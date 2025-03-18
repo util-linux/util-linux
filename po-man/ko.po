@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-03-06 10:31+0100\n"
+"POT-Creation-Date: 2025-03-18 13:44+0100\n"
 "PO-Revision-Date: 2024-05-04 16:42+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -72,7 +72,15 @@ msgid "_/etc/terminal-colors.d/disable_"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
-#: ../man-common/colors.adoc:14 ../lib/terminal-colors.d.5.adoc:47
+#: ../man-common/colors.adoc:14
+msgid ""
+"Since version 2.41, the $NO_COLOR environment variable is also supported to "
+"disable output colorization unless explicitly enabled by a command-line "
+"option."
+msgstr ""
+
+#. type: Plain text
+#: ../man-common/colors.adoc:17 ../lib/terminal-colors.d.5.adoc:46
 msgid ""
 "The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/"
 "terminal-colors.d_ overrides the global setting."
@@ -81,7 +89,7 @@ msgstr ""
 "terminal-colors.d_를 전역 설정 대신 적용합니다."
 
 #. type: Plain text
-#: ../man-common/colors.adoc:17
+#: ../man-common/colors.adoc:20
 msgid ""
 "Note that the output colorization may be enabled by default, and in this "
 "case _terminal-colors.d_ directories do not have to exist yet."
@@ -147,10 +155,9 @@ msgid "Display help text and exit."
 msgstr "도움말 내용을 나타낸 후 나갑니다."
 
 #. type: Labeled list
-#: ../man-common/help-version.adoc:4 ../disk-utils/fdisk.8.adoc:100
-#: ../login-utils/chfn.1.adoc:52 ../login-utils/chsh.1.adoc:43
-#: ../sys-utils/blkpr.8.adoc:43 ../sys-utils/setsid.1.adoc:34
-#: ../text-utils/col.1.adoc:83
+#: ../man-common/help-version.adoc:4 ../login-utils/chfn.1.adoc:52
+#: ../login-utils/chsh.1.adoc:43 ../sys-utils/blkpr.8.adoc:43
+#: ../sys-utils/setsid.1.adoc:34 ../text-utils/col.1.adoc:83
 #, no-wrap
 msgid "*-V*, *--version*"
 msgstr "*-V*, *--version*"
@@ -580,7 +587,7 @@ msgstr "분할 영역의 길이 (512 바이트 섹터 단위)."
 #. type: Title ==
 #: ../disk-utils/addpart.8.adoc:45 ../disk-utils/cfdisk.8.adoc:148
 #: ../disk-utils/delpart.8.adoc:33 ../disk-utils/fdformat.8.adoc:74
-#: ../disk-utils/fdisk.8.adoc:222 ../disk-utils/fsck.8.adoc:164
+#: ../disk-utils/fdisk.8.adoc:219 ../disk-utils/fsck.8.adoc:164
 #: ../disk-utils/fsck.cramfs.8.adoc:51 ../disk-utils/fsck.minix.8.adoc:98
 #: ../disk-utils/mkfs.8.adoc:53 ../disk-utils/mkfs.bfs.8.adoc:57
 #: ../disk-utils/mkfs.cramfs.8.adoc:82 ../disk-utils/mkfs.minix.8.adoc:86
@@ -603,7 +610,7 @@ msgstr "분할 영역의 길이 (512 바이트 섹터 단위)."
 #: ../misc-utils/fincore.1.adoc:56 ../misc-utils/findfs.8.adoc:67
 #: ../misc-utils/findmnt.8.adoc:266 ../misc-utils/getopt.1.adoc:151
 #: ../misc-utils/kill.1.adoc:131 ../misc-utils/lastlog2.8.adoc:89
-#: ../misc-utils/logger.1.adoc:252 ../misc-utils/look.1.adoc:101
+#: ../misc-utils/logger.1.adoc:252 ../misc-utils/look.1.adoc:103
 #: ../misc-utils/lsblk.8.adoc:242 ../misc-utils/lsclocks.1.adoc:104
 #: ../misc-utils/lslocks.8.adoc:127 ../misc-utils/mcookie.1.adoc:54
 #: ../misc-utils/namei.1.adoc:75 ../misc-utils/pipesz.1.adoc:99
@@ -1101,7 +1108,7 @@ msgstr "읽기-쓰기 여부를 설정합니다."
 
 #. type: Title ==
 #: ../disk-utils/blockdev.8.adoc:117 ../disk-utils/cfdisk.8.adoc:142
-#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:215
+#: ../disk-utils/fdformat.8.adoc:70 ../disk-utils/fdisk.8.adoc:212
 #: ../disk-utils/fsck.8.adoc:159 ../disk-utils/fsck.minix.8.adoc:94
 #: ../disk-utils/mkfs.8.adoc:45 ../disk-utils/partx.8.adoc:128
 #: ../disk-utils/raw.8.adoc:57 ../disk-utils/sfdisk.8.adoc:459
@@ -1255,13 +1262,13 @@ msgid ""
 msgstr "장치에서 이전 분할 영역 배치를 제거하려면 *wipefs*(8)를 활용하십시오."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:49
+#: ../disk-utils/cfdisk.8.adoc:47
 #, no-wrap
 msgid "*-L*, *--color*[**=**__when__]"
 msgstr "*-L*, *--color*[**=**__시기__]"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:51
+#: ../disk-utils/cfdisk.8.adoc:49
 msgid ""
 "Colorize the output. The optional argument _when_ can be *auto*, *never* or "
 "*always*. If the _when_ argument is omitted, it defaults to *auto*. The "
@@ -1274,7 +1281,7 @@ msgstr ""
 "오. *색상* 섹션도 참고하십시오."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:52 ../disk-utils/fdisk.8.adoc:64
+#: ../disk-utils/cfdisk.8.adoc:50 ../disk-utils/fdisk.8.adoc:62
 #: ../disk-utils/mkfs.bfs.8.adoc:38 ../disk-utils/mkfs.minix.8.adoc:49
 #: ../disk-utils/mkswap.8.adoc:60 ../disk-utils/sfdisk.8.adoc:165
 #: ../misc-utils/wipefs.8.adoc:52
@@ -1284,7 +1291,7 @@ msgid "*--lock*[**=**_mode_]"
 msgstr "*--lock*[=_모드_]"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:54 ../disk-utils/fdisk.8.adoc:66
+#: ../disk-utils/cfdisk.8.adoc:52 ../disk-utils/fdisk.8.adoc:64
 #: ../disk-utils/mkfs.bfs.8.adoc:40 ../disk-utils/mkfs.minix.8.adoc:51
 #: ../disk-utils/mkswap.8.adoc:62 ../disk-utils/sfdisk.8.adoc:167
 msgid ""
@@ -1303,25 +1310,25 @@ msgstr ""
 "그램과의 자원 동시 접근 상황을 피하는 용도로 추천합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:55 ../sys-utils/losetup.8.adoc:92
+#: ../disk-utils/cfdisk.8.adoc:53 ../sys-utils/losetup.8.adoc:92
 #: ../sys-utils/mount.8.adoc:406 ../sys-utils/umount.8.adoc:105
 #, no-wrap
 msgid "*-r*, *--read-only*"
 msgstr "*-r*, *--read-only*"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:57
+#: ../disk-utils/cfdisk.8.adoc:55
 msgid "Forced open in read-only mode."
 msgstr "읽기 전용으로 강제로 엽니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:58 ../disk-utils/fdisk.8.adoc:42
+#: ../disk-utils/cfdisk.8.adoc:56 ../disk-utils/fdisk.8.adoc:42
 #, no-wrap
 msgid "*-b*, *--sector-size* _sectorsize_"
 msgstr "*-b*, *--sector-size* _섹터 크기_"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:60 ../disk-utils/fdisk.8.adoc:44
+#: ../disk-utils/cfdisk.8.adoc:58 ../disk-utils/fdisk.8.adoc:44
 #: ../disk-utils/sfdisk.8.adoc:213
 msgid ""
 "Specify the sector size of the disk. Valid values are 512, 1024, 2048, and "
@@ -1333,13 +1340,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:61 ../misc-utils/hardlink.1.adoc:82
+#: ../disk-utils/cfdisk.8.adoc:59 ../misc-utils/hardlink.1.adoc:80
 #, no-wrap
 msgid "*-z*, *--zero*"
 msgstr "*-z*, *--zero*"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:63
+#: ../disk-utils/cfdisk.8.adoc:61
 msgid ""
 "Start with an in-memory zeroed partition table. This option does not zero "
 "the partition table on the disk; rather, it simply starts the program "
@@ -1616,14 +1623,14 @@ msgid "*cfdisk* does not support color customization with a color-scheme file."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:195
+#: ../disk-utils/cfdisk.8.adoc:122 ../disk-utils/fdisk.8.adoc:192
 #: ../disk-utils/fsck.8.adoc:128 ../disk-utils/mkfs.minix.8.adoc:70
 #: ../disk-utils/mkswap.8.adoc:95 ../disk-utils/partx.8.adoc:101
 #: ../disk-utils/sfdisk.8.adoc:417 ../disk-utils/swaplabel.8.adoc:39
-#: ../lib/terminal-colors.d.5.adoc:129 ../login-utils/sulogin.8.adoc:66
+#: ../lib/terminal-colors.d.5.adoc:128 ../login-utils/sulogin.8.adoc:66
 #: ../login-utils/vipw.8.adoc:61 ../misc-utils/blkid.8.adoc:173
 #: ../misc-utils/findfs.8.adoc:58 ../misc-utils/findmnt.8.adoc:219
-#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:77
+#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:79
 #: ../misc-utils/lsblk.8.adoc:214 ../misc-utils/whereis.1.adoc:112
 #: ../misc-utils/wipefs.8.adoc:80 ../sys-utils/hwclock.8.adoc:357
 #: ../sys-utils/losetup.8.adoc:131 ../sys-utils/lsns.8.adoc:99
@@ -1648,20 +1655,20 @@ msgid "enables cfdisk debug output."
 msgstr "cfdisk 디버깅 출력을 사용합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:200
+#: ../disk-utils/cfdisk.8.adoc:127 ../disk-utils/fdisk.8.adoc:197
 #: ../disk-utils/sfdisk.8.adoc:421
 #, no-wrap
 msgid "*LIBFDISK_DEBUG*=all"
 msgstr "*LIBFDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:202
+#: ../disk-utils/cfdisk.8.adoc:129 ../disk-utils/fdisk.8.adoc:199
 #: ../disk-utils/sfdisk.8.adoc:423
 msgid "enables libfdisk debug output."
 msgstr "libfdisk 디버깅 출력을 사용합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:203
+#: ../disk-utils/cfdisk.8.adoc:130 ../disk-utils/fdisk.8.adoc:200
 #: ../disk-utils/sfdisk.8.adoc:423 ../misc-utils/lsblk.8.adoc:219
 #: ../sys-utils/mount.8.adoc:1691 ../sys-utils/swapon.8.adoc:128
 #, no-wrap
@@ -1669,7 +1676,7 @@ msgid "*LIBBLKID_DEBUG*=all"
 msgstr "*LIBBLKID_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:205
+#: ../disk-utils/cfdisk.8.adoc:132 ../disk-utils/fdisk.8.adoc:202
 #: ../disk-utils/fsck.8.adoc:146 ../disk-utils/mkswap.8.adoc:99
 #: ../disk-utils/partx.8.adoc:105 ../disk-utils/sfdisk.8.adoc:425
 #: ../disk-utils/swaplabel.8.adoc:43 ../misc-utils/findfs.8.adoc:62
@@ -1677,7 +1684,7 @@ msgid "enables libblkid debug output."
 msgstr "libblkid 디버깅 출력을 사용합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:206
+#: ../disk-utils/cfdisk.8.adoc:133 ../disk-utils/fdisk.8.adoc:203
 #: ../disk-utils/sfdisk.8.adoc:425 ../misc-utils/findmnt.8.adoc:230
 #: ../misc-utils/lsblk.8.adoc:225
 #, no-wrap
@@ -1685,13 +1692,13 @@ msgid "*LIBSMARTCOLS_DEBUG*=all"
 msgstr "*LIBSMARTCOLS_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:208
+#: ../disk-utils/cfdisk.8.adoc:135 ../disk-utils/fdisk.8.adoc:205
 #: ../disk-utils/sfdisk.8.adoc:427
 msgid "enables libsmartcols debug output."
 msgstr "libsmartcols 디버깅 출력을 사용합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:209
+#: ../disk-utils/cfdisk.8.adoc:136 ../disk-utils/fdisk.8.adoc:206
 #: ../misc-utils/findmnt.8.adoc:233 ../misc-utils/lsblk.8.adoc:228
 #, no-wrap
 msgid "*LIBSMARTCOLS_DEBUG_PADDING*=on"
@@ -1704,14 +1711,14 @@ msgstr ""
 "보이는 여백 문자를 활용합니다. *LIBSMARTCOLS_DEBUG* 사용 설정이 필요합니다."
 
 #. type: Labeled list
-#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:212
+#: ../disk-utils/cfdisk.8.adoc:139 ../disk-utils/fdisk.8.adoc:209
 #: ../disk-utils/sfdisk.8.adoc:427
 #, no-wrap
 msgid "*LOCK_BLOCK_DEVICE*=<mode>"
 msgstr "*LOCK_BLOCK_DEVICE*=<모드>"
 
 #. type: Plain text
-#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:214
+#: ../disk-utils/cfdisk.8.adoc:141 ../disk-utils/fdisk.8.adoc:211
 #: ../disk-utils/mkfs.minix.8.adoc:74 ../disk-utils/mkswap.8.adoc:102
 #: ../disk-utils/sfdisk.8.adoc:429 ../misc-utils/wipefs.8.adoc:87
 msgid ""
@@ -2046,7 +2053,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:53 ../sys-utils/dmesg.1.adoc:81
+#: ../disk-utils/fdisk.8.adoc:51 ../sys-utils/dmesg.1.adoc:81
 #: ../text-utils/hexdump.1.adoc:85
 #, fuzzy, no-wrap
 #| msgid "*-L*, *--color*[**=**__when__]"
@@ -2054,7 +2061,7 @@ msgid "*-L*, *--color*[**=**_when_]"
 msgstr "*-L*, *--color*[**=**__시기__]"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:55 ../disk-utils/sfdisk.8.adoc:158
+#: ../disk-utils/fdisk.8.adoc:53 ../disk-utils/sfdisk.8.adoc:158
 #: ../misc-utils/cal.1.adoc:124
 msgid ""
 "Colorize the output. The optional argument _when_ can be *auto*, *never* or "
@@ -2064,7 +2071,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:56 ../disk-utils/fsck.minix.8.adoc:47
+#: ../disk-utils/fdisk.8.adoc:54 ../disk-utils/fsck.minix.8.adoc:47
 #: ../disk-utils/partx.8.adoc:54 ../misc-utils/enosys.1.adoc:35
 #: ../misc-utils/findmnt.8.adoc:96 ../misc-utils/lsblk.8.adoc:76
 #: ../sys-utils/losetup.8.adoc:101 ../sys-utils/lsipc.1.adoc:67
@@ -2074,12 +2081,12 @@ msgid "*-l*, *--list*"
 msgstr "*-l*, *--list*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:58
+#: ../disk-utils/fdisk.8.adoc:56
 msgid "List the partition tables for the specified devices and then exit."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:60
+#: ../disk-utils/fdisk.8.adoc:58
 msgid ""
 "If no devices are given, the devices mentioned in _/proc/partitions_ (if "
 "this file exists) are used. Devices are always listed in the order in which "
@@ -2088,24 +2095,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:61
+#: ../disk-utils/fdisk.8.adoc:59
 #, no-wrap
 msgid "*-x*, *--list-details*"
 msgstr "*-x*, *--list-details*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:63
+#: ../disk-utils/fdisk.8.adoc:61
 msgid "Like *--list*, but provides more details."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:67
+#: ../disk-utils/fdisk.8.adoc:65
 #, no-wrap
 msgid "*-n*, *--noauto-pt*"
 msgstr "*-n*, *--noauto-pt*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:69
+#: ../disk-utils/fdisk.8.adoc:67
 msgid ""
 "Don't automatically create a default partition table on empty device. The "
 "partition table has to be explicitly created by user (by command like 'o', "
@@ -2113,7 +2120,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:70 ../disk-utils/partx.8.adoc:69
+#: ../disk-utils/fdisk.8.adoc:68 ../disk-utils/partx.8.adoc:69
 #: ../disk-utils/sfdisk.8.adoc:202 ../login-utils/lslogins.1.adoc:69
 #: ../lsfd-cmd/lsfd.1.adoc:50 ../misc-utils/fincore.1.adoc:37
 #: ../misc-utils/findmnt.8.adoc:115 ../misc-utils/lsblk.8.adoc:94
@@ -2127,7 +2134,7 @@ msgid "*-o*, *--output* _list_"
 msgstr "*-o*, *--output* _목록_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:72 ../disk-utils/sfdisk.8.adoc:204
+#: ../disk-utils/fdisk.8.adoc:70 ../disk-utils/sfdisk.8.adoc:204
 #: ../misc-utils/lslocks.8.adoc:51 ../misc-utils/uuidparse.1.adoc:58
 #: ../misc-utils/wipefs.8.adoc:60 ../sys-utils/lsipc.1.adoc:81
 #: ../sys-utils/lsns.8.adoc:48
@@ -2138,27 +2145,27 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:74
+#: ../disk-utils/fdisk.8.adoc:72
 msgid ""
 "The default list of columns may be extended if _list_ is specified in the "
 "format _{plus}list_ (e.g., *-o {plus}UUID*)."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:76
+#: ../disk-utils/fdisk.8.adoc:74
 #, no-wrap
 msgid "*-s*, *--getsz*"
 msgstr "*-s*, *--getsz*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:78
+#: ../disk-utils/fdisk.8.adoc:76
 msgid ""
 "Print the size in 512-byte sectors of each given block device. This option "
 "is DEPRECATED in favour of *blockdev*(8)."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:79 ../disk-utils/mkfs.8.adoc:29
+#: ../disk-utils/fdisk.8.adoc:77 ../disk-utils/mkfs.8.adoc:29
 #: ../disk-utils/partx.8.adoc:84 ../sys-utils/blkpr.8.adoc:39
 #: ../sys-utils/lsns.8.adoc:74
 #, no-wrap
@@ -2166,21 +2173,21 @@ msgid "*-t*, *--type* _type_"
 msgstr "*-t*, *--type* _형식_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:81
+#: ../disk-utils/fdisk.8.adoc:79
 msgid ""
 "Enable support only for disklabels of the specified _type_, and disable "
 "support for all other types."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:82
+#: ../disk-utils/fdisk.8.adoc:80
 #, fuzzy, no-wrap
 #| msgid "*-u*, *--units*[=_unit_]"
 msgid "*-u*, *--units*[**=**_unit_]"
 msgstr "*-u*, *--units*[=_단위_]"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:84
+#: ../disk-utils/fdisk.8.adoc:82
 msgid ""
 "When listing partition tables, show sizes in 'sectors' or in 'cylinders'. "
 "The default is to show sizes in sectors. For backward compatibility, it is "
@@ -2191,26 +2198,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:85
+#: ../disk-utils/fdisk.8.adoc:83
 #, no-wrap
 msgid "*-C*, *--cylinders* _number_"
 msgstr "*-C*, *--cylinders* _숫자_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:87
+#: ../disk-utils/fdisk.8.adoc:85
 msgid ""
 "Specify the _number_ of cylinders of the disk. I have no idea why anybody "
 "would want to do so."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:88
+#: ../disk-utils/fdisk.8.adoc:86
 #, no-wrap
 msgid "*-H*, *--heads* _number_"
 msgstr "*-H*, *--heads* _숫자_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:90
+#: ../disk-utils/fdisk.8.adoc:88
 msgid ""
 "Specify the number of heads of the disk. (Not the physical number, of "
 "course, but the number used for partition tables.) Reasonable values are 255 "
@@ -2218,13 +2225,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:91
+#: ../disk-utils/fdisk.8.adoc:89
 #, no-wrap
 msgid "*-S*, *--sectors* _number_"
 msgstr "*-S*, *--sectors* _숫자_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:93
+#: ../disk-utils/fdisk.8.adoc:91
 msgid ""
 "Specify the number of sectors per track of the disk. (Not the physical "
 "number, of course, but the number used for partition tables.) A reasonable "
@@ -2232,13 +2239,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:94 ../disk-utils/sfdisk.8.adoc:223
+#: ../disk-utils/fdisk.8.adoc:92 ../disk-utils/sfdisk.8.adoc:223
 #, no-wrap
 msgid "*-w*, *--wipe* _when_"
 msgstr "*-w*, *--wipe* _시기_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:96
+#: ../disk-utils/fdisk.8.adoc:94
 msgid ""
 "Wipe filesystem, RAID and partition-table signatures from the device, in "
 "order to avoid possible collisions. The argument _when_ can be *auto*, "
@@ -2249,13 +2256,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:97 ../disk-utils/sfdisk.8.adoc:226
+#: ../disk-utils/fdisk.8.adoc:95 ../disk-utils/sfdisk.8.adoc:226
 #, no-wrap
 msgid "*-W*, *--wipe-partitions* _when_"
 msgstr "*-W*, *--wipe-partitions* _시기_"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:99
+#: ../disk-utils/fdisk.8.adoc:97
 msgid ""
 "Wipe filesystem, RAID and partition-table signatures from a newly created "
 "partitions, in order to avoid possible collisions. The argument _when_ can "
@@ -2266,21 +2273,14 @@ msgid ""
 "*wipefs*(8) command."
 msgstr ""
 
-#. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:102 ../disk-utils/fsck.8.adoc:117
-#: ../disk-utils/sfdisk.8.adoc:231 ../sys-utils/blkpr.8.adoc:45
-#: ../sys-utils/setsid.1.adoc:36
-msgid "Display version information and exit."
-msgstr "버전 정보를 나타내고 빠져나갑니다."
-
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:103
+#: ../disk-utils/fdisk.8.adoc:100
 #, no-wrap
 msgid "DEVICES"
 msgstr "장치"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:106
+#: ../disk-utils/fdisk.8.adoc:103
 msgid ""
 "The _device_ is usually _/dev/sda_, _/dev/sdb_ or so. A device name refers "
 "to the entire disk. Old systems without libata (a library used inside the "
@@ -2290,7 +2290,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:108
+#: ../disk-utils/fdisk.8.adoc:105
 msgid ""
 "The _partition_ is a device name followed by a partition number. For "
 "example, _/dev/sda1_ is the first partition on the first hard disk in the "
@@ -2299,14 +2299,14 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:109
+#: ../disk-utils/fdisk.8.adoc:106
 #, no-wrap
 msgid "SIZES"
 msgstr "크기"
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:114
+#: ../disk-utils/fdisk.8.adoc:111
 msgid ""
 "The \"last sector\" dialog accepts partition size specified by number of "
 "sectors or by {plus}/-<size>{K,B,M,G,...} notation."
@@ -2314,7 +2314,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:118
+#: ../disk-utils/fdisk.8.adoc:115
 msgid ""
 "If the size is prefixed by '{plus}' then it is interpreted as relative to "
 "the partition first sector. If the size is prefixed by '-' then it is "
@@ -2323,7 +2323,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:120
+#: ../disk-utils/fdisk.8.adoc:117
 msgid ""
 "In the case the size is specified in bytes, then the number may be followed "
 "by the multiplicative suffixes KiB (1024 bytes), MiB (1024*1024 bytes), and "
@@ -2333,7 +2333,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:124
+#: ../disk-utils/fdisk.8.adoc:121
 msgid ""
 "The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) "
 "are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,"
@@ -2341,7 +2341,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:126
+#: ../disk-utils/fdisk.8.adoc:123
 msgid ""
 "The last sector of the partition is strictly calculated as <start> + <size> "
 "(without -1) if the size is specified by the +<sectors> notation. In this "
@@ -2349,7 +2349,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:128
+#: ../disk-utils/fdisk.8.adoc:125
 msgid ""
 "For backward compatibility *fdisk* also accepts the suffixes KB (1000 "
 "bytes), MB (1000*1000 bytes), and so on for GB, TB, PB, EB, ZB and YB. These "
@@ -2357,13 +2357,13 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:129
+#: ../disk-utils/fdisk.8.adoc:126
 #, no-wrap
 msgid "SCRIPT FILES"
 msgstr "스크립트 파일"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:132
+#: ../disk-utils/fdisk.8.adoc:129
 msgid ""
 "*fdisk* allows reading (by 'I' command) *sfdisk*(8) compatible script files. "
 "The script is applied to in-memory partition table, and then it is possible "
@@ -2371,33 +2371,33 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:134
+#: ../disk-utils/fdisk.8.adoc:131
 msgid ""
 "And vice-versa it is possible to write the current in-memory disk layout to "
 "the script file by command 'O'."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:136
+#: ../disk-utils/fdisk.8.adoc:133
 msgid ""
 "The script files are compatible between *cfdisk*(8), *sfdisk*(8), *fdisk* "
 "and other libfdisk applications. For more details see *sfdisk*(8)."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:137
+#: ../disk-utils/fdisk.8.adoc:134
 #, no-wrap
 msgid "DISK LABELS"
 msgstr "디스크 레이블"
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:139
+#: ../disk-utils/fdisk.8.adoc:136
 #, no-wrap
 msgid "*GPT (GUID Partition Table)*"
 msgstr "*GPT (GUID 분할 영역 테이블)*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:141
+#: ../disk-utils/fdisk.8.adoc:138
 msgid ""
 "GPT is modern standard for the layout of the partition table. GPT uses 64-"
 "bit logical block addresses, checksums, UUIDs and names for partitions and "
@@ -2406,7 +2406,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:143
+#: ../disk-utils/fdisk.8.adoc:140
 msgid ""
 "Note that the first sector is still reserved for a *protective MBR* in the "
 "GPT specification. It prevents MBR-only partitioning tools from mis-"
@@ -2414,20 +2414,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:145
+#: ../disk-utils/fdisk.8.adoc:142
 msgid ""
 "GPT is always a better choice than MBR, especially on modern hardware with a "
 "UEFI boot loader."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:146
+#: ../disk-utils/fdisk.8.adoc:143
 #, no-wrap
 msgid "*DOS-type (MBR)*"
 msgstr "*DOS-type (MBR)*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:148
+#: ../disk-utils/fdisk.8.adoc:145
 msgid ""
 "A DOS-type partition table can describe an unlimited number of partitions. "
 "In sector 0 there is room for the description of 4 partitions (called "
@@ -2440,7 +2440,7 @@ msgstr ""
 
 #. TRANSLATORS: Keep {plus} untranslated.
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:150
+#: ../disk-utils/fdisk.8.adoc:147
 msgid ""
 "In a DOS-type partition table the starting offset and the size of each "
 "partition is stored in two ways: as an absolute number of sectors (given in "
@@ -2455,20 +2455,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:153
+#: ../disk-utils/fdisk.8.adoc:150
 msgid ""
 "*Please, read the DOS-mode section if you want DOS-compatible partitions.* "
 "*fdisk* does not care about cylinder boundaries by default."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:154
+#: ../disk-utils/fdisk.8.adoc:151
 #, no-wrap
 msgid "*BSD/Sun-type*"
 msgstr "*BSD/Sun-type*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:156
+#: ../disk-utils/fdisk.8.adoc:153
 msgid ""
 "A BSD/Sun disklabel can describe 8 partitions, the third of which should be "
 "a `whole disk' partition. Do not start a partition that actually uses its "
@@ -2478,13 +2478,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:157
+#: ../disk-utils/fdisk.8.adoc:154
 #, no-wrap
 msgid "*IRIX/SGI-type*"
 msgstr "*IRIX/SGI-type*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:159
+#: ../disk-utils/fdisk.8.adoc:156
 msgid ""
 "An IRIX/SGI disklabel can describe 16 partitions, the eleventh of which "
 "should be an entire `volume' partition, while the ninth should be labeled "
@@ -2498,20 +2498,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:161
+#: ../disk-utils/fdisk.8.adoc:158
 msgid ""
 "A *sync*(2) and an ioctl(BLKRRPART) (rereading the partition table from "
 "disk) are performed before exiting when the partition table has been updated."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fdisk.8.adoc:162
+#: ../disk-utils/fdisk.8.adoc:159
 #, no-wrap
 msgid "DOS mode and DOS 6.x WARNING"
 msgstr "도스 모드 및 DOS 6.x 경고"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:165
+#: ../disk-utils/fdisk.8.adoc:162
 msgid ""
 "*Note that all this is deprecated. You don't have to care about things like* "
 "*geometry and cylinders on modern operating systems. If you really want* "
@@ -2520,7 +2520,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:167
+#: ../disk-utils/fdisk.8.adoc:164
 msgid ""
 "The DOS 6.x FORMAT command looks for some information in the first sector of "
 "the data area of the partition, and treats this information as more reliable "
@@ -2531,7 +2531,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:169
+#: ../disk-utils/fdisk.8.adoc:166
 msgid ""
 "The bottom line is that if you use *fdisk* or *cfdisk*(8) to change the size "
 "of a DOS partition table entry, then you must also use *dd*(1) to *zero the "
@@ -2544,7 +2544,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:171
+#: ../disk-utils/fdisk.8.adoc:168
 msgid ""
 "*fdisk* usually obtains the disk geometry automatically. This is not "
 "necessarily the physical disk geometry (indeed, modern disks do not really "
@@ -2554,7 +2554,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:173
+#: ../disk-utils/fdisk.8.adoc:170
 msgid ""
 "Usually all goes well by default, and there are no problems if Linux is the "
 "only system on the disk. However, if the disk has to be shared with other "
@@ -2565,7 +2565,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:175
+#: ../disk-utils/fdisk.8.adoc:172
 msgid ""
 "Whenever a partition table is printed out in DOS mode, a consistency check "
 "is performed on the partition table entries. This check verifies that the "
@@ -2575,7 +2575,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:177
+#: ../disk-utils/fdisk.8.adoc:174
 msgid ""
 "Some versions of MS-DOS create a first partition which does not begin on a "
 "cylinder boundary, but on sector 2 of the first cylinder. Partitions "
@@ -2584,7 +2584,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:179
+#: ../disk-utils/fdisk.8.adoc:176
 msgid ""
 "For best results, you should always use an OS-specific partition table "
 "program. For example, you should make DOS partitions with the DOS FDISK "
@@ -2593,88 +2593,88 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:182
+#: ../disk-utils/fdisk.8.adoc:179
 msgid "The logical color names supported by *fdisk* are:"
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:183 ../disk-utils/sfdisk.8.adoc:410
+#: ../disk-utils/fdisk.8.adoc:180 ../disk-utils/sfdisk.8.adoc:410
 #: ../misc-utils/cal.1.adoc:167
 #, no-wrap
 msgid "*header*"
 msgstr "*header*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:185 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:182 ../disk-utils/sfdisk.8.adoc:412
 msgid "The header of the output tables."
 msgstr "출력 배치 헤더입니다."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:186
+#: ../disk-utils/fdisk.8.adoc:183
 #, no-wrap
 msgid "*help-title*"
 msgstr "*help-title*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:188
+#: ../disk-utils/fdisk.8.adoc:185
 msgid "The help section titles."
 msgstr "도움말 섹션 제목입니다."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:412
+#: ../disk-utils/fdisk.8.adoc:186 ../disk-utils/sfdisk.8.adoc:412
 #: ../sys-utils/dmesg.1.adoc:182
 #, no-wrap
 msgid "*warn*"
 msgstr "*warn*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:191 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:188 ../disk-utils/sfdisk.8.adoc:414
 msgid "The warning messages."
 msgstr "경고 메시지입니다."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:192 ../disk-utils/sfdisk.8.adoc:414
+#: ../disk-utils/fdisk.8.adoc:189 ../disk-utils/sfdisk.8.adoc:414
 #, no-wrap
 msgid "*welcome*"
 msgstr "*welcome*"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:194 ../disk-utils/sfdisk.8.adoc:416
+#: ../disk-utils/fdisk.8.adoc:191 ../disk-utils/sfdisk.8.adoc:416
 msgid "The welcome message."
 msgstr "환영 메시지입니다."
 
 #. type: Labeled list
-#: ../disk-utils/fdisk.8.adoc:197
+#: ../disk-utils/fdisk.8.adoc:194
 #, no-wrap
 msgid "*FDISK_DEBUG*=all"
 msgstr "*FDISK_DEBUG*=all"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:199
+#: ../disk-utils/fdisk.8.adoc:196
 msgid "enables fdisk debug output."
 msgstr "fdisk 디버깅 출력을 설정합니다."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:211 ../misc-utils/findmnt.8.adoc:235
+#: ../disk-utils/fdisk.8.adoc:208 ../misc-utils/findmnt.8.adoc:235
 #: ../misc-utils/lsblk.8.adoc:230
 msgid "use visible padding characters."
 msgstr "보이는 여백 문자를 활용합니다."
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:219
+#: ../disk-utils/fdisk.8.adoc:216
 msgid "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 msgstr ""
 "mailto:kzak@redhat.com[Karel Zak], mailto:dave@gnu.org[Davidlohr Bueso]"
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:221
+#: ../disk-utils/fdisk.8.adoc:218
 msgid ""
 "The original version was written by Andries E. Brouwer, A. V. Le Blanc and "
 "others."
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/fdisk.8.adoc:228
+#: ../disk-utils/fdisk.8.adoc:225
 msgid "*cfdisk*(8), *mkfs*(8), *partx*(8), *sfdisk*(8)"
 msgstr "*cfdisk*(8), *mkfs*(8), *partx*(8), *sfdisk*(8)"
 
@@ -3169,6 +3169,12 @@ msgstr "*-?*, *--help*"
 msgid "*--version*"
 msgstr "*--version*"
 
+#. type: Plain text
+#: ../disk-utils/fsck.8.adoc:117 ../disk-utils/sfdisk.8.adoc:231
+#: ../sys-utils/blkpr.8.adoc:45 ../sys-utils/setsid.1.adoc:36
+msgid "Display version information and exit."
+msgstr "버전 정보를 나타내고 빠져나갑니다."
+
 #. type: Title ==
 #: ../disk-utils/fsck.8.adoc:118
 #, no-wrap
@@ -3293,11 +3299,11 @@ msgid "enables libmount debug output."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:134
+#: ../disk-utils/fsck.8.adoc:150 ../lib/terminal-colors.d.5.adoc:138
 #: ../login-utils/last.1.adoc:112 ../login-utils/login.1.adoc:141
 #: ../login-utils/newgrp.1.adoc:40 ../login-utils/runuser.1.adoc:118
 #: ../login-utils/su.1.adoc:130 ../misc-utils/lastlog2.8.adoc:79
-#: ../misc-utils/look.1.adoc:82 ../misc-utils/mcookie.1.adoc:44
+#: ../misc-utils/look.1.adoc:84 ../misc-utils/mcookie.1.adoc:44
 #: ../sys-utils/adjtime_config.5.adoc:50 ../sys-utils/ctrlaltdel.8.adoc:39
 #: ../sys-utils/fstab.5.adoc:126 ../sys-utils/hwclock.8.adoc:365
 #: ../sys-utils/losetup.8.adoc:136 ../sys-utils/mount.8.adoc:1697
@@ -3371,12 +3377,12 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/fsck.cramfs.8.adoc:23 ../disk-utils/fsck.minix.8.adoc:56
 #: ../disk-utils/mkfs.bfs.8.adoc:41 ../disk-utils/partx.8.adoc:96
-#: ../misc-utils/hardlink.1.adoc:112 ../misc-utils/mcookie.1.adoc:39
+#: ../misc-utils/hardlink.1.adoc:110 ../misc-utils/mcookie.1.adoc:39
 #: ../misc-utils/pipesz.1.adoc:64 ../misc-utils/rename.1.adoc:32
 #: ../misc-utils/waitpid.1.adoc:26 ../schedutils/chrt.1.adoc:101
 #: ../schedutils/coresched.1.adoc:67 ../schedutils/uclampset.1.adoc:87
 #: ../sys-utils/blkdiscard.8.adoc:54 ../sys-utils/blkzone.8.adoc:98
-#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:84
+#: ../sys-utils/chmem.8.adoc:49 ../sys-utils/eject.1.adoc:82
 #: ../sys-utils/fallocate.1.adoc:64 ../sys-utils/hwclock.8.adoc:173
 #: ../sys-utils/losetup.8.adoc:98 ../sys-utils/mount.8.adoc:455
 #: ../sys-utils/readprofile.8.adoc:51 ../sys-utils/rtcwake.8.adoc:105
@@ -3446,18 +3452,18 @@ msgstr "*-y*"
 #: ../misc-utils/enosys.1.adoc:68 ../misc-utils/exch.1.adoc:28
 #: ../misc-utils/fadvise.1.adoc:44 ../misc-utils/findfs.8.adoc:49
 #: ../misc-utils/findmnt.8.adoc:213 ../misc-utils/kill.1.adoc:107
-#: ../misc-utils/logger.1.adoc:192 ../misc-utils/lsblk.8.adoc:200
-#: ../misc-utils/rename.1.adoc:70 ../misc-utils/waitpid.1.adoc:40
-#: ../sys-utils/blkdiscard.8.adoc:59 ../sys-utils/chcpu.8.adoc:59
-#: ../sys-utils/chmem.8.adoc:54 ../sys-utils/dmesg.1.adoc:188
-#: ../sys-utils/eject.1.adoc:93 ../sys-utils/flock.1.adoc:93
-#: ../sys-utils/fstrim.8.adoc:74 ../sys-utils/hwclock.8.adoc:347
-#: ../sys-utils/losetup.8.adoc:123 ../sys-utils/lsipc.1.adoc:100
-#: ../sys-utils/lsns.8.adoc:88 ../sys-utils/mount.8.adoc:1635
-#: ../sys-utils/mountpoint.1.adoc:39 ../sys-utils/swapon.8.adoc:94
-#: ../sys-utils/switch_root.8.adoc:29 ../sys-utils/umount.8.adoc:132
-#: ../sys-utils/zramctl.8.adoc:79 ../term-utils/mesg.1.adoc:93
-#: ../text-utils/hexdump.1.adoc:224
+#: ../misc-utils/logger.1.adoc:192 ../misc-utils/look.1.adoc:75
+#: ../misc-utils/lsblk.8.adoc:200 ../misc-utils/rename.1.adoc:70
+#: ../misc-utils/waitpid.1.adoc:40 ../sys-utils/blkdiscard.8.adoc:59
+#: ../sys-utils/chcpu.8.adoc:59 ../sys-utils/chmem.8.adoc:54
+#: ../sys-utils/dmesg.1.adoc:188 ../sys-utils/eject.1.adoc:93
+#: ../sys-utils/flock.1.adoc:93 ../sys-utils/fstrim.8.adoc:74
+#: ../sys-utils/hwclock.8.adoc:347 ../sys-utils/losetup.8.adoc:123
+#: ../sys-utils/lsipc.1.adoc:100 ../sys-utils/lsns.8.adoc:88
+#: ../sys-utils/mount.8.adoc:1635 ../sys-utils/mountpoint.1.adoc:39
+#: ../sys-utils/swapon.8.adoc:94 ../sys-utils/switch_root.8.adoc:29
+#: ../sys-utils/umount.8.adoc:132 ../sys-utils/zramctl.8.adoc:79
+#: ../term-utils/mesg.1.adoc:93 ../text-utils/hexdump.1.adoc:224
 #, no-wrap
 msgid "EXIT STATUS"
 msgstr "종료 상태"
@@ -3888,7 +3894,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:41 ../disk-utils/raw.8.adoc:51
 #: ../login-utils/login.1.adoc:163 ../login-utils/utmpdump.1.adoc:67
 #: ../misc-utils/cal.1.adoc:185 ../misc-utils/getopt.1.adoc:141
-#: ../misc-utils/hardlink.1.adoc:154 ../misc-utils/mcookie.1.adoc:50
+#: ../misc-utils/hardlink.1.adoc:153 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:65 ../misc-utils/pipesz.1.adoc:91
 #: ../sys-utils/lscpu.1.adoc:98 ../sys-utils/mount.8.adoc:1723
 #: ../sys-utils/readprofile.8.adoc:67 ../term-utils/agetty.8.adoc:332
@@ -4076,7 +4082,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:150
+#: ../disk-utils/mkfs.cramfs.8.adoc:27 ../misc-utils/hardlink.1.adoc:149
 #: ../misc-utils/kill.1.adoc:36 ../term-utils/agetty.8.adoc:35
 #: ../term-utils/mesg.1.adoc:75
 #, no-wrap
@@ -4520,7 +4526,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:54 ../disk-utils/sfdisk.8.adoc:208
-#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:94
+#: ../misc-utils/getopt.1.adoc:47 ../misc-utils/hardlink.1.adoc:92
 #: ../misc-utils/pipesz.1.adoc:61 ../misc-utils/uuidd.8.adoc:53
 #: ../misc-utils/wipefs.8.adoc:72 ../sys-utils/blkdiscard.8.adoc:45
 #: ../sys-utils/mountpoint.1.adoc:28 ../sys-utils/umount.8.adoc:99
@@ -4535,7 +4541,7 @@ msgid "Suppress output and warning messages."
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/mkswap.8.adoc:57 ../disk-utils/swaplabel.8.adoc:33
+#: ../disk-utils/mkswap.8.adoc:57 ../disk-utils/swaplabel.8.adoc:31
 #: ../misc-utils/blkid.8.adoc:74 ../sys-utils/mount.8.adoc:339
 #, no-wrap
 msgid "*-L*, *--label* _label_"
@@ -4560,7 +4566,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../disk-utils/mkswap.8.adoc:66 ../disk-utils/swaplabel.8.adoc:36
+#: ../disk-utils/mkswap.8.adoc:66 ../disk-utils/swaplabel.8.adoc:34
 #, no-wrap
 msgid "*-U*, *--uuid* _UUID_"
 msgstr "*-U*, *--uuid* _UUID_"
@@ -5059,7 +5065,7 @@ msgid "Verbose mode."
 msgstr "자세한 출력 모드."
 
 #. type: Title ==
-#: ../disk-utils/partx.8.adoc:106 ../lib/terminal-colors.d.5.adoc:142
+#: ../disk-utils/partx.8.adoc:106 ../lib/terminal-colors.d.5.adoc:146
 #: ../misc-utils/uuidd.8.adoc:74 ../sys-utils/chmem.8.adoc:67
 #: ../sys-utils/losetup.8.adoc:144 ../sys-utils/pivot_root.8.adoc:37
 #: ../sys-utils/readprofile.8.adoc:77 ../sys-utils/rfkill.8.adoc:64
@@ -6806,7 +6812,7 @@ msgstr ""
 #. type: Title ==
 #: ../disk-utils/sfdisk.8.adoc:436 ../misc-utils/enosys.1.adoc:48
 #: ../misc-utils/findmnt.8.adoc:236 ../misc-utils/getopt.1.adoc:128
-#: ../misc-utils/logger.1.adoc:239 ../misc-utils/look.1.adoc:94
+#: ../misc-utils/logger.1.adoc:239 ../misc-utils/look.1.adoc:96
 #: ../misc-utils/pipesz.1.adoc:69 ../misc-utils/rename.1.adoc:87
 #: ../misc-utils/uuidgen.1.adoc:67 ../misc-utils/whereis.1.adoc:117
 #: ../misc-utils/wipefs.8.adoc:88 ../schedutils/chrt.1.adoc:106
@@ -6958,7 +6964,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/swaplabel.8.adoc:35
+#: ../disk-utils/swaplabel.8.adoc:33
 msgid ""
 "Specify a new _label_ for the device. Swap partition labels can be at most "
 "16 characters long. If _label_ is longer than 16 characters, *swaplabel* "
@@ -6966,7 +6972,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../disk-utils/swaplabel.8.adoc:38
+#: ../disk-utils/swaplabel.8.adoc:36
 msgid ""
 "Specify a new _UUID_ for the device. The _UUID_ must be in the standard "
 "8-4-4-4-12 character format, such as is output by *uuidgen*(1)."
@@ -7049,35 +7055,37 @@ msgstr "*disable*"
 
 #. type: Plain text
 #: ../lib/terminal-colors.d.5.adoc:37
-msgid "Turns off output colorization for all compatible utilities."
+msgid ""
+"Turns off output colorization for all compatible utilities. See also the "
+"NO_COLOR environment variable below."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:38
+#: ../lib/terminal-colors.d.5.adoc:37
 #, no-wrap
 msgid "*enable*"
 msgstr "*enable*"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:40
+#: ../lib/terminal-colors.d.5.adoc:39
 msgid "Turns on output colorization; any matching *disable* files are ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:41
+#: ../lib/terminal-colors.d.5.adoc:40
 #, no-wrap
 msgid "*scheme*"
 msgstr "*scheme*"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:43
+#: ../lib/terminal-colors.d.5.adoc:42
 msgid ""
 "Specifies colors used for output. The file format may be specific to the "
 "utility, the default format is described below."
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:45
+#: ../lib/terminal-colors.d.5.adoc:44
 msgid ""
 "If there are more files that match for a utility, then the file with the "
 "more specific filename wins. For example, the filename \"@xterm.scheme\" has "
@@ -7086,23 +7094,23 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:48
+#: ../lib/terminal-colors.d.5.adoc:47
 #, no-wrap
 msgid "DEFAULT SCHEME FILES FORMAT"
 msgstr "기본 스킴 파일 형식"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:51
+#: ../lib/terminal-colors.d.5.adoc:50
 msgid "The following statement is recognized:"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:54
+#: ../lib/terminal-colors.d.5.adoc:53
 msgid "*name color-sequence*"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:57
+#: ../lib/terminal-colors.d.5.adoc:56
 msgid ""
 "The *name* is a logical name of color sequence (for example \"error\"). The "
 "names are specific to the utilities. For more details always see the "
@@ -7110,20 +7118,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:59
+#: ../lib/terminal-colors.d.5.adoc:58
 msgid ""
 "The *color-sequence* is a color name, ASCII color sequences or escape "
 "sequences."
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:60
+#: ../lib/terminal-colors.d.5.adoc:59
 #, no-wrap
 msgid "Color names"
 msgstr "색상 명칭"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:63
+#: ../lib/terminal-colors.d.5.adoc:62
 msgid ""
 "black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, "
 "lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, "
@@ -7131,20 +7139,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:64
+#: ../lib/terminal-colors.d.5.adoc:63
 #, no-wrap
 msgid "ANSI color sequences"
 msgstr "안시 색상 시퀀스"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:67
+#: ../lib/terminal-colors.d.5.adoc:66
 msgid ""
 "The color sequences are composed of sequences of numbers separated by "
 "semicolons. The most common codes are:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:91
+#: ../lib/terminal-colors.d.5.adoc:90
 #, no-wrap
 msgid ""
 "|0 |to restore default color\n"
@@ -7170,20 +7178,20 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:94
+#: ../lib/terminal-colors.d.5.adoc:93
 #, no-wrap
 msgid "Escape sequences"
 msgstr "이스케이프 시퀀스"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:97
+#: ../lib/terminal-colors.d.5.adoc:96
 msgid ""
 "To specify control or blank characters in the color sequences, C-style \\-"
 "escaped notation can be used:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:114
+#: ../lib/terminal-colors.d.5.adoc:113
 #, no-wrap
 msgid ""
 "|*\\a* |Bell (ASCII 7)\n"
@@ -7215,7 +7223,7 @@ msgstr ""
 "|*\\#* |해시 마크 (#)\n"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:118
+#: ../lib/terminal-colors.d.5.adoc:117
 msgid ""
 "Please note that escapes are necessary to enter a space, backslash, caret, "
 "or any control character anywhere in the string, as well as a hash mark as "
@@ -7223,96 +7231,111 @@ msgid ""
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:120
+#: ../lib/terminal-colors.d.5.adoc:119
 msgid ""
 "For example, to use a red background for alert messages in the output of "
 "*dmesg*(1), use:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:123
+#: ../lib/terminal-colors.d.5.adoc:122
 msgid "*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*"
 msgstr "*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*"
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:125
+#: ../lib/terminal-colors.d.5.adoc:124
 #, no-wrap
 msgid "Comments"
 msgstr "주석"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:128
+#: ../lib/terminal-colors.d.5.adoc:127
 msgid ""
 "Lines where the first non-blank character is a # (hash) are ignored. Any "
 "other use of the hash character is not interpreted as introducing a comment."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:131
+#: ../lib/terminal-colors.d.5.adoc:130
 #, no-wrap
 msgid "*TERMINAL_COLORS_DEBUG*=all"
 msgstr "*TERMINAL_COLORS_DEBUG*=all"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:133 ../misc-utils/whereis.1.adoc:116
+#: ../lib/terminal-colors.d.5.adoc:132 ../misc-utils/whereis.1.adoc:116
 #: ../sys-utils/losetup.8.adoc:135
 msgid "enables debug output."
 msgstr ""
 
+#. type: Labeled list
+#: ../lib/terminal-colors.d.5.adoc:133
+#, fuzzy, no-wrap
+#| msgid "*COLOR*"
+msgid "*NO_COLOR*"
+msgstr "*색상*"
+
 #. type: delimited block _
 #: ../lib/terminal-colors.d.5.adoc:137
+msgid ""
+"if defined, this disables output colorization unless explicitly enabled by a "
+"command-line option. See https://no-color.org/ for more details. Supported "
+"since util-linux version 2.41."
+msgstr ""
+
+#. type: delimited block _
+#: ../lib/terminal-colors.d.5.adoc:141
 msgid "_$XDG_CONFIG_HOME/terminal-colors.d_"
 msgstr "_$XDG_CONFIG_HOME/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:139
+#: ../lib/terminal-colors.d.5.adoc:143
 msgid "_$HOME/.config/terminal-colors.d_"
 msgstr "_$HOME/.config/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:141
+#: ../lib/terminal-colors.d.5.adoc:145
 msgid "_/etc/terminal-colors.d_"
 msgstr "_/etc/terminal-colors.d_"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:145
+#: ../lib/terminal-colors.d.5.adoc:149
 msgid "Disable colors for all compatible utilities:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:148 ../lib/terminal-colors.d.5.adoc:160
+#: ../lib/terminal-colors.d.5.adoc:152 ../lib/terminal-colors.d.5.adoc:164
 msgid "*touch /etc/terminal-colors.d/disable*"
 msgstr "*touch /etc/terminal-colors.d/disable*"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:151
+#: ../lib/terminal-colors.d.5.adoc:155
 msgid "Disable colors for all compatible utils on a vt100 terminal:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:154
+#: ../lib/terminal-colors.d.5.adoc:158
 msgid "*touch /etc/terminal-colors.d/@vt100.disable*"
 msgstr "*touch /etc/terminal-colors.d/@vt100.disable*"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:157
+#: ../lib/terminal-colors.d.5.adoc:161
 msgid "Disable colors for all compatible utils except *dmesg*(1):"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:162
+#: ../lib/terminal-colors.d.5.adoc:166
 msgid "*touch /etc/terminal-colors.d/dmesg.enable*"
 msgstr "*touch /etc/terminal-colors.d/dmesg.enable*"
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:164 ../misc-utils/getopt.1.adoc:112
+#: ../lib/terminal-colors.d.5.adoc:168 ../misc-utils/getopt.1.adoc:112
 #: ../term-utils/setterm.1.adoc:169
 #, no-wrap
 msgid "COMPATIBILITY"
 msgstr "호환"
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:167
+#: ../lib/terminal-colors.d.5.adoc:171
 msgid ""
 "The *terminal-colors.d* functionality is currently supported by all util-"
 "linux utilities which provides colorized output. For more details always see "
@@ -10129,7 +10152,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../login-utils/lslogins.1.adoc:98 ../misc-utils/findmnt.8.adoc:208
-#: ../misc-utils/lsblk.8.adoc:177 ../sys-utils/lsipc.1.adoc:97
+#: ../misc-utils/lsblk.8.adoc:175 ../sys-utils/lsipc.1.adoc:97
 #, no-wrap
 msgid "*-y*, *--shell*"
 msgstr "*-y*, *--shell*"
@@ -10258,7 +10281,7 @@ msgstr ""
 #: ../login-utils/lslogins.1.adoc:135 ../login-utils/nologin.8.adoc:59
 #: ../login-utils/runuser.1.adoc:132 ../login-utils/su.1.adoc:152
 #: ../login-utils/vipw.8.adoc:68 ../lsfd-cmd/lsfd.1.adoc:733
-#: ../misc-utils/cal.1.adoc:181 ../misc-utils/look.1.adoc:90
+#: ../misc-utils/cal.1.adoc:181 ../misc-utils/look.1.adoc:92
 #: ../sys-utils/fstab.5.adoc:139 ../sys-utils/lsipc.1.adoc:111
 #: ../sys-utils/mount.8.adoc:1719 ../sys-utils/renice.1.adoc:92
 #: ../sys-utils/rtcwake.8.adoc:118 ../sys-utils/swapon.8.adoc:165
@@ -10753,8 +10776,9 @@ msgstr ""
 
 #. type: Labeled list
 #: ../login-utils/runuser.1.adoc:76 ../login-utils/su.1.adoc:84
-#, no-wrap
-msgid "*-T*, *--no-pty**"
+#, fuzzy, no-wrap
+#| msgid "*-T*, *--no-pty**"
+msgid "*-T*, *--no-pty*"
 msgstr "*-T*, *--no-pty**"
 
 #. type: Plain text
@@ -12094,8 +12118,9 @@ msgstr ""
 
 #. type: Labeled list
 #: ../lsfd-cmd/lsfd.1.adoc:177
-#, no-wrap
-msgid "ENDPOINT <``string``>"
+#, fuzzy, no-wrap
+#| msgid "ENDPOINT <``string``>"
+msgid "ENDPOINTS <``string``>"
 msgstr "ENDPOINT <``문자열``>"
 
 #. type: Plain text
@@ -12141,7 +12166,7 @@ msgstr "_PID_,_COMMAND_,_ASSOC_[-r][-w]"
 #. type: Plain text
 #: ../lsfd-cmd/lsfd.1.adoc:194
 msgid ""
-"The last characters ([-r][-w]) represents the read and/or write mode of the "
+"The last characters ([-r][-w]) represent the read and/or write mode of the "
 "endpoint."
 msgstr ""
 
@@ -14202,7 +14227,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/blkid.8.adoc:103 ../misc-utils/lsblk.8.adoc:191
+#: ../misc-utils/blkid.8.adoc:103 ../misc-utils/lsblk.8.adoc:189
 #, no-wrap
 msgid "*udev*"
 msgstr "*udev*"
@@ -15456,7 +15481,7 @@ msgid "*partx --show <disk>*"
 msgstr "*partx --show <disk>*"
 
 #. type: Labeled list
-#: ../misc-utils/findfs.8.adoc:45 ../misc-utils/lsblk.8.adoc:193
+#: ../misc-utils/findfs.8.adoc:45 ../misc-utils/lsblk.8.adoc:191
 #, no-wrap
 msgid "*blkid*"
 msgstr "*blkid*"
@@ -16872,7 +16897,7 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:160
+#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:159
 #: ../misc-utils/uuidd.8.adoc:84 ../pam_lastlog2/man/pam_lastlog2.8.adoc:64
 #, no-wrap
 msgid "AUTHOR"
@@ -16939,26 +16964,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:45
+#: ../misc-utils/hardlink.1.adoc:43
 #, no-wrap
 msgid "*-c*, *--content*"
 msgstr "*-c*, *--content*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:47
+#: ../misc-utils/hardlink.1.adoc:45
 msgid ""
 "Consider only file content, not attributes, when determining whether two "
 "files are equal. Same as *-pot*."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:48
+#: ../misc-utils/hardlink.1.adoc:46
 #, no-wrap
 msgid "*-b*, *--io-size* _size_"
 msgstr "*-b*, *--io-size* _크기_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:56
+#: ../misc-utils/hardlink.1.adoc:54
 msgid ""
 "The size of the *read*(2) or *sendfile*(2) buffer used when comparing file "
 "contents.  The _size_ argument may be followed by the multiplicative "
@@ -16970,13 +16995,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:57
+#: ../misc-utils/hardlink.1.adoc:55
 #, no-wrap
 msgid "*-d*, *--respect-dir*"
 msgstr "*-d*, *--respect-dir*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:59
+#: ../misc-utils/hardlink.1.adoc:57
 msgid ""
 "Only try to link files with the same directory name. The top-level directory "
 "(as specified on the *hardlink* command line) is ignored. For example, "
@@ -16986,13 +17011,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:60
+#: ../misc-utils/hardlink.1.adoc:58
 #, no-wrap
 msgid "*-f*, *--respect-name*"
 msgstr "*-f*, *--respect-name*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:62
+#: ../misc-utils/hardlink.1.adoc:60
 msgid ""
 "Only try to link files with the same (base)name. It's strongly recommended "
 "to use long options rather than *-f* which is interpreted in a different way "
@@ -17000,14 +17025,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:63
+#: ../misc-utils/hardlink.1.adoc:61
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--ignore-time*"
 msgid "*-F*, *--prioritize-trees*"
 msgstr "*-t*, *--ignore-time*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:66
+#: ../misc-utils/hardlink.1.adoc:64
 msgid ""
 "Keep files found in the earliest specified top-level directory if there are "
 "multiple identical files in different trees.  For example, *hardlink foo/ "
@@ -17015,13 +17040,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:67
+#: ../misc-utils/hardlink.1.adoc:65
 #, no-wrap
 msgid "*-i*, *--include* _regex_"
 msgstr "*-i*, *--include* _정규식_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:69
+#: ../misc-utils/hardlink.1.adoc:67
 msgid ""
 "A regular expression to include files. If the option *--exclude* has been "
 "given, this option re-includes files which would otherwise be excluded. If "
@@ -17030,78 +17055,78 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:70
+#: ../misc-utils/hardlink.1.adoc:68
 #, no-wrap
 msgid "*-m*, *--maximize*"
 msgstr "*-m*, *--maximize*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:72
+#: ../misc-utils/hardlink.1.adoc:70
 msgid "Among equal files, keep the file with the highest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:73
+#: ../misc-utils/hardlink.1.adoc:71
 #, no-wrap
 msgid "*-M*, *--minimize*"
 msgstr "*-M*, *--minimize*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:75
+#: ../misc-utils/hardlink.1.adoc:73
 msgid "Among equal files, keep the file with the lowest link count."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:76 ../sys-utils/rtcwake.8.adoc:93
+#: ../misc-utils/hardlink.1.adoc:74 ../sys-utils/rtcwake.8.adoc:93
 #, no-wrap
 msgid "*-n*, *--dry-run*"
 msgstr "*-n*, *--dry-run*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:78
+#: ../misc-utils/hardlink.1.adoc:76
 msgid "Do not act, just print what would happen."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:79
+#: ../misc-utils/hardlink.1.adoc:77
 #, fuzzy, no-wrap
 #| msgid "*-T*, *--list-types*"
 msgid "*-l*, *--list-duplicates*"
 msgstr "*-T*, *--list-types*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:81
+#: ../misc-utils/hardlink.1.adoc:79
 msgid ""
 "Don't link anything, but list the absolute path of every duplicate file, one "
 "per line, preceded by a unique 16-byte discriminator and a tab."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:84
+#: ../misc-utils/hardlink.1.adoc:82
 msgid "Separate lines with a NUL instead of a newline in *-l* mode."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:85
+#: ../misc-utils/hardlink.1.adoc:83
 #, no-wrap
 msgid "*-o*, *--ignore-owner*"
 msgstr "*-o*, *--ignore-owner*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:87
+#: ../misc-utils/hardlink.1.adoc:85
 msgid ""
 "Link and compare files even if their owner information (user and group) "
 "differs. Results may be unpredictable."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:88
+#: ../misc-utils/hardlink.1.adoc:86
 #, no-wrap
 msgid "*-O*, *--keep-oldest*"
 msgstr "*-O*, *--keep-oldest*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:90
+#: ../misc-utils/hardlink.1.adoc:88
 msgid ""
 "Among equal files, keep the oldest file (least recent modification time). By "
 "default, the newest file is kept. If *--maximize* or *--minimize* is "
@@ -17110,31 +17135,31 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:91
+#: ../misc-utils/hardlink.1.adoc:89
 #, no-wrap
 msgid "*-p*, *--ignore-mode*"
 msgstr "*-p*, *--ignore-mode*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:93
+#: ../misc-utils/hardlink.1.adoc:91
 msgid ""
 "Link and compare files even if their mode is different. Results may be "
 "slightly unpredictable."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:96
+#: ../misc-utils/hardlink.1.adoc:94
 msgid "Quiet mode, don't print anything."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:97
+#: ../misc-utils/hardlink.1.adoc:95
 #, no-wrap
 msgid "*-r*, *--cache-size* _size_"
 msgstr "*-r*, *--cache-size* _크기_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:102
+#: ../misc-utils/hardlink.1.adoc:100
 msgid ""
 "The size of the cache for content checksums. All non-memcmp methods "
 "calculate checksum for each file content block (see *--io-size*), these "
@@ -17143,13 +17168,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:103
+#: ../misc-utils/hardlink.1.adoc:101
 #, no-wrap
 msgid "*-s*, *--minimum-size* _size_"
 msgstr "*-s*, *--minimum-size* _크기_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:105
+#: ../misc-utils/hardlink.1.adoc:103
 msgid ""
 "The minimum size to consider. By default this is 1, so empty files will not "
 "be linked. The _size_ argument may be followed by the multiplicative "
@@ -17159,13 +17184,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:106
+#: ../misc-utils/hardlink.1.adoc:104
 #, no-wrap
 msgid "*-S*, *--maximum-size* _size_"
 msgstr "*-S*, *--maximum-size* _크기_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:108
+#: ../misc-utils/hardlink.1.adoc:106
 msgid ""
 "The maximum size to consider. By default this is 0 and 0 has the special "
 "meaning of unlimited. The _size_ argument may be followed by the "
@@ -17175,20 +17200,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:109
+#: ../misc-utils/hardlink.1.adoc:107
 #, no-wrap
 msgid "*-t*, *--ignore-time*"
 msgstr "*-t*, *--ignore-time*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:111
+#: ../misc-utils/hardlink.1.adoc:109
 msgid ""
 "Link and compare files even if their time of modification is different. This "
 "is usually a good choice."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:114
+#: ../misc-utils/hardlink.1.adoc:112
 msgid ""
 "Verbose output, explain to the user what is being done. If specified once, "
 "every hardlinked file is displayed. If specified twice, it also shows every "
@@ -17196,65 +17221,65 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:115
+#: ../misc-utils/hardlink.1.adoc:113
 #, no-wrap
 msgid "*-x*, *--exclude* _regex_"
 msgstr "*-x*, *--exclude* _정규식_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:117
+#: ../misc-utils/hardlink.1.adoc:115
 msgid ""
 "A regular expression that excludes files from being compared and linked. "
 "This option can be used multiple times."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:118
+#: ../misc-utils/hardlink.1.adoc:116
 #, fuzzy, no-wrap
 #| msgid "*-x*, *--exclude* _regex_"
 msgid "*--exclude-subtree* _regex_"
 msgstr "*-x*, *--exclude* _정규식_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:120
+#: ../misc-utils/hardlink.1.adoc:118
 msgid ""
 "A regular expression that excludes entire directories from being compared "
 "and linked. This option can also be used multiple times."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:121
+#: ../misc-utils/hardlink.1.adoc:119
 #, fuzzy, no-wrap
 #| msgid "*remount*"
 msgid "*--mount*"
 msgstr "*remount*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:123
+#: ../misc-utils/hardlink.1.adoc:121
 msgid ""
 "Do not traverse directories on different filesystems (remain within the same "
 "filesystem)."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:124
+#: ../misc-utils/hardlink.1.adoc:122
 #, no-wrap
 msgid "*-X*, *--respect-xattrs*"
 msgstr "*-X*, *--respect-xattrs*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:126
+#: ../misc-utils/hardlink.1.adoc:124
 msgid "Only try to link files with the same extended attributes."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:127
+#: ../misc-utils/hardlink.1.adoc:125
 #, no-wrap
 msgid "*-y*, *--method* _name_"
 msgstr "*-y*, *--method* _이름_"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:133
+#: ../misc-utils/hardlink.1.adoc:131
 msgid ""
 "Set the file content comparison method. The currently supported methods are "
 "sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux "
@@ -17264,14 +17289,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:134
+#: ../misc-utils/hardlink.1.adoc:132
 #, fuzzy, no-wrap
 #| msgid "*--reflink*[=_when_]"
 msgid "*--reflink*[**=**_when_]"
 msgstr "*--reflink*[=_시기_]"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:139
+#: ../misc-utils/hardlink.1.adoc:137
 msgid ""
 "Create copy-on-write clones (aka reflinks) rather than hardlinks. The "
 "reflinked files share only on-disk data, but the file mode and owner can be "
@@ -17281,7 +17306,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:145
+#: ../misc-utils/hardlink.1.adoc:143
 msgid ""
 "The optional argument _when_ can be *never*, *always*, or *auto*. If the "
 "_when_ argument is omitted, it defaults to *auto*, in this case, *hardlink* "
@@ -17292,27 +17317,27 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/hardlink.1.adoc:146
+#: ../misc-utils/hardlink.1.adoc:144
 #, no-wrap
 msgid "*--skip-reflinks*"
 msgstr "*--skip-reflinks*"
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:148
+#: ../misc-utils/hardlink.1.adoc:146
 msgid ""
 "Ignore already cloned files. This option may be used without *--reflink* "
 "when creating classic hardlinks."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:153
+#: ../misc-utils/hardlink.1.adoc:152
 msgid ""
 "*hardlink* takes one or more directories which will be searched for files to "
 "be linked."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:157
+#: ../misc-utils/hardlink.1.adoc:156
 msgid ""
 "The original *hardlink* implementation uses the option *-f* to force "
 "hardlinks creation between filesystem. This very rarely usable feature is no "
@@ -17320,7 +17345,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:159
+#: ../misc-utils/hardlink.1.adoc:158
 msgid ""
 "*hardlink* assumes that the trees it operates on do not change during "
 "operation. If a tree does change, the result is undefined and potentially "
@@ -17332,7 +17357,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:163
+#: ../misc-utils/hardlink.1.adoc:162
 msgid ""
 "There are multiple *hardlink* implementations. The very first implementation "
 "is from Jakub Jelinek for Fedora distribution, this implementation has been "
@@ -18736,54 +18761,54 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:76
+#: ../misc-utils/look.1.adoc:78
 msgid ""
 "The *look* utility exits 0 if one or more lines were found and displayed, 1 "
 "if no lines were found, and >1 if an error occurred."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:79
+#: ../misc-utils/look.1.adoc:81
 #, no-wrap
 msgid "*WORDLIST*"
 msgstr "*단어 목록*"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:81
+#: ../misc-utils/look.1.adoc:83
 msgid ""
 "Path to a dictionary file. The environment variable has greater priority "
 "than the dictionary path defined in the *FILES* segment."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:84
+#: ../misc-utils/look.1.adoc:86
 #, no-wrap
 msgid "_/usr/share/dict/words_"
 msgstr "_/usr/share/dict/words_"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:86
+#: ../misc-utils/look.1.adoc:88
 msgid "the dictionary"
 msgstr "사전"
 
 #. type: Labeled list
-#: ../misc-utils/look.1.adoc:87
+#: ../misc-utils/look.1.adoc:89
 #, no-wrap
 msgid "_/usr/share/dict/web2_"
 msgstr "_/usr/share/dict/web2_"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:89
+#: ../misc-utils/look.1.adoc:91
 msgid "the alternative dictionary"
 msgstr "대체 사전"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:93
+#: ../misc-utils/look.1.adoc:95
 msgid "The *look* utility appeared in Version 7 AT&T Unix."
 msgstr "*look* 유틸리티는 AT&T 유닉스 버전 7에서 도입했습니다."
 
 #. type: delimited block .
-#: ../misc-utils/look.1.adoc:99
+#: ../misc-utils/look.1.adoc:101
 #, no-wrap
 msgid ""
 "sort -d /etc/passwd -o /tmp/look.dict\n"
@@ -18793,7 +18818,7 @@ msgstr ""
 "look -t: root:foobar /tmp/look.dict\n"
 
 #. type: Plain text
-#: ../misc-utils/look.1.adoc:105
+#: ../misc-utils/look.1.adoc:107
 msgid "*grep*(1), *sort*(1)"
 msgstr "*grep*(1), *sort*(1)"
 
@@ -19263,13 +19288,13 @@ msgstr ""
 "NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME*."
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:171
+#: ../misc-utils/lsblk.8.adoc:169
 #, no-wrap
 msgid "*-w*, *--width* _number_"
 msgstr "*-w*, *--width* _숫자_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:173
+#: ../misc-utils/lsblk.8.adoc:171
 msgid ""
 "Specifies output width as a number of characters. The default is the number "
 "of the terminal columns, and if not executed on a terminal, then output "
@@ -19280,13 +19305,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:174
+#: ../misc-utils/lsblk.8.adoc:172
 #, no-wrap
 msgid "*-x*, *--sort* _column_"
 msgstr "*-x*, *--sort* _항목_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:176
+#: ../misc-utils/lsblk.8.adoc:174
 msgid ""
 "Sort output lines by _column_. This option enables *--list* output format by "
 "default. It is possible to use the option *--tree* to force tree-like output "
@@ -19294,7 +19319,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:179
+#: ../misc-utils/lsblk.8.adoc:177
 msgid ""
 "The column name will be modified to contain only characters allowed for "
 "shell variable identifiers, for example, MIN_IO and FSUSE_PCT instead of MIN-"
@@ -19305,24 +19330,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:180
+#: ../misc-utils/lsblk.8.adoc:178
 #, no-wrap
 msgid "*-z*, *--zoned*"
 msgstr "*-z*, *--zoned*"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:182
+#: ../misc-utils/lsblk.8.adoc:180
 msgid "Print the zone related information for each device."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:183
+#: ../misc-utils/lsblk.8.adoc:181
 #, no-wrap
 msgid "*--sysroot* _directory_"
 msgstr "*--sysroot* _디렉터리_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:185
+#: ../misc-utils/lsblk.8.adoc:183
 msgid ""
 "Gather data for a Linux instance other than the instance from which the "
 "*lsblk* command is issued. The specified directory is the system root of the "
@@ -19331,14 +19356,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:186
+#: ../misc-utils/lsblk.8.adoc:184
 #, fuzzy, no-wrap
 #| msgid "*-O*, *--options* _list_"
 msgid "*--properties-by* _list_"
 msgstr "*-O*, *--options* _목록_"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:190
+#: ../misc-utils/lsblk.8.adoc:188
 msgid ""
 "This option specifies the methods used by *lsblk* to gather information "
 "about filesystems and partition tables. The list is a comma-separated list "
@@ -19347,41 +19372,41 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:193
+#: ../misc-utils/lsblk.8.adoc:191
 msgid ""
 "Reads data from udev DB. If unsuccessful, it continues to the next probing "
 "method."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:195
+#: ../misc-utils/lsblk.8.adoc:193
 msgid ""
 "Reads data directly from the device using libblkid. If unsuccessful, it "
 "continues to the next probing method."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:195
+#: ../misc-utils/lsblk.8.adoc:193
 #, fuzzy, no-wrap
 #| msgid "*fileset=*"
 msgid "*file*"
 msgstr "*fileset=*"
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:197
+#: ../misc-utils/lsblk.8.adoc:195
 msgid ""
 "Reads data from a file. This method is only used if the --sysroot option is "
 "specified. This method always stops probing if used."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:197
+#: ../misc-utils/lsblk.8.adoc:195
 #, no-wrap
 msgid "*none*"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:199
+#: ../misc-utils/lsblk.8.adoc:197
 msgid "Does not probe. This method always stops probing."
 msgstr ""
 
@@ -21006,36 +21031,36 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:39
+#: ../misc-utils/uuidgen.1.adoc:37
 #, no-wrap
 msgid "*-m*, *--md5*"
 msgstr "*-m*, *--md5*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:41
+#: ../misc-utils/uuidgen.1.adoc:39
 msgid "Use MD5 as the hash algorithm."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:42
+#: ../misc-utils/uuidgen.1.adoc:40
 #, no-wrap
 msgid "*-s*, *--sha1*"
 msgstr "*-s*, *--sha1*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:44
+#: ../misc-utils/uuidgen.1.adoc:42
 msgid "Use SHA1 as the hash algorithm."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:45
+#: ../misc-utils/uuidgen.1.adoc:43
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--time*"
 msgid "*-6*, *--time-v6*"
 msgstr "*-t*, *--time*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:47 ../misc-utils/uuidgen.1.adoc:50
+#: ../misc-utils/uuidgen.1.adoc:45 ../misc-utils/uuidgen.1.adoc:48
 msgid ""
 "Generate a time-based UUID. This method creates a UUID based on the system "
 "clock plus and is lexicographically sortable according to the contained "
@@ -21043,20 +21068,20 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:48
+#: ../misc-utils/uuidgen.1.adoc:46
 #, fuzzy, no-wrap
 #| msgid "*-t*, *--time*"
 msgid "*-7*, *--time-v7*"
 msgstr "*-t*, *--time*"
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:51
+#: ../misc-utils/uuidgen.1.adoc:49
 #, no-wrap
 msgid "*-n*, *--namespace* _namespace_"
 msgstr "*-n*, *--namespace* _이름영역_"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:53
+#: ../misc-utils/uuidgen.1.adoc:51
 msgid ""
 "Generate the hash with the _namespace_ prefix. The _namespace_ is UUID, or "
 "'@ns' where \"ns\" is well-known predefined UUID addressed by namespace name "
@@ -21064,24 +21089,24 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:54 ../sys-utils/lsipc.1.adoc:28
+#: ../misc-utils/uuidgen.1.adoc:52 ../sys-utils/lsipc.1.adoc:28
 #, no-wrap
 msgid "*-N*, *--name* _name_"
 msgstr "*-N*, *--name* _이름_"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:56
+#: ../misc-utils/uuidgen.1.adoc:54
 msgid "Generate the hash of the _name_."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:57
+#: ../misc-utils/uuidgen.1.adoc:55
 #, no-wrap
 msgid "*-C*, *--count* _num_"
 msgstr "*-C*, *--count* _숫자_"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:59
+#: ../misc-utils/uuidgen.1.adoc:57
 msgid ""
 "Generate multiple UUIDs using the enhanced capability of the libuuid to "
 "cache time-based UUIDs, thus resulting in improved performance. However, "
@@ -21089,13 +21114,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/uuidgen.1.adoc:60 ../sys-utils/lscpu.1.adoc:87
+#: ../misc-utils/uuidgen.1.adoc:58 ../sys-utils/lscpu.1.adoc:87
 #, no-wrap
 msgid "*-x*, *--hex*"
 msgstr "*-x*, *--hex*"
 
 #. type: Plain text
-#: ../misc-utils/uuidgen.1.adoc:62
+#: ../misc-utils/uuidgen.1.adoc:60
 msgid "Interpret name _name_ as a hexadecimal string."
 msgstr ""
 
@@ -25427,20 +25452,20 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:86
+#: ../sys-utils/eject.1.adoc:84
 msgid ""
 "Run in verbose mode; more information is displayed about what the command is "
 "doing."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/eject.1.adoc:87
+#: ../sys-utils/eject.1.adoc:85
 #, no-wrap
 msgid "*-X*, *--listspeed*"
 msgstr "*-X*, *--listspeed*"
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:89
+#: ../sys-utils/eject.1.adoc:87
 msgid ""
 "With this option the CD-ROM drive will be probed to detect the available "
 "speeds. The output is a list of speeds which can be used as an argument of "
@@ -25451,13 +25476,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/eject.1.adoc:90
+#: ../sys-utils/eject.1.adoc:88
 #, no-wrap
 msgid "*-x*, *--cdspeed* _speed_"
 msgstr "*-x*, *--cdspeed* _읽기속도_"
 
 #. type: Plain text
-#: ../sys-utils/eject.1.adoc:92
+#: ../sys-utils/eject.1.adoc:90
 msgid ""
 "With this option the drive is given a CD-ROM select speed command. The "
 "_speed_ argument is a number indicating the desired speed (e.g., 8 for 8X "
@@ -30619,14 +30644,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/lsmem.1.adoc:65
+#: ../sys-utils/lsmem.1.adoc:63
 #, fuzzy, no-wrap
 #| msgid "*--summary*[=_when_]"
 msgid "*--summary*[**=**_when_]"
 msgstr "*--summary*[=_시기_]"
 
 #. type: Plain text
-#: ../sys-utils/lsmem.1.adoc:67
+#: ../sys-utils/lsmem.1.adoc:65
 msgid ""
 "This option controls summary lines output. The optional argument _when_ can "
 "be *never*, *always* or *only*. If the _when_ argument is omitted, it "
@@ -48446,13 +48471,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/rev.1.adoc:61
+#: ../text-utils/rev.1.adoc:59
 #, no-wrap
 msgid "*-0*, *--zero*"
 msgstr "*-0*, *--zero*"
 
 #. type: Plain text
-#: ../text-utils/rev.1.adoc:63
+#: ../text-utils/rev.1.adoc:61
 msgid "_Zero termination_. Use the byte '\\0' as line separator."
 msgstr ""
 
@@ -48705,14 +48730,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../text-utils/bits.1.adoc:72
+#: ../text-utils/bits.1.adoc:70
 #, fuzzy, no-wrap
 #| msgid "*-w*, *--width* _number_"
 msgid "*-w* __<NUM>__, *--width* __<NUM>__"
 msgstr "*-w*, *--width* _숫자_"
 
 #. type: Plain text
-#: ../text-utils/bits.1.adoc:75
+#: ../text-utils/bits.1.adoc:73
 msgid ""
 "Maximum number of bits in the masks handled by *bits* (default __8192__). "
 "Any bit larger than this number will be truncated."
