@@ -11040,7 +11040,7 @@ msgstr "Stejné jako *-c*, ale nevytvoří novou relaci. (Nedoporučuje se.)"
 #: ../login-utils/runuser.1.adoc:76 ../login-utils/su.1.adoc:84
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--pty*"
-msgid "*-T*, *--no-pty**"
+msgid "*-T*, *--no-pty*"
 msgstr "*-P*, *--pty*"
 
 #. type: Plain text

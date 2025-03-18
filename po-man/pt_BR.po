@@ -12501,7 +12501,7 @@ msgstr ""
 #. type: Labeled list
 #: ../login-utils/runuser.1.adoc:76 ../login-utils/su.1.adoc:84
 #, fuzzy, no-wrap
-msgid "*-T*, *--no-pty**"
+msgid "*-T*, *--no-pty*"
 msgstr " -P, --pty                       cria um novo pseudoterminal\n"
 
 #. type: Plain text

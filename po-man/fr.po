@@ -12693,7 +12693,7 @@ msgstr "Comme *-c*, mais sans créer de nouvelle session (à éviter)."
 #: ../login-utils/runuser.1.adoc:76 ../login-utils/su.1.adoc:84
 #, fuzzy, no-wrap
 #| msgid "*-n*, *--noparity*"
-msgid "*-T*, *--no-pty**"
+msgid "*-T*, *--no-pty*"
 msgstr "*-n*, *--noparity*"
 
 #. type: Plain text
