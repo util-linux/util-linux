@@ -129,7 +129,7 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	struct libscols_table *table, *cpus = NULL;
 	struct irq_stat *stat;
 	time_t now = time(NULL);
-	char timestr[64], *data, *data0, *p;
+	char timestr[64], *data, *data0, *p = NULL;
 	char *input_file;
 
 	/* make irqs table */
@@ -171,7 +171,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	/* print cpus table or not by -c option */
 	if (cpus) {
 		scols_print_table_to_string(cpus, &data);
-		irqtop_printf(ctl, "%s\n\n", data);
+		if (data && *data)
+			irqtop_printf(ctl, "%s\n\n", data);
 		free(data);
 	}
 
@@ -179,7 +180,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 	scols_print_table_to_string(table, &data0);
 	data = data0;
 
-	p = strchr(data, '\n');
+	if (data && *data)
+		p = strchr(data, '\n');
 	if (p) {
 		/* print header in reverse mode */
 		*p = '\0';
@@ -191,7 +193,8 @@ static int update_screen(struct irqtop_ctl *ctl, struct irq_output *out)
 		data = p + 1;
 	}
 
-	irqtop_printf(ctl, "%s\n\n", data);
+	if (data && *data)
+		irqtop_printf(ctl, "%s\n\n", data);
 	free(data0);
 
 	/* clean up */
