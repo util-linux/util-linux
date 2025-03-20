@@ -4,12 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#ifdef HAVE_WIDECHAR
-#include <wctype.h>
-#include <wchar.h>
-#endif
 #include <stdbool.h>
 
+#include "widechar.h"
 #include "cctype.h"
 
 /*

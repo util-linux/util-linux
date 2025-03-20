@@ -1105,6 +1105,16 @@ AC_ARG_WITH([ncursesw],
 )
 have_ncursesw=no
 have_ncursesw_header=no
+
+AS_CASE([$with_ncursesw:$build_widechar],
+  [yes:no],
+    [AC_MSG_ERROR([wide-char support disabled, but wide-char ncurses required])],
+  [auto:no],
+    [
+      AC_MSG_WARN([wide-char support disabled, disabling wide-char ncurses])
+      with_ncursesw=no
+    ]
+)
 AS_IF([test "x$with_ncursesw" != xno], [
   UL_NCURSES_CHECK([ncursesw])
   AS_IF([test "x$have_ncursesw" = xyes], [
