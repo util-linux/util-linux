@@ -174,6 +174,8 @@ int main(int argc, char **argv)
 				irq_column_name_to_id) < 0)
 		exit(EXIT_FAILURE);
 
+	scols_init_debug(0);
+
 	if (print_irq_data(&out, softirq, threshold, setsize, cpuset) < 0)
 		return EXIT_FAILURE;
 
