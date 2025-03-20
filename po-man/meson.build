@@ -33,6 +33,7 @@ foreach adoc : manadocs
 endforeach
 
 meson.add_install_script(meson.project_source_root() / 'tools/poman-install.sh',
-  '--mandir', get_option('mandir'),
+  '--force-destdir',
+  '--mandir', mandir,
   '--mansrcdir', meson.current_build_dir() / 'translations/man',
   manpages)
