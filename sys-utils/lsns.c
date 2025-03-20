@@ -19,7 +19,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <wchar.h>
 #include <libsmartcols.h>
 #include <libmount.h>
 # include <stdbool.h>
@@ -43,6 +42,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "c.h"
+#include "widechar.h"
 #include "list.h"
 #include "closestream.h"
 #include "optutils.h"
