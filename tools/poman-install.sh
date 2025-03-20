@@ -24,12 +24,17 @@ HEREDOC
 MANPAGES=()
 PROGRAM=$(basename "$0")
 MYCMD="install"
+FORCE_DESTDIR=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --help)
       usage
       exit 0
+      ;;
+    --force-destdir)
+      FORCE_DESTDIR=true
+      shift
       ;;
     --mandir)
       MANDIR="$2"
@@ -61,6 +66,12 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+# Autotools automatically uses $DESTDIR in all paths, but Meson assumes that
+# custom scripts will prefix the path.
+if [ "$FORCE_DESTDIR" = true ]; then
+   MANDIR="${DESTDIR}/${MANDIR}"
+fi
+
 set -- "${MANPAGES[@]}"
 
 if [ ${#MANPAGES[@]} -eq 0 ]; then
@@ -77,17 +88,13 @@ for LOCALEDIR in "$MANSRCDIR"/*/; do
     if [ "$MYCMD" = "install" ]; then
       PAGE="$LOCALEDIR/man$SECTION/$MANPAGE"
       if [ -f "$PAGE" ]; then
-        if [ -z ${MESON_INSTALL_QUIET+x} ]; then
-	  echo "Installing $PAGE to ${MANDIR}/$LOCALE/man$SECTION"
-	fi
+	echo "Installing $PAGE to ${MANDIR}/$LOCALE/man$SECTION"
 	mkdir -p "${MANDIR}/$LOCALE/man$SECTION"
         install -m 644 "$PAGE" "${MANDIR}/$LOCALE/man$SECTION"
       fi
 
     elif [ "$MYCMD" = "uninstall" ]; then
-      if [ -z ${MESON_INSTALL_QUIET+x} ]; then
-        echo "Uninstalling ${MANDIR}/$LOCALE/man$SECTION/$MANPAGE"
-      fi
+      echo "Uninstalling ${MANDIR}/$LOCALE/man$SECTION/$MANPAGE"
       rm -f "${MANDIR}/$LOCALE/man$SECTION/$MANPAGE"
     fi
 
