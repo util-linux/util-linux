@@ -39,6 +39,7 @@ char *ul_buffer_get_string(struct ul_buffer *buf,  size_t *sz, size_t *width);
 char *ul_buffer_get_safe_data(struct ul_buffer *buf, size_t *sz, size_t *width, const char *safechars);
 
 size_t ul_buffer_get_bufsiz(struct ul_buffer *buf);
+size_t ul_buffer_get_datasiz(struct ul_buffer *buf);
 
 int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx);
 char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short  ptr_idx);

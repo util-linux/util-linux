@@ -852,7 +852,8 @@ done:
 	if (cal && scols_column_is_wrap(cl))
 		scols_column_reset_wrap(cl);
 
-	DBG(COL, ul_debugobj(cl, "__cursor_to_buffer rc=%d", rc));
+	DBG(COL, ul_debugobj(cl, "__cursor_to_buffer rc=%d len=%zu", rc,
+				ul_buffer_get_datasiz(buf)));
 	return rc;
 }
 

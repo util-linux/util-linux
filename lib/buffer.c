@@ -207,6 +207,11 @@ size_t ul_buffer_get_bufsiz(struct ul_buffer *buf)
 	return buf->sz;
 }
 
+size_t ul_buffer_get_datasiz(struct ul_buffer *buf)
+{
+	return buf->end - buf->begin;
+}
+
 /* encode data by mbs_safe_encode() to avoid control and non-printable chars */
 char *ul_buffer_get_safe_data(struct ul_buffer *buf, size_t *sz, size_t *width, const char *safechars)
 {
