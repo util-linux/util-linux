@@ -209,7 +209,9 @@ static inline size_t ansi_esc_width(ansi_esc_states *state, size_t *found, const
 			*found += chw;
 			break;
 		case 0x7:  // APC/OSC/OSC8-Links ends with BEL
+#ifdef HAVE_WIDECHAR
 		case 0x9c:  // APC/DCS/DM ends with ST (String Terminator)
+#endif
 			break;
 		default:
 			*found += chw;
