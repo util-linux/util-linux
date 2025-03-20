@@ -1,13 +1,9 @@
 #ifndef UTIL_LINUX_FGETWC_OR_ERR_H
 #define UTIL_LINUX_FGETWC_OR_ERR_H
 
-#include <stdio.h>
-#include <wchar.h>
-#include <errno.h>
-
-#include "widechar.h"
 #include "c.h"
 #include "nls.h"
+#include "widechar.h"
 
 static inline wint_t fgetwc_or_err(FILE *stream) {
 	wint_t ret;

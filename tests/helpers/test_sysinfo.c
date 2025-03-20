@@ -23,12 +23,12 @@
 #include <limits.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include <wchar.h>
 #include <errno.h>
 #include <time.h>
 #include <sys/ioctl.h>
 
 #include "c.h"
+#include "widechar.h"
 
 #ifdef __linux__
 # include <sys/mount.h>

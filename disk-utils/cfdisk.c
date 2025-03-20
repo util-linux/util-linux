@@ -52,14 +52,10 @@
 # include <ncurses/ncurses.h>
 #endif
 
-#ifdef HAVE_WIDECHAR
-# include <wctype.h>
-# include <wchar.h>
-#endif
-
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "widechar.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "mbsalign.h"
