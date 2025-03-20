@@ -475,6 +475,8 @@ int main(int argc, char **argv)
 		curs_set(0);
 	}
 
+	scols_init_debug(0);
+
 	ctl.hostname = xgethostname();
 	event_loop(&ctl, &out);
 
