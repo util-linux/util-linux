@@ -634,7 +634,7 @@ int main(int argc, char *argv[])
 		printf("1st vs. 3rd: %s\n", rc == 1 ? "MATCH" : "NOT-MATCH");
 
 		rc = ul_fileeq(&eq, &b, &c);
-		printf("2st vs. 3rd: %s\n", rc == 1 ? "MATCH" : "NOT-MATCH");
+		printf("2nd vs. 3rd: %s\n", rc == 1 ? "MATCH" : "NOT-MATCH");
 	}
 
 	ul_fileeq_data_deinit(&a);
