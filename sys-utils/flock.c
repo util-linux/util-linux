@@ -292,7 +292,7 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_FCNTL_LENGTH:
 			length = strtosize_or_err(optarg,
-						  _("invalid as lenght of lock range"));
+						  _("invalid as length of lock range"));
 			api = API_FCNTL_OFD;
 			break;
 		case OPT_VERBOSE:
