@@ -4,12 +4,12 @@
  *
  * Written by Karel Zak <kzak@redhat.com>
  */
-#include <wchar.h>
 #include <pwd.h>
 #include <grp.h>
 #include <sys/types.h>
 
 #include "c.h"
+#include "widechar.h"
 #include "idcache.h"
 
 struct identry *get_id(struct idcache *ic, unsigned long int id)
