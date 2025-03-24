@@ -4043,7 +4043,11 @@ run_target(
 
 manadocs += lib_tcolors_manadocs
 if build_libblkid
-  manadocs += lib_blkid_manadocs + lib_smartcols_manadocs
+  manadocs += lib_blkid_manadocs
+endif
+
+if build_libsmartcols
+  manadocs += lib_smartcols_manadocs
 endif
 
 if build_libuuid
