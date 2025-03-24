@@ -530,9 +530,6 @@ int mnt_context_is_xnocanonicalize(
 	assert(cxt);
 	assert(type);
 
-	if (mnt_context_is_nocanonicalize(cxt))
-		return 1;
-
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
 		return 0;
