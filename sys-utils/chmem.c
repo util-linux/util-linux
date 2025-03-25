@@ -146,12 +146,12 @@ static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 
 		idxtostr(desc, index, str, sizeof(str));
 		rc = ul_path_writef_string(desc->sysmem, onoff, "%s/state", name);
-		if (rc != 0 && desc->verbose) {
+		if (rc != 0) {
 			if (enable)
-				fprintf(stdout, _("%s enable failed\n"), str);
+				warn(_("%s enable failed"), str);
 			else
-				fprintf(stdout, _("%s disable failed\n"), str);
-		} else if (rc == 0 && desc->verbose) {
+				warn(_("%s disable failed"), str);
+		} else if (desc->verbose) {
 			if (enable)
 				fprintf(stdout, _("%s enabled\n"), str);
 			else
