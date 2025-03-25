@@ -44,8 +44,8 @@ Use defined block size, which has to be divisible by page size.
 *-e* _edition_::
 Use defined file system edition number in superblock.
 
-*-N* _big, little, host_::
-Use defined endianness. Value defaults to _host_.
+*-N* *big*|*little*|*host*::
+Use the specified endianness. The default is *host*.
 
 *-i* _file_::
 Insert a _file_ to cramfs file system.
@@ -63,12 +63,12 @@ This option is ignored. Originally the *-s* turned on directory entry sorting.
 Make explicit holes.
 
 *-l*[**=**_mode_]::
- Use exclusive BSD lock for device or file it operates.  The optional argument
- _mode_ can be _yes_, _no_ (or 1 and 0) or _nonblock_.  If the _mode_
- argument is omitted, it defaults to _"yes"_.  This option overwrites
- environment variable *$LOCK_BLOCK_DEVICE*.  The default is not to use any
- lock at all, but it's recommended to avoid collisions with udevd or other
- tools.
+Use an exclusive BSD lock for the device or file that is operated upon.
+The optional argument _mode_ can be *yes* (*1*), *no* (*0*), or *nonblock*.
+If the _mode_ argument is omitted, it defaults to *yes*.
+This option overrides the environment variable *$LOCK_BLOCK_DEVICE*.
+The default is to not use any lock at all, but using a lock
+is recommended to avoid collisions with udevd or other tools.
 
 include::man-common/help-version.adoc[]
 
