@@ -128,10 +128,15 @@ struct entry {
 static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	fprintf(stdout, _(" %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"),
-		program_invocation_short_name);
+	fprintf(stdout, _(" %s [options] dirname outfile\n"), program_invocation_short_name);
+
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(_("Make compressed ROM file system."), stdout);
+	fputsln(_("Make a compressed ROM file system."), stdout);
+
+	fputs(USAGE_SEPARATOR, stdout);
+	fputsln(_(  " dirname        root of the filesystem to be compressed"), stdout);
+	fputsln(_(  " outfile        output file"), stdout);
+
 	fputs(USAGE_OPTIONS, stdout);
 	fputsln(_(  " -v             be verbose"), stdout);
 	fputsln(_(  " -E             make all warnings errors (non-zero exit status)"), stdout);
@@ -141,14 +146,12 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_(  " -i file        insert a file image into the filesystem"), stdout);
 	fputsln(_(  " -n name        set name of cramfs filesystem"), stdout);
 	fprintf(stdout, _(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
-	fputsln(_(  " -s             sort directory entries (old option, ignored)"), stdout);
 	fputsln(_(  " -z             make explicit holes"), stdout);
 	fputsln(_(  " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"), stdout);
-	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(_(  " dirname        root of the filesystem to be compressed"), stdout);
-	fputsln(_(  " outfile        output file"), stdout);
+
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(16));
+
 	fprintf(stdout, USAGE_MAN_TAIL("mkfs.cramfs(8)"));
 	exit(MKFS_EX_OK);
 }
