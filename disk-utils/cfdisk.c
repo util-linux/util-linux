@@ -947,6 +947,7 @@ static void menu_set_title(struct cfdisk_menu *m, const char *title)
 			m->width = len + MENU_TITLE_PADDING;
 		str = xstrdup(title);
 	}
+	free(m->title);
 	m->title = str;
 }
 
@@ -2173,7 +2174,8 @@ static int ui_create_label(struct cfdisk *cf)
 	nitems = fdisk_get_nlabels(cf->cxt);
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
-	while (fdisk_next_label(cf->cxt, &lb) == 0) {
+	while (fdisk_next_label(cf->cxt, &lb) == 0 && i < nitems) {
+
 		if (fdisk_label_is_disabled(lb) ||
 		    fdisk_label_get_type(lb) == FDISK_DISKLABEL_BSD)
 			continue;
