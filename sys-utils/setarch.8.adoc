@@ -35,6 +35,8 @@ List the architectures that *setarch* knows about. Whether *setarch* can actuall
 Show the currently active personality and flags.
 If the *personality* argument is provided, it is shown instead of the current one.
 *personality* is a hexadecimal number with values was described in *sys/personality.h*.
++
+If *--pid=pid* option is provided, show them of the specifies process.
 
 *--uname-2.6*::
 Causes the _program_ to see a kernel version number beginning with 2.6. Turns on *UNAME26*.
@@ -47,6 +49,9 @@ Specifies _program_ should use a maximum of 3GB of address space. Supported on x
 
 *--4gb*::
 This option has no effect. It is retained for backward compatibility only, and may be removed in future releases.
+
+*-p*, *--pid=pid*::
+With *--show* option, show the currently active personality and flags of the specifies process.
 
 *-B*, *--32bit*::
 Limit the address space to 32 bits to emulate hardware. Supported on ARM and Alpha. Turns on *ADDR_LIMIT_32BIT*.
@@ -84,6 +89,9 @@ setarch --addr-no-randomize mytestprog
 setarch ppc32 rpmbuild --target=ppc --rebuild foo.src.rpm
 setarch ppc32 -v -vL3 rpmbuild --target=ppc --rebuild bar.src.rpm
 setarch ppc32 --32bit rpmbuild --target=ppc --rebuild foo.src.rpm
+setarch --show
+setarch --show=$(cat /proc/9284/personality)
+setarch --show --pid 9284
 ....
 
 == AUTHORS
@@ -96,6 +104,7 @@ mailto:kzak@redhat.com[Karel Zak]
 
 *personality*(2),
 *select*(2)
+*proc_pid_personality(5)
 
 include::man-common/bugreports.adoc[]
 
