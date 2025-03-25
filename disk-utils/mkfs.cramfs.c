@@ -134,20 +134,22 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_("Make a compressed ROM file system."), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(_(  " dirname        root of the filesystem to be compressed"), stdout);
-	fputsln(_(  " outfile        output file"), stdout);
+	fputsln(_(" dirname        root of the filesystem to be compressed"), stdout);
+	fputsln(_(" outfile        output file"), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputsln(_(  " -v             be verbose"), stdout);
-	fputsln(_(  " -E             make all warnings errors (non-zero exit status)"), stdout);
-	fputsln(_(  " -b blksize     use this blocksize, must equal page size"), stdout);
-	fputsln(_(  " -e edition     set edition number (part of fsid)"), stdout);
-	fprintf(stdout, _(" -N endian      set cramfs endianness (%s|%s|%s), default %s\n"), "big", "little", "host", "host");
-	fputsln(_(  " -i file        insert a file image into the filesystem"), stdout);
-	fputsln(_(  " -n name        set name of cramfs filesystem"), stdout);
-	fprintf(stdout, _(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
-	fputsln(_(  " -z             make explicit holes"), stdout);
-	fputsln(_(  " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"), stdout);
+	fputsln(_(" -v             be verbose"), stdout);
+	fputsln(_(" -E             make all warnings errors (non-zero exit status)"), stdout);
+	fputsln(_(" -b blksize     use this blocksize, must equal page size"), stdout);
+	fputsln(_(" -e edition     set edition number (part of fsid)"), stdout);
+	fprintf(stdout,
+	        _(" -N endian      set cramfs endianness (%s|%s|%s), default %s\n"), "big", "little", "host", "host");
+	fputsln(_(" -i file        insert a file image into the filesystem"), stdout);
+	fputsln(_(" -n name        set name of cramfs filesystem"), stdout);
+	fprintf(stdout,
+	        _(" -p             pad by %d bytes for boot code\n"), PAD_SIZE);
+	fputsln(_(" -z             make explicit holes"), stdout);
+	fputsln(_(" -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(16));
