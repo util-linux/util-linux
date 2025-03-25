@@ -12,7 +12,7 @@ chmem - configure memory
 
 == SYNOPSIS
 
-*chmem* [*-h] [*-V*] [*-v*] [*-e*|*-d*] [_SIZE_|_RANGE_ *-b* _BLOCKRANGE_] [*-z* _ZONE_]
+*chmem* [*-h*] [*-V*] [*-v*] [*-e*|*-d*] [_SIZE_|_RANGE_|*-b* _BLOCKRANGE_] [*-z* _ZONE_]
 
 == DESCRIPTION
 
@@ -64,7 +64,7 @@ failure
 *64*::
 partial success
 
-== EXAMPLE
+== EXAMPLES
 
 *chmem --enable 1024*::
 This command requests 1024 MiB of memory to be set online.
