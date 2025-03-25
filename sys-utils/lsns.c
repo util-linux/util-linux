@@ -587,7 +587,10 @@ static void add_namespace_from_sock(struct lsns *ls, pid_t pid, uint64_t fd)
 	if (get_namespace(ls, sb.st_ino))
 		goto out_nsfd;
 
+#ifdef USE_NS_GET_API
 	add_namespace_for_nsfd(ls, nsfd, sb.st_ino);
+#endif
+
 out_nsfd:
 	close(nsfd);
 out_sk:
@@ -608,6 +611,7 @@ static void add_namespace_from_sock(struct lsns *ls __attribute__((__unused__)),
 {
 }
 #endif /* HAVE_LINUX_NET_NAMESPACE_H */
+
 /* Read namespaces open(2)ed explicitly by the process specified by `pc'. */
 static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc, pid_t pid)
 {
@@ -627,11 +631,13 @@ static void read_opened_namespaces(struct lsns *ls, struct path_cxt *pc, pid_t p
 		if (st.st_dev == ls->nsfs_dev) {
 			if (get_namespace(ls, st.st_ino))
 				continue;
+#ifdef USE_NS_GET_API
 			int fd = ul_path_openf(pc, O_RDONLY, "fd/%ju", (uintmax_t) num);
 			if (fd >= 0) {
 				add_namespace_for_nsfd(ls, fd, st.st_ino);
 				close(fd);
 			}
+#endif
 		} else if ((st.st_mode & S_IFMT) == S_IFSOCK) {
 			add_namespace_from_sock(ls, pid, num);
 		}
