@@ -260,7 +260,8 @@ static int display_summary(void)
 	if (!itr)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
-	/* TRANSLATORS: The tabs make each field a multiple of 8 characters. Keep aligned with each entry below. */
+	/* TRANSLATORS: The tabs make each field a multiple of 8 characters.
+	 * Please keep the translation aligned with the original. */
 	printf(_("Filename\t\t\t\tType\t\tSize\t\tUsed\t\tPriority\n"));
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0) {
@@ -271,7 +272,6 @@ static int display_summary(void)
 		off_t size = mnt_fs_get_size(fs);
 		off_t used = mnt_fs_get_usedsize(fs);
 
-		/* TRANSLATORS: Keep each field a multiple of 8 characters and aligned with the header above. */
 		printf("%s%*s%s%s\t%jd%s\t%jd%s\t%d\n",
 			src,
 			srclen < 40 ? 40 - srclen : 1, " ",
