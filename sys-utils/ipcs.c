@@ -75,8 +75,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Show information on IPC facilities.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
-	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fputs(_(" -i, --id <id>     print details on resource identified by <id>\n"), out);
+	fprintf(out, USAGE_HELP_OPTIONS(19));
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);
