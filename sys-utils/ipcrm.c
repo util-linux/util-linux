@@ -173,7 +173,7 @@ static int deprecated_main(int argc, char **argv)
 	return 1;
 }
 
-static unsigned long strtokey(const char *str, const char *errmesg)
+static unsigned long strtokey(const char *str)
 {
 	unsigned long num;
 	char *end = NULL;
@@ -190,9 +190,9 @@ static unsigned long strtokey(const char *str, const char *errmesg)
 	return num;
  err:
 	if (errno)
-		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+		err(EXIT_FAILURE, _("failed to parse argument: '%s'"), str);
 	else
-		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+		errx(EXIT_FAILURE, _("failed to parse argument: '%s'"), str);
 	return 0;
 }
 
@@ -200,7 +200,7 @@ static int key_to_id(type_id type, char *s)
 {
 	int id;
 	/* keys are in hex or decimal */
-	key_t key = strtokey(s, "failed to parse argument");
+	key_t key = strtokey(s);
 	if (key == IPC_PRIVATE) {
 		warnx(_("illegal key (%s)"), s);
 		return -1;
