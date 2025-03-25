@@ -56,17 +56,18 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Remove certain IPC resources.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --shmem-id <id>        				remove shared memory segment by id\n"), out);
-	fputs(_(" -M, --shmem-key <key>      				remove shared memory segment by key\n"), out);
-	fputs(_("     --posix-shmem <name>   				remove POSIX shared memory segment by name\n"), out);
-	fputs(_(" -q, --queue-id <id>        				remove message queue by id\n"), out);
-	fputs(_(" -Q, --queue-key <key>      				remove message queue by key\n"), out);
-	fputs(_("     --posix-mqueue <name>  				remove POSIX message queue by name\n"), out);
-	fputs(_(" -s, --semaphore-id <id>    				remove semaphore by id\n"), out);
-	fputs(_(" -S, --semaphore-key <key>  				remove semaphore by key\n"), out);
-	fputs(_("     --posix-semaphore <name> 				remove POSIX semaphore by name\n"), out);
-	fputs(_(" -a, --all[=shm|pshm|msg|pmsg|sem|psem]	remove all (in the specified category)\n"), out);
-	fputs(_(" -v, --verbose              				explain what is being done\n"), out);
+	fputs(_(" -m, --shmem-id <id>           remove shared memory segment by id\n"), out);
+	fputs(_(" -M, --shmem-key <key>         remove shared memory segment by key\n"), out);
+	fputs(_("     --posix-shmem <name>      remove POSIX shared memory segment by name\n"), out);
+	fputs(_(" -q, --queue-id <id>           remove message queue by id\n"), out);
+	fputs(_(" -Q, --queue-key <key>         remove message queue by key\n"), out);
+	fputs(_("     --posix-mqueue <name>     remove POSIX message queue by name\n"), out);
+	fputs(_(" -s, --semaphore-id <id>       remove semaphore by id\n"), out);
+	fputs(_(" -S, --semaphore-key <key>     remove semaphore by key\n"), out);
+	fputs(_("     --posix-semaphore <name>  remove POSIX semaphore by name\n"), out);
+	fputs(_(" -a, --all[=shm|pshm|msg|pmsg|sem|psem]\n"
+	        "                               remove all (in the specified category)\n"), out);
+	fputs(_(" -v, --verbose                 explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(28));
