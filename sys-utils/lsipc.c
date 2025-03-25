@@ -784,7 +784,7 @@ static void do_posix_sem(const char *name, struct lsipc_control *ctl,
 
 	if (retval < 1) {
 		if (name != NULL)
-			warnx(_("mqueue %s not found"), name);
+			warnx(_("message queue %s not found"), name);
 		return;
 	}
 
@@ -1010,7 +1010,7 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl,
 
 	if (retval < 1) {
 		if (name != NULL)
-			warnx(_("mqueue %s not found"), name);
+			warnx(_("message queue %s not found"), name);
 		return;
 	}
 
@@ -1326,7 +1326,7 @@ static void do_posix_shm(const char *name, struct lsipc_control *ctl, struct lib
 
 	if (retval < 1) {
 		if (name != NULL)
-			warnx(_("shm %s not found"), name);
+			warnx(_("shared memory segment %s not found"), name);
 		return;
 	}
 

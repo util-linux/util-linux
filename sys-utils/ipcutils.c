@@ -677,7 +677,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 	}
 
 	if (name && name[0] != '/') {
-		warnx(_("mqueue name must start with '/': %s"), name);
+		warnx(_("message queue name must start with '/': %s"), name);
 		return -1;
 	}
 
