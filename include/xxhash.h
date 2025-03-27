@@ -341,11 +341,14 @@ extern "C" {
  */
 XXH_PUBLIC_API unsigned XXH_versionNumber (void);
 
+/* ****************************
+*  Common C macros
+******************************/
+#include <c.h>
 
 /* ****************************
 *  Common basic types
 ******************************/
-#include <stddef.h>   /* size_t */
 typedef enum { XXH_OK=0, XXH_ERROR } XXH_errorcode;
 
 
@@ -605,41 +608,6 @@ XXH_PUBLIC_API void XXH32_canonicalFromHash(XXH32_canonical_t* dst, XXH32_hash_t
  */
 XXH_PUBLIC_API XXH32_hash_t XXH32_hashFromCanonical(const XXH32_canonical_t* src);
 
-
-#ifdef __has_attribute
-# define XXH_HAS_ATTRIBUTE(x) __has_attribute(x)
-#else
-# define XXH_HAS_ATTRIBUTE(x) 0
-#endif
-
-/* C-language Attributes are added in C23. */
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ > 201710L) && defined(__has_c_attribute)
-# define XXH_HAS_C_ATTRIBUTE(x) __has_c_attribute(x)
-#else
-# define XXH_HAS_C_ATTRIBUTE(x) 0
-#endif
-
-#if defined(__cplusplus) && defined(__has_cpp_attribute)
-# define XXH_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
-#else
-# define XXH_HAS_CPP_ATTRIBUTE(x) 0
-#endif
-
-/*
-Define XXH_FALLTHROUGH macro for annotating switch case with the 'fallthrough' attribute
-introduced in CPP17 and C23.
-CPP17 : https://en.cppreference.com/w/cpp/language/attributes/fallthrough
-C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
-*/
-#if XXH_HAS_C_ATTRIBUTE(x)
-# define XXH_FALLTHROUGH [[fallthrough]]
-#elif XXH_HAS_CPP_ATTRIBUTE(x)
-# define XXH_FALLTHROUGH [[fallthrough]]
-#elif XXH_HAS_ATTRIBUTE(__fallthrough__)
-# define XXH_FALLTHROUGH __attribute__ ((fallthrough))
-#else
-# define XXH_FALLTHROUGH
-#endif
 
 /*!
  * @}
@@ -2028,41 +1996,41 @@ XXH32_finalize(xxh_u32 h32, const xxh_u8* ptr, size_t len, XXH_alignment align)
     } else {
          switch(len&15) /* or switch(bEnd - p) */ {
            case 12:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 8:       XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 4:       XXH_PROCESS4;
                          return XXH32_avalanche(h32);
 
            case 13:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 9:       XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 5:       XXH_PROCESS4;
                          XXH_PROCESS1;
                          return XXH32_avalanche(h32);
 
            case 14:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 10:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 6:       XXH_PROCESS4;
                          XXH_PROCESS1;
                          XXH_PROCESS1;
                          return XXH32_avalanche(h32);
 
            case 15:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 11:      XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 7:       XXH_PROCESS4;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 3:       XXH_PROCESS1;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 2:       XXH_PROCESS1;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 1:       XXH_PROCESS1;
-                         XXH_FALLTHROUGH;
+                         FALLTHROUGH;
            case 0:       return XXH32_avalanche(h32);
         }
         XXH_ASSERT(0);

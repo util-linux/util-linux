@@ -1578,7 +1578,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 				ui_menu_goto(cf, (int) m->idx - m->page_sz);
 				return 0;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case KEY_HOME:
 			ui_menu_goto(cf, 0);
 			return 0;
@@ -1587,7 +1587,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 				ui_menu_goto(cf, m->idx + m->page_sz);
 				return 0;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case KEY_END:
 			ui_menu_goto(cf, m->nitems);
 			return 0;
@@ -2668,7 +2668,7 @@ static int ui_run(struct cfdisk *cf)
 				ui_table_goto(cf, (int) cf->lines_idx - cf->page_sz);
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case KEY_HOME:
 			ui_table_goto(cf, 0);
 			break;
@@ -2677,7 +2677,7 @@ static int ui_run(struct cfdisk *cf)
 				ui_table_goto(cf, cf->lines_idx + cf->page_sz);
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case KEY_END:
 			ui_table_goto(cf, (int) cf->nlines - 1);
 			break;
