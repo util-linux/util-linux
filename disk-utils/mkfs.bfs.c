@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version(EXIT_SUCCESS);
 
-	volume = fsname = "      ";	/* is there a default? */
+	volume = fsname = NULL;
 	inodes = 0;
 
 	while ((c = getopt_long(argc, argv, "N:V:F:vhcl", longopts, NULL)) != -1) {
@@ -260,13 +260,29 @@ int main(int argc, char **argv)
 	sb.s_start = cpu_to_le32(ino_bytes + sizeof(struct bfssb));
 	sb.s_end = cpu_to_le32(total_blocks * BFS_BLOCKSIZE - 1);
 	sb.s_from = sb.s_to = sb.s_backup_from = sb.s_backup_to = -1;
-	memcpy(sb.s_fsname, fsname, 6);
-	memcpy(sb.s_volume, volume, 6);
+
+	if (fsname == NULL){
+		fsname = "      ";
+		memcpy(sb.s_fsname, fsname, 6);
+	}
+	else{
+		memcpy(sb.s_fsname, fsname, 6);
+		free(fsname);
+	}
+	if (volume == NULL){
+		volume = "      ";
+		memcpy(sb.s_volume, volume, 6);
+	}
+	else{
+		memcpy(sb.s_volume, volume, 6);
+		free(volume);
+	}
+	volume = fsname = NULL;
 
 	if (verbose) {
 		fprintf(stderr, _("Device: %s\n"), device);
-		fprintf(stderr, _("Volume: <%-6s>\n"), volume);
-		fprintf(stderr, _("FSname: <%-6s>\n"), fsname);
+		fprintf(stderr, _("Volume: <%-6s>\n"), sb.s_volume);
+		fprintf(stderr, _("FSname: <%-6s>\n"), sb.s_fsname);
 		fprintf(stderr, _("BlockSize: %d\n"), BFS_BLOCKSIZE);
 		if (ino_blocks == 1)
 			fprintf(stderr, _("Inodes: %ld (in 1 block)\n"),
