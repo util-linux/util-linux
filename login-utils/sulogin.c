@@ -401,11 +401,11 @@ static void tcfinal(struct console *con)
 		break;
 	case 1:				/* odd parity */
 		tio->c_cflag |= PARODD;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 2:				/* even parity */
 		tio->c_cflag |= PARENB;
 		tio->c_iflag |= (INPCK | ISTRIP);
-		/* fallthrough */
+		FALLTHROUGH;
 	case (1 | 2):			/* no parity bit */
 		tio->c_cflag &= ~CSIZE;
 		tio->c_cflag |= CS7;
@@ -796,7 +796,7 @@ static char *getpasswd(struct console *con)
 			switch (errno) {
 			case EIO:
 				con->flags |= CON_EIO;
-				/* fallthrough */
+				FALLTHROUGH;
 			default:
 				warn(_("cannot read %s"), con->tty);
 				break;
@@ -1241,7 +1241,7 @@ int main(int argc, char **argv)
 			exit(0);
 		case -1:
 			warn(_("fork failed"));
-			/* fallthrough */
+			FALLTHROUGH;
 		default:
 			break;
 		}

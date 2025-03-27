@@ -1155,7 +1155,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 			n = class->get_addr(l4, L4_LOCAL);		\
 			has_laddr = true;				\
 			p = tcp->local_port;				\
-			/* FALL THROUGH */				\
+			FALLTHROUGH;					\
 		case COL_##L4##_RADDR:					\
 			if (!has_laddr) {				\
 				n = class->get_addr(l4, L4_REMOTE);	\
@@ -1171,7 +1171,7 @@ static bool tcp_get_listening(struct sock_xinfo *sock_xinfo,
 		case COL_##L4##_LPORT:					\
 			p = tcp->local_port;				\
 			has_lport = true;				\
-			/* FALL THROUGH */				\
+			FALLTHROUGH;					\
 		case COL_##L4##_RPORT:					\
 			if (!has_lport)					\
 				p = tcp->remote_port;			\

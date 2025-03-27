@@ -1833,7 +1833,7 @@ int mnt_context_get_mount_excode(
 			snprintf(buf, bufsz, _("cannot mount; probably corrupted filesystem on %s"), src);
 			break;
 		}
-		/* fallthrough */
+		FALLTHROUGH;
 
 	default:
 	generic_error:
