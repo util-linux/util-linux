@@ -1545,6 +1545,7 @@ static char *find_editor(void)
 
 static void runtime_usage(void)
 {
+	print_separator('-', 79);
 	fputs(_("Most commands optionally preceded by integer argument k.  "
 		"Defaults in brackets.\n"
 		"Star (*) indicates argument becomes new default.\n"), stdout);
