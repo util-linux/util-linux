@@ -10,7 +10,14 @@ _setarch_module()
 			;;
 	esac
 	if [ $COMP_CWORD -eq 1 ]; then
-		COMPREPLY=( $(compgen -W "$($1 --list)" -- $cur) )
+		OPTS="$($1 --list)"
+		OPTS="$OPTS
+			--list
+			--help
+			--version
+			--show
+		"
+		COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 		return 0
 	fi
 	case $cur in
