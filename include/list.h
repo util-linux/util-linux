@@ -35,9 +35,6 @@ struct list_head {
 	struct list_head *next, *prev;
 };
 
-#define LIST_HEAD(name) \
-	struct list_head name = { .next = &(name), .prev = &(name) }
-
 #define INIT_LIST_HEAD(ptr) do { \
 	(ptr)->next = (ptr); (ptr)->prev = (ptr); \
 } while (0)
