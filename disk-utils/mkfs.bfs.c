@@ -158,6 +158,8 @@ int main(int argc, char **argv)
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
 				errx(EXIT_FAILURE, _("volume name too long"));
+			if (volume != NULL)
+				errx(EXIT_FAILURE, _("more than one volume"));
 			volume = xstrdup(optarg);
 			break;
 
@@ -165,6 +167,8 @@ int main(int argc, char **argv)
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
 				errx(EXIT_FAILURE, _("fsname name too long"));
+			if (fsname != NULL)
+				errx(EXIT_FAILURE, _("more than one fsname"));
 			fsname = xstrdup(optarg);
 			break;
 
