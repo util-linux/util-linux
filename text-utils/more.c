@@ -1037,7 +1037,7 @@ static void ttyin(struct more_control *ctl, char buf[], int nmax, char pchar)
 						case (size_t)-2:
 						case (size_t)-1:
 							state = state_bak;
-							/* fallthrough */
+							FALLTHROUGH;
 						case 0:
 							mblength = 1;
 						}
@@ -1172,7 +1172,7 @@ static void expand(struct more_control *ctl, char *inbuf)
 				*outstr++ = *inpstr++;
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		default:
 			*outstr++ = c;
 		}
@@ -1793,7 +1793,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				break;
 			}
 			search_again = 1;
-			/* fallthrough */
+			FALLTHROUGH;
 		case more_kc_search:
 			if (cmd.number == 0)
 				cmd.number++;
@@ -1860,7 +1860,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 				execute_editor(ctl, cmdbuf, sizeof(cmdbuf), filename);
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		default:
 			if (ctl->suppress_bell) {
 				erase_to_col(ctl, 0);

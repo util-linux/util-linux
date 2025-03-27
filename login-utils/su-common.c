@@ -1154,7 +1154,7 @@ int su_main(int argc, char **argv, int mode)
 				errx(EXIT_FAILURE, _("no command was specified"));
 			break;
 		}
-		/* fallthrough */
+		FALLTHROUGH;
 	case SU_MODE:
 		if (optind < argc)
 			su->new_user = argv[optind++];

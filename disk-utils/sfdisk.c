@@ -2095,7 +2095,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				break;
 			}
 		}
-		/* fallthrough */
+		FALLTHROUGH;
 	case SFDISK_DONE_WRITE:
 		rc = write_changes(sf);
 		break;
@@ -2334,7 +2334,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'J':
 			sf->json = 1;
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'd':
 			sf->act = ACT_DUMP;
 			break;
@@ -2346,7 +2346,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'G':
 			warnx(_("--show-pt-geometry is no more implemented. Using --show-geometry."));
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'g':
 			sf->act = ACT_SHOW_GEOM;
 			break;

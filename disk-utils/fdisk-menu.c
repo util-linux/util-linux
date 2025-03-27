@@ -620,7 +620,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_reread_partition_table(cxt);
 		if (!rc)
 			rc = fdisk_deassign_device(cxt, 0);
-		/* fallthrough */
+		FALLTHROUGH;
 	case 'q':
 		fdisk_unref_context(cxt);
 		fputc('\n', stdout);

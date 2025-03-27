@@ -725,7 +725,7 @@ int main(int argc, char **argv)
 			case COL_SIZE:
 				if (!lsmem->bytes)
 					break;
-				/* fallthrough */
+				FALLTHROUGH;
 			case COL_NODE:
 				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
 				break;

@@ -712,9 +712,9 @@ static int callback_log_signal(void *data, struct signalfd_siginfo *info, void *
 		break;
 	}
 	case SIGTERM:
-		/* fallthrough */
+		FALLTHROUGH;
 	case SIGINT:
-		/* fallthrough */
+		FALLTHROUGH;
 	case SIGQUIT:
 		ssz = log_signal(ctl, info->ssi_signo, NULL);
 		break;

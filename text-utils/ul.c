@@ -516,7 +516,7 @@ static void filter(struct ul_ctl *ctl, struct term_caps const *const tcs, FILE *
 			}
 			ctl->buf[ctl->column].c_char = '_';
 			ctl->buf[ctl->column].c_width = 1;
-			/* fallthrough */
+			FALLTHROUGH;
 		case ' ':
 			set_column(ctl, ctl->column + 1);
 			continue;
@@ -617,7 +617,7 @@ int main(int argc, char **argv)
 		break;
 	default:
 		warnx(_("trouble reading terminfo"));
-		/* fallthrough */
+		FALLTHROUGH;
 	case 0:
 		if (opt_terminal)
 			warnx(_("terminal `%s' is not known, defaulting to `dumb'"),

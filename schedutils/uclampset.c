@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'h':
 			usage();
 		default:

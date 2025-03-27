@@ -403,7 +403,7 @@ static struct libscols_table *new_table(struct lsipc_control *ctl)
 	switch(ctl->outmode) {
 	case OUT_NEWLINE:
 		scols_table_set_column_separator(table, "\n");
-		/* fallthrough */
+		FALLTHROUGH;
 	case OUT_EXPORT:
 		scols_table_enable_export(table, 1);
 		break;
