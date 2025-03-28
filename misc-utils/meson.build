@@ -229,3 +229,8 @@ lsclocks_sources = files(
   'lsclocks.c',
 )
 lsclocks_manadocs = files('lsclocks.1.adoc')
+
+mu_sources = files(
+  'mu.c',
+)
+mu_manadocs = files('mu.1.adoc')

@@ -1,0 +1,470 @@
+[[Common-options]]
+== Common options
+
+[[Block-size]]
+=== Block size
+
+block size
+
+Some GNU programs (at least `df`, `du`, and `ls`) display sizes in
+“blocks”. You can adjust the block size and method of display to make
+sizes easier to read. The block size used for display is independent of
+any file system block size. Fractional block counts are rounded up to
+the nearest integer.
+
+--block-size=
+
+size
+
+BLOCKSIZE
+
+BLOCK++_++SIZE
+
+DF++_++BLOCK++_++SIZE
+
+DU++_++BLOCK++_++SIZE
+
+LS++_++BLOCK++_++SIZE
+
+POSIXLY++_++CORRECT, and block size
+
+The default block size is chosen by examining the following environment
+variables in turn; the first one that is set determines the block size.
+
+[[File-memory-usage]]
+== File memory usage
+
+File memory usage
+
+memory usage
+
+These commands report how much memory files use
+
+[[mu-invocation]]
+=== `mu`: Report file memory usage
+
+mu
+
+file memory usage
+
+memory usage for files
+
+`mu` reports the memory used for a set of files. Synopsis:
+
+....
+mu [option]… [file]…
+....
+
+With no arguments, `mu` reports the memory used by the files at or under
+the current directory. Normally the memory is printed in units of 1024
+bytes, but this can be overridden (see link:#Block-size[Block size]).
+Non-integer quantities are rounded up to the next higher unit.
+
+If two or more hard links point to the same file, only one of the hard
+links is counted. The ++<++file++>++ argument order affects which links
+are counted, and changing the argument order may change the numbers and
+entries that `mu` outputs.
+
+The program accepts the following options. Also see
+link:#Common-options[Common options].
+
+‘`-0`’; ‘`--null`’::
+  -0
+  +
+  --null
+  +
+  output NUL-byte-terminated lines
+  +
+  Output a zero byte (ASCII NUL) at the end of each line, rather than a
+  newline. This option enables other programs to parse the output even
+  when that output would contain data with embedded newlines.
+‘`-a`’; ‘`--all`’::
+  -a
+  +
+  --all
+  +
+  Show counts for all files, not just directories.
+‘`-B size`’; ‘`--block-size=size`’::
+  -B
+  +
+  --block-size
+  +
+  memory sizes
+  +
+  Scale sizes by ++<++size++>++ before printing them (see
+  link:#Block-size[Block size]). For example, `-BG` prints sizes in
+  units of 1,073,741,824 bytes.
+‘`-b`’; ‘`--bytes`’::
+  -b
+  +
+  --bytes
+  +
+  Equivalent to `--block-size=1`.
+‘`-c`’; ‘`--total`’::
+  -c
+  +
+  --total
+  +
+  grand total of file memory usage
+  +
+  Print a grand total of all arguments after all arguments have been
+  processed. This can be used to find out the total file memory usage of
+  a given set of files or directories.
+‘`-D`’; ‘`--dereference-args`’::
+  -D
+  +
+  --dereference-args
+  +
+  Dereference symbolic links that are command line arguments. Does not
+  affect other symbolic links. This is helpful for finding out the file
+  memory usage of directories, such as `/usr/tmp`, which are often
+  symbolic links.
+‘`-d depth`’; ‘`--max-depth=depth`’::
+  -d
+  +
+  depth
+  +
+  --max-depth=
+  +
+  depth
+  +
+  limiting output of
+  +
+  mu
+  +
+  Show the total for each directory (and file if `--all`) that is at
+  most MAX++_++DEPTH levels down from the root of the hierarchy. The
+  root is at level 0, so `mu --max-depth=0` is equivalent to `mu -s`.
+‘`--files0-from=file`’::
+  --files0-from=
+  +
+  file
+  +
+  Disallow processing files named on the command line, and instead
+  process those named in file ++<++file++>++; each name being terminated
+  by a zero byte (ASCII NUL). This is useful when the list of file names
+  is so long that it may exceed a command line length limitation. In
+  such cases, running `mu` via `xargs` is undesirable because it splits
+  the list into pieces and makes `mu` print with the `--total` (`-c`)
+  option for each sublist rather than for the entire list. One way to
+  produce a list of ASCII NUL terminated file names is with GNU `find`,
+  using its `-print0` predicate. If ++<++file++>++ is ‘`-`’ then the
+  ASCII NUL terminated file names are read from standard input.
+‘`-f`’; ‘`--format=format`’::
+  -f
+  +
+  --format=
+  +
+  format
+  +
+  use specified FORMAT for output instead of the default
+  +
+  FORMAT is automatically newline-terminated, so running a command like
+  the following with two or more FILE operands produces a line of output
+  for each operand:
+  +
+....
+$ mu -f '%c %d' file_a file_b
+4 0    file_a
+8 0    file_b
+....
+  +
+  The valid ++<++format++>++ directives for memory usage with `--format`
+  are:
+  +
+  * %c – memory cached in the page cache
+  * %d – dirty memory (have been modified and not yet written back to
+  persistent storage)
+  * %w – memory currently being written back
+  * %e – memory were once resident in the cache but has since been
+  forced out
+  * %r – memory that has been forced out in the recent past. In this
+  case, the ’recent past’ is defined by the memory that has been evicted
+  since the memory in question was forced out
+‘`-H`’::
+  -H
+  +
+  Equivalent to `--dereference-args` (`-D`).
+‘`-h`’; ‘`--human-readable`’::
+  -h
+  +
+  --human-readable
+  +
+  human-readable output
+  +
+  Append a size letter to each size, such as ‘`M`’ for mebibytes. Powers
+  of 1024 are used, not 1000; ‘`M`’ stands for 1,048,576 bytes. This
+  option is equivalent to `--block-size=human-readable`. Use the `--si`
+  option if you prefer powers of 1000.
+‘`-k`’::
+  -k
+  +
+  kibibytes for memory sizes
+  +
+  Print sizes in 1024-byte blocks, overriding the default block size
+  (see link:#Block-size[Block size]). This option is equivalent to
+  `--block-size=1K`.
+‘`-L`’; ‘`--dereference`’::
+  -L
+  +
+  --dereference
+  +
+  symbolic links, dereferencing in
+  +
+  mu
+  +
+  Dereference symbolic links (show the file memory space used by the
+  file or directory that the link points to instead of the memory used
+  by the link).
+‘`-l`’; ‘`--count-links`’::
+  -l
+  +
+  --count-links
+  +
+  hard links, counting in
+  +
+  mu
+  +
+  Count the size of all files, even if they have appeared already (as a
+  hard link).
+‘`-m`’::
+  -m
+  +
+  megabytes for memory sizes
+  +
+  Print sizes in 1,048,576-byte blocks, overriding the default block
+  size (see link:#Block-size[Block size]). This option is equivalent to
+  `--block-size=1M`.
+‘`-P`’; ‘`--no-dereference`’::
+  -P
+  +
+  --no-dereference
+  +
+  symbolic links, dereferencing in
+  +
+  mu
+  +
+  For each symbolic link encountered by `mu`, consider the file memory
+  used by the symbolic link itself.
+‘`-S`’; ‘`--separate-dirs`’::
+  -S
+  +
+  --separate-dirs
+  +
+  Normally, in the output of `mu` (when not using `--summarize`), the
+  size listed next to a directory name, ++<++d++>++, represents the sum
+  of sizes of all entries beneath ++<++d++>++ as well as the size of
+  ++<++d++>++ itself. With `--separate-dirs`, the size reported for a
+  directory name, ++<++d++>++, will exclude the size of any
+  subdirectories.
+‘`--si`’::
+  --si
+  +
+  SI output
+  +
+  Append an SI-style abbreviation to each size, such as ‘`M`’ for
+  megabytes. Powers of 1000 are used, not 1024; ‘`M`’ stands for
+  1,000,000 bytes. This option is equivalent to `--block-size=si`. Use
+  the `-h` or `--human-readable` option if you prefer powers of 1024.
+‘`-s`’; ‘`--summarize`’::
+  -s
+  +
+  --summarize
+  +
+  Display only a total for each argument.
+‘`-t size`’; ‘`--threshold=size`’::
+  -t
+  +
+  --threshold
+  +
+  Exclude entries based on a given ++<++size++>++.
+  +
+  If ++<++size++>++ is positive, then `mu` will only print entries with
+  a size greater than or equal to that.
+  +
+  If ++<++size++>++ is negative, then `mu` will only print entries with
+  a size smaller than or equal to that.
+‘`--time`’::
+  --time
+  +
+  last modified dates, displaying in
+  +
+  mu
+  +
+  Show the most recent modification timestamp (mtime) of any file in the
+  directory, or any of its subdirectories. See
+  link:#File-timestamps[File timestamps].
+‘`--time=ctime`’; ‘`--time=status`’; ‘`--time=use`’::
+  --time
+  +
+  ctime, show the most recent
+  +
+  status time, show the most recent
+  +
+  use time, show the most recent
+  +
+  Show the most recent status change timestamp (ctime) of any file in
+  the directory, or any of its subdirectories. See
+  link:#File-timestamps[File timestamps].
+‘`--time=atime`’; ‘`--time=access`’::
+  --time
+  +
+  atime, show the most recent
+  +
+  access timestamp, show the most recent
+  +
+  Show the most recent access timestamp (atime) of any file in the
+  directory, or any of its subdirectories. See
+  link:#File-timestamps[File timestamps].
+‘`--time-style=style`’::
+  --time-style
+  +
+  time style
+  +
+  List timestamps in style ++<++style++>++. This option has an effect
+  only if the `--time` option is also specified. The ++<++style++>++
+  should be one of the following:
+  +
+  ‘`{plus}format`’;;
+    LC++_++TIME
+    +
+    List timestamps using ++<++format++>++, where ++<++format++>++ is
+    interpreted For example, `--time-style="{plus}%Y-%m-%d %H:%M:%S"`
+    causes `du` to list timestamps like ‘`2020-07-21 23:45:56`’. As with
+    `date`, ++<++format++>++’s interpretation is affected by the
+    `LC++_++TIME` locale category.
+  ‘`full-iso`’;;
+    List timestamps in full using ISO 8601-like date, time, and time
+    zone components with nanosecond precision, e.g.,
+    ‘`2020-07-21 23:45:56.477817180 -0400`’. This style is equivalent to
+    ‘`{plus}%Y-%m-%d %H:%M:%S.%N %z`’.
+  ‘`long-iso`’;;
+    List ISO 8601 date and time components with minute precision, e.g.,
+    ‘`2020-07-21 23:45`’. These timestamps are shorter than ‘`full-iso`’
+    timestamps, and are usually good enough for everyday work. This
+    style is equivalent to ‘`{plus}%Y-%m-%d %H:%M`’.
+  ‘`iso`’;;
+    List ISO 8601 dates for timestamps, e.g., ‘`2020-07-21`’. This style
+    is equivalent to ‘`{plus}%Y-%m-%d`’.
+  +
+  TIME++_++STYLE
+  +
+  You can specify the default value of the `--time-style` option with
+  the environment variable `TIME++_++STYLE`; if `TIME++_++STYLE` is not
+  set the default style is ‘`long-iso`’. For compatibility with `ls`, if
+  `TIME++_++STYLE` begins with ‘`{plus}`’ and contains a newline, the
+  newline and any later characters are ignored; if `TIME++_++STYLE`
+  begins with ‘`posix-`’ the ‘`posix-`’ is ignored; and if
+  `TIME++_++STYLE` is ‘`locale`’ it is ignored.
+‘`-X file`’; ‘`--exclude-from=file`’::
+  -X
+  +
+  file
+  +
+  --exclude-from=
+  +
+  file
+  +
+  excluding files from
+  +
+  mu
+  +
+  Like `--exclude`, except take the patterns to exclude from
+  ++<++file++>++, one per line. If ++<++file++>++ is ‘`-`’, take the
+  patterns from standard input.
+‘`--exclude=pattern`’::
+  --exclude=
+  +
+  pattern
+  +
+  excluding files from
+  +
+  mu
+  +
+  When recursing, skip subdirectories or files matching
+  ++<++pattern++>++. For example, `mu --exclude='++*++.o'` excludes
+  files whose names end in ‘`.o`’.
+‘`-x`’; ‘`--one-file-system`’::
+  -x
+  +
+  --one-file-system
+  +
+  one file system, restricting
+  +
+  mu
+  +
+  to
+  +
+  Skip directories that are on different file systems from the one that
+  the argument being processed is on.
+
+An exit status of zero indicates success, and a nonzero value indicates
+failure.
+
+[[File-timestamps]]
+== File timestamps
+
+atime
+
+birthtime
+
+ctimes
+
+mtime
+
+Standard POSIX files have three timestamps: the access timestamp (atime)
+of the last read, the modification timestamp (mtime) of the last write,
+and the status change timestamp (ctime) of the last change to the file’s
+meta-information. Some file systems support a fourth time: the birth
+timestamp (birthtime) of when the file was created; by definition,
+birthtime never changes.
+
+One common example of a ctime change is when the permissions of a file
+change. Changing the permissions doesn’t access the file, so atime
+doesn’t change, nor does it modify the file, so the mtime doesn’t
+change. Yet, something about the file itself has changed, and this must
+be noted somewhere. This is the job of the ctime field. This is
+necessary, so that, for example, a backup program can make a fresh copy
+of the file, including the new permissions value. Another operation that
+modifies a file’s ctime without affecting the others is renaming.
+
+Naively, a file’s atime, mtime, and ctime are set to the current time
+whenever you read, write, or change the attributes of the file
+respectively, and searching a directory counts as reading it. A file’s
+atime and mtime can also be set directly, via the though, timestamps are
+not updated quite that way.
+
+For efficiency reasons, many systems are lazy about updating atimes:
+when a program accesses a file, they may delay updating the file’s
+atime, or may not update the file’s atime if the file has been accessed
+recently, or may not update the atime at all. Similar laziness, though
+typically not quite so extreme, applies to mtimes and ctimes.
+
+Some systems emulate timestamps instead of supporting them directly, and
+these emulations may disagree with the naive interpretation. For
+example, a system may fake an atime or ctime by using the mtime.
+
+clock skew
+
+The determination of what time is “current” depends on the platform.
+Platforms with network file systems often use different clocks for the
+operating system and for file systems; because updates typically uses
+file systems’ clocks by default, clock skew can cause the resulting file
+timestamps to appear to be in a program’s “future” or “past”.
+
+file timestamp resolution
+
+When the system updates a file timestamp to a desired time ++<++t++>++
+(which is either the current time, or a time specified via the `touch`
+command), there are several reasons the file’s timestamp may be set to a
+value that differs from ++<++t++>++. First, ++<++t++>++ may have a
+higher resolution than supported. Second, a file system may use
+different resolutions for different types of times. Third, file
+timestamps may use a different resolution than operating system
+timestamps. Fourth, the operating system primitives used to update
+timestamps may employ yet a different resolution. For example, in theory
+a file system might use 10-microsecond resolution for access timestamp
+and 100-nanosecond resolution for modification timestamp, and the
+operating system might use nanosecond resolution for the current time
+and microsecond resolution for the primitive that `touch` uses to set a
+file’s timestamp to an arbitrary value.
