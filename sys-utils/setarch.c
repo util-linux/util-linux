@@ -37,6 +37,7 @@
 #include "closestream.h"
 #include "sysfs.h"
 #include "strutils.h"
+#include "procfs.h"
 
 #ifndef HAVE_PERSONALITY
 # include <syscall.h>
@@ -169,6 +170,7 @@ static void __attribute__((__noreturn__)) usage(int archwrapper)
 	if (!archwrapper) {
 		fputs(_("     --list               list settable architectures, and exit\n"), stdout);
 		fputs(_("     --show[=personality] show current or specific personality and exit\n"), stdout);
+		fputs(_(" -p, --pid=PID            show the personality of the process using with --show\n"), stdout);
 	}
 
 	fputs(USAGE_SEPARATOR, stdout);
@@ -424,6 +426,24 @@ static void show_current_personality(void)
 	show_personality(pers);
 }
 
+static void show_process_personality(pid_t pid)
+{
+	int pers;
+	char *pers_str;
+
+	pers_str = pid_get_personality(pid);
+	if (pers_str == NULL)
+		err(EXIT_FAILURE,
+		    _("Can not get the personality for process(%d)"),
+		    pid);
+	pers = str2num_or_err(pers_str, 16,
+			      _("could not parse personality"),
+			      0, INT_MAX);
+	free(pers_str);
+
+	show_personality(pers);
+}
+
 int main(int argc, char *argv[])
 {
 	const char *arch = NULL;
@@ -434,6 +454,8 @@ int main(int argc, char *argv[])
 	struct arch_domain *doms = NULL, *target = NULL;
 	unsigned long pers_value = 0;
 	char *shell = NULL, *shell_arg = NULL;
+	int do_show = 0;
+	pid_t target_pid = 0;
 
 	/* Options without equivalent short options */
 	enum {
@@ -463,6 +485,7 @@ int main(int argc, char *argv[])
 		{"uname-2.6",		no_argument,		NULL,	OPT_UNAME26},
 		{"list",		no_argument,		NULL,	OPT_LIST},
 		{"show",		optional_argument,	NULL,	OPT_SHOW},
+		{"pid",			required_argument,	NULL,	'p'},
 		{NULL,			0,			NULL,	0}
 	};
 
@@ -495,7 +518,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZ", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZp:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'v':
 			verbose = 1;
@@ -542,9 +565,22 @@ int main(int argc, char *argv[])
 			} else
 				warnx(_("unrecognized option '--list'"));
 			goto error_getopts;
+		case 'p':
+			if (!archwrapper) {
+				target_pid = strtos32_or_err(optarg, _("invalid PID argument"));
+				if (target_pid <= 0)
+					errx(EXIT_FAILURE, _("out of range value for pid specification: %d"),
+					     target_pid);
+				break;
+			} else
+				warnx(_("unrecognized option '%s'"), argv[optind - 1]);
+			goto error_getopts;
 		case OPT_SHOW:
 			if (!archwrapper) {
-				if (!optarg || strcmp(optarg, "current") == 0)
+				if (!optarg) {
+					do_show = 1;
+					break;
+				} else if (strcmp(optarg, "current") == 0)
 					show_current_personality();
 				else
 					show_personality(str2num_or_err(
@@ -565,6 +601,17 @@ error_getopts:
 			print_version(EXIT_SUCCESS);
 		}
 	}
+
+	/* We could not find --pid option though we saw --show option. */
+	if (do_show) {
+		if (target_pid)
+			show_process_personality(target_pid);
+		else
+			show_current_personality();
+		return EXIT_SUCCESS;
+	}
+	if (target_pid)
+		errx(EXIT_FAILURE, _("use -p/--pid option with --show option"));
 
 	if (!arch && !options)
 		errx(EXIT_FAILURE, _("no architecture argument or personality flags specified"));

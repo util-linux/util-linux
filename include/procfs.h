@@ -64,5 +64,6 @@ extern int procfs_dirent_match_name(DIR *procfs, struct dirent *d, const char *n
 extern int fd_is_procfs(int fd);
 extern char *pid_get_cmdname(pid_t pid);
 extern char *pid_get_cmdline(pid_t pid);
+extern char *pid_get_personality(pid_t pid);
 
 #endif /* UTIL_LINUX_PROCFS_H */

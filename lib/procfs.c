@@ -449,6 +449,11 @@ char *pid_get_cmdline(pid_t pid)
 	return strdup_procfs_file(pid, "cmdline");
 }
 
+char *pid_get_personality(pid_t pid)
+{
+	return strdup_procfs_file(pid, "personality");
+}
+
 #ifdef TEST_PROGRAM_PROCFS
 
 static int test_tasks(int argc, char *argv[], const char *prefix)

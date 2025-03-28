@@ -4,13 +4,39 @@ _setarch_module()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	pprev="${COMP_WORDS[COMP_CWORD-2]}"
+	case $pprev in
+		'-p'|'--pid')
+			COMPREPLY=( $(compgen -W "--show" -- $cur) )
+			return 0
+			;;
+	esac
 	case $prev in
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
+		'-p'|'--pid')
+			COMPREPLY=( $(compgen -W "$(cd /proc && echo [0-9]*)" -- $cur) )
+			return 0
+			;;
+		'--show')
+			OPTS="
+				current
+				--pid
+			"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
 	esac
 	if [ $COMP_CWORD -eq 1 ]; then
-		COMPREPLY=( $(compgen -W "$($1 --list)" -- $cur) )
+		OPTS="$($1 --list)"
+		OPTS="$OPTS
+			--list
+			--help
+			--version
+			--show
+		"
+		COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 		return 0
 	fi
 	case $cur in
