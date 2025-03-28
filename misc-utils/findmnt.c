@@ -637,7 +637,7 @@ static char *get_data(struct libmnt_fs *fs, int num, size_t *datasiz, struct fin
 		if (str)
 			break;
 
-		/* fallthrough */
+		FALLTHROUGH;
 	case COL_SOURCE:
 	{
 		const char *root = mnt_fs_get_root(fs);
@@ -1492,7 +1492,7 @@ static int get_column_json_type(int id, int scols_flags, int *multi, unsigned in
 			*multi = 1;
 		if (!(findmnt_flags & FL_BYTES))
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case COL_ID:
 	case COL_UNIQ_ID:
 	case COL_PARENT:
@@ -1981,7 +1981,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'M':
 			findmnt.flags |= FL_STRICTTARGET;
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'T':
 			set_match(COL_TARGET, optarg);
 			findmnt.flags |= FL_NOSWAPMATCH;

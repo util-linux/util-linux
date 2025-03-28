@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 				ret++;
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'm':
 			if (!iskey)
 				id = strtos32_or_err(optarg, _("failed to parse argument"));
@@ -462,7 +462,7 @@ int main(int argc, char **argv)
 				ret++;
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case 'q':
 			if (!iskey)
 				id = strtos32_or_err(optarg, _("failed to parse argument"));
@@ -476,7 +476,7 @@ int main(int argc, char **argv)
 				ret++;
 				break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		case 's':
 			if (!iskey)
 				id = strtos32_or_err(optarg, _("failed to parse argument"));

@@ -355,7 +355,7 @@ isint:				cs[3] = '\0';
 					case 'A':
 						endfu = fu;
 						fu->flags |= F_IGNORE;
-						/* fallthrough */
+						FALLTHROUGH;
 					case 'a':
 						pr->flags = F_ADDRESS;
 						++p2;

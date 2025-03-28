@@ -485,7 +485,7 @@ int main(int argc, char **argv)
 		ctl.req.day = strtos32_or_err(*argv++, _("illegal day value"));
 		if (ctl.req.day < 1 || DAYS_IN_MONTH < ctl.req.day)
 			errx(EXIT_FAILURE, _("illegal day value: use 1-%d"), DAYS_IN_MONTH);
-		/* fallthrough */
+		FALLTHROUGH;
 	case 2:
 		if (isdigit(**argv))
 			ctl.req.month = strtos32_or_err(*argv++, _("illegal month value: use 1-12"));
@@ -497,7 +497,7 @@ int main(int argc, char **argv)
 		}
 		if (ctl.req.month < 1 || MONTHS_IN_YEAR < ctl.req.month)
 			errx(EXIT_FAILURE, _("illegal month value: use 1-12"));
-		/* fallthrough */
+		FALLTHROUGH;
 	case 1:
 		ctl.req.year = strtos32_or_err(*argv++, _("illegal year value"));
 		if (ctl.req.year < SMALLEST_YEAR)
