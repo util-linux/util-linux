@@ -57,9 +57,6 @@ The search direction, either *forward* or *backward*.
 *-e*, *--evaluate*::
 Convert all tags (LABEL, UUID, PARTUUID, or PARTLABEL) to the corresponding device names for the SOURCE column.  It's an unusual situation, but the same tag may be duplicated (used for more devices). For this purpose, there is SOURCES (pl.) column. This column displays by multi-line cell all devices where the tag is detected by libblkid. This option makes sense for _fstab_ only.
 
-*--hyperlink*[**=**_mode_]::
-Print mountpoint paths as terminal hyperlinks. The _mode_ can be set to "always", "never", or "auto". The optional argument _when_ can be set to "auto", "never", or "always". If the _when_ argument is omitted, it will default to "auto". The "auto" setting means that hyperlinks will only be used if the output is on a terminal.
-
 *-F*, *--tab-file* _path_::
 Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, then it overrides the default paths. If specified more than once, then tree-like output is disabled (see the *--list* option).
 
@@ -68,6 +65,12 @@ Print the first matching filesystem only.
 
 *-H*, *--list-columns*::
 List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+
+*--hyperlink*[**=**_mode_]::
+Print mountpoint paths as terminal hyperlinks. The optional _mode_ argument
+can be *always*, *never*, or *auto*. If the argument is omitted, it defaults
+to *auto*, which means that hyperlinks will only be used when the output goes
+to a terminal.
 
 *-I*, *--dfi*::
 Imitate the output of *df*(1) with its *-i* option. This option is equivalent to *-o SOURCE,FSTYPE,INO.TOTAL,INO.USED,INO.AVAIL,INO.USE%,TARGET* but excludes all pseudo filesystems. Use *--all* to print all filesystems.
@@ -84,7 +87,7 @@ Select a filesystem using the mount node 64-bit ID, use with *--kernel=listmount
 *-J*, *--json*::
 Use JSON output format.
 
-*-k*, *--kernel*[_=method_]::
+*-k*, *--kernel*[**=**_method_]::
 Reads information about filesystems from the kernel. This is the default output. The format is tree-like and only includes mount options managed by the kernel (see also *--mtab*).
 +
 The optional argument _method_ can be either:
@@ -126,7 +129,7 @@ Produce output in the form of key="value" pairs. All potentially unsafe value ch
 +
 Note that SOURCES column, use multi-line cells. In these cases, the column use an array-like formatting in the output, for example *name=("aaa" "bbb" "ccc")*.
 
-*-p*, *--poll*[_=list_]::
+*-p*, *--poll*[**=**_list_]::
 Monitor changes in the _/proc/self/mountinfo_ file. Supported actions are: mount, umount, remount and move. More than one action may be specified in a comma-separated list. All actions are monitored by default.
 +
 The time for which *--poll* will block can be restricted with the *--timeout* or *--first-only* options.
@@ -142,9 +145,6 @@ available for umount and remount actions
 
 *--pseudo*::
 Print only pseudo filesystems.
-
-*--shadow*::
-Print only filesystems over-mounted by another filesystem.
 
 *-Q*, *--filter* _expr_::
 Print only the filesystems that meet the conditions specified by the expr.
@@ -172,6 +172,9 @@ Explicitly define the mount source. Supported specifications are _device_, __maj
 *-s*, *--fstab*::
 Search in _/etc/fstab_. The output is in the list format (see *--list*).
 
+*--shadowed*::
+Print only filesystems that are over-mounted by another filesystem.
+
 *-T*, *--target* _path_::
 Define the mount target. If _path_ is not a mountpoint file or directory, then *findmnt* checks the _path_ elements in reverse order to get the mountpoint (this feature is supported only when searching in kernel files and unsupported for *--fstab*). It's recommended to use the option *--mountpoint* when checks of _path_ elements are unwanted and _path_ is a strictly specified mountpoint.
 
@@ -180,9 +183,6 @@ Limit the set of printed filesystems. More than one type may be specified in a c
 
 *--tree*::
 Enable tree-like output if possible. The options is silently ignored for tables where is missing child-parent relation (e.g., _fstab_).
-
-*--shadowed*::
-Print only filesystems over-mounted by another filesystem.
 
 *-U*, *--uniq*::
 Ignore filesystems with duplicate mount targets, thus effectively skipping over-mounted mount points.
@@ -193,17 +193,17 @@ Do not truncate text in columns. The default is to not truncate the *TARGET*, *S
 *-v*, *--nofsroot*::
 Do not print a [/dir] in the SOURCE column for bind mounts or btrfs subvolumes.
 
-*-w*, *--timeout* _milliseconds_::
-Specify an upper limit on the time for which *--poll* will block, in milliseconds.
-
-*-x*, *--verify*::
-Check mount table content. The default is to verify _/etc/fstab_ parsability and usability. It's possible to use this option also with *--tab-file*. It's possible to specify source (device) or target (mountpoint) to filter mount table. The option *--verbose* forces *findmnt* to print more details.
-
 *--verbose*::
 Force *findmnt* to print more information (*--verify* only for now).
 
 *--vfs-all*::
 When used with *VFS-OPTIONS* column, print all VFS (fs-independent) flags. This option is designed for auditing purposes to list also default VFS kernel mount options which are normally not listed.
+
+*-w*, *--timeout* _milliseconds_::
+Specify an upper limit on the time for which *--poll* will block, in milliseconds.
+
+*-x*, *--verify*::
+Check mount table content. The default is to verify _/etc/fstab_ parsability and usability. It's possible to use this option also with *--tab-file*. It's possible to specify source (device) or target (mountpoint) to filter mount table. The option *--verbose* forces *findmnt* to print more details.
 
 *-y*, *--shell*::
 The column name will be modified to contain only characters allowed for shell variable identifiers. This is usable, for example, with *--pairs*. Note that this feature has been automatically enabled for *--pairs* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
