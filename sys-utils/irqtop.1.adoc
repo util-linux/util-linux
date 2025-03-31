@@ -8,7 +8,7 @@
 
 == NAME
 
-irqtop - utility to display kernel interrupt information
+irqtop - display kernel interrupt information
 
 == SYNOPSIS
 
@@ -16,7 +16,7 @@ irqtop - utility to display kernel interrupt information
 
 == DESCRIPTION
 
-Display kernel interrupt counter information in *top*(1) style view.
+Display interrupt-counter information from the kernel in the style of *top*(1).
 
 The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output*.
 
