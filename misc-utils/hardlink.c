@@ -1385,7 +1385,7 @@ static int parse_options(int argc, char *argv[])
 				else if (strcmp(optarg, "never") == 0)
 					reflink_mode = REFLINK_NEVER;
 				else
-					errx(EXIT_FAILURE, _("unsupported reflink mode; %s"), optarg);
+					errx(EXIT_FAILURE, _("unsupported reflink mode: %s"), optarg);
 			}
 			if (reflink_mode != REFLINK_NEVER)
 				reflinks_skip = 1;
