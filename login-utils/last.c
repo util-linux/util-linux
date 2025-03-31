@@ -598,15 +598,15 @@ static void __attribute__((__noreturn__)) usage(const struct last_control *ctl)
 	fputs(_(" -F, --fulltimes      print full login and logout times and dates\n"), out);
 	fputs(_(" -i, --ip             display IP numbers in numbers-and-dots notation\n"), out);
 	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
+	fputs(_(" -p, --present <time> display who were present at the specified time\n"), out);
 	fputs(_(" -R, --nohostname     don't display the hostname field\n"), out);
 	fputs(_(" -s, --since <time>   display the lines since the specified time\n"), out);
 	fputs(_(" -t, --until <time>   display the lines until the specified time\n"), out);
-	fputs(_(" -T, --tab-separated	use tabs as delimiters\n"), out);
-	fputs(_(" -p, --present <time> display who were present at the specified time\n"), out);
-	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
-	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
+	fputs(_(" -T, --tab-separated  use tabs as delimiters\n"), out);
 	fputs(_("     --time-format <format>  show timestamps in the specified <format>:\n"
 		"                               notime|short|full|iso\n"), out);
+	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
+	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(22));
