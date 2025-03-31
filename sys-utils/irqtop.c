@@ -306,11 +306,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	puts(_("Interactive utility to display kernel interrupt information."));
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(" -b, --batch batch mode\n"), stdout);
+	fputs(_(" -b, --batch           send tables to stdout, not to a static screen\n"), stdout);
 	fputs(_(" -c, --cpu-stat <mode> show per-cpu stat (auto, enable, disable)\n"), stdout);
 	fputs(_(" -C, --cpu-list <list> specify cpus in list format\n"), stdout);
-	fputs(_(" -d, --delay <secs>   delay updates\n"), stdout);
-	fputs(_(" -J, --json  use JSON output format (will run in batch mode)\n"), stdout);
+	fputs(_(" -d, --delay <secs>    wait this number of seconds between updates\n"), stdout);
+	fputs(_(" -J, --json            use JSON output format (implies --batch)\n"), stdout);
 	fputs(_(" -n, --iter <number>  the maximum number of iterations\n"), stdout);
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), stdout);
 	fputs(_(" -s, --sort <column>  specify sort column\n"), stdout);

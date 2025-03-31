@@ -26,7 +26,8 @@ The default output is subject to change. So whenever possible, you should avoid 
 Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
 
 *-b*, *--batch*::
-Starts irqtop in batch mode, which could be useful for sending output to other programs or to a file.
+Send the produced tables to stdout instead of to a static screen.
+This can be used for sending the output to other programs or to a file.
 
 *-c*, *--cpu-stat* _mode_::
 Show per-cpu statistics by specified mode. Available modes are: *auto*, *enable*, *disable*. The default option *auto* detects the width of window, then shows the per-cpu statistics if the width of window is large enough to show a full line of statistics.
@@ -35,10 +36,10 @@ Show per-cpu statistics by specified mode. Available modes are: *auto*, *enable*
 Specify cpus in list format to show.
 
 *-d*, *--delay* _seconds_::
-Update interrupt output every _seconds_ intervals.
+Update the tables every this number of seconds.
 
 *-J*, *--json*::
-Use JSON output format. irqtop will run in batch mode.
+Use JSON output format. Implies *--batch*.
 
 *-n*, *--iter* _number_::
 Specifies the maximum iterations before quitting.
