@@ -1,4 +1,5 @@
 
+#include "cctype.h"
 #include "fdiskP.h"
 #include "strutils.h"
 #include "carefulputc.h"
@@ -239,7 +240,7 @@ static struct fdisk_scriptheader *script_get_header(struct fdisk_script *dp,
 	list_for_each(p, &dp->headers) {
 		struct fdisk_scriptheader *fi = list_entry(p, struct fdisk_scriptheader, headers);
 
-		if (strcasecmp(fi->name, name) == 0)
+		if (c_strcasecmp(fi->name, name) == 0)
 			return fi;
 	}
 
@@ -1165,41 +1166,41 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 		DBG(SCRIPT, ul_debugobj(dp, " parsing '%s'", p));
 		p = (char *) skip_blank(p);
 
-		if (!strncasecmp(p, "start=", 6)) {
+		if (!c_strncasecmp(p, "start=", 6)) {
 			p += 6;
 			rc = parse_start_value(dp, pa, &p);
 
-		} else if (!strncasecmp(p, "size=", 5)) {
+		} else if (!c_strncasecmp(p, "size=", 5)) {
 			p += 5;
 			rc = parse_size_value(dp, pa, &p);
 
-		} else if (!strncasecmp(p, "bootable", 8)) {
+		} else if (!c_strncasecmp(p, "bootable", 8)) {
 			/* we use next_token() to skip possible extra space */
 			char *tk = next_token(&p);
-			if (tk && strcasecmp(tk, "bootable") == 0)
+			if (tk && c_strcasecmp(tk, "bootable") == 0)
 				pa->boot = 1;
 			else
 				rc = -EINVAL;
 
-		} else if (!strncasecmp(p, "attrs=", 6)) {
+		} else if (!c_strncasecmp(p, "attrs=", 6)) {
 			p += 6;
 			free(pa->attrs);
 			rc = next_string(&p, &pa->attrs);
 
-		} else if (!strncasecmp(p, "uuid=", 5)) {
+		} else if (!c_strncasecmp(p, "uuid=", 5)) {
 			p += 5;
 			free(pa->uuid);
 			rc = next_string(&p, &pa->uuid);
 
-		} else if (!strncasecmp(p, "name=", 5)) {
+		} else if (!c_strncasecmp(p, "name=", 5)) {
 			p += 5;
 			free(pa->name);
 			rc = next_string(&p, &pa->name);
 			if (!rc)
 				unhexmangle_string(pa->name);
 
-		} else if (!strncasecmp(p, "type=", 5) ||
-			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
+		} else if (!c_strncasecmp(p, "type=", 5) ||
+			   !c_strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
 			char *type = NULL;
 
 			fdisk_unref_parttype(pa->type);

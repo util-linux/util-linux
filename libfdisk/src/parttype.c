@@ -2,6 +2,7 @@
 #include <ctype.h>
 
 #include "fdiskP.h"
+#include "cctype.h"
 #include "strutils.h"
 
 /**
@@ -264,7 +265,7 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_string(
 
 	for (i = 0; i < lb->nparttypes; i++)
 		if (lb->parttypes[i].typestr
-		    && strcasecmp(lb->parttypes[i].typestr, str) == 0)
+		    && c_strcasecmp(lb->parttypes[i].typestr, str) == 0)
 			return (struct fdisk_parttype *)&lb->parttypes[i];
 
 	return NULL;
