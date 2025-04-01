@@ -103,7 +103,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	char *device, *volume, *fsname;
+	char *device, *volume = NULL, *fsname = NULL;
 	char *lockmode = 0;
 	long inodes;
 	unsigned long long total_blocks, ino_bytes, ino_blocks, data_blocks;
@@ -111,12 +111,16 @@ int main(int argc, char **argv)
 	int verbose = 0;
 	int fd;
 	uint32_t first_block;
-	struct bfssb sb;
 	struct bfsi ri;
 	struct bfsde de;
 	struct stat statbuf;
 	time_t now;
-	int c, i, len;
+	int c, i;
+	size_t len;
+	struct bfssb sb = {
+		.s_fsname = "\x20\x20\x20\x20\x20\x20",
+		.s_volume = "\x20\x20\x20\x20\x20\x20"
+	};
 
 	enum {
 	    VERSION_OPTION = CHAR_MAX + 1,
@@ -145,7 +149,6 @@ int main(int argc, char **argv)
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version(EXIT_SUCCESS);
 
-	volume = fsname = "      ";	/* is there a default? */
 	inodes = 0;
 
 	while ((c = getopt_long(argc, argv, "N:V:F:vhcl", longopts, NULL)) != -1) {
@@ -155,17 +158,21 @@ int main(int argc, char **argv)
 			break;
 
 		case 'V':
+			if (volume)
+				errx(EXIT_FAILURE, _("more than one volume"));
 			len = strlen(optarg);
-			if (len <= 0 || len > 6)
+			if (!len || len > sizeof(sb.s_volume))
 				errx(EXIT_FAILURE, _("volume name too long"));
-			volume = xstrdup(optarg);
+			volume = optarg;
 			break;
 
 		case 'F':
+			if (fsname)
+				errx(EXIT_FAILURE, _("more than one fsname"));
 			len = strlen(optarg);
-			if (len <= 0 || len > 6)
+			if (!len || len > sizeof(sb.s_fsname))
 				errx(EXIT_FAILURE, _("fsname name too long"));
-			fsname = xstrdup(optarg);
+			fsname = optarg;
 			break;
 
 		case 'v':
@@ -260,13 +267,16 @@ int main(int argc, char **argv)
 	sb.s_start = cpu_to_le32(ino_bytes + sizeof(struct bfssb));
 	sb.s_end = cpu_to_le32(total_blocks * BFS_BLOCKSIZE - 1);
 	sb.s_from = sb.s_to = sb.s_backup_from = sb.s_backup_to = -1;
-	memcpy(sb.s_fsname, fsname, 6);
-	memcpy(sb.s_volume, volume, 6);
+
+	if (fsname)
+		str2memcpy(sb.s_fsname, fsname, sizeof(sb.s_fsname));
+	if (volume)
+		str2memcpy(sb.s_volume, volume, sizeof(sb.s_volume));
 
 	if (verbose) {
 		fprintf(stderr, _("Device: %s\n"), device);
-		fprintf(stderr, _("Volume: <%-6s>\n"), volume);
-		fprintf(stderr, _("FSname: <%-6s>\n"), fsname);
+		fprintf(stderr, _("Volume: <%.6s>\n"), sb.s_volume);
+		fprintf(stderr, _("FSname: <%.6s>\n"), sb.s_fsname);
 		fprintf(stderr, _("BlockSize: %d\n"), BFS_BLOCKSIZE);
 		if (ino_blocks == 1)
 			fprintf(stderr, _("Inodes: %ld (in 1 block)\n"),
