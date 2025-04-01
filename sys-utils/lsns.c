@@ -304,6 +304,9 @@ static inline const struct colinfo *get_column_info(unsigned num)
 }
 
 #ifdef USE_NS_GET_API
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
+
+
 /* Get the inode number for the parent namespace of the namespace `fd' specifies.
  * If `pfd' is non-null, the file descriptor opening the parent namespace.*/
 static int get_parent_ns_ino(int fd, enum lsns_type lsns_type, ino_t *pino, int *pfd)
@@ -421,8 +424,6 @@ static int parse_proc_stat(char *line, pid_t *pid, char *state, pid_t *ppid)
 error:
 	return rc;
 }
-
-static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
 
 static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
 {
