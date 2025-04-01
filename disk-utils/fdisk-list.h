@@ -11,6 +11,8 @@
 #ifndef UTIL_LINUX_FDISK_LIST_H
 #define UTIL_LINUX_FDISK_LIST_H
 
+#include "cctype.h"
+
 extern void list_disklabel(struct fdisk_context *cxt);
 extern void list_disk_identifier(struct fdisk_context *cxt);
 extern void list_disk_geometry(struct fdisk_context *cxt);
@@ -51,7 +53,7 @@ static inline int wipemode_from_string(const char *str)
 		return -EINVAL;
 
 	for (i = 0; i < ARRAY_SIZE(modes); i++) {
-		if (strcasecmp(str, modes[i]) == 0)
+		if (c_strcasecmp(str, modes[i]) == 0)
 			return i;
 	}
 
