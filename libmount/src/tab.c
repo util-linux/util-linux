@@ -2054,6 +2054,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 #ifdef TEST_PROGRAM
 #include "pathnames.h"
+#include "cctype.h"
 
 static int parser_errcb(struct libmnt_table *tb __attribute__((unused)),
 			const char *filename, int line)
@@ -2229,9 +2230,9 @@ static int test_find(struct libmnt_test *ts __attribute__((unused)),
 	mnt_table_set_cache(tb, mpc);
 	mnt_unref_cache(mpc);
 
-	if (strcasecmp(find, "source") == 0)
+	if (c_strcasecmp(find, "source") == 0)
 		fs = mnt_table_find_source(tb, what, dr);
-	else if (strcasecmp(find, "target") == 0)
+	else if (c_strcasecmp(find, "target") == 0)
 		fs = mnt_table_find_target(tb, what, dr);
 
 	if (!fs)
