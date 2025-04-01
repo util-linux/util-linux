@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="--show --pid options"
+
+. "$TS_TOPDIR"/functions.sh
+
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_SETARCH"
+ts_check_prog "cat"
+
+ts_cd "$TS_OUTDIR"
+
+if ! "$TS_CMD_SETARCH" -R bash -c 'echo $$; cat' < /dev/null 1 > /dev/null 2>&1; then
+    ts_skip "--addr-no-randomize doesn't work on this platform"
+fi
+
+SKIP_REASON=
+{
+    PID=
+    coproc BASH { "$TS_CMD_SETARCH" -R bash -c 'echo $$; cat'; }
+    if read -u ${BASH[0]} PID; then
+	personality_file="/proc/$PID/personality"
+	if personality=$(cat "$personality_file"); then
+	    DIRECT=$("$TS_CMD_SETARCH" --show="$personality")
+	    INDIRECT=$("$TS_CMD_SETARCH" --show --pid="$PID")
+	    if [[ "$DIRECT" == "$INDIRECT" ]]; then
+		echo OK
+	    else
+		echo DIRECT: "$DIRECT"
+		echo INDIRECT: "$INDIRECT"
+	    fi
+	else
+	    SKIP_REASON="cannot read $personality_file on this platform"
+	fi
+    fi
+    exec {BASH[1]}>&-
+    wait ${BASH_PID}
+}  > $TS_OUTPUT 2>&1
+
+if [[ -n "$SKIP_REASON" ]]; then
+    ts_skip "$SKIP_REASON"
+fi
+
+ts_finalize
