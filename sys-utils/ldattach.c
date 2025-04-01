@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "all-io.h"
 #include "nls.h"
 #include "strutils.h"
@@ -152,7 +153,7 @@ static int lookup_table(const struct ld_table *tab, const char *str)
 	const struct ld_table *t;
 
 	for (t = tab; t && t->name; t++)
-		if (!strcasecmp(t->name, str))
+		if (!c_strcasecmp(t->name, str))
 			return t->value;
 	return -1;
 }

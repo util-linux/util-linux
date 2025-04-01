@@ -32,6 +32,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "cctype.h"
 #include "xalloc.h"
 #include "closestream.h"
 #include "optutils.h"
@@ -165,7 +166,7 @@ static long name2bit(const char *name, size_t namesz)
 
 	for (i = 0; i < ARRAY_SIZE(wdflags); i++) {
 		const char *cn = wdflags[i].name;
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return wdflags[i].flag;
 	}
 	warnx(_("unknown flag: %s"), name);
@@ -178,7 +179,7 @@ static int column2id(const char *name, size_t namesz)
 
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);

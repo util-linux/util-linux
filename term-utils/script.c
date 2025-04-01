@@ -58,6 +58,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "c.h"
+#include "cctype.h"
 #include "ttyutils.h"
 #include "all-io.h"
 #include "monotonic.h"
@@ -864,9 +865,9 @@ int main(int argc, char **argv)
 			ctl.quiet = 1;
 			break;
 		case 'm':
-			if (strcasecmp(optarg, "classic") == 0)
+			if (c_strcasecmp(optarg, "classic") == 0)
 				format = SCRIPT_FMT_TIMING_SIMPLE;
-			else if (strcasecmp(optarg, "advanced") == 0)
+			else if (c_strcasecmp(optarg, "advanced") == 0)
 				format = SCRIPT_FMT_TIMING_MULTI;
 			else
 				errx(EXIT_FAILURE, _("unsupported logging format: '%s'"), optarg);

@@ -33,6 +33,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "env.h"
 #include "closestream.h"
 #include "islocal.h"
@@ -245,7 +246,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 			free(buf);
 			return xstrdup(def_val);
 		}
-		if (!strcasecmp(buf, "none")) {
+		if (!c_strcasecmp(buf, "none")) {
 			free(buf);
 			ctl->changed = 1;
 			return xstrdup("");
