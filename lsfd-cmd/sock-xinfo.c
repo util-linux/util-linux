@@ -74,7 +74,7 @@ static struct stat self_netns_sb;
 static void *xinfo_tree;	/* for tsearch/tfind */
 static void *netns_tree;
 
-static LIST_HEAD(unix_ipcs);
+static struct list_head unix_ipcs;
 static void *unix_oneway_ipc_tree;	/* for tsearch/tfind */
 
 struct iface {
@@ -269,6 +269,8 @@ void initialize_sock_xinfos(void)
 	struct path_cxt *pc;
 	DIR *dir;
 	struct dirent *d;
+
+	INIT_LIST_HEAD(&unix_ipcs);
 
 	self_netns_fd = open("/proc/self/ns/net", O_RDONLY);
 
