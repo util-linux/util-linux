@@ -1,5 +1,6 @@
 
 #include "fdiskP.h"
+#include "cctype.h"
 
 
 /**
@@ -236,7 +237,7 @@ const struct fdisk_field *fdisk_label_get_field_by_name(
 	assert(name);
 
 	for (i = 0; i < lb->nfields; i++) {
-		if (lb->fields[i].name && strcasecmp(lb->fields[i].name, name) == 0)
+		if (lb->fields[i].name && c_strcasecmp(lb->fields[i].name, name) == 0)
 			return &lb->fields[i];
 	}
 
