@@ -23,6 +23,7 @@
 #include "partitions.h"
 #include "sysfs.h"
 #include "strutils.h"
+#include "cctype.h"
 
 /**
  * SECTION: partitions
@@ -1044,7 +1045,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			tmp = uuid;
 			prefix = uuid ? strsep(&tmp, "-") : NULL;
 
-			if (prefix && strncasecmp(prefix, "part", 4) == 0) {
+			if (prefix && c_strncasecmp(prefix, "part", 4) == 0) {
 				char *end = NULL;
 
 				errno = 0;
