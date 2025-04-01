@@ -6,6 +6,7 @@
 #endif
 
 #include "c.h"
+#include "cctype.h"
 #include "xalloc.h"
 #include "mangle.h"
 #include "path.h"
@@ -352,13 +353,13 @@ done:
 
 static int name2method(const char *name, size_t namesz)
 {
-	if (namesz == 4 && strncasecmp(name, "none", namesz) == 0)
+	if (namesz == 4 && c_strncasecmp(name, "none", namesz) == 0)
 		return LSBLK_METHOD_NONE;
-	if (namesz == 4 && strncasecmp(name, "udev", namesz) == 0)
+	if (namesz == 4 && c_strncasecmp(name, "udev", namesz) == 0)
 		return LSBLK_METHOD_UDEV;
-	if (namesz == 5 && strncasecmp(name, "blkid", namesz) == 0)
+	if (namesz == 5 && c_strncasecmp(name, "blkid", namesz) == 0)
 		return LSBLK_METHOD_BLKID;
-	if (namesz == 4 && strncasecmp(name, "file", namesz) == 0)
+	if (namesz == 4 && c_strncasecmp(name, "file", namesz) == 0)
 		return LSBLK_METHOD_FILE;
 
 	warnx(_("unknown properties probing method: %s"), name);
@@ -472,7 +473,7 @@ const char *lsblk_parttype_code_to_string(const char *code, const char *pttype)
 			const struct lsblk_parttype *t = &gpt_types[i];
 
 			if (t->name && t->typestr &&
-			    strcasecmp(code, t->typestr) == 0)
+			    c_strcasecmp(code, t->typestr) == 0)
 				return t->name;
 		}
 	}
