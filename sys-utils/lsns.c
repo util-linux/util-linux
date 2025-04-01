@@ -313,6 +313,9 @@ static inline const struct colinfo *get_column_info(unsigned num)
 
 
 #ifdef USE_NS_GET_API
+static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
+
+
 /* Get the inode number for the parent namespace of the namespace `fd' specifies.
  * If `pfd' is non-null, the file descriptor opening the parent namespace.*/
 static int get_parent_ns_ino(int fd, enum lsns_type lsns_type, ino_t *pino, int *pfd)
@@ -431,8 +434,6 @@ error:
 	return rc;
 }
 
-static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, ino_t ino);
-
 static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
 {
 	struct list_head *p;
@@ -550,18 +551,6 @@ static int get_netnsid_via_netlink(int target_fd)
 	return netnsid;
 }
 
-static int get_netnsid_for_fd(int target_fd, ino_t netino)
-{
-	int netnsid;
-
-	if (!netnsid_cache_find(netino, &netnsid)) {
-		netnsid = get_netnsid_via_netlink(target_fd);
-		netnsid_cache_add(netino, netnsid);
-	}
-
-	return netnsid;
-}
-
 static int get_netnsid_for_pc_via_netlink(struct path_cxt *pc, const char *path)
 {
 	int netnsid;
@@ -628,11 +617,6 @@ out_pidfd:
 	close(pidfd);
 }
 #else
-static int get_netnsid_for_fd(int target_fd __attribute__((__unused__)),
-			      ino_t netino __attribute__((__unused__)))
-{
-	return LSNS_NETNS_UNUSABLE;
-}
 static int get_netnsid_for_pc(struct path_cxt *pc __attribute__((__unused__)),
 			      ino_t netino __attribute__((__unused__)))
 {
@@ -912,9 +896,13 @@ static struct lsns_namespace *add_namespace_for_nsfd(struct lsns *ls, int fd, in
 	get_parent_ns_ino(fd, lsns_type, &ino_parent, &fd_parent);
 	get_owner_ns_ino(fd, &ino_owner, &fd_owner);
 
-	netnsid = (lsns_type == LSNS_TYPE_NET)
-		? get_netnsid_for_fd(fd, ino)
-		: LSNS_NETNS_UNUSABLE;
+	if (lsns_type == LSNS_TYPE_NET) {
+		if (!netnsid_cache_find(ino, &netnsid)) {
+			netnsid = get_netnsid_via_netlink(fd);
+			netnsid_cache_add(ino, netnsid);
+		}
+	} else
+		netnsid = LSNS_NETNS_UNUSABLE;
 
 	ns = add_namespace(ls, lsns_type, ino, ino_parent, ino_owner, netnsid);
 	lsns_ioctl(fd, NS_GET_OWNER_UID, &ns->uid_fallback);
