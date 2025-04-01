@@ -396,7 +396,7 @@ PACKET.IFACE <``string``>::
 Interface name associated with the packet socket.
 
 PACKET.PROTOCOL <``string``>::
-L3 protocol associated with the packet socket.
+L2 protocol associated with the packet socket.
 
 PARTITION <``string``>::
 Block device name resolved by `/proc/partition`.

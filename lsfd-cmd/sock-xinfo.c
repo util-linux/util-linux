@@ -2479,7 +2479,7 @@ static void load_xinfo_from_proc_packet(ino_t netns_inode)
 		unsigned long inode;
 		struct packet_xinfo *pkt;
 
-		if (sscanf(line, "%*x %*d %" SCNu16 " %" SCNu16 " %u %*d %*d %*d %lu",
+		if (sscanf(line, "%*x %*d %" SCNu16 " %" SCNx16 " %u %*d %*d %*d %lu",
 			   &type, &protocol, &iface, &inode) < 4)
 			continue;
 
