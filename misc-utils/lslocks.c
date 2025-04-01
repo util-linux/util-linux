@@ -43,6 +43,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "c.h"
+#include "cctype.h"
 #include "list.h"
 #include "closestream.h"
 #include "optutils.h"
@@ -552,7 +553,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);

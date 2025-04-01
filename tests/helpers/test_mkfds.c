@@ -18,6 +18,7 @@
  */
 
 #include "c.h"
+#include "cctype.h"
 #include "xalloc.h"
 #include "test_mkfds.h"
 #include "exitcodes.h"
@@ -242,10 +243,10 @@ static union value boolean_read(const char *arg, const union value *defv)
 	if (!arg)
 		return *defv;
 
-	if (strcasecmp(arg, "true") == 0
+	if (c_strcasecmp(arg, "true") == 0
 	    || strcmp(arg, "1") == 0
-	    || strcasecmp(arg, "yes") == 0
-	    || strcasecmp(arg, "y") == 0)
+	    || c_strcasecmp(arg, "yes") == 0
+	    || c_strcasecmp(arg, "y") == 0)
 		r.boolean = true;
 	else
 		r.boolean = false;

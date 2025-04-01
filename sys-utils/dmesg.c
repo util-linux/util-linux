@@ -29,6 +29,7 @@
 #include <fcntl.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "colors.h"
 #include "nls.h"
 #include "strutils.h"
@@ -460,7 +461,7 @@ static int parse_level(const char *str, size_t len)
 		for (i = 0; i < ARRAY_SIZE(level_names); i++) {
 			const char *n = level_names[i].name;
 
-			if (strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
+			if (c_strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
 				return i + offset;
 		}
 	}
@@ -498,7 +499,7 @@ static int parse_facility(const char *str, size_t len)
 		for (i = 0; i < ARRAY_SIZE(facility_names); i++) {
 			const char *n = facility_names[i].name;
 
-			if (strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
+			if (c_strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
 				return i;
 		}
 	}

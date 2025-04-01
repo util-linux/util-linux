@@ -11,6 +11,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "pathnames.h"
 #include "sysfs.h"
 #include "fileutils.h"
@@ -576,7 +577,7 @@ int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
 	tmp = uuid;
 	prefix = uuid ? strsep(&tmp, "-") : NULL;
 
-        if (prefix && strncasecmp(prefix, "part", 4) == 0)
+        if (prefix && c_strncasecmp(prefix, "part", 4) == 0)
             is_part = 1;
         free(uuid);
 

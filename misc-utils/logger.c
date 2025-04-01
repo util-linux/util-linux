@@ -56,6 +56,7 @@
 
 #include "all-io.h"
 #include "c.h"
+#include "cctype.h"
 #include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -220,7 +221,7 @@ static int decode(const char *name, const CODE *codetab)
 		return -1;
 	}
 	for (c = codetab; c->c_name; c++)
-		if (!strcasecmp(name, c->c_name))
+		if (!c_strcasecmp(name, c->c_name))
 			return (c->c_val);
 
 	return -1;

@@ -35,6 +35,7 @@
 #include "all-io.h"
 #include "blkdev.h"
 #include "c.h"
+#include "cctype.h"
 #include "linux_version.h"
 #include "fileutils.h"
 #include "nls.h"
@@ -384,14 +385,14 @@ int blkdev_lock(int fd, const char *devname, const char *lockmode)
 	if (!lockmode)
 		return 0;
 
-	if (strcasecmp(lockmode, "yes") == 0 ||
+	if (c_strcasecmp(lockmode, "yes") == 0 ||
 	    strcmp(lockmode, "1") == 0)
 		oper = LOCK_EX;
 
-	else if (strcasecmp(lockmode, "nonblock") == 0)
+	else if (c_strcasecmp(lockmode, "nonblock") == 0)
 		oper = LOCK_EX | LOCK_NB;
 
-	else if (strcasecmp(lockmode, "no") == 0 ||
+	else if (c_strcasecmp(lockmode, "no") == 0 ||
 		 strcmp(lockmode, "0") == 0)
 		return 0;
 	else {

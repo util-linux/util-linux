@@ -44,6 +44,7 @@
 #include "nls.h"
 #include "closestream.h"
 #include "c.h"
+#include "cctype.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "optutils.h"
@@ -344,13 +345,13 @@ static int poll_action_name_to_id(const char *name, size_t namesz)
 {
 	int id = -1;
 
-	if (strncasecmp(name, "move", namesz) == 0 && namesz == 4)
+	if (c_strncasecmp(name, "move", namesz) == 0 && namesz == 4)
 		id = MNT_TABDIFF_MOVE;
-	else if (strncasecmp(name, "mount", namesz) == 0 && namesz == 5)
+	else if (c_strncasecmp(name, "mount", namesz) == 0 && namesz == 5)
 		id = MNT_TABDIFF_MOUNT;
-	else if (strncasecmp(name, "umount", namesz) == 0 && namesz == 6)
+	else if (c_strncasecmp(name, "umount", namesz) == 0 && namesz == 6)
 		id = MNT_TABDIFF_UMOUNT;
-	else if (strncasecmp(name, "remount", namesz) == 0 && namesz == 7)
+	else if (c_strncasecmp(name, "remount", namesz) == 0 && namesz == 7)
 		id = MNT_TABDIFF_REMOUNT;
 	else
 		warnx(_("unknown action: %s"), name);
@@ -396,7 +397,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = column_id_to_name(i);
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);

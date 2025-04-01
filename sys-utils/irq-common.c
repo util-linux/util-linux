@@ -25,6 +25,7 @@
 #include <libsmartcols.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
@@ -89,7 +90,7 @@ int irq_column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
@@ -407,13 +408,13 @@ static void sort_result(struct irq_output *out,
 
 void set_sort_func_by_name(struct irq_output *out, const char *name)
 {
-	if (strcasecmp(name, "IRQ") == 0)
+	if (c_strcasecmp(name, "IRQ") == 0)
 		out->sort_cmp_func = cmp_interrupts;
-	else if (strcasecmp(name, "TOTAL") == 0)
+	else if (c_strcasecmp(name, "TOTAL") == 0)
 		out->sort_cmp_func = cmp_total;
-	else if (strcasecmp(name, "DELTA") == 0)
+	else if (c_strcasecmp(name, "DELTA") == 0)
 		out->sort_cmp_func = cmp_delta;
-	else if (strcasecmp(name, "NAME") == 0)
+	else if (c_strcasecmp(name, "NAME") == 0)
 		out->sort_cmp_func = cmp_name;
 	else
 		errx(EXIT_FAILURE, _("unsupported column name to sort output"));

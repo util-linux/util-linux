@@ -25,6 +25,7 @@
 #include <dirent.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "nls.h"
 #include "path.h"
 #include "strutils.h"
@@ -84,7 +85,7 @@ static int zone_name_to_id(const char *name)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
-		if (!strcasecmp(name, zone_names[i]))
+		if (!c_strcasecmp(name, zone_names[i]))
 			return i;
 	}
 	return -1;
@@ -133,7 +134,7 @@ static int chmem_size(struct chmem_desc *desc, int enable, int zone_id)
 				zn = zone_names[zone_id];
 				if (enable && !strcasestr(line, zn))
 					continue;
-				if (!enable && strncasecmp(line, zn, strlen(zn)) != 0)
+				if (!enable && c_strncasecmp(line, zn, strlen(zn)) != 0)
 					continue;
 			} else if (enable) {
 				/* By default, use zone Movable for online, if valid */
@@ -218,7 +219,7 @@ static int chmem_range(struct chmem_desc *desc, int enable, int zone_id)
 					warnx(_("%s enable failed: Zone mismatch"), str);
 					continue;
 				}
-				if (!enable && strncasecmp(line, zn, strlen(zn)) != 0) {
+				if (!enable && c_strncasecmp(line, zn, strlen(zn)) != 0) {
 					warnx(_("%s disable failed: Zone mismatch"), str);
 					continue;
 				}

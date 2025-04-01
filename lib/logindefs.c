@@ -32,6 +32,7 @@
 #include <pwd.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "closestream.h"
 #include "logindefs.h"
 #include "nls.h"
@@ -171,7 +172,7 @@ static struct item *search(const char *name)
 
 	ptr = list;
 	while (ptr != NULL) {
-		if (strcasecmp(name, ptr->name) == 0)
+		if (c_strcasecmp(name, ptr->name) == 0)
 			return ptr;
 		ptr = ptr->next;
 	}
@@ -185,7 +186,7 @@ static const char *search_config(const char *name)
 
 	ptr = list;
 	while (ptr != NULL) {
-		if (strcasecmp(name, ptr->name) == 0)
+		if (c_strcasecmp(name, ptr->name) == 0)
 			return ptr->path;
 		ptr = ptr->next;
 	}
@@ -196,7 +197,7 @@ static const char *search_config(const char *name)
 int getlogindefs_bool(const char *name, int dflt)
 {
 	struct item *ptr = search(name);
-	return ptr && ptr->value ? (strcasecmp(ptr->value, "yes") == 0) : dflt;
+	return ptr && ptr->value ? (c_strcasecmp(ptr->value, "yes") == 0) : dflt;
 }
 
 unsigned long getlogindefs_num(const char *name, unsigned long dflt)
