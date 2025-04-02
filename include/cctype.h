@@ -23,6 +23,9 @@
 #ifndef UTIL_LINUX_CCTYPE_H
 #define UTIL_LINUX_CCTYPE_H
 
+#include <stddef.h>
+#include <limits.h>
+
 /**
  * The functions defined in this file assume the "C" locale and a character
  * set without diacritics (ASCII-US or EBCDIC-US or something like that).
@@ -317,38 +320,54 @@ static inline int c_toupper (int c)
 	}
 }
 
+#define C_CTYPE_CMP(c1, c2)	(((c1) > (c2)) - ((c1) < (c2)))
+
 static inline int c_strncasecmp(const char *a, const char *b, size_t n)
 {
-	int res = 0;
+	const unsigned char *p1 = (const unsigned char *) a;
+	const unsigned char *p2 = (const unsigned char *) b;
+	unsigned char x, y;
 
-        for (; n > 0; a++, b++, n--) {
-		unsigned int x = (unsigned int) *a;
-		unsigned int y = (unsigned int) *b;
+	if (n == 0 || p1 == p2)
+		return 0;
 
-		res = c_tolower(x) - c_tolower(y);
-                if (res)
-                        break;
-        }
-        return res;
+	do {
+		x = c_tolower(*p1);
+		y = c_tolower(*p2);
+
+		if (--n == 0 || x == '\0')
+			break;
+		++p1, ++p2;
+	} while (x == y);
+
+	if (UCHAR_MAX <= INT_MAX)
+		return x - y;
+
+	return C_CTYPE_CMP(x, y);
 }
 
 static inline int c_strcasecmp(const char *a, const char *b)
 {
-	int res = 0;
+	const unsigned char *p1 = (const unsigned char *) a;
+	const unsigned char *p2 = (const unsigned char *) b;
+	unsigned char x, y;
 
-	if (a == b)
+	if (p1 == p2)
 		return 0;
 
-	for (; *a != '\0'; a++, b++) {
-		unsigned int x = (unsigned int) *a;
-		unsigned int y = (unsigned int) *b;
+	do {
+		x = c_tolower(*p1);
+		y = c_tolower(*p2);
 
-		res = c_tolower(x) - c_tolower(y);
-		if (res)
+		if (x == '\0')
 			break;
-	}
+		++p1, ++p2;
+	} while (x == y);
 
-	return res;
+	if (UCHAR_MAX <= INT_MAX)
+		return x - y;
+
+	return C_CTYPE_CMP(x, y);
 }
 
 #endif /* UTIL_LINUX_CCTYPE_H */
