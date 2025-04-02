@@ -51,7 +51,7 @@ ts_finalize_subtest
 
 ts_init_subtest "get-cookie-own-pid"
 $TS_CMD_CORESCHED get 2>> "$TS_ERRLOG" \
-  | sed -e "s/pid [0-9]\+/pid OWN_PID/g" \
+  | sed -e "s/PID [0-9]\+/PID OWN_PID/g" \
         -e "s/$CORESCHED_PARENT_COOKIE/PARENT_COOKIE/g" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
