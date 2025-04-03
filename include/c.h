@@ -82,6 +82,39 @@
 # endif
 #endif
 
+#ifdef __has_attribute
+# define UL_HAS_ATTRIBUTE(x) __has_attribute(x)
+#else
+# define UL_HAS_ATTRIBUTE(x) 0
+#endif
+
+/* C-language Attributes are added in C23. */
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ > 201710L) && defined(__has_c_attribute)
+# define UL_HAS_C_ATTRIBUTE(x) __has_c_attribute(x)
+#else
+# define UL_HAS_C_ATTRIBUTE(x) 0
+#endif
+
+#if defined(__cplusplus) && defined(__has_cpp_attribute)
+# define UL_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
+#else
+# define UL_HAS_CPP_ATTRIBUTE(x) 0
+#endif
+
+/*
+Define FALLTHROUGH macro for annotating switch case with the 'fallthrough' attribute
+introduced in CPP17 and C23.
+CPP17 : https://en.cppreference.com/w/cpp/language/attributes/fallthrough
+C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
+*/
+#if UL_HAS_C_ATTRIBUTE(fallthrough) || UL_HAS_CPP_ATTRIBUTE(fallthrough)
+# define FALLTHROUGH [[fallthrough]]
+#elif UL_HAS_ATTRIBUTE(__fallthrough__)
+# define FALLTHROUGH __attribute__ ((__fallthrough__))
+#else
+# define FALLTHROUGH /* fallthrough */
+#endif
+
 
 /*
  * It evaluates to 1 if the attribute/feature is supported by the current
