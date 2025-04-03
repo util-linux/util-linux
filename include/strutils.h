@@ -18,6 +18,8 @@
 
 #include "c.h"
 
+#define streq(a,b) (strcmp((a),(b)) == 0)
+
 /* initialize a custom exit code for all *_or_err functions */
 extern void strutils_set_exitcode(int exit_code);
 

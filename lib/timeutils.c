@@ -27,8 +27,6 @@
 
 #define WHITESPACE " \t\n\r"
 
-#define streq(a,b) (strcmp((a),(b)) == 0)
-
 static int parse_sec(const char *t, usec_t *usec)
 {
 	static const struct {

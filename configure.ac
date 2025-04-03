@@ -2051,6 +2051,9 @@ UL_REQUIRES_LINUX([lsclocks])
 UL_REQUIRES_BUILD([lsclocks], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSCLOCKS], [test "x$build_lsclocks" = xyes])
 
+UL_BUILD_INIT([mu], [yes])
+AM_CONDITIONAL([BUILD_MU], [test "x$build_mu" = xyes])
+
 UL_BUILD_INIT([getopt], [yes])
 AM_CONDITIONAL([BUILD_GETOPT], [test "x$build_getopt" = xyes])
 
