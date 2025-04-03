@@ -82,6 +82,10 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define EXIT_UNSUPPORTED_IOCTL 2
 
+#ifndef SIOCGSKNS
+#define SIOCGSKNS 0x894C
+#endif
+
 static struct idcache *uid_cache = NULL;
 
 /* column IDs */
