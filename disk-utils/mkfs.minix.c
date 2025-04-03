@@ -780,7 +780,7 @@ int main(int argc, char ** argv)
 			break;
 		case 'v': /* kept for backwards compatibility */
 			warnx(_("-v is ambiguous, use '-2' instead"));
-			/* fallthrough */
+			FALLTHROUGH;
 		case '2':
 			fs_version = 2;
 			break;

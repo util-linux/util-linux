@@ -307,7 +307,7 @@ static bool cdev_generic_fill_column(struct proc *proc  __attribute__((__unused_
 				  minor(file->stat.st_rdev));
 			return true;
 		}
-		/* FALL THROUGH */
+		FALLTHROUGH;
 	case COL_MAJMIN:
 		xasprintf(str, "%u:%u",
 			  major(file->stat.st_rdev),

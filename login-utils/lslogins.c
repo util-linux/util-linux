@@ -1208,13 +1208,13 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 		break;
 	case OUT_NEWLINE:
 		scols_table_set_column_separator(table, "\n");
-		/* fallthrough */
+		FALLTHROUGH;
 	case OUT_EXPORT:
 		scols_table_enable_export(table, 1);
 		break;
 	case OUT_NUL:
 		scols_table_set_line_separator(table, "\0");
-		/* fallthrough */
+		FALLTHROUGH;
 	case OUT_RAW:
 		scols_table_enable_raw(table, 1);
 		break;

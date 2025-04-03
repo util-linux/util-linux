@@ -344,7 +344,7 @@ static int reduce_column(struct libscols_table *tb,
 		/* reduce extreme columns with large width deviation */
 		if (st->width_deviation < st->width_avg / 2.0)
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 2:
 		/* reduce extreme columns */
 		if (!scols_column_is_noextremes(cl))
@@ -356,7 +356,7 @@ static int reduce_column(struct libscols_table *tb,
 		/* reduce columns with trunc flag and relative whint and large width deviation */
 		if (st->width_deviation < st->width_avg / 2.0)
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 4:
 		/* reduce columns with trunc flag and relative whint */
 		if (!is_trunc)
@@ -372,7 +372,7 @@ static int reduce_column(struct libscols_table *tb,
 		/* reduce all columns with trunc flag large width deviation */
 		if (st->width_deviation < st->width_avg / 2.2)
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 6:
 		/* reduce all columns with trunc flag */
 		if (!is_trunc && !scols_column_is_noextremes(cl))

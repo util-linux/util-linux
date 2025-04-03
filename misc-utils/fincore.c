@@ -529,7 +529,7 @@ int main(int argc, char ** argv)
 			case COL_RES:
 				if (!ctl.bytes)
 					break;
-				/* fallthrough */
+				FALLTHROUGH;
 			default:
 				scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
 				break;
