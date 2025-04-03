@@ -82,7 +82,7 @@ static void verify_disk(int ctrl, unsigned int track_from, unsigned int track_to
 {
 	unsigned char *data;
 	struct format_descr current;
-	int track_size, count;
+	size_t track_size;
 	unsigned int retries_left;
 
 	track_size = param.sect * SECTOR_SIZE;
@@ -96,15 +96,17 @@ static void verify_disk(int ctrl, unsigned int track_from, unsigned int track_to
 
 	for (current.track = track_from; current.track <= track_to; current.track++) {
 		for (current.head = 0; current.head < param.head; current.head++) {
-			int read_bytes;
 
 			printf("%3u\b\b\b", current.track);
 			fflush(stdout);
 
 			retries_left = repair;
 			do {
+				ssize_t read_bytes;
+				size_t count;
+
 				read_bytes = read(ctrl, data, track_size);
-				if (read_bytes != track_size) {
+				if (read_bytes < 0 || (size_t) read_bytes != track_size) {
 					if (retries_left) {
 						format_begin(ctrl);
 						format_track_head(ctrl, &current);
@@ -118,7 +120,7 @@ static void verify_disk(int ctrl, unsigned int track_from, unsigned int track_to
 						perror(_("Read: "));
 					fprintf(stderr,
 						_("Problem reading track/head %u/%u,"
-						  " expected %d, read %d\n"),
+						  " expected %zu, read %zd\n"),
 						current.track, current.head, track_size, read_bytes);
 					free(data);
 					exit(EXIT_FAILURE);
