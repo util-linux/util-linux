@@ -35,6 +35,7 @@
 #include <libsmartcols.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "nls.h"
 #include "closestream.h"
 #include "strutils.h"
@@ -244,7 +245,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
 		const char *cn = coldescs[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz)) {
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz)) {
 			if (i > COL_CTIME) {
 				if (i >= LOWER && i <= UPPER)
 					return i;

@@ -40,6 +40,7 @@
 #include <blkid.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "pathnames.h"
 #include "blkdev.h"
 #include "canonicalize.h"
@@ -350,7 +351,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 
@@ -362,7 +363,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 		for (i = 0; i < ARRAY_SIZE(infos); i++) {
 			if (scols_shellvar_name(infos[i].name, &buf, &bufsz) != 0)
 				continue;
-			if (!strncasecmp(name, buf, namesz) && !*(buf + namesz)) {
+			if (!c_strncasecmp(name, buf, namesz) && !*(buf + namesz)) {
 				free(buf);
 				return i;
 			}
@@ -463,7 +464,7 @@ static char *get_type(struct lsblk_device *dev)
 
 			if (dm_uuid_prefix) {
 				/* kpartx hack to remove partition number */
-				if (strncasecmp(dm_uuid_prefix, "part", 4) == 0)
+				if (c_strncasecmp(dm_uuid_prefix, "part", 4) == 0)
 					dm_uuid_prefix[4] = '\0';
 
 				res = xstrdup(dm_uuid_prefix);

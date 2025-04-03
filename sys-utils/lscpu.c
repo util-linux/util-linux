@@ -29,6 +29,7 @@
 
 #include <libsmartcols.h>
 
+#include "cctype.h"
 #include "closestream.h"
 #include "optutils.h"
 #include "c_strtod.h"
@@ -186,7 +187,7 @@ cpu_column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++) {
 		const char *cn = coldescs_cpu[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
@@ -201,7 +202,7 @@ cache_column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++) {
 		const char *cn = coldescs_cache[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);

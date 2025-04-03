@@ -2,6 +2,7 @@
 # include <blkid.h>
 #endif
 
+#include "cctype.h"
 #include "blkdev.h"
 #ifdef __linux__
 # include "partx.h"
@@ -168,9 +169,9 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	}
 
 	if (name) {
-		if (strcasecmp(name, "bsd") == 0)
+		if (c_strcasecmp(name, "bsd") == 0)
 			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
-		else if (strcasecmp(name, "dos") == 0 || strcasecmp(name, "mbr") == 0)
+		else if (c_strcasecmp(name, "dos") == 0 || c_strcasecmp(name, "mbr") == 0)
 			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
 	}
 
@@ -227,12 +228,12 @@ struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
 	if (!name)
 		return cxt->label;
 
-	if (strcasecmp(name, "mbr") == 0)
+	if (c_strcasecmp(name, "mbr") == 0)
 		name = "dos";
 
 	for (i = 0; i < cxt->nlabels; i++)
 		if (cxt->labels[i]
-		    && strcasecmp(cxt->labels[i]->name, name) == 0)
+		    && c_strcasecmp(cxt->labels[i]->name, name) == 0)
 			return cxt->labels[i];
 
 	DBG(CXT, ul_debugobj(cxt, "failed to found %s label driver", name));

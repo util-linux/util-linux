@@ -19,6 +19,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "c.h"
+#include "cctype.h"
 #include "closestream.h"
 
 static int tolerant;
@@ -65,7 +66,7 @@ static int parse_ioclass(const char *str)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(to_prio); i++)
-		if (!strcasecmp(str, to_prio[i]))
+		if (!c_strcasecmp(str, to_prio[i]))
 			return i;
 	return -1;
 }

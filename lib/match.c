@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "match.h"
+#include "cctype.h"
 
 /*
  * match_fstype:
@@ -39,10 +40,10 @@ int match_fstype(const char *type, const char *pattern)
 	len = strlen(type);
 	p = pattern;
 	while(1) {
-		if (!strncmp(p, "no", 2) && !strncasecmp(p+2, type, len) &&
+		if (!strncmp(p, "no", 2) && !c_strncasecmp(p+2, type, len) &&
 		    (p[len+2] == 0 || p[len+2] == ','))
 			return 0;
-		if (strncasecmp(p, type, len) == 0 && (p[len] == 0 || p[len] == ','))
+		if (c_strncasecmp(p, type, len) == 0 && (p[len] == 0 || p[len] == ','))
 			return !no;
 		p = strchr(p,',');
 		if (!p)

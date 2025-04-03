@@ -11,22 +11,25 @@
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  */
-#include <c.h>
-#include <nls.h>
-#include <path.h>
-#include <strutils.h>
-#include <closestream.h>
-#include <xalloc.h>
-#include <getopt.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
+#include <stdbool.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <assert.h>
-#include <optutils.h>
+
 #include <libsmartcols.h>
+
+#include "c.h"
+#include "cctype.h"
+#include "nls.h"
+#include "path.h"
+#include "strutils.h"
+#include "closestream.h"
+#include "xalloc.h"
+#include "optutils.h"
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
 
@@ -150,7 +153,7 @@ static int zone_name_to_id(const char *name)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(zone_names); i++) {
-		if (!strcasecmp(name, zone_names[i]))
+		if (!c_strcasecmp(name, zone_names[i]))
 			return i;
 	}
 	return ZONE_UNKNOWN;
@@ -166,7 +169,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
 		const char *cn = coldescs[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
@@ -737,7 +740,7 @@ int main(int argc, char **argv)
 		int split[ARRAY_SIZE(coldescs)] = { 0 };
 		static size_t nsplits = 0;
 
-		if (strcasecmp(splitarg, "none") == 0)
+		if (c_strcasecmp(splitarg, "none") == 0)
 			;
 		else if (string_add_to_idarray(splitarg, split, ARRAY_SIZE(split),
 					&nsplits, column_name_to_id) < 0)

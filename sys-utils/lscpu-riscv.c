@@ -12,6 +12,7 @@
 #include "lscpu.h"
 #include "strutils.h"
 #include "strv.h"
+#include "cctype.h"
 
 static int riscv_cmp_func(const void *a, const void *b)
 {
@@ -24,7 +25,7 @@ bool is_riscv(struct lscpu_cputype *ct)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(base_isa); i++) {
-		if (!strncasecmp(ct->isa, base_isa[i], strlen(base_isa[i])))
+		if (!c_strncasecmp(ct->isa, base_isa[i], strlen(base_isa[i])))
 			return true;
 	}
 

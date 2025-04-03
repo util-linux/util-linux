@@ -32,6 +32,7 @@
 #endif
 
 #include "c.h"
+#include "cctype.h"
 #include "colors.h"
 #include "pathnames.h"
 #include "strutils.h"
@@ -744,7 +745,7 @@ int colormode_from_string(const char *str)
 	assert(ARRAY_SIZE(modes) == __UL_NCOLORMODES);
 
 	for (i = 0; i < ARRAY_SIZE(modes); i++) {
-		if (strcasecmp(str, modes[i]) == 0)
+		if (c_strcasecmp(str, modes[i]) == 0)
 			return i;
 	}
 
