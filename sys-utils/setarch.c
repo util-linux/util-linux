@@ -567,7 +567,7 @@ int main(int argc, char *argv[])
 			goto error_getopts;
 		case 'p':
 			if (!archwrapper) {
-				target_pid = strtos32_or_err(optarg, _("invalid PID argument"));
+				target_pid = strtopid_or_err(optarg, _("invalid PID argument"));
 				if (target_pid <= 0)
 					errx(EXIT_FAILURE, _("out of range value for pid specification: %d"),
 					     target_pid);
