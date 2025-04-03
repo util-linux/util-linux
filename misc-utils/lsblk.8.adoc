@@ -105,45 +105,51 @@ Produce output in the form of key="value" pairs. The output lines are still orde
 *-p*, *--paths*::
 Print full device paths.
 
-*-Q*, *--filter* _expr_::
-Print only the devices that meet the conditions specified by the expr. The
-filter is assessed prior to lsblk collecting data for all output columns. Only
+*-Q*, *--filter* _expression_::
+Print only the devices that meet the conditions specified by _expression_. The
+filter is assessed prior to *lsblk* collecting data for all output columns. Only
 the necessary data for the lazy evaluation of the expression is retrieved from
 the system. This approach can enhance performance when compared to
-post-filtering, as commonly done by tools such as grep(1).
+post-filtering, as commonly done by tools such as *grep*(1).
 +
-This feature is EXPERIMENTAL. See also *scols-filter*(5). For example
-exclude sda  and sdb, but print everything else ('!~' is a negative regular
-expression matching operator):
+This feature is EXPERIMENTAL. See also *scols-filter*(5).
++
+For example, to exclude sda and sdb, but print everything else
+('!~' is a negative regular-expression matching operator):
 ____
  lsblk --filter 'NAME !~ "sd[ab]"'
 ____
 
-*--highlight* _expr_::
-Colorize lines matching the expression.
+*--highlight* _expression_::
+Colorize lines matching _expression_.
++
 This feature is EXPERIMENTAL. See also *scols-filter*(5).
 
-*--ct* _name_ [: _param_ [: _function_ ]]::
-Define a custom counter. The counters are printed after the standard output.
-The _name_ is the custom name of the counter, the optional _param_ is the name of the column
-to be used for the counter, and the optional _function_ specifies
-the aggregation function, supported functions are: count, min, max, or sum. The
-default is count.
+*--ct* _name_[**:**_parameter_[**:**_function_]]::
+Define a custom counter. Custom counters are printed after the standard output.
+The _name_ is the custom name of the counter, the optional _parameter_ is the name
+of the column to be used for the counter, and the optional _function_ specifies
+the aggregation function. Supported functions are: *count*, *min*, *max*, *sum*.
+The default function is *count*. If _parameter_ is not specified, then the counter
+counts the number of lines.
 +
-If the _param_ is not specified, then the counter counts the number of lines. This
-feature is EXPERIMENTAL. See also *--ct-filter*.
+This feature is EXPERIMENTAL. See also *--ct-filter*.
 +
-For example, *--ct MyCounter:SIZE:sum* will count the summary for SIZE from all lines;
-and to count the number of SATA disks, it is possible to use:
+For example, *--ct MyCounter:SIZE:sum* reports the total of the SIZE values.
+To report the number of SATA disks, one can use:
 ____
 
- lsblk --ct-filter 'TYPE=="disk" && TRAN=="sata"' --ct "Number of SATA devices"
+ lsblk --ct-filter 'TYPE=="disk" && TRAN=="sata"' \
+       --ct "Number of SATA devices"
 ____
 
 
-*--ct-filter* _expr_::
-Define a restriction for the next counter. This feature is EXPERIMENTAL. See also *--ct*
-and *scols-filter*(5). For example, aggregate sizes by device type:
+*--ct-filter* _expression_::
+Define a restriction for the next counter.
++
+This feature is EXPERIMENTAL. See also *--ct* and *scols-filter*(5).
++
+For example, to aggregate sizes by device type:
 ____
  lsblk --ct-filter 'TYPE=="part"' --ct Partitions:SIZE:sum \
        --ct-filter 'TYPE=="disk"' --ct WholeDisks:SIZE:sum

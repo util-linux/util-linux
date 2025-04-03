@@ -54,22 +54,22 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %1$s [options]\n"
-		  " %1$s [options] --pid <pid> | --system | <command> <arg>...\n"),
+		_(" %1$s [options] --pid <pid> | <command> [<arg>...] | --system\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Show or change the utilization clamping attributes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m <value>           util_min value to set\n"), out);
-	fputs(_(" -M <value>           util_max value to set\n"), out);
+	fputs(_(" -m <value>           minimum utilization value to set\n"), out);
+	fputs(_(" -M <value>           maximum utilization value to set\n"), out);
 	fputs(_(" -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"), out);
 	fputs(_(" -p, --pid <pid>      operate on existing given pid\n"), out);
 	fputs(_(" -s, --system         operate on system\n"), out);
 	fputs(_(" -R, --reset-on-fork  set reset-on-fork flag\n"), out);
 	fputs(_(" -v, --verbose        display status information\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(22));
 
 	fputs(USAGE_SEPARATOR, out);

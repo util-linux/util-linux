@@ -80,31 +80,24 @@ static void __attribute__((__noreturn__)) usage(void)
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(_("Manage core scheduling cookies for tasks."), stdout);
+	fputsln(_("Manage core-scheduling cookies for tasks."), stdout);
 
 	fputs(USAGE_FUNCTIONS, stdout);
-	fputsln(_(" get                      retrieve the core scheduling cookie of a PID"),
-		stdout);
-	fputsln(_(" new                      assign a new core scheduling cookie to an existing\n"
-		  "                            PID or execute a program with a new cookie"),
-		stdout);
-	fputsln(_(" copy                     copy the core scheduling cookie from an existing PID\n"
-		  "                            to another PID, or execute a program with that\n"
-		  "                            copied cookie"),
-		stdout);
+	fputsln(_(" get      retrieve the core-scheduling cookie of a PID"), stdout);
+	fputsln(_(" new      assign a new cookie to an existing PID,\n"
+		  "            or execute a program with a new cookie"), stdout);
+	fputsln(_(" copy     copy the cookie from an existing PID to another PID,\n"
+		  "            or execute a program with that copied cookie"), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
 	fprintf(stdout,
-		_(" -s, --source <PID>       which PID to get the cookie from\n"
-		  "                            If omitted, it is the PID of %s itself\n"),
+		_(" -s, --source <PID>       which PID to get the cookie from; if this option\n"
+		  "                            is omitted, the PID of %s itself is used\n"),
 		program_invocation_short_name);
-	fputsln(_(" -d, --dest <PID>         which PID to modify the cookie of\n"),
-		stdout);
-	fputsln(_(" -t, --dest-type <TYPE>   type of the destination PID, or the type of the PID\n"
-		  "                            when a new core scheduling cookie is created.\n"
-		  "                            Can be one of the following: pid, tgid or pgid.\n"
-		  "                            The default is tgid."),
-		stdout);
+	fputsln(_(" -d, --dest <PID>         which PID to modify the cookie of"), stdout);
+	fputsln(_(" -t, --dest-type <TYPE>   type of the new or destination PID; can be one\n"
+		  "                            of: pid, tgid, pgid; default: tgid"), stdout);
+
 	fputs(USAGE_SEPARATOR, stdout);
 	fputsln(_(" -v, --verbose      verbose"), stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(20));
@@ -341,7 +334,7 @@ int main(int argc, char **argv)
 	switch (args.cmd) {
 	case SCHED_CORE_CMD_GET:
 		cookie = core_sched_get_cookie(args.src);
-		printf(_("cookie of pid %d is 0x%llx\n"), args.src, cookie);
+		printf(_("cookie of PID %d is 0x%llx\n"), args.src, cookie);
 		break;
 	case SCHED_CORE_CMD_NEW:
 		if (args.exec_argv_offset) {

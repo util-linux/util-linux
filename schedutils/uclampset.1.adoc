@@ -38,9 +38,9 @@ manipulate the utilization clamping attributes of the system or a process
 
 == SYNOPSIS
 
-*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max] _command argument_
+*uclampset* [options] [*-m* _minimum_] [*-M* _maximum_] *-p* _PID_
 
-*uclampset* [options] [*-m* _uclamp_min_] [*-M* _uclamp_max_] *-p* _PID_
+*uclampset* [options] [*-m* _minimum_] [*-M* _maximum_] _command_ [_argument_...]
 
 == DESCRIPTION
 
