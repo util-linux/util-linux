@@ -41,6 +41,8 @@
  *	present curses can still be used.
  * 2010-10-21 Davidlohr Bueso <dave@gnu.org>
  *	modified mem allocation handling for util-linux
+ * 2025-04-03 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+ *  	modified to add MORESECURE and PAGERSECURE environment variables
  */
 
 #include <stdio.h>
@@ -218,6 +220,7 @@ struct more_control {
 		leading_colon,  	/* key command has leading ':' character */
 		is_eof,                 /* EOF detected */
 		is_paused,  		/* is output paused */
+		is_secure,		/* is running in secure mode */
 		no_quit_dialog,  	/* suppress quit dialog */
 		no_scroll,  		/* do not scroll, clear the screen and then display text */
 		no_tty_in,  		/* is input in interactive mode */
@@ -1801,8 +1804,13 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			done = 1;
 			break;
 		case more_kc_run_shell:
-			run_shell(ctl, filename);
-			break;
+			if (ctl->is_secure == 1) {
+				more_error(ctl, _("Command not available in secure mode"));
+				break;
+			} else {
+				run_shell(ctl, filename);
+				break;
+			}
 		case more_kc_help:
 			if (ctl->no_scroll)
 				more_clear_screen(ctl);
@@ -1833,7 +1841,11 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			done = 1;
 			break;
 		case more_kc_run_editor:	/* This case should go right before default */
-			if (!ctl->no_tty_in) {
+			if (ctl->is_secure == 1) {
+				more_error(ctl, _("Command not available in secure mode"));
+				break;
+			}
+		  	if (!ctl->no_tty_in) {
 				execute_editor(ctl, cmdbuf, sizeof(cmdbuf), filename);
 				break;
 			}
@@ -2104,6 +2116,9 @@ int main(int argc, char **argv)
 		ctl.no_scroll++;
 
 	ctl.exit_on_eof = getenv("POSIXLY_CORRECT") ? 0 : 1;
+
+	if (getenv("MORESECURE") || getenv("PAGERSECURE"))
+		ctl.is_secure = 1;
 
 	if ((s = getenv("MORE")) != NULL)
 		env_argscan(&ctl, s);

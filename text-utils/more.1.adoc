@@ -161,6 +161,16 @@ Display current file name and line number.
 *.*::
 Repeat previous command.
 
+== SECURITY
+
+When either MORESECURE or PAGERSECURE is set, *more* will run in "secure" mode and effectively disable the following commands:
+
+*!command* or *:!command*::
+Execute _command_ in a subshell.
+
+*v*::
+Start up an editor.
+
 == ENVIRONMENT
 
 The *more* command respects the following environment variables, if they exist:
@@ -183,6 +193,12 @@ The editor of choice when *VISUAL* is not specified.
 *POSIXLY_CORRECT*::
 Disable exit-on-eof (see option *-e* for more details).
 
+*MORESECURE*::
+Run *more* in "secure" mode. See SECURITY for details.
+
+*PAGERSECURE*::
+Equivalent to MORESECURE. 
+
 == HISTORY
 
 The *more* command appeared in 3.0BSD. This man page documents *more* version 5.19 (Berkeley 6/29/88), which is currently in use in the Linux community. Documentation was produced using several other versions of the man page, and extensive inspection of the source code.
@@ -194,6 +210,8 @@ Eric Shienbrood, UC Berkeley.
 Modified by Geoff Peck, UCB to add underlining, single spacing.
 
 Modified by John Foderaro, UCB to add -c and MORE environment variable.
+
+Modified by Christian Goeschel Ndjomouo to add MORESECURE and PAGERSECURE environment variables, and a SECURITY section
 
 == SEE ALSO
 
