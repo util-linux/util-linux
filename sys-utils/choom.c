@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "hn:p:V", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'p':
-			pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'n':
 			adj = strtos32_or_err(optarg, _("invalid adjust argument"));

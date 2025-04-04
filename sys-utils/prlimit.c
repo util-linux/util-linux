@@ -596,7 +596,7 @@ int main(int argc, char **argv)
 		case 'p':
 			if (pid)
 				errx(EXIT_FAILURE, _("option --pid may be specified only once"));
-			pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,

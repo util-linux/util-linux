@@ -1206,7 +1206,7 @@ int main(int argc, char **argv)
 
 				if (*p == '=')
 					p++;
-				ctl.pid = strtoul_or_err(optarg, _("failed to parse id"));
+				ctl.pid = strtopid_or_err(optarg, _("failed to parse id"));
 			} else
 				ctl.pid = logger_getpid();
 			break;

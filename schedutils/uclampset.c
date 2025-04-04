@@ -247,7 +247,7 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			errno = 0;
-			ctl->pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			ctl->pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 's':
 			ctl->system = 1;
