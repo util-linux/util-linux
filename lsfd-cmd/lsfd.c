@@ -590,6 +590,8 @@ struct lsfd_control {
 
 	struct libscols_filter *filter;		/* filter */
 	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
+
+	struct early_filters *early_filters;
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -873,37 +875,46 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
 					 int assoc,
-					 bool sockets_only)
+					 bool sockets_only,
+					 struct early_filters *early_filters)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
 	struct file *f, *prev;
 
-	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
+	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0) {
+		if (early_filters_has_file_path(early_filters))
+			return NULL;
 		f = new_readlink_error_file(proc, errno, assoc);
+	}
 	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
 	 * more than once. Let's try to reuse the previous file if the real
 	 * path is the same to save stat() call.
 	 */
-	else if ((prev = list_last_entry(&proc->files, struct file, files))
-		 && (!prev->is_error)
-		 && prev->name && strcmp(prev->name, sym) == 0) {
-		f = copy_file(prev, assoc);
-		sb = prev->stat;
-	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
-		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
-		const struct file_class *class = stat2class(&sb);
-
-		if (sockets_only
-		    /* A nsfs file is not a socket but the nsfs file can
-		     * be used as a entry point to collect information from
-		     * other network namespaces. Based on the information,
-		     * various columns of sockets can be filled.
-		     */
-		    && (class != &sock_class) && (class != &nsfs_file_class))
+		if (!early_filters_apply_file_path(early_filters, sym))
 			return NULL;
-		f = new_file(proc, class, &sb, sym, assoc);
+
+		if ((prev = list_last_entry(&proc->files, struct file, files))
+		    && (!prev->is_error)
+		    && prev->name && strcmp(prev->name, sym) == 0) {
+			f = copy_file(prev, assoc);
+			sb = prev->stat;
+		} else if (ul_path_stat(pc, &sb, 0, name) < 0)
+			f = new_stat_error_file(proc, sym, errno, assoc);
+		else {
+			const struct file_class *class = stat2class(&sb);
+
+			if (sockets_only
+			    /* A nsfs file is not a socket but the nsfs file can
+			     * be used as a entry point to collect information from
+			     * other network namespaces. Based on the information,
+			     * various columns of sockets can be filled.
+			     */
+			    && (class != &sock_class) && (class != &nsfs_file_class))
+				return NULL;
+			f = new_file(proc, class, &sb, sym, assoc);
+		}
 	}
 
 	file_init_content(f);
@@ -945,7 +956,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 /* read symlinks from /proc/#/fd
  */
 static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     bool sockets_only, struct early_filters *early_filters)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -958,11 +969,12 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		collect_file_symlink(pc, proc, path, num, sockets_only);
+		collect_file_symlink(pc, proc, path, num, sockets_only, early_filters);
 	}
 }
 
-static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
+static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
+			    struct early_filters *early_filters)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
@@ -1003,6 +1015,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
+		if (!early_filters_apply_file_path(early_filters, path))
+			return;
 		if (stat(path, &sb) < 0)
 			/* If a file is mapped but deleted from the file system,
 			 * "stat by the file name" may not work. In that case,
@@ -1015,13 +1029,20 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 
 	try_map_files:
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
-				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
+				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
+			if (early_filters_has_file_path(early_filters))
+				return;
 			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (ul_path_statf(pc, &sb, 0,
-				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
+		} else if (ul_path_statf(pc, &sb, 0,
+					 "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
+			if (early_filters_has_file_path(early_filters))
+				return;
 			f = new_stat_error_file(proc, sym, errno, -assoc);
-		else
+		} else {
+			if (!early_filters_apply_file_path(early_filters, sym))
+				return;
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+		}
 	}
 
 	if (modestr[0] == 'r')
@@ -1038,7 +1059,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	file_init_content(f);
 }
 
-static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
+static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
+			      struct early_filters *early_filters)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1048,7 +1070,7 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(pc, buf, proc);
+		parse_maps_line(pc, buf, proc, early_filters);
 
 	fclose(fp);
 }
@@ -1058,28 +1080,29 @@ static void collect_outofbox_files(struct path_cxt *pc,
 				   enum association assocs[],
 				   const char *names[],
 				   size_t count,
-				   bool sockets_only)
+				   bool sockets_only,
+				   struct early_filters *early_filters)
 {
 	size_t i;
 
 	for (i = 0; i < count; i++)
 		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
-				     sockets_only);
+				     sockets_only, early_filters);
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
-				bool sockets_only)
+				bool sockets_only, struct early_filters *early_filters)
 {
 	enum association assocs[] = { ASSOC_EXE };
 	const char *names[] = {
 		[ASSOC_EXE]  = "exe",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+			       sockets_only, early_filters);
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     bool sockets_only, struct early_filters *early_filters)
 {
 	enum association assocs[] = { ASSOC_CWD, ASSOC_ROOT };
 	const char *names[] = {
@@ -1087,10 +1110,11 @@ static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 		[ASSOC_ROOT] = "root",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+			       sockets_only, early_filters);
 }
 
-static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc,
+					    struct early_filters *early_filters)
 {
 	enum association assocs[] = {
 		ASSOC_NS_CGROUP,
@@ -1104,10 +1128,12 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
 			       /* Namespace information is always needed. */
-			       false);
+			       false,
+			       early_filters);
 }
 
-static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc,
+					       struct early_filters *early_filters)
 {
 	enum association assocs[] = {
 		ASSOC_NS_NET,
@@ -1129,7 +1155,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
 			       /* Namespace information is always needed. */
-			       false);
+			       false, early_filters);
 }
 
 static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
@@ -1984,11 +2010,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		goto out;
 	}
 
-	collect_execve_file(pc, proc, ctl->sockets_only);
+	collect_execve_file(pc, proc, ctl->sockets_only, ctl->early_filters);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_fs_files(pc, proc, ctl->sockets_only);
+		collect_fs_files(pc, proc, ctl->sockets_only, ctl->early_filters);
 
 	/* Reading /proc/$pid/mountinfo is expensive.
 	 * mnt_namespaces is a table for avoiding reading mountinfo files
@@ -2009,7 +2035,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
 	if (proc->mnt_ns == NULL)
-		collect_namespace_files_tophalf(pc, proc);
+		collect_namespace_files_tophalf(pc, proc, ctl->early_filters);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
@@ -2033,7 +2059,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * When reading the information about the net namespace,
 	 * backing device for "nsfs" must be solved.
 	 */
-	collect_namespace_files_bottomhalf(pc, proc);
+	collect_namespace_files_bottomhalf(pc, proc, ctl->early_filters);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
@@ -2043,11 +2069,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if ((!ctl->sockets_only)
 	    && (proc->pid == proc->leader->pid
 		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
-		collect_mem_files(pc, proc);
+		collect_mem_files(pc, proc, ctl->early_filters);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(pc, proc, ctl->sockets_only);
+		collect_fd_files(pc, proc, ctl->sockets_only, ctl->early_filters);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
@@ -2069,7 +2095,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	ul_path_close_dirfd(pc);
 }
 
-static void parse_pids(const char *str, pid_t **pids, int *count)
+static void add_pids_to_early_filters(const char *str, struct early_filters *early_filters)
 {
 	long v;
 	char *next = NULL;
@@ -2086,41 +2112,16 @@ static void parse_pids(const char *str, pid_t **pids, int *count)
 	if (v < 0)
 		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
 
-	(*count)++;
-	*pids = xreallocarray(*pids, *count, sizeof(**pids));
-	(*pids)[*count - 1] = (pid_t)v;
+	early_filters_add_pid(early_filters, v);
 
 	while (next && *next != '\0'
 	       && (isspace((unsigned char)*next) || *next == ','))
 		next++;
 	if (*next != '\0')
-		parse_pids(next, pids, count);
+		add_pids_to_early_filters(next, early_filters);
 }
 
-static int pidcmp(const void *a, const void *b)
-{
-	pid_t pa = *(pid_t *)a;
-	pid_t pb = *(pid_t *)b;
-
-	if (pa < pb)
-		return -1;
-	else if (pa == pb)
-		return 0;
-	else
-		return 1;
-}
-
-static void sort_pids(pid_t pids[], const int count)
-{
-	qsort(pids, count, sizeof(pid_t), pidcmp);
-}
-
-static bool member_pids(const pid_t pid, const pid_t pids[], const int count)
-{
-	return bsearch(&pid, pids, count, sizeof(pid_t), pidcmp)? true: false;
-}
-
-static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int n_pids)
+static void collect_processes(struct lsfd_control *ctl)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -2139,7 +2140,8 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
-		if (n_pids == 0 || member_pids(pid, pids, n_pids))
+		if (early_filters_has_pid_filter(ctl->early_filters) == false
+		    || early_filters_apply_pid(ctl->early_filters, pid))
 			read_process(ctl, pc, pid, 0);
 	}
 
@@ -2181,7 +2183,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [--] names\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --threads                list in threads level\n"), out);
@@ -2527,14 +2529,12 @@ int main(int argc, char *argv[])
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
 	bool dump_counters = false;
-	pid_t *pids = NULL;
-	int n_pids = 0;
 	struct list_head counter_specs;
 
 	struct lsfd_control ctl = {
 		.show_main = 1
 	};
-
+	ctl.early_filters = new_early_filters();
 	INIT_LIST_HEAD(&counter_specs);
 
 	enum {
@@ -2594,7 +2594,7 @@ int main(int argc, char *argv[])
 			ctl.notrunc = 1;
 			break;
 		case 'p':
-			parse_pids(optarg, &pids, &n_pids);
+			add_pids_to_early_filters(optarg, ctl.early_filters);
 			break;
 		case 'i': {
 			const char *subexpr = NULL;
@@ -2665,8 +2665,8 @@ int main(int argc, char *argv[])
 	if (collist)
 		list_colunms("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
 
-	if (argv[optind])
-		errtryhelp(EXIT_FAILURE);
+	for (int n = optind; n < argc; n++)
+		early_filters_add_file_path(ctl.early_filters, argv[n]);
 
 #define INITIALIZE_COLUMNS(COLUMN_SPEC)				\
 	for (i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
@@ -2736,8 +2736,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (n_pids > 0)
-		sort_pids(pids, n_pids);
+	early_filters_optimize(ctl.early_filters);
 
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
@@ -2758,8 +2757,7 @@ int main(int argc, char *argv[])
 	initialize_classes();
 	initialize_devdrvs();
 
-	collect_processes(&ctl, pids, n_pids);
-	free(pids);
+	collect_processes(&ctl);
 
 	attach_xinfos(&ctl.procs);
 	if (ctl.show_xmode)
@@ -2782,6 +2780,8 @@ int main(int argc, char *argv[])
 	finalize_classes();
 	finalize_ipc_table();
 	finalize_nodevs();
+
+	free_early_filters(ctl.early_filters);
 
 	return 0;
 }
