@@ -862,6 +862,9 @@ static struct number_command read_command(struct more_control *ctl)
 			case 'p':
 				cmd.key = more_kc_previous_file;
 				return cmd;
+			case '!':
+				cmd.key = more_kc_run_shell;
+				return cmd;
 			default:
 				cmd.key = more_kc_unknown_command;
 				return cmd;
