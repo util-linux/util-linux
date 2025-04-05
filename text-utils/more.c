@@ -226,6 +226,7 @@ struct more_control {
 		print_banner,  		/* print file name banner */
 		reading_num,  		/* are we reading leading_number */
 		report_errors,  	/* is an error reported */
+		prev_command_called,	/* previous more command is called */
 		search_at_start,  	/* search pattern defined at start up */
 		search_called,  	/* previous more command was a search */
 		squeeze_spaces,  	/* suppress white space */
@@ -1295,8 +1296,11 @@ static void run_shell(struct more_control *ctl, char *filename)
 	erase_to_col(ctl, 0);
 	putchar('!');
 	fflush(NULL);
-	if (ctl->previous_command.key == more_kc_run_shell && ctl->shell_line)
+	if (ctl->previous_command.key == more_kc_run_shell && ctl->shell_line
+	    && ctl->prev_command_called == 1) {
 		fputs(ctl->shell_line, stderr);
+		ctl->prev_command_called = 0;
+	}
 	else {
 		ttyin(ctl, cmdbuf, sizeof(cmdbuf) - 2, '!');
 		if (strpbrk(cmdbuf, "%!\\"))
@@ -1674,6 +1678,7 @@ static int more_key_command(struct more_control *ctl, char *filename)
 	else
 		ctl->report_errors = 0;
 	ctl->search_called = 0;
+	ctl->prev_command_called = 0;
 	for (;;) {
 		if (more_poll(ctl, -1, &stderr_active) <= 0)
 			continue;
@@ -1682,10 +1687,13 @@ static int more_key_command(struct more_control *ctl, char *filename)
 		cmd = read_command(ctl);
 		if (cmd.key == more_kc_unknown_command)
 			continue;
-		if (cmd.key == more_kc_repeat_previous)
+		if (cmd.key == more_kc_repeat_previous) {
 			cmd = ctl->previous_command;
-		else
+			ctl->prev_command_called = 1;
+		}
+		else {
 			ctl->previous_command = cmd;
+		}
 
 		switch (cmd.key) {
 		case more_kc_backwards:
