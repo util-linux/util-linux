@@ -751,9 +751,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --noheadings          don't print headings\n"), out);
 	fputs(_(" -o, --output <list>       columns to use for status output\n"), out);
 	fputs(_("     --output-all          output all columns\n"), out);
-	fputs(_(" -p, --algorithm-params <parameters>\n"
+	fputs(_(" -p, --algorithm-params <parameter>...\n"
 		"                           parameters for the compression algorithm\n"), out);
-	fputs(_(" -r, --reset               reset all specified devices\n"), out);
+	fputs(_(" -r, --reset <device>...   reset the specified zram devices\n"), out);
 	fputs(_("     --raw                 use raw status output format\n"), out);
 	fputs(_(" -s, --size <size>         device size\n"), out);
 	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
