@@ -745,17 +745,18 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --algorithm <alg>              compression algorithm to use\n"), out);
-	fputs(_(" -b, --bytes                        print sizes in bytes rather than in human readable format\n"), out);
-	fputs(_(" -f, --find                         find a free device\n"), out);
-	fputs(_(" -n, --noheadings                   don't print headings\n"), out);
-	fputs(_(" -o, --output <list>                columns to use for status output\n"), out);
-	fputs(_("     --output-all                   output all columns\n"), out);
-	fputs(_(" -p, --algorithm-params <params>    algorithm parameters to use\n"), out);
-	fputs(_("     --raw                          use raw status output format\n"), out);
-	fputs(_(" -r, --reset                        reset all specified devices\n"), out);
-	fputs(_(" -s, --size <size>                  device size\n"), out);
-	fputs(_(" -t, --streams <number>             number of compression streams\n"), out);
+	fputs(_(" -a, --algorithm <alg>     compression algorithm to use\n"), out);
+	fputs(_(" -b, --bytes               print sizes in bytes, not in human-readable form\n"), out);
+	fputs(_(" -f, --find                find a free device\n"), out);
+	fputs(_(" -n, --noheadings          don't print headings\n"), out);
+	fputs(_(" -o, --output <list>       columns to use for status output\n"), out);
+	fputs(_("     --output-all          output all columns\n"), out);
+	fputs(_(" -p, --algorithm-params <parameters>\n"
+		"                           parameters for the compression algorithm\n"), out);
+	fputs(_(" -r, --reset               reset all specified devices\n"), out);
+	fputs(_("     --raw                 use raw status output format\n"), out);
+	fputs(_(" -s, --size <size>         device size\n"), out);
+	fputs(_(" -t, --streams <number>    number of compression streams\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
