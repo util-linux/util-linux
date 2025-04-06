@@ -1025,7 +1025,7 @@ int main(int argc, char **argv)
 		case SECCOMP_FILTER:
 			if (opts.seccomp_filter)
 				errx(EXIT_FAILURE,
-				     _("duplicate --secccomp-filter option"));
+				     _("duplicate --seccomp-filter option"));
 			opts.seccomp_filter = optarg;
 			break;
 		case RESET_ENV:

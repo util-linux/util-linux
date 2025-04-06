@@ -338,7 +338,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
-	fputs(_(" -b, --bytes              print SIZE in bytes rather\n"), out);
+	fputs(_(" -b, --bytes              print SIZE in bytes rather than in human-readable form\n"), out);
 	fputs(_(" -c, --creator            show creator and owner\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
 	fputs(_(" -J, --json               use the JSON output format\n"), out);
