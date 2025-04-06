@@ -943,11 +943,6 @@ done:
  * Hardware clock set time is subtracted from read_time to 'refer back', or
  * delay, the trigger point.  Fractional parts must be accounted for in this
  * way, because the Hardware Clock can only be set to a whole second.
- *
- * <universal>: the Hardware Clock is kept in UTC.
- *
- * <testing>:  We are running in test mode (no updating of clock).
- *
  */
 static void
 do_adjustment(const struct hwclock_control *ctl, struct adjtime *adjtime_p,
