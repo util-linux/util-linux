@@ -652,27 +652,24 @@ static int strtosize_sectors(const char *str, unsigned long sector_size,
 	size_t len = strlen(str);
 	int insec = 0;
 	int rc;
+	char *buf = NULL;
 
 	if (!len)
 		return 0;
 
 	if (str[len - 1] == 'S' || str[len - 1] == 's') {
 		insec = 1;
-		str = strndup(str, len - 1); /* strip trailing 's' */
+		str = buf = strndup(str, len - 1); /* strip trailing 's' */
 		if (!str)
 			return -errno;
 	}
 
 	rc = strtosize(str, res);
-	if (rc)
-		return rc;
-
-	if (insec) {
+	if (rc == 0 && insec)
 		*res *= sector_size;
-		free((void *)str);
-	}
 
-	return 0;
+	free(buf);
+	return rc;
 }
 
 void resize_partition(struct fdisk_context *cxt)
