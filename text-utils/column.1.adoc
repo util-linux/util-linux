@@ -59,15 +59,20 @@ This is the default mode (required for backwards compatibility).
 This mode is enabled with the *-x, --fillrows* option.
 
 *create a table*::
-Determine the number of columns the input contains and create a table. This mode is enabled with the *-t, --table* option. Output is aligned to the terminal width in interactive mode and 80 columns in non-interactive mode (see *--output-width* for more details). Custom formatting can be applied by using various *--table-\** options.
+Determine the number of columns the input contains and create a table.
+This mode is enabled with the *-t*/*--table* option.
+Output is aligned to the terminal width in interactive mode, and to 80 columns
+in non-interactive mode (see *--output-width* for more details).
+Custom formatting can be applied by using various **--table-*** options.
 
 Input is taken from _file_, or otherwise from standard input. Empty lines are ignored and all invalid multibyte sequences are encoded with the x<hex> convention.
 
 == OPTIONS
 
-The argument _columns_ for *--table-\** options is a comma separated list of
-user supplied names, defined with *--table-column _name1_,_name2_,...*, indices of columns, as they
-appear in the input, beginning with 1, or names, defined by a *--table-columns* attribute.
+The argument _columns_, for the **--table-*** options below, is a comma-separated list
+of user-supplied names defined with *--table-columns* _name1_**,**_name2_**,**...,
+or indices of columns as they appear in the input, beginning with 1,
+or names defined through a *--table-column* attribute.
 It's possible to mix names and indices. The special placeholder '0' (e.g. -R0) may
 be used to specify all columns and '-1' (e.g. -R -1) to specify the last visible column.
 It's possible to use ranges like '1-5' when addressing columns by indices.
@@ -76,80 +81,86 @@ It's possible to use ranges like '1-5' when addressing columns by indices.
 Use JSON output format to print the table. The option *--table-columns* is required and the option *--table-name* is recommended.
 
 *-c, --output-width* _width_::
-Output is formatted to a width specified as a number of characters. The original name of this option is *--columns*; this name is deprecated since v2.30. Note that input longer than _width_ is not truncated by default. The default is the terminal width and 80 columns in non-interactive mode. The column headers are never truncated.
+Output is formatted to a width specified as a number of characters.
+Note that input longer than _width_ is not truncated by default.
+The default is the terminal width in interactive mode, and 80 columns in non-interactive mode.
+The column headers are never truncated.
 +
-The placeholder "unlimited" (or 0) can be used to prevent restricting output width. This is recommended for example when redirecting output to a file.
+The placeholder *unlimited* (or *0*) can be used to prevent restricting the output width.
+This is recommended when redirecting output to a file.
++
+(The original long name of this option was *--columns*; this name is deprecated since v2.30.)
 
 *-d, --table-noheadings*::
-Omit printing the header. This option allows the use of user supplied column names on the command line, but keeps the header hidden when printing the table.
+Omit printing the header. This option allows having user-supplied column names on the command line, but keeps the header hidden when printing the table.
 
 *-o, --output-separator* _string_::
 Column delimiter for table output (default is two spaces).
 
 *-s, --separator* _separators_::
-Possible input item delimiters (default is whitespace).
+Possible input-item delimiters (default is whitespace).
 
 *-S, --use-spaces* _number_::
-When not in table mode, use whitespaces instead of tabulators to align the columns. This option specifies the minimum number of whitespaces that separate two columns.
+When not in table mode, use spaces instead of tabulators to align the columns. This option specifies the minimum number of spaces that separate two columns.
 
 *-t, --table*::
 Determine the number of columns the input contains and create a table. Columns are by default delimited with whitespace, or with characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
 
 *-C, --table-column* _attributes_::
-Define a column with a comma separated list of column attributes.
+Define a column with a comma-separated list of attributes.
 This option can be used more than once, every use defines a single column.
-Attributes replace some of *--table-* options. For example, *--table-column name=FOO,right*
-defines a column where text is aligned to right. The option is
-mutually exclusive to *--table-columns*.
+Attributes replace some of the **--table-*** options: for example,
+*--table-column name=FOO,right* defines a column where text is aligned to the right.
+The option is mutually exclusive with *-N*/*--table-columns*.
 +
 Supported attributes are:
 +
-*name=string*;;
+**name=**_string_;;
 Column name.
 *trunc*;;
 Truncate column text when necessary. The same as *--table-truncate*.
 *right*;;
 Right align text. The same as *--table-right*.
-*width=number*;;
-Column width. It's used only as a hint. To force it, specify the *strictwidth* attribute
+**width=**_number_;;
+Column width. It's used only as a hint. To enforce it, specify the *strictwidth* attribute
 as well.
 *strictwidth*;;
-Strictly follow column *width=* setting.
+Strictly follow the *width=* setting.
 *noextreme*;;
-Ignore unusually long cell width. See *--table-noextreme* for more details.
+Ignore unusually long content width. See *--table-noextreme* for more details.
 *wrap*;;
 Allow using a multi-line cell for long text if necessary. See *--table-wrap* for more details.
 *hide*;;
 Don't print the column. See *--table-hide* for more details.
-*json=type*;;
-Define column type for JSON output. Supported types are string, number and boolean.
+**json=**_type_;;
+Define the column type for JSON output. Supported types are *string*, *number* and *boolean*.
 
 *-N, --table-columns* _names_::
-Specify column names with a comma separated list. The names are used
-for the table header and column addressing in option arguments. See also *--table-column*.
+Specify column names with a comma-separated list. The names are used for the table header
+and for column addressing in option arguments. See also *--table-column*.
 
 *-l, --table-columns-limit* _number_::
-Specify maximum number of input columns. The last column will contain all remaining line data if the limit is smaller than the number of the columns in the input data.
+Specify the maximum number of input columns. The last column will contain all remaining line data if the limit is smaller than the number of columns in the input data.
 
 *-R, --table-right* _columns_::
-Right align text in specified columns.
+Right align text in the specified columns.
 
 *-T, --table-truncate* _columns_::
-Specify columns where text can be truncated when necessary, otherwise very long table entries may be printed on multiple lines.
+Specify the columns where text can be truncated when necessary, otherwise very long table entries may be printed on multiple lines.
 
 *-E, --table-noextreme* _columns_::
-Specify columns where is possible to ignore unusually long (longer than average) cells when calculate column width. The option has impact to the width calculation and table formatting, but the printed text is not affected.
+Specify the columns where longer-than-average content should be ignored when calculating the column width. The option influences width calculation and table formatting, but the printed text is not affected.
 +
-The option is used for the last visible column by default.
+This option is active by default for the last visible column.
 
 *-e, --table-header-repeat*::
 Print header line for each page.
 
 *-W, --table-wrap* _columns_::
-Specify columns where multi-line cells can be used for long text.
+Specify the columns where multi-line cells can be used for long text.
 
 *-H, --table-hide* _columns_::
-Don't print specified columns. The special placeholder '-' may be used to hide all unnamed columns (see *--table-columns*).
+Don't print the specified columns. The special placeholder '*-*' may be used to hide all unnamed columns (see *--table-columns*).
 
 *-O, --table-order* _columns_::
 Specify the output column order.
@@ -167,10 +178,10 @@ Preserve whitespace-only lines in the input. The default is to ignore all empty 
 Specify the column to use for a tree-like output. Note that the circular dependencies and other anomalies in child and parent relation are silently ignored.
 
 *-i, --tree-id* _column_::
-Specify the column that contains each line's unique child IDs for a child-parent relation.
+Specify the column that contains each line's unique child ID for a child-parent relation.
 
 *-p, --tree-parent* _column_::
-Specify the column that contains each line's parent IDs for a child-parent relation.
+Specify the column that contains each line's parent ID for a child-parent relation.
 
 *-x, --fillrows*::
 Fill rows before filling columns.
