@@ -454,6 +454,7 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			errno = 0;
+			/* strtopid_or_err() is not suitable here; 0 can be passed.*/
 			ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
 			break;
 		case 'r':

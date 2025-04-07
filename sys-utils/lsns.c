@@ -1689,7 +1689,7 @@ int main(int argc, char *argv[])
 			ls.persist = 1;
 			break;
 		case 'p':
-			ls.fltr_pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			ls.fltr_pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'n':
 			ls.no_headings = 1;

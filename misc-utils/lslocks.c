@@ -382,6 +382,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 				l->pid = oinfo->pid;
 				l->cmdname = xstrdup(oinfo->cmdname);
 			} else {
+				/* strtopid_or_err() is not suitable here; tok can be -1.*/
 				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
 				if (l->pid > 0) {
 					l->cmdname = pid_get_cmdname(l->pid);
@@ -902,7 +903,7 @@ int main(int argc, char *argv[])
 			json = 1;
 			break;
 		case 'p':
-			target_pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			target_pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			outarg = optarg;
