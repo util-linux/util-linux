@@ -497,6 +497,8 @@ int main(int argc, char **argv)
 		case 'a':
 			rm_all = 1;
 			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				if (!strcmp(optarg, "shm"))
 					what_all = SHM;
 				else if (!strcmp(optarg, "pshm"))

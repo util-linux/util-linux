@@ -627,9 +627,11 @@ static void parse_options(int argc, char **argv, struct uuidd_cxt_t *uuidd_cxt,
 		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'C':
-			if (optarg != NULL)
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				uuidd_cxt->cont_clock_offset = parse_cont_clock(optarg);
-			else
+			} else
 				uuidd_cxt->cont_clock_offset = 7200; /* default 2h */
 			break;
 		case 'd':
