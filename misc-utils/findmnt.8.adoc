@@ -90,7 +90,7 @@ Use JSON output format.
 *-k*, *--kernel*[**=**_method_]::
 Reads information about filesystems from the kernel. This is the default output. The format is tree-like and only includes mount options managed by the kernel (see also *--mtab*).
 +
-The optional argument _method_ can be either:
+The optional argument _method_ is supported only for the long variant (--kernel). The short variant (-k) defaults to the mountinfo method for backward compatibility. The supported methods can be either:
 +
 * *mountinfo* - this is the default method and it reads data from the _/proc/self/mountinfo_ file.
 +
