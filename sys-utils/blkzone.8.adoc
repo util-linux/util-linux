@@ -29,31 +29,29 @@ The command *blkzone report* is used to report device zone information.
 By default, the command will report all zones from the start of the block device. Options may be used to modify this behavior, changing the starting zone or the size of the report, as explained below.
 
 Report output:
-[cols=",",]
-|===
-|start |Zone start sector
-|len |Zone length in number of sectors
-|cap |Zone capacity in number of sectors
-|wptr |Zone write pointer position
-|reset |Reset write pointer recommended
-|non-seq |Non-sequential write resources active
-|cond |Zone condition
-|type |Zone type
-|===
+....
+ start      Zone start sector
+ len        Zone length in number of sectors
+ cap        Zone capacity in number of sectors
+ wptr       Zone write pointer position
+ reset      Reset write pointer recommended
+ non-seq    Non-sequential write resources active
+ cond       Zone condition
+ type       Zone type
+....
 
 Zone conditions:
-[cols=",",]
-|===
-|cl |Closed
-|nw |Not write pointer
-|em |Empty
-|fu |Full
-|oe |Explicitly opened
-|oi |Implicitly opened
-|ol |Offline
-|ro |Read only
-|x? |Reserved conditions (should not be reported)
-|===
+....
+ cl    Closed
+ nw    Not write pointer
+ em    Empty
+ fu    Full
+ oe    Explicitly opened
+ oi    Implicitly opened
+ ol    Offline
+ ro    Read only
+ xN    Reserved conditions (should not be reported)
+....
 
 === capacity
 
