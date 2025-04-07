@@ -567,6 +567,7 @@ mount -t tmpfs none /mnt -o \
 ....
 ____
 
++
 For more details, see *selinux*(8).
 
 *defaults*::
@@ -746,6 +747,7 @@ and xfs.
 Note that comma is used as a separator between mount options, it means
 that auto-fstypes values have to be properly quoted, don’t forget that the shell
 strips off quotes and thus double quoting is required. For example:
++
 ____
 mount -t auto -o'X-mount.auto-fstypes="noext2,ext3"'  /dev/sdc1 /mnt/test
 ____
@@ -933,17 +935,23 @@ Set the umask applied to directories only. The default is the umask of the curre
 Set the umask applied to regular files only. The default is the umask of the current process. The value is given in octal.
 
 **allow_utime=**__value__::
-This option controls the permission check of mtime/atime.
+This option controls the permission check of mtime/atime.  Possible values:
 
 *20*;;
-If current process is in group of file's group ID, you can change timestamp.
-
+If the current process is in the group of the file's group ID,
+you can change the timestamp.
++
 *2*;;
-Other users can change timestamp.
+Other users can change the timestamp.
 
-The default is set from 'dmask' option. (If the directory is writable, *utime*(2) is also allowed. I.e. ~dmask & 022)
-
-Normally *utime*(2) checks that the current process is owner of the file, or that it has the *CAP_FOWNER* capability. But FAT filesystems don't have UID/GID on disk, so the normal check is too inflexible. With this option you can relax it.
++
+The default is set from the above *dmask* option. (If the directory
+is writable, *utime*(2) is also allowed.  That is: ~dmask & 022.)
+ +
+Normally *utime*(2) checks that the current process is the owner of the
+file, or that it has the *CAP_FOWNER* capability. But FAT filesystems
+don't have UID/GID on disk, so the normal check is too inflexible.
+With this option you can relax it.
 
 **check=**__value__::
 Three different levels of pickiness can be chosen:
@@ -1584,11 +1592,11 @@ Path to *pkcs7*(1ssl) signature of root hash hex string. Requires crypt_activate
 
 **verity.oncorruption=**__ignore__|__restart__|__panic__::
 Instruct the kernel to ignore, reboot or panic when corruption is detected. By default the I/O operation simply fails. Requires Linux 4.1 or newer, and libcrypsetup 2.3.4 or newer. Optional.
-
++
 Supported since util-linux v2.35.
-
-For example commands:
-
++
+For example, the commands:
++
 ....
 mksquashfs /etc /tmp/etc.raw
 veritysetup format /tmp/etc.raw /tmp/etc.verity --root-hash-file=/tmp/etc.roothash
@@ -1598,6 +1606,7 @@ mount -o verity.hashdevice=/tmp/etc.verity,verity.roothashfile=/tmp/etc.roothash
 verity.roothashsig=/tmp/etc.roothash.p7s /tmp/etc.raw /mnt
 ....
 
++
 create squashfs image from _/etc_ directory, verity hash device and mount verified filesystem image to _/mnt_. The kernel will verify that the root hash is signed by a key from the kernel keyring if roothashsig is used.
 
 == LOOP-DEVICE SUPPORT
