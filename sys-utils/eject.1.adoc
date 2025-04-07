@@ -18,6 +18,8 @@ for conditions under which this file may be redistributed.
 
 eject - eject removable media
 
+== SYNOPSIS
+
 *eject* [options] _device_|_mountpoint_
 
 == DESCRIPTION
