@@ -48,9 +48,9 @@ hexdump - display file contents in hexadecimal, decimal, octal, or ascii
 
 == SYNOPSIS
 
-*hexdump* _options file_ ...
+*hexdump* [options] _file_ ...
 
-*hd* _options file_ ...
+*hd* [options] _file_ ...
 
 == DESCRIPTION
 
@@ -116,29 +116,24 @@ If an iteration count and/or a byte count is specified, a single slash must be p
 
 The format is required and must be surrounded by double quote (" ") marks. It is interpreted as a fprintf-style format string (see *fprintf*(3)), with the following exceptions:
 
-1.::
-An asterisk (*) may not be used as a field width or precision.
+. An asterisk (*) may not be used as a field width or precision.
 
-2.::
-A byte count or field precision _is_ required for each *s* conversion character (unlike the *fprintf*(3) default which prints the entire string if the precision is unspecified).
+. A byte count or field precision _is_ required for each *s* conversion character
+(unlike the *fprintf*(3) default which prints the entire string if the precision is unspecified).
 
-3.::
-The conversion characters *h*, *l*, *n*, *p*, and *q* are not supported.
+. The conversion characters *h*, *l*, *n*, *p*, and *q* are not supported.
 
-4.::
-The single character escape sequences described in the C standard are supported:
-
+. The single character escape sequences described in the C standard are supported:
++
 ____
-|===
-|NULL |\0
-|<alert character> |\a
-|<backspace> |\b
-|<form-feed> |\f
-|<newline> |\n
-|<carriage return> |\r
-|<tab> |\t
-|<vertical tab> |\v
-|===
+ \0   NULL
+ \a   alert character
+ \b   backspace
+ \f   form-feed
+ \n   newline
+ \r   carriage return
+ \t   tab
+ \v   vertical tab
 ____
 
 === Conversion strings
@@ -159,16 +154,16 @@ Output characters in the default character set. Non-printing characters are disp
 
 *_u*::
 Output US ASCII characters, with the exception that control characters are displayed using the following, lower-case, names. Characters greater than 0xff, hexadecimal, are displayed as hexadecimal strings.
-
++
 ____
-|===
-|000 nul |001 soh |002 stx |003 etx |004 eot |005 enq
-|006 ack |007 bel |008 bs |009 ht |00A lf |00B vt
-|00C ff |00D cr |00E so |00F si |010 dle |011 dc1
-|012 dc2 |013 dc3 |014 dc4 |015 nak |016 syn |017 etb
-|018 can |019 em |01A sub |01B esc |01C fs |01D gs
-|01E rs |01F us |0FF del | | |
-|===
+ 00 nul     08 bs      10 dle     18 can     7F del
+ 01 soh     09 ht      11 dc1     19 em
+ 02 stx     0A lf      12 dc2     1A sub
+ 03 etx     0B vt      13 dc3     1B esc
+ 04 eot     0C ff      14 dc4     1C fs
+ 05 enq     0D cr      15 nak     1D gs
+ 06 ack     0E so      16 syn     1E rs
+ 07 bel     0F si      17 etb     1F us
 ____
 
 === Colors
