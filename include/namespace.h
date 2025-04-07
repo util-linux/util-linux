@@ -3,10 +3,14 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Compat code so unshare and setns can be used with older libcs
+ * Compat code to support older libcs.
  */
 #ifndef UTIL_LINUX_NAMESPACE_H
 # define UTIL_LINUX_NAMESPACE_H
+
+/*
+ * Compat code for sched.h (unshare and setns)
+ */
 
 # include <sched.h>
 
@@ -51,6 +55,14 @@ static inline int setns(int fd, int nstype)
 {
 	return syscall(SYS_setns, fd, nstype);
 }
+# endif
+
+/*
+ * Compat code for sockios.h
+ */
+
+# ifndef SIOCGSKNS
+#  define SIOCGSKNS 0x894C
 # endif
 
 #endif	/* UTIL_LINUX_NAMESPACE_H */
