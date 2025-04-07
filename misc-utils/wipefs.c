@@ -711,6 +711,8 @@ main(int argc, char **argv)
 			break;
 		case 'b':
 			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				ctl.backup = optarg;
 			} else {
 				ctl.backup = getenv("HOME");

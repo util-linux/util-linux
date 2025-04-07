@@ -196,9 +196,11 @@ static void enable_namespace(int nstype, const char *path)
 {
 	struct namespace_file *nsfile = get_nsfile(nstype);
 
-	if (nsfile)
+	if (nsfile) {
+		if (path && *path == '=')	/* used in getopt_long() block */
+			path++;
 		enable_nsfile(nsfile, path);
-	else
+	} else
 		assert(nsfile);
 }
 
@@ -620,12 +622,16 @@ int main(int argc, char *argv[])
 				do_rd = true;
 			break;
 		case 'w':
-			if (optarg)
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				open_target_fd(&wd_fd, "cwd", optarg);
-			else
+			} else
 				do_wd = true;
 			break;
 		case 'W':
+			if (optarg && *optarg == '=')
+				optarg++;
 			wdns = optarg;
 			break;
 		case 'e':
