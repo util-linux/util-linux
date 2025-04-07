@@ -47,15 +47,16 @@ mount - mount a filesystem
 
 *mount* [*-l*] [*-t* _fstype_]
 
-*mount* *-a* [*-fFnrsvw*] [*-t* _fstype_] [*-O* _optlist_]
+*mount* *-a* [*-F*] [*-fnrsvw*] [*-t* _fstype_] [*-O* _optlist_]
 
 *mount* [*-fnrsvw*] [*-o* _options_] _device_|_mountpoint_
 
-*mount* [*-fnrsvw*] [*-t* _fstype_] [*-o* _options_] _device mountpoint_
+*mount* [*-fnrsvw*] [*-o* _options_] [*-t* _fstype_] _device mountpoint_
 
 *mount* *--bind*|*--rbind*|*--move* _olddir newdir_
 
-*mount* *--make-*[*shared*|*slave*|*private*|*unbindable*|*rshared*|*rslave*|*rprivate*|*runbindable*] _mountpoint_
+*mount* *--make-*[*r*]{*shared*|*slave*|*private*|*unbindable*} _mountpoint_
+
 
 == DESCRIPTION
 
@@ -765,8 +766,8 @@ Note that *mount*(8) still sanitizes and canonicalizes the source and target pat
 *X-mount.noloop*::
 Do not create and mount a loop device, even if the source of the mount is a regular file.
 
-*X-mount.subdir=*__directory__::
-Allow mounting sub-directory from a filesystem instead of the root directory. For now, this feature is implemented by temporary filesystem root directory mount in unshared namespace and then bind the sub-directory to the final mount point and umount the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple *mount*(2) syscalls.
+**X-mount.subdir=**_directory_::
+Allow mounting a sub-directory of a filesystem instead of the root directory. For now, this feature is implemented by a temporary filesystem root-directory mount in an unshared namespace and then binding the sub-directory to the final mount point and unmounting the root of the filesystem. The sub-directory mount shows up atomically for the rest of the system although it is implemented by multiple *mount*(2) syscalls.
 +
 Note that this feature will not work in session with an unshared private mount namespace (after *unshare --mount*) on old kernels or with *mount*(8) without support for file-descriptors-based mount kernel API. In this case, you need *unshare --mount --propagation shared*.
 +
@@ -1513,7 +1514,7 @@ Set behavior on error:
 *panic*;;
 If an error is encountered, cause a kernel panic.
 
-[**lock**|**umount**|*repair*];;
+**lock**|**umount**|*repair*;;
 These mount options don't do anything at present; when an error is encountered only a console message is printed.
 
 === Mount options for umsdos
@@ -1590,7 +1591,7 @@ Parity bytes for FEC (default: 2). Optional.
 **verity.roothashsig=**__path__::
 Path to *pkcs7*(1ssl) signature of root hash hex string. Requires crypt_activate_by_signed_key() from cryptsetup and kernel built with *CONFIG_DM_VERITY_VERIFY_ROOTHASH_SIG*. For device reuse, signatures have to be either used by all mounts of a device or by none. Optional.
 
-**verity.oncorruption=**__ignore__|__restart__|__panic__::
+**verity.oncorruption=**{*ignore*|*restart*|*panic*}::
 Instruct the kernel to ignore, reboot or panic when corruption is detected. By default the I/O operation simply fails. Requires Linux 4.1 or newer, and libcrypsetup 2.3.4 or newer. Optional.
 +
 Supported since util-linux v2.35.
