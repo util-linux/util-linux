@@ -8,7 +8,9 @@
 
 == NAME
 
-choom - display and adjust OOM-killer score.
+choom - display or adjust OOM-killer score
+
+== SYNOPSIS
 
 *choom* *-p* _PID_
 
@@ -18,7 +20,7 @@ choom - display and adjust OOM-killer score.
 
 == DESCRIPTION
 
-The *choom* command displays and adjusts Out-Of-Memory killer score setting.
+The *choom* command displays or adjusts the Out-Of-Memory killer score setting.
 
 == OPTIONS
 
