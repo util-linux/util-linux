@@ -104,7 +104,8 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
 
 	if (!canonic) {
 		char *n, *v;
-
+		/* The mntcache is always used; see the main().  There is no
+		 * need to free the memory allocated by mnt_resolve_spec(). */
 		special = mnt_resolve_spec(orig_special, mntcache);
 		if (!special && blkid_parse_tag_string(orig_special, &n, &v) == 0) {
 			special = buf = resolve_swapfile_tag(n, v);
@@ -147,6 +148,8 @@ static int swapoff_by(const char *name, const char *value, int quiet)
 	char *buf = NULL;
 	int rc;
 
+	/* The mntcache is always used; see the main().  There is no
+	 * need to free the memory allocated by mnt_resolve_tag(). */
 	special = mnt_resolve_tag(name, value, mntcache);
 	if (!special)
 		special = buf = resolve_swapfile_tag(name, value);
