@@ -1531,7 +1531,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -F, --tab-file <path>  alternative file for -s, -m or -k options\n"), out);
 	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"
 		"                          (includes user space mount options)\n"), out);
-	fputs(_(" -k, --kernel[=<method>] search in kernel mount table (default)\n"
+	fputs(_(" -k                     alias to '--kernel mountinfo'\n"), out);
+	fputs(_(" --kernel[=<method>]    search in kernel mount table (default)\n"
 		"                          <method> is mountinfo or listmount\n"), out);
 	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
 	fputs(_(" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"), out);
@@ -1764,7 +1765,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_SHADOWED,
 		FINDMNT_OPT_HYPERLINK,
 		FINDMNT_OPT_ID,
-		FINDMNT_OPT_UNIQ_ID
+		FINDMNT_OPT_UNIQ_ID,
+		FINDMNT_OPT_KERNEL
 	};
 
 	static const struct option longopts[] = {
@@ -1781,7 +1783,7 @@ int main(int argc, char *argv[])
 		{ "help",	    no_argument,       NULL, 'h'		 },
 		{ "invert",	    no_argument,       NULL, 'i'		 },
 		{ "json",	    no_argument,       NULL, 'J'		 },
-		{ "kernel",	    optional_argument, NULL, 'k'		 },
+		{ "kernel",	    optional_argument, NULL, FINDMNT_OPT_KERNEL	 },
 		{ "list",	    no_argument,       NULL, 'l'		 },
 		{ "mountpoint",	    required_argument, NULL, 'M'		 },
 		{ "mtab",	    no_argument,       NULL, 'm'		 },
@@ -1844,7 +1846,7 @@ int main(int argc, char *argv[])
 	findmnt.flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehIiJfF:o:O:p::PQ:k::lmM:nN:rst:uvRS:T:Uw:VxyH",
+				"AabCcDd:ehIiJfF:o:O:p::PQ:klmM:nN:rst:uvRS:T:Uw:VxyH",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1941,6 +1943,9 @@ int main(int argc, char *argv[])
 			findmnt.flags &= ~FL_TREE;
 			break;
 		case 'k':
+			tabtype = TABTYPE_KERNEL_MOUNTINFO;
+			break;
+		case FINDMNT_OPT_KERNEL:
 			if (optarg) {
 				if (strcmp(optarg, "mountinfo") == 0)
 					tabtype = TABTYPE_KERNEL_MOUNTINFO;
