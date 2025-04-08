@@ -605,41 +605,10 @@ XXH_PUBLIC_API void XXH32_canonicalFromHash(XXH32_canonical_t* dst, XXH32_hash_t
  */
 XXH_PUBLIC_API XXH32_hash_t XXH32_hashFromCanonical(const XXH32_canonical_t* src);
 
+/* Reuse FALLTHROUGH macro from c.h */
+#include "c.h"
 
-#ifdef __has_attribute
-# define XXH_HAS_ATTRIBUTE(x) __has_attribute(x)
-#else
-# define XXH_HAS_ATTRIBUTE(x) 0
-#endif
-
-/* C-language Attributes are added in C23. */
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ > 201710L) && defined(__has_c_attribute)
-# define XXH_HAS_C_ATTRIBUTE(x) __has_c_attribute(x)
-#else
-# define XXH_HAS_C_ATTRIBUTE(x) 0
-#endif
-
-#if defined(__cplusplus) && defined(__has_cpp_attribute)
-# define XXH_HAS_CPP_ATTRIBUTE(x) __has_cpp_attribute(x)
-#else
-# define XXH_HAS_CPP_ATTRIBUTE(x) 0
-#endif
-
-/*
-Define XXH_FALLTHROUGH macro for annotating switch case with the 'fallthrough' attribute
-introduced in CPP17 and C23.
-CPP17 : https://en.cppreference.com/w/cpp/language/attributes/fallthrough
-C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
-*/
-#if XXH_HAS_C_ATTRIBUTE(x)
-# define XXH_FALLTHROUGH [[fallthrough]]
-#elif XXH_HAS_CPP_ATTRIBUTE(x)
-# define XXH_FALLTHROUGH [[fallthrough]]
-#elif XXH_HAS_ATTRIBUTE(__fallthrough__)
-# define XXH_FALLTHROUGH __attribute__ ((fallthrough))
-#else
-# define XXH_FALLTHROUGH
-#endif
+#define XXH_FALLTHROUGH FALLTHROUGH
 
 /*!
  * @}

@@ -121,11 +121,11 @@ static int probe_md_tp(blkid_probe pr,
 	switch (md.level) {
 	case 6:
 		md.raid_disks--;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 5:
 	case 4:
 		md.raid_disks--;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 1:
 	case 0:
 	case 10:

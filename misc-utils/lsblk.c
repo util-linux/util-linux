@@ -2224,7 +2224,7 @@ static void set_column_type(const struct colinfo *ci, struct libscols_column *cl
 		/* See init_scols_filter(), it may overwrite the type */
 		if (!lsblk->bytes)
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case COLTYPE_NUM:
 		scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
 		scols_column_set_data_type(cl, SCOLS_DATA_U64);

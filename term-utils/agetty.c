@@ -2265,7 +2265,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				break;
 			case CTL('U'):
 				cp->kill = ascval;		/* set kill character */
-				/* fallthrough */
+				FALLTHROUGH;
 			case CTL('C'):
 				if (key == CTL('C') && !(op->flags & F_VCONSOLE))
 					/* Ignore CTRL+C on serial line */
@@ -2375,12 +2375,12 @@ static void termio_final(struct options *op, struct termios *tp, struct chardata
 	case 1:
 		/* odd parity */
 		tp->c_cflag |= PARODD;
-		/* fallthrough */
+		FALLTHROUGH;
 	case 2:
 		/* even parity */
 		tp->c_cflag |= PARENB;
 		tp->c_iflag |= INPCK | ISTRIP;
-		/* fallthrough */
+		FALLTHROUGH;
 	case (1 | 2):
 		/* no parity bit */
 		tp->c_cflag &= ~CSIZE;

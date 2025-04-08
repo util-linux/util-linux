@@ -586,11 +586,11 @@ static int handle_signal(struct ul_pty *pty, int fd)
 		}
 		break;
 	case SIGHUP:
-		/* fallthrough */
+		FALLTHROUGH;
 	case SIGTERM:
-		/* fallthrough */
+		FALLTHROUGH;
 	case SIGINT:
-		/* fallthrough */
+		FALLTHROUGH;
 	case SIGQUIT:
 		DBG(SIG, ul_debugobj(pty, " get signal SIG{TERM,INT,QUIT}"));
 		pty->delivered_signal = info.ssi_signo;

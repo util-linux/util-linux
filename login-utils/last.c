@@ -866,7 +866,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 					c = whydown;
 				quit = list(ctl, &ut, lastboot, c);
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 
 		case DEAD_PROCESS:
 			/*

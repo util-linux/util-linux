@@ -99,7 +99,7 @@ static bool unkn_fill_column(struct proc *proc,
 	case COL_TYPE:
 		if (!unkn->anon_ops)
 			return false;
-		/* FALL THROUGH */
+		FALLTHROUGH;
 	case COL_AINODECLASS:
 		if (unkn->anon_ops) {
 			str = anon_get_class(unkn);

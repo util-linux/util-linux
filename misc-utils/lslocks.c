@@ -722,7 +722,7 @@ static int get_json_type_for_column(int column_id, int representing_in_bytes)
 	case COL_SIZE:
 		if (!representing_in_bytes)
 			return SCOLS_JSON_STRING;
-		/* fallthrough */
+		FALLTHROUGH;
 	case COL_PID:
 	case COL_START:
 	case COL_END:

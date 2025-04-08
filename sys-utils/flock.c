@@ -405,7 +405,7 @@ int main(int argc, char *argv[])
 				if (open_flags & O_RDWR)
 					break;
 			}
-			/* fallthrough */
+			FALLTHROUGH;
 		default:
 			/* Other errors */
 			if (filename)

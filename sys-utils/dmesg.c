@@ -1928,7 +1928,7 @@ int main(int argc, char *argv[])
 			;
 		else
 			break;
-		/* fallthrough */
+		FALLTHROUGH;
 	case SYSLOG_ACTION_CLEAR:
 		if (klogctl(SYSLOG_ACTION_CLEAR, NULL, 0) < 0)
 			err(EXIT_FAILURE, _("clear kernel buffer failed"));
