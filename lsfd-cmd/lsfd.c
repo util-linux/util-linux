@@ -2600,6 +2600,8 @@ int main(int argc, char *argv[])
 			const char *subexpr = NULL;
 
 			ctl.sockets_only = 1;
+			if (optarg && *optarg == '=')
+				optarg++;
 			if (optarg == NULL)
 				subexpr = inet46_subexpr;
 			else if (strcmp(optarg, "4") == 0)

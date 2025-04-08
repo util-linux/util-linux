@@ -207,6 +207,8 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'd':
 			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
 				dump = fopen(optarg, "w");
 				if (!dump)
 					err(EXIT_FAILURE, _("Could not open %s"), optarg);
