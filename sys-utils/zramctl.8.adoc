@@ -54,17 +54,20 @@ Define the status output columns to be used. If no output arrangement is specifi
 +
 The default list of columns may be extended if _list_ is specified in the format _+list_ (e.g., *zramctl -o+COMP-RATIO*).
 
-*-p*, *--algorithm-params*::
-Set the algorithm parameters, for example, *level=9 dict=/etc/dictionary* to set compression level and pre-trained dictionary. Parameters are algorithm specific.
-
 *--output-all*::
 Output all available columns.
 
+*-p*, *--algorithm-params* _parameter_...::
+Specify the parameters for the selected compression algorithm.
+For example, *level=9 dict=/etc/dictionary* sets the compression level
+and pre-trained dictionary. Parameters are algorithm-specific.
+
+*-r*, *--reset* _zramdev_...::
+Reset the specified zram device(s).
+The settings of a zram device can be changed only after a reset.
+
 *--raw*::
 Use the raw format for status output.
-
-*-r*, *--reset*::
-Reset the options of the specified zram device(s). Zram device settings can be changed only after a reset.
 
 *-s*, *--size* _size_::
 Create a zram device of the specified _size_. Zram devices are aligned to memory pages; when the requested _size_ is not a multiple of the page size, it will be rounded up to the next multiple. When not otherwise specified, the unit of the _size_ parameter is bytes.
