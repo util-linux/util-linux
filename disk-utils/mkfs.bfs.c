@@ -48,8 +48,8 @@ struct bfssb {
 	int32_t s_backup_from, s_backup_to;
 
 	/* labels - may well contain garbage */
-	char s_fsname[6];
-	char s_volume[6];
+	char s_fsname[6] __ul_nonstring;
+	char s_volume[6] __ul_nonstring;
 	char s_pad[472];
 };
 

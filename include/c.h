@@ -153,6 +153,12 @@ C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
 # define __ul_returns_nonnull
 #endif
 
+#if __has_attribute(__nonstring__)
+# define __ul_nonstring __attribute__((__nonstring__))
+#else
+# define __ul_nonstring
+#endif
+
 /*
  * Force a compilation error if condition is true, but also produce a
  * result (of value 0 and type size_t), so the expression can be used
