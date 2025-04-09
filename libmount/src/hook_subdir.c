@@ -329,9 +329,6 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc, char **subdir
 
 	dir = mnt_opt_get_value(opt);
 
-	if (dir && *dir == '"')
-		dir++;
-
 	if (!dir || !*dir) {
 		DBG(HOOK, ul_debug("failed to parse X-mount.subdir '%s'", dir));
 		*rc = -MNT_ERR_MOUNTOPT;
