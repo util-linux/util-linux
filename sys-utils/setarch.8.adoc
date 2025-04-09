@@ -14,44 +14,45 @@ setarch - change reported architecture in new program environment and/or set per
 
 *setarch* [_arch_] [options] [_program_ [_argument_...]]
 
-*setarch* *--list*|*-h*|*-V*
-
-*arch* [options] [_program_ [_argument_...]]
+_arch_ [options] [_program_ [_argument_...]]
 
 == DESCRIPTION
 
-*setarch* modifies execution domains and process personality flags.
+*setarch* modifies the execution domain and process personality flags.
 
-The execution domains currently only affects the output of *uname -m*. For example, on an AMD64 system, running *setarch i386* _program_ will cause _program_ to see i686 instead of _x86_64_ as the machine type. It can also be used to set various personality options. The default _program_ is */bin/sh*.
+The execution domain currently only affects the output of *uname -m*.
+For example, on an AMD64 system, running *setarch i386* _program_ will
+cause _program_ to see *i686* instead of *x86_64* as the machine type.
+The default _program_ is */bin/sh*.
 
-Since version 2.33 the _arch_ command line argument is optional and *setarch* may be used to change personality flags (ADDR_LIMIT_*, SHORT_INODE, etc) without modification of the execution domain.
+Since version 2.33, the _arch_ command-line argument is optional
+and *setarch* may be used to change personality flags (ADDR_LIMIT_3GB,
+SHORT_INODE, etc) without modification of the execution domain.
 
 == OPTIONS
 
 *--list*::
 List the architectures that *setarch* knows about. Whether *setarch* can actually set each of these architectures depends on the running kernel.
 
-*--show[=personality]*::
+*--show*[**=**_personality_]::
 Show the currently active personality and flags.
-If the *personality* argument is provided, it is shown instead of the current one.
-*personality* is a hexadecimal number with values was described in *sys/personality.h*.
-+
-If *--pid=pid* option is provided, show them of the specifies process.
+If the _personality_ argument is provided, that personality is shown instead of the current one.
+_personality_ is a hexadecimal number whose possible values are described in *sys/personality.h*.
+
+*-p*, **--pid=**_pid_::
+When used with *--show*, show the personality and flags of the specified process.
 
 *--uname-2.6*::
-Causes the _program_ to see a kernel version number beginning with 2.6. Turns on *UNAME26*.
+Causes the specified _program_ to see a kernel version number beginning with 2.6. Turns on *UNAME26*.
 
 *-v*, *--verbose*::
 Be verbose.
 
 *-3*, *--3gb*::
-Specifies _program_ should use a maximum of 3GB of address space. Supported on x86. Turns on *ADDR_LIMIT_3GB*.
+The specified _program_ should use a maximum of 3GB of address space. Supported on x86. Turns on *ADDR_LIMIT_3GB*.
 
 *--4gb*::
 This option has no effect. It is retained for backward compatibility only, and may be removed in future releases.
-
-*-p*, *--pid=pid*::
-With *--show* option, show the currently active personality and flags of the specifies process.
 
 *-B*, *--32bit*::
 Limit the address space to 32 bits to emulate hardware. Supported on ARM and Alpha. Turns on *ADDR_LIMIT_32BIT*.
@@ -82,12 +83,12 @@ SVr4 bug emulation that will set *mmap*(2) page zero as read-only. Use when _pro
 
 include::man-common/help-version.adoc[]
 
-== EXAMPLE
+== EXAMPLES
 
 ....
 setarch --addr-no-randomize mytestprog
 setarch ppc32 rpmbuild --target=ppc --rebuild foo.src.rpm
-setarch ppc32 -v -vL3 rpmbuild --target=ppc --rebuild bar.src.rpm
+setarch ppc32 -vL3 rpmbuild --target=ppc --rebuild bar.src.rpm
 setarch ppc32 --32bit rpmbuild --target=ppc --rebuild foo.src.rpm
 setarch --show
 setarch --show=$(cat /proc/9284/personality)
