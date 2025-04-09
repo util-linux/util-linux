@@ -54,19 +54,12 @@ static int all;
  * mnt_resolve_tag() and mnt_resolve_spec() works with system visible block
  * devices only.
  */
-static char *swapoff_resolve_tag(const char *name, const char *value,
-				 struct libmnt_cache *cache)
+static char *resolve_swapfile_tag(const char *name, const char *value)
 {
 	char *path;
 	struct libmnt_table *tb;
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
-
-	/* this is usual case for block devices (and it's really fast as it uses
-	 * udev /dev/disk/by-* symlinks by default */
-	path = mnt_resolve_tag(name, value, cache);
-	if (path)
-		return path;
 
 	/* try regular files from /proc/swaps */
 	tb = get_swaps();
@@ -103,6 +96,7 @@ static char *swapoff_resolve_tag(const char *name, const char *value,
 static int do_swapoff(const char *orig_special, int quiet, int canonic)
 {
         const char *special = orig_special;
+	char *buf = NULL;
 	int rc = SWAPOFF_EX_OK;
 
 	if (verbose)
@@ -113,12 +107,14 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
 
 		special = mnt_resolve_spec(orig_special, mntcache);
 		if (!special && blkid_parse_tag_string(orig_special, &n, &v) == 0) {
-			special = swapoff_resolve_tag(n, v, mntcache);
+			special = buf = resolve_swapfile_tag(n, v);
 			free(n);
 			free(v);
 		}
-		if (!special)
-			return cannot_find(orig_special);
+		if (!special) {
+			rc = cannot_find(orig_special);
+			goto done;
+		}
 	}
 
 	if (swapoff(special) == 0)
@@ -140,13 +136,25 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
 		}
 	}
 
+done:
+	free(buf);
 	return rc;
 }
 
 static int swapoff_by(const char *name, const char *value, int quiet)
 {
-	const char *special = swapoff_resolve_tag(name, value, mntcache);
-	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(value);
+	const char *special;
+	char *buf = NULL;
+	int rc;
+
+	special = mnt_resolve_tag(name, value, mntcache);
+	if (!special)
+		special = buf = resolve_swapfile_tag(name, value);
+
+	rc = special ? do_swapoff(special, quiet, CANONIC) : cannot_find(value);
+	free(buf);
+
+	return rc;
 }
 
 static void __attribute__((__noreturn__)) usage(void)
