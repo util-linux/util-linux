@@ -559,8 +559,8 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 
 	ll_fp = fopen(lastlog_file, "r");
 	if (ll_fp == NULL) {
-		if (error && asprintf(error, "Failed to open '%s': %s",
-				     lastlog_file, strerror(errno)) < 0)
+		if (error && asprintf(error, "Failed to open '%s': %m",
+				     lastlog_file) < 0)
 			return -ENOMEM;
 
 		return -1;
@@ -569,8 +569,8 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 
 	if (fstat(fileno(ll_fp), &statll) != 0) {
 		retval = -1;
-		if (error && asprintf(error, "Cannot get size of '%s': %s",
-					lastlog_file, strerror(errno)) < 0)
+		if (error && asprintf(error, "Cannot get size of '%s': %m",
+					lastlog_file) < 0)
 			retval = -ENOMEM;
 
 		goto done;

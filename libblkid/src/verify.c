@@ -73,8 +73,8 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	diff = (uintmax_t)now - dev->bid_time;
 
 	if (stat(dev->bid_name, &st) < 0) {
-		DBG(PROBE, ul_debug("blkid_verify: error %s (%d) while "
-			   "trying to stat %s", strerror(errno), errno,
+		DBG(PROBE, ul_debug("blkid_verify: error %m (%d) while "
+			   "trying to stat %s", errno,
 			   dev->bid_name));
 	open_err:
 		if ((errno == EPERM) || (errno == EACCES) || (errno == ENOENT)) {
@@ -128,8 +128,8 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 
 	fd = open(dev->bid_name, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
 	if (fd < 0) {
-		DBG(PROBE, ul_debug("blkid_verify: error %s (%d) while "
-					"opening %s", strerror(errno), errno,
+		DBG(PROBE, ul_debug("blkid_verify: error %m (%d) while "
+					"opening %s", errno,
 					dev->bid_name));
 		goto open_err;
 	}
