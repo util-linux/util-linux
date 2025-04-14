@@ -91,11 +91,12 @@ Set the Hardware Clock to the time given by the *--date* option, and update the 
 This is an alternate to the *--hctosys* function that does not read the Hardware Clock nor set the System Clock; consequently there is not any drift correction. It is intended to be used in a startup script on systems with kernels above version 2.6 where you know the System Clock has been set from the Hardware Clock by the kernel during boot.
 +
 It does the following things that are detailed above in the *--hctosys* function:
-
++
 * Corrects the System Clock timescale to UTC as needed. Only instead of accomplishing this by setting the System Clock, *hwclock* simply informs the kernel and it handles the change.
 * Sets the kernel's NTP '11 minute mode' timescale.
 * Sets the kernel's timezone.
 
++
 The first two are only available on the first call of *settimeofday*(2) after boot. Consequently this option only makes sense when used in a startup script. If the Hardware Clocks timescale configuration is changed then a reboot would be required to inform the kernel.
 
 *-w*, *--systohc*::
@@ -166,8 +167,9 @@ This option was added in v2.26, because it is typical for systems to call *hwclo
 * (Re)calculating drift factor on every shutdown delivers suboptimal results. For example, if ephemeral conditions cause the machine to be abnormally hot the drift factor calculation would be out of range.
 * Significantly increased system shutdown times (as of v2.31 when not using *--update-drift* the RTC is not read).
 
++
 Having *hwclock* calculate the drift factor is a good starting point, but for optimal results it will likely need to be adjusted by directly editing the _{ADJTIME_PATH}_ file. For most configurations once a machine's optimal drift factor is crafted it should not need to be changed. Therefore, the old behavior to automatically (re)calculate drift was changed and now requires this option to be used. See the discussion below, under *The Adjust Function*.
-
+ +
 This option requires reading the Hardware Clock before setting it. If it cannot be read, then this option will cause the set functions to fail. This can happen, for example, if the Hardware Clock is corrupted by a power failure. In that case, the clock must first be set without this option. Despite it not working, the resulting drift correction factor would be invalid anyway.
 
 *-v*, *--verbose*::
