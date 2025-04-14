@@ -95,6 +95,8 @@ The CPU logical numbers are not affected by this option.
 *--output-all*::
 Output all available columns. This option must be combined with either *--extended*, *--parse* or *--caches*.
 
+include::man-common/help-version.adoc[]
+
 == BUGS
 
 The basic overview of CPU models is based on heuristics, taking into account differences such as
