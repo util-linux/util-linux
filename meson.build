@@ -1387,8 +1387,7 @@ exe = executable(
   more_sources,
   link_with : [lib_common],
   include_directories : includes,
-  dependencies : [lib_tinfo,
-                  curses_libs,
+  dependencies : [curses_libs,
 		  lib_magic],
   install : opt,
   build_by_default : opt)
@@ -1398,8 +1397,7 @@ exe2 = executable(
   link_with : [lib_common],
   include_directories : includes,
   c_args : '-DTEST_PROGRAM',
-  dependencies : [lib_tinfo,
-                  curses_libs,
+  dependencies : [curses_libs,
 		  lib_magic],
   build_by_default : opt and program_tests)
 exes += exe
