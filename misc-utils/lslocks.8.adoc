@@ -35,7 +35,8 @@ lslocks - list local system locks
 include::man-common/in-bytes.adoc[]
 
 *-H*, *--list-columns*::
-List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 *-i*, *--noinaccessible*::
 Ignore lock files which are inaccessible for the current user.

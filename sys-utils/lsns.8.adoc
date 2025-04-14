@@ -32,7 +32,8 @@ Note that *lsns* reads information directly from the _/proc_ filesystem and for 
 == OPTIONS
 
 *-H*, *--list-columns*::
-List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 *-J*, *--json*::
 Use JSON output format.

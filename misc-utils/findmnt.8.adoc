@@ -64,7 +64,8 @@ Search in an alternative file. If used with *--fstab*, *--mtab* or *--kernel*, t
 Print the first matching filesystem only.
 
 *-H*, *--list-columns*::
-List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 *--hyperlink*[**=**_mode_]::
 Print mountpoint paths as terminal hyperlinks. The optional _mode_ argument

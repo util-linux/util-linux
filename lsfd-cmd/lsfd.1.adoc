@@ -114,7 +114,8 @@ Dump the definition of counters used in *--summary* output.
 Print paths as terminal hyperlinks. The _mode_ can be set to "always", "never", or "auto". The optional argument _when_ can be set to "auto", "never", or "always". If the _when_ argument is omitted, it will default to "auto". The "auto" setting means that hyperlinks will only be used if the output is on a terminal.
 
 *-H*, *--list-columns*::
-List available columns that you can specify at *--output* option.
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 include::man-common/help-version.adoc[]
 

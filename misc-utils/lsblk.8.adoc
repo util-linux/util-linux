@@ -42,7 +42,8 @@ Disable all built-in filters and list all empty devices and RAM disk devices too
 include::man-common/in-bytes.adoc[]
 
 *-H*, *--list-columns*::
-List the available columns, use with *--json* or *--raw* to get output in machine-readable format.
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 *-D*, *--discard*::
 Print information about the discarding capabilities (TRIM, UNMAP) for each device.
