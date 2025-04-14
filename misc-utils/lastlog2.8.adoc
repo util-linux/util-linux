@@ -20,61 +20,61 @@ lastlog2 - displays date of last login for all users or a specific one
 
 == DESCRIPTION
 
-
-*lastlog2* displays the content of the last login database. The _login-name_,
+*lastlog2* displays the content of the last-login database. The _login-name_,
 _last-login-time_, _tty_ and _remote-host_ will be printed.
-The default (no flags) causes all last login entries to be printed, sorted
-by the order as written the first time into the database.
+By default (no flags) all last-login entries are printed,
+in the order they were first written into the database.
 
-Compared to *lastlog* this command is Y2038 safe and uses sqlite3 to store the
-information and not a sparse file.
+If a user has never logged in, the message *+++**+++Never logged in+++**+++*
+is displayed in the last-login-time column.
+
+Only the entries for the current users of the system are displayed.
+Other entries may exist for users that have meanwhile been deleted.
+
+Compared to *lastlog*(8), this command is Y2038-safe, and uses SQLite3
+instead of a sparse file to store the information.
 
 == OPTIONS
 
 *-a*, *--active*::
-Print last login records excluding users who have never logged in.
+Do not print entries for users who have never logged in.
 
-*-b*, *--before* _DAYS_::
-Print only last login records older than _DAYS_.
+*-b*, *--before* _days_::
+Print only the last-login records older than _days_.
 
 *-C*, *--clear*::
-Clear last login record of a user. This option can be used only together with
-*-u' (*--user*).
-
-*-d*, *--database _FILE_::
-Use _FILE_ as lastlog2 database.
-
-*-i*, *--import* _FILE_::
-Import data from old lastlog file _FILE_. Existing entries in the lastlog2
-database will be overwritten.
-
-*-r*, *--rename* _NEWNAME_::
+Clear the last-login record of a user.
 This option can only be used together with *-u* (*--user*).
 
-*-s*, *--service* _num_::
-Display PAM service used to login in the last column.
+*-d*, *--database* _file_::
+Use _file_ as lastlog2 database.
+
+*-i*, *--import* _file_::
+Import data from an old lastlog file named _file_.
+Existing entries in the lastlog2 database will be overwritten.
+
+*-r*, *--rename* _newname_::
+Rename the user given with *-u* to this _newname_.
+This option can only be used together with *-u* (*--user*).
+
+*-s*, *--service*::
+Display the PAM service used to login in the last column.
 
 *-S*, *--set*::
-Set last login record of a user to the current time. This option can only be used
-together with *-u* (*--user*).
+Set the last-login record of a user to the current time.
+This option can only be used together with *-u* (*--user*).
 
-*-t*, *--time* _DAYS_::
-Print only last login records more recent than _DAYS_.
+*-t*, *--time* _days_::
+Print only last-login records more recent than _days_.
 
-*-u*, *--users* _LOGINS_::
-Print only the last login record of the user _LOGIN_.
+*-u*, *--user* _login_::
+Print (or modify) the last-login record of the user _login_.
 
 *-h*, *--help*::
 Display help text and exit.
 
 *-v*, *--version*::
 Display version and exit.
-
-If the user has never logged in the message **Never logged in** will be displayed
-in the latest login time row.
-
-Only the entries for the current users of the system will be displayed.
-Other entries may exist for users that were deleted previously.
 
 == FILES
 
