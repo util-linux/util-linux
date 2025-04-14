@@ -44,9 +44,6 @@ Clear last login record of a user. This option can be used only together with
 *-d*, *--database _FILE_::
 Use _FILE_ as lastlog2 database.
 
-*-h*, *--help*::
-Display help message and exit.
-
 *-i*, *--import* _FILE_::
 Import data from old lastlog file _FILE_. Existing entries in the lastlog2
 database will be overwritten.
@@ -67,8 +64,11 @@ Print only last login records more recent than _DAYS_.
 *-u*, *--users* _LOGINS_::
 Print only the last login record of the user _LOGIN_.
 
+*-h*, *--help*::
+Display help text and exit.
+
 *-v*, *--version*::
-Print version number and exit.
+Display version and exit.
 
 If the user has never logged in the message **Never logged in** will be displayed
 in the latest login time row.

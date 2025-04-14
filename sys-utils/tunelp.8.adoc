@@ -56,6 +56,8 @@ This option resets the port. It requires a Linux kernel version of 1.1.80 or lat
 *-q*, *--print-irq* _<on|off>_::
 This option sets printing the display of the current IRQ setting.
 
+include::man-common/help-version.adoc[]
+
 == FILES
 
 _/dev/lp?_,
