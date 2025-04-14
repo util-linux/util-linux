@@ -1873,7 +1873,7 @@ exe = executable(
   link_with : [lib_common,
                lib_smartcols],
   # requires systemd v240 or newer
-  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH') == 1 ? lib_systemd : [] ],
+  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH').to_string() == '1' ? lib_systemd : [] ],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
