@@ -1,6 +1,6 @@
 po4a = find_program('po4a', required : false)
 
-if not (asciidoctor.found() and po4a.found())
+if not get_option('translate-docs').require(asciidoctor.found()).require(po4a.found()).allowed()
   subdir_done()
 endif
 
