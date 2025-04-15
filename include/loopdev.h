@@ -179,7 +179,6 @@ extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc);
 
 extern int loopcxt_get_fd(struct loopdev_cxt *lc);
-extern int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, mode_t mode);
 
 extern int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags);
 extern int loopcxt_deinit_iterator(struct loopdev_cxt *lc);

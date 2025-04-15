@@ -346,16 +346,6 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 	return __loopcxt_get_fd(lc, O_RDONLY);
 }
 
-int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, mode_t mode)
-{
-	if (!lc)
-		return -EINVAL;
-
-	lc->fd = fd;
-	lc->mode = mode;
-	return 0;
-}
-
 /*
  * @lc: context
  * @flags: LOOPITER_FL_* flags
