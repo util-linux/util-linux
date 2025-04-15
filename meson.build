@@ -1486,7 +1486,7 @@ has_seminfo_type = cc.has_type('struct seminfo', args : '-D_GNU_SOURCE', prefix 
 
 posixipc_libs = []
 if not cc.has_function('shm_open') and conf.get('HAVE_SYS_MMAN_H').to_string() == '1'
-  posixipc_libs = cc.find_library('rt', required : true)
+  posixipc_libs += cc.find_library('rt', required : true)
 endif
 
 if not cc.has_function('sem_close') and conf.get('HAVE_SEMAPHORE_H').to_string() == '1'
