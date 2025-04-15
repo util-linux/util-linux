@@ -144,6 +144,10 @@ time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv)
 }
 #if defined(__USE_TIME_BITS64) && defined(__GLIBC__)
 extern time_t uuid_time64(const uuid_t uu, struct timeval *ret_tv) __attribute__((weak, alias("__uuid_time")));
+#elif defined(__clang__) && defined(__APPLE__)
+__asm__(".globl _uuid_time");
+__asm__(".set _uuid_time, ___uuid_time");
+extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv);
 #else
 extern time_t uuid_time(const uuid_t uu, struct timeval *ret_tv) __attribute__((weak, alias("__uuid_time")));
 #endif
