@@ -1400,8 +1400,7 @@ exe = executable(
   more_sources,
   link_with : [lib_common],
   include_directories : includes,
-  dependencies : [lib_tinfo,
-                  curses_libs,
+  dependencies : [curses_libs,
 		  lib_magic],
   install : opt,
   build_by_default : opt)
@@ -1411,8 +1410,7 @@ exe2 = executable(
   link_with : [lib_common],
   include_directories : includes,
   c_args : '-DTEST_PROGRAM',
-  dependencies : [lib_tinfo,
-                  curses_libs,
+  dependencies : [curses_libs,
 		  lib_magic],
   build_by_default : opt and program_tests)
 exes += exe
@@ -1875,7 +1873,7 @@ exe = executable(
   link_with : [lib_common,
                lib_smartcols],
   # requires systemd v240 or newer
-  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH') == 1 ? lib_systemd : [] ],
+  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH').to_string() == '1' ? lib_systemd : [] ],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
