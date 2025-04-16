@@ -1418,12 +1418,9 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	do {
 		errno = 0;
 
-		/* For the ioctls, it's enough to use O_RDONLY, but udevd
-		 * monitor devices by inotify, and udevd needs IN_CLOSE_WRITE
-		 * event to trigger probing of the new device.
-		 *
-		 * The mode used for the device does not have to match the mode
-		 * used for the backing file.
+		/* For the ioctls, it's enough to use O_RDONLY for a read-only
+		 * loop device, but udevd monitor devices by inotify, and udevd
+		 * needs IN_CLOSE_WRITE event to trigger probing of the new device.
 		 */
 		dev_fd = __loopcxt_get_fd(lc, O_RDWR);
 		if (dev_fd >= 0 || lc->control_ok == 0)
