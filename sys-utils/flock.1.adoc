@@ -82,7 +82,7 @@ Fail if the lock cannot be acquired within _seconds_. Decimal fractional values 
 
 *--fcntl*::
 Instead of flock(2), apply an fcntl(2) open file description lock (that is, using the F_OFD_SETLK (non-blocking) or F_OFD_SETLKW (blocking) commands). These locks are independent of those applied via flock(2), but, unlike traditional POSIX fcntl() locks (F_SETLK, F_SETLKW), have semantics matching those of flock(2).
-
++
 This is only available on kernel versions >= 3.15.
 
 *--start* _offset_::

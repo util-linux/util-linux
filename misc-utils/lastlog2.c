@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 		{"set",      no_argument,       NULL, 'S'},
 		{"time",     required_argument, NULL, 't'},
 		{"user",     required_argument, NULL, 'u'},
-		{"version",  no_argument,       NULL, 'v'},
+		{"version",  no_argument,       NULL, 'V'},
 		{NULL, 0, NULL, '\0'}
 	};
 	char *error = NULL;
@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 
 	int c;
 
-	while ((c = getopt_long(argc, argv, "ab:Cd:hi:r:sSt:u:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ab:Cd:hi:r:sSt:u:vV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a': /* active; print lastlog excluding '**Never logged in**' users */
 			aflg = 1;
@@ -214,6 +214,7 @@ int main(int argc, char **argv)
 			uflg = 1;
 			user = optarg;
 			break;
+		case 'V':
 		case 'v': /* version; Print version number and exit */
 			print_version(EXIT_SUCCESS);
 			break;

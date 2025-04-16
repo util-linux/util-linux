@@ -104,6 +104,8 @@ Ignored: TERM TSTP TTIN TTOU
 Caught: HUP INT PIPE ALRM CHLD WINCH
 ....
 
+include::man-common/help-version.adoc[]
+
 == EXIT STATUS
 
 *kill* has the following exit status values:

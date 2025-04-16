@@ -44,6 +44,7 @@ Note the following restrictions (detailed in *capabilities*(7)) regarding modifi
 * A capability can be added to the ambient set only if it is currently present in both the permitted and inheritable sets.
 * Notwithstanding the syntax offered by *setpriv*, the kernel does not permit capabilities to be added to the bounding set.
 
++
 If you drop a capability from the bounding set without also dropping it from the inheritable set, you are likely to become confused. Do not do that.
 
 *--keep-groups*::

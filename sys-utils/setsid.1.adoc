@@ -31,11 +31,7 @@ Always create a new process.
 *-w*, *--wait*::
 Wait for the execution of the program to end, and return the exit status of this program as the exit status of *setsid*.
 
-*-V*, *--version*::
-Display version information and exit.
-
-*-h*, *--help*::
-Display help text and exit.
+include::man-common/help-version.adoc[]
 
 == AUTHORS
 

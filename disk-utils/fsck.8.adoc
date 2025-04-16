@@ -113,7 +113,7 @@ Produce verbose output, including all filesystem-specific commands that are exec
 Display help text and exit.
 
 *--version*::
-Display version information and exit.
+Display version and exit.
 
 == FILESYSTEM SPECIFIC OPTIONS
 

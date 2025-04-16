@@ -116,6 +116,8 @@ Use the raw *--list* output format.
 *-J*, *--json*::
 Use JSON format for *--list* output.
 
+include::man-common/help-version.adoc[]
+
 == ENCRYPTION
 
 *Cryptoloop is no longer supported in favor of dm-crypt.* For more details see *cryptsetup*(8).

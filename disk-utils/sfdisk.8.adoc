@@ -226,11 +226,11 @@ Wipe filesystem, RAID and partition-table signatures from the device, in order t
 *-W*, *--wipe-partitions* _when_::
 Wipe filesystem, RAID and partition-table signatures from a newly created partition, in order to avoid possible collisions. The argument _when_ can be *auto*, *never* or *always*. When this option is not given, the default is *auto*, in which case signatures are wiped only when in interactive mode and after confirmation by user. In all cases detected signatures are reported by warning messages after a new partition is created. See also *wipefs*(8) command.
 
-*-v*, *--version*::
-Display version information and exit.
-
 *-h*, *--help*::
 Display help text and exit.
+
+*-v*, *--version*::
+Display version and exit.
 
 == INPUT FORMATS
 

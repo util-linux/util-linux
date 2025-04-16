@@ -17,11 +17,15 @@ line - read one line
 
 == SYNOPSIS
 
-*line*
+*line* [*-h*|*-V*]
 
 == DESCRIPTION
 
 The utility *line* copies one line (up to a newline) from standard input to standard output. It always prints at least a newline and returns an exit status of 1 on EOF or read error.
+
+== OPTIONS
+
+include::man-common/help-version.adoc[]
 
 == SEE ALSO
 

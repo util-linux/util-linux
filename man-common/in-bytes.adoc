@@ -1,7 +1,5 @@
-Print the sizes in bytes rather than in a human-readable format. 
+Print sizes in bytes rather than in human-readable form.
 +
-By default, the unit, sizes are expressed in, is byte, and unit prefixes are in
-power of 2^10 (1024). Abbreviations of symbols are exhibited truncated in order
-to reach a better readability, by exhibiting alone the first letter of them;
-examples: "1 KiB" and "1 MiB" are respectively exhibited as "1 K" and "1 M",
-then omitting on purpose the mention "iB", which is part of these abbreviations.
+By default, sizes are shown in units that are powers of 1024 bytes.
+The formal abbreviations for these units (KiB, MiB, GiB, ...) are
+further shortened to just their first letter: K, M, G, ....

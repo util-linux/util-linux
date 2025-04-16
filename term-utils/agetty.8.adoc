@@ -180,7 +180,11 @@ Run login with this priority.
 *--reload*::
 Ask all running *agetty* instances to reload and update their displayed prompts, if the user has not yet commenced logging in. After doing so the command will exit. This feature might be unsupported on systems without Linux *inotify*(7).
 
-include::man-common/help-version.adoc[]
+*--help*::
+Display help text and exit.
+
+*--version*::
+Display version and exit.
 
 == CONFIG FILE ITEMS
 *agetty* reads the _/etc/login.defs_ configuration file (see *login.defs*(5)).
