@@ -116,7 +116,7 @@ Look for a syslog prefix on every line read from standard input. This prefix is 
 +
 If the prefix contains no facility, the facility defaults to what is specified by the *-p* option. Similarly, if no prefix is provided, the line is logged using the _priority_ given with *-p*.
 +
-This option doesn't affect a command-line message.
+This option doesn't affect a command-line message. This option is primarily designed for use cases where *logger* is used in a pipeline (e.g., daemon | logger --prio-prefix) to read multiple messages with different priorities.
 
 *--rfc3164*::
 Use the link:https://tools.ietf.org/html/rfc3164[RFC 3164] BSD syslog protocol to submit messages to a remote server.
@@ -133,7 +133,7 @@ The *nohost* value suppresses *gethostname*(2) information from the message head
 The RFC 5424 protocol has been the default for *logger* since version 2.26.
 
 *-s*, *--stderr*::
-Output the message to standard error as well as to the system log.
+Output the message to standard error as well as to the system log. The complete message is output in the same form as sent to syslog or journald, including priority and possibly other fields. This option is primarily designed for debugging purposes and is often used with *--no-act*.
 
 *--sd-id* _name_[**@**__digits__]::
 Specifies a structured data element ID for an RFC 5424 message header. The option has to be used before *--sd-param* to introduce a new element. The number of structured data elements is unlimited. The ID (_name_ plus possibly **@**__digits__) is case-sensitive and uniquely identifies the type and purpose of the element. The same ID must not exist more than once in a message. The **@**__digits__ part is required for user-defined non-standardized IDs.
