@@ -1418,11 +1418,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	do {
 		errno = 0;
 
-		/* For the ioctls, it's enough to use O_RDONLY for a read-only
-		 * loop device, but udevd monitor devices by inotify, and udevd
-		 * needs IN_CLOSE_WRITE event to trigger probing of the new device.
-		 */
-		dev_fd = __loopcxt_get_fd(lc, O_RDWR);
+		dev_fd = __loopcxt_get_fd(lc, mode);
 		if (dev_fd >= 0 || lc->control_ok == 0)
 			break;
 		if (errno != EACCES && errno != ENOENT)
