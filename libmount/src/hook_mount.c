@@ -90,7 +90,9 @@ static void free_hookset_data(	struct libmnt_context *cxt,
 
 	close_sysapi_fds(api);
 
+	free(api->subdir);
 	free(api);
+
 	mnt_context_set_hookset_data(cxt, hs, NULL);
 }
 
@@ -224,8 +226,6 @@ static int open_fs_configuration_context(struct libmnt_context *cxt,
 					 struct libmnt_sysapi *api,
 					 const char *type)
 {
-	DBG(HOOK, ul_debug(" new FS '%s'", type));
-
 	if (!type)
 		return -EINVAL;
 
@@ -285,10 +285,26 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	}
 
 	if (!rc) {
-		api->fd_tree = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
-		hookset_set_syscall_status(cxt, "fsmount", api->fd_tree >= 0);
-		if (api->fd_tree < 0)
+		int fd = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
+		hookset_set_syscall_status(cxt, "fsmount", fd >= 0);
+
+		if (fd >= 0 && api->subdir) {
+			/*
+			 * subdir for Linux >= 6.15, see hook_subdir.c for more details.
+			 */
+			DBG(HOOK, ul_debugobj(hs, "opening subdir (detached) '%s'", api->subdir));
+			int sub_fd = open_tree(fd, api->subdir,
+					AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW |
+					AT_RECURSIVE | OPEN_TREE_CLOEXEC |
+					OPEN_TREE_CLONE);
+			hookset_set_syscall_status(cxt, "open_tree", sub_fd >= 0);
+			close(fd);
+			fd = sub_fd;
+		}
+
+		if (fd < 0)
 			rc = -errno;
+		api->fd_tree = fd;
 	}
 
 	if (rc)

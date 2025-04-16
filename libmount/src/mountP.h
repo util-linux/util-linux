@@ -730,6 +730,9 @@ struct libmnt_sysapi {
 	int	fd_fs;		/* FD from fsopen() or fspick() */
 	int	fd_tree;	/* FD from fsmount() or open_tree() */
 
+	char	*subdir;	/* Linux >= 6.15 can directly open subdir;
+				 * hook_subdir sets this variable */
+
 	unsigned int is_new_fs : 1 ;	/* fd_fs comes from fsopen() */
 };
 

@@ -10,8 +10,26 @@
  * (at your option) any later version.
  *
  *
- * This is X-mount.subdir= implementation. The code uses global hookset data
- * rather than per-callback (hook) data.
+ * This is the implementation of X-mount.subdir=. The code uses global hookset
+ * data rather than per-callback (hook) data.
+ *
+ * Note that functionality varies significantly depending on the kernel version
+ * and available kernel mount interface:
+ *
+ * Supported scenarios:
+ *
+ * A) mount(2):
+ *	- Unshare, mount the filesystem to a private temporary mount point
+ *	- Bind mount subdirectory to the final target
+ *
+ * B) FD-based for Linux:
+ *	- Unshare, attach to a temporary mount point
+ *	- Open attached subdirectory and move to the final target
+ *
+ * C) FD-based for Linux >= 6.15 (with detached tree operations support):
+ *	- hook_subdir.c only initializes api->subdir (according to X-mount.subdir=)
+ *	- hook_mount.c opens detached subdirectory as a tree and later attaches to
+ *	  the final target
  *
  * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
@@ -19,6 +37,7 @@
 
 #include "mountP.h"
 #include "fileutils.h"
+#include "linux_version.h"
 
 struct hookset_data {
 	char *subdir;
@@ -54,10 +73,14 @@ static struct hookset_data *new_hookset_data(
 {
 	struct hookset_data *hsd = calloc(1, sizeof(struct hookset_data));
 
-	if (hsd && mnt_context_set_hookset_data(cxt, hs, hsd) != 0) {
-		/* probably ENOMEM problem */
-		free(hsd);
-		hsd = NULL;
+	if (hsd) {
+		hsd->new_ns_fd = hsd->old_ns_fd = -1;
+
+		if (mnt_context_set_hookset_data(cxt, hs, hsd) != 0) {
+			/* probably ENOMEM problem */
+			free(hsd);
+			hsd = NULL;
+		}
 	}
 	return hsd;
 }
@@ -84,8 +107,6 @@ static int tmptgt_unshare(struct hookset_data *hsd)
 {
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
 	int rc = 0;
-
-	hsd->old_ns_fd = hsd->new_ns_fd = -1;
 
 	/* create directory */
 	rc = ul_mkdir_p(MNT_PATH_TMPTGT, S_IRWXU);
@@ -137,6 +158,9 @@ fail:
 static int tmptgt_cleanup(struct hookset_data *hsd)
 {
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	if (!hsd || !hsd->subdir)
+		return 0;
+
 	if (!hsd->tmp_umounted) {
 		umount(MNT_PATH_TMPTGT);
 		hsd->tmp_umounted = 1;
@@ -167,8 +191,12 @@ static int do_mount_subdir(
 			const char *root)
 {
 	int rc = 0;
-	const char *subdir = hsd->subdir;
+	const char *subdir;
 	const char *target;
+
+	if (!hsd || !hsd->subdir)
+		return 0;
+	subdir = hsd->subdir;
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	struct libmnt_sysapi *api = mnt_context_get_sysapi(cxt);
@@ -186,18 +214,18 @@ static int do_mount_subdir(
 	target = mnt_fs_get_target(cxt->fs);
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
-	if (api && api->fd_tree >= 0) {
-		/* FD based way - unfortunately, it's impossible to open
-		 * sub-directory on not-yet attached mount. It means
-		 * hook_mount.c attaches FS to temporary directory, and we
-		 * clone and move the subdir, and umount the old unshared
-		 * temporary tree.
+	if (api && api->fd_tree >= 0 && !api->subdir) {
+		/* This is for older kernels with an FD-based mount API, but without
+		 * support for detached open_tree() functionality.
 		 *
-		 * The old mount(2) way does the same, but by BIND.
-		 */
+		 * We attach the filesystem to a temporary directory, clone and
+		 * move the subdirectory, then unmount the old unshared temporary
+		 * tree.
+		 *
+		 * The old mount(2) method does the same, but using BIND. */
 		int fd;
 
-		DBG(HOOK, ul_debug("attach subdir '%s'", subdir));
+		DBG(HOOK, ul_debug("opening subdir (ateched) '%s'", subdir));
 		fd = open_tree(api->fd_tree, subdir,
 					OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
 		mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
@@ -210,6 +238,8 @@ static int do_mount_subdir(
 			 * so we need to move the the original namespace.
 			 */
 			setns(hsd->old_ns_fd, CLONE_NEWNS);
+
+			DBG(HOOK, ul_debug("move_mount(to=%s)", target));
 
 			rc = move_mount(fd, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
 			mnt_context_syscall_save_status(cxt, "move_mount", rc == 0);
@@ -253,7 +283,11 @@ static int do_mount_subdir(
 	return rc;
 }
 
-
+/*
+ * This callback is invoked after mounting on old kernels, when the new
+ * filesystem is already attached to the temporary directory. It then moves the
+ * subdirectory to the final target in the original desired namespace.
+ */
 static int hook_mount_post(
 			struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
@@ -276,6 +310,12 @@ static int hook_mount_post(
 	return rc;
 }
 
+/*
+ * This callback is invoked before mounting, when all other hooks are
+ * initialized, and the FD-based API is ready (unless disabled by the user).
+ *
+ * See the description at the beginning of the file for supported scenarios.
+ */
 static int hook_mount_pre(
 			struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
@@ -285,8 +325,25 @@ static int hook_mount_pre(
 	int rc = 0;
 
 	hsd = mnt_context_get_hookset_data(cxt, hs);
-	if (!hsd)
+	if (!hsd || !hsd->subdir)
 		return 0;
+
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
+	/*
+	 * Linux >= 6.15 can open subdir on a detached tree. Therefore,
+	 * all of hook_subdir.c can be replaced by a single open_tree() call.
+	 */
+	struct libmnt_sysapi *api = mnt_context_get_sysapi(cxt);
+
+	if (api
+	    && cxt->helper == NULL
+	    && get_linux_version() >= KERNEL_VERSION(6, 15, 0)) {
+		DBG(HOOK, ul_debugobj(hs, "detached subdir open (ignore hook)"));
+		api->subdir = hsd->subdir;
+		hsd->subdir = NULL;
+		return 0;
+	}
+#endif
 
 	/* create unhared temporary target */
 	hsd->org_target = strdup(mnt_fs_get_target(cxt->fs));
@@ -313,6 +370,7 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc, char **subdir
 	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt;
 	const char *dir = NULL;
+	unsigned long flags = 0;
 
 	assert(cxt);
 	assert(rc);
@@ -328,24 +386,33 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc, char **subdir
 		return 0;
 
 	dir = mnt_opt_get_value(opt);
-
-	if (dir && *dir == '"')
-		dir++;
-
 	if (!dir || !*dir) {
 		DBG(HOOK, ul_debug("failed to parse X-mount.subdir '%s'", dir));
 		*rc = -MNT_ERR_MOUNTOPT;
-	} else {
-		*subdir = strdup(dir);
-		if (!*subdir)
-			*rc = -ENOMEM;
+		return 0;
 	}
+
+	*rc = mnt_optlist_get_flags(ol, &flags, cxt->map_linux, 0);
+	if (*rc)
+		return 0;
+
+	if (flags & MS_REMOUNT || flags & MS_BIND || flags & MS_MOVE
+	    || mnt_context_propagation_only(cxt)) {
+		DBG(HOOK, ul_debug("ignore subdir= (bind/move/remount/..)"));
+		return 0;
+	}
+
+	*subdir = strdup(dir);
+	if (!*subdir)
+		*rc = -ENOMEM;
 
 	return *rc == 0;
 }
 
-/* this is the initial callback used to check mount options and define next
- * actions if necessary */
+/*
+ * This is the initial callback used to check mount options and define
+ * the next actions if necessary.
+ */
 static int hook_prepare_target(
 			struct libmnt_context *cxt,
 			const struct libmnt_hookset *hs,
