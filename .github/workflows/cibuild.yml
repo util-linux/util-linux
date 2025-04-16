@@ -27,11 +27,10 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          # gcc-13 has false-positives with ubsan
-          - { COMPILER: "gcc",   COMPILER_VERSION: "13", SANITIZE: "yes"  }
-          - { COMPILER: "gcc",   COMPILER_VERSION: "13", SANITIZE: "no"   }
-          - { COMPILER: "clang", COMPILER_VERSION: "19", SANITIZE: "yes"  }
-          - { COMPILER: "clang", COMPILER_VERSION: "19", SANITIZE: "no"   }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "14", SANITIZE: "yes"  }
+          - { COMPILER: "gcc",   COMPILER_VERSION: "14", SANITIZE: "no"   }
+          - { COMPILER: "clang", COMPILER_VERSION: "20", SANITIZE: "yes"  }
+          - { COMPILER: "clang", COMPILER_VERSION: "20", SANITIZE: "no"   }
     env: ${{ matrix.env }}
     steps:
       - name: Repository checkout
@@ -86,7 +85,7 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 13
+      COMPILER_VERSION: 14
       SANITIZE: no
     steps:
       - name: Repository checkout
@@ -106,7 +105,7 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 13
+      COMPILER_VERSION: 14
       SANITIZE: no
       TRANSLATE_MANPAGES: yes
     steps:
@@ -171,7 +170,7 @@ jobs:
           distro: ubuntu_latest
           run: |
             export COMPILER=gcc
-            export COMPILER_VERSION=13
+            export COMPILER_VERSION=14
             export SANITIZE=no
             export QEMU_USER=1
 
