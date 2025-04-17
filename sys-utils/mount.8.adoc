@@ -385,7 +385,8 @@ Use the specified mount options. The _opts_ argument is a comma-separated list. 
 +
 *mount LABEL=mydisk -o noatime,nodev,nosuid*
 +
-Note that the order of the options matters, as the last option wins if there are conflicting ones. The options from the command line also overwrite options from fstab by default.
+Note that the order of the options matters, as the last option wins if there are conflicting ones.
+Also, options on the command line override options from fstab.
 +
 For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 

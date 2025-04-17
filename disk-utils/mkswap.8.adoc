@@ -58,7 +58,12 @@ Suppress output and warning messages.
 Specify a _label_ for the device, to allow *swapon*(8) by label.
 
 *--lock*[**=**_mode_]::
-Use exclusive BSD lock for device or file it operates. The optional argument _mode_ can be *yes*, *no* (or 1 and 0) or *nonblock*. If the _mode_ argument is omitted, it defaults to *yes*. This option overwrites environment variable *$LOCK_BLOCK_DEVICE*. The default is not to use any lock at all, but it's recommended to avoid collisions with *systemd-udevd*(8) or other tools.
+Use an exclusive BSD lock for the device or file that is operated upon.
+The optional argument _mode_ can be *yes* (*1*), *no* (*0*), or *nonblock*.
+If the _mode_ argument is omitted, it defaults to *yes*.
+This option overrides the environment variable *$LOCK_BLOCK_DEVICE*.
+The default is to not use any lock at all, but using a lock is recommended
+to avoid collisions with *systemd-udevd*(8) or other tools.
 
 *-p*, *--pagesize* _size_::
 Specify the page _size_ (in bytes) to use. This option is usually unnecessary; *mkswap* reads the size from the kernel.

@@ -67,8 +67,8 @@ Use an exclusive BSD lock for the device or file that is operated upon.
 The optional argument _mode_ can be *yes* (*1*), *no* (*0*), or *nonblock*.
 If the _mode_ argument is omitted, it defaults to *yes*.
 This option overrides the environment variable *$LOCK_BLOCK_DEVICE*.
-The default is to not use any lock at all, but using a lock
-is recommended to avoid collisions with udevd or other tools.
+The default is to not use any lock at all, but using a lock is recommended
+to avoid collisions with *systemd-udevd*(8) or other tools.
 
 include::man-common/help-version.adoc[]
 

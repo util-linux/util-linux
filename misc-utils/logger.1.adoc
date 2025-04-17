@@ -73,7 +73,7 @@ Log the PID of the *logger* process with each line.
 *--id*[**=**__id__]::
 Log the PID of the *logger* process with each line. When the optional argument _id_ is specified, then it is used instead of the *logger* command's PID. The use of *--id=$$* (PPID) is recommended in scripts that send several messages.
 +
-Note that the system logging infrastructure (for example *systemd* when listening on _/dev/log_) may follow local socket credentials to overwrite the PID specified in the message. *logger*(1) is able to set those socket credentials to the given _id_, but only if you have root permissions and a process with the specified PID exists, otherwise the socket credentials are not modified and the problem is silently ignored.
+Note that the system logging infrastructure (for example *systemd* when listening on _/dev/log_) may follow local socket credentials to override the PID specified in the message. *logger*(1) is able to set those socket credentials to the given _id_, but only if you have root permissions and a process with the specified PID exists, otherwise the socket credentials are not modified and the problem is silently ignored.
 
 *--journald*[**=**__file__]::
 Write a *systemd* journal entry. The entry is read from the given _file_, when specified, otherwise from standard input. Each line must begin with a field that is accepted by *journald*; see *systemd.journal-fields*(7) for details. The use of a MESSAGE_ID field is generally a good idea, as it makes finding entries easy. Examples:

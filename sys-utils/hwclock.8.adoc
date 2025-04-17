@@ -124,9 +124,17 @@ This option must be used with the *--set* or *--predict* functions, otherwise it
 The argument must be in local time, even if you keep your Hardware Clock in UTC. See the *--localtime* option. Therefore, the argument should not include any timezone information. It also should not be a relative time like "+5 minutes", because *hwclock*'s precision depends upon correlation between the argument's value and when the enter key is pressed. Fractional seconds are silently dropped. This option is capable of understanding many time and date formats, but the previous parameters should be observed.
 
 **--delay=**__seconds__::
-This option can be used to overwrite the internally used delay when setting the clock time. The default is 0.5 (500ms) for rtc_cmos, for another RTC types the delay is 0. If RTC type is impossible to determine (from sysfs) then it defaults also to 0.5 to be backwardly compatible.
+This option overrides the default delay used when setting the clock time.
+The default is *0.5* (500 ms) for rtc_cmos; for other RTC types the delay is *0*.
+If the RTC type cannot be determined (from sysfs), then the delay defaults
+also to *0.5* to be backwardly compatible.
 +
-The 500ms default is based on commonly used MC146818A-compatible (x86) hardware clock. This Hardware Clock can only be set to any integer time plus one half second. The integer time is required because there is no interface to set or get a fractional second. The additional half second delay is because the Hardware Clock updates to the following second precisely 500 ms after setting the new time. Unfortunately, this behavior is hardware specific and in some cases another delay is required.
+The 500 ms default is based on the commonly used MC146818A-compatible (x86) hardware clock.
+This Hardware Clock can only be set to an integer time plus one half second.
+The integer time is required because there is no interface to get or set a fractional second.
+The additional half second is because the Hardware Clock updates to the following second
+precisely 500 ms after setting the new time. Unfortunately, this behavior is hardware specific
+and in some cases a different delay is required.
 
 *-D*, *--debug*::
 Use *--verbose*. The *--debug* option has been deprecated and may be repurposed or removed in a future release.
