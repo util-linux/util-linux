@@ -37,19 +37,22 @@ Specify an alternative path to the adjust file.
 Read the clock mode (whether the hardware clock is set to UTC or local time) from the _adjtime_ file, where *hwclock*(8) stores that information. This is the default.
 
 *--date* _timestamp_::
-Set the wakeup time to the value of the timestamp. Format of the timestamp can be any of the following:
-
-[cols=",",]
-|===
-|YYYYMMDDhhmmss |
-|YYYY-MM-DD hh:mm:ss |
-|YYYY-MM-DD hh:mm |(seconds will be set to 00)
-|YYYY-MM-DD |(time will be set to 00:00:00)
-|hh:mm:ss |(date will be set to today)
-|hh:mm |(date will be set to today, seconds to 00)
-|tomorrow |(time is set to 00:00:00)
-|+5min |
-|===
+Set the wakeup time to the value of this timestamp.
+The format of _timestamp_ can be any of the following:
++
+....
+ YYYYMMDDhhmmss
+ "YYYY-MM-DD hh:mm:ss"
+ "YYYY-MM-DD hh:mm"      (seconds is 00)
+ YYYY-MM-DD              (time is 00:00:00)
+ hh:mm:ss                (date is today)
+ hh:mm                   (date is today, seconds is 00)
+ +number[smhd]           (seconds/minutes/hours/days after now)
+ tomorrow                (time is 00:00:00)
+....
++
+Examples of the **+**_number_[*smhd*] format are: *+5m*, *+6h*, *+2d*.
+The unit specifier may be longer: *+5min*, *+6hours*, *+2days*.
 
 *-d*, *--device* _device_::
 Use the specified _device_ instead of *rtc0* as realtime clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.
