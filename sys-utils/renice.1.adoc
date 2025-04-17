@@ -46,24 +46,30 @@ renice - alter priority of running processes
 
 == SYNOPSIS
 
-*renice* [*--priority|--relative*] _priority_ [*-g*|*-p*|*-u*] _identifier_...
+*renice* [*-n*|*--priority*|*--relative*] _priority_ [*-g*|*-p*|*-u*] _identifier_...
 
 == DESCRIPTION
 
 *renice* alters the scheduling priority of one or more running processes. The first argument is the _priority_ value to be used. The other arguments are interpreted as process IDs (by default), process group IDs, user IDs, or user names. *renice*'ing a process group causes all processes in the process group to have their scheduling priority altered. *renice*'ing a user causes all processes owned by the user to have their scheduling priority altered.
 
-If no *-n*, *--priority* or *--relative* option is used, then the priority is set as *absolute*.
+By default, _priority_ is understood as an absolute value. But when option *--relative* is given,
+or when option *-n* is given and the environment variable POSIXLY_CORRECT is set, then _priority_
+is understood as a relative value.
 
 == OPTIONS
 
-*-n* _priority_::
-Specify the *absolute* or *relative* (depending on environment variable POSIXLY_CORRECT) scheduling _priority_ to be used for the process, process group, or user. Use of the option *-n* is optional, but when used, it must be the first argument. See *NOTES* for more information.
+*-n* _priority_|__delta__::
+Specify the absolute scheduling priority (when POSIXLY_CORRECT is not set) or a relative
+priority (when POSIXLY_CORRECT *is* set).  See *NOTES* below for more details.
+Using option *-n* is optional, but when used, it must be the first argument.
 
 *--priority* _priority_::
-Specify an *absolute* scheduling _priority_. _Priority_ is set to the given value. This is the default, when no option is specified.
+Specify the absolute scheduling _priority_ to be used.
+This is the default, when no option is specified.
 
-*--relative* _priority_::
-Specify a *relative* scheduling _priority_. Same as the standard POSIX *-n* option. _Priority_ gets _incremented/decremented_ by the given value.
+*--relative* _delta_::
+Specify a relative priority. The actual scheduling priority gets incremented/decremented
+by the given _delta_. (This is the same as the *-n* option when POSIXLY_CORRECT is set.)
 
 *-g*, *--pgrp*::
 Interpret the succeeding arguments as process group IDs.
@@ -83,21 +89,30 @@ to map user names to user IDs
 
 == NOTES
 
-Users other than the superuser may only alter the priority of processes they own. Furthermore, an unprivileged user can only _increase_ the "nice value" (i.e., choose a lower priority) and such changes are irreversible unless (since Linux 2.6.12) the user has a suitable "nice" resource limit (see *ulimit*(1p) and *getrlimit*(2)).
+Users other than the superuser may alter the priority only of processes they own.
+Furthermore, an unprivileged user can only _increase_ the "nice value" (that is:
+lower the urgency), and such changes are irreversible unless (since Linux 2.6.12)
+the user has a suitable "nice" resource limit (see *getrlimit*(2)).
 
 The superuser may alter the priority of any process and set the priority to any value in the range -20 to 19. Useful priorities are: 19 (the affected processes will run only when nothing else in the system wants to), 0 (the "base" scheduling priority), anything negative (to make things go very fast).
 
-For historical reasons in this implementation, the *-n* option did not follow the POSIX specification. Therefore, instead of setting a *relative* priority, it sets an *absolute* priority by default. As this may not be desirable, this behavior can be controlled by setting the environment variable POSIXLY_CORRECT to be fully POSIX compliant. See the *-n* option for details. See *--relative* and *--priority* for options that do not change behavior depending on environment variables.
+For historical reasons, the *-n* option in this implementation does not follow the POSIX
+specification: instead of setting a *relative* priority, it sets an *absolute* priority
+by default. As this may not be desirable, this behavior can be changed by setting the
+environment variable POSIXLY_CORRECT, to be fully POSIX compliant. See *--relative* and
+*--priority* for options that do not change behavior depending on environment variables.
 
 == HISTORY
 
 The *renice* command appeared in 4.0BSD.
 
-== EXAMPLES
+== EXAMPLE
 
-The following command would change the priority of the processes with PIDs 987 and 32, plus all processes owned by the users daemon and root:
+The following command changes the priority of the processes with PIDs 987 and 32, plus all processes owned by the users daemon and root:
 
+____
 *renice +1 987 -u daemon root -p 32*
+____
 
 == SEE ALSO
 
