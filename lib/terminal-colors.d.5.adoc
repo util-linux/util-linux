@@ -47,14 +47,15 @@ The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/termina
 == DEFAULT SCHEME FILES FORMAT
 
 The following statement is recognized:
-
 ____
-*name color-sequence*
+_name color-sequence_
 ____
 
-The *name* is a logical name of color sequence (for example "error"). The names are specific to the utilities. For more details always see the *COLORS* section in the man page for the utility.
+The _name_ is a logical name for the color sequence (for example: *error*).
+The names are specific to the utilities. For more details always see
+the *COLORS* section in the man page for the utility.
 
-The *color-sequence* is a color name, ASCII color sequences or escape sequences.
+The _color-sequence_ is a color name, ASCII color sequences, or escape sequences.
 
 === Color names
 
@@ -63,67 +64,59 @@ black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, lightb
 === ANSI color sequences
 
 The color sequences are composed of sequences of numbers separated by semicolons. The most common codes are:
-
 ____
-[cols=",",]
-|===
-|0 |to restore default color
-|1 |for brighter colors
-|4 |for underlined text
-|5 |for flashing text
-|30 |for black foreground
-|31 |for red foreground
-|32 |for green foreground
-|33 |for yellow (or brown) foreground
-|34 |for blue foreground
-|35 |for purple foreground
-|36 |for cyan foreground
-|37 |for white (or gray) foreground
-|40 |for black background
-|41 |for red background
-|42 |for green background
-|43 |for yellow (or brown) background
-|44 |for blue background
-|45 |for purple background
-|46 |for cyan background
-|47 |for white (or gray) background
-|===
+     0   to restore default color
+     1   for brighter colors
+     4   for underlined text
+     5   for flashing text
+    30   for black foreground
+    31   for red foreground
+    32   for green foreground
+    33   for yellow (or brown) foreground
+    34   for blue foreground
+    35   for purple foreground
+    36   for cyan foreground
+    37   for white (or gray) foreground
+    40   for black background
+    41   for red background
+    42   for green background
+    43   for yellow (or brown) background
+    44   for blue background
+    45   for purple background
+    46   for cyan background
+    47   for white (or gray) background
 ____
-
-=== Escape sequences
-
-To specify control or blank characters in the color sequences, C-style \-escaped notation can be used:
-
-____
-[cols=",",]
-|===
-|*\a* |Bell (ASCII 7)
-|*\b* |Backspace (ASCII 8)
-|*\e* |Escape (ASCII 27)
-|*\f* |Form feed (ASCII 12)
-|*\n* |Newline (ASCII 10)
-|*\r* |Carriage Return (ASCII 13)
-|*\t* |Tab (ASCII 9)
-|*\v* |Vertical Tab (ASCII 11)
-|*\?* |Delete (ASCII 127)
-|*\_* |Space
-|*\\* |Backslash (\)
-|*\^* |Caret (^)
-|*\#* |Hash mark (#)
-|===
-____
-
-Please note that escapes are necessary to enter a space, backslash, caret, or any control character anywhere in the string, as well as a hash mark as the first character.
 
 For example, to use a red background for alert messages in the output of *dmesg*(1), use:
 
+``  *echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*``
+
+=== Escape sequences
+
+An escape sequence is necessary to enter a space, backslash, caret, or any
+control character anywhere in a string, as well as a hash mark as the first
+character. These C-style backslash-escapes can be used:
+
 ____
-*echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*
+``    *\a*   Bell (ASCII 7)``
+``    *\b*   Backspace (ASCII 8)``
+``    *\e*   Escape (ASCII 27)``
+``    *\f*   Form feed (ASCII 12)``
+``    *\n*   Newline (ASCII 10)``
+``    *\r*   Carriage Return (ASCII 13)``
+``    *\t*   Tab (ASCII 9)``
+``    *\v*   Vertical Tab (ASCII 11)``
+``    *\?*{nbsp}{nbsp}{nbsp}Delete (ASCII 127)``
+``    *\_*   Space``
+``    *\\*   Backslash (\)``
+``    *\^*   Caret (^)``
+``    *\\#*   Hash mark (#)``
 ____
 
 === Comments
 
-Lines where the first non-blank character is a # (hash) are ignored. Any other use of the hash character is not interpreted as introducing a comment.
+Lines where the first non-blank character is a *#* (hash) are ignored.
+Any other use of the hash character is not interpreted as introducing a comment.
 
 == ENVIRONMENT
 
