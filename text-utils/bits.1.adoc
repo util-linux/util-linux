@@ -20,56 +20,60 @@ Copyright (c) 2024 Robin Jarry
 
 == NAME
 
-bits - convert bit masks from/to various formats
+bits - convert bit masks or lists from/to various formats
 
 == SYNOPSIS
 
-*bits* [*-h*] [*-V*] [*-w* _<NUM>_] [_<MODE>_] [_<MASK_OR_LIST>_...]
+*bits* [*-h*] [*-V*] [*-w* _number_] [_mode_] [_mask_|_list_]...
 
 == DESCRIPTION
 
-The *bits* utility converts bit masks into various formats. It supports
-combining multiple masks together using bitwise operations.
+The *bits* utility converts between bit masks and bit lists.
+It supports combining multiple masks or lists using bitwise operations.
 
 == POSITIONAL ARGUMENTS
 
-_<MASK_OR_LIST>_::
-A set of bits specified as a hexadecimal mask value (e.g. _0xeec2_) or as
-a comma-separated list of bit IDs.
+_mask_::
+A set of bits specified as a hexadecimal mask value
+(for example: *0xeec2*).
+_list_::
+A set of bits specified as a comma-separated list of bit IDs
+(for example: *1,5,29,32*).
 
-If no argument is specified, the sets of bits will be read from standard input;
-one group per line.
+If no argument is specified, the sets of bits will be read from
+standard input, one group per line.
 
-Consecutive ids can be compressed as ranges (e.g. _5,6,7,8,9,10_ -> _5-10_).
+Consecutive IDs can be compressed as ranges
+(for example: *5,6,7,8,9,10* -> *5-10*).
 
-Optionally, if an argument starts with a comma, it will be parsed as a single
-hexadecimal mask split in 32bit groups (e.g. _,00014000,00000000,00020000_ ->
-_17,78,80_).
+Optionally, if an argument starts with a comma, it will be
+parsed as a single hexadecimal mask split in 32-bit groups
+(for example: *,00014000,00000000,00020000* -> *17,78,80*).
 
-By default all groups will be OR'ed together. If a group has one of the
-following prefixes, it will be combined with the resulting mask using
-a different binary operation:
+By default, all groups will be OR'ed together. If a group has one of
+the prefixes **&**, **^**, or **~**, it will be combined with the
+resulting mask using a different binary operation:
 
-**&**__<MASK_OR_LIST>__::
-The group will be combined with a binary AND operation. I.e. all bits that are
-set to 1 in the group AND the combined groups so far will be preserved to 1.
-All other bits will be reset to 0.
+**&**__mask__|**&**__list__::
+The group will be combined with a binary AND operation.
+That is: all bits that are set to 1 in the group AND in the combined groups
+so far will be preserved as 1. All other bits will be reset to 0.
 
-**^**__<MASK_OR_LIST>__::
-The group will be combined with a binary XOR operation. I.e. all bits that are
-set to 1 in the group AND to 0 the combined groups so far (or the other way
-around) will be set to 1. Bits that are both to 1 or both to 0 will be reset to
-0.
+**^**__mask__|**+++^+++**__list__::
+The group will be combined with a binary XOR operation.
+That is: all bits that are set to 1 in the group AND to 0 in the combined
+groups so far (or the other way around) will be set to 1.
+Bits that are set both to 1 or both to 0 will be reset to 0.
 
-**~**__<MASK_OR_LIST>__::
+**~**__mask__|**+++~+++**__list__::
 All bits set to 1 in the group will be cleared (reset to 0) in the combined
 groups so far.
 
 == OPTIONS
 
-*-w* __<NUM>__, *--width* __<NUM>__::
-Maximum number of bits in the masks handled by *bits* (default __8192__). Any
-bit larger than this number will be truncated.
+*-w* _number_, *--width* _number_::
+The maximum number of bits in the masks handled by *bits*.
+The default is *8192*. Any bit larger than this number will be truncated.
 
 include::man-common/help-version.adoc[]
 
@@ -78,19 +82,19 @@ include::man-common/help-version.adoc[]
 One of the following conversion modes can be specified. If not specified, it
 defaults to *-m*, *--mask*.
 
-*-m*, *--mask*::
-Print the combined args as a hexadecimal mask value (default).
+*-b*, *--binary*::
+Print the combined arguments as a binary mask value.
 
 *-g*, *--grouped-mask*::
-Print the combined args as a hexadecimal mask value in 32bit comma separated
-groups.
-
-*-b*, *--binary*::
-Print the combined args as a binary mask value.
+Print the combined arguments as a hexadecimal mask value
+in 32-bit comma-separated groups.
 
 *-l*, *--list*::
-Print the combined args as a list of bit IDs. Consecutive IDs are compressed as
-ranges.
+Print the combined arguments as a list of bit IDs.
+Consecutive IDs are compressed to ranges.
+
+*-m*, *--mask*::
+Print the combined arguments as a hexadecimal mask value (default).
 
 == EXAMPLES
 
