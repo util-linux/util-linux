@@ -113,10 +113,10 @@ Display a calendar for the whole year.
 Display a calendar for the next twelve months.
 
 *-w*, *--week*[**=**_number_]::
-Display week numbers in the calendar according to the US or ISO-8601 format. If
-a _number_ is specified, the requested week will be printed in the desired or
-current year. The _number_ may be overwritten if _day_ and _month_ are also
-specified.
+Display week numbers in the calendar according to the US or ISO-8601 format.
+If a _number_ is specified, the requested week in the desired or current year
+will be printed and its number highlighted.
+The _number_ may be ignored if _month_ is also specified.
 +
 See the *NOTES* section for more details.
 

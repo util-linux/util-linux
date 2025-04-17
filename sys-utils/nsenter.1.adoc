@@ -51,7 +51,9 @@ Various of the options below that relate to namespaces take an optional _file_ a
 
 //TRANSLATORS: Keep {asterisk} untranslated.
 *-a*, *--all*::
-Enter all namespaces of the target process by the default _/proc/[pid]/ns/{asterisk}_ namespace paths. The default paths to the target process namespaces may be overwritten by namespace specific options (e.g., *--all --mount*=[_path_]).
+Enter all namespaces of the target process by the default _/proc/<pid>/ns/{asterisk}_
+namespace paths. The default paths to the target process namespaces may be overridden
+by namespace-specific options (e.g., **--all --mount=**_path_).
 +
 The user namespace will be ignored if the same as the caller's current user namespace. It prevents a caller that has dropped capabilities from regaining those capabilities via a call to setns(). See *setns*(2) for more details.
 

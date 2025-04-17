@@ -237,7 +237,9 @@ Since version 2.35, additional locations for the issue file and directory are su
 
 Note that in versions 2.35 to 2.40, the additional locations were only read if the default _/etc/issue_ file did not exist. However, since version 2.41, the additional locations are always read, regardless of the existence of the _/etc/issue_ file. This change allows for the generation of issue files by default.
 
-The default paths maybe completely overridden by *--issue-file* option. In this case specified path has to be file or directory and all the default issue file and directory locations are ignored.
+The default paths may be completely overridden by the *--issue-file* option.
+In this case the specified path has to be a file or directory and
+all the default issue file and directory locations are ignored.
 
 The issue file feature can be completely disabled by *--noissue* option.
 

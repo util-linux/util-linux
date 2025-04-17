@@ -148,7 +148,9 @@ Move GPT backup header behind the last partition. Note that UEFI standard requir
 *-a*, *--append*::
 Don't create a new partition table, but only append the specified partitions.
 +
-Note that unused partition maybe be re-used in this case although it is not the last partition in the partition table. See also *-N* to specify entry in the partition table.
+Note that in this case an unused partition may be re-used even though it is
+not the last partition in the partition table. See also *-N* for addressing a
+specific entry in the partition table.
 
 *-b*, *--backup*::
 Back up the current partition table sectors before starting the partitioning. The default backup file name is _~/sfdisk-<device>-<offset>.bak_; to use another name see option *-O*, *--backup-file*. See section *BACKING UP THE PARTITION TABLE* for more details.
@@ -215,7 +217,11 @@ Specify the sector size of the disk. Valid values are 512, 1024, 2048, and 4096.
 Deprecated option. Only the sector unit is supported. This option is not supported when using the *--show-size* command.
 
 *-X*, *--label* _type_::
-Specify the disk label type (e.g., *dos*, *gpt*, ...). If this option is not given, then *sfdisk* defaults to the existing label, but if there is no label on the device yet, then the type defaults to *dos*. The default or the current label may be overwritten by the "label: <name>" script header line. The option *--label* does not force *sfdisk* to create empty disk label (see the *EMPTY DISK LABEL* section below).
+Specify the disk-label type (e.g., *dos*, *gpt*, ...). If this option is not given,
+then *sfdisk* defaults to the type of the existing label, but if there is no label
+on the device yet, then the type defaults to *dos*. This default may be overridden
+by the "label: <name>" script-header line. The option *--label* does not force
+*sfdisk* to create an empty disk label (see the *EMPTY DISK LABEL* section below).
 
 *-Y*, *--label-nested* _type_::
 Force editing of a nested disk label. The primary disk label has to exist already. This option allows editing for example a hybrid/protective MBR on devices with GPT.

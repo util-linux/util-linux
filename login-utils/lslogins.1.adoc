@@ -79,13 +79,17 @@ Display information related to login by password (see also *-afL*).
 Raw output (no columnation).
 
 *-s*, *--system-accs*::
-Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be overwritten by parameters *SYS_UID_MIN* and *SYS_UID_MAX* in the file _/etc/login.defs_.
+Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive),
+with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be
+overridden by the parameters *SYS_UID_MIN* and *SYS_UID_MAX* in the file _/etc/login.defs_.
 
 *--time-format* _type_::
 Display dates in short, full or iso format. The default is short, this time format is designed to be space efficient and human readable.
 
 *-u*, *--user-accs*::
-Show user accounts. These are by default all accounts with UID above 1000 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default maybe overwritten by parameters UID_MIN and UID_MAX in the file _/etc/login.defs_.
+Show user accounts. These are by default all accounts with a UID above 1000 (inclusive),
+with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be
+overridden by the parameters *UID_MIN* and *UID_MAX* in the file _/etc/login.defs_.
 
 include::man-common/help-version.adoc[]
 
