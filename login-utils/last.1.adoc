@@ -64,13 +64,14 @@ Like *--dns ,* but displays the host's IP number instead of the name.
 Tell *last* how many lines to show.
 
 *-p*, *--present* _time_::
-Display the users who were present at the specified time. This is like using the options *--since* and *--until* together with the same _time_.
+Display the users who were present at the specified time.
 
 *-R*, *--nohostname*::
 Suppresses the display of the hostname field.
 
 *-s*, *--since* _time_::
-Display the state of logins since the specified _time_. This is useful, e.g., to easily determine who was logged in at a particular time. The option is often combined with *--until*.
+Display the state of logins since the specified _time_.
+The option is often combined with *-t*/*--until* to cover a period.
 
 *-t*, *--until* _time_::
 Display the state of logins until the specified _time_.
