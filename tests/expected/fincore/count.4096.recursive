@@ -1,0 +1,12 @@
+0 0 i_dir/EMPTY_FILE
+return value: 0
+1 4095 i_dir/PAGESIZE_-1__incore_
+return value: 0
+1 4096 i_dir/JUST_PAGESIZE_incore_
+return value: 0
+[ RECURSIVE SCAN ]
+0 0 i_dir/EMPTY_FILE
+1 4095 i_dir/PAGESIZE_-1__incore_
+1 4096 i_dir/JUST_PAGESIZE_incore_
+PAGES SIZE FILE
+return value: 0

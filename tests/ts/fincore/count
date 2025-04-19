@@ -23,7 +23,7 @@ function make_input_name
 {
     header=$1
     prefix=i_
-    echo ${prefix}$(sed -e "s/[^-+a-zA-Z0-9_]/_/g"<<<"$header")
+    echo ${prefix}$(sed -e "s/[^-+a-zA-Z0-9_/]/_/g"<<<"$header")
 }
 
 function _dd
@@ -71,7 +71,7 @@ function run_dd_test
 		_dd if=/dev/zero of=$input count=1 bs=$bs $flags || return
     fi
 
-    $TS_CMD_FINCORE --output $OUT_COLUMNS  --bytes --noheadings $input
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS  --bytes --noheadings $input
 
     footer "$?"
 }
@@ -91,7 +91,7 @@ function run_dd_dd_test
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags0 || return
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags1 || return
 
-    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --noheadings $input
 
     footer "$?"
 }
@@ -100,17 +100,32 @@ function run_dd_dd_test
 PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
 WINDOW_SIZE=$(( 32 * 1024 * PAGE_SIZE ))
 
+AGG_OUT="$TS_OUTDIR/count.aggregate"
+AGG_ERR="$TS_OUTDIR/count.err.aggregate"
+
 # we use PAGE_SIZE dependent output for a few systems
 if test -f "$TS_EXPECTED.$PAGE_SIZE"; then
-	TS_EXPECTED+=".$PAGE_SIZE"
-	TS_EXPECTED_ERR+=".$PAGE_SIZE"
+	cat "$TS_EXPECTED.$PAGE_SIZE" >"$AGG_OUT"
 	OUT_COLUMNS="PAGES,SIZE,FILE"
 else
-	TS_EXPECTED+=".nosize"
-	TS_EXPECTED_ERR+=".nosize"
+	cat "$TS_EXPECTED.nosize" >"$AGG_OUT"
 	OUT_COLUMNS="PAGES,FILE"
 fi
 
+cat "$TS_EXPECTED_ERR" >"$AGG_ERR"
+
+if ! $TS_CMD_FINCORE --recursive |& grep -q 'recursive option is not supported' ; then
+	RECURSIVE=1
+	if test -f "$TS_EXPECTED.$PAGE_SIZE"; then
+		cat "$TS_EXPECTED.$PAGE_SIZE.recursive" >> "$AGG_OUT"
+	else
+		cat "$TS_EXPECTED.nosize.recursive" >> "$AGG_OUT"
+	fi
+	echo '[ RECURSIVE SCAN ]' >> "$AGG_ERR"
+fi
+
+TS_EXPECTED="$AGG_OUT"
+TS_EXPECTED_ERR="$AGG_ERR"
 
 ts_check_test_command "$TS_CMD_FINCORE"
 ts_cd "$TS_OUTDIR"
@@ -125,7 +140,7 @@ ts_log_both "[ NO EXCITING FILE ]"
     input=no_such_file
     INPUT="${INPUT} ${input}"
 
-    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes --noheadings $input
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --noheadings $input
     footer "$?"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
 
@@ -154,13 +169,13 @@ ts_log_both "[ NO EXCITING FILE ]"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
-    run_dd_dd_test "TWO PAGES(mixed directio/incore)" \
+    run_dd_dd_test "TWO PAGES(mixed directio,incore)" \
 			    oflag=direct \
 			    "oflag=append seek=1"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 {
-    run_dd_dd_test "TWO PAGES(mixed incore/directio)" \
+    run_dd_dd_test "TWO PAGES(mixed incore,directio)" \
 		   "" \
 		   "oflag=direct,append seek=1"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -223,9 +238,31 @@ ts_log_both "[ NO EXCITING FILE ]"
 
 ts_log_both "[ MULTIPLE FILES ]"
 {
-    $TS_CMD_FINCORE --output $OUT_COLUMNS --bytes $INPUT
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes $INPUT
     footer "$?"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+if [ -n "$RECURSIVE" ]; then
+	mkdir -p $TS_OUTDIR/i_dir
+
+	{
+	    run_dd_test "dir/EMPTY FILE" 0
+	} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+	{
+	    run_dd_test "dir/PAGESIZE -1 (incore)" $(( PAGE_SIZE - 1 ))
+	} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+	{
+	    run_dd_test "dir/JUST PAGESIZE(incore)" $(( PAGE_SIZE ))
+	} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+	ts_log_both "[ RECURSIVE SCAN ]"
+	{
+	    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir |sort
+	    footer "$?"
+	} >> $TS_OUTPUT 2>> $TS_ERRLOG
+fi
 
 rm -f $INPUT
 ts_finalize

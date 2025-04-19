@@ -822,6 +822,10 @@ AS_IF([test x"$have_dirfd" = xno], [
 
 AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes || test "x$have_ddfd" = xyes])
 
+have_fts_open=no
+AC_CHECK_FUNCS([fts_open], [have_fts_open=yes], [have_fts_open=no])
+AM_CONDITIONAL([HAVE_FTS_OPEN], [test "x$have_fts_open" = xyes])
+
 MQ_LIBS=
 AC_CHECK_LIB([rt], [mq_open], [MQ_LIBS="-lrt"])
 AC_SUBST([MQ_LIBS])
