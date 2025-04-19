@@ -45,6 +45,12 @@
 # endif
 #endif
 
+#ifdef HAVE_FTS_OPEN
+# include <fcntl.h>
+# include <sys/stat.h>
+# include <fts.h>
+#endif
+
 #include "xalloc.h"
 #include "namespace.h"
 
@@ -218,6 +224,89 @@ static int hlp_hostname(void)
 	return 0;
 }
 
+static int hlp_fts(void)
+{
+#ifdef HAVE_FTS_OPEN
+	char template[NAME_MAX];
+	char *paths[] = { NULL, NULL };
+	char path[PATH_MAX];
+	FTSENT *node;
+	FTS *fts;
+	int r;
+	int files = 0, dirs = 0;
+
+	snprintf(template, sizeof(template), "%s/fts_checkXXXXXX", getenv("TMPDIR") ?: "/tmp");
+
+	paths[0] = mkdtemp(template);
+	if (paths[0] == NULL)
+		return 0;
+
+	r = mkdir(template, 0755);
+	if (r < 0 && errno != EEXIST)
+		return 0;
+	dirs++;
+
+	snprintf(path, sizeof(path), "%s/subdir", template);
+	r = mkdir(path, 0755);
+	if (r < 0 && errno != EEXIST)
+		return 0;
+	dirs++;
+
+	snprintf(path, sizeof(path), "%s/file1.txt", template);
+	r = creat(path, 0644);
+	if (r < 0)
+		return 0;
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/file2.txt", template);
+	r = creat(path, 0644);
+	if (r < 0)
+		return 0;
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/subdir/file3.txt", template);
+	r = creat(path, 0644);
+	if (r < 0)
+		return 0;
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/subdir/file4.txt", template);
+	r = creat(path, 0644);
+	if (r < 0)
+		return 0;
+	close(r);
+	files++;
+
+	fts = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, NULL);
+	if (fts == NULL)
+		return 0;
+
+	while ((node = fts_read(fts)) != NULL) {
+		switch (node->fts_info) {
+		case FTS_F:
+			files--;
+			break;
+		case FTS_D:
+			dirs--;
+			break;
+		case FTS_ERR:
+			return 0;
+		default:
+			break;
+		}
+	}
+
+	if (fts_close(fts) < 0 || files != 0 || dirs != 0)
+		return 0;
+
+	puts("FTS");
+#endif
+	return 0;
+}
+
 static const mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
@@ -238,6 +327,7 @@ static const mntHlpfnc hlps[] =
 	{ "ns-gettype-ok", hlp_get_nstype_ok },
 	{ "ns-getuserns-ok", hlp_get_userns_ok },
 	{ "hostname", hlp_hostname, },
+	{ "fts", hlp_fts, },
 	{ NULL, NULL }
 };
 
