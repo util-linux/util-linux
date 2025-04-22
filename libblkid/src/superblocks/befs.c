@@ -170,12 +170,17 @@ static const unsigned char *get_tree_node(blkid_probe pr, const struct befs_supe
 							&ds->direct[i],
 							start, length, fs_le);
 			start -= br_len;
+			if (start < 0)
+				return NULL; /* Corrupt? */
 		}
 	} else if (start < (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le)) {
 		struct block_run *br;
 		int64_t max_br, br_len, i;
 
 		start -= FS64_TO_CPU(ds->max_direct_range, fs_le);
+		if (start < 0)
+			return NULL; /* Corrupt? */
+
 		max_br = ((int64_t) FS16_TO_CPU(ds->indirect.len, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le))
 				/ sizeof(struct block_run);
@@ -198,6 +203,8 @@ static const unsigned char *get_tree_node(blkid_probe pr, const struct befs_supe
 		int64_t max_br, di_br_size, br_per_di_br, di_index, i_index;
 
 		start -= (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le);
+		if (start < 0)
+			return NULL; /* Corrupt? */
 
 		di_br_size = (int64_t) FS16_TO_CPU(ds->double_indirect.len,
 				fs_le) << FS32_TO_CPU(bs->block_shift, fs_le);
