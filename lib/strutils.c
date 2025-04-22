@@ -1235,8 +1235,14 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 			return -EINVAL;
 		if (!start)
 			start = p;		/* beginning of the option item */
-		if (*p == '"')
-			open_quote ^= 1;	/* reverse the status */
+		if (*p == '"') {
+			if (p > optstr0 && *(p - 1) == '=' && !open_quote) {
+				open_quote ^= 1;
+			} else if (open_quote) {
+				open_quote ^= 1;
+			}
+			continue;
+		}
 		if (open_quote)
 			continue;		/* still in quoted block */
 		if (!sep && p > start && *p == '=')
