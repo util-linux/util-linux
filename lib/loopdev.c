@@ -346,16 +346,6 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 	return __loopcxt_get_fd(lc, O_RDONLY);
 }
 
-int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, mode_t mode)
-{
-	if (!lc)
-		return -EINVAL;
-
-	lc->fd = fd;
-	lc->mode = mode;
-	return 0;
-}
-
 /*
  * @lc: context
  * @flags: LOOPITER_FL_* flags
@@ -1428,14 +1418,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	do {
 		errno = 0;
 
-		/* For the ioctls, it's enough to use O_RDONLY, but udevd
-		 * monitor devices by inotify, and udevd needs IN_CLOSE_WRITE
-		 * event to trigger probing of the new device.
-		 *
-		 * The mode used for the device does not have to match the mode
-		 * used for the backing file.
-		 */
-		dev_fd = __loopcxt_get_fd(lc, O_RDWR);
+		dev_fd = __loopcxt_get_fd(lc, mode);
 		if (dev_fd >= 0 || lc->control_ok == 0)
 			break;
 		if (errno != EACCES && errno != ENOENT)
