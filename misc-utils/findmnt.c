@@ -57,6 +57,8 @@
 
 /* column IDs */
 enum {
+	COL_TARGET,	/* Keep it first to make --output-all readable */
+
 	COL_ACTION,
 	COL_AVAIL,
 	COL_FREQ,
@@ -82,7 +84,6 @@ enum {
 	COL_SIZE,
 	COL_SOURCE,
 	COL_SOURCES,
-	COL_TARGET,
 	COL_TID,
 	COL_UNIQ_ID,
 	COL_USED,

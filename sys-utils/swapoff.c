@@ -81,9 +81,10 @@ static char *resolve_swapfile_tag(const char *name, const char *value)
 		pr = get_swap_prober(src);
 		if (!pr)
 			continue;
-		blkid_probe_lookup_value(pr, name, &data, NULL);
-		if (data && strcmp(data, value) == 0)
+		if (blkid_probe_lookup_value(pr, name, &data, NULL) == 0
+		    && data && strcmp(data, value) == 0)
 			path = xstrdup(src);
+
 		blkid_free_probe(pr);
 		if (path)
 			break;

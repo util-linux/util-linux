@@ -68,7 +68,9 @@ static int column_id_to_number(int id);
 
 /* column IDs */
 enum {
-	COL_ALIOFF = 0,
+	COL_NAME,	/* Keep it first to make --output-all readable */
+
+	COL_ALIOFF,
 	COL_IDLINK,
 	COL_ID,
 	COL_DALIGN,
@@ -97,7 +99,6 @@ enum {
 	COL_MODE,
 	COL_MODEL,
 	COL_MQ,
-	COL_NAME,
 	COL_OPTIO,
 	COL_OWNER,
 	COL_PARTFLAGS,
