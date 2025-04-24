@@ -465,7 +465,7 @@ int main(int argc, char **argv)
 	if (!ctl.batch) {
 		is_tty = isatty(STDIN_FILENO);
 		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-			fputs(_("terminal setting retrieval"), stdout);
+			fputs(_("failed to get terminal attributes"), stdout);
 
 		ctl.win = initscr();
 		get_terminal_dimension(&ctl.cols, &ctl.rows);
