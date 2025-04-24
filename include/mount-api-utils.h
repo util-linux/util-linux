@@ -437,6 +437,17 @@ static inline ssize_t ul_listmount(uint64_t mnt_id,
 
        return syscall(SYS_listmount, &req, list, num, flags);
 }
+
+static inline int has_listmount(void)
+{
+	uint64_t dummy;
+
+	errno = 0;
+
+	if (ul_listmount(LSMT_ROOT, 0, 0, &dummy, 1, LISTMOUNT_REVERSE) != 1)
+		return 0;
+	return 1;
+}
 #endif
 
 #endif /* HAVE_STATMOUNT_API */

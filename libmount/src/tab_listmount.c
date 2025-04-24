@@ -91,18 +91,13 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 	ls = tb->lsmnt;
 
 	/* check if supported by current kernel */
-	if (!ls) {
-		uint64_t dummy;
-
-		errno = 0;
-		if (ul_listmount(LSMT_ROOT, 0, 0, &dummy, 1, LISTMOUNT_REVERSE) != 1) {
-			if (errno == ENOSYS)
-				DBG(TAB, ul_debugobj(tb, "listmount: unsuppported"));
-			if (errno == EINVAL)
-				DBG(TAB, ul_debugobj(tb, "listmount: reverse unsuppported"));
-			errno = ENOSYS;
-			return -ENOSYS;
-		}
+	if (!ls && !has_listmount()) {
+		if (errno == ENOSYS)
+			DBG(TAB, ul_debugobj(tb, "listmount: unsuppported"));
+		if (errno == EINVAL)
+			DBG(TAB, ul_debugobj(tb, "listmount: reverse unsuppported"));
+		errno = ENOSYS;
+		return -ENOSYS;
 	}
 
 	/* reset if allocated for a different size */
