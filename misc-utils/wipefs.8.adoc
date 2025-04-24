@@ -38,7 +38,10 @@ Note that by default *wipefs* does not erase nested partition tables on non-whol
 == OPTIONS
 
 *-a*, *--all*::
-Erase all available signatures. The set of erased signatures can be restricted with the *-t* option.
+Erase all available signatures. The set of erased signatures can be restricted
+with the *-t* option.  When performed on a partitioned whole-disk device like
+/dev/sdX, it will erase only the partition tables, not the content of the
+partitions.
 
 *-b*, *--backup*[**=**_dir_]::
 Create a signature backup to the file _wipefs-<devname>-<offset>.bak_ in _$HOME_ or the directory specified as the optional argument. For more details see the *EXAMPLE* section.
