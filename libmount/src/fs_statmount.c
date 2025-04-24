@@ -360,7 +360,11 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 
 	if (fs->stmnt) {
 		DBG(FS, ul_debugobj(fs, " reuse libmnt_stmnt"));
-		memset(fs->stmnt->buf, 0, fs->stmnt->bufsiz);
+
+		/* note that sys_statmount (re)allocates the buffer */
+		if (fs->stmnt->buf && fs->stmnt->bufsiz > 0)
+			memset(fs->stmnt->buf, 0, fs->stmnt->bufsiz);
+
 		rc = sys_statmount(fs->uniq_id, 0, mask,
 				   &fs->stmnt->buf, &fs->stmnt->bufsiz, 0);
 		buf = fs->stmnt->buf;
