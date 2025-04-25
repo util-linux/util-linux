@@ -348,8 +348,9 @@ struct ul_statmount {
 # define LISTMOUNT_REVERSE      BIT(0)               /* List later mounts first */
 #endif
 
+/* Don't use this "raw" version. See ul_statmount() below. */
 #if defined(SYS_statmount)
-static inline int ul_statmount(uint64_t mnt_id,
+static inline int ul_statmount_syscall(uint64_t mnt_id,
 			uint64_t ns_id,
 			uint64_t mask,
 			struct ul_statmount *buf,
@@ -364,31 +365,21 @@ static inline int ul_statmount(uint64_t mnt_id,
 
        return syscall(SYS_statmount, &req, buf, bufsize, flags);
 }
-#endif
 
-#if defined(SYS_listmount)
-static inline ssize_t ul_listmount(uint64_t mnt_id,
-			uint64_t ns_id,
-			uint64_t last_mnt_id,
-			uint64_t list[], size_t num,
-			unsigned int flags)
+static inline int has_statmount(void)
 {
-       struct ul_mnt_id_req req = {
-		.size = MNT_ID_REQ_SIZE_VER1,
-		.mnt_id = mnt_id,
-		.param = last_mnt_id,
-		.mnt_ns_id = ns_id
-       };
+	errno = 0;
 
-       return syscall(SYS_listmount, &req, list, num, flags);
+	if (ul_statmount_syscall(0, 0, 0, NULL, 0, 0) < 0 && errno == ENOSYS)
+		return 0;
+	return 1;
 }
-#endif
 
 /* This is a version of statmount() that reallocates @buf to be large enough to
  * store data for the requested @id. This function never deallocates; it is the
  * caller's responsibility.
  */
-static inline int sys_statmount(uint64_t id,
+static inline int ul_statmount(uint64_t id,
 			uint64_t ns_id,
 			uint64_t mask,
 			struct ul_statmount **buf,
@@ -415,7 +406,7 @@ static inline int sys_statmount(uint64_t id,
 		}
 
 		errno = 0;
-		rc = ul_statmount(id, ns_id, mask, *buf, *bufsiz, flags);
+		rc = ul_statmount_syscall(id, ns_id, mask, *buf, *bufsiz, flags);
 		if (!rc)
 			break;
 		if (errno != EOVERFLOW)
@@ -427,6 +418,37 @@ static inline int sys_statmount(uint64_t id,
 
 	return rc;
 }
+#endif /* SYS_statmount */
+
+
+#if defined(SYS_listmount)
+static inline ssize_t ul_listmount(uint64_t mnt_id,
+			uint64_t ns_id,
+			uint64_t last_mnt_id,
+			uint64_t list[], size_t num,
+			unsigned int flags)
+{
+       struct ul_mnt_id_req req = {
+		.size = MNT_ID_REQ_SIZE_VER1,
+		.mnt_id = mnt_id,
+		.param = last_mnt_id,
+		.mnt_ns_id = ns_id
+       };
+
+       return syscall(SYS_listmount, &req, list, num, flags);
+}
+
+static inline int has_listmount(void)
+{
+	uint64_t dummy;
+
+	errno = 0;
+
+	if (ul_listmount(LSMT_ROOT, 0, 0, &dummy, 1, LISTMOUNT_REVERSE) != 1)
+		return 0;
+	return 1;
+}
+#endif
 
 #endif /* HAVE_STATMOUNT_API */
 

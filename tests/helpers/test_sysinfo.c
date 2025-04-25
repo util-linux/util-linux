@@ -145,26 +145,25 @@ static int hlp_fsopen_ok(void)
 
 static int hlp_statmount_ok(void)
 {
+	printf("%d\n",
 #ifdef HAVE_STATMOUNT_API
-	errno = 0;
-	ul_statmount(0, 0, 0, NULL, 0, 0);
+		has_statmount()
 #else
-	errno = ENOSYS;
+		0
 #endif
-	printf("%d\n", errno != ENOSYS);
+	);
 	return 0;
 }
 
 static int hlp_listmount_ok(void)
 {
+	printf("%d\n",
 #ifdef HAVE_STATMOUNT_API
-	uint64_t dummy;
-	errno = 0;
-	ul_listmount(LSMT_ROOT, 0, 0, &dummy, 1, LISTMOUNT_REVERSE);
+		has_listmount()
 #else
-	errno = ENOSYS;
+		0
 #endif
-	printf("%d\n", !(errno == ENOSYS || errno == EINVAL));
+	);
 	return 0;
 }
 

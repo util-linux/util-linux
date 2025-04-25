@@ -33,7 +33,7 @@ struct libmnt_statmnt *mnt_new_statmnt(void)
 	struct libmnt_statmnt *sm;
 
 	errno = 0;
-	if (ul_statmount(0, 0, 0, NULL, 0, 0) < 0 && errno == ENOSYS) {
+	if (!has_statmount()) {
 		DBG(FS, ul_debug("statmount: unsuppported"));
 		return NULL;
 	}
@@ -360,14 +360,18 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 
 	if (fs->stmnt) {
 		DBG(FS, ul_debugobj(fs, " reuse libmnt_stmnt"));
-		memset(fs->stmnt->buf, 0, fs->stmnt->bufsiz);
-		rc = sys_statmount(fs->uniq_id, 0, mask,
+
+		/* note that sys_statmount (re)allocates the buffer */
+		if (fs->stmnt->buf && fs->stmnt->bufsiz > 0)
+			memset(fs->stmnt->buf, 0, fs->stmnt->bufsiz);
+
+		rc = ul_statmount(fs->uniq_id, 0, mask,
 				   &fs->stmnt->buf, &fs->stmnt->bufsiz, 0);
 		buf = fs->stmnt->buf;
 		bufsiz = fs->stmnt->bufsiz;
 	} else {
 		DBG(FS, ul_debugobj(fs, " use private buffer"));
-		rc = sys_statmount(fs->uniq_id, 0, mask, &buf, &bufsiz, 0);
+		rc = ul_statmount(fs->uniq_id, 0, mask, &buf, &bufsiz, 0);
 	}
 	DBG(FS, ul_debugobj(fs, " statmount [rc=%d bufsiz=%zu ns=%" PRIu64 " mask: %s%s%s%s%s%s%s]",
 				rc, bufsiz, ns,
@@ -378,11 +382,9 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 				mask & STATMOUNT_FS_TYPE ? "fs-type " : "",
 				mask & STATMOUNT_MNT_OPTS ? "mnt-opts " : "",
 				mask & STATMOUNT_SB_SOURCE ? "sb-source " : ""));
-
 	if (!rc)
 		rc = apply_statmount(fs, buf);
 done:
-
 	if (fs->stmnt)
 		mnt_statmnt_disable_fetching(fs->stmnt, status);
 	else
