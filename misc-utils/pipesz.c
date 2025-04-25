@@ -61,6 +61,9 @@ static char opt_verbose = 0;	/* --verbose */
 
 static void __attribute__((__noreturn__)) usage(void)
 {
+	if (ul_path_read_s32(NULL, &opt_size, PIPESZ_DEFAULT_SIZE_FILE))
+		warn(_("cannot parse %s"), PIPESZ_DEFAULT_SIZE_FILE);
+
 	fputs(USAGE_HEADER, stdout);
 	fprintf(stdout, _(" %s [options] [--set <size>] [--] [command]\n"), program_invocation_short_name);
 	fprintf(stdout, _(" %s [options] --get\n"), program_invocation_short_name);
@@ -71,11 +74,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputsln(_(" -g, --get          examine pipe buffers"), stdout);
-	/* TRANSLATORS: '%s' refers to a system file */
 	fprintf(stdout,
-	     _(" -s, --set <size>   set pipe buffer sizes\n"
-	       "                      size defaults to %s\n"),
-		PIPESZ_DEFAULT_SIZE_FILE);
+		_(" -s, --set <size>   the buffer size to be used (default: %u)\n"), opt_size);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputsln(_(" -f, --file <path>  act on a file"), stdout);
