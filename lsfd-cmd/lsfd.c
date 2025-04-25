@@ -2190,14 +2190,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>          output columns (see --list-columns)\n"), out);
 	fputs(_(" -r, --raw                    use raw output format\n"), out);
 	fputs(_(" -u, --notruncate             don't truncate text in columns\n"), out);
-	fputs(_(" -p, --pid  <pid(s)>          collect information only specified processes\n"), out);
+	fputs(_(" -p, --pid <list>             collect information only for specified processes\n"), out);
 	fputs(_(" -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"), out);
 	fputs(_(" -Q, --filter <expr>          apply display filter\n"), out);
 	fputs(_("     --debug-filter           dump the internal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
-	fputs(_("     --hyperlink[=mode]       print paths as terminal hyperlinks (always, never, or auto)\n"), out);
-	fputs(_("     --summary[=<when>]       print summary information (only, append, or never)\n"), out);
+	fputs(_("     --hyperlink[=<when>]     print paths as terminal hyperlinks (always|never|auto)\n"), out);
+	fputs(_("     --summary[=<mode>]       print summary information (append|only|never)\n"), out);
 	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
