@@ -1568,6 +1568,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -D, --df               imitate the output of df(1)\n"), out);
 	fputs(_(" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 	        "                          to device names\n"), out);
+	fputs(_("     --hyperlink[=<when>]\n"
+		"                        print paths as hyperlinks (always|never|auto)\n"), out);
 	fputs(_(" -I, --dfi              imitate the output of df(1) with -i option\n"), out);
 	fputs(_(" -J, --json             use JSON output format\n"), out);
 	fputs(_(" -l, --list             use list format output\n"), out);

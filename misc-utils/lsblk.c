@@ -2330,6 +2330,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
 	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
+	fputs(_("     --hyperlink[=<when>]\n"
+		"                      print paths as hyperlinks (always|never|auto)\n"), out);
 	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
