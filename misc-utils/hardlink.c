@@ -433,9 +433,11 @@ static void print_stats(void)
 /**
  * handle_interrupt - Handle a signal
  */
-static void handle_interrupt(void)
+static inline void handle_interrupt(void)
 {
 	switch (last_signal) {
+	case 0:
+		break;
 	case SIGUSR1:
 		print_stats();
 		putchar('\n');
