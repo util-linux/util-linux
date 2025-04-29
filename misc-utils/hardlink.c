@@ -295,7 +295,7 @@ static void register_regex(struct hdl_regex **pregs, const char *regex)
  * Checks whether any of the regular expressions in the list matches the
  * string.
  */
-static int match_any_regex(struct hdl_regex *pregs, const char *what)
+static inline int match_any_regex(struct hdl_regex *pregs, const char *what)
 {
 	for (; pregs != NULL; pregs = pregs->next) {
 		if (regexec(&pregs->re, what, 0, NULL, 0) == 0)
@@ -649,7 +649,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
  * Check whether the two files are considered equal attributes and can be
  * linked. This function does not compare content od the files!
  */
-static int file_may_link_to(const struct file *a, const struct file *b)
+static inline int file_may_link_to(const struct file *a, const struct file *b)
 {
 	return (a->st.st_size == b->st.st_size &&
 		a->links != NULL && b->links != NULL &&
@@ -673,7 +673,7 @@ static int file_may_link_to(const struct file *a, const struct file *b)
  * as the master when linking (the master is the file that all equal files
  * will be replaced with).
  */
-static int file_compare(const struct file *a, const struct file *b)
+static inline int file_compare(const struct file *a, const struct file *b)
 {
 	int res = 0;
 	if (a->st.st_dev == b->st.st_dev && a->st.st_ino == b->st.st_ino)
@@ -815,7 +815,7 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	return TRUE;
 }
 
-static int has_fpath(struct file *node, const char *path)
+static inline int has_fpath(struct file *node, const char *path)
 {
 	struct link *l;
 
