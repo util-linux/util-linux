@@ -2319,7 +2319,11 @@ UL_REQUIRES_HAVE([scriptlive], [pty], [openpty function (libutil)])
 AM_CONDITIONAL([BUILD_SCRIPTLIVE], [test "x$build_scriptlive" = xyes])
 
 
-UL_BUILD_INIT([bits], [yes])
+AC_ARG_ENABLE([bits],
+  AS_HELP_STRING([--disable-bits], [do not build bits]),
+  [], [UL_DEFAULT_ENABLE([bits], [check])])
+UL_BUILD_INIT([bits])
+UL_REQUIRES_HAVE([bits], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL([BUILD_BITS], [test "x$build_bits" = xyes])
 
 UL_BUILD_INIT([col], [check])
