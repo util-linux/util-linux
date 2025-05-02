@@ -25,6 +25,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <string.h>
+#include <gnu/libc-version.h>
 
 #ifdef HAVE_FTS_OPEN
 #include <fts.h>
@@ -562,6 +563,7 @@ int main(int argc, char ** argv)
 
 	if (ctl.recursive) {
 #ifdef HAVE_FTS_OPEN
+printf("recursive with fts_open(), libc version: %s\n", gnu_get_libc_version());
 		FTS *fts = fts_open(argv + optind, FTS_PHYSICAL, NULL);
 		FTSENT *ent;
 
@@ -569,8 +571,11 @@ int main(int argc, char ** argv)
 			warn(_("failed to iterate tree"));
 			rc = EXIT_FAILURE;
 		} else {
+printf("fts_open\n");
 			while ((ent = fts_read(fts)) != NULL) {
+printf("fts_read: fts_path: '%s', fts_info: %x\n", ent->fts_path, ent->fts_info);
 				if (ent->fts_info == FTS_F || ent->fts_info == FTS_DEFAULT) {
+printf("ent: %s\n", ent->fts_path);
 					/* fts changes directory when iterating,
 					 * so we need to use .fts_accpath to access
 					 * the file named .fts_path */

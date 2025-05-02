@@ -257,6 +257,46 @@ if [ -n "$RECURSIVE" ]; then
 	    run_dd_test "dir/JUST PAGESIZE(incore)" $(( PAGE_SIZE ))
 	} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
+	echo ' -------------------- DEBUG ---------------------- '
+
+	echo 'uname -a'
+	uname -a
+
+	echo 'dpkg -l libc6'
+	dpkg -l libc6
+
+	echo 'cat /proc/cpuinfo'
+	cat /proc/cpuinfo
+
+	echo "ldd /bin/cat"
+	ldd /bin/cat
+
+	echo 'cat /proc/mounts'
+	cat /proc/mounts
+
+	echo "stat -f $PWD"
+	stat -f "$PWD"
+
+	echo 'ls -lhA i_dir'
+	ls -lhA i_dir
+
+	echo 'find i_dir -ls'
+	find i_dir -ls
+
+	echo "RUN: $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --raw i_dir/*"
+	$TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --raw i_dir/*
+	echo "END: EXIT $?"
+
+	echo "RUN: $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir |sort"
+	$TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir |sort
+	echo "END: EXIT $?"
+
+	echo "RUN: $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir"
+	$TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir
+	echo "END: EXIT $?"
+
+	echo ' -------------------- /DEBUG ---------------------- '
+
 	ts_log_both "[ RECURSIVE SCAN ]"
 	{
 	    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --recursive --raw i_dir |sort
