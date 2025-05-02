@@ -247,14 +247,14 @@ int isxdigit_strend(const char *str, const char **end)
 }
 
 /*
- *  parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
+ *  For example: parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
-int parse_switch(const char *arg, const char *errmesg, ...)
+int parse_switch(const char *arg, ...)
 {
 	const char *a, *b;
 	va_list ap;
 
-	va_start(ap, errmesg);
+	va_start(ap, *arg);
 	do {
 		a = va_arg(ap, char *);
 		if (!a)
@@ -275,7 +275,7 @@ int parse_switch(const char *arg, const char *errmesg, ...)
 	} while (1);
 	va_end(ap);
 
-	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, arg);
+	errx(STRTOXX_EXIT_CODE, _("unsupported argument: %s"), arg);
 }
 
 #ifndef HAVE_MEMPCPY

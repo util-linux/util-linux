@@ -68,7 +68,7 @@ extern int isxdigit_strend(const char *str, const char **end);
 #define isxdigit_string(_s)	isxdigit_strend(_s, NULL)
 
 
-extern int parse_switch(const char *arg, const char *errmesg, ...);
+extern int parse_switch(const char *arg, ...);
 
 #ifndef HAVE_MEMPCPY
 extern void *mempcpy(void *restrict dest, const void *restrict src, size_t n);
