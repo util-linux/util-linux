@@ -1261,7 +1261,7 @@ endif
 
 ############################################################
 
-opt = not get_option('build-bits').disabled()
+opt = not get_option('build-bits').require(have_cpu_set_t).disabled()
 exe = executable(
   'bits',
   bits_sources,
