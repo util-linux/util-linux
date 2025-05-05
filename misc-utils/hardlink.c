@@ -118,16 +118,16 @@ struct file {
 
 /**
  * enum log_level - Logging levels
- * @JLOG_SUMMARY: Default log level
- * @JLOG_INFO:    Verbose logging (verbose == 1)
- * @JLOG_VERBOSE1:  Verbosity 2
- * @JLOG_VERBOSE2:  Verbosity 3
+ * @HDL_LOG_SUMMARY: Default log level
+ * @HDL_LOG_INFO:    Verbose logging (verbose == 1)
+ * @HDL_LOG_VERBOSE1:  Verbosity 2
+ * @HDL_LOG_VERBOSE2:  Verbosity 3
  */
-enum log_level {
-	JLOG_SUMMARY,
-	JLOG_INFO,
-	JLOG_VERBOSE1,
-	JLOG_VERBOSE2
+enum hdl_log_level {
+	HDL_LOG_SUMMARY,
+	HDL_LOG_INFO,
+	HDL_LOG_VERBOSE1,
+	HDL_LOG_VERBOSE2
 };
 
 /**
@@ -183,7 +183,8 @@ static struct options {
 	struct hdl_regex *exclude_subtree;
 
 	const char *method;
-	signed int verbosity;
+	short int verbosity;
+
 	bool respect_mode;
 	bool respect_owner;
 	bool respect_name;
@@ -238,26 +239,20 @@ static void *files_by_ino;
 static volatile sig_atomic_t last_signal;
 
 
-#define is_log_enabled(_level)  (quiet == 0 && (_level) <= (unsigned int)opts.verbosity)
+#define is_log_enabled( l )  (quiet == 0 && opts.verbosity >= HDL_LOG_ ## l)
 
 /**
- * jlog - Logging for hardlink
- * @level: The log level
- * @format: A format string for printf()
+ * hdl_log - Logging for hardlink
+ * @l: The log level (without HDL_LOG_ prefix)
+ * @x: function to print output
  */
-__attribute__((format(printf, 2, 3)))
-static void jlog(enum log_level level, const char *format, ...)
-{
-	va_list args;
-
-	if (!is_log_enabled(level))
-		return;
-
-	va_start(args, format);
-	vfprintf(stdout, format, args);
-	va_end(args);
-	fputc('\n', stdout);
-}
+#define jlog(l, x) \
+	do { \
+		if (is_log_enabled( l )) { \
+			x; \
+			fputc('\n', stdout); \
+		} \
+	} while (0)
 
 /**
  * CMP - Compare two numerical values, return 1, 0, or -1
@@ -300,7 +295,7 @@ static void register_regex(struct hdl_regex **pregs, const char *regex)
  * Checks whether any of the regular expressions in the list matches the
  * string.
  */
-static int match_any_regex(struct hdl_regex *pregs, const char *what)
+static inline int match_any_regex(struct hdl_regex *pregs, const char *what)
 {
 	for (; pregs != NULL; pregs = pregs->next) {
 		if (regexec(&pregs->re, what, 0, NULL, 0) == 0)
@@ -405,40 +400,44 @@ static void print_stats(void)
 	gettime_monotonic(&end);
 	timersub(&end, &stats.start_time, &delta);
 
-	jlog(JLOG_SUMMARY, "%-25s %s", _("Mode:"),
-	     opts.dry_run ? _("dry-run") : _("real"));
-	jlog(JLOG_SUMMARY, "%-25s %s", _("Method:"), opts.method);
-	jlog(JLOG_SUMMARY, "%-25s %zu", _("Files:"), stats.files);
-	jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Linked:"), stats.linked);
+	jlog(SUMMARY, printf("%-25s %s", _("Mode:"),
+			     opts.dry_run ? _("dry-run") : _("real")));
+	jlog(SUMMARY, printf("%-25s %s", _("Method:"), opts.method));
+	jlog(SUMMARY, printf("%-25s %zu", _("Files:"), stats.files));
+	jlog(SUMMARY, printf(_("%-25s %zu files"), _("Linked:"), stats.linked));
 
 #ifdef USE_XATTR
-	jlog(JLOG_SUMMARY, _("%-25s %zu xattrs"), _("Compared:"),
-	     stats.xattr_comparisons);
+	jlog(SUMMARY, printf(_("%-25s %zu xattrs"), _("Compared:"),
+				stats.xattr_comparisons));
 #endif
-	jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Compared:"),
-	     stats.comparisons);
+	jlog(SUMMARY, printf(_("%-25s %zu files"), _("Compared:"),
+				stats.comparisons));
 #ifdef USE_REFLINK
 	if (reflinks_skip)
-		jlog(JLOG_SUMMARY, _("%-25s %zu files"), _("Skipped reflinks:"),
-		     stats.ignored_reflinks);
+		jlog(SUMMARY, printf(_("%-25s %zu files"), _("Skipped reflinks:"),
+				     stats.ignored_reflinks));
 #endif
 	ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
 				   SIZE_DECIMAL_2DIGITS, stats.saved);
 
-	jlog(JLOG_SUMMARY, "%-25s %s", _("Saved:"), ssz);
+	jlog(SUMMARY, printf("%-25s %s", _("Saved:"), ssz));
 	free(ssz);
 
-	jlog(JLOG_SUMMARY, _("%-25s %"PRId64".%06"PRId64" seconds"), _("Duration:"),
-	     (int64_t)delta.tv_sec, (int64_t)delta.tv_usec);
+	jlog(SUMMARY, printf(_("%-25s %"PRId64".%06"PRId64" seconds"),
+				_("Duration:"),
+				(int64_t) delta.tv_sec,
+				(int64_t) delta.tv_usec));
 }
 
 /**
  * handle_interrupt - Handle a signal
  */
-static void handle_interrupt(void)
+static inline void handle_interrupt(void)
 {
 	switch (last_signal) {
+	case 0:
+		break;
 	case SIGUSR1:
 		print_stats();
 		putchar('\n');
@@ -560,8 +559,8 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
 	assert(a->links != NULL);
 	assert(b->links != NULL);
 
-	jlog(JLOG_VERBOSE1, _("Comparing xattrs of %s to %s"), a->links->path,
-	     b->links->path);
+	jlog(VERBOSE1, printf(_("Comparing xattrs of %s to %s"),
+				a->links->path, b->links->path));
 
 	stats.xattr_comparisons++;
 
@@ -650,7 +649,7 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
  * Check whether the two files are considered equal attributes and can be
  * linked. This function does not compare content od the files!
  */
-static int file_may_link_to(const struct file *a, const struct file *b)
+static inline int file_may_link_to(const struct file *a, const struct file *b)
 {
 	return (a->st.st_size == b->st.st_size &&
 		a->links != NULL && b->links != NULL &&
@@ -674,7 +673,7 @@ static int file_may_link_to(const struct file *a, const struct file *b)
  * as the master when linking (the master is the file that all equal files
  * will be replaced with).
  */
-static int file_compare(const struct file *a, const struct file *b)
+static inline int file_compare(const struct file *a, const struct file *b)
 {
 	int res = 0;
 	if (a->st.st_dev == b->st.st_dev && a->st.st_ino == b->st.st_ino)
@@ -727,7 +726,7 @@ fallback:
 
 		if (reflink_mode == REFLINK_ALWAYS)
 			return -errno;
-		jlog(JLOG_VERBOSE2,_("Reflinking failed, fallback to hardlinking"));
+		jlog(VERBOSE2, printf(_("Reflinking failed, fallback to hardlinking")));
 	}
 
 	return link(a->links->path, new_name);
@@ -758,15 +757,15 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	assert(a->links != NULL);
 	assert(b->links != NULL);
 
-	if (is_log_enabled(JLOG_INFO)) {
+	if (is_log_enabled(INFO)) {
 		char *ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
 				   SIZE_DECIMAL_2DIGITS, a->st.st_size);
-		jlog(JLOG_INFO, _("%s%sLinking %s to %s (-%s)"),
+		jlog(INFO, printf(_("%s%sLinking %s to %s (-%s)"),
 		     opts.dry_run ? _("[DryRun] ") : "",
 		     reflink ? "Ref" : "",
 		     a->links->path, b->links->path,
-		     ssz);
+		     ssz));
 		free(ssz);
 	}
 
@@ -816,7 +815,7 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	return TRUE;
 }
 
-static int has_fpath(struct file *node, const char *path)
+static inline int has_fpath(struct file *node, const char *path)
 {
 	struct link *l;
 
@@ -855,8 +854,8 @@ static int inserter(const char *fpath, const struct stat *sb,
 	if (opts.exclude_subtree
 	    && typeflag == FTW_D
 	    && match_any_regex(opts.exclude_subtree, fpath)) {
-		jlog(JLOG_VERBOSE1,
-			_("Skipped (excluded subtree) %s"), fpath);
+		jlog(VERBOSE1,
+			printf(_("Skipped (excluded subtree) %s"), fpath));
 		return FTW_SKIP_SUBTREE;
 	}
 #endif
@@ -868,26 +867,26 @@ static int inserter(const char *fpath, const struct stat *sb,
 
 	if ((opts.exclude && excluded && !included) ||
 	    (!opts.exclude && opts.include && !included)) {
-		jlog(JLOG_VERBOSE1,
-			_("Skipped (excluded) %s"), fpath);
+		jlog(VERBOSE1,
+			printf(_("Skipped (excluded) %s"), fpath));
 		return 0;
 	}
 
 	stats.files++;
 
 	if ((uintmax_t) sb->st_size < opts.min_size) {
-		jlog(JLOG_VERBOSE1,
-		     _("Skipped (smaller than configured size) %s"), fpath);
+		jlog(VERBOSE1,
+			printf(_("Skipped (smaller than configured size) %s"), fpath));
 		return 0;
 	}
 
-	jlog(JLOG_VERBOSE2, " %5zu: [%" PRIu64 "/%" PRIu64 "/%zu] %s",
+	jlog(VERBOSE2, printf(" %5zu: [%" PRIu64 "/%" PRIu64 "/%zu] %s",
 			stats.files, sb->st_dev, sb->st_ino,
-			(size_t) sb->st_nlink, fpath);
+			(size_t) sb->st_nlink, fpath));
 
 	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
-		jlog(JLOG_VERBOSE1,
-		     _("Skipped (greater than configured size) %s"), fpath);
+		jlog(VERBOSE1,
+		     printf(_("Skipped (greater than configured size) %s"), fpath));
 		return 0;
 	}
 
@@ -915,8 +914,8 @@ static int inserter(const char *fpath, const struct stat *sb,
 		assert((*node)->st.st_ino == sb->st_ino);
 
 		if (has_fpath(*node, fpath)) {
-			jlog(JLOG_VERBOSE1,
-				_("Skipped (specified more than once) %s"), fpath);
+			jlog(VERBOSE1,
+				printf(_("Skipped (specified more than once) %s"), fpath));
 			free(fil->links);
 		} else {
 			fil->links->next = (*node)->links;
@@ -1121,14 +1120,14 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
 			/* check file attributes, etc. */
 			if (!file_may_link_to(master, other)) {
-				jlog(JLOG_VERBOSE2,
-				     _("Skipped (attributes mismatch) %s"), other->links->path);
+				jlog(VERBOSE2,
+				     printf(_("Skipped (attributes mismatch) %s"), other->links->path));
 				continue;
 			}
 #ifdef USE_REFLINK
 			if (may_reflink && reflinks_skip && is_reflink(master, other)) {
-				jlog(JLOG_VERBOSE2,
-				     _("Skipped (already reflink) %s"), other->links->path);
+				jlog(VERBOSE2,
+				     printf(_("Skipped (already reflink) %s"), other->links->path));
 				stats.ignored_reflinks++;
 				continue;
 			}
@@ -1148,8 +1147,8 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 			stats.comparisons++;
 
 			if (!eq) {
-				jlog(JLOG_VERBOSE2,
-				     _("Skipped (content mismatch) %s"), other->links->path);
+				jlog(VERBOSE2,
+				     printf(_("Skipped (content mismatch) %s"), other->links->path));
 				continue;
 			}
 
@@ -1479,7 +1478,8 @@ int main(int argc, char *argv[])
 
 	rc = ul_fileeq_init(&fileeq, opts.method);
 	if (rc != 0 && strcmp(opts.method, "memcmp") != 0) {
-		jlog(JLOG_INFO, _("cannot initialize %s method, use 'memcmp' fallback"), opts.method);
+		jlog(INFO, printf(_("cannot initialize %s method, use 'memcmp' fallback"),
+					opts.method));
 		opts.method = "memcmp";
 		rc = ul_fileeq_init(&fileeq, opts.method);
 	}
@@ -1505,7 +1505,7 @@ int main(int argc, char *argv[])
 	if (opts.exclude_subtree)
 		ftw_flags |= FTW_ACTIONRETVAL;
 #endif
-	jlog(JLOG_VERBOSE2, _("Scanning [device/inode/links]:"));
+	jlog(VERBOSE2, printf(_("Scanning [device/inode/links]:")));
 	for (; optind < argc; optind++) {
 		char *path = realpath(argv[optind], NULL);
 
