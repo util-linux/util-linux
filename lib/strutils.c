@@ -1235,7 +1235,7 @@ int ul_optstr_next(char **optstr, char **name, size_t *namesz,
 			return -EINVAL;
 		if (!start)
 			start = p;		/* beginning of the option item */
-		if (*p == '"')
+		if (*p == '"' && (p == optstr0 || *(p - 1) != '\\'))
 			open_quote ^= 1;	/* reverse the status */
 		if (open_quote)
 			continue;		/* still in quoted block */
@@ -1480,7 +1480,8 @@ int main(int argc, char *argv[])
 				"       %1$s --stralnumcmp <str> <str>\n"
 				"       %1$s --cstrcasecmp <str> <str>\n"
 				"       %1$s --normalize <str>\n"
-				"       %1$s --strto{s,u}{16,32,64} <str>\n",
+				"       %1$s --strto{s,u}{16,32,64} <str>\n"
+				"       %1$s --optstr <str>\n",
 				argv[0]);
 		exit(EXIT_FAILURE);
 	}
