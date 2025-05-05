@@ -183,7 +183,7 @@ jobs:
             .github/workflows/cibuild.sh CHECK
 
   build-openwrt:
-    name: build (openwrt, ${{ matrix.target }})
+    name: build (openwrt, ${{ matrix.target }}/${{ matrix.subtarget}})
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ toJSON(matrix) }}-${{ github.ref }}
@@ -206,6 +206,12 @@ jobs:
             abi: musl
           - target: x86
             subtarget: generic
+            abi: musl
+          - target: octeon
+            subtarget: generic
+            abi: musl
+          - target: ramips
+            subtarget: mt7620
             abi: musl
     env:
       COMPILER: none
