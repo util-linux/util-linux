@@ -254,7 +254,7 @@ int parse_switch(const char *arg, ...)
 	const char *a, *b;
 	va_list ap;
 
-	va_start(ap, *arg);
+	va_start(ap, arg);
 	do {
 		a = va_arg(ap, char *);
 		if (!a)
@@ -1406,6 +1406,14 @@ int main(int argc, char *argv[])
 	if (argc == 3 && strcmp(argv[1], "--size") == 0) {
 		return test_strutils_sizes(argc - 1, argv + 1);
 
+	} else if (argc == 3 && strcmp(argv[1], "--parse-switch") == 0) {
+		printf("'%s'-->%d\n", argv[2], parse_switch(argv[2],
+						"on", "off",
+						"enable", "disable",
+						"yes", "no",
+						"1", "0",
+						NULL));
+		return EXIT_SUCCESS;
 	} else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0) {
 		return test_strutils_cmp_paths(argc - 1, argv + 1);
 
@@ -1475,6 +1483,7 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
+				"       %1$s --parse-switch <str>\n"
 				"       %1$s --cmp-paths <path> <path>\n"
 				"       %1$s --strdup-member <str> <str>\n"
 				"       %1$s --stralnumcmp <str> <str>\n"
