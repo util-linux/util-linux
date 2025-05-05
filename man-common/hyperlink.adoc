@@ -1,0 +1,5 @@
+*--hyperlink*[**=**_when_]::
+Print paths as terminal hyperlinks. The optional _when_ argument can be
+*always*, *never*, or *auto*. If the argument is omitted, it defaults to
+*auto*, which means that hyperlinks will only be used when the output
+goes to a terminal.

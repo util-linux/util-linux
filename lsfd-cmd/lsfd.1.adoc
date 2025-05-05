@@ -60,22 +60,22 @@ Use raw output format.
 *--notruncate*::
 Don't truncate text in columns.
 
-*-p*, *--pid* _pids_::
-Collect information only for specified processes.
-_pids_ is a list of pids. A comma or whitespaces can be used as separators.
-You can use this option with *pidof*(1). See *FILTER EXAMPLES*.
-+
-Both *-Q* option with an expression including PID, e.g. -Q (PID == 1),
-and *-p* option, e.g. -p 1, may print the same output but using *-p*
-option is much more efficient because *-p* option works at a much earlier
-stage of processing than the *-Q* option.
+*-p*, *--pid* _list_::
+Collect information only for the specified processes.
+The _list_ is a comma-separated list of PIDs.
+See also *FILTER EXAMPLES*.
 
-*-i*[4|6], *--inet*[=4|=6]::
+*-i*[*4*|*6*], *--inet*[**=4**|**=6**]::
 List only IPv4 sockets and/or IPv6 sockets.
 
-*-Q*, *--filter* _expr_::
-Print only the files matching the condition represented by the _expr_.
+*-Q*, *--filter* _expression_::
+Print only the files matching the condition represented by the _expression_.
 See also *scols-filter*(5) and *FILTER EXAMPLES*.
++
+The *-Q* option with a PID (for example: *-Q PID==1*) and the *-p*
+option (for example: *-p 1*) can be used to achieve the same result,
+but using the *-p* option is much more efficient because it works at
+a much earlier stage of processing than the *-Q* option.
 
 *-C*, *--counter* __label__:__filter_expr__::
 Define a custom counter used in *--summary* output. *lsfd* makes a
@@ -85,14 +85,13 @@ counter named _label_. *lsfd* applies filters defined with *--filter*
 options before counting; files excluded by the filters are not counted.
 +
 See *scols-filter*(5) about _filter_expr_.
-_label_ should not include `{` nor `:`. You can define multiple
+_label_ should not include *{* nor *:*. You can define multiple
 counters by specifying this option multiple times.
-+
 See also *COUNTER EXAMPLES*.
 
-*--summary*[**=**__when__]::
-This option controls summary lines output. The optional argument _when_
-can be *only*, *append* or *never*. If the _when_ argument is omitted,
+*--summary*[**=**_mode_]::
+This option controls summary lines output. The optional argument _mode_
+can be *only*, *append*, or *never*. If the _mode_ argument is omitted,
 it defaults to *only*.
 +
 The summary reports counters. A counter consists of a label and an
@@ -110,8 +109,7 @@ only for *lsfd* developers.
 *--dump-counters*::
 Dump the definition of counters used in *--summary* output.
 
-*--hyperlink*[=_mode_]::
-Print paths as terminal hyperlinks. The _mode_ can be set to "always", "never", or "auto". The optional argument _when_ can be set to "auto", "never", or "always". If the _when_ argument is omitted, it will default to "auto". The "auto" setting means that hyperlinks will only be used if the output is on a terminal.
+include::man-common/hyperlink.adoc[]
 
 *-H*, *--list-columns*::
 List the columns that can be specified with the *--output* option.

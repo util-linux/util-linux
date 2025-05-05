@@ -1241,7 +1241,7 @@ int main(int argc, char *argv[])
 		newdir = newdir ?: "/";
 	}
 	if (newdir && chdir(newdir))
-		err(EXIT_FAILURE, _("cannot chdir to '%s'"), newdir);
+		err(EXIT_FAILURE, _("cannot change directory to %s"), newdir);
 
 	if (procmnt) {
 		/* When not changing root and using the default propagation flags
