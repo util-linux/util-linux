@@ -13,6 +13,7 @@ extern char *mangle(const char *s);
 
 extern void unmangle_to_buffer(const char *s, char *buf, size_t len);
 extern size_t unhexmangle_to_buffer(const char *s, char *buf, size_t len);
+extern size_t unescape_to_buffer(const char *s, const char *wanted, char *buf, size_t len);
 
 extern char *unmangle(const char *s, const char **end);
 
@@ -26,6 +27,12 @@ static inline void unhexmangle_string(char *s)
 {
 	if (s)
 		unhexmangle_to_buffer(s, s, strlen(s) + 1);
+}
+
+static inline void unescape_string(char *s, const char *wanted)
+{
+	if (s)
+		unescape_to_buffer(s, wanted, s, strlen(s) + 1);
 }
 
 #endif /* UTIL_LINUX_MANGLE_H */

@@ -95,6 +95,25 @@ size_t unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 	return buf - buf0 + 1;
 }
 
+size_t unescape_to_buffer(const char *s, const char *wanted, char *buf, size_t len)
+{
+	size_t sz = 0;
+	const char *buf0 = buf;
+
+	while (*s && sz < len - 1) {
+		if (*s == '\\' && sz + 1 < len - 1 && strchr(wanted, s[1])) {
+			*buf++ = s[1];
+			s += 2;
+			sz += 2;
+		} else {
+			*buf++ = *s++;;
+			sz++;
+		}
+	}
+	*buf = '\0';
+	return buf - buf0 + 1;
+}
+
 static inline const char *skip_nonspaces(const char *s)
 {
 	while (s && *s && !(*s == ' ' || *s == '\t'))
@@ -136,7 +155,7 @@ int main(int argc, char *argv[])
 {
 	char *p = NULL;
 	if (argc < 3) {
-		fprintf(stderr, "usage: %s --mangle|unmangle <string>\n",
+		fprintf(stderr, "usage: %s --mangle|unmangle|unescape <string>\n",
 						program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
@@ -160,6 +179,16 @@ int main(int argc, char *argv[])
 			unmangle_to_buffer(x, x, strlen(x) + 1);
 
 			printf("self-unmangled: '%s'\n", x);
+			free(x);
+		}
+	}
+
+	else if (!strcmp(argv[1], "--unescape")) {
+		char *x = strdup(argv[2]);
+		if (x) {
+			unescape_to_buffer(x, ",\"", x, strlen(x) + 1);
+
+			printf("self-unescaped: '%s'\n", x);
 			free(x);
 		}
 	}
