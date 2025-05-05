@@ -9,7 +9,7 @@ _irqtop_module()
 			return 0
 			;;
 		'-c'|'--cpu-stat')
-			COMPREPLY=( $(compgen -W "auto enable disable" -- $cur) )
+			COMPREPLY=( $(compgen -W "auto enable disable always never" -- $cur) )
 			return 0
 			;;
 		'-C'|'--cpu-list')

@@ -818,7 +818,7 @@ int main(int argc, char **argv)
 		case OPT_DIO:
 			use_dio = set_dio = 1;
 			if (optarg)
-				use_dio = parse_switch(optarg, _("argument error"), "on", "off", NULL);
+				use_dio = parse_switch(optarg, "on", "off", NULL);
 			if (use_dio)
 				lo_flags |= LO_FLAGS_DIRECT_IO;
 			break;

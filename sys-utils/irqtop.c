@@ -307,7 +307,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -b, --batch            send tables to stdout, not to a static screen\n"), stdout);
-	fputs(_(" -c, --cpu-stat <mode>  whether to show the per-cpu stats (auto|enable|disable)\n"), stdout);
+	fputs(_(" -c, --cpu-stat <when>  whether to show the per-cpu stats (auto|never|always)\n"), stdout);
 	fputs(_(" -C, --cpu-list <list>  show IRQs only for the specified cpus\n"), stdout);
 	fputs(_(" -d, --delay <secs>     wait this number of seconds between updates\n"), stdout);
 	fputs(_(" -J, --json             use JSON output format (implies --batch)\n"), stdout);
@@ -364,12 +364,10 @@ static void parse_args(	struct irqtop_ctl *ctl,
 		case 'c':
 			if (!strcmp(optarg, "auto"))
 				ctl->cpustat_mode = IRQTOP_CPUSTAT_AUTO;
-			else if (!strcmp(optarg, "enable"))
-				ctl->cpustat_mode = IRQTOP_CPUSTAT_ENABLE;
-			else if (!strcmp(optarg, "disable"))
-				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE;
 			else
-				errx(EXIT_FAILURE, _("unsupported mode '%s'"), optarg);
+				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE - parse_switch(optarg,
+							"always", "never", "enable", "disable",
+							"on", "off", "yes", "no", "1", "0", NULL);
 			break;
 		case 'C':
 			{
