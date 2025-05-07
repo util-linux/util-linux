@@ -425,6 +425,22 @@ int logindefs_setenv(const char *name, const char *conf, const char *dflt)
 }
 
 /*
+ * logindefs based setenv("PATH")
+ */
+int logindefs_setenv_path(uid_t uid)
+{
+	int rc = 0;
+
+	if (uid)
+		rc = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
+
+	else if ((rc = logindefs_setenv("PATH", "ENV_SUPATH", NULL)) != 0)
+		rc = logindefs_setenv("PATH", "ENV_ROOTPATH", _PATH_DEFPATH_ROOT);
+
+	return rc;
+}
+
+/*
  * We need to check the effective UID/GID. For example, $HOME could be on a
  * root-squashed NFS or on an NFS with UID mapping, and access(2) uses the
  * real UID/GID.  Then open(2) seems as the surest solution.

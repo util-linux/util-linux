@@ -28,7 +28,10 @@ extern int getlogindefs_bool(const char *name, int dflt);
 extern unsigned long getlogindefs_num(const char *name, unsigned long dflt);
 extern const char *getlogindefs_str(const char *name, const char *dflt);
 extern void free_getlogindefs_data(void);
+
 extern int logindefs_setenv(const char *name, const char *conf, const char *dflt);
+extern int logindefs_setenv_path(uid_t uid);
+
 extern int effective_access(const char *path, int mode);
 extern int get_hushlogin_status(struct passwd *pwd, const char *override_home, int force_check);
 

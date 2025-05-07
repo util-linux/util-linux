@@ -2175,7 +2175,7 @@ exe = executable(
   'setpriv',
   setpriv_sources,
   include_directories : includes,
-  link_with : [lib_common],
+  link_with : [lib_common, logindefs_c],
   dependencies : [lib_cap_ng],
   install_dir : usrbin_exec_dir,
   install : opt,
