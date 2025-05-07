@@ -121,9 +121,12 @@ Load raw BPF seccomp filter code from a file.
 Filters can for example be created with *enosys*.
 
 *--reset-env*::
-Clears all the environment variables except *TERM*; initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME* according to the user's passwd entry; sets *PATH* to _/usr/local/bin:/bin:/usr/bin_ for a regular user and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root.
+* clears all the environment variables except *TERM* environment variable
+* initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME* according to the user's passwd entry
+* the environment variable *SHELL* defaults to */bin/sh* if none is given in the user's passwd entry.
+* resets *PATH* senvironment variable according to setting in _/etc/login.defs_ (*ENV_PATH*, *ENV_SUPATH* or *ENV_ROOTPATH* variables), or defaults to _/usr/local/bin:/bin:/usr/bin_ for a regular user and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root.
 +
-The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_. The environment variable *SHELL* defaults to */bin/sh* if none is given in the user's passwd entry.
+The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_.
 
 include::man-common/help-version.adoc[]
 

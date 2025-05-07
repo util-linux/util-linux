@@ -46,6 +46,8 @@
 #include "setpriv-landlock.h"
 #include "seccomp.h"
 
+#include "logindefs.h"
+
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
 #endif
@@ -744,10 +746,7 @@ static void do_reset_environ(struct passwd *pw)
 	xsetenv("USER", pw->pw_name, 1);
 	xsetenv("LOGNAME", pw->pw_name, 1);
 
-	if (pw->pw_uid)
-		xsetenv("PATH", _PATH_DEFPATH, 1);
-	else
-		xsetenv("PATH", _PATH_DEFPATH_ROOT, 1);
+	logindefs_setenv_path(pw->pw_uid);
 }
 
 static uid_t get_user(const char *s, const char *err)
