@@ -1194,6 +1194,8 @@ static void init_environ(struct login_context *cxt)
 	int len, i;
 
 	saved = env_list_add_getenv(NULL, "TERM", "dumb");
+	saved = env_list_add_getenv(saved, "COLORTERM", NULL);
+	saved = env_list_add_getenv(saved, "NO_COLOR", NULL);
 
 	/* destroy environment unless user has requested preservation (-p) */
 	if (!cxt->keep_env) {
