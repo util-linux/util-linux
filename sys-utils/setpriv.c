@@ -721,18 +721,20 @@ static void do_seccomp_filter(const char *file)
 
 static void do_reset_environ(struct passwd *pw)
 {
-	char *term = getenv("TERM");
+	struct ul_env_list *saved;
 
-	if (term)
-		term = xstrdup(term);
+	saved = env_list_add_getenv(NULL, "TERM", NULL);
+	saved = env_list_add_getenv(saved, "COLORTERM", NULL);
+	saved = env_list_add_getenv(saved, "NO_COLOR", NULL);
+
 #ifdef HAVE_CLEARENV
 	clearenv();
 #else
 	environ = NULL;
 #endif
-	if (term) {
-		xsetenv("TERM", term, 1);
-		free(term);
+	if (saved) {
+		env_list_setenv(saved, 1);
+		env_list_free(saved);
 	}
 
 	if (pw->pw_shell && *pw->pw_shell)
