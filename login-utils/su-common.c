@@ -675,22 +675,6 @@ static void create_watching_parent(struct su_context *su)
 	exit(status);
 }
 
-static void setenv_path(const struct passwd *pw)
-{
-	int rc;
-
-	DBG(MISC, ul_debug("setting PATH"));
-
-	if (pw->pw_uid)
-		rc = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
-
-	else if ((rc = logindefs_setenv("PATH", "ENV_SUPATH", NULL)) != 0)
-		rc = logindefs_setenv("PATH", "ENV_ROOTPATH", _PATH_DEFPATH_ROOT);
-
-	if (rc)
-		err(EXIT_FAILURE, _("failed to set the PATH environment variable"));
-}
-
 static void modify_environment(struct su_context *su, const char *shell)
 {
 	const struct passwd *pw = su->pwd;
@@ -723,7 +707,8 @@ static void modify_environment(struct su_context *su, const char *shell)
 		if (shell)
 			xsetenv("SHELL", shell, 1);
 
-		setenv_path(pw);
+		if (logindefs_setenv_path(pw->pw_uid) != 0)
+			err(EXIT_FAILURE, _("failed to set the PATH environment variable"));
 
 		xsetenv("HOME", pw->pw_dir, 1);
 		xsetenv("USER", pw->pw_name, 1);
@@ -740,8 +725,9 @@ static void modify_environment(struct su_context *su, const char *shell)
 		if (shell)
 			xsetenv("SHELL", shell, 1);
 
-		if (getlogindefs_bool("ALWAYS_SET_PATH", 0))
-			setenv_path(pw);
+		if (getlogindefs_bool("ALWAYS_SET_PATH", 0)
+		    && logindefs_setenv_path(pw->pw_uid) != 0)
+			err(EXIT_FAILURE, _("failed to set the PATH environment variable"));
 
 		if (pw->pw_uid) {
 			xsetenv("USER", pw->pw_name, 1);
