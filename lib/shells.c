@@ -63,6 +63,7 @@ extern void print_shells(FILE *out, const char *format)
 #else
         char *s;
 
+		setusershell();
         while ((s = getusershell()))
 	        fprintf(out, format, s);
         endusershell();
