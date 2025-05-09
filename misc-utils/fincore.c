@@ -26,6 +26,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#ifdef HAVE_FTS_OPEN
+#include <fts.h>
+#endif
+
 #include "c.h"
 #include "cctype.h"
 #include "nls.h"
@@ -125,12 +129,13 @@ struct fincore_control {
 	unsigned int bytes : 1,
 		     noheadings : 1,
 		     raw : 1,
-		     json : 1;
+		     json : 1,
+		     recursive : 1;
 
 };
 
 struct fincore_state {
-	const char * const name;
+	const char * name;
 	long long unsigned int file_size;
 
 	struct cachestat cstat;
@@ -357,30 +362,34 @@ static int fincore_fd (struct fincore_control *ctl,
  * Returns: <0 on error, 0 success, 1 ignore.
  */
 static int fincore_name(struct fincore_control *ctl,
-			struct fincore_state *st)
+			const char *filename,
+			const char *showname,
+			struct stat *statp)
 {
 	int fd;
 	int rc = 0;
-	struct stat sb;
+	struct stat _sb, *sb = statp ?: &_sb;
+	struct fincore_state _st = { .name = filename }, *st = &_st;
 
-	if ((fd = open (st->name, O_RDONLY)) < 0) {
-		warn(_("failed to open: %s"), st->name);
+	if ((fd = open(filename, O_RDONLY)) < 0) {
+		warn(_("failed to open: %s"), showname);
 		return -errno;
 	}
 
-	if (fstat (fd, &sb) < 0) {
-		warn(_("failed to do fstat: %s"), st->name);
-		close (fd);
-		return -errno;
+	if (!statp) {
+		if (fstat (fd, sb) < 0) {
+			warn(_("failed to do fstat: %s"), showname);
+			close (fd);
+			return -errno;
+		}
 	}
-	st->file_size = sb.st_size;
 
-	if (S_ISBLK(sb.st_mode)) {
+	if (S_ISBLK(sb->st_mode)) {
 		rc = blkdev_get_size(fd, &st->file_size);
 		if (rc)
-			warn(_("failed ioctl to get size: %s"), st->name);
-	} else if (S_ISREG(sb.st_mode)) {
-		st->file_size = sb.st_size;
+			warn(_("failed ioctl to get size: %s"), showname);
+	} else if (S_ISREG(sb->st_mode)) {
+		st->file_size = sb->st_size;
 	} else {
 		rc = 1;			/* ignore things like symlinks
 					 * and directories*/
@@ -390,6 +399,12 @@ static int fincore_name(struct fincore_control *ctl,
 		rc = fincore_fd(ctl, fd, st);
 
 	close (fd);
+
+	if (!rc) {
+		st->name = showname;
+		rc = add_output_data(ctl, st);
+	}
+
 	return rc;
 }
 
@@ -408,6 +423,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>   output columns\n"), out);
 	fputs(_("     --output-all      output all columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
+	fputs(_(" -R, --recursive       recursively check all files in directories\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(23));
@@ -445,6 +461,7 @@ int main(int argc, char ** argv)
 		{ "help",	no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
+		{ "recursive",	no_argument, NULL, 'R' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -453,7 +470,7 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long (argc, argv, "bno:JrVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bno:JrRVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			ctl.bytes = 1;
@@ -473,6 +490,12 @@ int main(int argc, char ** argv)
 			break;
 		case 'r':
 			ctl.raw = 1;
+			break;
+		case 'R':
+#ifndef HAVE_FTS_OPEN
+			errx(EXIT_FAILURE, _("recursive option is not supported"));
+#endif
+			ctl.recursive = 1;
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -537,25 +560,32 @@ int main(int argc, char ** argv)
 		}
 	}
 
-	for(; optind < argc; optind++) {
-		struct fincore_state st = {
-			.name = argv[optind],
-		};
+	if (ctl.recursive) {
+#ifdef HAVE_FTS_OPEN
+		FTS *fts = fts_open(argv + optind, FTS_PHYSICAL, NULL);
+		FTSENT *ent;
 
-		switch (fincore_name(&ctl, &st)) {
-		case 0:
-			add_output_data(&ctl, &st);
-			break;
-		case 1:
-			break; /* ignore */
-		default:
+		if (!fts) {
+			warn(_("failed to iterate tree"));
 			rc = EXIT_FAILURE;
-			break;
+		} else {
+			while ((ent = fts_read(fts)) != NULL) {
+				if (ent->fts_info == FTS_F || ent->fts_info == FTS_DEFAULT) {
+					/* fts changes directory when iterating,
+					 * so we need to use .fts_accpath to access
+					 * the file named .fts_path */
+					rc |= fincore_name(&ctl, ent->fts_accpath, ent->fts_path, ent->fts_statp);
+				}
+			}
 		}
+#endif
+	} else {
+		for(; optind < argc; optind++)
+			rc |= fincore_name(&ctl, argv[optind], argv[optind], NULL);
 	}
 
 	scols_print_table(ctl.tb);
 	scols_unref_table(ctl.tb);
 
-	return rc;
+	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }

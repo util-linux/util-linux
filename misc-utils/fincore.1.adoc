@@ -47,6 +47,9 @@ Produce output in raw format. All potentially unsafe characters are hex-escaped 
 *-J*, *--json*::
 Use JSON output format.
 
+*-R*, *--recursive*::
+Recursively check all files in directories.
+
 include::man-common/help-version.adoc[]
 
 == AUTHORS

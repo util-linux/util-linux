@@ -822,6 +822,130 @@ AS_IF([test x"$have_dirfd" = xno], [
 
 AM_CONDITIONAL([HAVE_DIRFD], [test "x$have_dirfd" = xyes || test "x$have_ddfd" = xyes])
 
+AC_MSG_CHECKING([Whether fts_read() actually works])
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <limits.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <fts.h>
+]], [[
+	char template[NAME_MAX];
+	char *paths[] = { NULL, NULL };
+	char path[PATH_MAX];
+	FTSENT *node;
+	FTS *fts;
+	int r;
+	int files = 0, dirs = 0;
+
+	snprintf(template, sizeof(template), "%s/fts_checkXXXXXX", getenv("TMPDIR") ?: "/tmp");
+
+	paths[0] = mkdtemp(template);
+	if (paths[0] == NULL) {
+		perror("mkdtemp");
+		return 1;
+	}
+
+	r = mkdir(template, 0755);
+	if (r < 0 && errno != EEXIST) {
+		perror("mkdir");
+		return 1;
+	}
+	dirs++;
+
+	snprintf(path, sizeof(path), "%s/subdir", template);
+	r = mkdir(path, 0755);
+	if (r < 0 && errno != EEXIST) {
+		perror("mkdir");
+		return 1;
+	}
+	dirs++;
+
+	snprintf(path, sizeof(path), "%s/file1.txt", template);
+	r = creat(path, 0644);
+	if (r < 0) {
+		perror("creat");
+		return 1;
+	}
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/file2.txt", template);
+	r = creat(path, 0644);
+	if (r < 0) {
+		perror("creat");
+		return 1;
+	}
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/subdir/file3.txt", template);
+	r = creat(path, 0644);
+	if (r < 0) {
+		perror("creat");
+		return 1;
+	}
+	close(r);
+	files++;
+
+	snprintf(path, sizeof(path), "%s/subdir/file4.txt", template);
+	r = creat(path, 0644);
+	if (r < 0) {
+		perror("creat");
+		return 1;
+	}
+	close(r);
+	files++;
+
+	fts = fts_open(paths, FTS_NOCHDIR | FTS_PHYSICAL, NULL);
+	if (fts == NULL) {
+		perror("fts_open");
+		return 1;
+	}
+
+	while ((node = fts_read(fts)) != NULL) {
+		switch (node->fts_info) {
+		case FTS_F:
+			files--;
+			break;
+		case FTS_D:
+			dirs--;
+			break;
+		case FTS_ERR:
+			perror("fts_read");
+			return 1;
+		default:
+			break;
+		}
+	}
+
+	if (fts_close(fts) < 0) {
+		perror("fts_close");
+		return 1;
+	}
+
+	if (files != 0) {
+		fprintf(stderr, "Error: %d files not found\n", files);
+		return 1;
+	}
+
+	if (dirs != 0) {
+		fprintf(stderr, "Error: %d directories not found\n", dirs);
+		return 1;
+	}
+]])], [
+	AC_MSG_RESULT([yes])
+	AC_DEFINE([HAVE_FTS_OPEN], [1],
+		[Define if fts_read() actually works])
+], [
+	AC_MSG_RESULT([no])
+], [
+	AC_MSG_RESULT([skipped when cross compiling])
+])
+
 MQ_LIBS=
 AC_CHECK_LIB([rt], [mq_open], [MQ_LIBS="-lrt"])
 AC_SUBST([MQ_LIBS])
