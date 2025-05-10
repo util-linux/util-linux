@@ -23,6 +23,7 @@
  */
 #include <stdio.h>
 #include <getopt.h>
+#include <sys/auxv.h> // for getauxval()
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
@@ -939,10 +940,9 @@ static void load_config(void *data)
 static int is_not_root(void)
 {
 	const uid_t ruid = getuid();
-	const uid_t euid = geteuid();
 
 	/* if we're really root and aren't running setuid */
-	return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
+	return (uid_t) 0 == ruid && !getauxval(AT_SECURE) ? 0 : 1;
 }
 
 /* Don't rely on PAM and reset the most important limits. */
