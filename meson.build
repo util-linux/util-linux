@@ -683,6 +683,7 @@ funcs = '''
         open_memstream
         reboot
         getusershell
+        fts_open
 '''.split()
 
 foreach func: funcs
