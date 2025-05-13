@@ -55,7 +55,7 @@ PAM) from this point of view. You need to use tools like *systemd-run* or
 +
 *su* does:
 +
-* clears all the environment variables except *TERM* and variables specified by *--whitelist-environment*
+* clears all the environment variables except *TERM*, *COLORTERM*, *NO_COLOR* and variables specified by *--whitelist-environment*
 * initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and *PATH*
 * changes to the target user's home directory
 * sets argv[0] of the shell to '*-*' in order to make the shell a login shell

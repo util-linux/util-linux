@@ -704,8 +704,10 @@ static void modify_environment(struct su_context *su, const char *shell)
 	 * --whitelist-environment if specified.
 	 */
 	if (su->simulate_login) {
-		/* leave TERM unchanged */
+		/* leave unchanged */
 		su->env_whitelist = env_list_add_getenv(su->env_whitelist, "TERM", NULL);
+		su->env_whitelist = env_list_add_getenv(su->env_whitelist, "COLORTERM", NULL);
+		su->env_whitelist = env_list_add_getenv(su->env_whitelist, "NO_COLOR", NULL);
 
 		/* Note that original su(1) has allocated environ[] by malloc
 		 * to the number of expected variables. This seems unnecessary
