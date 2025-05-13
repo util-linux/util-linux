@@ -247,9 +247,9 @@ int isxdigit_strend(const char *str, const char **end)
 }
 
 /*
- *  For example: parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
+ *  For example: ul_parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
-int parse_switch(const char *arg, ...)
+int ul_parse_switch(const char *arg, ...)
 {
 	const char *a, *b;
 	va_list ap;
@@ -1407,7 +1407,7 @@ int main(int argc, char *argv[])
 		return test_strutils_sizes(argc - 1, argv + 1);
 
 	} else if (argc == 3 && strcmp(argv[1], "--parse-switch") == 0) {
-		printf("'%s'-->%d\n", argv[2], parse_switch(argv[2],
+		printf("'%s'-->%d\n", argv[2], ul_parse_switch(argv[2],
 						"on", "off",
 						"enable", "disable",
 						"yes", "no",

@@ -365,7 +365,7 @@ static void parse_args(	struct irqtop_ctl *ctl,
 			if (!strcmp(optarg, "auto"))
 				ctl->cpustat_mode = IRQTOP_CPUSTAT_AUTO;
 			else
-				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE - parse_switch(optarg,
+				ctl->cpustat_mode = IRQTOP_CPUSTAT_DISABLE - ul_parse_switch(optarg,
 							"always", "never", "enable", "disable",
 							"on", "off", "yes", "no", "1", "0", NULL);
 			break;
