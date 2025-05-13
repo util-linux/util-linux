@@ -207,7 +207,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		switch (c) {
 		case 'a':
 			ctl->a_option = 1;
-			ctl->a_arg = parse_switch(optarg, _("argument error"),
+			ctl->a_arg = ul_parse_switch(optarg, _("argument error"),
 						"on", "off",  "1", "0",  NULL);
 			break;
 		case 'c':
@@ -229,7 +229,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 			break;
 		case 'i':
 			ctl->i_option = 1;
-			ctl->i_arg = parse_switch(optarg, _("argument error"),
+			ctl->i_arg = ul_parse_switch(optarg, _("argument error"),
 						"on", "off",  "1", "0",  NULL);
 			break;
 		case 'm':

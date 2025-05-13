@@ -247,9 +247,9 @@ int isxdigit_strend(const char *str, const char **end)
 }
 
 /*
- *  parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
+ *  ul_parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
-int parse_switch(const char *arg, const char *errmesg, ...)
+int ul_parse_switch(const char *arg, const char *errmesg, ...)
 {
 	const char *a, *b;
 	va_list ap;
