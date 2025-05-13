@@ -334,6 +334,16 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 
 
 #ifdef USE_SYSTEMD
+/*
+* Note that this mount(8) message may generate thousands of lines of output
+* when mount(8) is called from any script in systems with large fstab, etc.
+*
+* The goal is to avoid spamming system logs (don't print on stderr) and hide
+* the hint if stderr is redirected/piped (in this case mount(8) is probably
+* executed in a script).
+*
+* The target audience is users on a terminal who directly use mount(8).
+*/
 static void systemd_hint(void)
 {
 	static int fstab_check_done = 0;
@@ -342,6 +352,7 @@ static void systemd_hint(void)
 		struct stat a, b;
 
 		if (isatty(STDERR_FILENO) &&
+		    isatty(STDOUT_FILENO) &&
 		    stat(_PATH_SD_UNITSLOAD, &a) == 0 &&
 		    stat(_PATH_MNTTAB, &b) == 0 &&
 		    cmp_stat_mtime(&a, &b, <))
