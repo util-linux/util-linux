@@ -1955,7 +1955,7 @@ static int ui_get_size(struct cfdisk *cf,	/* context */
 				insec = 1;
 				buf[len - 1] = '\0';
 			}
-			rc = parse_size(buf, (uintmax_t *)&user, &pwr);	/* parse */
+			rc = ul_parse_size(buf, (uintmax_t *)&user, &pwr);	/* parse */
 		}
 
 		if (rc == 0) {

@@ -467,7 +467,7 @@ int main(int argc, char **argv)
 	if (argc == 1 && !isdigit_string(*argv)) {
 		usec_t x;
 		/* cal <timestamp> */
-		if (parse_timestamp(*argv, &x) == 0)
+		if (ul_parse_timestamp(*argv, &x) == 0)
 			now = (time_t) (x / 1000000);
 		/* cal <monthname> */
 		else if ((ctl.req.month = monthname_to_number(&ctl, *argv)) > 0)

@@ -189,24 +189,24 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			cmds->op = LPABORT;
-			cmds->val = parse_switch(optarg, "on", "off", NULL);
+			cmds->val = ul_parse_switch(optarg, "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = NULL;
 			break;
 		case 'q':
-			show_irq = parse_switch(optarg, "on", "off", NULL);
+			show_irq = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case 'o':
 			cmds->op = LPABORTOPEN;
-			cmds->val = parse_switch(optarg, "on", "off", NULL);
+			cmds->val = ul_parse_switch(optarg, "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = NULL;
 			break;
 		case 'C':
 			cmds->op = LPCAREFUL;
-			cmds->val = parse_switch(optarg, "on", "off", NULL);
+			cmds->val = ul_parse_switch(optarg, "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = NULL;

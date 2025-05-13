@@ -64,7 +64,7 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  * Note that the function does not accept numbers with '-' (negative sign)
  * prefix.
  */
-int parse_size(const char *str, uintmax_t *res, int *power)
+int ul_parse_size(const char *str, uintmax_t *res, int *power)
 {
 	const char *p;
 	char *end;
@@ -220,7 +220,7 @@ err:
 
 int strtosize(const char *str, uintmax_t *res)
 {
-	return parse_size(str, res, NULL);
+	return ul_parse_size(str, res, NULL);
 }
 
 int isdigit_strend(const char *str, const char **end)
@@ -247,9 +247,9 @@ int isxdigit_strend(const char *str, const char **end)
 }
 
 /*
- *  For example: parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
+ *  For example: ul_parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
-int parse_switch(const char *arg, ...)
+int ul_parse_switch(const char *arg, ...)
 {
 	const char *a, *b;
 	va_list ap;
@@ -863,7 +863,7 @@ int string_to_bitmask(const char *list,
  *
  * Returns: 0 on success, <0 on error.
  */
-int parse_range(const char *str, int *lower, int *upper, int def)
+int ul_parse_range(const char *str, int *lower, int *upper, int def)
 {
 	char *end = NULL;
 
@@ -1407,7 +1407,7 @@ int main(int argc, char *argv[])
 		return test_strutils_sizes(argc - 1, argv + 1);
 
 	} else if (argc == 3 && strcmp(argv[1], "--parse-switch") == 0) {
-		printf("'%s'-->%d\n", argv[2], parse_switch(argv[2],
+		printf("'%s'-->%d\n", argv[2], ul_parse_switch(argv[2],
 						"on", "off",
 						"enable", "disable",
 						"yes", "no",

@@ -559,19 +559,19 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			break;
 		case OPT_CURSOR:
 			ctl->opt_cursor = set_opt_flag(ctl->opt_cursor);
-			ctl->opt_cu_on = parse_switch(optarg,"on", "off", NULL);
+			ctl->opt_cu_on = ul_parse_switch(optarg,"on", "off", NULL);
 			break;
 		case OPT_REPEAT:
 			ctl->opt_repeat = set_opt_flag(ctl->opt_repeat);
-			ctl->opt_rep_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_rep_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_APPCURSORKEYS:
 			ctl->opt_appcursorkeys = set_opt_flag(ctl->opt_appcursorkeys);
-			ctl->opt_appck_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_appck_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_LINEWRAP:
 			ctl->opt_linewrap = set_opt_flag(ctl->opt_linewrap);
-			ctl->opt_li_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_li_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_DEFAULT:
 			ctl->opt_default = set_opt_flag(ctl->opt_default);
@@ -594,27 +594,27 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			break;
 		case OPT_INVERSESCREEN:
 			ctl->opt_inversescreen = set_opt_flag(ctl->opt_inversescreen);
-			ctl->opt_invsc_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_invsc_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_BOLD:
 			ctl->opt_bold = set_opt_flag(ctl->opt_bold);
-			ctl->opt_bo_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_bo_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_HALF_BRIGHT:
 			ctl->opt_halfbright = set_opt_flag(ctl->opt_halfbright);
-			ctl->opt_hb_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_hb_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_BLINK:
 			ctl->opt_blink = set_opt_flag(ctl->opt_blink);
-			ctl->opt_bl_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_bl_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_REVERSE:
 			ctl->opt_reverse = set_opt_flag(ctl->opt_reverse);
-			ctl->opt_re_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_re_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_UNDERLINE:
 			ctl->opt_underline = set_opt_flag(ctl->opt_underline);
-			ctl->opt_un_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_un_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_STORE:
 			ctl->opt_store = set_opt_flag(ctl->opt_store);
@@ -622,7 +622,7 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 		case OPT_CLEAR:
 			ctl->opt_clear = set_opt_flag(ctl->opt_clear);
 			if (optarg)
-				ctl->opt_cl_all = parse_switch(optarg, "all", "rest", NULL);
+				ctl->opt_cl_all = ul_parse_switch(optarg, "all", "rest", NULL);
 			else
 				ctl->opt_cl_all = 1;
 			break;
@@ -656,7 +656,7 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 			break;
 		case OPT_MSG:
 			ctl->opt_msg = set_opt_flag(ctl->opt_msg);
-			ctl->opt_msg_on = parse_switch(optarg, "on", "off", NULL);
+			ctl->opt_msg_on = ul_parse_switch(optarg, "on", "off", NULL);
 			break;
 		case OPT_MSGLEVEL:
 			ctl->opt_msglevel = set_opt_flag(ctl->opt_msglevel);

@@ -1556,7 +1556,7 @@ int main(int argc, char **argv)
 		/* minimalistic GPLv2 based parser */
 		usec_t usec;
 
-		if (parse_timestamp(ctl.date_opt, &usec) == 0)
+		if (ul_parse_timestamp(ctl.date_opt, &usec) == 0)
 			set_time = (time_t) (usec / 1000000);
 #endif
 		else {
