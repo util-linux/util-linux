@@ -46,6 +46,7 @@
 #include "mountP.h"
 #include "fileutils.h"	/* statx() fallback */
 #include "strutils.h"
+#include "mangle.h"
 #include "linux_version.h"
 
 #ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
@@ -138,19 +139,12 @@ static inline int fsconfig_set_value(
 	int rc;
 	char *s = NULL;
 
-	/* "\," is a way to use comma in values, let's remove \ escape */
-	if (value && strstr(value, "\\,")) {
-		char *x, *p;
-
+	/* Remove \, and \" escapes, both supported by ul_optstr_next() */
+	if (value && strchr(value, '\\')) {
 		s = strdup(value);
 		if (!s)
-			return -EINVAL;
-		for (x = p = s; *x; p++, x++) {
-			if (*x == '\\' && *(x + 1) == ',')
-				x++;
-			*p = *x;
-		}
-		*p = '\0';
+			return -ENOMEM;
+		unescape_string(s, ",\"");
 		value = s;
 	}
 
