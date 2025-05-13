@@ -1054,17 +1054,17 @@ int main(int argc, char **argv)
 			ctl.time_fmt = LAST_TIMEFTM_CTIME;
 			break;
 		case 'p':
-			if (parse_timestamp(optarg, &p) < 0)
+			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			ctl.present = (time_t) (p / 1000000);
 			break;
 		case 's':
-			if (parse_timestamp(optarg, &p) < 0)
+			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			ctl.since = (time_t) (p / 1000000);
 			break;
 		case 't':
-			if (parse_timestamp(optarg, &p) < 0)
+			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			ctl.until = (time_t) (p / 1000000);
 			break;
