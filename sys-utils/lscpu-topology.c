@@ -509,7 +509,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 			/* cache size */
 			if (ul_path_readf_buffer(sys, buf, sizeof(buf),
 					"cpu%d/cache/index%zu/size", num, i) > 0)
-				parse_size(buf, &ca->size, NULL);
+				ul_parse_size(buf, &ca->size, NULL);
 			else
 				ca->size = 0;
 		}

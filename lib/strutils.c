@@ -64,7 +64,7 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  * Note that the function does not accept numbers with '-' (negative sign)
  * prefix.
  */
-int parse_size(const char *str, uintmax_t *res, int *power)
+int ul_parse_size(const char *str, uintmax_t *res, int *power)
 {
 	const char *p;
 	char *end;
@@ -220,7 +220,7 @@ err:
 
 int strtosize(const char *str, uintmax_t *res)
 {
-	return parse_size(str, res, NULL);
+	return ul_parse_size(str, res, NULL);
 }
 
 int isdigit_strend(const char *str, const char **end)
