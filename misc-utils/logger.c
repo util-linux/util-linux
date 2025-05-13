@@ -53,6 +53,7 @@
 #include <pwd.h>
 #include <signal.h>
 #include <sys/uio.h>
+#include <stdbool.h>
 
 #include "all-io.h"
 #include "c.h"
@@ -131,16 +132,15 @@ struct logger_ctl {
 
 	void (*syslogfp)(struct logger_ctl *ctl);
 
-	unsigned int
-			unix_socket_errors:1,	/* whether to report or not errors */
-			noact:1,		/* do not write to sockets */
-			prio_prefix:1,		/* read priority from input */
-			stderr_printout:1,	/* output message to stderr */
-			rfc5424_time:1,		/* include time stamp */
-			rfc5424_tq:1,		/* include time quality markup */
-			rfc5424_host:1,		/* include hostname */
-			skip_empty_lines:1,	/* do not send empty lines when processing files */
-			octet_count:1;		/* use RFC6587 octet counting */
+	bool	unix_socket_errors,	/* whether to report or not errors */
+		noact,			/* do not write to sockets */
+		prio_prefix,		/* read priority from input */
+		stderr_printout,	/* output message to stderr */
+		rfc5424_time,		/* include time stamp */
+		rfc5424_tq,		/* include time quality markup */
+		rfc5424_host,		/* include hostname */
+		skip_empty_lines,	/* do not send empty lines when processing files */
+		octet_count;		/* use RFC6587 octet counting */
 };
 
 #define is_connected(_ctl)	((_ctl)->fd >= 0)
