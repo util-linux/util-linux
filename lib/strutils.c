@@ -863,7 +863,7 @@ int string_to_bitmask(const char *list,
  *
  * Returns: 0 on success, <0 on error.
  */
-int parse_range(const char *str, int *lower, int *upper, int def)
+int ul_parse_range(const char *str, int *lower, int *upper, int def)
 {
 	char *end = NULL;
 

@@ -260,7 +260,7 @@ extern int string_to_bitarray(const char *list, char *ary,
 extern int string_to_bitmask(const char *list,
 			     unsigned long *mask,
 			     long (*name2flag)(const char *, size_t));
-extern int parse_range(const char *str, int *lower, int *upper, int def);
+extern int ul_parse_range(const char *str, int *lower, int *upper, int def);
 
 extern int streq_paths(const char *a, const char *b);
 
