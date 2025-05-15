@@ -18,6 +18,11 @@ TS_DESC="decode functions"
 . "$TS_TOPDIR/functions.sh"
 ts_init "$*"
 
+# make sure we do not use shell built-in command
+if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
+	TS_CMD_KILL="$(which kill)"
+fi
+
 ts_skip_qemu_user
 
 ts_check_test_command "$TS_CMD_KILL"
