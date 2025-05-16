@@ -65,6 +65,9 @@ Set scheduling policy to *SCHED_IDLE* (scheduling very low priority jobs). Linux
 *-d*, *--deadline*::
 Set scheduling policy to *SCHED_DEADLINE* (sporadic task model deadline scheduling). Linux-specific, supported since 3.14. The priority argument has to be set to zero. See also *--sched-runtime*, *--sched-deadline* and *--sched-period*. The relation between the options required by the kernel is runtime <= deadline <= period. *chrt* copies _period_ to _deadline_ if *--sched-deadline* is not specified and _deadline_ to _runtime_ if *--sched-runtime* is not specified. It means that at least *--sched-period* has to be specified. See *sched*(7) for more details.
 
+*-d*, *--ext*::
+Set scheduling policy to *SCHED_EXT* (BPF program-defined scheduling). Linux-specific, supported since 6.12. The priority argument has to be set to zero.
+
 == SCHEDULING OPTIONS
 
 *-T*, *--sched-runtime* _nanoseconds_::

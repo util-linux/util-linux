@@ -71,6 +71,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Policy options:\n"), out);
 	fputs(_(" -b, --batch          set policy to SCHED_BATCH\n"), out);
 	fputs(_(" -d, --deadline       set policy to SCHED_DEADLINE\n"), out);
+	fputs(_(" -e, --ext            set policy to SCHED_EXT\n"), out);
 	fputs(_(" -f, --fifo           set policy to SCHED_FIFO\n"), out);
 	fputs(_(" -i, --idle           set policy to SCHED_IDLE\n"), out);
 	fputs(_(" -o, --other          set policy to SCHED_OTHER\n"), out);
@@ -120,6 +121,10 @@ static const char *get_policy_name(int policy)
 #ifdef SCHED_DEADLINE
 	case SCHED_DEADLINE:
 		return "SCHED_DEADLINE";
+#endif
+#ifdef SCHED_EXT
+	case SCHED_EXT:
+		return "SCHED_EXT";
 #endif
 	default:
 		break;
@@ -290,6 +295,9 @@ static void show_min_max(void)
 #ifdef SCHED_DEADLINE
 		SCHED_DEADLINE,
 #endif
+#ifdef SCHED_EXT
+		SCHED_EXT,
+#endif
 	};
 
 	for (i = 0; i < ARRAY_SIZE(policies); i++) {
@@ -397,6 +405,7 @@ int main(int argc, char **argv)
 		{ "all-tasks",  no_argument, NULL, 'a' },
 		{ "batch",	no_argument, NULL, 'b' },
 		{ "deadline",   no_argument, NULL, 'd' },
+		{ "ext",	no_argument, NULL, 'e' },
 		{ "fifo",	no_argument, NULL, 'f' },
 		{ "idle",	no_argument, NULL, 'i' },
 		{ "pid",	no_argument, NULL, 'p' },
@@ -418,7 +427,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "+abdD:fiphmoP:T:rRvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abdD:efiphmoP:T:rRvV", longopts, NULL)) != -1)
 	{
 		switch (c) {
 		case 'a':
@@ -433,6 +442,11 @@ int main(int argc, char **argv)
 		case 'd':
 #ifdef SCHED_DEADLINE
 			ctl->policy = SCHED_DEADLINE;
+#endif
+			break;
+		case 'e':
+#ifdef SCHED_EXT
+			ctl->policy = SCHED_EXT;
 #endif
 			break;
 		case 'f':

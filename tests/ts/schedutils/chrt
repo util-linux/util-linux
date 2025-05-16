@@ -137,6 +137,15 @@ if [ $? == 0 ]; then
 	ts_finalize_subtest
 fi
 
+ts_init_subtest "ext"
+skip_policy SCHED_EXT
+if [ $? == 0 ]; then
+	do_chrt --ext 0
+	do_chrt -e 0
+	cleanup_output
+	ts_finalize_subtest
+fi
+
 # failed -- let's report kernel limits
 #
 if [ $TS_NSUBFAILED -ne 0 ]; then
