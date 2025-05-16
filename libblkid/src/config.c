@@ -154,7 +154,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 
 #else /* !HAVE_LIBECONF */
 
-	static econf_file *file = NULL;
+	econf_file *file = NULL;
 	char *line = NULL;
 	bool uevent = false;
 	econf_err error;
