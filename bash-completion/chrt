@@ -19,6 +19,7 @@ _chrt_module()
 				--all-tasks
 				--batch
 				--deadline
+				--ext
 				--fifo
 				--help
 				--idle
