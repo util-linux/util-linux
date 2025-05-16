@@ -40,6 +40,24 @@ struct type_string {
 	char *desc;
 };
 
+#ifndef IOC_PR_READ_KEYS
+struct pr_keys {
+	uint32_t generation;
+	uint32_t num_keys;
+	uint64_t keys[];
+};
+#define IOC_PR_READ_KEYS       _IOWR('p', 206, struct pr_keys)
+#endif
+
+#ifndef IOC_PR_READ_RESV
+struct pr_held_reservation {
+	uint64_t key;
+	uint32_t generation;
+	uint32_t type;
+};
+#define IOC_PR_READ_RESV       _IOWR('p', 207, struct pr_held_reservation)
+#endif
+
 /* This array should keep align with enum pr_type of linux/types.h */
 static const struct type_string pr_type[] = {
 	{PR_WRITE_EXCLUSIVE,           "write-exclusive",
@@ -103,6 +121,12 @@ static const struct type_string pr_command[] = {
 	{IOC_PR_CLEAR,         "clear",
 	"  * clear: This command unregisters both key and any other reservation\n"
 	"    key registered with the device and drops any existing reservation.\n"},
+	{IOC_PR_READ_KEYS,     "read-keys",
+	"  * read-keys: This command reads the existing persistent reservation\n"
+	"    keys on a device.\n"},
+	{IOC_PR_READ_RESV,     "read-reservation",
+	"  * read-reservation: This command reads the current persistent reservation\n"
+	"    from a device.\n"},
 };
 
 static const struct type_string pr_flag[] = {
@@ -157,6 +181,10 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, unsigned op, int typ
 	struct pr_reservation pr_res;
 	struct pr_preempt pr_prt;
 	struct pr_clear pr_clr;
+	struct pr_keys pr_ky;
+	struct pr_held_reservation pr_resv;
+	char *pr_type;
+	unsigned int k;
 	int fd, ret;
 
 	fd = open(path, O_RDWR);
@@ -189,6 +217,73 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, unsigned op, int typ
 		pr_clr.key = key;
 		pr_clr.flags = flag;
 		ret = ioctl(fd, op, &pr_clr);
+		break;
+	case IOC_PR_READ_KEYS:
+		memset(&pr_ky, 0, sizeof(pr_ky));
+		ret = ioctl(fd, op, &pr_ky);
+		if (ret)
+			break;
+		if (pr_ky.num_keys > 0) {
+			struct pr_keys *_pr_keys;
+
+			_pr_keys = xmalloc(sizeof(pr_ky) +
+					   (sizeof(__u64) * pr_ky.num_keys));
+			if (!_pr_keys) {
+				errno = ENOMEM;
+				ret = -1;
+				break;
+			}
+			ret = ioctl(fd, op, _pr_keys);
+			if (ret) {
+				free(_pr_keys);
+				break;
+			}
+			for (k = 0; k < _pr_keys->num_keys; k++) {
+				fprintf(stdout, "0x%08" PRIx64 "\n",
+					_pr_keys->keys[k]);
+			}
+			free(_pr_keys);
+		} else {
+			fprintf(stdout, "PR generation 0x%x\n",
+				pr_ky.generation);
+		}
+		break;
+	case IOC_PR_READ_RESV:
+		memset(&pr_resv, 0, sizeof(pr_resv));
+		ret = ioctl(fd, op, &pr_resv);
+		if (ret)
+			break;
+		fprintf(stdout, "PR generation: 0x%x\n", pr_resv.generation);
+		if (pr_resv.key) {
+			fprintf(stdout, "PR key: 0x%08" PRIx64 "\n",
+				pr_resv.key);
+			switch (pr_resv.type) {
+			case PR_WRITE_EXCLUSIVE:
+				pr_type = "write exclusive";
+				break;
+			case PR_EXCLUSIVE_ACCESS:
+				pr_type = "exclusive access";
+				break;
+			case PR_WRITE_EXCLUSIVE_REG_ONLY:
+				pr_type = "write exclusive, registrants only";
+				break;
+			case PR_EXCLUSIVE_ACCESS_REG_ONLY:
+				pr_type = "exclusive access, registrants only";
+				break;
+			case PR_WRITE_EXCLUSIVE_ALL_REGS:
+				pr_type = "write exclusive, all registrants";
+				break;
+			case PR_EXCLUSIVE_ACCESS_ALL_REGS:
+				pr_type = "exclusive access, all registrants";
+				break;
+			default:
+				pr_type = "<unknown>";
+				break;
+			}
+			fprintf(stdout, "PR type: %s\n", pr_type);
+		} else {
+			fprintf(stdout, "PR key: none\n");
+		}
 		break;
 	default:
 		errno = EINVAL;
