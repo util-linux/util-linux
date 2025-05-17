@@ -65,6 +65,18 @@ blkid_tag blkid_find_tag_dev(blkid_dev dev, const char *type)
 	return NULL;
 }
 
+static int blkid_compare_tag_value(blkid_tag tag, const char *value)
+{
+	static const char *caseinsensitive_tags[] = { "UUID", "PARTUUID" };
+
+	for (size_t i = 0; i < ARRAY_SIZE(caseinsensitive_tags); i++)
+	{
+		if (strcmp(tag->bit_name, caseinsensitive_tags[i]) != 0)
+			return strcasecmp(tag->bit_val, value);
+	}
+	return strcmp(tag->bit_val, value);
+}
+
 int blkid_dev_has_tag(blkid_dev dev, const char *type,
 			     const char *value)
 {
@@ -73,7 +85,7 @@ int blkid_dev_has_tag(blkid_dev dev, const char *type,
 	tag = blkid_find_tag_dev(dev, type);
 	if (!value)
 		return (tag != NULL);
-	if (!tag || strcmp(tag->bit_val, value) != 0)
+	if (!tag || blkid_compare_tag_value(tag, value) != 0)
 		return 0;
 	return 1;
 }
@@ -133,7 +145,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 		if (t)
 			blkid_free_tag(t);
 	} else if (t) {
-		if (!strcmp(t->bit_val, val)) {
+		if (!blkid_compare_tag_value(t, val)) {
 			/* Same thing, exit */
 			free(val);
 			return 0;
@@ -345,7 +357,7 @@ try_again:
 			blkid_tag tmp = list_entry(p, struct blkid_struct_tag,
 						   bit_names);
 
-			if (!strcmp(tmp->bit_val, value) &&
+			if (!blkid_compare_tag_value(tmp, value) &&
 			    (tmp->bit_dev->bid_pri > pri) &&
 			    !access(tmp->bit_dev->bid_name, F_OK)) {
 				dev = tmp->bit_dev;
