@@ -83,7 +83,7 @@ static int probe_lvm_tp(blkid_probe pr,
 			dup2(lvpipe[1], STDOUT_FILENO);
 
 		if (drop_permissions() != 0)
-			 exit(1);
+			 _exit(1);
 
 		lvargv[0] = cmd;
 		lvargv[1] = devname;
@@ -92,7 +92,7 @@ static int probe_lvm_tp(blkid_probe pr,
 		execv(lvargv[0], lvargv);
 
 		DBG(LOWPROBE, ul_debug("Failed to execute %s: errno=%d", cmd, errno));
-		exit(1);
+		_exit(1);
 	}
 	case -1:
 		DBG(LOWPROBE, ul_debug("Failed to forking: errno=%d", errno));
