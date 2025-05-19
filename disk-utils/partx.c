@@ -864,7 +864,7 @@ int main(int argc, char **argv)
 			what = ACT_LIST;
 			break;
 		case 'n':
-			if (parse_range(optarg, &lower, &upper, 0))
+			if (ul_parse_range(optarg, &lower, &upper, 0))
 				errx(EXIT_FAILURE, _("failed to parse --nr <M-N> range"));
 			break;
 		case 'o':

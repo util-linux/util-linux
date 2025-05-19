@@ -482,7 +482,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 		}
 
 		/* parse range (N-M) */
-		if (strchr(*one, '-') && parse_range(*one, &low, &up, 0) == 0) {
+		if (strchr(*one, '-') && ul_parse_range(*one, &low, &up, 0) == 0) {
 			for (; low <= up; low++) {
 				if (low < 0)
 					cl = get_last_visible_column(ctl, (low * -1) -1);

@@ -1024,7 +1024,7 @@ static int parse_start_value(struct fdisk_script *dp, struct fdisk_partition *pa
 		int pow = 0, sign = skip_optional_sign(&tk);
 		uint64_t num;
 
-		rc = parse_size(tk, (uintmax_t *) &num, &pow);
+		rc = ul_parse_size(tk, (uintmax_t *) &num, &pow);
 		if (!rc) {
 			if (pow) {	/* specified as <num><suffix> */
 				if (!dp->cxt->sector_size) {
@@ -1080,7 +1080,7 @@ static int parse_size_value(struct fdisk_script *dp, struct fdisk_partition *pa,
 		int pow = 0, sign = skip_optional_sign(&tk);
 		uint64_t num;
 
-		rc = parse_size(tk, (uintmax_t *) &num, &pow);
+		rc = ul_parse_size(tk, (uintmax_t *) &num, &pow);
 		if (!rc) {
 			if (pow) { /* specified as <size><suffix> */
 				if (!dp->cxt->sector_size) {
@@ -1564,7 +1564,7 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 	if (str) {
 		uintmax_t sz;
 
-		rc = parse_size(str, &sz, NULL);
+		rc = ul_parse_size(str, &sz, NULL);
 		if (rc == 0)
 			rc = fdisk_save_user_grain(cxt, sz);
 		if (rc)
@@ -1591,7 +1591,7 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 	if (str) {
 		uintmax_t sz;
 
-		rc = parse_size(str, &sz, NULL);
+		rc = ul_parse_size(str, &sz, NULL);
 		if (rc == 0)
 			rc = fdisk_gpt_set_npartitions(cxt, sz);
 	}

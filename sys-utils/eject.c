@@ -207,7 +207,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		switch (c) {
 		case 'a':
 			ctl->a_option = 1;
-			ctl->a_arg = parse_switch(optarg, "on", "off",  "1", "0",  NULL);
+			ctl->a_arg = ul_parse_switch(optarg, "on", "off",  "1", "0",  NULL);
 			break;
 		case 'c':
 			ctl->c_option = 1;
@@ -228,7 +228,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 			break;
 		case 'i':
 			ctl->i_option = 1;
-			ctl->i_arg = parse_switch(optarg, "on", "off",  "1", "0",  NULL);
+			ctl->i_arg = ul_parse_switch(optarg, "on", "off",  "1", "0",  NULL);
 			break;
 		case 'm':
 			ctl->m_option = 1;

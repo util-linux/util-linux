@@ -21,7 +21,7 @@
 /* initialize a custom exit code for all *_or_err functions */
 extern void strutils_set_exitcode(int exit_code);
 
-extern int parse_size(const char *str, uintmax_t *res, int *power);
+extern int ul_parse_size(const char *str, uintmax_t *res, int *power);
 extern int strtosize(const char *str, uintmax_t *res);
 extern uintmax_t strtosize_or_err(const char *str, const char *errmesg);
 
@@ -68,7 +68,7 @@ extern int isxdigit_strend(const char *str, const char **end);
 #define isxdigit_string(_s)	isxdigit_strend(_s, NULL)
 
 
-extern int parse_switch(const char *arg, ...);
+extern int ul_parse_switch(const char *arg, ...);
 
 #ifndef HAVE_MEMPCPY
 extern void *mempcpy(void *restrict dest, const void *restrict src, size_t n);
@@ -260,7 +260,7 @@ extern int string_to_bitarray(const char *list, char *ary,
 extern int string_to_bitmask(const char *list,
 			     unsigned long *mask,
 			     long (*name2flag)(const char *, size_t));
-extern int parse_range(const char *str, int *lower, int *upper, int def);
+extern int ul_parse_range(const char *str, int *lower, int *upper, int def);
 
 extern int streq_paths(const char *a, const char *b);
 

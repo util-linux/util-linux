@@ -359,7 +359,7 @@ static int ask_offset(struct fdisk_context *cxt,
 			p++;
 		}
 
-		rc = parse_size(p, &num, &pwr);
+		rc = ul_parse_size(p, &num, &pwr);
 		if (rc)
 			continue;
 		DBG(ASK, ul_debug("parsed size: %ju", num));
