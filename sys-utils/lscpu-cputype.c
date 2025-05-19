@@ -442,62 +442,51 @@ static char *key_cleanup(char *str, int *keynum)
 	}
 	return str;
 }
-
 static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value, int *keynum)
 {
-	struct cpuinfo_pattern key = { .id = 0 }, *pat;
-	char *p, *v;
-	char buf[CPUTYPE_PATTERN_BUFSZ] = { 0 };
+    struct cpuinfo_pattern key = { .id = 0 }, *pat = NULL;
+    char *field_end, *val, *field = NULL;
 
-	DBG(GATHER, ul_debug("parse \"%s\"", str));
+    if (!str)
+        return NULL;
 
-	if (!str || !*str)
-		return NULL;
-	p = (char *) skip_blank(str);
-	if (!p || !*p)
-		return NULL;
+    str = (char *)skip_blank(str);
+    if (!str || !*str)
+        return NULL;
 
-	v = strchr(p, ':');
-	if (!v || !*v)
-		return NULL;
+    field_end = strchr(str, ':');
+    if (!field_end)
+        return NULL;
 
-	/* prepare name of the field */
-	xstrncpy(buf, p, sizeof(buf));
-	buf[v - p] = '\0';
-	v++;
+    /* Allocate an exact-length, NUL-terminated copy of the key */
+    field = xstrndup(str, (size_t)(field_end - str));
+    if (!field)
+        return NULL;               /* OOM */
 
-	/* prepare value */
-	v = (char *) skip_space(v);
-	if (!v || !*v)
-		return NULL;
+    val = (char *)skip_space(field_end + 1);
+    if (!val || !*val) {
+        free(field);
+        return NULL;
+    }
 
-	key.pattern = key_cleanup(buf, keynum);
-	/* CPU-type */
-	if ((pat = bsearch(&key, type_patterns,
-			ARRAY_SIZE(type_patterns),
-			sizeof(struct cpuinfo_pattern),
-			cmp_pattern)))
-		goto found;
+    key.pattern = key_cleanup(field, keynum);
 
-	/* CPU */
-	if ((pat = bsearch(&key, cpu_patterns,
-			ARRAY_SIZE(cpu_patterns),
-			sizeof(struct cpuinfo_pattern),
-			cmp_pattern)))
-		goto found;
+    /* Three existing pattern tables, unchanged */
+    if (!(pat = bsearch(&key, type_patterns,  ARRAY_SIZE(type_patterns),
+                        sizeof *type_patterns, cmp_pattern)))
+        pat = bsearch(&key, cpu_patterns,   ARRAY_SIZE(cpu_patterns),
+                      sizeof *cpu_patterns, cmp_pattern);
+    if (!pat)
+        pat = bsearch(&key, cache_patterns, ARRAY_SIZE(cache_patterns),
+                      sizeof *cache_patterns, cmp_pattern);
 
-	/* CACHE */
-	if ((pat = bsearch(&key, cache_patterns,
-			ARRAY_SIZE(cache_patterns),
-			sizeof(struct cpuinfo_pattern),
-			cmp_pattern)))
-		goto found;
+    if (pat) {
+        rtrim_whitespace((unsigned char *)val);
+        *value = val;
+    }
 
-	return NULL;
-found:
-	rtrim_whitespace((unsigned char *) v);
-	*value = v;
-	return pat;
+    free(field);
+    return pat;                   /* may be NULL */
 }
 
 /* Parse extra cache lines contained within /proc/cpuinfo but which are not
