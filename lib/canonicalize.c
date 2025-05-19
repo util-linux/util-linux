@@ -192,7 +192,7 @@ char *canonicalize_path_restricted(const char *path)
 		write_all(pipes[1], (char *) &len, sizeof(len));
 		if (canonical)
 			write_all(pipes[1], canonical, len);
-		exit(0);
+		_exit(0);
 	default:
 		break;
 	}
