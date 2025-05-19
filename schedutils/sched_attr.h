@@ -124,4 +124,12 @@ static int sched_getattr(pid_t pid, struct sched_attr *attr, unsigned int size, 
 # define SCHED_DEADLINE 6
 #endif
 
+/* the SCHED_EXT is supported since Linux 6.12
+ * commit id f0e1a0643a59bf1f922fa209cec86a170b784f3f
+ * -- temporary workaround for people with old glibc headers
+ */
+#if defined(__linux__) && !defined(SCHED_EXT)
+# define SCHED_EXT 7
+#endif
+
 #endif /* UTIL_LINUX_SCHED_ATTR_H */
