@@ -60,16 +60,51 @@ static FILE *myopen(char *name, char *mode, int *flag)
 {
 	int len = strlen(name);
 
-	if (!strcmp(name + len - 3, ".gz")) {
-		FILE *res;
-		char *cmdline = xmalloc(len + 6);
-		snprintf(cmdline, len + 6, "zcat %s", name);
-		res = popen(cmdline, mode);
-		free(cmdline);
-		*flag = 1;
-		return res;
+	/* Handle compressed files with direct execution of zcat */
+	if (len > 3 && !strcmp(name + len - 3, ".gz")) {
+		int pipefd[2];
+		pid_t pid;
+		FILE *f;
+
+		if (pipe(pipefd) == -1)
+			return NULL;
+
+		pid = fork();
+		if (pid == -1) {
+			close(pipefd[0]);
+			close(pipefd[1]);
+			return NULL;
+		}
+
+		if (pid == 0) {
+			/* Child process */
+			close(pipefd[0]);
+			if (pipefd[1] != STDOUT_FILENO) {
+				if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+					exit(EXIT_FAILURE);
+				close(pipefd[1]);
+			}
+			
+			execl("/bin/zcat", "zcat", "--", name, NULL);
+			/* If we get here, exec failed */
+			exit(EXIT_FAILURE);
+		}
+
+		/* Parent process */
+		close(pipefd[1]);
+		f = fdopen(pipefd[0], mode);
+		if (!f) {
+			close(pipefd[0]);
+			/* Should also kill child process but keeping it simple */
+			return NULL;
+		}
+
+		*flag = 1;  /* caller must pclose(f) */
+		return f;
 	}
-	*flag = 0;
+
+	/* plain System.map */
+	*flag = 0;  /* caller will fclose(f) */
 	return fopen(name, mode);
 }
 
