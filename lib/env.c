@@ -16,6 +16,7 @@
 #include <sys/syscall.h>
 #endif
 #include <unistd.h>
+#include <sys/auxv.h> // for getauxval()
 #include <sys/types.h>
 
 #include "env.h"
@@ -260,7 +261,7 @@ void sanitize_env(void)
 
 char *safe_getenv(const char *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
+	if (getauxval(AT_SECURE))
 		return NULL;
 #ifdef HAVE_PRCTL
 	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)

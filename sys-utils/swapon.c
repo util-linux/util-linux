@@ -20,6 +20,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/auxv.h> // for getauxval()
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
@@ -348,7 +349,7 @@ static int swap_reinitialize(struct swap_device *dev)
 		return -1;
 
 	case 0:	/* child */
-		if (geteuid() != getuid() && drop_permissions() != 0)
+		if (getauxval(AT_SECURE) && drop_permissions() != 0)
 			exit(EXIT_FAILURE);
 
 		cmd[idx++] = "mkswap";
