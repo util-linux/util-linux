@@ -287,7 +287,7 @@ static const struct cpuinfo_pattern cache_patterns[] =
 	DEF_PAT_CACHE("cache",	PAT_CACHE),
 };
 
-#define CPUTYPE_PATTERN_BUFSZ	32
+#define CPUTYPE_PATTERN_BUFSZ	128
 
 static int cmp_pattern(const void *a0, const void *b0)
 {
@@ -461,8 +461,7 @@ static const struct cpuinfo_pattern *cpuinfo_parse_line(char *str, char **value,
 		return NULL;
 
 	/* prepare name of the field */
-	xstrncpy(buf, p, sizeof(buf));
-	buf[v - p] = '\0';
+	xstrncpy(buf, p, min((size_t)(v - p)+1, sizeof(buf)));
 	v++;
 
 	/* prepare value */
