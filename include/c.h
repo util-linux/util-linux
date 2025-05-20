@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -35,6 +36,10 @@
 
 #ifndef NAME_MAX
 # define NAME_MAX PATH_MAX
+#endif
+
+#ifndef HAVE_SYS_AUXV_H
+# include <sys/auxv.h>
 #endif
 
 #define BIT(n)                 (1 << (n))
@@ -444,6 +449,15 @@ static inline int drop_permissions(void)
 	return 0;
 fail:
 	return errno ? -errno : -1;
+}
+
+static inline bool is_privileged_execution(void)
+{
+#if defined(HAVE_GETAUXVAL) && defined(AT_SECURE)
+	return getauxval(AT_SECURE) != 0;
+#else
+	return (geteuid() != getuid()) || (getegid() != getgid());
+#endif
 }
 
 /*

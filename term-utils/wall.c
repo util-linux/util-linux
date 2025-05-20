@@ -42,7 +42,6 @@
  *
  */
 
-#include <sys/auxv.h> // for getauxval()
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/time.h>
@@ -414,8 +413,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 			 * After all, our invoker can easily do "wall < file"
 			 * instead of "wall file".
 			 */
-			uid_t uid = getuid();
-			if (uid && getauxval(AT_SECURE))
+			if (getuid() && is_privileged_execution())
 				errx(EXIT_FAILURE, _("will not read %s - use stdin."),
 				     fname);
 

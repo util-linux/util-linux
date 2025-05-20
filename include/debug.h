@@ -36,7 +36,8 @@
 
 #include <stdarg.h>
 #include <string.h>
-#include <sys/auxv.h> // for getauxval()
+
+#include "c.h"
 
 struct ul_debug_maskname {
 	const char *name;
@@ -90,7 +91,7 @@ struct ul_debug_maskname {
 		} else \
 			lib ## _debug_mask = mask; \
 		if (lib ## _debug_mask) { \
-			if (getauxval(AT_SECURE)) { \
+			if (is_privileged_execution()) { \
 				lib ## _debug_mask |= __UL_DEBUG_FL_NOADDR; \
 				fprintf(stderr, "%d: %s: don't print memory addresses (SUID executable).\n", getpid(), # lib); \
 			} \

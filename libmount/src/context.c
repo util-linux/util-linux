@@ -42,7 +42,6 @@
 #include "match.h"
 
 #include <stdarg.h>
-#include <sys/auxv.h> // for getauxval()
 #include <sys/wait.h>
 
 #include "mount-api-utils.h"
@@ -77,7 +76,7 @@ struct libmnt_context *mnt_new_context(void)
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
 
 	/* if we're really root and aren't running setuid */
-	cxt->restricted = (uid_t) 0 == ruid && !getauxval(AT_SECURE) ? 0 : 1;
+	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
 
 	cxt->noautofs = 0;
 
