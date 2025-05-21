@@ -138,6 +138,10 @@ If set, it will be used to define the *PATH* environment variable when a regular
 
 If set, it will be used to define the PATH environment variable when the superuser logs in. *ENV_ROOTPATH* takes precedence. The default value is _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_.
 
+*LOGIN_SHELL_FALLBACK* (boolean)::
+
+If set to _yes_, login will provide a valid shell from `/etc/shells` when the shell specified in `/etc/passwd` is invalid or inaccessible due to administrative errors. This ensures users can still log in. However, it may bypass intended shell restrictions, potentially causing unexpected behavior if the fallback shell differs from the configured one.
+
 == FILES
 
 _/var/run/utmp_,
