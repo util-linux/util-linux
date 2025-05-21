@@ -99,7 +99,7 @@ int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
 	if (!mn)
 		return -EINVAL;
 
-	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_KERNEL);
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_KERNEL, -1);
 	if (me) {
 		rc = monitor_modify_epoll(mn, me, enable);
 		if (!enable)

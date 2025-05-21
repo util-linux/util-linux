@@ -209,7 +209,7 @@ int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const ch
 	if (!mn)
 		return -EINVAL;
 
-	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_USERSPACE);
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_USERSPACE, -1);
 	if (me) {
 		rc = monitor_modify_epoll(mn, me, enable);
 		if (!enable)

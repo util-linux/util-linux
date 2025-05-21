@@ -124,6 +124,7 @@ struct monitor_entry *monitor_new_entry(struct libmnt_monitor *mn)
 	list_add_tail(&me->ents, &mn->ents);
 
 	me->fd = -1;
+	me->id = -1;
 
 	return me;
 }
@@ -153,14 +154,14 @@ static int monitor_next_entry(struct libmnt_monitor *mn,
 }
 
 /* returns entry by type */
-struct monitor_entry *monitor_get_entry(struct libmnt_monitor *mn, int type)
+struct monitor_entry *monitor_get_entry(struct libmnt_monitor *mn, int type, int id)
 {
 	struct libmnt_iter itr;
 	struct monitor_entry *me;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while (monitor_next_entry(mn, &itr, &me) == 0) {
-		if (me->type == type)
+		if (me->type == type && me->id == id)
 			return me;
 	}
 	return NULL;
