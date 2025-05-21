@@ -47,6 +47,9 @@ if LINUX
   lib_mount_sources += '''
     src/hooks.c
     src/monitor.c
+    src/monitor.h
+    src/monitor_utab.c
+    src/monitor_mountinfo.c
     src/optlist.c
     src/hook_veritydev.c
     src/hook_subdir.c
