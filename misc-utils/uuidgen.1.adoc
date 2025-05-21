@@ -41,10 +41,10 @@ Use MD5 as the hash algorithm.
 Use SHA1 as the hash algorithm.
 
 *-6*, *--time-v6*::
-Generate a time-based UUID. This method creates a UUID based on the system clock plus and is lexicographically sortable according to the contained timestamp.
+Generate a time-based UUID. This method creates a UUID based on the system clock and is lexicographically sortable according to the contained timestamp.
 
 *-7*, *--time-v7*::
-Generate a time-based UUID. This method creates a UUID based on the system clock plus and is lexicographically sortable according to the contained timestamp.
+Generate a time-based UUID. This method creates a UUID based on the system clock and is lexicographically sortable according to the contained timestamp.
 
 *-n*, *--namespace* _namespace_::
 Generate the hash with the _namespace_ prefix. The _namespace_ is UUID, or '@ns' where "ns" is well-known predefined UUID addressed by namespace name (see above).
