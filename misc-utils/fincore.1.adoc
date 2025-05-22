@@ -34,6 +34,9 @@ Do not print a header line in status output.
 *-b*, *--bytes*::
 include::man-common/in-bytes.adoc[]
 
+*-c*, *--total*::
+produce a grand total.
+
 *-o*, *--output* _list_::
 Define output columns. See the *--help* output to get a list of the currently supported columns. The default list of columns may be extended if _list_ is specified in the format _{plus}list_.
 //TRANSLATORS: Keep {plus} untranslated.

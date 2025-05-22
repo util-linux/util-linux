@@ -130,7 +130,8 @@ struct fincore_control {
 		     noheadings : 1,
 		     raw : 1,
 		     json : 1,
-		     recursive : 1;
+		     recursive : 1,
+		     total : 1;
 
 };
 
@@ -147,6 +148,9 @@ struct fincore_state {
 	} cstat_fields;
 };
 
+static struct fincore_state total = {
+	.name = "TOTAL",
+};
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -297,6 +301,8 @@ static int do_mincore(struct fincore_control *ctl,
 		{
 			vec[n] = 0;
 			st->cstat.nr_cache++;
+			if (ctl->total)
+				total.cstat.nr_cache++;
 		}
 	}
 
@@ -349,6 +355,15 @@ static int fincore_fd (struct fincore_control *ctl,
 		st->cstat_fields.writeback = 1;
 		st->cstat_fields.evicted = 1;
 		st->cstat_fields.recently_evicted = 1;
+
+		if (ctl->total) {
+			total.cstat.nr_cache += st->cstat.nr_cache;
+			total.cstat.nr_dirty += st->cstat.nr_dirty;
+			total.cstat.nr_writeback += st->cstat.nr_writeback;
+			total.cstat.nr_evicted += st->cstat.nr_evicted;
+			total.cstat.nr_recently_evicted += st->cstat.nr_recently_evicted;
+		}
+
 		return 0;
 	}
 
@@ -402,6 +417,8 @@ static int fincore_name(struct fincore_control *ctl,
 
 	if (!rc) {
 		st->name = showname;
+		if (ctl->total)
+			total.file_size += st->file_size;
 		rc = add_output_data(ctl, st);
 	}
 
@@ -419,6 +436,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -J, --json            use JSON output format\n"), out);
 	fputs(_(" -b, --bytes           print sizes in bytes rather than in human readable format\n"), out);
+	fputs(_(" -c, --total           produce a grand total\n"), out);
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
 	fputs(_("     --output-all      output all columns\n"), out);
@@ -454,6 +472,7 @@ int main(int argc, char ** argv)
 	};
 	static const struct option longopts[] = {
 		{ "bytes",      no_argument, NULL, 'b' },
+		{ "total",      no_argument, NULL, 'c' },
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "output-all",	no_argument,       NULL, OPT_OUTPUT_ALL },
@@ -470,10 +489,13 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long (argc, argv, "bno:JrRVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bcno:JrRVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			ctl.bytes = 1;
+			break;
+		case 'c':
+			ctl.total = 1;
 			break;
 		case 'n':
 			ctl.noheadings = 1;
@@ -583,6 +605,9 @@ int main(int argc, char ** argv)
 		for(; optind < argc; optind++)
 			rc |= fincore_name(&ctl, argv[optind], argv[optind], NULL);
 	}
+
+	if (ctl.total)
+		rc |= add_output_data(&ctl, &total);
 
 	scols_print_table(ctl.tb);
 	scols_unref_table(ctl.tb);
