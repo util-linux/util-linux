@@ -1,0 +1,108 @@
+CPU op-mode(s):                       32-bit, 64-bit
+Address sizes:                        48 bits physical, 48 bits virtual
+Byte Order:                           Little Endian
+CPU(s):                               32
+On-line CPU(s) list:                  0-31
+Model name:                           Loongson-3A5000
+CPU family:                           Loongson-64bit
+Model:                                0x10
+Thread(s) per core:                   1
+Core(s) per socket:                   1
+Socket(s):                            32
+BogoMIPS:                             4000.00
+Flags:                                cpucfg lam ual fpu lsx lasx crc32 lspw lbt_x86 lbt_arm lbt_mips
+L1d cache:                            2 MiB (32 instances)
+L1i cache:                            2 MiB (32 instances)
+L2 cache:                             8 MiB (32 instances)
+L3 cache:                             16 MiB (1 instance)
+NUMA node(s):                         1
+NUMA node0 CPU(s):                    0-31
+Vulnerability Gather data sampling:   Not affected
+Vulnerability Ghostwrite:             Not affected
+Vulnerability Itlb multihit:          Not affected
+Vulnerability L1tf:                   Not affected
+Vulnerability Mds:                    Not affected
+Vulnerability Meltdown:               Not affected
+Vulnerability Mmio stale data:        Not affected
+Vulnerability Reg file data sampling: Not affected
+Vulnerability Retbleed:               Not affected
+Vulnerability Spec rstack overflow:   Not affected
+Vulnerability Spec store bypass:      Not affected
+Vulnerability Spectre v1:             Not affected
+Vulnerability Spectre v2:             Not affected
+Vulnerability Srbds:                  Not affected
+Vulnerability Tsx async abort:        Not affected
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting usually from zero.
+# CPU,Core,Socket,Node,,L1d,L1i,L2,L3
+0,0,0,0,,0,0,0,0
+1,1,1,0,,1,1,1,0
+2,2,2,0,,2,2,2,0
+3,3,3,0,,3,3,3,0
+4,4,4,0,,4,4,4,0
+5,5,5,0,,5,5,5,0
+6,6,6,0,,6,6,6,0
+7,7,7,0,,7,7,7,0
+8,8,8,0,,8,8,8,0
+9,9,9,0,,9,9,9,0
+10,10,10,0,,10,10,10,0
+11,11,11,0,,11,11,11,0
+12,12,12,0,,12,12,12,0
+13,13,13,0,,13,13,13,0
+14,14,14,0,,14,14,14,0
+15,15,15,0,,15,15,15,0
+16,16,16,0,,16,16,16,0
+17,17,17,0,,17,17,17,0
+18,18,18,0,,18,18,18,0
+19,19,19,0,,19,19,19,0
+20,20,20,0,,20,20,20,0
+21,21,21,0,,21,21,21,0
+22,22,22,0,,22,22,22,0
+23,23,23,0,,23,23,23,0
+24,24,24,0,,24,24,24,0
+25,25,25,0,,25,25,25,0
+26,26,26,0,,26,26,26,0
+27,27,27,0,,27,27,27,0
+28,28,28,0,,28,28,28,0
+29,29,29,0,,29,29,29,0
+30,30,30,0,,30,30,30,0
+31,31,31,0,,31,31,31,0
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting usually from zero.
+# CPU,Core,Socket,Node,,L1d,L1i,L2,L3
+0,0,0,0,,0,0,0,0
+1,1,1,0,,1,1,1,0
+2,2,2,0,,2,2,2,0
+3,3,3,0,,3,3,3,0
+4,4,4,0,,4,4,4,0
+5,5,5,0,,5,5,5,0
+6,6,6,0,,6,6,6,0
+7,7,7,0,,7,7,7,0
+8,8,8,0,,8,8,8,0
+9,9,9,0,,9,9,9,0
+10,10,10,0,,10,10,10,0
+11,11,11,0,,11,11,11,0
+12,12,12,0,,12,12,12,0
+13,13,13,0,,13,13,13,0
+14,14,14,0,,14,14,14,0
+15,15,15,0,,15,15,15,0
+16,16,16,0,,16,16,16,0
+17,17,17,0,,17,17,17,0
+18,18,18,0,,18,18,18,0
+19,19,19,0,,19,19,19,0
+20,20,20,0,,20,20,20,0
+21,21,21,0,,21,21,21,0
+22,22,22,0,,22,22,22,0
+23,23,23,0,,23,23,23,0
+24,24,24,0,,24,24,24,0
+25,25,25,0,,25,25,25,0
+26,26,26,0,,26,26,26,0
+27,27,27,0,,27,27,27,0
+28,28,28,0,,28,28,28,0
+29,29,29,0,,29,29,29,0
+30,30,30,0,,30,30,30,0
+31,31,31,0,,31,31,31,0

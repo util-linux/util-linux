@@ -773,7 +773,9 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 		char buf[BUFSIZ];
 
 		snprintf(buf, sizeof(buf), " %s ", ct->isa);
-		if (strstr(buf, " loongarch32 "))
+		if (strstr(buf, " loongarch32 ")
+		    || strstr(buf, " loongarch32s ")
+		    || strstr(buf, " loongarch32r "))
 			ar->bit32 = 1;
 		if (strstr(buf, " loongarch64 "))
 			ar->bit64 = 1;
