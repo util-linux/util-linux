@@ -103,10 +103,12 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		prop->partlabel = xstrdup(data);
 		unhexmangle_string(prop->partlabel);
 	}
+
 	if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
 		prop->fstype = xstrdup(data);
 	if ((data = udev_device_get_property_value(dev, "ID_FS_VERSION")))
 		prop->fsversion = xstrdup(data);
+
 	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
 		prop->parttype = xstrdup(data);
 	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
@@ -115,6 +117,9 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		prop->partn = xstrdup(data);
 	if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
 		prop->partflags = xstrdup(data);
+	if (!prop->pttype &&
+	    (data = udev_device_get_property_value(dev, "ID_PART_ENTRY_SCHEME")))
+		prop->pttype = xstrdup(data);
 
 	data = udev_device_get_property_value(dev, "ID_WWN_WITH_EXTENSION");
 	if (!data)
@@ -256,6 +261,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 		else if (lookup(buf, "ID_PART_ENTRY_UUID", &prop->partuuid)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_FLAGS", &prop->partflags)) ;
 		else if (lookup(buf, "ID_PART_ENTRY_NUMBER", &prop->partn)) ;
+		else if (lookup(buf, "ID_PART_ENTRY_SCHEME", &prop->pttype)) ;
 		else if (lookup(buf, "ID_MODEL", &prop->model)) ;
 		else if (lookup(buf, "ID_WWN_WITH_EXTENSION", &prop->wwn)) ;
 		else if (lookup(buf, "ID_WWN", &prop->wwn)) ;
@@ -339,6 +345,9 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 			prop->partflags = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NUMBER", &data, NULL))
 			prop->partn = xstrdup(data);
+		if (!prop->pttype &&
+		    !blkid_probe_lookup_value(pr, "PART_ENTRY_SCHEME", &data, NULL))
+			prop->pttype = xstrdup(data);
 
 		DBG(DEV, ul_debugobj(dev, "%s: found blkid properties", dev->name));
 	}
