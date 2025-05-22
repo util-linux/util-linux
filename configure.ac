@@ -370,6 +370,7 @@ AC_CHECK_HEADERS([ \
 	stdint.h \
 	stdio_ext.h \
 	stdlib.h \
+	sys/auxv.h \
 	sys/disk.h \
 	sys/disklabel.h \
 	sys/endian.h \
@@ -618,6 +619,7 @@ AC_CHECK_FUNCS([ \
 	fsopen \
 	fspick \
 	fsync \
+	getauxval \
 	getdomainname \
 	getdtablesize \
 	getexecname \
