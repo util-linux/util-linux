@@ -131,7 +131,8 @@ struct fincore_control {
 		     raw : 1,
 		     json : 1,
 		     recursive : 1,
-		     total : 1;
+		     total : 1,
+		     cachestat : 1;
 
 };
 
@@ -367,8 +368,11 @@ static int fincore_fd (struct fincore_control *ctl,
 		return 0;
 	}
 
-	if (errno != ENOSYS)
+	if (errno != ENOSYS || ctl->cachestat)
 		warn(_("failed to do cachestat: %s"), st->name);
+
+	if (ctl->cachestat)
+		return -errno;
 
 	return mincore_fd(ctl, fd, st);
 }
@@ -442,6 +446,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all      output all columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 	fputs(_(" -R, --recursive       recursively check all files in directories\n"), out);
+	fputs(_(" -C, --cachestat       force useage of cachestat syscall\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(23));
@@ -481,6 +486,7 @@ int main(int argc, char ** argv)
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "recursive",	no_argument, NULL, 'R' },
+		{ "cachestat",  no_argument, NULL, 'C' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -489,13 +495,19 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long (argc, argv, "bcno:JrRVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bcCno:JrRVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			ctl.bytes = 1;
 			break;
 		case 'c':
 			ctl.total = 1;
+			break;
+		case 'C':
+#ifndef HAVE_CACHESTAT
+			errx(EXIT_FAILURE, _("cachestat option is not supported"));
+#endif
+			ctl.cachestat = 1;
 			break;
 		case 'n':
 			ctl.noheadings = 1;
