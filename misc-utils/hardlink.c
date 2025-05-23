@@ -1195,11 +1195,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -d, --respect-dir          directory names have to be identical\n"), out);
 	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
 	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
-	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
-	        "                              lowest hardlink count\n"), out);
-	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
+	fputs(_(" -m, --maximize             keep the file with the most links\n"), out);
+	fputs(_(" -M, --minimize             keep the file with the fewest links\n"), out);
 	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
-	fputs(_(" -l, --list-duplicates      print every group of duplicate files\n"), out);
+	fputs(_(" -l, --list-duplicates      just list paths of duplicates, don't link them\n"), out);
 	fputs(_(" -z, --zero                 delimit output with NULs instead of newlines\n"), out);
 	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -F, --prioritize-trees     files found in the earliest specified top-level\n"
