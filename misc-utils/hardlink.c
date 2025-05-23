@@ -1210,8 +1210,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -q, --quiet                quiet mode - don't print anything\n"), out);
 	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
-	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
+	fputs(_(" -s, --minimum-size <size>  minimum size for files\n"), out);
+	fputs(_(" -S, --maximum-size <size>  maximum size for files\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
 	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
