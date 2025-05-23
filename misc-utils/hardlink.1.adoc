@@ -65,20 +65,20 @@ For example, *hardlink foo/ bar/* will link files in bar/ to equal files in the 
 *-i*, *--include* _regex_::
 A regular expression to include files. If the option *--exclude* has been given, this option re-includes files which would otherwise be excluded. If the option is used without *--exclude*, only files matched by the pattern are included.
 
+*-l*, *--list-duplicates*::
+Don't link anything, but list the absolute path of every duplicate file, one per line, preceded by a unique 16-byte discriminator and a tab.
+
 *-m*, *--maximize*::
 Among equal files, keep the file with the highest link count.
 
 *-M*, *--minimize*::
 Among equal files, keep the file with the lowest link count.
 
+*--mount*::
+Do not traverse directories on different filesystems (remain within the same filesystem).
+
 *-n*, *--dry-run*::
 Do not act, just print what would happen.
-
-*-l*, *--list-duplicates*::
-Don't link anything, but list the absolute path of every duplicate file, one per line, preceded by a unique 16-byte discriminator and a tab.
-
-*-z*, *--zero*::
-Separate lines with a NUL instead of a newline in *-l* mode.
 
 *-o*, *--ignore-owner*::
 Link and compare files even if their owner information (user and group) differs. Results may be unpredictable.
@@ -98,6 +98,22 @@ file content block (see *--io-size*), these checksums are cached for the next co
 size is important for large files or a large sets of files of the same size. The default is
 10MiB.
 
+*--reflink*[**=**_when_]::
+Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
+share only on-disk data, but the file mode and owner can be different. It's recommended
+to use this option together with the *--ignore-owner* and *--ignore-mode* options.
+This option implies *--skip-reflinks* to ignore already cloned files.
++
+The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
+is omitted, it defaults to *auto*, which means that *hardlink* checks the filesystem type
+and uses reflinks on BTRFS and XFS only, and falls back to hardlinks when creating a
+reflink is impossible.
+The argument *always* disables filesystem-type detection and the fallback to hardlinks,
+which means that only reflinks are allowed.
+
+*--skip-reflinks*::
+Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
+
 *-s*, *--minimum-size* _size_::
 The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
@@ -116,33 +132,18 @@ A regular expression that excludes files from being compared and linked. This op
 *--exclude-subtree* _regex_::
 A regular expression that excludes entire directories from being compared and linked. This option can also be used multiple times.
 
-*--mount*::
-Do not traverse directories on different filesystems (remain within the same filesystem).
-
 *-X*, *--respect-xattrs*::
 Only try to link files with the same extended attributes.
 
 *-y*, *--method* _name_::
 Set the file content comparison method. The currently supported methods are
-sha256, sha1, crc32c and memcmp. The default is sha256, or memcmp if Linux
-Crypto API is not available. The methods based on checksums are implemented in
-zero-copy way, in this case file contents are not copied to the userspace and all
-calculation is done in kernel.
+*sha256*, *sha1*, *crc32c*, and *memcmp*. The default is *sha256*, or *memcmp* if the
+Linux Crypto API is not available. The methods based on checksums are implemented in
+a zero-copy way, which means that file contents are not copied to userspace and all
+calculation is done in the kernel.
 
-*--reflink*[**=**_when_]::
-Create copy-on-write clones (aka reflinks) rather than hardlinks. The reflinked files
-share only on-disk data, but the file mode and owner can be different. It's recommended
-to use it with *--ignore-owner* and *--ignore-mode* options. This option implies
-*--skip-reflinks* to ignore already cloned files.
-+
-The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
-is omitted, it defaults to *auto*, in this case, *hardlink* checks filesystem type and
-uses reflinks on BTRFS and XFS only, and fallback to hardlinks when creating reflink is impossible.
-The argument *always* disables filesystem type detection and fallback to hardlinks, in this case,
-only reflinks are allowed.
-
-*--skip-reflinks*::
-Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
+*-z*, *--zero*::
+Separate lines with a NUL byte instead of a newline (for *-l*).
 
 include::man-common/help-version.adoc[]
 
