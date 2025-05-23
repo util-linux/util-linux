@@ -118,8 +118,7 @@ The format is required and must be surrounded by double quote (" ") marks. It is
 
 . An asterisk (*) may not be used as a field width or precision.
 
-. A byte count or field precision _is_ required for each *s* conversion character
-(unlike the *fprintf*(3) default which prints the entire string if the precision is unspecified).
+. A byte count or field precision _is_ required for each *s* conversion character (unlike the *fprintf*(3) default which prints the entire string if the precision is unspecified).
 
 . The conversion characters *h*, *l*, *n*, *p*, and *q* are not supported.
 
