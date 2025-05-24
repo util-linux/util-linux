@@ -126,10 +126,12 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 		}
 
 		/* Is this the username we were sent to change? */
-		if (!found && linebuf[namelen] == ':' &&
-		    !strncmp(linebuf, pwd->pw_name, namelen)) {
-			/* Yes! So go forth in the name of the Lord and
-			 * change it!  */
+		if (!found &&
+		    strncmp(linebuf, pwd->pw_name, namelen) == 0 &&
+		    strlen(linebuf) > namelen &&
+		    linebuf[namelen] == ':') {
+			/* Yes! But this time let’s not walk past the end of the buffer
+			 * in the name of the Lord, SUID, or anything else. */
 			if (putpwent(pwd, fp) < 0)
 				goto fail;
 			found = 1;
