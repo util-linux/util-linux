@@ -1314,7 +1314,7 @@ msgstr "Nombre de partició"
 #: disk-utils/fdisk.c:889
 #, fuzzy
 #| msgid "Free Space"
-msgid "free space sectros"
+msgid "free space sectors"
 msgstr "Espai lliure"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
