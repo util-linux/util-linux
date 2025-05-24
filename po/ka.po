@@ -1096,7 +1096,7 @@ msgstr "დანაყოფის ნომერი"
 #: disk-utils/fdisk.c:889
 #, fuzzy
 #| msgid "Free space"
-msgid "free space sectros"
+msgid "free space sectors"
 msgstr "თავისუფალი სივრცე"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
