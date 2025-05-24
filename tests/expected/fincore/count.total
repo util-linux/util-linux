@@ -1,0 +1,33 @@
+0 i_EMPTY
+return value: 0
+1 i_1b
+return value: 0
+1024 i_1k
+return value: 0
+10240 i_10k
+return value: 0
+[ GRAND TOTAL SIZE ]
+0 i_EMPTY
+1 i_1b
+1024 i_1k
+10240 i_10k
+11265 TOTAL
+return value: 0
+0 i_EMPTY
+return value: 0
+1 i_1b
+return value: 0
+1 i_ONE_PAGE
+return value: 0
+2 i_TWO_PAGES
+return value: 0
+10 i_TEN_PAGES
+return value: 0
+[ GRAND TOTAL PAGES ]
+0 i_EMPTY
+1 i_1b
+1 i_ONE_PAGE
+2 i_TWO_PAGES
+10 i_TEN_PAGES
+14 TOTAL
+return value: 0

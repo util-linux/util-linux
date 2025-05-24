@@ -117,6 +117,7 @@ else
 	OUT_COLUMNS="PAGES,FILE"
 fi
 
+cat "$TS_EXPECTED.total" >>"$AGG_OUT"
 cat "$TS_EXPECTED_ERR" >"$AGG_ERR"
 
 if ! $TS_CMD_FINCORE --recursive |& grep -q 'recursive option is not supported' ; then
@@ -246,6 +247,67 @@ ts_log_both "[ MULTIPLE FILES ]"
     $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes $INPUT
     footer "$?"
 } >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+rm -f $INPUT
+INPUT=
+
+OLD_COLUMNS=$OUT_COLUMNS
+OUT_COLUMNS=SIZE,FILE
+
+{
+	run_dd_test "EMPTY" 0
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 1b 1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 1k 1024
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 10k 10240
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+ts_log_both "[ GRAND TOTAL SIZE ]"
+{
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --noheadings --total $INPUT
+    footer "$?"
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+rm -f $INPUT
+INPUT=
+
+OUT_COLUMNS=PAGES,FILE
+
+{
+	run_dd_test "EMPTY" 0
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 1b 1
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 'ONE PAGE' $PAGE_SIZE
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 'TWO PAGES' $(( 2 * PAGE_SIZE ))
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+{
+	run_dd_test 'TEN PAGES' $(( 10 * PAGE_SIZE ))
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+ts_log_both "[ GRAND TOTAL PAGES ]"
+{
+    $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --noheadings --total $INPUT
+    footer "$?"
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+OUT_COLUMNS=$OLD_COLUMNS
 
 if [ -n "$RECURSIVE" ]; then
 	dir=$(make_input_name dir)
