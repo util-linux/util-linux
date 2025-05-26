@@ -15,7 +15,7 @@ PAST MAINTAINERS:
 AUTHORS (merged projects & commands):
 
       blkdiscard:      Lukas Czerner <lczerner@redhat.com>
-      blkpr:           zhenwei pi <pizhenwei@bytedance.com>
+      blkpr:           zhenwei pi <zhenwei.pi@linux.dev>
       blkzone:         Shaun Tancheff <shaun@tancheff.com>
                        Damien Le Moal <damien.lemoal@wdc.com>
       enosys:          Thomas Weißschuh <thomas@t-8ch.de>
@@ -33,7 +33,7 @@ AUTHORS (merged projects & commands):
       hardlink:        Jakub Jelinek <jakub@redhat.com>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
       ipcmk:           Hayden James <hayden.james@gmail.com>
-      irqtop/lsirq:    Zhenwei Pi <pizhenwei@bytedance.com>
+      irqtop/lsirq:    Zhenwei Pi <zhenwei.pi@linux.dev>
                        Sami Kerola <kerolasa@iki.fi>
       last/lastb:      [merged from sysvinit]
                        Miquel van Smoorenburg <miquels@cistron.nl>
