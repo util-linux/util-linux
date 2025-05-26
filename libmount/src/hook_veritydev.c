@@ -461,7 +461,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	 * a lot of time and resources when there are duplicated mounts. If the roothash is the same, then the volumes
 	 * are also guaranteed to be identical. This is what systemd also does, so we can deduplicate across the whole
 	 * system. */
-	if (asprintf(&mapper_device, "%s-verity", root_hash) < 0)
+	if (!rc && asprintf(&mapper_device, "%s-verity", root_hash) < 0)
 		rc = -ENOMEM;
 
 	if (!rc)
