@@ -543,7 +543,8 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			if (!rc) {
 				DBG(HOOK, ul_debugobj(hs, "comparing root hash of existing device with %s", root_hash));
 				if (memcmp(key, root_hash_binary, hash_size)) {
-					DBG(HOOK, ul_debugobj(hs, "existing device's hash does not match with %s", root_hash));
+					/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+					mnt_context_append_mesg(cxt, _("e device's hash does not match with root hash"));
 					rc = -EINVAL;
 					goto done;
 				}
@@ -561,8 +562,9 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			 */
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 			if (!!hash_sig != !!(crypt_params.flags & CRYPT_VERITY_ROOT_HASH_SIGNATURE)) {
+				/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+				mnt_context_append_mesg(cxt, _("e device and mount have to either be both opened with signature or both without"));
 				rc = -EINVAL;
-				DBG(HOOK, ul_debugobj(hs, "existing device and new mount have to either be both opened with signature or both without"));
 				goto done;
 			}
 #endif
