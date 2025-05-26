@@ -103,10 +103,10 @@ static void delete_veritydev(struct libmnt_context *cxt,
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
 static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
-				      const struct libmnt_hookset *hs,
 				      struct hookset_data *hsd)
 {
 	size_t i;
+	const char *errmsg = NULL;
 	int flags = RTLD_LAZY | RTLD_LOCAL;
 
 	assert(cxt);
@@ -121,10 +121,17 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 #ifdef RTLD_DEEPBIND
 	flags |= RTLD_DEEPBIND;
 #endif
+	/* Don't rely on errno; the dlopen API may not use it. Also, note that
+	 * dlerror() provides complete messages that do not need any additional
+	 * introduction when printed to end users. */
+	errno = 0;
+
 	hsd->dl = dlopen("libcryptsetup.so.12", flags);
 	if (!hsd->dl) {
-		DBG(HOOK, ul_debugobj(hs, "cannot dlopen libcryptsetup"));
-		return -ENOTSUP;
+		errmsg = dlerror();
+		if (errmsg)
+			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
+		goto failed;
 	}
 
 	/* clear errors first, then load all the libcryptsetup symbols */
@@ -132,7 +139,6 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 
 	/* dlsym()  */
 	for (i = 0; i < ARRAY_SIZE(verity_symbols); i++) {
-		char *errmsg;
 		const struct verity_sym *def = &verity_symbols[i];
 		void **sym;
 
@@ -141,11 +147,15 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 
 		errmsg = dlerror();
 		if (errmsg) {
-			DBG(HOOK, ul_debugobj(hs, "dlsym failed %s: %s", def->name, errmsg));
-			return -ENOTSUP;
+			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
+			goto failed;
 		}
 	}
 	return 0;
+failed:
+	if (!errno)
+		errno = ENOTSUP;
+	return -errno;
 }
 #endif
 
@@ -190,7 +200,7 @@ static struct hookset_data *new_hookset_data(
 		goto failed;
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
-	if (load_libcryptsetup_symbols(cxt, hs, hsd) != 0)
+	if (load_libcryptsetup_symbols(cxt, hsd) != 0)
 		goto failed;
 #endif
 	if (mnt_context_is_verbose(cxt))
@@ -611,7 +621,7 @@ static int hook_prepare_source(
 
 	hsd = new_hookset_data(cxt, hs);
 	if (!hsd)
-		return -ENOMEM;
+		return errno ? -errno : -ENOMEM;
 
 	rc = setup_veritydev(cxt, hs, hsd, ol);
 	if (!rc) {
