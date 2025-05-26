@@ -238,6 +238,7 @@ headers = '''
         security/pam_appl.h
         security/pam_misc.h
         security/pam_modules.h
+        sys/auxv.h
         sys/disk.h
         sys/disklabel.h
         sys/endian.h
@@ -611,6 +612,7 @@ funcs = '''
         fsync
         getttynam
         utimensat
+        getauxval
         getdomainname
         getdtablesize
         getexecname

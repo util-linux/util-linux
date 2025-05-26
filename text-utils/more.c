@@ -1273,8 +1273,7 @@ static void __attribute__((__format__ (__printf__, 3, 4)))
 		}
 		va_end(argp);
 
-		if ((geteuid() != getuid() || getegid() != getgid())
-		    && drop_permissions() != 0)
+		if (is_privileged_execution() && drop_permissions() != 0)
 			err(EXIT_FAILURE, _("drop permissions failed"));
 
 		execvp(cmd, args);

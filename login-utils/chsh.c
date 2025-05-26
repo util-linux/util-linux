@@ -243,7 +243,7 @@ int main(int argc, char **argv)
 	/* reality check */
 #ifdef HAVE_LIBUSER
 	/* If we're setuid and not really root, disallow the password change. */
-	if (geteuid() != getuid() && uid != pw->pw_uid) {
+	if (is_privileged_execution() && uid != pw->pw_uid) {
 #else
 	if (uid != 0 && uid != pw->pw_uid) {
 #endif

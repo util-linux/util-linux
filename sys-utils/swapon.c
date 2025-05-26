@@ -348,7 +348,7 @@ static int swap_reinitialize(struct swap_device *dev)
 		return -1;
 
 	case 0:	/* child */
-		if (geteuid() != getuid() && drop_permissions() != 0)
+		if (is_privileged_execution() && drop_permissions() != 0)
 			exit(EXIT_FAILURE);
 
 		cmd[idx++] = "mkswap";

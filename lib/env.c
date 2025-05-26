@@ -260,7 +260,7 @@ void sanitize_env(void)
 
 char *safe_getenv(const char *arg)
 {
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
+	if (is_privileged_execution())
 		return NULL;
 #ifdef HAVE_PRCTL
 	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
