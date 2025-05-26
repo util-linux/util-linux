@@ -1110,7 +1110,7 @@ msgid "partition sectors"
 msgstr "číslo oddielu"
 
 #: disk-utils/fdisk.c:889
-msgid "free space sectros"
+msgid "free space sectors"
 msgstr ""
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441

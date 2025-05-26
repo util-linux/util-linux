@@ -1095,7 +1095,7 @@ msgid "partition sectors"
 msgstr "분할 영역 섹터"
 
 #: disk-utils/fdisk.c:889
-msgid "free space sectros"
+msgid "free space sectors"
 msgstr "여분 공간 섹터"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441

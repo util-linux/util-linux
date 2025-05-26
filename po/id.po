@@ -1178,7 +1178,7 @@ msgstr "Nomor partisi"
 
 #: disk-utils/fdisk.c:889
 #, fuzzy
-msgid "free space sectros"
+msgid "free space sectors"
 msgstr "Space kosong"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
