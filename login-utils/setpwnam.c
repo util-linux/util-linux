@@ -99,7 +99,8 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 		goto fail;
 
 	namelen = strlen(pwd->pw_name);
-
+	if (namelen > buflen)
+		buflen += namelen;
 	linebuf = malloc(buflen);
 	if (!linebuf)
 		goto fail;
