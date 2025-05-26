@@ -180,9 +180,13 @@ static struct hookset_data *new_hookset_data(
 				struct libmnt_context *cxt,
 				const struct libmnt_hookset *hs)
 {
-	struct hookset_data *hsd = calloc(1, sizeof(struct hookset_data));
+	struct hookset_data *hsd;
 
-	if (hsd && mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
+	hsd = calloc(1, sizeof(struct hookset_data));
+	if (!hsd)
+		return NULL;
+
+	if (mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
 		goto failed;
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
@@ -196,7 +200,10 @@ static struct hookset_data *new_hookset_data(
 
 	return hsd;
 failed:
-	free(hsd);
+	if (mnt_context_get_hookset_data(cxt, hs))
+		free_hookset_data(cxt, hs);
+	else
+		free(hsd);
 	return NULL;
 }
 
