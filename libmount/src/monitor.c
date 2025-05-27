@@ -189,8 +189,12 @@ int monitor_modify_epoll(struct libmnt_monitor *mn,
 
 	if (enable) {
 		struct epoll_event ev = { .events = me->events };
-		int fd = me->opers->op_get_fd(mn, me);
+		int fd;
 
+		assert(me->opers->op_get_fd);
+		assert(me->opers->op_process_event);
+
+		fd = me->opers->op_get_fd(mn, me);
 		if (fd < 0)
 			goto err;
 
@@ -347,8 +351,7 @@ int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 		if (!me)
 			return -EINVAL;
 
-		if (me->opers->op_process_event == NULL ||
-		    me->opers->op_process_event(mn, me) == 1) {
+		if (me->opers->op_process_event(mn, me) == 1) {
 			me->active = 1;
 			break;
 		}
@@ -418,8 +421,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 		if (!me)
 			return -EINVAL;
 
-		if (me->opers->op_process_event != NULL &&
-		    me->opers->op_process_event(mn, me) != 1)
+		if (me->opers->op_process_event(mn, me) != 1)
 			me = NULL;
 	}
 
