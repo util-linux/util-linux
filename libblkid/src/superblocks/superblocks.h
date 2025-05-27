@@ -46,6 +46,8 @@ extern const struct blkid_idinfo exfs_idinfo;
 extern const struct blkid_idinfo gfs_idinfo;
 extern const struct blkid_idinfo gfs2_idinfo;
 extern const struct blkid_idinfo romfs_idinfo;
+extern const struct blkid_idinfo scoutfs_meta_idinfo;
+extern const struct blkid_idinfo scoutfs_data_idinfo;
 extern const struct blkid_idinfo ocfs_idinfo;
 extern const struct blkid_idinfo ocfs2_idinfo;
 extern const struct blkid_idinfo oracleasm_idinfo;
