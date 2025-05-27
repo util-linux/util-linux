@@ -14,6 +14,7 @@ struct monitor_entry {
 	uint32_t		events;		/* wanted epoll events */
 
 	const struct monitor_opers *opers;
+	void			*data;		/* private type-specific data */
 
 	unsigned int		enable : 1,
 				changed : 1;
@@ -33,6 +34,7 @@ struct libmnt_monitor {
 struct monitor_opers {
 	int (*op_get_fd)(struct libmnt_monitor *, struct monitor_entry *);
 	int (*op_close_fd)(struct libmnt_monitor *, struct monitor_entry *);
+	int (*op_free_data)(struct monitor_entry *);
 	int (*op_event_verify)(struct libmnt_monitor *, struct monitor_entry *);
 };
 

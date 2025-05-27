@@ -78,6 +78,10 @@ void free_monitor_entry(struct monitor_entry *me)
 {
 	if (!me)
 		return;
+
+	if (me->opers->op_free_data)
+		me->opers->op_free_data(me);
+
 	list_del(&me->ents);
 	if (me->fd >= 0)
 		close(me->fd);
