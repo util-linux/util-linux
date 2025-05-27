@@ -181,8 +181,8 @@ int monitor_modify_epoll(struct libmnt_monitor *mn,
 	assert(mn);
 	assert(me);
 
-	me->enable = enable ? 1 : 0;
-	me->changed = 0;
+	me->enabled = enable ? 1 : 0;
+	me->active = 0;
 
 	if (mn->fd < 0)
 		return 0;	/* no epoll, ignore request */
@@ -292,7 +292,7 @@ int mnt_monitor_get_fd(struct libmnt_monitor *mn)
 
 	DBG(MONITOR, ul_debugobj(mn, "adding monitor entries to epoll (fd=%d)", mn->fd));
 	while (monitor_next_entry(mn, &itr, &me) == 0) {
-		if (!me->enable)
+		if (!me->enabled)
 			continue;
 		rc = monitor_modify_epoll(mn, me, TRUE);
 		if (rc)
@@ -347,9 +347,9 @@ int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 		if (!me)
 			return -EINVAL;
 
-		if (me->opers->op_event_verify == NULL ||
-		    me->opers->op_event_verify(mn, me) == 1) {
-			me->changed = 1;
+		if (me->opers->op_process_event == NULL ||
+		    me->opers->op_process_event(mn, me) == 1) {
+			me->active = 1;
 			break;
 		}
 	} while (1);
@@ -358,14 +358,14 @@ int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 }
 
 
-static struct monitor_entry *get_changed(struct libmnt_monitor *mn)
+static struct monitor_entry *get_active(struct libmnt_monitor *mn)
 {
 	struct libmnt_iter itr;
 	struct monitor_entry *me;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while (monitor_next_entry(mn, &itr, &me) == 0) {
-		if (me->changed)
+		if (me->active)
 			return me;
 	}
 	return NULL;
@@ -398,7 +398,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	 *
 	 * If we get nothing, then ask kernel.
 	 */
-	me = get_changed(mn);
+	me = get_active(mn);
 	while (!me) {
 		struct epoll_event events[1];
 
@@ -418,12 +418,12 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 		if (!me)
 			return -EINVAL;
 
-		if (me->opers->op_event_verify != NULL &&
-		    me->opers->op_event_verify(mn, me) != 1)
+		if (me->opers->op_process_event != NULL &&
+		    me->opers->op_process_event(mn, me) != 1)
 			me = NULL;
 	}
 
-	me->changed = 0;
+	me->active = 0;
 
 	if (filename)
 		*filename = me->path;

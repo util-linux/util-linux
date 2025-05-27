@@ -35,7 +35,7 @@ static int kernel_monitor_get_fd(struct libmnt_monitor *mn,
 {
 	int rc;
 
-	if (!me || me->enable == 0)	/* not-initialized or disabled */
+	if (!me || me->enabled == 0)	/* not-initialized or disabled */
 		return -EINVAL;
 	if (me->fd >= 0)
 		return me->fd;		/* already initialized */
@@ -54,8 +54,8 @@ err:
 	return rc;
 }
 
-static int kernel_event_verify(struct libmnt_monitor *mn,
-			       struct monitor_entry *me)
+static int kernel_process_event(struct libmnt_monitor *mn,
+			        struct monitor_entry *me)
 {
 	int status = 1;
 
@@ -75,7 +75,7 @@ static int kernel_event_verify(struct libmnt_monitor *mn,
 static const struct monitor_opers kernel_opers = {
 	.op_get_fd		= kernel_monitor_get_fd,
 	.op_close_fd		= kernel_monitor_close_fd,
-	.op_event_verify	= kernel_event_verify
+	.op_process_event	= kernel_process_event
 };
 
 /**

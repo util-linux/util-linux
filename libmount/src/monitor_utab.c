@@ -96,7 +96,7 @@ static int userspace_monitor_get_fd(struct libmnt_monitor *mn,
 {
 	int rc;
 
-	if (!me || me->enable == 0)	/* not-initialized or disabled */
+	if (!me || me->enabled == 0)	/* not-initialized or disabled */
 		return -EINVAL;
 	if (me->fd >= 0)
 		return me->fd;		/* already initialized */
@@ -124,7 +124,7 @@ err:
 /*
  * verify and drain inotify buffer
  */
-static int userspace_event_verify(struct libmnt_monitor *mn,
+static int userspace_process_event(struct libmnt_monitor *mn,
 					struct monitor_entry *me)
 {
 	char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
@@ -133,7 +133,7 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 	if (!me || me->fd < 0)
 		return 0;
 
-	DBG(MONITOR, ul_debugobj(mn, "drain and verify userspace monitor inotify"));
+	DBG(MONITOR, ul_debugobj(mn, "process utab event"));
 
 	/* the me->fd is non-blocking */
 	do {
@@ -177,7 +177,7 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 static const struct monitor_opers userspace_opers = {
 	.op_get_fd		= userspace_monitor_get_fd,
 	.op_close_fd		= userspace_monitor_close_fd,
-	.op_event_verify	= userspace_event_verify
+	.op_process_event	= userspace_process_event
 };
 
 /**

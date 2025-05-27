@@ -4,6 +4,9 @@
 #ifndef _MNTMONITOR_PRIVATE_H
 #define _MNTMONITOR_PRIVATE_H
 
+#include "c.h"
+#include <stdbool.h>
+
 struct monitor_opers;
 
 struct monitor_entry {
@@ -16,8 +19,8 @@ struct monitor_entry {
 	const struct monitor_opers *opers;
 	void			*data;		/* private type-specific data */
 
-	unsigned int		enable : 1,
-				changed : 1;
+	bool			enabled,	/* monitoring fd */
+				active;		/* ready for mnt_monitor_next_change() */
 
 	struct list_head	ents;
 };
@@ -28,14 +31,14 @@ struct libmnt_monitor {
 
 	struct list_head	ents;
 
-	unsigned int		kernel_veiled: 1;
+	bool			kernel_veiled;
 };
 
 struct monitor_opers {
 	int (*op_get_fd)(struct libmnt_monitor *, struct monitor_entry *);
 	int (*op_close_fd)(struct libmnt_monitor *, struct monitor_entry *);
 	int (*op_free_data)(struct monitor_entry *);
-	int (*op_event_verify)(struct libmnt_monitor *, struct monitor_entry *);
+	int (*op_process_event)(struct libmnt_monitor *, struct monitor_entry *);
 };
 
 int monitor_modify_epoll(struct libmnt_monitor *mn, struct monitor_entry *me, int enable);
