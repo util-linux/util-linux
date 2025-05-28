@@ -24,6 +24,7 @@
 #include <libmount.h>
 #include <ctype.h>
 
+#include "fileutils.h"
 #include "nls.h"
 #include "c.h"
 #include "env.h"
@@ -486,6 +487,9 @@ static int sanitize_paths(struct libmnt_context *cxt)
 	p = mnt_fs_get_target(fs);
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
+		if (!np && !ul_mkdir_p_precheck(p))
+			np = xstrdup(p);
+
 		if (!np)
 			return -EPERM;
 		mnt_fs_set_target(fs, np);

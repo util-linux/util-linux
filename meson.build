@@ -3571,6 +3571,7 @@ exe = executable(
   'lib/buffer.c',
   'lib/mbsalign.c',
   'lib/fileutils.c',
+  'lib/canonicalize.c',
   have_cpu_set_t ? 'lib/cpuset.c' : [],
   c_args : ['-DTEST_PROGRAM_SYSFS'],
   include_directories : dir_include,
@@ -3602,6 +3603,7 @@ endif
 exe = executable(
   'test_fileutils',
   'lib/fileutils.c',
+  'lib/canonicalize.c',
   c_args : ['-DTEST_PROGRAM_FILEUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)

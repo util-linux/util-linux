@@ -17,6 +17,7 @@
 #include "all-io.h"
 #include "fileutils.h"
 #include "pathnames.h"
+#include "canonicalize.h"
 
 int mkstemp_cloexec(char *template)
 {
@@ -206,6 +207,52 @@ int main(int argc, char *argv[])
 }
 #endif
 
+/* Check if a path can be created, 0 success, 1 failure */
+int ul_mkdir_p_precheck(const char *path)
+{
+	int i;
+	char *path_copy;
+	char *tmp, *slash;
+	int result = 1;
+
+	errno = 0;
+	path_copy = absolute_path(path);
+	if (!path_copy && errno == EINVAL)
+		path_copy = strdup(path);
+
+	if (!path_copy)
+		return result;
+	
+	/* remove trailing slashes */
+	for (i = strlen(path_copy) - 1; i > 0 && path_copy[i] == '/'; i--)
+		path_copy[i] = '\0';
+
+	/* find parent directory */
+	tmp = canonicalize_path_restricted(path_copy);
+	while (!tmp) {
+		if (!strcmp(path_copy, "/")) {
+			free(path_copy);
+			return result;
+		}
+
+		slash = strrchr(path_copy, '/');
+		if (slash) {
+			*slash = '\0';
+		} else {
+			path_copy[0] = '/';
+			path_copy[1] = '\0';
+		}
+		tmp = canonicalize_path_restricted(path_copy);
+	}
+
+	/* check if parent directory is writable */
+	if (access(tmp, W_OK) == 0)
+		result = 0;
+	
+	free(path_copy);
+	free(tmp);
+	return result;
+}
 
 int ul_mkdir_p(const char *path, mode_t mode)
 {
@@ -240,6 +287,48 @@ int ul_mkdir_p(const char *path, mode_t mode)
 
 	free(dir);
 	return rc;
+}
+
+int ul_mkdir_p_restrict(const char *path, mode_t mode)
+{
+	int pid;
+	int result;
+	int pipes[2];
+	if (pipe(pipes) != 0)
+		return -1;
+
+	pid = fork();
+	switch (pid) {
+	case -1:
+		close(pipes[0]);
+		close(pipes[1]);
+		return -1;			/* fork error */
+	case 0:
+		close(pipes[0]);		/* close unused end */
+		pipes[0] = -1;
+		errno = 0;
+
+		if (drop_permissions() != 0)
+			result = -1;	/* failed */
+		else {
+			result = ul_mkdir_p(path, mode);
+		}
+
+		/* send length or errno */
+		write_all(pipes[1], (char *) &result, sizeof(result));
+		exit(0);
+	default:
+		break;
+	}
+
+	close(pipes[1]);		/* close unused end */
+	pipes[1] = -1;
+
+	/* read result */
+	if (read_all(pipes[0], (char *) &result, sizeof(result)) != sizeof(result))
+		return -1;
+
+	return result;
 }
 
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)
