@@ -51,7 +51,7 @@ static pid_t *parse_pids(size_t n_strings, char * const *strings)
 	pid_t *pids = xcalloc(n_strings, sizeof(*pids));
 
 	for (size_t i = 0; i < n_strings; i++)
-		pids[i] = strtopid_or_err(strings[i], _("failed to parse pid"));
+		pids[i] = strtopid_or_err(strings[i], _("invalid PID argument"));
 
 	return pids;
 }
