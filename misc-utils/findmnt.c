@@ -2026,8 +2026,7 @@ int main(int argc, char *argv[])
 			findmnt.flags |= FL_SHADOWED;
 			break;
 		case FINDMNT_OPT_HYPERLINK:
-			if (hyperlinkwanted_or_err(optarg,
-					_("invalid hyperlink argument")))
+			if (hyperlinkwanted(optarg))
 				findmnt.uri = xgethosturi(NULL);
 			break;
 		case FINDMNT_OPT_ID:

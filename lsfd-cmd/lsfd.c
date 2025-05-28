@@ -2648,8 +2648,7 @@ int main(int argc, char *argv[])
 				err(EXIT_FAILURE, _("failed to drop privilege"));
 			break;
 		case OPT_HYPERLINK:
-			if (hyperlinkwanted_or_err(optarg,
-					_("invalid hyperlink argument")))
+			if (hyperlinkwanted(optarg))
 				ctl.uri = xgethosturi(NULL);
 			break;
 		case 'V':
