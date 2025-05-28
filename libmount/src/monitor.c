@@ -313,6 +313,55 @@ err:
 	return rc;
 }
 
+/* Returns: <0 on error, 0 on success, 1 nothing (timeout) */
+static int read_epoll_events(struct libmnt_monitor *mn, int timeout, struct monitor_entry **act)
+{
+	int rc;
+	struct monitor_entry *me = NULL;
+	struct epoll_event events[1];
+
+	if (act)
+		*act = NULL;
+
+	do {
+		DBG(MONITOR, ul_debugobj(mn, "calling epoll_wait(), timeout=%d", timeout));
+		rc = epoll_wait(mn->fd, events, 1, timeout);
+		if (rc < 0) {
+			rc = -errno;
+			goto failed;
+		}
+		if (rc == 0)
+			goto nothing;		/* timeout */
+
+		me = (struct monitor_entry *) events[0].data.ptr;
+		if (!me) {
+			rc = -EINVAL;
+			goto failed;
+		}
+
+		/* rc: 1 event accepted; 0 ignored; <0 error */
+		rc = me->opers->op_process_event(mn, me);
+		if (rc < 0)
+			goto failed;
+		if (rc == 1)
+			break;
+		/* TODO" recalculate timeout */
+	} while (1);
+
+	if (me)
+		me->active = 1;
+	if (act)
+		*act = me;
+	return 0;
+
+nothing:
+	DBG(MONITOR, ul_debugobj(mn, " *** nothing"));
+	return 1;
+failed:
+	DBG(MONITOR, ul_debugobj(mn, " *** error"));
+	return rc;
+}
+
 /**
  * mnt_monitor_wait:
  * @mn: monitor
@@ -327,8 +376,6 @@ err:
 int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 {
 	int rc;
-	struct monitor_entry *me;
-	struct epoll_event events[1];
 
 	if (!mn)
 		return -EINVAL;
@@ -339,25 +386,11 @@ int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 			return rc;
 	}
 
-	do {
-		DBG(MONITOR, ul_debugobj(mn, "calling epoll_wait(), timeout=%d", timeout));
-		rc = epoll_wait(mn->fd, events, 1, timeout);
-		if (rc < 0)
-			return -errno;		/* error */
-		if (rc == 0)
-			return 0;		/* timeout */
+	rc = read_epoll_events(mn, timeout, NULL);
 
-		me = (struct monitor_entry *) events[0].data.ptr;
-		if (!me)
-			return -EINVAL;
-
-		if (me->opers->op_process_event(mn, me) == 1) {
-			me->active = 1;
-			break;
-		}
-	} while (1);
-
-	return 1;			/* success */
+	return	rc == 0	? 1 :	/* success */
+		rc == 1 ? 0 :	/* timeout (aka nothing) */
+		rc;		/* error */
 }
 
 
@@ -389,40 +422,17 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 			     const char **filename,
 			     int *type)
 {
-	int rc;
-	struct monitor_entry *me;
+	int rc = 0;
+	struct monitor_entry *me = NULL;
 
 	if (!mn || mn->fd < 0)
 		return -EINVAL;
 
-	/*
-	 * if we previously called epoll_wait() (e.g. mnt_monitor_wait()) then
-	 * info about unread change is already stored in monitor_entry.
-	 *
-	 * If we get nothing, then ask kernel.
-	 */
 	me = get_active(mn);
-	while (!me) {
-		struct epoll_event events[1];
-
-		DBG(MONITOR, ul_debugobj(mn, "asking for next changed"));
-
-		rc = epoll_wait(mn->fd, events, 1, 0);	/* no timeout! */
-		if (rc < 0) {
-			DBG(MONITOR, ul_debugobj(mn, " *** error"));
-			return -errno;
-		}
-		if (rc == 0) {
-			DBG(MONITOR, ul_debugobj(mn, " *** nothing"));
-			return 1;
-		}
-
-		me = (struct monitor_entry *) events[0].data.ptr;
-		if (!me)
-			return -EINVAL;
-
-		if (me->opers->op_process_event(mn, me) != 1)
-			me = NULL;
+	if (!me) {
+		rc = read_epoll_events(mn, 0, &me);	/* try without timeout */
+		if (rc != 0)
+			return rc;
 	}
 
 	me->active = 0;
