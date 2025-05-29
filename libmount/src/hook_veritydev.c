@@ -103,10 +103,10 @@ static void delete_veritydev(struct libmnt_context *cxt,
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
 static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
-				      const struct libmnt_hookset *hs,
 				      struct hookset_data *hsd)
 {
 	size_t i;
+	const char *errmsg = NULL;
 	int flags = RTLD_LAZY | RTLD_LOCAL;
 
 	assert(cxt);
@@ -121,10 +121,17 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 #ifdef RTLD_DEEPBIND
 	flags |= RTLD_DEEPBIND;
 #endif
+	/* Don't rely on errno; the dlopen API may not use it. Also, note that
+	 * dlerror() provides complete messages that do not need any additional
+	 * introduction when printed to end users. */
+	errno = 0;
+
 	hsd->dl = dlopen("libcryptsetup.so.12", flags);
 	if (!hsd->dl) {
-		DBG(HOOK, ul_debugobj(hs, "cannot dlopen libcryptsetup"));
-		return -ENOTSUP;
+		errmsg = dlerror();
+		if (errmsg)
+			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
+		goto failed;
 	}
 
 	/* clear errors first, then load all the libcryptsetup symbols */
@@ -132,7 +139,6 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 
 	/* dlsym()  */
 	for (i = 0; i < ARRAY_SIZE(verity_symbols); i++) {
-		char *errmsg;
 		const struct verity_sym *def = &verity_symbols[i];
 		void **sym;
 
@@ -141,11 +147,15 @@ static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 
 		errmsg = dlerror();
 		if (errmsg) {
-			DBG(HOOK, ul_debugobj(hs, "dlsym failed %s: %s", def->name, errmsg));
-			return -ENOTSUP;
+			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
+			goto failed;
 		}
 	}
 	return 0;
+failed:
+	if (!errno)
+		errno = ENOTSUP;
+	return -errno;
 }
 #endif
 
@@ -180,13 +190,17 @@ static struct hookset_data *new_hookset_data(
 				struct libmnt_context *cxt,
 				const struct libmnt_hookset *hs)
 {
-	struct hookset_data *hsd = calloc(1, sizeof(struct hookset_data));
+	struct hookset_data *hsd;
 
-	if (hsd && mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
+	hsd = calloc(1, sizeof(struct hookset_data));
+	if (!hsd)
+		return NULL;
+
+	if (mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
 		goto failed;
 
 #ifdef CRYPTSETUP_VIA_DLOPEN
-	if (load_libcryptsetup_symbols(cxt, hs, hsd) != 0)
+	if (load_libcryptsetup_symbols(cxt, hsd) != 0)
 		goto failed;
 #endif
 	if (mnt_context_is_verbose(cxt))
@@ -196,7 +210,10 @@ static struct hookset_data *new_hookset_data(
 
 	return hsd;
 failed:
-	free(hsd);
+	if (mnt_context_get_hookset_data(cxt, hs))
+		free_hookset_data(cxt, hs);
+	else
+		free(hsd);
 	return NULL;
 }
 
@@ -454,7 +471,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	 * a lot of time and resources when there are duplicated mounts. If the roothash is the same, then the volumes
 	 * are also guaranteed to be identical. This is what systemd also does, so we can deduplicate across the whole
 	 * system. */
-	if (asprintf(&mapper_device, "%s-verity", root_hash) < 0)
+	if (!rc && asprintf(&mapper_device, "%s-verity", root_hash) < 0)
 		rc = -ENOMEM;
 
 	if (!rc)
@@ -526,7 +543,8 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			if (!rc) {
 				DBG(HOOK, ul_debugobj(hs, "comparing root hash of existing device with %s", root_hash));
 				if (memcmp(key, root_hash_binary, hash_size)) {
-					DBG(HOOK, ul_debugobj(hs, "existing device's hash does not match with %s", root_hash));
+					/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+					mnt_context_append_mesg(cxt, _("e device's hash does not match with root hash"));
 					rc = -EINVAL;
 					goto done;
 				}
@@ -544,8 +562,9 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			 */
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 			if (!!hash_sig != !!(crypt_params.flags & CRYPT_VERITY_ROOT_HASH_SIGNATURE)) {
+				/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
+				mnt_context_append_mesg(cxt, _("e device and mount have to either be both opened with signature or both without"));
 				rc = -EINVAL;
-				DBG(HOOK, ul_debugobj(hs, "existing device and new mount have to either be both opened with signature or both without"));
 				goto done;
 			}
 #endif
@@ -604,7 +623,7 @@ static int hook_prepare_source(
 
 	hsd = new_hookset_data(cxt, hs);
 	if (!hsd)
-		return -ENOMEM;
+		return errno ? -errno : -ENOMEM;
 
 	rc = setup_veritydev(cxt, hs, hsd, ol);
 	if (!rc) {
