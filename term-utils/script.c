@@ -64,6 +64,7 @@
 #include "monotonic.h"
 #include "timeutils.h"
 #include "strutils.h"
+#include "strv.h"
 #include "xalloc.h"
 #include "optutils.h"
 #include "signames.h"
@@ -190,7 +191,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [file]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [file] [-- program [arguments]]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Make a typescript of a terminal session.\n"), out);
@@ -207,7 +208,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -a, --append                  append to the log file\n"), out);
-	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
+	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"
+		"                                 (alternative to '-- program [arguments]')\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
@@ -813,7 +815,7 @@ int main(int argc, char **argv)
 
 	ctl.isterm = isatty(STDIN_FILENO);
 
-	while ((ch = getopt_long(argc, argv, "aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "+aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -888,12 +890,25 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
 	argc -= optind;
 	argv += optind;
 
+	/*
+	 * Note that "--" separates non-option arguments. The script can be
+	 * used with an <outfile> name as well as with a <command>. The
+	 * <outfile> is always before "--" and <command> is always after "--".
+	 * Possible combinations are:
+	 *
+	 * script [options] <outfile>
+	 * script [options] -- <command ...>
+	 * script [options] <outfile> -- <command ...>
+	 */
+
 	/* default if no --log-* specified */
 	if (!outfile && !infile) {
-		if (argc > 0) {
+		/* if argv[0] is not after --, use argv[0] as outfile */
+		if (argc > 0 && strcmp(argv[-1], "--") != 0) {
 			outfile = argv[0];
 			argc--;
 			argv++;
@@ -906,9 +921,29 @@ int main(int argc, char **argv)
 		log_associate(&ctl, &ctl.out, outfile, SCRIPT_FMT_RAW);
 	}
 
+	/* skip -- to non-option arguments */
+	if (argc > 0 && strcmp(argv[0], "--") == 0) {
+		argc--;
+		argv++;
+	}
+
+	/* concat non-option arguments as command */
+	if (argc > 0 && strcmp(argv[-1], "--") == 0) {
+		if (ctl.command != NULL) {
+			warnx(_("option --command and '-- program' are mutually exclusive"));
+			errtryhelp(EXIT_FAILURE);
+		}
+
+		ctl.command = strv_join(argv, " ");
+		if (!ctl.command)
+			errx(EXIT_FAILURE, _("failed to concatenate arguments"));
+
+		ctl.command_norm = xstrdup(ctl.command);
+		strrep(ctl.command_norm, '\n', ' ');
+		argc = 0;
+	}
+
 	if (argc > 0) {
-		/* only one filename is accepted. if --log-out was given,
-		 * freestanding filename is ignored */
 		warnx(_("unexpected number of arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
