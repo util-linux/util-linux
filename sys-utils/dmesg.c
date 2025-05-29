@@ -1818,13 +1818,13 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_SINCE:
 		{
-			if (parse_timestamp(optarg, &ctl.since) < 0)
+			if (ul_parse_timestamp(optarg, &ctl.since) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			break;
 		}
 		case OPT_UNTIL:
 		{
-			if (parse_timestamp(optarg, &ctl.until) < 0)
+			if (ul_parse_timestamp(optarg, &ctl.until) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			break;
 		}

@@ -516,7 +516,7 @@ int main(int argc, char **argv)
 		case OPT_DATE:
 		{	/* alarm time, see timestamp format from manual */
 			usec_t p;
-			if (parse_timestamp(optarg, &p) < 0)
+			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			alarm = (time_t) (p / 1000000);
 			break;

@@ -735,7 +735,7 @@ static int get_script_u64(struct fdisk_context *cxt, uint64_t *num, const char *
 	if (!str)
 		return 1;
 
-	rc = parse_size(str, (uintmax_t *) num, &pwr);
+	rc = ul_parse_size(str, (uintmax_t *) num, &pwr);
 	if (rc < 0)
 		return rc;
 	if (pwr)
