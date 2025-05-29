@@ -47,7 +47,7 @@ script - make typescript of terminal session
 
 == SYNOPSIS
 
-*script* [options] [_file_]
+*script* [options] [_file_] [ -- program [arguments]]
 
 == DESCRIPTION
 
@@ -67,7 +67,7 @@ Below, the _size_ argument may be followed by the multiplicative suffixes KiB (=
 Append the output to _file_ or to _typescript_, retaining the prior contents.
 
 *-c*, *--command* _command_::
-Run the _command_ rather than an interactive shell. This makes it easy for a script to capture the output of a program that behaves differently when its stdout is not a tty.
+Run the _command_ rather than an interactive shell. This makes it easy for a script to capture the output of a program that behaves differently when its stdout is not a tty. you can also specify the command after '--'.
 
 *-E*, *--echo* _when_::
 This option controls the *ECHO* flag for the slave end of the session's pseudoterminal. The supported modes are _always_, _never_, or _auto_.
