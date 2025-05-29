@@ -1191,43 +1191,42 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --content              compare only file contents, same as -pot\n"), out);
 	fputs(_(" -b, --io-size <size>       I/O buffer size for file reading\n"
-	        "                              (speedup, using more RAM)\n"), out);
+		"                              (speedup, using more RAM)\n"), out);
 	fputs(_(" -d, --respect-dir          directory names have to be identical\n"), out);
 	fputs(_(" -f, --respect-name         filenames have to be identical\n"), out);
-	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
-	fputs(_(" -m, --maximize             maximize the hardlink count, remove the file with\n"
-	        "                              lowest hardlink count\n"), out);
-	fputs(_(" -M, --minimize             reverse the meaning of -m\n"), out);
-	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
-	fputs(_(" -l, --list-duplicates      print every group of duplicate files\n"), out);
-	fputs(_(" -z, --zero                 delimit output with NULs instead of newlines\n"), out);
-	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -F, --prioritize-trees     files found in the earliest specified top-level\n"
-                "                              directory have higher priority (lower precedence\n"
-		"                              than minimize/maximize)\n"), out);
+		"                              directory have higher priority (but this has\n"
+		"                              lower precedence than --maximize/--minimize)\n"), out);
+	fputs(_(" -i, --include <regex>      regular expression to include files/dirs\n"), out);
+	fputs(_(" -l, --list-duplicates      just list paths of duplicates, don't link them\n"), out);
+	fputs(_(" -m, --maximize             keep the file with the most links\n"), out);
+	fputs(_(" -M, --minimize             keep the file with the fewest links\n"), out);
+	fputs(_("     --mount                stay within the same filesystem\n"), out);
+	fputs(_(" -n, --dry-run              don't actually link anything\n"), out);
+	fputs(_(" -o, --ignore-owner         ignore owner changes\n"), out);
 	fputs(_(" -O, --keep-oldest          keep the oldest file of multiple equal files\n"
 		"                              (lower precedence than minimize/maximize)\n"), out);
 	fputs(_(" -p, --ignore-mode          ignore changes of file mode\n"), out);
 	fputs(_(" -q, --quiet                quiet mode - don't print anything\n"), out);
 	fputs(_(" -r, --cache-size <size>    memory limit for cached file content data\n"), out);
-	fputs(_(" -s, --minimum-size <size>  minimum size for files.\n"), out);
-	fputs(_(" -S, --maximum-size <size>  maximum size for files.\n"), out);
+#ifdef USE_REFLINK
+	fputs(_("     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"), out);
+	fputs(_("     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"), out);
+#endif
+	fputs(_(" -s, --minimum-size <size>  minimum size for files\n"), out);
+	fputs(_(" -S, --maximum-size <size>  maximum size for files\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
 	fputs(_(" -v, --verbose              verbose output (repeat for more verbosity)\n"), out);
 	fputs(_(" -x, --exclude <regex>      regular expression to exclude files\n"), out);
 #ifdef USE_SKIP_SUBTREE
 	fputs(_("     --exclude-subtree <regex>  regular expression to exclude directories\n"), out);
 #endif
-	fputs(_("     --mount                stay within the same filesystem\n"), out);
 #ifdef USE_XATTR
 	fputs(_(" -X, --respect-xattrs       respect extended attributes\n"), out);
 #endif
 	fputs(_(" -y, --method <name>        file content comparison method\n"), out);
+	fputs(_(" -z, --zero                 delimit output with NULs instead of newlines\n"), out);
 
-#ifdef USE_REFLINK
-	fputs(_("     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"), out);
-	fputs(_("     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"), out);
-#endif
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(28));
 	fprintf(out, USAGE_MAN_TAIL("hardlink(1)"));
