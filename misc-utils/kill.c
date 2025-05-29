@@ -396,7 +396,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			if (2 < argc)
 				errx(EXIT_FAILURE, _("too many arguments"));
 			arg = argv[1];
-			pid = strtopid_or_err(arg, _("invalid pid argument"));
+			pid = strtopid_or_err(arg, _("invalid PID argument"));
 			print_process_signal_state(pid);
 			exit(EXIT_SUCCESS);
 		}
@@ -404,7 +404,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			pid_t pid;
 			char *p = strchr(arg, '=') + 1;
 
-			pid = strtopid_or_err(p, _("invalid pid argument"));
+			pid = strtopid_or_err(p, _("invalid PID argument"));
 			print_process_signal_state((pid_t)pid);
 			exit(EXIT_SUCCESS);
 		}

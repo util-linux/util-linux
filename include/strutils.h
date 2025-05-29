@@ -59,7 +59,7 @@ extern void strtotimespec_or_err(const char *str, struct timespec *ts,
 		const char *errmesg);
 extern time_t strtotime_or_err(const char *str, const char *errmesg);
 
-extern bool hyperlinkwanted_or_err(const char *mode, const char *errmesg);
+extern bool hyperlinkwanted(const char *mode);
 
 extern int isdigit_strend(const char *str, const char **end);
 #define isdigit_string(_s)	isdigit_strend(_s, NULL)

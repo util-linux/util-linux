@@ -593,7 +593,7 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			cpu_clock = xmalloc(sizeof(*cpu_clock));
-			cpu_clock->pid = strtopid_or_err(optarg, _("failed to parse pid"));
+			cpu_clock->pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			snprintf(cpu_clock->name, sizeof(cpu_clock->name),
 				 "%jd", (intmax_t) cpu_clock->pid);
 			list_add(&cpu_clock->head, &cpu_clocks);

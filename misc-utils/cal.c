@@ -421,8 +421,7 @@ int main(int argc, char **argv)
 		case OPT_COLOR:
 			ctl.colormode = UL_COLORMODE_AUTO;
 			if (optarg)
-				ctl.colormode = colormode_or_err(optarg,
-						_("unsupported color mode"));
+				ctl.colormode = colormode_or_err(optarg);
 			break;
 		case OPT_REFORM:
 			ctl.reform_year = parse_reform_year(optarg);

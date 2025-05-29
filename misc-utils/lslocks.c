@@ -383,7 +383,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 				l->cmdname = xstrdup(oinfo->cmdname);
 			} else {
 				/* strtopid_or_err() is not suitable here; tok can be -1.*/
-				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
+				l->pid = strtos32_or_err(tok, _("invalid PID argument"));
 				if (l->pid > 0) {
 					l->cmdname = pid_get_cmdname(l->pid);
 					if (!l->cmdname)

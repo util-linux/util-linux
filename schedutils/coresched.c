@@ -232,12 +232,11 @@ static void parse_and_verify_arguments(int argc, char **argv, struct args *args)
 		switch (c) {
 		case 's':
 			args->src = strtopid_or_err(
-				optarg,
-				_("Failed to parse PID for -s/--source"));
+				optarg, _("invalid PID for -s/--source"));
 			break;
 		case 'd':
 			args->dest = strtopid_or_err(
-				optarg, _("Failed to parse PID for -d/--dest"));
+				optarg, _("invalid PID for -d/--dest"));
 			break;
 		case 't':
 			args->type = parse_core_sched_type(optarg);

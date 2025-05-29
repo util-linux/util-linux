@@ -2781,8 +2781,7 @@ int main(int argc, char *argv[])
 		case 'L':
 			colormode = UL_COLORMODE_AUTO;
 			if (optarg)
-				colormode = colormode_or_err(optarg,
-						_("unsupported color mode"));
+				colormode = colormode_or_err(optarg);
 			break;
                 case 'r':
                         read_only = 1;

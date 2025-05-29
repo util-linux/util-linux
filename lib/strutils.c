@@ -524,7 +524,7 @@ time_t strtotime_or_err(const char *str, const char *errmesg)
 	return (time_t) user_input;
 }
 
-bool hyperlinkwanted_or_err(const char *mode, const char *errmesg)
+bool hyperlinkwanted(const char *mode)
 {
 	if (mode && strcmp(mode, "never") == 0)
 		return false;
@@ -535,7 +535,7 @@ bool hyperlinkwanted_or_err(const char *mode, const char *errmesg)
 	if (!mode || strcmp(mode, "auto") == 0)
 		return isatty(STDOUT_FILENO) ? true : false;
 
-	errx(EXIT_FAILURE, "%s: '%s'", errmesg, mode);
+	errx(EXIT_FAILURE, _("invalid argument of --hyperlink: %s"), mode);
 }
 
 /*

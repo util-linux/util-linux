@@ -34,6 +34,7 @@
 #include "c.h"
 #include "cctype.h"
 #include "colors.h"
+#include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
 
@@ -755,14 +756,14 @@ int colormode_from_string(const char *str)
 /*
  * Parses @str and exit(EXIT_FAILURE) on error
  */
-int colormode_or_err(const char *str, const char *errmsg)
+int colormode_or_err(const char *str)
 {
 	const char *p = str && *str == '=' ? str + 1 : str;
 	int colormode;
 
 	colormode = colormode_from_string(p);
 	if (colormode < 0)
-		errx(EXIT_FAILURE, "%s: '%s'", errmsg, p);
+		errx(EXIT_FAILURE, _("unsupported color mode: %s"), p);
 
 	return colormode;
 }
@@ -791,7 +792,7 @@ int main(int argc, char *argv[])
 			color_scheme = optarg;
 			break;
 		case 'm':
-			mode = colormode_or_err(optarg, "unsupported color mode");
+			mode = colormode_or_err(optarg);
 			break;
 		case 'n':
 			name = optarg;
