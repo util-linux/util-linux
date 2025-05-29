@@ -23,6 +23,9 @@ fincore - count pages of file contents in core
 == DESCRIPTION
 
 *fincore* counts pages of file contents being resident in memory (in core), and reports the numbers. If an error occurs during counting, then an error message is printed to the stderr and *fincore* continues processing the rest of files listed in a command line.
+*fincore* uses the *cachestat*(2) syscall to count resident pages. If the *cachestat* syscall is not available and *cachestat* usage is not forced with the *--cachestat* option, then *fincore* uses the *mincore*(2) syscall as a fallback.
+The *cachestat* syscall is more efficient than *mincore* because it does not require a page table lock to walks page tables, and also reports more information than *mincore*, like the number of cached pages, dirty pages, pages marked for writeback, evicted pages, and recently evicted pages.
+Another difference between the two syscalls is that if write permissions are not granted to the file, then *cachestat* returns an error, while *mincore* for security reasons, returns fake data as if all pages were resident in memory (c.f.r. link:https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=134fca9063ad4851de767d1768180e5dede9a881[kernel commit "make mincore() more conservative"]).
 
 The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output* _columns-list_ in environments where a stable output is required.
 
@@ -36,6 +39,9 @@ include::man-common/in-bytes.adoc[]
 
 *-c*, *--total*::
 produce a grand total.
+
+*-C*, *--cachestat*::
+force usage of the cachestat() syscall instead of mincore(), and fail if it's not available.
 
 *-o*, *--output* _list_::
 Define output columns. See the *--help* output to get a list of the currently supported columns. The default list of columns may be extended if _list_ is specified in the format _{plus}list_.
