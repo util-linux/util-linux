@@ -93,6 +93,7 @@ lib_blkid_sources = '''
   src/superblocks/promise_raid.c
   src/superblocks/reiserfs.c
   src/superblocks/romfs.c
+  src/superblocks/scoutfs.c
   src/superblocks/silicon_raid.c
   src/superblocks/squashfs.c
   src/superblocks/stratis.c

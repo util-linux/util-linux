@@ -83,6 +83,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/promise_raid.c \
 	libblkid/src/superblocks/reiserfs.c \
 	libblkid/src/superblocks/romfs.c \
+	libblkid/src/superblocks/scoutfs.c \
 	libblkid/src/superblocks/silicon_raid.c \
 	libblkid/src/superblocks/squashfs.c \
 	libblkid/src/superblocks/stratis.c \
