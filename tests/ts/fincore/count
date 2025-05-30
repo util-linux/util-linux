@@ -141,7 +141,7 @@ check_dd_fs_feat
 INPUT=
 input=
 
-ts_log_both "[ NO EXCITING FILE ]"
+ts_log_both "[ NON EXISTING FILE ]"
 {
     input=no_such_file
     INPUT="${INPUT} ${input}"
