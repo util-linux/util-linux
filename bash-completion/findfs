@@ -16,16 +16,16 @@ _findfs_module()
 			return 0
 			;;
 	esac
-	for i in $(lsblk -rpno label); do
+	for i in $(command lsblk -rpno label); do
 		findable+=" LABEL=$i"
 	done
-	for i in $(lsblk -rpno uuid); do
+	for i in $(command lsblk -rpno uuid); do
 		findable+=" UUID=$i"
 	done
-	for i in $(lsblk -rpno partlabel); do
+	for i in $(command lsblk -rpno partlabel); do
 		findable+=" PARTLABEL=$i"
 	done
-	for i in $(lsblk -rpno partuuid); do
+	for i in $(command lsblk -rpno partuuid); do
 		findable+=" PARTUUID=$i"
 	done
 	COMPREPLY=( $(compgen -W "$findable" -- $cur) )

@@ -4,7 +4,7 @@ _blockdev_module()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	DEVS="$(lsblk -pnro name)"
+	DEVS="$(command lsblk -pnro name)"
 	OPTS="-h -V -q
 		--report
 		--getsz

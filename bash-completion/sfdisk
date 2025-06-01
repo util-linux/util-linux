@@ -7,7 +7,7 @@ _sfdisk_module()
 	case $prev in
 		'-d'|'--dump'|'-J'|'--json'|'-l'|'--list'|'-F'|'--list-free'|'-r'|'--reorder'|'-s'|'--show-size'|'-V'|'--verify'|'-A'|'--activate'|'--delete')
 			compopt -o bashdefault -o default
-			COMPREPLY=( $(compgen -W "$(lsblk -dpnro name)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command lsblk -dpnro name)" -- $cur) )
 			return 0
 			;;
 		'-N'|'--partno')
@@ -97,7 +97,7 @@ _sfdisk_module()
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _sfdisk_module sfdisk

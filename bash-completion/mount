@@ -24,13 +24,13 @@ _mount_module()
 			;;
 		'-L'|'--label')
 			local LABELS
-			LABELS="$(lsblk -o LABEL -nr)"
+			LABELS="$(command lsblk -o LABEL -nr)"
 			COMPREPLY=( $(compgen -W "$LABELS" -- $cur) )
 			return 0
 			;;
 		'-U'|'--uuid')
 			local UUIDS
-			UUIDS="$(lsblk -o UUID -nr)"
+			UUIDS="$(command lsblk -o UUID -nr)"
 			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
 			return 0
 			;;
