@@ -158,7 +158,7 @@ if HAVE_CPU_SET_T
 test_path_SOURCES += lib/cpuset.c
 endif
 test_path_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PATH
-test_path_LDADD = $(LDADD)
+test_path_LDADD = $(LDADD) libcommon.la
 endif
 endif
 
@@ -180,14 +180,14 @@ if HAVE_CPU_SET_T
 test_sysfs_SOURCES += lib/cpuset.c
 endif
 test_sysfs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_SYSFS
-test_sysfs_LDADD = $(LDADD)
+test_sysfs_LDADD = $(LDADD) libcommon.la
 
 test_procfs_SOURCES = lib/procfs.c lib/path.c lib/fileutils.c lib/strutils.c
 if HAVE_CPU_SET_T
 test_procfs_SOURCES += lib/cpuset.c
 endif
 test_procfs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PROCFS
-test_procfs_LDADD = $(LDADD)
+test_procfs_LDADD = $(LDADD) libcommon.la
 
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PAGER
@@ -201,6 +201,7 @@ test_fileeq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEEQ
 
 test_fileutils_SOURCES = lib/fileutils.c
 test_fileutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEUTILS
+test_fileutils_LDADD = libcommon.la
 
 test_canonicalize_SOURCES = lib/canonicalize.c
 test_canonicalize_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CANONICALIZE
