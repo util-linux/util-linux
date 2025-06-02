@@ -84,8 +84,35 @@ static inline clockid_t FD_TO_CLOCKID(int fd)
 #define CLOCK_TAI			11
 #endif
 
+#ifndef MAX_CLOCKS
+#define MAX_CLOCKS			16
+#endif
+
+#ifndef CLOCK_AUX
+#define CLOCK_AUX			MAX_CLOCKS
+#endif
+
+#ifndef MAX_AUX_CLOCKS
+#define MAX_AUX_CLOCKS			8
+#endif
+
+#define CLOCK_AUX0			(CLOCK_AUX + 0)
+#define CLOCK_AUX1			(CLOCK_AUX + 1)
+#define CLOCK_AUX2			(CLOCK_AUX + 2)
+#define CLOCK_AUX3			(CLOCK_AUX + 3)
+#define CLOCK_AUX4			(CLOCK_AUX + 4)
+#define CLOCK_AUX5			(CLOCK_AUX + 5)
+#define CLOCK_AUX6			(CLOCK_AUX + 6)
+#define CLOCK_AUX7			(CLOCK_AUX + 7)
+
+static inline bool is_aux_clock(clockid_t clockid)
+{
+	return clockid >= CLOCK_AUX && clockid < CLOCK_AUX + MAX_AUX_CLOCKS;
+}
+
 enum CLOCK_TYPE {
 	CT_SYS,
+	CT_AUX,
 	CT_PTP,
 	CT_CPU,
 	CT_RTC,
@@ -96,6 +123,8 @@ static const char *clock_type_name(enum CLOCK_TYPE type)
 	switch (type) {
 	case CT_SYS:
 		return "sys";
+	case CT_AUX:
+		return "aux";
 	case CT_PTP:
 		return "ptp";
 	case CT_CPU:
@@ -127,6 +156,14 @@ static const struct clockinfo clocks[] = {
 	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
 	{ CT_SYS, CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
 	{ CT_SYS, CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
+	{ CT_AUX, CLOCK_AUX0,             "CLOCK_AUX0",             "aux0"             },
+	{ CT_AUX, CLOCK_AUX1,             "CLOCK_AUX1",             "aux1"             },
+	{ CT_AUX, CLOCK_AUX2,             "CLOCK_AUX2",             "aux2"             },
+	{ CT_AUX, CLOCK_AUX3,             "CLOCK_AUX3",             "aux3"             },
+	{ CT_AUX, CLOCK_AUX4,             "CLOCK_AUX4",             "aux4"             },
+	{ CT_AUX, CLOCK_AUX5,             "CLOCK_AUX5",             "aux5"             },
+	{ CT_AUX, CLOCK_AUX6,             "CLOCK_AUX6",             "aux6"             },
+	{ CT_AUX, CLOCK_AUX7,             "CLOCK_AUX7",             "aux7"             },
 };
 
 /* column IDs */
@@ -359,7 +396,9 @@ static void add_posix_clock_line(struct libscols_table *tb, const int *columns,
 	int rc;
 
 	rc = clock_gettime(clockinfo->id, &now);
-	if (rc)
+	if (rc == -1 && errno == EINVAL && is_aux_clock(clockinfo->id))
+		return; /* auxclocks are not supported */
+	else if (rc)
 		now.tv_nsec = -1;
 
 	rc = clock_getres(clockinfo->id, &resolution);
