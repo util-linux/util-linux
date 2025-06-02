@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
     @(#)colrm.1	6.6 (Berkeley) 3/14/91
 ////
+ifdef::neverdefined[---]
+
 = colrm(1)
 :doctype: manpage
 :man manual: User Commands

@@ -5,6 +5,8 @@
 //
 // Original author unknown.  This man page is in the public domain.
 // Modified Sat Oct  9 17:46:48 1993 by faith@cs.unc.edu
+ifdef::neverdefined[---]
+
 = newgrp(1)
 :doctype: manpage
 :man manual: User Commands

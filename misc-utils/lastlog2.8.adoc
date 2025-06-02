@@ -3,6 +3,8 @@
 Copyright 2023 Thorsten Kukuk (kukuk@suse.de)
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = lastlog2(8)
 :doctype: manpage
 :man manual: User Commands

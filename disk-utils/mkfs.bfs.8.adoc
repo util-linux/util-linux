@@ -3,6 +3,8 @@
 Copyright 1999 Andries E. Brouwer (aeb@cwi.nl)
 May be freely distributed.
 ////
+ifdef::neverdefined[---]
+
 = mkfs.bfs(8)
 :doctype: manpage
 :man manual: System Administration

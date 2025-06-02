@@ -5,6 +5,8 @@
 //
 // Daan De Meyer <daan.j.demeyer@gmail.com>
 // In the public domain.
+ifdef::neverdefined[---]
+
 = setpgid(1)
 :doctype: manpage
 :man manual: User Commands

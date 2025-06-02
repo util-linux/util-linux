@@ -3,6 +3,8 @@
 Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = ctrlaltdel(8)
 :doctype: manpage
 :man manual: System Administration

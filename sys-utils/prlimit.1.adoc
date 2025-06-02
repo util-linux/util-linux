@@ -4,6 +4,8 @@ prlimit.1 --
 Copyright 2011 Davidlohr Bueso <dave@gnu.org>
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = prlimit(1)
 :doctype: manpage
 :man manual: User Commands

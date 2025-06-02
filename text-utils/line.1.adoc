@@ -4,6 +4,8 @@
 // it what you wish.
 //
 // This page is in the public domain
+ifdef::neverdefined[---]
+
 = line(1)
 :doctype: manpage
 :man manual: User Commands

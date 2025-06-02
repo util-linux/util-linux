@@ -3,6 +3,8 @@
 Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = mkswap(8)
 :doctype: manpage
 :man manual: System Administration

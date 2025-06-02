@@ -7,6 +7,8 @@ It may be distributed under the GNU General Public License, version 2, or
 any higher version. See section COPYING of the GNU General Public license
 for conditions under which this file may be redistributed.
 ////
+ifdef::neverdefined[---]
+
 = eject(1)
 :doctype: manpage
 :man manual: User Commands

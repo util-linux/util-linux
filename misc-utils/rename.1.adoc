@@ -5,6 +5,8 @@
 //
 // Written by Andries E. Brouwer (aeb@cwi.nl)
 // Placed in the public domain
+ifdef::neverdefined[---]
+
 = rename(1)
 :doctype: manpage
 :man manual: User Commands

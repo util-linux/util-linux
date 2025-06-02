@@ -36,6 +36,8 @@ SUCH DAMAGE.
 
 Copyright (c) 1992 Rik Faith (faith@cs.unc.edu)
 ////
+ifdef::neverdefined[---]
+
 = more(1)
 :doctype: manpage
 :man manual: User Commands

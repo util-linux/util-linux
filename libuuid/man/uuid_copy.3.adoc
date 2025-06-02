@@ -30,6 +30,8 @@ DAMAGE.
 
 Created  Wed Mar 10 17:42:12 1999, Andreas Dilger
 ////
+ifdef::neverdefined[---]
+
 = uuid_copy(3)
 :doctype: manpage
 :man manual: Programmer's Manual
