@@ -33,6 +33,7 @@ _fincore_module()
 				--output-all
 				--raw
 				--recursive
+				--cachestat
 				--help
 				--version
 			"
