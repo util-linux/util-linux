@@ -2,7 +2,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Copyright (C) 2012-2015 Karel Zak <kzak@redhat.com>
+ * Written by Karel Zak <kzak@redhat.com> [2012]
  */
 #ifndef UTIL_LINUX_COLOR_NAMES_H
 #define UTIL_LINUX_COLOR_NAMES_H
