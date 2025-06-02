@@ -180,9 +180,9 @@ int main(int argc, char **argv)
 		}
 
 	if (argc > 1)
-		first = strtoul_or_err(*++argv, _("first argument"));
+		first = strtoul_or_err(*++argv, _("invalid first argument"));
 	if (argc > 2)
-		last = strtoul_or_err(*++argv, _("second argument"));
+		last = strtoul_or_err(*++argv, _("invalid second argument"));
 
 	while (process_input(first, last))
 		;

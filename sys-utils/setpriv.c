@@ -473,7 +473,7 @@ static void parse_ptracer(struct privctx *opts, const char *str)
 	} else if (!strcmp(str, "none")) {
 		opts->ptracer = 0;
 	} else {
-		opts->ptracer = strtopid_or_err(str, _("failed to parse ptracer pid"));
+		opts->ptracer = strtopid_or_err(str, _("invalid PID argument"));
 	}
 }
 

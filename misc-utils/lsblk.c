@@ -2678,8 +2678,7 @@ int main(int argc, char *argv[])
 				errtryhelp(EXIT_FAILURE);
 			break;
 		case OPT_HYPERLINK:
-			if (hyperlinkwanted_or_err(optarg,
-					_("invalid hyperlink argument")))
+			if (hyperlinkwanted(optarg))
 				lsblk->uri = xgethosturi(NULL);
 			break;
 		case 'H':

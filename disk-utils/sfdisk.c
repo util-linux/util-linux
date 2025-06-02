@@ -2437,8 +2437,7 @@ int main(int argc, char *argv[])
 		case OPT_COLOR:
 			colormode = UL_COLORMODE_AUTO;
 			if (optarg)
-				colormode = colormode_or_err(optarg,
-						_("unsupported color mode"));
+				colormode = colormode_or_err(optarg);
 			break;
 		case OPT_MOVEDATA:
 			sf->movedata = 1;
