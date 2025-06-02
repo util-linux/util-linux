@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
- *
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
+ *
+ * Authors: Karel Zak <kzak@redhat.com> [2010]
+ *          Davidlohr Bueso <dave@gnu.org> [2010]
  */
 #include <stdio.h>
 #include <stdlib.h>
