@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2009 Karel Zak <kzak@redhat.com>
  *
- * This file may be redistributed under the terms of the GNU Public
- * License.
+ * This file may be redistributed under the terms of the
+ * GNU General Public License.
  */
 #include <stdio.h>
 #include <stdlib.h>
