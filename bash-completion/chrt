@@ -42,7 +42,7 @@ _chrt_module()
 	for i in ${COMP_WORDS[*]}; do
 		case $i in
 		'-p'|'--pid')
-			COMPREPLY=( $(compgen -W "$(cd /proc && echo [0-9]*)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /proc && echo [0-9]*)" -- $cur) )
 			return 0
 			;;
 		esac

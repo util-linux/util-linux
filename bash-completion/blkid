@@ -25,11 +25,11 @@ _blkid_module()
 			return 0
 			;;
 		'-L'|'--label')
-			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
 		'-U'|'--uuid')
-			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
 		'-S'|'--size')

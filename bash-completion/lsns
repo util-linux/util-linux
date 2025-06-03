@@ -22,7 +22,7 @@ _lsns_module()
 			return 0
 			;;
 		'-p'|'--task')
-			COMPREPLY=( $(compgen -W "$(cd /proc && echo [0-9]*)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /proc && echo [0-9]*)" -- $cur) )
 			return 0
 			;;
 		'-t'|'--type')

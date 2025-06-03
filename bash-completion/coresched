@@ -13,7 +13,7 @@ _coresched_module()
   case $3 in
     "-s"|"--source"|"-d"|"--dest")
       local pids sorted_pids
-      pids=$(cd /proc && echo [0-9]*)
+      pids=$(builtin cd /proc && echo [0-9]*)
       sorted_pids=$(echo "${pids[@]}" | tr ' ' '\n' | sort -nr | tr '\n' ' ')
       COMPREPLY=( $(compgen -W "$sorted_pids" -- "$2") )
       return 0
