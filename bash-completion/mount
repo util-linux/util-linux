@@ -8,8 +8,8 @@ _mount_module()
 		'-t'|'--types')
 			local prefix realcur TYPES
 			TYPES="
-				$(\ls /lib/modules/$(uname -r)/kernel/fs | awk '{print $1, "no" $1}')
-				$(awk '{print $NF, "no" $NF}' /proc/filesystems)
+				$(\ls /lib/modules/$(command uname -r)/kernel/fs | command awk '{print $1, "no" $1}')
+				$(command awk '{print $NF, "no" $NF}' /proc/filesystems)
 			"
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
@@ -36,7 +36,7 @@ _mount_module()
 			;;
 		'-N'|'--namespace')
 			local NAMESPACE
-			NAMESPACE="$(lsns --type mnt --output PATH --noheadings)"
+			NAMESPACE="$(command lsns --type mnt --output PATH --noheadings)"
 			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
 			return 0
 			;;

@@ -75,7 +75,7 @@ _findmnt_module()
 			;;
 		'-S'|'--source')
 			local DEV_MPOINT
-			DEV_MPOINT=$($1 -rno SOURCE | grep ^/dev)
+			DEV_MPOINT=$($1 -rno SOURCE | command grep ^/dev)
 			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- $cur) )
 			return 0
 			;;

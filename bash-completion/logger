@@ -16,7 +16,7 @@ _logger_module()
 			return 0
 			;;
 		'-P'|'--port')
-			COMPREPLY=( $(compgen -W "$(awk '$1 ~ /^syslog$/  {split($2, a, "/"); print a[1]}' /etc/services)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command awk '$1 ~ /^syslog$/  {split($2, a, "/"); print a[1]}' /etc/services)" -- $cur) )
 			return 0
 			;;
 		'-p'|'--priority')
@@ -28,7 +28,7 @@ _logger_module()
 			return 0
 			;;
 		'-u'|'--socket')
-			COMPREPLY=( $(compgen -W "$(awk '$NF ~ /^\// {print $NF}' /proc/net/unix)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command awk '$NF ~ /^\// {print $NF}' /proc/net/unix)" -- $cur) )
 			return 0
 			;;
 		'--socket-errors')

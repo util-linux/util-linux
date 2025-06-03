@@ -10,7 +10,7 @@ _swaplabel_module()
 			return 0
 			;;
 		'-U'|'--uuid')
-			COMPREPLY=( $(compgen -W '$(uuidgen)' -- $cur) )
+			COMPREPLY=( $(compgen -W '$(command uuidgen)' -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')

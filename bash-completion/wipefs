@@ -29,7 +29,7 @@ _wipefs_module()
 			;;
 		'-t'|'--types')
 			local TYPES
-			TYPES="$(blkid -k)"
+			TYPES="$(command blkid -k)"
 			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
 			return 0
 			;;

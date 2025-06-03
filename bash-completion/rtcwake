@@ -18,7 +18,7 @@ _rtcwake_module()
 			return 0
 			;;
 		'-m'|'--mode')
-			COMPREPLY=( $(compgen -W "$(rtcwake --list-modes)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command rtcwake --list-modes)" -- $cur) )
 			return 0
 			;;
 		'-s'|'--seconds')

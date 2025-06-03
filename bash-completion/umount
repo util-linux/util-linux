@@ -3,7 +3,7 @@ _umount_points_list()
 	# List of characters to escape shamelessly stolen from "scp" completion
 	local escape_chars='[][(){}<>\",:;^&!$=?`|\\'\'' \t\f\n\r\v]'
 
-	findmnt -lno TARGET | awk '
+	command findmnt -lno TARGET | command awk '
 
 	function literal_ere(s) {
 		gsub(/[][^$.*?+{}\\()|]/, "\\\\&", s)
@@ -42,8 +42,8 @@ _umount_module()
 		'-t'|'--types')
 			local TYPES
 			TYPES="
-				$(\ls /lib/modules/$(uname -r)/kernel/fs | awk '{print $1, "no" $1}')
-				$(awk '{print $NF, "no" $NF}' /proc/filesystems)
+				$(\ls /lib/modules/$(command uname -r)/kernel/fs | command awk '{print $1, "no" $1}')
+				$(command awk '{print $NF, "no" $NF}' /proc/filesystems)
 			"
 			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
 			return 0
@@ -53,7 +53,7 @@ _umount_module()
 			;;
 		'-N'|'--namespace')
 			local NAMESPACE
-			NAMESPACE="$(lsns --type mnt --output PATH --noheadings)"
+			NAMESPACE="$(command lsns --type mnt --output PATH --noheadings)"
 			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
 			return 0
 			;;

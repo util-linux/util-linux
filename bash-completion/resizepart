@@ -17,7 +17,7 @@ _resizepart_module()
 			;;
 		2)
 			prev="${COMP_WORDS[COMP_CWORD-1]}"
-			COMPREPLY=( $(compgen -W "$(cat /sys/block/${prev##*/}/*/partition 2>/dev/null)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command cat /sys/block/${prev##*/}/*/partition 2>/dev/null)" -- $cur) )
 			;;
 		3)
 			COMPREPLY="length"

@@ -18,7 +18,7 @@ _mkswap_module()
 			return 0
 			;;
 		'-U'|'--uuid')
-			COMPREPLY=( $(compgen -W "$(uuidgen -r)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command uuidgen -r)" -- $cur) )
 			return 0
 			;;
 		'-o'|'--offset')

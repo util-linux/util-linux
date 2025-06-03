@@ -15,7 +15,7 @@ _su_module()
 			return 0
 			;;
 		'-s'|'--shell')
-			COMPREPLY=( $(compgen -W "$(chsh -l)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command chsh -l)" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')

@@ -7,7 +7,7 @@ _rfkill_module()
 	case $prev in
 		'list'|'block'|'unblock'|'toggle')
 			local targets
-			targets="$(rfkill --output=id,type --noheadings list)"
+			targets="$(command rfkill --output=id,type --noheadings list)"
 			COMPREPLY=( $(compgen -W "all $targets" -- $cur) )
 			return 0;
 			;;

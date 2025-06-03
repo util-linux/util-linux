@@ -9,11 +9,11 @@ _swapoff_module()
 			return 0
 			;;
 		'-U'|'UUID=')
-			COMPREPLY=( $(compgen -W "$(swapon --show=UUID --noheading)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command swapon --show=UUID --noheading)" -- $cur) )
 			return 0
 			;;
 		'-L'|'LABEL=')
-			COMPREPLY=( $(compgen -W "$(swapon --show=LABEL --noheading)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command swapon --show=LABEL --noheading)" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -32,7 +32,7 @@ _swapoff_module()
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "$(swapon --show=NAME --raw --noheading)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command swapon --show=NAME --raw --noheading)" -- $cur) )
 	return 0
 }
 complete -F _swapoff_module swapoff

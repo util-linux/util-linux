@@ -15,7 +15,7 @@ _ionice_module()
 			;;
 		'-P'|'--pgid')
 			local PGID
-			PGID="$(awk '{print $5}' /proc/*/stat 2>/dev/null | sort -u)"
+			PGID="$(command awk '{print $5}' /proc/*/stat 2>/dev/null | command sort -u)"
 			COMPREPLY=( $(compgen -W "$PGID" -- $cur) )
 			return 0
 			;;
@@ -27,7 +27,7 @@ _ionice_module()
 			;;
 		'-u'|'--uid')
 			local UIDS
-			UIDS="$(stat --format='%u' /proc/[0-9]* | sort -u)"
+			UIDS="$(command stat --format='%u' /proc/[0-9]* | command sort -u)"
 			COMPREPLY=( $(compgen -W "$UIDS" -- $cur) )
 			return 0
 			;;
