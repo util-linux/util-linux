@@ -42,7 +42,7 @@ _umount_module()
 		'-t'|'--types')
 			local TYPES
 			TYPES="
-				$(\ls /lib/modules/$(command uname -r)/kernel/fs | command awk '{print $1, "no" $1}')
+				$(command ls /lib/modules/$(command uname -r)/kernel/fs | command awk '{print $1, "no" $1}')
 				$(command awk '{print $NF, "no" $NF}' /proc/filesystems)
 			"
 			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )

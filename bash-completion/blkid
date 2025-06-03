@@ -46,7 +46,7 @@ _blkid_module()
 		'-n'|'--match-types')
 			OUTPUT_ALL="
 				$(command awk '{print $NF}' /proc/filesystems)
-				$(\ls /lib/modules/$(command uname -r)/kernel/fs)
+				$(command ls /lib/modules/$(command uname -r)/kernel/fs)
 			"
 			;;
 		'-h'|'--help'|'-V'|'--version')
