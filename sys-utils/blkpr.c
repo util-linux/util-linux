@@ -35,7 +35,7 @@
 #include "xalloc.h"
 
 struct type_string {
-	int type;
+	unsigned type;
 	char *str;
 	char *desc;
 };
@@ -122,7 +122,7 @@ static void print_type(FILE *out, const struct type_string *ts, size_t nmem)
 }
 
 
-static int parse_type_by_str(const struct type_string *ts, int nmem, char *pattern)
+static unsigned parse_type_by_str(const struct type_string *ts, int nmem, char *pattern)
 {
 	int i;
 
@@ -131,7 +131,7 @@ static int parse_type_by_str(const struct type_string *ts, int nmem, char *patte
 			return ts[i].type;
 	}
 
-	return -1;
+	return 0;
 }
 
 
@@ -140,7 +140,7 @@ static int parse_type_by_str(const struct type_string *ts, int nmem, char *patte
 	{ print_type(out, XX, ARRAY_SIZE(XX)); }
 
 #define PARSE(XX) \
-	static int parse_##XX(char *pattern) \
+	static unsigned parse_##XX(char *pattern) \
 	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern); }
 
 PRINT_SUPPORTED(pr_type)
@@ -151,7 +151,7 @@ PARSE(pr_type)
 PARSE(pr_command)
 PARSE(pr_flag)
 
-static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
+static int do_pr(char *path, uint64_t key, uint64_t oldkey, unsigned op, int type, int flag)
 {
 	struct pr_registration pr_reg;
 	struct pr_reservation pr_res;
@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 	int c;
 	char *path;
 	uint64_t key = 0, oldkey = 0;
-	int command = -1, type = -1, flag = 0;
+	unsigned command = 0, type = 0, flag = 0;
 
 	static const struct option longopts[] = {
 	    { "help",            no_argument,       NULL, 'h' },
@@ -276,17 +276,17 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			command = parse_pr_command(optarg);
-			if (command < 0)
+			if (command == 0)
 				err(EXIT_FAILURE, _("unknown command"));
 			break;
 		case 't':
 			type = parse_pr_type(optarg);
-			if (type < 0)
+			if (type == 0)
 				err(EXIT_FAILURE, _("unknown type"));
 			break;
 		case 'f':
 			flag = parse_pr_flag(optarg);
-			if (flag < 0)
+			if (flag == 0)
 				err(EXIT_FAILURE, _("unknown flag"));
 			break;
 
