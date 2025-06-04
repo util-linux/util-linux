@@ -53,14 +53,19 @@ ACK=
 	    # Sending one more USR1 is for making the signal pending state.
 	    "$TS_CMD_KILL" -USR1 "$PID"
 	    "$TS_CMD_KILL" -d "$PID" | {
-		if [[ $("$TS_CMD_KILL" --list=34) == RT0 ]]; then
+		SIGRTMIN=$("$TS_CMD_KILL" -L | grep -o '[0-9]\+ RTMIN' | cut -d " " -f 1)
+		if [[ $("$TS_CMD_KILL" --list=$SIGRTMIN) == RT0 ]]; then
 		    # See man signal(7).
 		    #   The  Linux  kernel  supports a range of 33 different real-time signals,
 		    #   numbered 32 to 64.  However, the glibc POSIX threads implementation in‐
 		    #   ternally uses two (for NPTL) or three (for LinuxThreads) real-time sig‐
 		    #   nals (see pthreads(7)), and adjusts the value of SIGRTMIN suitably  (to
 		    #   34 or 35).
-		    sed -e s/' 32 33'// -e s/' 34'//
+		    sed_cmd="sed"
+		    for ((i=32; i<=SIGRTMIN; i++)); do
+			sed_cmd+=" -e s/' $i'//"
+		    done
+		    eval $sed_cmd
 		else
 		    cat
 		fi
