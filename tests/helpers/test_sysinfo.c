@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/ioctl.h>
+#include <signal.h>
 
 #include "c.h"
 #include "widechar.h"
@@ -119,6 +120,12 @@ static int hlp_ulong_max32(void)
 #else
 	printf("%lu\n", ULONG_MAX);
 #endif
+	return 0;
+}
+
+static int hlp_sigrtmin(void)
+{
+	printf("%d\n", SIGRTMIN);
 	return 0;
 }
 
@@ -317,6 +324,7 @@ static const mntHlpfnc hlps[] =
 	{ "ULONG_MAX",  hlp_ulong_max	},
 	{ "ULONG_MAX32",hlp_ulong_max32	},
 	{ "UINT64_MAX", hlp_u64_max     },
+	{ "SIGRTMIN",   hlp_sigrtmin    },
 	{ "byte-order", hlp_endianness  },
 	{ "wcsspn-ok",  hlp_wcsspn_ok   },
 	{ "enotty-ok",  hlp_enotty_ok   },
