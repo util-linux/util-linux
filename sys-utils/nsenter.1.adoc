@@ -126,25 +126,25 @@ If the argument "follow" is specified the UID of the target process is used.
 When the *--user* option is given, ensure that capabilities granted in the user namespace are preserved in the child process.
 
 *--preserve-credentials*::
-Don't modify UID and GID when enter user namespace. The default is to drops supplementary groups and sets GID and UID to 0.
+Don't modify UID and GID when entering the user namespace. The default is to drop supplementary groups and set GID and UID to 0.
 
 *-r*, *--root*[**=**_directory_]::
-Set the root directory. If no directory is specified, set the root directory to the root directory of the target process. If directory is specified, set the root directory to the specified directory. The specified _directory_ is open before it switches to the requested namespaces.
+Set the root directory. If no directory is specified, set the root directory to the root directory of the target process. If directory is specified, set the root directory to the specified directory. The specified _directory_ is opened before switching to the requested namespaces.
 
 *-w*, *--wd*[**=**_directory_]::
-Set the working directory. If no directory is specified, set the working directory to the working directory of the target process. If directory is specified, set the working directory to the specified directory. The specified _directory_ is open before it switches to the requested namespaces, it means the specified directory works as "tunnel" to the current namespace. See also *--wdns*.
+Set the working directory. If no directory is specified, set the working directory to the working directory of the target process. If directory is specified, set the working directory to the specified directory. The specified _directory_ is opened before switching to the requested namespaces, which means the specified directory works as a "tunnel" to the current namespace. See also *--wdns*.
 
 *-W*, *--wdns*[**=**_directory_]::
-Set the working directory. The _directory_ is open after switch to the requested namespaces and after *chroot*(2) call. The options *--wd* and *--wdns* are mutually exclusive.
+Set the working directory. The _directory_ is opened after switching to the requested namespaces and after calling *chroot*(2). The options *--wd* and *--wdns* are mutually exclusive.
 
 *-e*, *--env*::
-Pass environment variables from the target process to the new process being created. If this option is not provided, the environment variables will remain the same as in the current namespace..
+Pass environment variables from the target process to the new process being created. If this option is not provided, the environment variables will remain the same as in the current namespace.
 
 *-F*, *--no-fork*::
 Do not fork before exec'ing the specified program. By default, when entering a PID namespace, *nsenter* calls *fork* before calling *exec* so that any children will also be in the newly entered PID namespace.
 
 *-Z*, *--follow-context*::
-Set the SELinux security context used for executing a new process according to already running process specified by *--target* PID. (The util-linux has to be compiled with SELinux support otherwise the option is unavailable.)
+Set the SELinux security context used for executing a new process according to the already running process specified by *--target* PID. (The util-linux has to be compiled with SELinux support otherwise the option is unavailable.)
 
 *-c*, *--join-cgroup*::
 Add the initiated process to the cgroup of the target process.
