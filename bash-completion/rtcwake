@@ -13,12 +13,12 @@ _rtcwake_module()
 			;;
 		'-d'|'--device')
 			local RTC_DEVS
-			RTC_DEVS=$(cd /sys/class/rtc/ && echo *)
+			RTC_DEVS=$(builtin cd /sys/class/rtc/ && echo *)
 			COMPREPLY=( $(compgen -W "$RTC_DEVS" -- $cur) )
 			return 0
 			;;
 		'-m'|'--mode')
-			COMPREPLY=( $(compgen -W "$(rtcwake --list-modes)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command rtcwake --list-modes)" -- $cur) )
 			return 0
 			;;
 		'-s'|'--seconds')

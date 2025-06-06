@@ -7,7 +7,7 @@ _renice_module()
 	case $prev in
 		'-g'|'--pgrp')
 			local PGRP
-			PGRP=$(ps -ax -opgrp | sed '1d')
+			PGRP=$(command ps -ax -opgrp | command sed '1d')
 			COMPREPLY=( $(compgen -W "$PGRP" -- $cur) )
 			return 0
 			;;
@@ -17,7 +17,7 @@ _renice_module()
 			;;
 		'-p'|'--pid')
 			local PIDS
-			PIDS=$(cd /proc && echo [0-9]*)
+			PIDS=$(builtin cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;

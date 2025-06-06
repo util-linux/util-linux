@@ -6,7 +6,7 @@ _fdisk_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-s'|'--getsz')
-			COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 			return 0
 			;;
 		'-b'|'--sector-size')
@@ -95,7 +95,7 @@ _fdisk_module()
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _fdisk_module fdisk

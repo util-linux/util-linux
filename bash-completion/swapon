@@ -27,25 +27,25 @@ _swapon_module()
 			;;
 		'-U'|'UUID=')
 			local UUIDS
-			UUIDS="$(lsblk -nrp -o FSTYPE,UUID | awk '$1 ~ /swap/ { print $2 }')"
+			UUIDS="$(command lsblk -nrp -o FSTYPE,UUID | command awk '$1 ~ /swap/ { print $2 }')"
 			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
 			return 0
 			;;
 		'-L'|'LABEL=')
 			local LABELS
-			LABELS="$(lsblk -nrp -o FSTYPE,LABEL | awk '$1 ~ /swap/ { print $2 }')"
+			LABELS="$(command lsblk -nrp -o FSTYPE,LABEL | command awk '$1 ~ /swap/ { print $2 }')"
 			COMPREPLY=( $(compgen -W "$LABELS" -- $cur) )
 			return 0
 			;;
 		'PARTUUID=')
 			local PARTUUIDS
-			PARTUUIDS="$(lsblk -nrp -o FSTYPE,PARTUUID | awk '$1 ~ /swap/ { print $2 }')"
+			PARTUUIDS="$(command lsblk -nrp -o FSTYPE,PARTUUID | command awk '$1 ~ /swap/ { print $2 }')"
 			COMPREPLY=( $(compgen -W "$PARTUUIDS" -- $cur) )
 			return 0
 			;;
 		'PARTLABEL=')
 			local PARTLABELS
-			PARTLABELS="$(lsblk -nrp -o FSTYPE,PARTLABEL | awk '$1 ~ /swap/ { print $2 }')"
+			PARTLABELS="$(command lsblk -nrp -o FSTYPE,PARTLABEL | command awk '$1 ~ /swap/ { print $2 }')"
 			COMPREPLY=( $(compgen -W "$PARTLABELS" -- $cur) )
 			return 0
 			;;
@@ -77,7 +77,7 @@ _swapon_module()
 			;;
 	esac
 	local DEVS
-	DEVS="$(lsblk -nrp -o FSTYPE,NAME | awk '$1 ~ /swap/ { print $2 }')"
+	DEVS="$(command lsblk -nrp -o FSTYPE,NAME | command awk '$1 ~ /swap/ { print $2 }')"
 	compopt -o nospace
 	COMPREPLY=( $(compgen -fW "$DEVS LABEL= UUID= PARTLABEL= PARTUUID=" -- $cur) )
 	return 0

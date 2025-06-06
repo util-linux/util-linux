@@ -32,7 +32,7 @@ _fstrim_module()
 			;;
 	esac
 	local MPOINTS
-	MPOINTS=$(findmnt -rno SOURCE,TARGET | awk '/^\/dev/{print $2}')
+	MPOINTS=$(command findmnt -rno SOURCE,TARGET | command awk '/^\/dev/{print $2}')
 	COMPREPLY=( $(compgen -W "$MPOINTS" -- $cur) )
 	return 0
 }

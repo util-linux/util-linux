@@ -9,7 +9,7 @@ _taskset_module()
 			local prefix realcur CPULIST_ALL CPULIST
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			CPULIST_ALL=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
+			CPULIST_ALL=$(command sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
 			for WORD in $(eval echo $CPULIST_ALL); do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					CPULIST="$WORD ${CPULIST:-""}"
@@ -25,7 +25,7 @@ _taskset_module()
 			# setting an affinity the optarg has to be cpu
 			# mask.  The following is good only for getting
 			# affinity.
-			PIDS=$(cd /proc && echo [0-9]*)
+			PIDS=$(builtin cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;

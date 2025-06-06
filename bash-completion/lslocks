@@ -9,7 +9,7 @@ _lslocks_module()
 			local PIDS
 			# /proc/locks can have 8 to 9 fields, see commit
 			# 55c0d16bab8cc84b72bf11cb2fdd8aa6205ac608
-			PIDS="$(awk '{print $(NF-3)}' /proc/locks)"
+			PIDS="$(command awk '{print $(NF-3)}' /proc/locks)"
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;

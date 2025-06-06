@@ -5,7 +5,7 @@ _addpart_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	case $COMP_CWORD in
 		1)
-			OPTS="--help --version $(lsblk -pnro name)"
+			OPTS="--help --version $(command lsblk -pnro name)"
 			compopt -o bashdefault -o default
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;

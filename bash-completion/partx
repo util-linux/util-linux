@@ -27,7 +27,7 @@ _partx_module()
 			return 0
 			;;
 		'-t'|'--type')
-			COMPREPLY=( $(compgen -W "$(partx --list-types)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command partx --list-types)" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -60,7 +60,7 @@ _partx_module()
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _partx_module partx

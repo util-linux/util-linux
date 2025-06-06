@@ -12,11 +12,11 @@ _lslogins_module()
 	"
 	case $prev in
 		'-g'|'--groups')
-			COMPREPLY=( $(compgen -W "$(getent group | awk -F: '{print $1}')" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command getent group | command awk -F: '{print $1}')" -- $cur) )
 			return 0
 			;;
 		'-l'|'--logins')
-			COMPREPLY=( $(compgen -W "$(getent passwd | awk -F: '{print $1}')" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command getent passwd | command awk -F: '{print $1}')" -- $cur) )
 			return 0
 			;;
 		'--time-format')

@@ -9,7 +9,7 @@ _setpriv_module()
 			local prefix realcur INHERIT_ALL INHERIT
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			INHERIT_ALL=$($1 --list-caps| awk '{print $1, "-" $1}')
+			INHERIT_ALL=$($1 --list-caps| command awk '{print $1, "-" $1}')
 			for WORD in $INHERIT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					INHERIT="$WORD ${INHERIT:-""}"
@@ -21,13 +21,13 @@ _setpriv_module()
 			;;
 		'--ruid'|'--euid'|'--reuid')
 			local UIDS
-			UIDS=$(getent passwd | awk -F: '{print $1}')
+			UIDS=$(command getent passwd | command awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$UIDS" -- $cur) )
 			return 0
 			;;
 		'--rgid'|'--egid'|'--regid')
 			local GIDS
-			GIDS=$(getent group | awk -F: '{print $1}')
+			GIDS=$(command getent group | command awk -F: '{print $1}')
 			COMPREPLY=( $(compgen -W "$GIDS" -- $cur) )
 			return 0
 			;;
@@ -35,7 +35,7 @@ _setpriv_module()
 			local prefix realcur GIDS_ALL GIDS
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			GIDS_ALL=$(getent group | awk -F: '{print $3}')
+			GIDS_ALL=$(command getent group | command awk -F: '{print $3}')
 			for WORD in $GIDS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					GIDS="$WORD ${GIDS:-""}"

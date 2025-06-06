@@ -25,11 +25,11 @@ _blkid_module()
 			return 0
 			;;
 		'-L'|'--label')
-			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
 		'-U'|'--uuid')
-			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(builtin cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
 		'-S'|'--size')
@@ -45,8 +45,8 @@ _blkid_module()
 			;;
 		'-n'|'--match-types')
 			OUTPUT_ALL="
-				$(awk '{print $NF}' /proc/filesystems)
-				$(\ls /lib/modules/$(uname -r)/kernel/fs)
+				$(command awk '{print $NF}' /proc/filesystems)
+				$(command ls /lib/modules/$(command uname -r)/kernel/fs)
 			"
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -94,7 +94,7 @@ _blkid_module()
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _blkid_module blkid

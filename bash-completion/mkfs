@@ -22,7 +22,7 @@ _mkfs_module()
 			;;
 	esac
 	compopt -o bashdefault -o default
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _mkfs_module mkfs

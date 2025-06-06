@@ -11,11 +11,11 @@ _write_module()
 	esac
 	case $COMP_CWORD in
 		1)
-			COMPREPLY=( $(compgen -W '$(users)' -- $cur) )
+			COMPREPLY=( $(compgen -W '$(command users)' -- $cur) )
 			return 0
 			;;
 		2)
-			COMPREPLY=( $(compgen -W "$(w -h $prev | awk '{print $2}')" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(command w -h $prev | command awk '{print $2}')" -- $cur) )
 			return 0
 			;;
 	esac

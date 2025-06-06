@@ -17,7 +17,7 @@ _fsfreeze_module()
 			;;
 	esac
 	local MPOINT
-	MPOINT="$(findmnt -t ext2,ext3,ext4,reiserfs,jfs,xfs -o TARGET -n -r)"
+	MPOINT="$(command findmnt -t ext2,ext3,ext4,reiserfs,jfs,xfs -o TARGET -n -r)"
 	COMPREPLY=( $(compgen -W "$MPOINT" -- $cur) )
 	return 0
 }

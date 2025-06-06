@@ -11,7 +11,7 @@ _choom_module()
 			;;
 		'-p'|'--pid')
 			local PIDS
-			PIDS=$(cd /proc && echo [0-9]*)
+			PIDS=$(builtin cd /proc && echo [0-9]*)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;
