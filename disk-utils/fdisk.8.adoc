@@ -6,6 +6,8 @@ Copyright 2012 Davidlohr Bueso <dave@gnu.org>
 Copyright (C) 2013 Karel Zak <kzak@redhat.com>
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = fdisk(8)
 :doctype: manpage
 :man manual: System Administration

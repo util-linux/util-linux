@@ -1,8 +1,8 @@
 /*
  * SPDX-License-Identifier: GPL-2.0-or-later
  *
- * This file may be redistributed under the terms of the GNU Public
- * License.
+ * This file may be redistributed under the terms of the
+ * GNU General Public License.
  */
 #ifndef IS_MOUNTED_H
 #define IS_MOUNTED_H

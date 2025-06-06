@@ -2,7 +2,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Copyright (C) 2018 Karel Zak <kzak@redhat.com>
+ * Written by Karel Zak <kzak@redhat.com> [2018]
  *
  *
  * Simple functions to access files. Paths can be globally prefixed to read

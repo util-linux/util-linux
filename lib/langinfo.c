@@ -1,13 +1,13 @@
 /*
- * This is callback solution for systems without nl_langinfo(), this function
- * returns hardcoded and on locale setting indepndent value.
+ * This is a fallback solution for systems without nl_langinfo().  This
+ * function returns a hardcoded value, independent from locale settings.
  *
- * See langinfo.h man page for more details.
+ * See `man langinfo.h` for more details.
  *
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+ * Written by Karel Zak <kzak@redhat.com> [2010]
  */
 #include "nls.h"
 

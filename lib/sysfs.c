@@ -2,7 +2,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
+ * Written by Karel Zak <kzak@redhat.com> [2011]
  */
 #include <ctype.h>
 #include <libgen.h>

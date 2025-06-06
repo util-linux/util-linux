@@ -6,6 +6,8 @@ Copyright 2007 Red Hat, Inc.
 Copyright 2010 Davidlohr Bueso <dave@gnu.org>
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = partx(8)
 :doctype: manpage
 :man manual: System Administration

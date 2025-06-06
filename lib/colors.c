@@ -4,9 +4,6 @@
  *
  * Authors: 2012 Ondrej Oprala <ooprala@redhat.com>
  *          2012-2025 Karel Zak <kzak@redhat.com>
- *
- * This file may be distributed under the terms of the
- * GNU Lesser General Public License.
  */
 #include <assert.h>
 #include <sys/stat.h>

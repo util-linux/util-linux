@@ -18,9 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program (see the file COPYING); if not, write to the
- * Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
- * MA 02110-1301, USA.
+ * along with this program.  If not, see <https://gnu.org/licenses/>.
  *
  * Author: Werner Fink <werner@suse.de>
  */

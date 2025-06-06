@@ -36,6 +36,8 @@ SUCH DAMAGE.
 
     @(#)cal.1	8.1 (Berkeley) 6/6/93
 ////
+ifdef::neverdefined[---]
+
 = cal(1)
 :doctype: manpage
 :man manual: User Commands

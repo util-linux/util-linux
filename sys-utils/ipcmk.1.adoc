@@ -3,6 +3,8 @@
 Copyright 2008 Hayden A. James (hayden.james@gmail.com)
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = ipcmk(1)
 :doctype: manpage
 :man manual: User Commands

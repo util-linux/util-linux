@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
     @(#)renice.8	8.1 (Berkeley) 6/9/93
 ////
+ifdef::neverdefined[---]
+
 = renice(1)
 :doctype: manpage
 :man manual: User Commands

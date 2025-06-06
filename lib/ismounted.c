@@ -3,8 +3,8 @@
  *
  * Copyright (C) 1995,1996,1997,1998,1999,2000,2008 Theodore Ts'o.
  *
- * This file may be redistributed under the terms of the GNU Public
- * License.
+ * This file may be redistributed under the terms of the
+ * GNU General Public License.
  */
 #include <stdio.h>
 #include <unistd.h>

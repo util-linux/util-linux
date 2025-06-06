@@ -1,6 +1,8 @@
 //po4a: entry man manual
 // Rick Sladkey <jrs@world.std.com>
 // In the public domain.
+ifdef::neverdefined[---]
+
 = setsid(1)
 :doctype: manpage
 :man manual: User Commands

@@ -4,6 +4,8 @@ Copyright 1994 Salvatore Valente (svalente@mit.edu)
 Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = kill(1)
 :doctype: manpage
 :man manual: User Commands

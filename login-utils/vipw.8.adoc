@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
     @(#)vipw.8	6.7 (Berkeley) 3/16/91
 ////
+ifdef::neverdefined[---]
+
 = vipw(8)
 :doctype: manpage
 :man manual: System Administration

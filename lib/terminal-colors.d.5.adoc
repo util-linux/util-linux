@@ -6,6 +6,7 @@ Copyright (C) 2014 Karel Zak <kzak@redhat.com>
 Copyright 2014 Red Hat, Inc.
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
 
 = terminal-colors.d(5)
 :doctype: manpage

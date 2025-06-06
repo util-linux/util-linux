@@ -1,6 +1,8 @@
 //po4a: entry man manual
 // Copyright (c) 2017 Sami Kerola
 // The 3-Clause BSD License
+ifdef::neverdefined[---]
+
 = uuidparse(1)
 :doctype: manpage
 :man manual: User Commands

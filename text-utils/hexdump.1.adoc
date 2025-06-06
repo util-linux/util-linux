@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
 	@(#)hexdump.1	8.2 (Berkeley) 4/18/94
 ////
+ifdef::neverdefined[---]
+
 = hexdump(1)
 :doctype: manpage
 :man manual: User Commands

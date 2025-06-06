@@ -1,7 +1,5 @@
 //po4a: entry man manual
-////
-coresched(1) manpage
-////
+
 = coresched(1)
 :doctype: manpage
 :man manual: User Commands

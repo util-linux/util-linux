@@ -4,6 +4,8 @@ Copyright 2021 Red Hat, Inc.
 
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = lsfd(1)
 :doctype: manpage
 :man manual: User Commands

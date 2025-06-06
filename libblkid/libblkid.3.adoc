@@ -5,6 +5,8 @@ This man page was created for libblkid.so.1.0 from e2fsprogs-1.24.
 This file may be copied under the terms of the GNU Lesser General Public License.
 Created  Wed Sep 14 12:02:12 2001, Andreas Dilger
 ////
+ifdef::neverdefined[---]
+
 = libblkid(3)
 :doctype: manpage
 :man manual: Programmer's Manual

@@ -36,6 +36,8 @@ SUCH DAMAGE.
 
     @(#)col.1	6.8 (Berkeley) 6/17/91
 ////
+ifdef::neverdefined[---]
+
 = col(1)
 :doctype: manpage
 :man manual: User Commands

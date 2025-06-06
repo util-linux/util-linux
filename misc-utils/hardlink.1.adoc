@@ -5,6 +5,8 @@ SPDX-License-Identifier: MIT
 Copyright (C) 2008 - 2012 Julian Andres Klode. See hardlink.c for license.
 Copyright (C) 2021 Karel Zak <kzak@redhat.com>
 ////
+ifdef::neverdefined[---]
+
 = hardlink(1)
 :doctype: manpage
 :man manual: User Commands

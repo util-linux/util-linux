@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
     @(#)fstab.5	6.5 (Berkeley) 5/10/91
 ////
+ifdef::neverdefined[---]
+
 = fstab(5)
 :doctype: manpage
 :man manual: File formats

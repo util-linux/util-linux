@@ -34,6 +34,8 @@ SUCH DAMAGE.
     @(#)wall.1	6.5 (Berkeley) 4/23/91
 
 ////
+ifdef::neverdefined[---]
+
 = wall(1)
 :doctype: manpage
 :man manual: User Commands

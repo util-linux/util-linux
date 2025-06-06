@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
 	@(#)script.1	6.5 (Berkeley) 7/27/91
 ////
+ifdef::neverdefined[---]
+
 = script(1)
 :doctype: manpage
 :man manual: User Commands

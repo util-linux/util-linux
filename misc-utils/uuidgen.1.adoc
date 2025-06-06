@@ -3,6 +3,8 @@
 Copyright 1999 Andreas Dilger (adilger@enel.ucalgary.ca)
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = uuidgen(1)
 :doctype: manpage
 :man manual: User Commands
