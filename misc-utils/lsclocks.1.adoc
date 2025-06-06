@@ -18,8 +18,13 @@ lsclocks - display system clocks
 
 *lsclocks* is a simple command to display system clocks.
 
-It allows to display information like current time and resolution of clocks like
-CLOCK_MONOTONIC, CLOCK_REALTIME and CLOCK_BOOTTIME.
+It allows to display information like current time and resolution of clocks.
+Different kinds of clocks are supported.
+
+* POSIX clocks: *CLOCK_MONOTONIC*, *CLOCK_REALTIME*, *CLOCK_BOOTTIME*\, etc.
+* CPU clocks: *clock_getcpuclockid()*.
+* PTP clocks: */dev/ptp0*.
+* RTC clocks: */dev/rtc0*.
 
 == OPTIONS
 
