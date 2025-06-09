@@ -672,7 +672,7 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
 	return 0;
 }
 
-/*
+/**
  * scols_column_set_data_func:
  * @cl: a pointer to a struct libscols_column instance
  * @datafunc: function to return data
@@ -682,7 +682,7 @@ int scols_column_get_wrap_data(const struct libscols_column *cl,
  * for some internal operations (like filters or counters) it needs to convert
  * the strings to usable data format. If this conversion is not possible then
  * application can define datafunc() callback to provide data for filters and counters.
-
+ *
  * The callback needs to return the data as pointer to void, and the data type
  * is defined by scols_column_set_data_type().
  *
