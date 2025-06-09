@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
 	@(#)rev.1	6.3 (Berkeley) 3/21/92
 ////
+ifdef::neverdefined[---]
+
 = rev(1)
 :doctype: manpage
 :man manual: User Commands

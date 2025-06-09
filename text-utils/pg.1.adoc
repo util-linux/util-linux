@@ -1,5 +1,7 @@
 //po4a: entry man manual
 // Copyright 2001 Gunnar Ritter
+ifdef::neverdefined[---]
+
 = pg(1)
 :doctype: manpage
 :man manual: User Commands

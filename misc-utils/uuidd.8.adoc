@@ -3,6 +3,8 @@
 Copyright 2007 by Theodore Ts'o.  All Rights Reserved.
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = uuidd(8)
 :doctype: manpage
 :man manual: System Administration

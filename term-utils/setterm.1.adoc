@@ -6,6 +6,8 @@ Copyright 2000 Colin Watson (cjw44@cam.ac.uk)
 Do not restrict distribution.
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = setterm(1)
 :doctype: manpage
 :man manual: User Commands

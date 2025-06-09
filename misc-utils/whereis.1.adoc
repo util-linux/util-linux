@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
 @(#)whereis.1 from UCB 4.2
 ////
+ifdef::neverdefined[---]
+
 = whereis(1)
 :doctype: manpage
 :man manual: User Commands

@@ -11,6 +11,8 @@ the Free Software Foundation; either version 2 of the License, or
 Copyright (c) 2024 Robin Jarry
 
 ////
+ifdef::neverdefined[---]
+
 = bits(1)
 :doctype: manpage
 :man manual: User Commands

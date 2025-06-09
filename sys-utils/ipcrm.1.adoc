@@ -3,6 +3,8 @@
 Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
 May be distributed under the GNU General Public License
 ////
+ifdef::neverdefined[---]
+
 = ipcrm(1)
 :doctype: manpage
 :man manual: User Commands

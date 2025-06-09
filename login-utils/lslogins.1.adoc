@@ -1,6 +1,8 @@
 //po4a: entry man manual
 // Copyright 2014 Ondrej Oprala (ondrej.oprala@gmail.com)
 // May be distributed under the GNU General Public License
+ifdef::neverdefined[---]
+
 = lslogins(1)
 :doctype: manpage
 :man manual: User Commands

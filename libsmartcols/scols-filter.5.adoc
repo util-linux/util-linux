@@ -4,6 +4,8 @@ Copyright (C) 2023 Karel Zak <kzak@redhat.com>
 
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = scols-filter(5)
 :doctype: manpage
 :man manual: File formats and conventions

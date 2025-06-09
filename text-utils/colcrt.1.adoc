@@ -33,6 +33,8 @@ SUCH DAMAGE.
 
     @(#)colcrt.1	8.1 (Berkeley) 6/30/93
 ////
+ifdef::neverdefined[---]
+
 = colcrt(1)
 :doctype: manpage
 :man manual: User Commands

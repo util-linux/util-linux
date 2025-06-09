@@ -3,6 +3,8 @@
 Copyright 2010 Jason Borden <jborden@bluehost.com>
 This file may be copied under the terms of the GNU General Public License.
 ////
+ifdef::neverdefined[---]
+
 = swaplabel(8)
 :doctype: manpage
 :man manual: System Administration
