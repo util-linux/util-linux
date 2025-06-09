@@ -30,6 +30,8 @@ ts_skip_nonroot
 ts_skip_qemu_user
 ts_cd "$TS_OUTDIR"
 
+lsfd_check_sockdiag "unix"
+
 declare -A tcase
 tcase[NAME]="state=connected"
 tcase[SOCK.NETNS]=
