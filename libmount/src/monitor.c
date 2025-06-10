@@ -413,8 +413,12 @@ static struct monitor_entry *get_active(struct libmnt_monitor *mn)
  * @filename: returns changed file (optional argument)
  * @type: returns MNT_MONITOR_TYPE_* (optional argument)
  *
- * The function does not wait and it's designed to provide details about changes.
- * It's always recommended to use this function to avoid false positives.
+ * The function does not wait and is designed to provide details about changes.
+ * It is always recommended to use this function to avoid false positives.
+ *
+ * This function iterates over a list of unprocessed events. When an event is returned
+ * by this function, it is marked as processed. If you need details about the last
+ * processed event, use the mnt_monitor_event_* functions.
  *
  * Returns: 0 on success, 1 no change, <0 on error
  */
@@ -428,6 +432,8 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	if (!mn || mn->fd < 0)
 		return -EINVAL;
 
+	mn->last = NULL;
+
 	me = get_active(mn);
 	if (!me) {
 		rc = read_epoll_events(mn, 0, &me);	/* try without timeout */
@@ -436,6 +442,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	}
 
 	me->active = 0;
+	mn->last = me;
 
 	if (filename)
 		*filename = me->path;
@@ -464,6 +471,43 @@ int mnt_monitor_event_cleanup(struct libmnt_monitor *mn)
 
 	while ((rc = mnt_monitor_next_change(mn, NULL, NULL)) == 0);
 	return rc < 0 ? rc : 0;
+}
+
+/**
+ * mnt_monitor_event_next_fs:
+ * @mn: monitor
+ * @fs: filesystem
+ *
+ * Fill in details about the next filesystem associated with the last event
+ * (as returned by mnt_monitor_next_change()). If the event does not provide
+ * details, it returns -ENOTSUP.
+ *
+ * <informalexample>
+ *  <programlisting>
+ *   while (mnt_monitor_next_change(mn, NULL, &type) == 0) {
+ *     if (type == MNT_MONITOR_TYPE_FANOTIFY) {
+ *       while (mnt_monitor_event_next_fs(mn, fs) == 0) {
+ *         printf("ID=%ju\n", mnt_fs_get_uniq_id(fs));
+ *       }
+ *     }
+ *   }
+ *  </programlisting>
+ * </informalexample>
+ *
+ * Returns: 0 on success, 1 no more data, <0 on error
+ *
+ * Since: 2.42
+ */
+int mnt_monitor_event_next_fs(struct libmnt_monitor *mn, struct libmnt_fs *fs)
+{
+	if (!mn || !fs)
+		return -EINVAL;
+	if (!mn->last)
+		return 1;
+	if (!mn->last->opers->op_next_fs)
+		return -ENOTSUP;
+
+	return mn->last->opers->op_next_fs(mn, mn->last, fs);
 }
 
 #ifdef TEST_PROGRAM

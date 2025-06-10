@@ -30,6 +30,7 @@ struct libmnt_monitor {
 	int			fd;		/* public monitor file descriptor */
 
 	struct list_head	ents;
+	struct monitor_entry	*last;		/* last active returned by mnt_monitor_next_change() */
 
 	bool			kernel_veiled;
 };
@@ -39,6 +40,7 @@ struct monitor_opers {
 	int (*op_close_fd)(struct libmnt_monitor *, struct monitor_entry *);
 	int (*op_free_data)(struct monitor_entry *);
 	int (*op_process_event)(struct libmnt_monitor *, struct monitor_entry *);
+	int (*op_next_fs)(struct libmnt_monitor *, struct monitor_entry *, struct libmnt_fs *);
 };
 
 int monitor_modify_epoll(struct libmnt_monitor *mn, struct monitor_entry *me, int enable);
