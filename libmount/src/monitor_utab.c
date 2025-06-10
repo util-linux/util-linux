@@ -94,7 +94,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 
 	/* try event file if already exists */
 	errno = 0;
-	wd = inotify_add_watch(me->fd, filename, IN_CLOSE_WRITE);
+	wd = inotify_add_watch(me->fd, filename, IN_CLOSE_WRITE | IN_DELETE_SELF);
 	if (wd >= 0) {
 		DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
 		rc = 0;
@@ -126,7 +126,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 			break;	/* already exist */
 		}
 		errno = 0;
-		wd = inotify_add_watch(me->fd, filename, IN_CREATE|IN_ISDIR);
+		wd = inotify_add_watch(me->fd, filename, IN_CREATE|IN_ISDIR|IN_DELETE_SELF);
 		if (wd >= 0) {
 			DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
 			rc = 0;
@@ -216,6 +216,11 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 			if (e->mask & IN_CLOSE_WRITE)
 				status = 0;
 			else {
+				if (e->mask & IN_DELETE_SELF) {
+					DBG(MONITOR, ul_debugobj(mn, " reseting watch"));
+					userspace_free_data(me);
+				}
+
 				/* add watch for the event file */
 				userspace_add_watch(me, &status, &fd);
 
