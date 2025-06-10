@@ -17,9 +17,30 @@
 #include "monitor.h"
 
 #include "fileutils.h"
+#include "strutils.h"
 
 #include <sys/inotify.h>
 #include <sys/epoll.h>
+
+/* private monitor data */
+struct monitor_entrydata {
+	char	*path;		/* monitored path (dir or final event file) */
+};
+
+static int userspace_free_data(struct monitor_entry *me)
+{
+	struct monitor_entrydata *data;
+
+	if (!me || !me->data)
+		return 0;
+
+	data = (struct monitor_entrydata *) me->data;
+
+	free(data->path);
+	free(me->data);
+	me->data = NULL;
+	return 0;
+}
 
 static int userspace_monitor_close_fd(
 			struct libmnt_monitor *mn __attribute__((__unused__)),
@@ -35,15 +56,37 @@ static int userspace_monitor_close_fd(
 
 static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 {
+	struct monitor_entrydata *data = NULL;
 	char *filename = NULL;
+	const char *p;
 	int wd, rc = -EINVAL;
 
 	assert(me);
 	assert(me->path);
 
-	/*
-	 * libmount uses utab.event file to monitor and control utab updates
+	if (fd)
+		*fd = -1;
+
+	data = (struct monitor_entrydata *) me->data;
+	if (!data) {
+		me->data = data = calloc(1, sizeof(*data));
+		if (!data) {
+			rc = -ENOMEM;
+			goto done;
+		}
+	}
+
+	/* The inotify buffer may contain obsolete events from when
+	 * we have not yet monitored the final event file; don't
+	 * call inotify_add_watch() if already monitoring the final file.
 	 */
+	if (data->path && (p = ul_startswith(data->path, me->path))
+	    && strcmp(p, ".event") == 0) {
+		rc = 0;
+		goto done;
+	}
+
+	/* libmount uses utab.event file to monitor and control utab updates */
 	if (asprintf(&filename, "%s.event", me->path) <= 0) {
 		rc = -ENOMEM;
 		goto done;
@@ -59,18 +102,29 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 			*final = 0;	/* success */
 		if (fd)
 			*fd = wd;
-		goto done;
+		goto remember;
 	} else if (errno != ENOENT) {
 		rc = -errno;
 		goto done;
 	}
 
+	data = (struct monitor_entrydata *) me->data;
+
 	while (strchr(filename, '/')) {
+		/*
+		 * Try watching the directory when we expect the final event file. If the
+		 * directory does not exist, then try the parent directory, and so on. Remember
+		 * the last created watch path to avoid unnecessary inotify_add_watch() calls.
+		 */
 		stripoff_last_component(filename);
 		if (!*filename)
 			break;
 
 		/* try directory where is the event file */
+		if (data->path && strcmp(data->path, filename) == 0) {
+			rc = 0;
+			break;	/* already exist */
+		}
 		errno = 0;
 		wd = inotify_add_watch(me->fd, filename, IN_CREATE|IN_ISDIR);
 		if (wd >= 0) {
@@ -78,7 +132,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 			rc = 0;
 			if (fd)
 				*fd = wd;
-			break;
+			goto remember;
 		}
 
 		if (errno != ENOENT) {
@@ -88,6 +142,10 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	}
 done:
 	free(filename);
+	return rc;
+remember:
+	free(data->path);
+	data->path = filename;
 	return rc;
 }
 
@@ -129,7 +187,7 @@ err:
 static int userspace_process_event(struct libmnt_monitor *mn,
 					struct monitor_entry *me)
 {
-	char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
+	char buf[16 * (sizeof(struct inotify_event) + NAME_MAX + 1)];
 	int status = 1;		/* nothing by default */
 
 	if (!me || me->fd < 0)
@@ -161,7 +219,7 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 				/* add watch for the event file */
 				userspace_add_watch(me, &status, &fd);
 
-				if (fd != e->wd) {
+				if (fd >= 0 && fd != e->wd) {
 					DBG(MONITOR, ul_debugobj(mn, " removing watch [fd=%d]", e->wd));
 					inotify_rm_watch(me->fd, e->wd);
 				}
@@ -180,6 +238,7 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 static const struct monitor_opers userspace_opers = {
 	.op_get_fd		= userspace_monitor_get_fd,
 	.op_close_fd		= userspace_monitor_close_fd,
+	.op_free_data		= userspace_free_data,
 	.op_process_event	= userspace_process_event
 };
 
