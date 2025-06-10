@@ -54,19 +54,18 @@ err:
 	return rc;
 }
 
+/* Returns: <0 error; 0 success; 1 nothing */
 static int kernel_process_event(struct libmnt_monitor *mn,
 			        struct monitor_entry *me)
 {
-	int status = 1;
-
 	if (!mn || !me || me->fd < 0)
-		return 0;
+		return -EINVAL;
 
 	if (mn->kernel_veiled && access(MNT_PATH_UTAB ".act", F_OK) == 0) {
-		status = 0;
 		DBG(MONITOR, ul_debugobj(mn, "kernel event veiled"));
+		return 1;
 	}
-	return status;
+	return 0;
 }
 
 /*

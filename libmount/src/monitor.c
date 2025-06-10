@@ -339,11 +339,11 @@ static int read_epoll_events(struct libmnt_monitor *mn, int timeout, struct moni
 			goto failed;
 		}
 
-		/* rc: 1 event accepted; 0 ignored; <0 error */
+		/* rc: <0 error; 0 accepted; 1 nothing */
 		rc = me->opers->op_process_event(mn, me);
 		if (rc < 0)
 			goto failed;
-		if (rc == 1)
+		if (rc == 0)
 			break;
 		/* TODO" recalculate timeout */
 	} while (1);

@@ -56,7 +56,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 		DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
 		rc = 0;
 		if (final)
-			*final = 1;
+			*final = 0;	/* success */
 		if (fd)
 			*fd = wd;
 		goto done;
@@ -123,15 +123,17 @@ err:
 
 /*
  * verify and drain inotify buffer
+ *
+ * Returns: <0 error; 0 success; 1 nothing
  */
 static int userspace_process_event(struct libmnt_monitor *mn,
 					struct monitor_entry *me)
 {
 	char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
-	int status = 0;
+	int status = 1;		/* nothing by default */
 
 	if (!me || me->fd < 0)
-		return 0;
+		return -EINVAL;
 
 	DBG(MONITOR, ul_debugobj(mn, "process utab event"));
 
@@ -154,7 +156,7 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 			DBG(MONITOR, ul_debugobj(mn, " inotify event 0x%x [%s]\n", e->mask, e->len ? e->name : ""));
 
 			if (e->mask & IN_CLOSE_WRITE)
-				status = 1;
+				status = 0;
 			else {
 				/* add watch for the event file */
 				userspace_add_watch(me, &status, &fd);
@@ -167,7 +169,8 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 		}
 	} while (1);
 
-	DBG(MONITOR, ul_debugobj(mn, "%s", status == 1 ? " success" : " nothing"));
+	DBG(MONITOR, ul_debugobj(mn, "%s", status < 0  ? " failed" :
+					   status == 0 ? " success" : " nothing"));
 	return status;
 }
 
