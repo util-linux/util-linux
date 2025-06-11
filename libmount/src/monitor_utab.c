@@ -59,7 +59,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	struct monitor_entrydata *data = NULL;
 	char *filename = NULL;
 	const char *p;
-	int wd, rc = -EINVAL;
+	int wd = -1;
 
 	assert(me);
 	assert(me->path);
@@ -70,10 +70,8 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	data = (struct monitor_entrydata *) me->data;
 	if (!data) {
 		me->data = data = calloc(1, sizeof(*data));
-		if (!data) {
-			rc = -ENOMEM;
-			goto done;
-		}
+		if (!data)
+			goto fail;
 	}
 
 	/* The inotify buffer may contain obsolete events from when
@@ -81,32 +79,22 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	 * call inotify_add_watch() if already monitoring the final file.
 	 */
 	if (data->path && (p = ul_startswith(data->path, me->path))
-	    && strcmp(p, ".event") == 0) {
-		rc = 0;
+	    && strcmp(p, ".event") == 0)
 		goto done;
-	}
 
 	/* libmount uses utab.event file to monitor and control utab updates */
-	if (asprintf(&filename, "%s.event", me->path) <= 0) {
-		rc = -ENOMEM;
-		goto done;
-	}
+	if (asprintf(&filename, "%s.event", me->path) <= 0)
+		goto fail;
 
 	/* try event file if already exists */
 	errno = 0;
 	wd = inotify_add_watch(me->fd, filename, IN_CLOSE_WRITE | IN_DELETE_SELF);
 	if (wd >= 0) {
-		DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
-		rc = 0;
 		if (final)
 			*final = 0;	/* success */
-		if (fd)
-			*fd = wd;
-		goto remember;
-	} else if (errno != ENOENT) {
-		rc = -errno;
-		goto done;
-	}
+		goto added;
+	} else if (errno != ENOENT)
+		goto fail;
 
 	data = (struct monitor_entrydata *) me->data;
 
@@ -121,32 +109,29 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 			break;
 
 		/* try directory where is the event file */
-		if (data->path && strcmp(data->path, filename) == 0) {
-			rc = 0;
-			break;	/* already exist */
-		}
+		if (data->path && strcmp(data->path, filename) == 0)
+			break;
+
 		errno = 0;
 		wd = inotify_add_watch(me->fd, filename, IN_CREATE|IN_ISDIR|IN_DELETE_SELF);
-		if (wd >= 0) {
-			DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
-			rc = 0;
-			if (fd)
-				*fd = wd;
-			goto remember;
-		}
-
-		if (errno != ENOENT) {
-			rc = -errno;
-			break;
-		}
+		if (wd >= 0)
+			goto added;
+		if (errno != ENOENT)
+			goto fail;
 	}
 done:
 	free(filename);
-	return rc;
-remember:
+	return 0;
+fail:
+	free(filename);
+	return -errno;
+added:
+	DBG(MONITOR, ul_debug(" added inotify watch for %s [fd=%d]", filename, wd));
+	if (fd && wd >= 0)
+		*fd = wd;
 	free(data->path);
 	data->path = filename;
-	return rc;
+	return 0;
 }
 
 static int userspace_monitor_get_fd(struct libmnt_monitor *mn,
@@ -222,9 +207,8 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 				}
 
 				/* add watch for the event file */
-				userspace_add_watch(me, &status, &fd);
-
-				if (fd >= 0 && fd != e->wd) {
+				if (userspace_add_watch(me, &status, &fd) == 0
+				    && fd >= 0 && fd != e->wd) {
 					DBG(MONITOR, ul_debugobj(mn, " removing watch [fd=%d]", e->wd));
 					inotify_rm_watch(me->fd, e->wd);
 				}
