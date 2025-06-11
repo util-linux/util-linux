@@ -108,7 +108,7 @@ static int probe_dm_tp(blkid_probe pr,
 	}
 
 	if (fscanf(stream, "%lld %lld striped %d %d ",
-			&offset, &size, &stripes, &stripesize) != 0)
+			&offset, &size, &stripes, &stripesize) != 4)
 		goto nothing;
 
 	blkid_topology_set_minimum_io_size(pr, stripesize << 9);
