@@ -47,3 +47,4 @@ _fincore_module()
 	return 0
 }
 complete -F _fincore_module fincore
+complete -F _fincore_module mu
