@@ -50,6 +50,7 @@ if LINUX
     src/monitor.h
     src/monitor_utab.c
     src/monitor_mountinfo.c
+    src/monitor_fanotify.c
     src/optlist.c
     src/hook_veritydev.c
     src/hook_subdir.c

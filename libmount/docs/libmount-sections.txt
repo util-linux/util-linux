@@ -485,6 +485,7 @@ libmnt_monitor
 mnt_new_monitor
 mnt_ref_monitor
 mnt_unref_monitor
+mnt_monitor_enable_fanotify
 mnt_monitor_enable_kernel
 mnt_monitor_enable_mountinfo
 mnt_monitor_enable_userspace

@@ -535,6 +535,11 @@ static struct libmnt_monitor *create_test_monitor(int argc, char *argv[])
 				warn("failed to initialize kernel monitor");
 				goto err;
 			}
+		} else if (strcmp(argv[i], "fanotify") == 0) {
+			if (mnt_monitor_enable_fanotify(mn, TRUE, -1)) {
+				warn("failed to initialize fanotify monitor");
+				goto err;
+			}
 		} else if (strcmp(argv[i], "veil") == 0) {
 			mnt_monitor_veil_kernel(mn, 1);
 		}
@@ -658,9 +663,9 @@ static int test_wait(struct libmnt_test *ts __attribute__((unused)),
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-		{ "--epoll", test_epoll, "<userspace mountinfo veil ...>  monitor in epoll" },
-		{ "--epoll-clean", test_epoll_cleanup, "<userspace mountinfo veil ...>  monitor in epoll and clean events" },
-		{ "--wait",  test_wait,  "<userspace mountinfo veil ...>  monitor wait function" },
+		{ "--epoll", test_epoll, "<userspace mountinfo fanotify veil ...>  monitor in epoll" },
+		{ "--epoll-clean", test_epoll_cleanup, "<userspace mountinfo fanotify veil ...>  monitor in epoll and clean events" },
+		{ "--wait",  test_wait,  "<userspace mountinfo fanotify veil ...>  monitor wait function" },
 		{ NULL }
 	};
 

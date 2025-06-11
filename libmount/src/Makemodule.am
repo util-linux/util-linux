@@ -45,7 +45,8 @@ libmount_la_SOURCES += \
 	libmount/src/monitor.c \
 	libmount/src/monitor.h \
 	libmount/src/monitor_utab.c \
-	libmount/src/monitor_mountinfo.c
+	libmount/src/monitor_mountinfo.c \
+	libmount/src/monitor_fanotify.c
 
 if HAVE_BTRFS
 libmount_la_SOURCES += libmount/src/btrfs.c

@@ -83,7 +83,12 @@ static const struct monitor_opers mountinfo_opers = {
  * @enable: 0 or 1
  *
  * Enables or disables kernel VFS monitoring based on /proc/self/mountinfo. If
- * the monitor does not exist and enable=1 then allocates new resources
+ * the monitor does not exist and enable=1 then allocates new resources. This
+ * monitor only informs that any change has been made to the kernel mount
+ * table, but does not return details on what was changed and how.  See also
+ * mnt_monitor_enable_fanotify().
+ *
+ * If the monitor does not exist and enable=1 then allocates new resources
  * necessary for the monitor.
  *
  * If the top-level monitor has been already created (by mnt_monitor_get_fd()
