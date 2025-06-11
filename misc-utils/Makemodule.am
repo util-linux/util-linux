@@ -337,3 +337,8 @@ lsclocks_SOURCES = misc-utils/lsclocks.c
 lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
+
+install-exec-hook-fincore:
+	cd $(DESTDIR)$(usrbin_execdir) && ln -sf fincore mu
+
+INSTALL_EXEC_HOOKS += install-exec-hook-fincore
