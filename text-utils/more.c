@@ -42,7 +42,7 @@
  * 2010-10-21 Davidlohr Bueso <dave@gnu.org>
  *	modified mem allocation handling for util-linux
  * 2025-04-03 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
- *  	modified to add MORESECURE and PAGERSECURE environment variables
+ *  	modified to add MORESECURE, PAGERSECURE and MORE_SHELL_LINES environment variables
  */
 
 #include <stdio.h>
@@ -2103,6 +2103,7 @@ static void initterm(struct more_control *ctl)
 int main(int argc, char **argv)
 {
 	char *s;
+	uint64_t num;
 	int left;
 	struct more_control ctl = {
 		.first_file = 1,
@@ -2129,6 +2130,13 @@ int main(int argc, char **argv)
 
 	if (getenv("MORESECURE") || getenv("PAGERSECURE"))
 		ctl.is_secure = 1;
+
+	num = 0;
+	if ((s = getenv("MORE_SHELL_LINES")) != NULL) {
+		if ((ul_strtou64(s, &num, 10)) == 0) {
+			ctl.lines_per_screen = num;
+		}
+	}
 
 	if ((s = getenv("MORE")) != NULL)
 		env_argscan(&ctl, s);
