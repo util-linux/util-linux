@@ -67,7 +67,7 @@ _findmnt_module()
 			TYPES="adfs affs autofs cifs coda coherent cramfs
 				debugfs devpts efs ext2 ext3 ext4 hfs
 				hfsplus hpfs iso9660 jfs minix msdos
-				ncpfs nfs nfs4 ntfs proc qnx4 ramfs
+				ncpfs nfs nfs4 ntfs3 proc qnx4 ramfs
 				reiserfs romfs squashfs smbfs sysv tmpfs
 				ubifs udf ufs umsdos usbfs vfat xenix xfs"
 			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
