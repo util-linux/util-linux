@@ -506,7 +506,7 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
 	case STATFS_NCP_MAGIC:		return "ncp";
 	case STATFS_NFS_MAGIC:		return "nfs";
 	case STATFS_NILFS_MAGIC:	return "nilfs2";
-	case STATFS_NTFS_MAGIC:		return "ntfs";
+	case STATFS_NTFS_MAGIC:		return "ntfs3";
 	case STATFS_OCFS2_MAGIC:	return "ocfs2";
 	case STATFS_OMFS_MAGIC:		return "omfs";
 	case STATFS_OPENPROMFS_MAGIC:	return "openpromfs";
