@@ -1155,7 +1155,7 @@ See mount options for fat. If the _msdos_ filesystem detects an inconsistency, i
 
 Just like _nfs_, the _ncpfs_ implementation expects a binary argument (a _struct ncp_mount_data_) to the *mount*(2) system call. This argument is constructed by *ncpmount*(8) and the current version of *mount* (2.12) does not know anything about ncpfs.
 
-=== Mount options for ntfs
+=== Mount options for ntfs3
 
 **iocharset=**__name__::
 Character set to use when returning file names. Unlike VFAT, NTFS suppresses names that contain nonconvertible characters. Deprecated.
