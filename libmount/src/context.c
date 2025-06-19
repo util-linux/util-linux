@@ -2201,8 +2201,9 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 int mnt_context_prepare_update(struct libmnt_context *cxt)
 {
 	int rc;
-	const char *target, *name;
+	const char *target, *source, *name;
 	unsigned long flags = 0;
+	struct libmnt_optlist *ol;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -2217,6 +2218,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	}
 
 	target = mnt_fs_get_target(cxt->fs);
+	source = mnt_fs_get_srcpath(cxt->fs);
 
 	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/")) {
 		DBG(CXT, ul_debugobj(cxt, "root umount: setting NOMTAB"));
@@ -2231,6 +2233,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "skip update: no writable destination"));
 		return 0;
 	}
+
 	/* 0 = success, 1 = not called yet */
 	if (cxt->syscall_status != 1 && cxt->syscall_status != 0) {
 		DBG(CXT, ul_debugobj(cxt,
@@ -2239,12 +2242,24 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		return 0;
 	}
 
-	if (!cxt->update) {
-		if (cxt->action == MNT_ACT_UMOUNT && is_file_empty(name)) {
-			DBG(CXT, ul_debugobj(cxt, "skip update: umount, no table"));
-			return 0;
-		}
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return -ENOMEM;
 
+	if ((cxt->action == MNT_ACT_UMOUNT || mnt_optlist_is_move(ol))
+	    && is_file_empty(name)) {
+		DBG(CXT, ul_debugobj(cxt, "skip update: umount/move, empty table"));
+		return 0;
+	}
+
+	if (mnt_optlist_is_move(ol) &&
+	    ((target && startswithpath(name, target))
+	     || (source && startswithpath(name, source)))) {
+		DBG(CXT, ul_debugobj(cxt, "skip update: utab move"));
+		return 0;
+	}
+
+	if (!cxt->update) {
 		cxt->update = mnt_new_update();
 		if (!cxt->update)
 			return -ENOMEM;
