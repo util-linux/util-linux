@@ -289,6 +289,19 @@ static inline const char *startswith_no_case(const char *s, const char *prefix)
 }
 
 /*
+ * Match path beginning
+ */
+static inline const char *startswithpath(const char *s, const char *prefix)
+{
+	const char *p = startswith(s, prefix);
+
+	if (p && (*p == '/' || *p == '\0'))
+		return p;
+
+	return NULL;
+}
+
+/*
  * Match string ending.
  */
 static inline const char *endswith(const char *s, const char *postfix)
