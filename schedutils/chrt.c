@@ -495,20 +495,26 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (((ctl->pid > -1) && argc - optind < 1) ||
-	    ((ctl->pid == -1) && argc - optind < 2)) {
+	bool need_prio = (ctl->policy == SCHED_FIFO || ctl->policy == SCHED_RR);
+
+	if (((ctl->pid > -1) && argc - optind < (need_prio ? 1 : 0)) ||
+	    ((ctl->pid == -1) && argc - optind < (need_prio ? 2 : 1))) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 }
 
-	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
+	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == (need_prio ? 1 : 0))) {
 		show_sched_info(ctl);
-		if (argc - optind == 1)
+		if (argc - optind == (need_prio ? 1 : 0))
 			return EXIT_SUCCESS;
 	}
 
 	errno = 0;
-	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
+
+	if (need_prio || argc - optind == 2)
+		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
+	else
+		ctl->priority = 0;
 
 	if (ctl->runtime && !supports_runtime_param(ctl->policy))
 		errx(EXIT_FAILURE, _("--sched-runtime option is supported for %s"),
