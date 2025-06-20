@@ -199,7 +199,10 @@ Disable exit-on-eof (see option *-e* for more details).
 Run *more* in "secure" mode. See SECURITY for details.
 
 *PAGERSECURE*::
-Equivalent to MORESECURE. 
+Equivalent to MORESECURE.
+
+*MORE_SHELL_LINES*::
+Specify the _number_ of lines per screenful. It has the same effect as the '-n' and '--lines' options. See in OPTIONS for details. Also, note that the environment variable's value will be overridden if any of these options are set.
 
 == HISTORY
 
@@ -213,7 +216,7 @@ Modified by Geoff Peck, UCB to add underlining, single spacing.
 
 Modified by John Foderaro, UCB to add -c and MORE environment variable.
 
-Modified by Christian Goeschel Ndjomouo to add MORESECURE and PAGERSECURE environment variables, and a SECURITY section
+Modified by Christian Goeschel Ndjomouo to add MORESECURE, PAGERSECURE and MORE_SHELL_LINES environment variables, and a SECURITY section
 
 == SEE ALSO
 
