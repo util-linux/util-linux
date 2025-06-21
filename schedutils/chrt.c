@@ -64,7 +64,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	" chrt [options] --pid <priority> <pid>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Get policy:\n"
-	" chrt [options] --pid <pid>\n"), out);
+	" chrt --pid <pid>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Policy options:\n"), out);
@@ -399,6 +399,7 @@ int main(int argc, char **argv)
 {
 	struct chrt_ctl _ctl = { .pid = -1, .policy = SCHED_RR }, *ctl = &_ctl;
 	int c;
+	bool policy_given = false;
 
 	static const struct option longopts[] = {
 		{ "all-tasks",  no_argument, NULL, 'a' },
@@ -435,21 +436,25 @@ int main(int argc, char **argv)
 		case 'b':
 #ifdef SCHED_BATCH
 			ctl->policy = SCHED_BATCH;
+			policy_given = true;
 #endif
 			break;
 
 		case 'd':
 #ifdef SCHED_DEADLINE
 			ctl->policy = SCHED_DEADLINE;
+			policy_given = true;
 #endif
 			break;
 		case 'e':
 #ifdef SCHED_EXT
 			ctl->policy = SCHED_EXT;
+			policy_given = true;
 #endif
 			break;
 		case 'f':
 			ctl->policy = SCHED_FIFO;
+			policy_given = true;
 			break;
 		case 'R':
 			ctl->reset_on_fork = 1;
@@ -457,6 +462,7 @@ int main(int argc, char **argv)
 		case 'i':
 #ifdef SCHED_IDLE
 			ctl->policy = SCHED_IDLE;
+			policy_given = true;
 #endif
 			break;
 		case 'm':
@@ -464,6 +470,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'o':
 			ctl->policy = SCHED_OTHER;
+			policy_given = true;
 			break;
 		case 'p':
 			errno = 0;
@@ -472,6 +479,7 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			ctl->policy = SCHED_RR;
+			policy_given = true;
 			break;
 		case 'v':
 			ctl->verbose = 1;
@@ -501,11 +509,20 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
+	/* pid exists but priority not given */
+	if (ctl->pid > -1 && argc - optind == 1) {
+		/* Error if a policy was specified but no priority given */
+		if (policy_given)
+			errx(EXIT_FAILURE, ("policy %s requires a priority argument"),
+						get_policy_name(ctl->policy));
+
+		/* If no policy specified, show current settings */
 		show_sched_info(ctl);
-		if (argc - optind == 1)
-			return EXIT_SUCCESS;
+		return EXIT_SUCCESS;
 	}
+
+	if (ctl->verbose)
+		show_sched_info(ctl);
 
 	errno = 0;
 	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
