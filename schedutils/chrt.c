@@ -64,7 +64,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	" chrt [options] --pid <priority> <pid>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Get policy:\n"
-	" chrt [options] -p <pid>\n"), out);
+	" chrt [options] --pid <pid>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Policy options:\n"), out);
@@ -341,7 +341,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	return set_sched_one_by_setscheduler(ctl, pid);
 }
 
-#else /* !HAVE_SCHED_SETATTR */
+#else /* HAVE_SCHED_SETATTR */
 static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_attr sa = { .size = sizeof(struct sched_attr) };
@@ -499,7 +499,7 @@ int main(int argc, char **argv)
 	    ((ctl->pid == -1) && argc - optind < 2)) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
-}
+	}
 
 	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
 		show_sched_info(ctl);
