@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 {
 	struct chrt_ctl _ctl = { .pid = -1, .policy = SCHED_RR }, *ctl = &_ctl;
 	int c;
-	bool policy_given = false;
+	bool policy_given = false, need_prio = false;
 
 	static const struct option longopts[] = {
 		{ "all-tasks",  no_argument, NULL, 'a' },
@@ -455,6 +455,7 @@ int main(int argc, char **argv)
 		case 'f':
 			ctl->policy = SCHED_FIFO;
 			policy_given = true;
+			need_prio = true;
 			break;
 		case 'R':
 			ctl->reset_on_fork = 1;
@@ -480,6 +481,7 @@ int main(int argc, char **argv)
 		case 'r':
 			ctl->policy = SCHED_RR;
 			policy_given = true;
+			need_prio = true;
 			break;
 		case 'v':
 			ctl->verbose = 1;
@@ -503,29 +505,35 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (((ctl->pid > -1) && argc - optind < 1) ||
-	    ((ctl->pid == -1) && argc - optind < 2)) {
+	if (((ctl->pid > -1) && argc - optind < (need_prio ? 1 : 0)) ||
+	    ((ctl->pid == -1) && argc - optind < (need_prio ? 2 : 1))) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
 	/* pid exists but priority not given */
 	if (ctl->pid > -1 && argc - optind == 1) {
-		/* Error if a policy was specified but no priority given */
-		if (policy_given)
+		/* Error if priority is missing for a policy that requires it */
+		if (policy_given && need_prio)
 			errx(EXIT_FAILURE, ("policy %s requires a priority argument"),
 						get_policy_name(ctl->policy));
 
 		/* If no policy specified, show current settings */
-		show_sched_info(ctl);
-		return EXIT_SUCCESS;
+		if (!policy_given) {
+			show_sched_info(ctl);
+			return EXIT_SUCCESS;
+		}
 	}
 
 	if (ctl->verbose)
 		show_sched_info(ctl);
 
 	errno = 0;
-	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
+
+	if (need_prio || argc - optind == 2)
+		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
+	else
+		ctl->priority = 0;
 
 	if (ctl->runtime && !supports_runtime_param(ctl->policy))
 		errx(EXIT_FAILURE, _("--sched-runtime option is supported for %s"),
