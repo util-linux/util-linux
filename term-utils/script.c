@@ -190,7 +190,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [file]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [file] [ -- program [arguments]]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Make a typescript of a terminal session.\n"), out);
@@ -207,7 +207,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -a, --append                  append to the log file\n"), out);
-	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"), out);
+	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"
+	    	"                               you can also specify the command after '--'\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
@@ -758,6 +759,31 @@ static void die_if_link(struct script_control *ctl, const char *filename)
 		       "Program not started."), filename);
 }
 
+static char *concat_command(int argc, char *argv[])
+{
+	int i;
+	size_t len = 0;
+	char *result, *p;
+
+	for (i = 0; i < argc; i++)
+		len += strlen(argv[i]) + 1;
+
+	if (len == 0)
+		return NULL;
+	
+	p = result = xmalloc(len + 1);
+	if (!result)
+		return NULL;
+	
+	for (i = 0; i < argc; i++) {
+		memcpy(p, argv[i], strlen(argv[i]));
+		p += strlen(argv[i]);
+		*p++ = ' ';
+	}
+	*--p = '\0';
+	return result;
+}
+
 int main(int argc, char **argv)
 {
 	struct script_control ctl = {
@@ -768,6 +794,7 @@ int main(int argc, char **argv)
 	int ch, format = 0, caught_signal = 0, rc = 0, echo = 1;
 	const char *outfile = NULL, *infile = NULL;
 	const char *timingfile = NULL, *shell = NULL;
+	char *posixly_correct;
 
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
 
@@ -812,6 +839,10 @@ int main(int argc, char **argv)
 	ON_DBG(PTY, ul_pty_init_debug(0xFFFF));
 
 	ctl.isterm = isatty(STDIN_FILENO);
+
+	/* assure the order of argv[] unchanged */
+	posixly_correct = getenv("POSIXLY_CORRECT");
+	setenv("POSIXLY_CORRECT", "1", 1);
 
 	while ((ch = getopt_long(argc, argv, "aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
 
@@ -888,12 +919,20 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	/* restore POSIXLY_CORRECT */
+	if (posixly_correct)
+		setenv("POSIXLY_CORRECT", posixly_correct, 1);
+	else
+		unsetenv("POSIXLY_CORRECT");
+
 	argc -= optind;
 	argv += optind;
 
 	/* default if no --log-* specified */
 	if (!outfile && !infile) {
-		if (argc > 0) {
+		/* if argv[0] is not after --, use argv[0] as outfile */
+		if (argc > 0 && strcmp(argv[-1], "--") != 0) {
 			outfile = argv[0];
 			argc--;
 			argv++;
@@ -906,9 +945,29 @@ int main(int argc, char **argv)
 		log_associate(&ctl, &ctl.out, outfile, SCRIPT_FMT_RAW);
 	}
 
+	/* skip -- to non-option arguments */
+	if (argc > 0 && strcmp(argv[0], "--") == 0) {
+		argc--;
+		argv++;
+	}
+
+	/* concat non-option arguments as command */
+	if (argc > 0 && strcmp(argv[-1], "--") == 0) {
+		if (ctl.command != NULL) {
+			warnx(_("conflicting arguments of --command and non-option arguments"));
+			errtryhelp(EXIT_FAILURE);
+		}
+
+		ctl.command = concat_command(argc, argv);
+		if (!ctl.command)
+			errx(EXIT_FAILURE, _("failed to concatenate arguments"));
+
+		ctl.command_norm = xstrdup(ctl.command);
+		strrep(ctl.command_norm, '\n', ' ');
+		argc = 0;
+	}
+
 	if (argc > 0) {
-		/* only one filename is accepted. if --log-out was given,
-		 * freestanding filename is ignored */
 		warnx(_("unexpected number of arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
