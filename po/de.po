@@ -48,13 +48,13 @@
 #           bzw. ungültig (z. B. »ungültige ‚magic number‘ im Superblock«)
 #
 # Philipp Thomas <pth@suse.de>, 2014-2015, 2017.
-# Mario Blättermann <mario.blaettermann@gmail.com>, 2014-2015, 2019-2024.
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2014-2015, 2019-2025.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.40.1-rc1\n"
+"Project-Id-Version: util-linux 2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-03-06 10:21+0100\n"
-"PO-Revision-Date: 2024-11-12 18:54+0100\n"
+"POT-Creation-Date: 2025-03-06 12:25+0100\n"
+"PO-Revision-Date: 2025-03-25 20:45+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -63,7 +63,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 24.08.3\n"
+"X-Generator: Lokalize 24.12.3\n"
 
 #: disk-utils/addpart.c:25
 #, c-format
@@ -8878,7 +8878,7 @@ msgstr " -t, --until <Zeit>   die Zeilen bis zur angegebenen Zeit anzeigen\n"
 
 #: login-utils/last.c:604
 msgid " -T, --tab-separated\tuse tabs as delimiters\n"
-msgstr ""
+msgstr " -T, --tab-separated\tTabulatoren als Trenner verwenden\n"
 
 #: login-utils/last.c:605
 msgid " -p, --present <time> display who were present at the specified time\n"
@@ -9900,10 +9900,9 @@ msgid "failed to compute default context"
 msgstr "Standardkontext konnte nicht berechnet werden"
 
 #: login-utils/sulogin.c:156
-#, fuzzy, c-format
-#| msgid "failed to set the controlling terminal"
+#, c-format
 msgid "failed to get context of terminal %s"
-msgstr "Steuerndes Terminal kann nicht gesetzt werden"
+msgstr "Kontext des Terminals %s konnte nicht ermittelt werden"
 
 #: login-utils/sulogin.c:162
 msgid "security class chr_file not available"
@@ -9985,10 +9984,9 @@ msgid "change directory to system root failed"
 msgstr "Ändern des Verzeichnisses zur Systemwurzel ist fehlgeschlagen"
 
 #: login-utils/sulogin.c:930
-#, fuzzy, c-format
-#| msgid "failed to connect to %s port %s"
+#, c-format
 msgid "failed to set context to %s for terminal %s"
-msgstr "Verbindung zu %s Port %s konnte nicht aufgebaut werden"
+msgstr "Kontext für Terminal %2$s konnte nicht auf %1$s gesetzt werden"
 
 #: login-utils/sulogin.c:935
 #, c-format
@@ -9996,10 +9994,9 @@ msgid "failed to set exec context to %s"
 msgstr "Kontext für Ausführung konnte nicht auf %s gesetzt werden"
 
 #: login-utils/sulogin.c:966
-#, fuzzy, c-format
-#| msgid "failed to connect to %s port %s"
+#, c-format
 msgid "failed to reset context to %s for terminal %s"
-msgstr "Verbindung zu %s Port %s konnte nicht aufgebaut werden"
+msgstr "Kontext für Terminal %2$s konnte nicht auf %1$s zurückgesetzt werden"
 
 #: login-utils/sulogin.c:979
 #, c-format
@@ -10192,29 +10189,23 @@ msgstr "Aus /proc/devices ermittelter Treibername des blockorientierten Geräts"
 
 #: lsfd-cmd/lsfd.c:188
 msgid "bpf map id associated with the fd"
-msgstr ""
+msgstr "Dem Dateideskriptor zugehörige Bpf-Zuweisungs-ID"
 
 #: lsfd-cmd/lsfd.c:191
-#, fuzzy
-#| msgid "file type (cooked)"
 msgid "bpf map type (decoded)"
-msgstr "Dateityp (verarbeitet)"
+msgstr "Bpf-Zuweisungstyp (dekodiert)"
 
 #: lsfd-cmd/lsfd.c:194
-#, fuzzy
-#| msgid "file type (raw)"
 msgid "bpf map type (raw)"
-msgstr "Dateityp (roh)"
+msgstr "Bpf-Zuweisungstyp (roh)"
 
 #: lsfd-cmd/lsfd.c:197
 msgid "bpf object name"
 msgstr "Bpf-Objektname"
 
 #: lsfd-cmd/lsfd.c:200
-#, fuzzy
-#| msgid "L3 protocol associated with the packet socket"
 msgid "bpf program id associated with the fd"
-msgstr "Dem Paket-Socket zugehöriges L3-Protokoll"
+msgstr "Dem Dateideskriptor zugehöriges Bpf-Programm"
 
 #: lsfd-cmd/lsfd.c:203
 #, fuzzy
@@ -10399,10 +10390,8 @@ msgid "file position"
 msgstr "Dateiposition"
 
 #: lsfd-cmd/lsfd.c:338
-#, fuzzy
-#| msgid "type of the namespace"
 msgid "tty index of the counterpart"
-msgstr "Typ des Namensraums"
+msgstr "TTY-Index des Gegenstücks"
 
 #: lsfd-cmd/lsfd.c:341
 msgid "protocol number of the raw socket"
@@ -10572,7 +10561,7 @@ msgstr "ferne IP-Adresse"
 
 #: lsfd-cmd/lsfd.c:458
 msgid "extended version of MODE (rwxD[Ll]m)"
-msgstr ""
+msgstr "erweiterte Version von MODE (rwxD[Ll]m)"
 
 #: lsfd-cmd/lsfd.c:499 sys-utils/prlimit.c:79
 msgid "processes"
@@ -11240,9 +11229,9 @@ msgstr "Filter ist zu groß"
 
 #: misc-utils/enosys.c:281
 #, fuzzy
-#| msgid "could not set timer"
+#| msgid "Could not seccomp filter"
 msgid "Could not dump seccomp filter"
-msgstr "Timer konnte nicht gesetzt werden"
+msgstr "Filter konnte nicht mit Seccomp geprüft werden"
 
 #: misc-utils/enosys.c:294 sys-utils/setpriv.c:709
 msgid "Seccomp non-functional"
@@ -11253,16 +11242,12 @@ msgid "Could not run prctl(PR_SET_NO_NEW_PRIVS)"
 msgstr "prctl(PR_SET_NO_NEW_PRIVS) konnte nicht ausgeführt werden"
 
 #: misc-utils/enosys.c:300
-#, fuzzy
-#| msgid "could not set timer"
 msgid "Could not seccomp filter"
-msgstr "Timer konnte nicht gesetzt werden"
+msgstr "Filter konnte nicht mit Seccomp geprüft werden"
 
 #: misc-utils/enosys.c:303
-#, fuzzy
-#| msgid "could not set timer"
 msgid "Could not exec"
-msgstr "Timer konnte nicht gesetzt werden"
+msgstr "Ausführung war nicht möglich"
 
 #: misc-utils/exch.c:42
 #, c-format
@@ -11355,24 +11340,20 @@ msgid "file name"
 msgstr "Dateiname"
 
 #: misc-utils/fincore.c:106
-#, fuzzy
-#| msgid "number of zones"
 msgid "number of dirty pages"
-msgstr "Anzahl der Zonen"
+msgstr "Anzahl der »Dirty pages«"
 
 #: misc-utils/fincore.c:107
-#, fuzzy
-#| msgid "number of zones"
 msgid "number of dirty bytes"
-msgstr "Anzahl der Zonen"
+msgstr "Anzahl der »Dirty bytes«"
 
 #: misc-utils/fincore.c:108
 msgid "number of pages marked for writeback"
-msgstr ""
+msgstr "Anzahl der zum Zurückschreiben markierten Seiten"
 
 #: misc-utils/fincore.c:109
 msgid "number of bytes marked for writeback"
-msgstr ""
+msgstr "Anzahl der zum Zurückschreiben markierten Bytes"
 
 #: misc-utils/fincore.c:110
 #, fuzzy
@@ -11409,10 +11390,9 @@ msgid "failed to do mmap: %s"
 msgstr "Ausführung von »mmap« ist fehlgeschlagen: %s"
 
 #: misc-utils/fincore.c:350
-#, fuzzy, c-format
-#| msgid "failed to do fstat: %s"
+#, c-format
 msgid "failed to do cachestat: %s"
-msgstr "Ausführung von »fstat« ist fehlgeschlagen: %s"
+msgstr "Ausführung von »cachestat« ist fehlgeschlagen: %s"
 
 #: misc-utils/fincore.c:366
 #, c-format
@@ -11479,7 +11459,7 @@ msgstr "Aktion erkannt von --poll"
 
 #: misc-utils/findmnt.c:113
 msgid "filesystem size available, use <number> if --bytes is given"
-msgstr ""
+msgstr "Verfügbare Dateisystemgröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/findmnt.c:114
 msgid "dump(8) period in days [fstab only]"
@@ -11559,7 +11539,7 @@ msgstr "VFS Propagierungskennungen"
 
 #: misc-utils/findmnt.c:134 misc-utils/lsblk.c:185
 msgid "filesystem size, use <number> if --bytes is given"
-msgstr ""
+msgstr "Dateisystemgröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/findmnt.c:135
 msgid "all possible source devices"
@@ -11583,7 +11563,7 @@ msgstr ""
 
 #: misc-utils/findmnt.c:140 misc-utils/lsblk.c:187
 msgid "filesystem size used, use <number> if --bytes is given"
-msgstr ""
+msgstr "Genutzte Dateisystemgröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/findmnt.c:141 misc-utils/lsblk.c:188
 msgid "filesystem use percentage"
@@ -12799,10 +12779,10 @@ msgid " -a, --active            print lastlog excluding '**Never logged in**' us
 msgstr " -a, --all            alle Geräte ausgeben\n"
 
 #: misc-utils/lastlog2.c:116
-#, fuzzy
-#| msgid " -z, --zoned          print zone related information\n"
 msgid " -b, --before DAYS       print only records older than DAYS\n"
-msgstr " -z, --zoned          Zonenbezogene Informationen ausgeben\n"
+msgstr ""
+" -b, --before TAGE       nur Datensätze ausgeben, die älter als die\n"
+"                           angegebenen TAGE sind\n"
 
 #: misc-utils/lastlog2.c:117
 msgid " -C, --clear             clear record of a user (requires -u)\n"
@@ -12821,6 +12801,9 @@ msgstr " -i, --import DATEI      Daten aus einer alten lastlog-Datei importieren
 #: misc-utils/lastlog2.c:120
 msgid " -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"
 msgstr ""
+" -r, --rename NEUER_NAME\n"
+"                         vorhandenen Benutzer in NEUER_NAME\n"
+"                           umbenennen (erfordert -u)\n"
 
 #: misc-utils/lastlog2.c:121
 msgid " -s, --service           display PAM service\n"
@@ -12839,10 +12822,10 @@ msgstr ""
 "                           als die angegebene Anzahl TAGE sind\n"
 
 #: misc-utils/lastlog2.c:124
-#, fuzzy
-#| msgid " -r, --reset               reset all the counters (root only)\n"
 msgid " -u, --user LOGIN        print lastlog record of the specified LOGIN\n"
-msgstr " -r, --reset               alle Zähler zurücksetzen (nur für Administrator)\n"
+msgstr ""
+" -u, --user ANMELDUNG    Nur Lastlog-Datensatz der angegebenen\n"
+"                           ANMELDUNG anzeigen\n"
 
 #: misc-utils/lastlog2.c:175 misc-utils/lastlog2.c:208
 msgid "Cannot parse days"
@@ -13187,7 +13170,7 @@ msgstr "Datten für Nullen verwerfen"
 
 #: misc-utils/lsblk.c:183
 msgid "filesystem size available for unprivileged users, use <number> if --bytes is given"
-msgstr ""
+msgstr "Für unprivilegierte Benutzer verfügbare Dateisystemgröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/lsblk.c:184
 msgid "mounted filesystem roots"
@@ -13327,7 +13310,7 @@ msgstr "Festplatten-Seriennummer"
 
 #: misc-utils/lsblk.c:226
 msgid "size of the device, use <number> if --bytes is given"
-msgstr ""
+msgstr "Gerätegröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/lsblk.c:227
 msgid "partition start offset (in 512-byte sectors)"
@@ -13375,7 +13358,7 @@ msgstr "Zonenmodell"
 
 #: misc-utils/lsblk.c:239
 msgid "zone size, use <number> if --bytes is given"
-msgstr ""
+msgstr "Zonengröße; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/lsblk.c:240
 msgid "zone write granularity, use <number> if --bytes is given"
@@ -13499,20 +13482,22 @@ msgstr " -O, --output-all     alle Spalten ausgeben\n"
 # FIXME maching → matching
 #: misc-utils/lsblk.c:2318
 #, fuzzy
-#| msgid " -Q,      --filter <expr>     apply display filter\n"
+#| msgid " -Q, --filter <expr>  print only lines maching the expression\n"
 msgid " -Q, --filter <expr>  print only lines matching the expression\n"
 msgstr ""
-" -Q,      --filter <Ausdruck>\n"
-"                              Anzeigefilter anwenden\n"
+" -Q, --filter <Ausdruck>\n"
+"                      Nur Zeilen anzeigen, die dem angegebenen\n"
+"                        Ausdruck entsprechen\n"
 
 # FIXME maching → matching
 #: misc-utils/lsblk.c:2319
 #, fuzzy
-#| msgid " -Q,      --filter <expr>     apply display filter\n"
+#| msgid "     --highlight <expr> colorize lines maching the expression\n"
 msgid "     --highlight <expr> colorize lines matching the expression\n"
 msgstr ""
-" -Q,      --filter <Ausdruck>\n"
-"                              Anzeigefilter anwenden\n"
+"     --highlight <Ausdruck>\n"
+"                        Zeilen einfärben, die dem angegebenen\n"
+"                          Ausdruck entsprechen\n"
 
 #: misc-utils/lsblk.c:2320
 msgid "     --ct-filter <expr> restrict the next counter\n"
@@ -13731,10 +13716,10 @@ msgid " -d, --dynamic-clock <path> also display specified dynamic clock\n"
 msgstr " -d, --dynamic-clock <Pfad> auch die angegebene dynamische Uhr anzeigen\n"
 
 #: misc-utils/lsclocks.c:200
-#, fuzzy
-#| msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgid " -c, --cpu-clock <pid>      also display CPU clock of specified process\n"
-msgstr " -p, --pid <PID>        nur die von diesem Prozess gehaltenen Sperren anzeigen\n"
+msgstr ""
+" -c, --cpu-clock <PID>      auch CPU-Uhr des angegebenen Prozesses\n"
+"                              anzeigen\n"
 
 #: misc-utils/lsclocks.c:242
 #, c-format
@@ -13750,10 +13735,9 @@ msgid "failed to format relative time"
 msgstr "relative Zeit konnte nicht formatiert werden"
 
 #: misc-utils/lsclocks.c:410 misc-utils/lsclocks.c:474
-#, fuzzy, c-format
-#| msgid "could not read: %s"
+#, c-format
 msgid "Could not glob: %d"
-msgstr "konnte nicht gelesen werden: %s"
+msgstr "Glob konnte nicht ausgeführt werden: %d"
 
 #: misc-utils/lsclocks.c:439 sys-utils/hwclock-rtc.c:160
 #, c-format
@@ -13788,7 +13772,7 @@ msgstr "Art der Sperre"
 
 #: misc-utils/lslocks.c:83
 msgid "size of the lock, use <number> if --bytes is given"
-msgstr ""
+msgstr "Größe der Sperre; verwenden Sie <Zahl>, falls --bytes angegeben ist"
 
 #: misc-utils/lslocks.c:86
 msgid "lock access mode"
@@ -13815,10 +13799,8 @@ msgid "PID of the process blocking the lock"
 msgstr "PID des Prozesses, der die Sperre hält"
 
 #: misc-utils/lslocks.c:92
-#, fuzzy
-#| msgid "owner of the file"
 msgid "holders of the lock"
-msgstr "Eigentümer der Datei"
+msgstr "Halter der Sperre"
 
 #: misc-utils/lslocks.c:285
 #, c-format
@@ -16480,10 +16462,8 @@ msgid " -F, --file <file>           use the file instead of the kernel log buffe
 msgstr " -F, --file <Datei>          Datei anstelle des Kernel-Protokollpuffers verwenden\n"
 
 #: sys-utils/dmesg.c:328
-#, fuzzy
-#| msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgid " -K, --kmsg-file <file>      use the file in kmsg format\n"
-msgstr " -F, --file <Datei>          Datei anstelle des Kernel-Protokollpuffers verwenden\n"
+msgstr " -K, --kmsg-file <Datei>     Datei im kmsg-Format verwenden\n"
 
 #: sys-utils/dmesg.c:329
 msgid " -f, --facility <list>       restrict output to defined facilities\n"
@@ -17765,16 +17745,12 @@ msgid "     --param-index <number>      parameter index (default 0)"
 msgstr ""
 
 #: sys-utils/hwclock.c:1236
-#, fuzzy
-#| msgid "     --raw                 use raw status output format\n"
 msgid "     --vl-read                   read voltage low information"
-msgstr "     --raw                 Rohformat für die Statusausgabe verwenden\n"
+msgstr "     --vl-read                   »Niedrige Spannung«-Information lesen"
 
 #: sys-utils/hwclock.c:1237
-#, fuzzy
-#| msgid " -C, --clear                 clear the kernel ring buffer\n"
 msgid "     --vl-clear                  clear voltage low information"
-msgstr " -C, --clear                 den Kernel-Ringpuffer leeren\n"
+msgstr "     --vl-read                   »Niedrige Spannung«-Information leeren"
 
 #: sys-utils/hwclock.c:1239
 msgid "     --predict                   predict the drifted RTC time according to --date"
@@ -18063,16 +18039,14 @@ msgid "Backup switchover happened"
 msgstr ""
 
 #: sys-utils/hwclock-rtc.c:582
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s failed"
+#, c-format
 msgid "ioctl(%d, RTC_VL_READ) on %s failed"
-msgstr "ioctl(%d, RTC_EPOCH_READ, epoch_p) auf %s fehlgeschlagen"
+msgstr "ioctl(%d, RTC_VL_READ) auf %s fehlgeschlagen"
 
 #: sys-utils/hwclock-rtc.c:588
-#, fuzzy, c-format
-#| msgid "ioctl(%d, RTC_EPOCH_READ, epoch_p) to %s succeeded.\n"
+#, c-format
 msgid "ioctl(%d, RTC_VL_READ) on %s returned 0x%x\n"
-msgstr "ioctl(%d, RTC_EPOCH_READ, epoch_p) auf %s war erfolgreich.\n"
+msgstr "ioctl(%d, RTC_VL_READ) auf %s lieferte 0x%x zurück\n"
 
 #: sys-utils/hwclock-rtc.c:617
 #, c-format
@@ -18156,7 +18130,7 @@ msgstr " -Q, --queue              Nachrichtenwarteschlange erzeugen\n"
 
 #: sys-utils/ipcmk.c:164
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
-msgstr " -p, --mode <mode>        Zugriffsrechte für die Ressource (Vorgabe ist 0644)\n"
+msgstr " -p, --mode <Modus>       Zugriffsrechte für die Ressource (Vorgabe ist 0644)\n"
 
 #: sys-utils/ipcmk.c:165
 #, fuzzy
@@ -19490,6 +19464,8 @@ msgstr ""
 #: sys-utils/losetup.c:490
 msgid "     --loop-ref <string>       loop device reference\n"
 msgstr ""
+"     --loop-ref <Zeichenkette>\n"
+"                               Loop-Gerät-Referenz\n"
 
 #: sys-utils/losetup.c:491
 msgid "     --show                    print device name after setup (with -f)\n"
@@ -20153,10 +20129,8 @@ msgid "cannot restore signal mask"
 msgstr "Signalmaske kann nicht wiederhergestellt werden"
 
 #: sys-utils/lscpu-virt.c:511
-#, fuzzy
-#| msgid "cannot block signals"
 msgid "cannot unblock signal"
-msgstr "Signale können nicht blockiert werden"
+msgstr "Signal kann nicht deblockiert werden"
 
 #: sys-utils/lscpu-virt.c:523
 msgid "cannot restore signal handler"
@@ -21461,10 +21435,8 @@ msgid " -U, --user[=<file>]    enter user namespace\n"
 msgstr " -U, --user[=<Datei>]    in den Benutzer-Namensraum wechseln\n"
 
 #: sys-utils/nsenter.c:103
-#, fuzzy
-#| msgid " -U, --user[=<file>]    enter user namespace\n"
 msgid "     --user-parent      enter parent user namespace\n"
-msgstr " -U, --user[=<Datei>]    in den Benutzer-Namensraum wechseln\n"
+msgstr "     --user-parent      in den übergeordneten Benutzer-Namensraum wechseln\n"
 
 #: sys-utils/nsenter.c:104
 msgid " -T, --time[=<file>]    enter time namespace\n"
@@ -21538,9 +21510,9 @@ msgstr "Neuzuweisung zu Namensraum »%s« ist fehlgeschlagen "
 
 #: sys-utils/nsenter.c:318
 #, fuzzy
-#| msgid "failed to set target namespace to %s"
+#| msgid "failed to open parent ns of %s"
 msgid "failed to open parent namespace"
-msgstr "Ziel-Namensraum konnte nicht auf %s gesetzt werden"
+msgstr "Übergeordneter Namensraum von %s konnte nicht geöffnet werden"
 
 #: sys-utils/nsenter.c:342
 #, fuzzy, c-format
@@ -21564,16 +21536,12 @@ msgid "ioctl(%d, SIOCGSKNS)"
 msgstr ""
 
 #: sys-utils/nsenter.c:386 sys-utils/nsenter.c:392
-#, fuzzy
-#| msgid "failed to set options pattern"
 msgid "failed to get cgroup path"
-msgstr "Optionsmuster konnte nicht gesetzt werden"
+msgstr "Cgroup-Pfad konnte nicht ermittelt werden"
 
 #: sys-utils/nsenter.c:398
-#, fuzzy
-#| msgid "failed to open /proc"
 msgid "failed to open cgroup.procs"
-msgstr "/proc konnte nicht geöffnet werden"
+msgstr "cgroup.procs konnte nicht geöffnet werden"
 
 #: sys-utils/nsenter.c:410
 #, c-format
@@ -21581,10 +21549,8 @@ msgid "statfs %s failed"
 msgstr "statfs für %s ist fehlgeschlagen"
 
 #: sys-utils/nsenter.c:423
-#, fuzzy
-#| msgid "initgroups failed"
 msgid "write cgroup.procs failed"
-msgstr "initgroups fehlgeschlagen"
+msgstr "cgroup.procs konnte nicht geschrieben werden"
 
 #: sys-utils/nsenter.c:581
 #, fuzzy
@@ -21622,7 +21588,7 @@ msgstr "keine Ziel-PID für --all angegeben"
 
 #: sys-utils/nsenter.c:709
 msgid "--join-cgroup is only supported in cgroup v2"
-msgstr ""
+msgstr "--join-cgroup wird nur in cgroup v2 unterstützt"
 
 #: sys-utils/nsenter.c:725
 #, fuzzy
@@ -22194,7 +22160,7 @@ msgid ""
 "                            the default is %s\n"
 msgstr ""
 " -A, --adjfile <Datei>    gibt den Pfad zur adjust-Datei an,\n"
-"                          die Vorgabe ist %s\n"
+"                            die Vorgabe ist %s\n"
 
 #: sys-utils/rtcwake.c:118
 msgid "     --date <timestamp>   date time of timestamp to wake\n"
@@ -22220,11 +22186,11 @@ msgstr "     --list-modes         verfügbare Modi auflisten\n"
 
 #: sys-utils/rtcwake.c:123
 msgid " -m, --mode <mode>        standby|mem|... sleep mode\n"
-msgstr " -m, --mode <mode>        standby[mem]… Schlafzustand\n"
+msgstr " -m, --mode <Modus>       standby[mem]… Schlafzustand\n"
 
 #: sys-utils/rtcwake.c:124
 msgid " -s, --seconds <seconds>  seconds to sleep\n"
-msgstr " -m, --mode <mode>        zu schlafende Sekunden\n"
+msgstr " -s, --seconds <Sekunden> zu schlafende Sekunden\n"
 
 #: sys-utils/rtcwake.c:125
 msgid " -t, --time <time_t>      time to wake\n"
@@ -22523,9 +22489,9 @@ msgstr "Ein Programm in einer neuen Prozessgruppe ausführen.\n"
 
 #: sys-utils/setpgid.c:27
 #, fuzzy
-#| msgid " -f, --force      force check\n"
+#| msgid " -f, --foregound     Make a foreground process group\n"
 msgid " -f, --foreground    Make a foreground process group\n"
-msgstr " -f, --force      Überprüfung erzwingen\n"
+msgstr " -f, --foregound     eine Vordergrund-Prozessgruppe erstellen\n"
 
 #: sys-utils/setpgid.c:71
 msgid "setpgid failed"
@@ -22580,10 +22546,8 @@ msgid " --euid <uid|user>           set effective uid\n"
 msgstr " --euid <UID|Benutzer>       effektive UID setzen\n"
 
 #: sys-utils/setpriv.c:142
-#, fuzzy
-#| msgid " --rgid <gid|user>           set real gid\n"
 msgid " --rgid <gid|group>          set real gid\n"
-msgstr " --ruid <GID|Gruppe>         reale GID setzen\n"
+msgstr " --rgid <GID|Gruppe>         reale GID setzen\n"
 
 #: sys-utils/setpriv.c:143
 msgid " --egid <gid|group>          set effective gid\n"
@@ -22641,11 +22605,11 @@ msgstr " --apparmor-profile <pr>     AppArmor-Profil setzen\n"
 
 #: sys-utils/setpriv.c:156
 msgid " --landlock-access <access>  add Landlock access\n"
-msgstr ""
+msgstr " --landlock-access <Zugr.>   Landlock-Zugriff hinzufügen\n"
 
 #: sys-utils/setpriv.c:157
 msgid " --landlock-rule <rule>      add Landlock rule\n"
-msgstr ""
+msgstr " --landlock-rule <Regel>     Landlock-Regel hinzufügen\n"
 
 #: sys-utils/setpriv.c:158
 #, fuzzy
@@ -22849,9 +22813,9 @@ msgstr "ungültige Kennung"
 
 #: sys-utils/setpriv.c:715
 #, fuzzy
-#| msgid "could not set timer"
+#| msgid "Could not seccomp filter"
 msgid "Could not load seccomp filter"
-msgstr "Timer konnte nicht gesetzt werden"
+msgstr "Filter konnte nicht mit Seccomp geprüft werden"
 
 #: sys-utils/setpriv.c:895
 msgid "duplicate --no-new-privs option"
@@ -23027,10 +22991,9 @@ msgid "set ptracer"
 msgstr ""
 
 #: sys-utils/setpriv-landlock.c:106
-#, fuzzy, c-format
-#| msgid "could not read: %s"
+#, c-format
 msgid "could not parse landlock fs access: %s"
-msgstr "konnte nicht gelesen werden: %s"
+msgstr "Landlock-Dateisystemzugriff konnte nicht gelesen werden: %s"
 
 #: sys-utils/setpriv-landlock.c:137 sys-utils/setpriv-landlock.c:140
 #, c-format
@@ -23038,34 +23001,27 @@ msgid "invalid landlock rule: %s"
 msgstr "ungültige Landlock-Regel: %s"
 
 #: sys-utils/setpriv-landlock.c:151
-#, fuzzy, c-format
-#| msgid "could not open pid %u"
+#, c-format
 msgid "could not open file for landlock: %s"
-msgstr "PID %u konnte nicht geöffnet werden"
+msgstr "Datei konnte nicht für Landlock geöffnet werden: %s"
 
 #: sys-utils/setpriv-landlock.c:178
-#, fuzzy
-#| msgid "fallocate failed"
 msgid "landlock_create_ruleset failed"
-msgstr "fallocate fehlgeschlagen"
+msgstr "landlock_create_ruleset fehlgeschlagen"
 
 #: sys-utils/setpriv-landlock.c:187
-#, fuzzy
-#| msgid "fallocate failed"
 msgid "adding landlock rule failed"
-msgstr "fallocate fehlgeschlagen"
+msgstr "Hinzufügen der Landloxk-Regel fehlgeschlagen"
 
 #: sys-utils/setpriv-landlock.c:191
-#, fuzzy
-#| msgid "disallow granting new privileges failed"
 msgid "disallow granting new privileges for landlock failed"
-msgstr "Abwehr der Zuweisung neuer Privilegien ist fehlgeschlagen"
+msgstr "Abwehr der Gewährung neuer Privilegien für Landlock ist fehlgeschlagen"
 
 #: sys-utils/setpriv-landlock.c:194
 #, fuzzy
-#| msgid "fallocate failed"
+#| msgid "landlock_restrict_self faild"
 msgid "landlock_restrict_self failed"
-msgstr "fallocate fehlgeschlagen"
+msgstr "landlock_restrict_self fehlgeschlagen"
 
 #: sys-utils/setpriv-landlock.c:202
 #, c-format
@@ -26585,6 +26541,7 @@ msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "Terminal »%s« ist nicht bekannt, Vorgabe »dumb« wird benutzt"
 
 #, c-format
+#~| msgid "%s system call failed: %m"
 #~ msgid "%s system call failed: %s"
 #~ msgstr "%s-Systemaufruf ist fehlgeschlagen: %s"
 
