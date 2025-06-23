@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: util-linux 2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2025-03-06 12:25+0100\n"
-"PO-Revision-Date: 2025-03-08 17:38+0100\n"
+"PO-Revision-Date: 2025-03-29 17:15+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -4913,7 +4913,7 @@ msgstr " --disk-id <urz> [<łańc>]          wypisanie lub zmiana ID etykiety dy
 
 #: disk-utils/sfdisk.c:2148
 msgid " --relocate <oper> <dev>           move partition header\n"
-msgstr " -relocate <oper> <urz>            przeniesienie nagłówka partycji\n"
+msgstr " --relocate <oper> <urz>           przeniesienie nagłówka partycji\n"
 
 #: disk-utils/sfdisk.c:2151
 msgid " <dev>                     device (usually disk) path\n"
@@ -9383,7 +9383,7 @@ msgstr "Grzeczne odmówienie logowania.\n"
 
 #: login-utils/nologin.c:34
 msgid " -c, --command <command>  does nothing (for compatibility with su -c)\n"
-msgstr " -c  --command <polecenie>  nic (dla zgodności z su - c)\n"
+msgstr " -c, --command <polecenie>  nic (dla zgodności z su - c)\n"
 
 #: login-utils/nologin.c:109
 #, c-format
@@ -10991,7 +10991,7 @@ msgstr " -l, --length <ile>    długość dla operacji przedziałowych, w bajtac
 
 #: misc-utils/fadvise.c:55
 msgid " -o, --offset <num>    offset for range operations, in bytes\n"
-msgstr " -o --offset <ile>     offset dla operacji przedziałowych, w bajtach\n"
+msgstr " -o, --offset <ile>    offset dla operacji przedziałowych, w bajtach\n"
 
 #: misc-utils/fadvise.c:60
 msgid ""
@@ -11831,11 +11831,11 @@ msgstr " -l, --longoptions <opcje>     długie opcje, jakie mają być rozpoznaw
 
 #: misc-utils/getopt.c:354
 msgid " -n, --name <progname>         the name under which errors are reported\n"
-msgstr "  -n, --name <program>         nazwa, z jaką mają być zgłaszane błędy\n"
+msgstr " -n, --name <program>          nazwa, z jaką mają być zgłaszane błędy\n"
 
 #: misc-utils/getopt.c:355
 msgid " -o, --options <optstring>     the short options to be recognized\n"
-msgstr "  -o, --options <optstring>    krótkie opcje, jakie mają być rozpoznawane\n"
+msgstr " -o, --options <optstring>     krótkie opcje, jakie mają być rozpoznawane\n"
 
 #: misc-utils/getopt.c:356
 msgid " -q, --quiet                   disable error reporting by getopt(3)\n"
@@ -14377,7 +14377,7 @@ msgstr " -n, --no-act         wykonanie wszystkiego poza właściwym wywołaniem
 
 #: misc-utils/wipefs.c:642
 msgid " -o, --offset <num>   offset to erase, in bytes"
-msgstr " -o --offset <ile>    offset do usunięcia, w bajtach"
+msgstr " -o, --offset <ile>   offset do usunięcia, w bajtach"
 
 #: misc-utils/wipefs.c:643
 msgid " -O, --output <list>  COLUMNS to display (see below)"
@@ -14452,7 +14452,7 @@ msgstr " -i, --idle           ustawienie polityki na SCHED_IDLE\n"
 
 #: schedutils/chrt.c:76
 msgid " -o, --other          set policy to SCHED_OTHER\n"
-msgstr " -o, --ther           ustawienie polityki na SCHED_OTHER\n"
+msgstr " -o, --other          ustawienie polityki na SCHED_OTHER\n"
 
 #: schedutils/chrt.c:77
 msgid " -r, --rr             set policy to SCHED_RR (default)\n"
@@ -15526,12 +15526,12 @@ msgid ""
 " -p, --dispatch <mode>         set dispatching mode\n"
 " -r, --rescan                  trigger rescan of cpus\n"
 msgstr ""
-"  -e, --enable <lista-cpu>     włączenie procesorów\n"
-"  -d, --disable <lista-cpu>    wyłączenie procesorów\n"
-"  -c, --configure <lista-cpu>  skonfigurowanie procesorów\n"
-"  -g, --deconfigure <lista-cpu> zdekonfigurowanie procesorów\n"
-"  -p, --dispatch <tryb>        ustawienie trybu przekazywania\n"
-"  -r, --rescan                 wyzwolenie przeskanowania CPU\n"
+" -e, --enable <lista-cpu>      włączenie procesorów\n"
+" -d, --disable <lista-cpu>     wyłączenie procesorów\n"
+" -c, --configure <lista-cpu>   skonfigurowanie procesorów\n"
+" -g, --deconfigure <lista-cpu> zdekonfigurowanie procesorów\n"
+" -p, --dispatch <tryb>         ustawienie trybu przekazywania\n"
+" -r, --rescan                  wyzwolenie przeskanowania CPU\n"
 
 #: sys-utils/chcpu.c:296
 msgid "failed to initialize sysfs handler"
@@ -15693,7 +15693,7 @@ msgstr " -b, --blocks       użycie bloków pamięci\n"
 
 #: sys-utils/chmem.c:349
 msgid " -z, --zone <name>  select memory zone (see below)\n"
-msgstr " -z, --zona <nazwa> wybór strefy pamięci (p. niżej)\n"
+msgstr " -z, --zone <nazwa> wybór strefy pamięci (p. niżej)\n"
 
 #: sys-utils/chmem.c:350
 msgid " -v, --verbose      verbose output\n"
@@ -16523,7 +16523,7 @@ msgstr " -n, --keep-size      zachowanie widocznego rozmiaru pliku\n"
 
 #: sys-utils/fallocate.c:95
 msgid " -o, --offset <num>   offset for range operations, in bytes\n"
-msgstr " -o --offset <ile>    offset dla operacji przedziałowych, w bajtach\n"
+msgstr " -o, --offset <ile>   offset dla operacji przedziałowych, w bajtach\n"
 
 #: sys-utils/fallocate.c:96
 msgid " -p, --punch-hole     replace a range with a hole (implies -n)\n"
@@ -17199,7 +17199,7 @@ msgstr " -u, --utc                       RTC używa skali czasu UTC"
 
 #: sys-utils/hwclock.c:1242
 msgid " -l, --localtime                 the RTC timescale is Local"
-msgstr " -l, --local                     RTC używa skali czasu lokalnego"
+msgstr " -l, --localtime                 RTC używa skali czasu lokalnego"
 
 #: sys-utils/hwclock.c:1245
 #, c-format
@@ -17522,7 +17522,7 @@ msgstr " -S, --semaphore <ile>    utworzenie tablicy semaforów o tylu elementac
 
 #: sys-utils/ipcmk.c:161
 msgid " -s, --posix-semaphore    create POSIX semaphore\n"
-msgstr " -s, --posix-semaphores   utworzenie semafora POSIX\n"
+msgstr " -s, --posix-semaphore    utworzenie semafora POSIX\n"
 
 #: sys-utils/ipcmk.c:162
 msgid " -Q, --queue              create message queue\n"
@@ -17538,7 +17538,7 @@ msgstr " -p, --mode <tryb>        uprawnienia do zasobu (domyślne do 0644)\n"
 
 #: sys-utils/ipcmk.c:165
 msgid " -n, --name <name>        name of the POSIX resource\n"
-msgstr "  -n, --name <nazwa>      nazwa zasobu POSIX\n"
+msgstr " -n, --name <nazwa>       nazwa zasobu POSIX\n"
 
 #: sys-utils/ipcmk.c:171 sys-utils/zramctl.c:600 term-utils/script.c:221
 msgid "<size>"
@@ -18782,7 +18782,7 @@ msgstr " -L, --nooverlap               unikanie możliwych konfliktów między u
 
 #: sys-utils/losetup.c:484
 msgid " -o, --offset <num>            start at offset <num> into file\n"
-msgstr " -o --offset <ile>             rozpoczęcie od podanego offsetu w pliku\n"
+msgstr " -o, --offset <ile>            rozpoczęcie od podanego offsetu w pliku\n"
 
 #: sys-utils/losetup.c:485
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
@@ -23999,7 +23999,7 @@ msgstr " -E, --echo <kiedy>      powtarzanie wejścia w sesji (auto, always lub 
 
 #: term-utils/scriptlive.c:73 term-utils/scriptreplay.c:68
 msgid " -m, --maxdelay <num>    wait at most this many seconds between updates\n"
-msgstr " -m --maxdelay <liczba>  oczekiwanie najwyżej podaną liczbę sekund między uaktualnieniami\n"
+msgstr " -m, --maxdelay <liczba> oczekiwanie najwyżej podaną liczbę sekund między uaktualnieniami\n"
 
 #: term-utils/scriptlive.c:237 term-utils/scriptreplay.c:256
 msgid "failed to parse maximal delay argument"
@@ -24719,7 +24719,7 @@ msgstr " -t, --table                      utworzenie tabeli\n"
 
 #: text-utils/column.c:898
 msgid " -n, --table-name <name>          table name for JSON output\n"
-msgstr "  -n, --table-name <nazwa>        nazwa tabeli do wyjścia JSON\n"
+msgstr " -n, --table-name <nazwa>         nazwa tabeli do wyjścia JSON\n"
 
 #: text-utils/column.c:899
 msgid " -O, --table-order <columns>      specify order of output columns\n"
@@ -24860,7 +24860,7 @@ msgstr " -b, --one-byte-octal      wyświetlanie ósemkowe jednobajtowe\n"
 
 #: text-utils/hexdump.c:174
 msgid " -X, --one-byte-hex        one-byte hexadecimal display\n"
-msgstr " -X, --one-bytes-hex       wyświetlanie szesnastkowe jednobajtowe\n"
+msgstr " -X, --one-byte-hex        wyświetlanie szesnastkowe jednobajtowe\n"
 
 #: text-utils/hexdump.c:175
 msgid " -c, --one-byte-char       one-byte character display\n"
