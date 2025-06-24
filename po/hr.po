@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: util-linux 2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2025-03-06 12:25+0100\n"
-"PO-Revision-Date: 2025-03-11 09:33-0700\n"
+"PO-Revision-Date: 2025-03-26 21:00-0700\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "Language: hr\n"
@@ -138,7 +138,7 @@ msgstr "pokaže optimalnu veličinu ulaz/izlaz"
 
 #: disk-utils/blockdev.c:124
 msgid "get alignment offset in bytes"
-msgstr "pokaže odmak poravnanja u bajtovima"
+msgstr "pokaže pomak poravnanja u bajtovima"
 
 #: disk-utils/blockdev.c:130
 msgid "get max sectors per request"
@@ -1096,7 +1096,7 @@ msgid "partition sectors"
 msgstr "sektori particije"
 
 #: disk-utils/fdisk.c:889
-msgid "free space sectors"
+msgid "free space sectros"
 msgstr "sektori slobodnog prostora"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
@@ -1110,7 +1110,7 @@ msgid ""
 "%s: offset = %<PRIu64>, size = %zu bytes."
 msgstr ""
 "\n"
-"%s: odmak = %<PRIu64>, veličina = %zu bajt(a/ova)."
+"%s: pomak = %<PRIu64>, veličina = %zu bajt(a/ova)."
 
 #: disk-utils/fdisk.c:1004
 msgid "cannot seek"
@@ -1207,9 +1207,7 @@ msgstr "     --bytes                   veličine u bajtovima umjesto u čitljivo
 #: disk-utils/fdisk.c:1107
 #, c-format
 msgid "     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"
-msgstr ""
-"     --lock[=<mode>]           rabi ekskluzivnu bravu uređaja\n"
-"                                 (%s, %s ili %s)\n"
+msgstr "     --lock[=<mode>]           rabi ekskluzivnu bravu uređaja (%s, %s ili %s)\n"
 
 #: disk-utils/fdisk.c:1109
 #, c-format
@@ -2315,7 +2313,7 @@ msgstr "korijenski inod (root inode) nije direktorij"
 #: disk-utils/fsck.cramfs.c:354
 #, c-format
 msgid "bad root offset (%lu)"
-msgstr "loš odmak (offset) korijena (%lu)"
+msgstr "loš pomak (offset) korijena (%lu)"
 
 #: disk-utils/fsck.cramfs.c:372
 msgid "data block too large"
@@ -2372,7 +2370,7 @@ msgstr "utimes nije uspio: %s"
 #: disk-utils/fsck.cramfs.c:473
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
-msgstr "inode direktorija ima odmak = 0 i veličinu != 0: %s"
+msgstr "inode direktorija ima pomak = 0 i veličinu != 0: %s"
 
 #: disk-utils/fsck.cramfs.c:488
 #, c-format
@@ -2397,19 +2395,19 @@ msgstr "loša dužina za ime datoteke"
 
 #: disk-utils/fsck.cramfs.c:518
 msgid "bad inode offset"
-msgstr "nevaljani inodov odmak"
+msgstr "nevaljani inodov pomak"
 
 #: disk-utils/fsck.cramfs.c:533
 msgid "file inode has zero offset and non-zero size"
-msgstr "inode datoteke ima odmak = 0 i veličinu != 0"
+msgstr "inode datoteke ima pomak = 0 i veličinu != 0"
 
 #: disk-utils/fsck.cramfs.c:536
 msgid "file inode has zero size and non-zero offset"
-msgstr "inode datoteke ima veličinu = 0 i odmak != 0"
+msgstr "inode datoteke ima veličinu = 0 i pomak != 0"
 
 #: disk-utils/fsck.cramfs.c:565
 msgid "symbolic link has zero offset"
-msgstr "simbolična poveznica ima odmak = 0"
+msgstr "simbolična poveznica ima pomak = 0"
 
 #: disk-utils/fsck.cramfs.c:567
 msgid "symbolic link has zero size"
@@ -2428,7 +2426,7 @@ msgstr "simbolična poveznica nije uspjela: %s"
 #: disk-utils/fsck.cramfs.c:603
 #, c-format
 msgid "special file has non-zero offset: %s"
-msgstr "specijalna datoteka ima odmak != 0: %s"
+msgstr "specijalna datoteka ima pomak != 0: %s"
 
 #: disk-utils/fsck.cramfs.c:613
 #, c-format
@@ -2462,7 +2460,7 @@ msgstr "kraj podataka direktorija (%lu) != početak podataka direktorija (%lu)"
 
 #: disk-utils/fsck.cramfs.c:671
 msgid "invalid file data offset"
-msgstr "nevaljani odmak podataka datoteke"
+msgstr "nevaljani pomak podataka datoteke"
 
 #: disk-utils/fsck.cramfs.c:718 disk-utils/mkfs.cramfs.c:744
 msgid "invalid blocksize argument"
@@ -3213,9 +3211,7 @@ msgstr " -z             napravi eksplicitne rupe"
 
 #: disk-utils/mkfs.cramfs.c:146
 msgid " -l[=<mode>]    use exclusive device lock (yes, no or nonblock)"
-msgstr ""
-"     --lock[=<mode>]      rabi ekskluzivnu bravu uređaja\n"
-"                            (yes, no ili nonblock)"
+msgstr " -l[=<mode>]    rabi ekskluzivnu bravu uređaja (yes, no ili nonblock)"
 
 #: disk-utils/mkfs.cramfs.c:148
 msgid " dirname        root of the filesystem to be compressed"
@@ -3359,7 +3355,7 @@ msgstr " -1                       koristi Minix inačicu 1\n"
 
 #: disk-utils/mkfs.minix.c:146
 msgid " -2, -v                  use Minix version 2\n"
-msgstr " -2                       koristi Minix inačicu 2\n"
+msgstr " -2, -v                   koristi Minix inačicu 2\n"
 
 #: disk-utils/mkfs.minix.c:147
 msgid " -3                      use Minix version 3\n"
@@ -3575,7 +3571,7 @@ msgstr "nije uspjelo raščlaniti nekoliko blokova"
 #: disk-utils/mkfs.minix.c:836
 #, c-format
 msgid "%s is mounted; will not make a filesystem here!"
-msgstr "%s je montiran; tu se ne može napraviti datotečni sustav!"
+msgstr "%s je montiran; tu nećemo napraviti datotečni sustav!"
 
 #: disk-utils/mkswap.c:133
 #, c-format
@@ -3649,15 +3645,15 @@ msgstr " -e, --endianness=<value>  koristi specificirani endianness (%s, %s or %
 
 #: disk-utils/mkswap.c:219
 msgid " -o, --offset OFFSET       specify the offset in the device\n"
-msgstr " -p, --pagesize SIZE       veličina stranica u bajtovima\n"
+msgstr " -o, --offset OFFSET       specificira pomak (offset) u uređaju\n"
 
 #: disk-utils/mkswap.c:220
 msgid " -s, --size SIZE           specify the size of a swap file in bytes\n"
-msgstr " -p, --pagesize BROJ       BROJ (bajti) specificira veličinu swap datoteke\n"
+msgstr " -s, --size BROJ           BROJ specificira veličinu swap datoteke u bajtovima\n"
 
 #: disk-utils/mkswap.c:221
 msgid " -F, --file                create a swap file\n"
-msgstr " -t, --file                kreira swap datoteku\n"
+msgstr " -F, --file                kreira swap datoteku\n"
 
 #: disk-utils/mkswap.c:222
 msgid "     --verbose             verbose output\n"
@@ -3721,7 +3717,7 @@ msgstr "nedodijeljeno proširenje na ofsetu %ju"
 
 #: disk-utils/mkswap.c:378
 msgid "offset larger than file size"
-msgstr "odmak je veći od od veličine datoteke"
+msgstr "pomak je veći od od veličine datoteke"
 
 #: disk-utils/mkswap.c:391
 msgid "unable to alloc new libblkid probe"
@@ -3821,7 +3817,7 @@ msgstr "nevaljani endianness %s nije podržan"
 
 #: disk-utils/mkswap.c:644 misc-utils/lsclocks.c:269
 msgid "Invalid offset"
-msgstr "Nevaljani odmak"
+msgstr "Nevaljani pomak"
 
 #: disk-utils/mkswap.c:700
 msgid "only one device argument is currently supported"
@@ -4322,7 +4318,7 @@ msgstr "ne može pisati %s"
 #: disk-utils/sfdisk.c:321
 #, c-format
 msgid "%12s (offset %5ju, size %5ju): %s"
-msgstr "%12s (odmak %5ju, size %5ju): %s"
+msgstr "%12s (pomak %5ju, size %5ju): %s"
 
 #: disk-utils/sfdisk.c:327
 #, c-format
@@ -4938,7 +4934,7 @@ msgstr ""
 
 #: disk-utils/sfdisk.c:2133
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
-msgstr " -r, --reorder <uređaj>            popravi poredak particija (početni odmak)\n"
+msgstr " -r, --reorder <uređaj>            popravi poredak particija (početni pomak)\n"
 
 #: disk-utils/sfdisk.c:2134
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
@@ -5284,7 +5280,7 @@ msgstr "boje su onemogućene (zadano)"
 #: login-utils/login.c:1221 term-utils/agetty.c:1212
 #, c-format
 msgid "failed to set the %s environment variable"
-msgstr "nije uspjelo postaviti varijablu okružja %s"
+msgstr "nije uspjelo postaviti varijablu okruženja %s"
 
 #: include/fgetwc_or_err.h:18
 msgid "fgetwc() failed"
@@ -6170,7 +6166,7 @@ msgstr "DragonFlyBSD HAMMER2"
 
 #: include/pt-gpt-partnames.h:294
 msgid "U-Boot environment"
-msgstr "U-Boot okružje"
+msgstr "U-Boot okruženje"
 
 #: include/pt-gpt-partnames.h:297
 msgid "Atari TOS basic data"
@@ -6889,7 +6885,7 @@ msgstr "Primarna particija nije dostupna."
 #: libfdisk/src/dos.c:275
 #, c-format
 msgid "Failed to read extended partition table (offset=%ju)"
-msgstr "Nije uspjelo pročitati proširenu tablicu particije (odmak=%ju)"
+msgstr "Nije uspjelo pročitati proširenu tablicu particije (pomak=%ju)"
 
 #: libfdisk/src/dos.c:345
 msgid "You can set geometry from the extra functions menu."
@@ -6920,7 +6916,7 @@ msgstr ""
 
 #: libfdisk/src/dos.c:548
 msgid "Bad offset in primary extended partition."
-msgstr "Neispravni odmak u primarnoj proširenoj particiji."
+msgstr "Neispravni pomak u primarnoj proširenoj particiji."
 
 #: libfdisk/src/dos.c:562
 #, c-format
@@ -6932,7 +6928,7 @@ msgstr ""
 #: libfdisk/src/dos.c:595
 #, c-format
 msgid "Extra link pointer in partition table %zu."
-msgstr "Suvišni pokazivač (link pointer) u particijskoj tablici %zu."
+msgstr "Suvišni pokazivač poveznice u particijskoj tablici %zu."
 
 #: libfdisk/src/dos.c:603
 #, c-format
@@ -8529,7 +8525,7 @@ msgstr "vrijeme %<PRId64> je izvan raspona."
 
 #: lib/timeutils.c:692
 msgid "format_reltime: buffer overflow."
-msgstr "format_reltime: prelijevanje buffera."
+msgstr "format_reltime: preljev buffera."
 
 #: login-utils/chfn.c:90 login-utils/chsh.c:70 login-utils/lslogins.c:1515
 #, c-format
@@ -9038,7 +9034,7 @@ msgstr "ioctl(TIOCSCTTY) nije uspjela: %m"
 
 #: login-utils/login.c:1207
 msgid "failed to set the environment variables"
-msgstr "nije uspjelo postaviti varijablu okružja"
+msgstr "nije uspjelo postaviti varijablu okruženja"
 
 #: login-utils/login.c:1289
 #, c-format
@@ -9051,7 +9047,7 @@ msgstr "Započinje sjednicu na sustavu.\n"
 
 #: login-utils/login.c:1294
 msgid " -p             do not destroy the environment"
-msgstr " -p             ne uništiti okružje"
+msgstr " -p             ne uništiti okruženje"
 
 #: login-utils/login.c:1295
 msgid " -f             skip a login authentication"
@@ -9446,7 +9442,7 @@ msgstr " -u, --user-accs          popis korisničkih računa sustava\n"
 
 #: login-utils/lslogins.c:1539
 msgid " -y, --shell              use column names to be usable as shell variable identifiers\n"
-msgstr "                          imenuje stupce da se mogu koristiti za varijable ljuske\n"
+msgstr " -y, --shell              koristi imena stupaca prikladnim za imena varijabli ljus\n"
 
 #: login-utils/lslogins.c:1540
 msgid " -Z, --context            display SELinux contexts\n"
@@ -9547,7 +9543,7 @@ msgstr "nije uspjelo promijeniti vlasnika ili način rada za pseudoterminal"
 
 #: login-utils/su-common.c:377
 msgid "failed to modify environment"
-msgstr "nije uspjelo modificirati okružje"
+msgstr "nije uspjelo modificirati okruženje"
 
 #: login-utils/su-common.c:414
 msgid "may not be used by non-root users"
@@ -9628,11 +9624,11 @@ msgstr " ...ubijena.\n"
 
 #: login-utils/su-common.c:691
 msgid "failed to set the PATH environment variable"
-msgstr "nije uspjelo postaviti varijablu okružja PATH (staza)"
+msgstr "nije uspjelo postaviti varijablu okruženja PATH (staza)"
 
 #: login-utils/su-common.c:734 sys-utils/nsenter.c:807
 msgid "failed to set environment variables"
-msgstr "nije uspjelo postaviti varijablu okružja"
+msgstr "nije uspjelo postaviti varijablu okruženja"
 
 #: login-utils/su-common.c:772
 msgid "cannot set groups"
@@ -9653,7 +9649,7 @@ msgstr "ne može postaviti ID korisnika (UID)"
 
 #: login-utils/su-common.c:856
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
-msgstr " -m, -p, --preserve-environment       ne resetira varijable okružja\n"
+msgstr " -m, -p, --preserve-environment       ne resetira varijable okruženja\n"
 
 #: login-utils/su-common.c:857
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
@@ -10616,7 +10612,7 @@ msgstr "     --_drop-privilege        (za testiranje) pokrenite setuid(1) odmah 
 
 #: lsfd-cmd/lsfd.c:2200
 msgid " -H, --list-columns           list the available columns\n"
-msgstr "     --list-columns           izlista dostupne načine (modove)\n"
+msgstr " -H, --list-columns           izlista dostupne stupce\n"
 
 #: lsfd-cmd/lsfd.c:2204
 msgid "Default"
@@ -10830,7 +10826,7 @@ msgstr " -D, --no-part-details      ne ispisuje informacije iz particijske tabli
 
 #: misc-utils/blkid.c:109
 msgid "<size> and <offset>"
-msgstr "<veličina> i <odmak>"
+msgstr "<veličina> i <pomak>"
 
 #: misc-utils/blkid.c:111
 msgid " <dev> specify device(s) to probe (default: all devices)\n"
@@ -10876,7 +10872,7 @@ msgstr "nepodržani izlazni format %s"
 
 #: misc-utils/blkid.c:816 misc-utils/fadvise.c:119 misc-utils/wipefs.c:738
 msgid "invalid offset argument"
-msgstr "nevaljani argument za odmak (offset)"
+msgstr "nevaljani argument za pomak (offset)"
 
 #: misc-utils/blkid.c:823
 msgid "Too many tags specified"
@@ -11146,7 +11142,7 @@ msgstr " -l, --length <broj>   dužina za operacije s rasponima, u bajtima\n"
 
 #: misc-utils/fadvise.c:55
 msgid " -o, --offset <num>    offset for range operations, in bytes\n"
-msgstr " -o, --offset <broj>   odmak za operacije s rasponima, u bajtima\n"
+msgstr " -o, --offset <broj>   pomak za operacije s rasponima, u bajtima\n"
 
 #: misc-utils/fadvise.c:60
 msgid ""
@@ -11698,7 +11694,7 @@ msgstr " -w, --timeout <broj>   gornja granica (u milisekundama) čekanja na --p
 
 #: misc-utils/findmnt.c:1581
 msgid " -y, --shell            use column names to be usable as shell variable identifiers\n"
-msgstr "                        imenuje stupce da se mogu koristiti za varijable ljuske\n"
+msgstr " -y, --shell            koristi imena stupaca prikladnim za identifikatore varijabli ljuske\n"
 
 #: misc-utils/findmnt.c:1584
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
@@ -11714,7 +11710,7 @@ msgstr "     --vfs-all          ispiše sve VFS opcije\n"
 
 #: misc-utils/findmnt.c:1590 misc-utils/lslocks.c:821 sys-utils/lsns.c:1550
 msgid " -H, --list-columns     list the available columns\n"
-msgstr " -H  --list-columns     izlista dostupne stupce\n"
+msgstr " -H, --list-columns     izlista dostupne stupce\n"
 
 #: misc-utils/findmnt.c:1653
 #, c-format
@@ -12186,7 +12182,7 @@ msgstr ""
 
 #: misc-utils/hardlink.c:1196
 msgid " -d, --respect-dir          directory names have to be identical\n"
-msgstr " -f, --respect-dir          imena direktorija moraju biti identična\n"
+msgstr " -d, --respect-dir          imena direktorija moraju biti identična\n"
 
 #: misc-utils/hardlink.c:1197
 msgid " -f, --respect-name         filenames have to be identical\n"
@@ -12572,7 +12568,7 @@ msgstr " -s, --service           Pokaže PAM service\n"
 
 #: misc-utils/lastlog2.c:122
 msgid " -S, --set               set lastlog record to current time (requires -u)\n"
-msgstr " -S, --reset             postavi lastlog na trenutno vrijeme (zahtijeva -u)\n"
+msgstr " -S, --set               postavi lastlog na trenutno vrijeme (zahtijeva -u)\n"
 
 #: misc-utils/lastlog2.c:123
 msgid " -t, --time DAYS         print only lastlog records more recent than DAYS\n"
@@ -12592,7 +12588,7 @@ msgstr "Opcije -C, -i i -S ne mogu se istovremeno koristiti"
 
 #: misc-utils/lastlog2.c:230
 msgid "Couldn't initialize lastlog2 environment"
-msgstr "Nije (bilo) moguće inicijalizirati lastlog2 okružje"
+msgstr "Nije (bilo) moguće inicijalizirati lastlog2 okruženje"
 
 #: misc-utils/lastlog2.c:235
 #, c-format
@@ -12879,7 +12875,7 @@ msgstr " -t, --terminate <znak>   definira znak kojim završava string\n"
 
 #: misc-utils/lsblk.c:174
 msgid "alignment offset"
-msgstr "odmak poravnanja"
+msgstr "pomak poravnanja"
 
 #: misc-utils/lsblk.c:175
 msgid "udev ID (based on ID-LINK)"
@@ -12891,7 +12887,7 @@ msgstr "najkraći udev /dev/disk/by-id ime poveznice"
 
 #: misc-utils/lsblk.c:177
 msgid "discard alignment offset"
-msgstr "odmak poravnanja odbacivanja (discard)"
+msgstr "pomak poravnanja odbacivanja (discard)"
 
 #: misc-utils/lsblk.c:178
 msgid "dax-capable device"
@@ -13059,7 +13055,7 @@ msgstr "veličina uređaja, koristi <broj> ako je dano --bytes"
 
 #: misc-utils/lsblk.c:227
 msgid "partition start offset (in 512-byte sectors)"
-msgstr "početni odmak particije (u sektorima od 512 bajta)"
+msgstr "početni pomak particije (u sektorima od 512 bajta)"
 
 #: misc-utils/lsblk.c:228
 msgid "state of the device"
@@ -13401,7 +13397,7 @@ msgstr "čitljivo relativno vrijeme"
 
 #: misc-utils/lsclocks.c:165
 msgid "namespace offset"
-msgstr "odmak imenskog prostora"
+msgstr "pomak imenskog prostora"
 
 #: misc-utils/lsclocks.c:192
 msgid " -J, --json                 use JSON output format\n"
@@ -13502,11 +13498,11 @@ msgstr "obvezno stanje brave: 0 (nema je), 1 (postavljena)"
 
 #: misc-utils/lslocks.c:88
 msgid "relative byte offset of the lock"
-msgstr "relativni odmak brave (lock)"
+msgstr "relativni pomak brave (lock)"
 
 #: misc-utils/lslocks.c:89
 msgid "ending offset of the lock"
-msgstr "krajnji odmak brave (lock)"
+msgstr "krajnji pomak brave (lock)"
 
 #: misc-utils/lslocks.c:90
 msgid "path of the locked file"
@@ -14344,7 +14340,7 @@ msgstr " -v, --verbose           objašnjava što radi\n"
 
 #: misc-utils/waitpid.c:162
 msgid " -t, --timeout=<timeout> wait at most timeout seconds\n"
-msgstr " -t, --timeout <broj>    čeka ne više od broj sekundi\n"
+msgstr " -t, --timeout=<broj>    čeka ne više od broj sekundi\n"
 
 #: misc-utils/waitpid.c:163
 msgid " -e, --exited            allow exited PIDs\n"
@@ -14352,9 +14348,7 @@ msgstr " -e, --exited            dopušta izišle (napuštene) PID-ove\n"
 
 #: misc-utils/waitpid.c:164
 msgid " -c, --count=<count>     number of process exits to wait for\n"
-msgstr ""
-" -c, --count <broj>    broj izlaza procesa na koje treba čekati\n"
-"\n"
+msgstr " -c, --count=<broj>      broj izlaza procesa na koje treba čekati\n"
 
 #: misc-utils/waitpid.c:202
 msgid "Could not parse timeout"
@@ -14444,7 +14438,7 @@ msgstr "tip superbloka"
 
 #: misc-utils/wipefs.c:113
 msgid "magic string offset"
-msgstr "odmak magičnog stringa (magic string offset)"
+msgstr "pomak magičnog stringa (magic string offset)"
 
 #: misc-utils/wipefs.c:114
 msgid "type description"
@@ -14494,7 +14488,7 @@ msgstr "%s: ignoriramo ugniježđenu particijsku tablicu \"%s\" na non-whole dis
 #: misc-utils/wipefs.c:586
 #, c-format
 msgid "%s: offset 0x%jx not found"
-msgstr "%s: odmak 0x%jx nije pronađen"
+msgstr "%s: pomak 0x%jx nije pronađen"
 
 #: misc-utils/wipefs.c:591
 msgid "Use the --force option to force erase."
@@ -14535,7 +14529,7 @@ msgstr " -n, --no-act         obavi sve osim stvarnog pisanja, tj. ne pozove wri
 
 #: misc-utils/wipefs.c:642
 msgid " -o, --offset <num>   offset to erase, in bytes"
-msgstr " -o, --offset <broj>  odmak za obrisati (u bajtima)"
+msgstr " -o, --offset <broj>  pomak za obrisati (u bajtima)"
 
 #: misc-utils/wipefs.c:643
 msgid " -O, --output <list>  COLUMNS to display (see below)"
@@ -15126,7 +15120,7 @@ msgstr "nije uspjelo dobiti afinitet za PID %d"
 
 #: schedutils/taskset.c:143
 msgid "affinity cannot be set due to PF_NO_SETAFFINITY flag set"
-msgstr "afinitet se ne može postaviti zbog postavljenog flaga PF_NO_SETAFFINITY"
+msgstr "afinitet nije moguće postaviti zbog postavljenog flaga PF_NO_SETAFFINITY"
 
 #: schedutils/taskset.c:214 sys-utils/chcpu.c:300 sys-utils/irqtop.c:323
 #: sys-utils/lsirq.c:137
@@ -15257,7 +15251,7 @@ msgstr " -l, --length <broj>  broj bajta koje treba odbaciti\n"
 
 #: sys-utils/blkdiscard.c:89
 msgid " -o, --offset <num>  offset in bytes to discard from\n"
-msgstr " -o, --offset <broj>  odmak odkud započinje odbacivanje\n"
+msgstr " -o, --offset <broj>  pomak odkud započinje odbacivanje\n"
 
 #: sys-utils/blkdiscard.c:90
 msgid " -p, --step <num>    size of the discard iterations within the offset\n"
@@ -15273,7 +15267,7 @@ msgstr " -s, --secure        obavi sigurnu operaciju odbacivanja\n"
 
 #: sys-utils/blkdiscard.c:93
 msgid " -v, --verbose       print aligned length and offset\n"
-msgstr " -v, --verbose       ispiše dužinu poravnanja i odmak\n"
+msgstr " -v, --verbose       ispiše dužinu poravnanja i pomak\n"
 
 #: sys-utils/blkdiscard.c:94
 msgid " -z, --zeroout       zero-fill rather than discard\n"
@@ -15287,7 +15281,7 @@ msgstr "%s: %s ioctl nije uspjela"
 #: sys-utils/blkdiscard.c:197 sys-utils/fstrim.c:546 sys-utils/losetup.c:799
 #: text-utils/hexdump.c:129
 msgid "failed to parse offset"
-msgstr "nije uspjelo razabrati odmak"
+msgstr "nije uspjelo razabrati pomak"
 
 #: sys-utils/blkdiscard.c:201
 msgid "failed to parse step"
@@ -15312,12 +15306,12 @@ msgstr "%s: BLKSSZGET ioctl nije uspjela"
 #: sys-utils/blkdiscard.c:251
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to sector size %i"
-msgstr "%s: odmak %<PRIu64> nije poravnat na veličinu sektora %i"
+msgstr "%s: pomak %<PRIu64> nije poravnat na veličinu sektora %i"
 
 #: sys-utils/blkdiscard.c:256 sys-utils/blkzone.c:349
 #, c-format
 msgid "%s: offset is greater than device size"
-msgstr "%s: odmak je veći od od veličine uređaja"
+msgstr "%s: pomak je veći od od veličine uređaja"
 
 #: sys-utils/blkdiscard.c:265
 #, c-format
@@ -15433,7 +15427,7 @@ msgstr "%s: nije uspjelo dobiti broj sektora"
 #: sys-utils/blkzone.c:242
 #, c-format
 msgid "%s: offset is greater than or equal to device size"
-msgstr "%s: odmak je veći od (ili je jednak) veličini uređaja"
+msgstr "%s: pomak je veći od (ili je jednak) veličini uređaja"
 
 #: sys-utils/blkzone.c:246 sys-utils/blkzone.c:339
 #, c-format
@@ -15475,7 +15469,7 @@ msgstr "0x%09<PRIx64>\n"
 #: sys-utils/blkzone.c:344
 #, c-format
 msgid "%s: offset %<PRIu64> is not aligned to zone size %lu"
-msgstr "%s: odmak %<PRIu64> nije poravnat na veličinu zone %lu"
+msgstr "%s: pomak %<PRIu64> nije poravnat na veličinu zone %lu"
 
 #: sys-utils/blkzone.c:363
 #, c-format
@@ -15535,7 +15529,7 @@ msgstr "nije uspjelo razabrati broj sektora"
 
 #: sys-utils/blkzone.c:466
 msgid "failed to parse zone offset"
-msgstr "nije uspjelo razabrati odmak zone"
+msgstr "nije uspjelo razabrati pomak zone"
 
 #: sys-utils/blkzone.c:485 sys-utils/setpgid.c:66 sys-utils/setsid.c:94
 msgid "no command specified"
@@ -15549,7 +15543,7 @@ msgstr "CPU %u ne postoji"
 #: sys-utils/chcpu.c:89
 #, c-format
 msgid "CPU %u is not hot pluggable"
-msgstr "CPU %u se ne može ukopčati na ‘vruće’"
+msgstr "CPU %u nije moguće ukopčati na ‘vruće’"
 
 #: sys-utils/chcpu.c:96
 #, c-format
@@ -16132,7 +16126,7 @@ msgstr " -E, --console-on            omogući ispis poruka na konzolu\n"
 
 #: sys-utils/dmesg.c:327
 msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
-msgstr " -f, --file <file>           rabi datoteku umjesto buffer dnevnika jezgre\n"
+msgstr " -F, --file <file>           rabi datoteku umjesto buffer dnevnika jezgre\n"
 
 #: sys-utils/dmesg.c:328
 msgid " -K, --kmsg-file <file>      use the file in kmsg format\n"
@@ -16205,7 +16199,7 @@ msgstr " -w, --follow                čeka na nove poruke\n"
 
 #: sys-utils/dmesg.c:347
 msgid " -W, --follow-new            wait and print only new messages\n"
-msgstr " -w, --follow-new            čeka na i ispiše samo nove poruke\n"
+msgstr " -W, --follow-new            čeka na i ispiše samo nove poruke\n"
 
 #: sys-utils/dmesg.c:348
 msgid " -x, --decode                decode facility and level to readable string\n"
@@ -16570,7 +16564,7 @@ msgstr "%s: je cijeli-disk uređaj"
 #: sys-utils/eject.c:915
 #, c-format
 msgid "%s: is not ejectable device"
-msgstr "%s: nije uređaj koji se ne može izabaciti"
+msgstr "%s: nije uređaj koji se ne može izbaciti"
 
 #: sys-utils/eject.c:919
 #, c-format
@@ -16699,7 +16693,7 @@ msgstr " -n, --keep-size      zadrži prividnu veličinu datoteke\n"
 
 #: sys-utils/fallocate.c:95
 msgid " -o, --offset <num>   offset for range operations, in bytes\n"
-msgstr " -o, --offset <broj>  odmak za operacije s rasponima, u bajtima\n"
+msgstr " -o, --offset <broj>  pomak za operacije s rasponima, u bajtima\n"
 
 #: sys-utils/fallocate.c:96
 msgid " -p, --punch-hole     replace a range with a hole (implies -n)\n"
@@ -16749,7 +16743,7 @@ msgstr "nije dȃn argument dužine"
 
 #: sys-utils/fallocate.c:399
 msgid "invalid offset value specified"
-msgstr "dȃna je nevaljana vrijednost za odmak"
+msgstr "dȃna je nevaljana vrijednost za pomak"
 
 #: sys-utils/fallocate.c:422
 #, c-format
@@ -17003,7 +16997,7 @@ msgstr " -I, --listed-in <popis>  podreže datotečne sustave iz <popisa> datote
 
 #: sys-utils/fstrim.c:463
 msgid " -o, --offset <num>       the offset in bytes to start discarding from\n"
-msgstr " -o, --offset <broj>   odmak u bajtovima otkuda započeti s odbacivanjem\n"
+msgstr " -o, --offset <broj>   pomak u bajtovima otkuda započeti s odbacivanjem\n"
 
 #: sys-utils/fstrim.c:464
 msgid " -l, --length <num>       the number of bytes to discard\n"
@@ -17457,8 +17451,8 @@ msgstr "   Pogledajte include/uapi/linux/rtc.h za parametre i vijednosti."
 #: sys-utils/hwclock.c:1276
 msgid " <param> and <value> accept hexadecimal values if prefixed with 0x, otherwise decimal."
 msgstr ""
-" <param> i <vrijednost> očekuju heksadecimalne vrijenosti s prefiksom 0x,\n"
-" inače decimalne vrijednosti."
+" <param> i <vrijednost> očekuju heksadekadske vrijenosti s prefiksom 0x,\n"
+" inače dekadske vrijednosti."
 
 #: sys-utils/hwclock.c:1383
 msgid "Unable to connect to audit system"
@@ -18678,7 +18672,7 @@ msgstr " -d, --delay <sek>    ažuriranje kašnjenja\n"
 
 #: sys-utils/irqtop.c:267 sys-utils/lsirq.c:63
 msgid " -s, --sort <column>  specify sort column\n"
-msgstr " -x, --sort <stupac>   stupac na kojem se sortira\n"
+msgstr " -s, --sort <stupac>  stupac na kojem se sortira\n"
 
 #: sys-utils/irqtop.c:268 sys-utils/lsirq.c:64
 msgid " -S, --softirq        show softirqs instead of interrupts\n"
@@ -18886,7 +18880,7 @@ msgstr "ime loop-uređaja"
 
 #: sys-utils/losetup.c:92
 msgid "offset from the beginning"
-msgstr "odmak od početka"
+msgstr "pomak od početka"
 
 #: sys-utils/losetup.c:93
 msgid "partscan flag set"
@@ -18923,7 +18917,7 @@ msgstr "veličina logičkog sektora u bajtovima"
 #: sys-utils/losetup.c:160 sys-utils/losetup.c:173
 #, c-format
 msgid ", offset %ju"
-msgstr ", odmak %ju"
+msgstr ", pomak %ju"
 
 #: sys-utils/losetup.c:162 sys-utils/losetup.c:175
 #, c-format
@@ -18991,7 +18985,7 @@ msgstr "     --sizelimit <broj>        koristi samo taj broj bajtova datoteke\n"
 
 #: sys-utils/losetup.c:486
 msgid " -b, --sector-size <num>       set the logical sector size to <num>\n"
-msgstr " -b  --sector-size <broj>      postavi veličinu logičkog sektora na <broj>\n"
+msgstr " -b, --sector-size <broj>      postavi veličinu logičkog sektora na <broj>\n"
 
 #: sys-utils/losetup.c:487
 msgid " -P, --partscan                create a partitioned loop device\n"
@@ -19591,7 +19585,7 @@ msgstr " -s, --sysroot <dir>     koristi taj direktorij kao root sustava\n"
 
 #: sys-utils/lscpu.c:1196
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
-msgstr " -x, --hex               ispiše heksadecimalne maske umjesto popisa CPU-a\n"
+msgstr " -x, --hex               ispiše heksadekadske maske umjesto popisa CPU-a\n"
 
 #: sys-utils/lscpu.c:1197
 msgid " -y, --physical          print physical instead of logical IDs\n"
@@ -19920,7 +19914,7 @@ msgstr " -q, --queues             redovi čekanja poruka\n"
 
 #: sys-utils/lsipc.c:328
 msgid " -Q, --posix-mqueues      POSIX message queues\n"
-msgstr " -Q, --posix-queues       POSIX redovi čekanja poruka\n"
+msgstr " -Q, --posix-mqueues      POSIX redovi čekanja poruka\n"
 
 #: sys-utils/lsipc.c:329
 msgid " -s, --semaphores         semaphores\n"
@@ -19972,7 +19966,7 @@ msgstr " -t, --time               pokaže vrijeme pripajanja, odvajanja i promje
 
 #: sys-utils/lsipc.c:350
 msgid " -y, --shell              use column names to be usable as shell variables\n"
-msgstr " -y, --shell              imenuje stupce da se mogu koristiti za varijable ljuske\n"
+msgstr " -y, --shell              koristi imena stupaca prikladnim za imena varijabli ljuske\n"
 
 #: sys-utils/lsipc.c:356
 #, c-format
@@ -20848,7 +20842,7 @@ msgstr " -W, --wdns <direktorij>   postavi radni direktorij u imenskom prostoru\
 
 #: sys-utils/nsenter.c:112
 msgid " -e, --env              inherit environment variables from target process\n"
-msgstr " -e, --env              naslijedi varijable okružja iz ciljanog procesa\n"
+msgstr " -e, --env              naslijedi varijable okruženja iz ciljanog procesa\n"
 
 #: sys-utils/nsenter.c:113
 msgid " -F, --no-fork          do not fork before exec'ing <program>\n"
@@ -20973,7 +20967,7 @@ msgstr "nije uspjelo promijeniti trenutni direktorij pomoću deskriptora radnog 
 
 #: sys-utils/nsenter.c:804
 msgid "failed to get environment variables"
-msgstr "nije uspjelo dobiti varijable okružja"
+msgstr "nije uspjelo dobiti varijable okruženja"
 
 #: sys-utils/nsenter.c:820
 msgid "can not get process stat"
@@ -21841,7 +21835,7 @@ msgstr "Pokrene program u novoj grupi procesa.\n"
 
 #: sys-utils/setpgid.c:27
 msgid " -f, --foreground    Make a foreground process group\n"
-msgstr " -f, --foregound     Stvori glavnu (foregound) grupu procesa\n"
+msgstr " -f, --foreground    Stvori glavnu (foregound) grupu procesa\n"
 
 #: sys-utils/setpgid.c:71
 msgid "setpgid failed"
@@ -21962,7 +21956,7 @@ msgid ""
 " --reset-env                 clear all environment and initialize\n"
 "                               HOME, SHELL, USER, LOGNAME and PATH\n"
 msgstr ""
-" --reset-env                 ukloni sve varijable okružja i inicijalizira\n"
+" --reset-env                 ukloni sve varijable okruženja i inicijalizira\n"
 "                               HOME, SHELL, USER, LOGNAME i PATH\n"
 
 #: sys-utils/setpriv.c:165
@@ -23094,11 +23088,11 @@ msgstr ""
 
 #: sys-utils/unshare.c:789
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
-msgstr " -R, --root=<dir>          izvrši naredbu s root direktorijem postavljenim na <dir>\n"
+msgstr " -R, --root <dir>          izvrši naredbu s root direktorijem postavljenim na <dir>\n"
 
 #: sys-utils/unshare.c:790
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
-msgstr " -w, --wd=<dir>            promijeni radni direktorij na <dir>\n"
+msgstr " -w, --wd <dir>            promijeni radni direktorij na <dir>\n"
 
 #: sys-utils/unshare.c:792
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
@@ -23114,7 +23108,7 @@ msgstr " --map-user <uid>|<ime>    pridruži trenutnog korisnika UID-u (implicir
 
 #: sys-utils/unshare.c:795
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
-msgstr "--map-group <gid>|<ime>    pridruži trenutnu grupu GID-u (implicira --user)\n"
+msgstr " --map-group <gid>|<ime>   pridruži trenutnu grupu GID-u (implicira --user)\n"
 
 #: sys-utils/unshare.c:796
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
@@ -23122,15 +23116,11 @@ msgstr " -r, --map-root-user       pridruži trenutnog korisnika na root (implic
 
 #: sys-utils/unshare.c:797
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
-msgstr ""
-" -r, --map-root-user       preslika trenutnog korisnika na samog sebe\n"
-"                             (implicira --user)\n"
+msgstr " -c, --map-current-user    preslika trenutnog korisnika na sebe (implicira --user)\n"
 
 #: sys-utils/unshare.c:798
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
-msgstr ""
-" --map-auto                mapira automatski korisnike i grupe\n"
-"                             (implicira --user)\n"
+msgstr " --map-auto                mapira automatski korisnike i grupe (implicira --user)\n"
 
 #: sys-utils/unshare.c:799
 msgid ""
@@ -23162,35 +23152,27 @@ msgstr ""
 
 #: sys-utils/unshare.c:808
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
-msgstr ""
-" --setgroups allow|deny    dopusti ili zabrani sustavske pozive setgroups\n"
-"                             u korisničkom imenskom prostoru\n"
+msgstr " --setgroups allow|deny    dopusti ili odbija sustavne pozive setgroups\n"
 
 #: sys-utils/unshare.c:809
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
-msgstr ""
-" --keep-caps               zadrži mogućnosti odobrene imenskom\n"
-"                             prostoru korisnika\n"
+msgstr " --keep-caps               zadrži mogućnosti korisničkih imenskih prostora\n"
 
 #: sys-utils/unshare.c:811
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
-msgstr ""
-" --monotonic <offset>      postavi odmak (offset) monotonog sata (sekunde)\n"
-"                             u vremenskom imenskom prostoru\n"
+msgstr " --monotonic <offset>      postavi monotoni pomak sata (sekunde) u vremenskim imenskim prostorima\n"
 
 #: sys-utils/unshare.c:812
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
-msgstr ""
-" --boottime <offset>       postavi odmak (offset) boottime sata (sekunde)\n"
-"                             u vremenskom imenskom prostoru\n"
+msgstr " --boottime <offset>       postavi pomak vremena pokretanja sata (sekunde) u vremenskim imenskim prostorima\n"
 
 #: sys-utils/unshare.c:1060
 msgid "failed to parse monotonic offset"
-msgstr "nije uspjelo razabrati monotoni odmak (offset)"
+msgstr "nije uspjelo razabrati monotoni pomak (offset)"
 
 #: sys-utils/unshare.c:1064
 msgid "failed to parse boottime offset"
-msgstr "nije uspjelo razabrati boottime odmak (offset)"
+msgstr "nije uspjelo razabrati boottime pomak (offset)"
 
 #: sys-utils/unshare.c:1087
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
@@ -23564,7 +23546,7 @@ msgstr "     --output-all                   ispiše sve stupce\n"
 
 #: sys-utils/zramctl.c:590
 msgid " -p, --algorithm-params <params>    algorithm parameters to use\n"
-msgstr " -p, --algorithm-parameters <param> parametri algoritma koje treba koristiti\n"
+msgstr " -p, --algorithm-params <params>    parametri algoritma koje treba koristiti\n"
 
 #: sys-utils/zramctl.c:591
 msgid "     --raw                          use raw status output format\n"
@@ -23727,7 +23709,7 @@ msgstr "%s: ne može otvoriti za čitanje i pisanje"
 #: term-utils/agetty.c:1151
 #, c-format
 msgid "/dev/%s: cannot set process group: %m"
-msgstr "/dev/%s: ne može postavit grupu procesa: %m"
+msgstr "/dev/%s: ne može postaviti grupu procesa: %m"
 
 #: term-utils/agetty.c:1165
 #, c-format
@@ -23867,7 +23849,7 @@ msgstr " -I, --init-string <string>  koristi taj string za inicijalizaciju\n"
 
 #: term-utils/agetty.c:2472
 msgid " -J, --noclear              do not clear the screen before prompt\n"
-msgstr " -J  --noclear              ne počisti ekran prije prompta\n"
+msgstr " -J, --noclear              ne počisti ekran prije prompta\n"
 
 #: term-utils/agetty.c:2473
 msgid " -l, --login-program <file> specify login program\n"
@@ -23887,7 +23869,7 @@ msgstr " -n, --skip-login           prijava bez prompta\n"
 
 #: term-utils/agetty.c:2477
 msgid " -N, --nonewline            do not print a newline before issue\n"
-msgstr " -N  --nonewline            ne prelomi redak ispred ‘issue’\n"
+msgstr " -N, --nonewline            ne prelomi redak ispred ‘issue’\n"
 
 #: term-utils/agetty.c:2478
 msgid " -o, --login-options <opts> options that are passed to login\n"
@@ -24356,7 +24338,7 @@ msgstr "Postavlja atribute terminala.\n"
 
 #: term-utils/setterm.c:388
 msgid " --term <terminal_name>        override TERM environment variable\n"
-msgstr " --term <ime_terminala>        redefinicija varijable okružja TERM\n"
+msgstr " --term <ime_terminala>        redefinicija varijable okruženja TERM\n"
 
 #: term-utils/setterm.c:389
 msgid " --reset                       reset terminal to power-on state\n"
@@ -24760,7 +24742,7 @@ msgid ""
 " <mask_or_list>      bits specified as a hex mask (e.g. 0xeec2)\n"
 "                       or as a comma-separated list of bit IDs"
 msgstr ""
-" <mask_or_list>      bitovi navedeni kao heksadecimalna maska (primjer, 0xeec2)\n"
+" <mask_or_list>      bitovi navedeni kao heksadekadska maska (primjer, 0xeec2)\n"
 "                       ili popis ID-ova bitova odvojenih zarezima"
 
 #: text-utils/bits.c:219
@@ -24785,14 +24767,14 @@ msgstr ""
 
 #: text-utils/bits.c:229
 msgid " -m, --mask          display bits as a hex mask value (default)"
-msgstr " -m, --mask          prikaže bitove kao vrijednost heksadecimalne maske (zadano)"
+msgstr " -m, --mask          prikaže bitove kao vrijednost heksadekadske maske (zadano)"
 
 #: text-utils/bits.c:231
 msgid ""
 " -g, --grouped-mask  display bits as a hex mask value in 32bit\n"
 "                       comma separated groups"
 msgstr ""
-" -g, --grouped-mask  prikaže bitove kao vrijednost heksadecimalne maske u\n"
+" -g, --grouped-mask  prikaže bitove kao vrijednost heksadekadske maske u\n"
 "                       32-bita zarezima odvojenih grupa"
 
 #: text-utils/bits.c:233
@@ -25085,7 +25067,7 @@ msgstr " %s [opcije] <datoteka>...\n"
 
 #: text-utils/hexdump.c:170
 msgid "Display file contents in hexadecimal, decimal, octal, or ascii.\n"
-msgstr "Pokaže heksadecimalni, decimalni, oktalni ili ASCII sadržaj datoteke.\n"
+msgstr "Pokaže heksadekadski, dekadski, oktalni ili ASCII sadržaj datoteke.\n"
 
 #: text-utils/hexdump.c:173
 msgid " -b, --one-byte-octal      one-byte octal display\n"
@@ -25093,7 +25075,7 @@ msgstr " -b, --one-byte-octal      prikaz u jednobajtnom oktalnom formatu\n"
 
 #: text-utils/hexdump.c:174
 msgid " -X, --one-byte-hex        one-byte hexadecimal display\n"
-msgstr " -X, --one-bytes-hex       prikaz u jednobajtnom heksadecimalnom formatu\n"
+msgstr " -X, --one-byte-hex        prikaz u jednobajtnom heksadekadskom formatu\n"
 
 #: text-utils/hexdump.c:175
 msgid " -c, --one-byte-char       one-byte character display\n"
@@ -25101,11 +25083,11 @@ msgstr " -c, --one-byte-char       prikaz u jednobajtnom znakovnom formatu\n"
 
 #: text-utils/hexdump.c:176
 msgid " -C, --canonical           canonical hex+ASCII display\n"
-msgstr " -C, --canonical           prikaz u kanonskom heksadecimalnom+ASCII formatu\n"
+msgstr " -C, --canonical           prikaz u kanonskom heksadekadskom+ASCII formatu\n"
 
 #: text-utils/hexdump.c:177
 msgid " -d, --two-bytes-decimal   two-byte decimal display\n"
-msgstr " -d, --two-bytes-decimal   prikaz u dvobajtnom decimalnom formatu\n"
+msgstr " -d, --two-bytes-decimal   prikaz u dvobajtnom dekadskom formatu\n"
 
 #: text-utils/hexdump.c:178
 msgid " -o, --two-bytes-octal     two-byte octal display\n"
@@ -25113,7 +25095,7 @@ msgstr " -o, --two-bytes-octal     prikaz u dvobajtnom oktalnom formatu\n"
 
 #: text-utils/hexdump.c:179
 msgid " -x, --two-bytes-hex       two-byte hexadecimal display\n"
-msgstr " -x, --two-bytes-hex       prikaz u dvobajtnom heksadecimalnom formatu\n"
+msgstr " -x, --two-bytes-hex       prikaz u dvobajtnom heksadekadskom formatu\n"
 
 #: text-utils/hexdump.c:180
 msgid " -L, --color[=<mode>]      interpret color formatting specifiers\n"
@@ -25231,7 +25213,7 @@ msgstr " +/<uzorak>            pokaže datoteku od počevši od nađenog uzorka"
 
 #: text-utils/more.c:361
 msgid "MORE environment variable"
-msgstr "varijabla okružja MORE"
+msgstr "varijabla okruženja MORE"
 
 #: text-utils/more.c:414
 msgid "magic failed"
