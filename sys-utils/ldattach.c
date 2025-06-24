@@ -241,7 +241,9 @@ static int my_cfsetspeed(struct termios *ts, int speed)
 	 *    checks for speed and supports Bxxx bit rates only)...
 	 */
 #if _HAVE_STRUCT_TERMIOS_C_ISPEED
-# define BOTHER 0010000		/* non standard rate */
+# ifndef BOTHER
+#  define BOTHER 0010000		/* non standard rate */
+# endif
 	dbg("using non-standard speeds");
 	ts->c_ospeed = ts->c_ispeed = speed;
 	ts->c_cflag &= ~CBAUD;
