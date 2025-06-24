@@ -393,6 +393,19 @@ int ul_strtou32(const char *str, uint32_t *num, int base)
 	return rc;
 }
 
+int ul_strtou16(const char *str, uint16_t *num, int base)
+{
+	uint64_t tmp;
+	int rc;
+
+	rc = ul_strtou64(str, &tmp, base);
+	if (rc == 0 && tmp > UINT16_MAX)
+		rc = -(errno = ERANGE);
+	if (rc == 0)
+		*num = (uint16_t) tmp;
+	return rc;
+}
+
 /*
  * Convert strings to numbers in defined range and print message on error.
  *

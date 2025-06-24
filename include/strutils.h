@@ -29,6 +29,8 @@ extern int ul_strtos64(const char *str, int64_t *num, int base);
 extern int ul_strtou64(const char *str, uint64_t *num, int base);
 extern int ul_strtos32(const char *str, int32_t *num, int base);
 extern int ul_strtou32(const char *str, uint32_t *num, int base);
+extern int ul_strtou16(const char *str, uint16_t *num, int base);
+
 extern int ul_strtold(const char *str, long double *num);
 
 extern int64_t str2num_or_err(const char *str, int base, const char *errmesg, int64_t low, int64_t up);
