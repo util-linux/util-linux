@@ -1,0 +1,134 @@
+util-linux 2.41.1 Release Notes
+===============================
+
+autotools:
+    - don't use wide-character ncurses if --disable-widechar (by Karel Zak)
+
+cfdisk:
+    - fix memory leak and possible NULL dereference [gcc-analyzer] (by Karel Zak)
+
+column:
+    - fix compiler warning for non-widechar compilation (by Karel Zak)
+
+fdformat:
+    - use size_t and ssize_t (by Karel Zak)
+
+fdisk:
+    - fix possible memory leak (by Karel Zak)
+
+fdisk,partx:
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+findmnt:
+    - fix -k option parsing regression (by Karel Zak)
+
+hardlink:
+    - define more function as inline (by Karel Zak)
+    - fix performance regression (inefficient signal evaluation) (by Karel Zak)
+    - Use macro for verbose output (by Karel Zak)
+
+include/cctype:
+    - fix string comparison (by Karel Zak)
+
+include/mount-api-utils:
+    - include linux/unistd.h (by Thomas Weißschuh)
+
+libblkid:
+    - Fix crash while parsing config with libeconf (by Stanislav Brabec)
+    - befs fix underflow (by Milan Broz)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+libblkid/src/topology/dm:
+    - fix fscanf return value check to match expected number of parsed items (by Mingjie Shen)
+
+libfdisk:
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+libmount:
+    - (subdir) restrict for real mounts only (by Karel Zak)
+    - (subdir) remove unused code (by Karel Zak)
+    - avoid calling memset() unnecessarily (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+    - fix --no-canonicalize regression (by Karel Zak)
+
+libuuid:
+    - fix uuid_time on macOS without attribute((alias)) (by Eugene Gershnik)
+
+lsblk:
+    - use ID_PART_ENTRY_SCHEME as fallback for PTTYPE (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+lscpu:
+    - fix possible buffer overflow in cpuinfo parser (by Karel Zak)
+    - Fix loongarch op-mode output with recent kernel (by Xi Ruoyao)
+
+lsfd:
+    - (bug fix) scan the protocol field of /proc/net/packet as a hex number (by Masatake YAMATO)
+    - fix the description for PACKET.PROTOCOL column (by Masatake YAMATO)
+
+lsns:
+    - enhance compilation without USE_NS_GET_API (by Karel Zak)
+    - fix undefined reference to add_namespace_for_nsfd #3483 (by Thomas Devoogdt)
+
+meson:
+    - add feature for translated documentation (by Thomas Weißschuh)
+    - remove tinfo dependency from 'more' (by Thomas Weißschuh)
+    - fix manadocs for libsmartcols and libblkid (by Karel Zak)
+    - fix po-man installation (by Karel Zak)
+
+misc:
+    - never include wchar.h (by Karel Zak)
+
+more:
+    - fix broken ':!command' command key (by cgoesche)
+    - fix implicit previous shell_line execution #3508 (by cgoesche)
+
+mount:
+    - (man) add missing word (by Jakub Wilk)
+
+namespace.h:
+    - fix compilation on Linux < 4.10 (by Thomas Devoogdt)
+
+po:
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pt.po (from translationproject.org) (by Pedro Albuquerque)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+
+tests:
+    - (test_mkfds::mapped-packet-socket) add a new parameter, protocol (by Masatake YAMATO)
+
+treewide:
+    - add ul_ to parse_timestamp() function name (by Karel Zak)
+    - add ul_ to parse_switch() function name (by Stanislav Brabec)
+    - add ul_ to parse_size() function name (by Karel Zak)
+    - add ul_ to parse_range() function name (by Karel Zak)
+    - fix optional arguments usage (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+Wipefs:
+    - improve --all descriptions for whole-disks (by Karel Zak)
+
+Misc:
+    - Do not call exit() on code ending in shared libraries (by Cristian Rodríguez)
+    - remove two leftover license lines from colors.{c,h} (by Benno Schulenberg)
+    - remove "Copyright (C) ...." notes from files that claim no copyright (by Benno Schulenberg)
+    - correct the full name of the GPL in various files (by Benno Schulenberg)
+    - Make scols_column_set_data_func docs visible (by FeRD (Frank Dana))
+    - Do not use strerror on shared libraries (by Cristian Rodríguez)
+    - Fix typo in blkdiscard docs (by pls-no-hack)
+    - lib/fileeq.c Fix a typo in message. (by Masanari Iida)
+
