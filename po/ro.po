@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: util-linux 2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2025-03-06 12:25+0100\n"
-"PO-Revision-Date: 2025-03-09 12:37+0100\n"
+"PO-Revision-Date: 2025-03-25 15:17+0100\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -1149,7 +1149,7 @@ msgid "partition sectors"
 msgstr "sectoarele partiției"
 
 #: disk-utils/fdisk.c:889
-msgid "free space sectors"
+msgid "free space sectros"
 msgstr "sectoare ale spațiului liber"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
@@ -24067,7 +24067,7 @@ msgstr "     --output-all              afișează toate coloanele\n"
 
 #: sys-utils/zramctl.c:590
 msgid " -p, --algorithm-params <params>    algorithm parameters to use\n"
-msgstr " -a, --algorithm <alg>     algoritmul de comprimare de utilizat\n"
+msgstr " -p, --algorithm-params <parametri> parametrii algoritmului de utilizat\n"
 
 #: sys-utils/zramctl.c:591
 msgid "     --raw                          use raw status output format\n"
