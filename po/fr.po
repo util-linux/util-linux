@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: util-linux 2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2025-03-06 12:25+0100\n"
-"PO-Revision-Date: 2025-03-08 18:13+0100\n"
+"PO-Revision-Date: 2025-03-28 10:00+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -1098,7 +1098,7 @@ msgid "partition sectors"
 msgstr "secteurs de partition"
 
 #: disk-utils/fdisk.c:889
-msgid "free space sectors"
+msgid "free space sectros"
 msgstr "secteurs de l'espace libre"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
@@ -1210,7 +1210,7 @@ msgstr "     --lock[=<mode>]           utiliser un verrou exclusif du périphér
 #: disk-utils/fdisk.c:1109
 #, c-format
 msgid " -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"
-msgstr " -w, --wipe[=<mode>]           nettoyer les signatures (%s, %s ou %s)\n"
+msgstr " -w, --wipe <mode>             nettoyer les signatures (%s, %s ou %s)\n"
 
 #: disk-utils/fdisk.c:1111 disk-utils/sfdisk.c:2181
 #, c-format
@@ -9557,7 +9557,7 @@ msgstr ""
 #: login-utils/su-common.c:865
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
-" -c  --command <commande>        passer une seule commande à l'interpréteur\n"
+" -c, --command <commande>        passer une seule commande à l'interpréteur\n"
 "                                   avec -c\n"
 
 #: login-utils/su-common.c:866
@@ -11589,7 +11589,7 @@ msgstr " -y, --shell            utiliser les noms des colonnes comme étant util
 
 #: misc-utils/findmnt.c:1584
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
-msgstr " -X, --verify           vérifier le contenu de la table de montage (fstab par défaut)\n"
+msgstr " -x, --verify           vérifier le contenu de la table de montage (fstab par défaut)\n"
 
 #: misc-utils/findmnt.c:1585
 msgid "     --verbose          print more details\n"
@@ -14296,7 +14296,7 @@ msgstr " -u         rechercher les entrées inhabituelles\n"
 
 #: misc-utils/whereis.c:219
 msgid " -g         interpret name as glob (pathnames pattern)\n"
-msgstr " -g,        interpréter le nom comme un glob (motif de noms de chemins)\n"
+msgstr " -g         interpréter le nom comme un glob (motif de noms de chemins)\n"
 
 #: misc-utils/whereis.c:220
 msgid " -l         output effective lookup paths\n"
@@ -14848,7 +14848,7 @@ msgid ""
 " -c, --class <class>    name or number of scheduling class,\n"
 "                          0: none, 1: realtime, 2: best-effort, 3: idle\n"
 msgstr ""
-"  -c, --class <classe>  nom ou numéro de classe d’ordonnancement\n"
+" -c, --class <classe>   nom ou numéro de classe d’ordonnancement\n"
 "                          0 : aucune, 1 : temps réel, 2 : au mieux,\n"
 "                          3 : au ralenti\n"
 
@@ -14857,7 +14857,7 @@ msgid ""
 " -n, --classdata <num>  priority (0..7) in the specified scheduling class,\n"
 "                          only for the realtime and best-effort classes\n"
 msgstr ""
-"  -n, --classdata <nbr> priorité (0-7) dans les classes d’ordonnancement\n"
+" -n, --classdata <nbr>  priorité (0-7) dans les classes d’ordonnancement\n"
 "                          indiquées, pour les classes temps réel et au mieux\n"
 
 #: schedutils/ionice.c:120
@@ -15566,12 +15566,12 @@ msgid ""
 " -p, --dispatch <mode>         set dispatching mode\n"
 " -r, --rescan                  trigger rescan of cpus\n"
 msgstr ""
-"  -e, --enable <liste>         activer les processeurs\n"
-"  -d, --disable <liste>        désactiver les processeurs\n"
-"  -c, --configure <liste>      configurer les processeurs\n"
-"  -g, --deconfigure <liste>    déconfigurer les processeurs\n"
-"  -p, --dispatch <mode>        configurer le mode distribué\n"
-"  -r, --rescan                 déclencher la recherche de processeurs\n"
+" -e, --enable <liste>          activer les processeurs\n"
+" -d, --disable <liste>         désactiver les processeurs\n"
+" -c, --configure <liste>       configurer les processeurs\n"
+" -g, --deconfigure <liste>     déconfigurer les processeurs\n"
+" -p, --dispatch <mode>         configurer le mode distribué\n"
+" -r, --rescan                  déclencher la recherche de processeurs\n"
 
 #: sys-utils/chcpu.c:296
 msgid "failed to initialize sysfs handler"
@@ -20718,7 +20718,7 @@ msgstr ""
 
 #: sys-utils/nsenter.c:114
 msgid " -c, --join-cgroup      join the cgroup of the target process\n"
-msgstr " -C, --join-cgroup      joindre le cgroup du processus cible\n"
+msgstr " -c, --join-cgroup      joindre le cgroup du processus cible\n"
 
 #: sys-utils/nsenter.c:116
 msgid " -Z, --follow-context   set SELinux context according to --target PID\n"
@@ -21228,7 +21228,7 @@ msgstr " -p, --pid              interpréter les arguments comme des PID (par d�
 
 #: sys-utils/renice.c:80
 msgid " -g, --pgrp             interpret arguments as process group ID\n"
-msgstr " -p, --pgrp             interpréter les arguments comme des PGID\n"
+msgstr " -g, --pgrp             interpréter les arguments comme des PGID\n"
 
 #: sys-utils/renice.c:81
 msgid " -u, --user             interpret arguments as username or user ID\n"
@@ -24830,7 +24830,7 @@ msgstr " -E, --table-noextreme <colonnes> ne pas compter les textes longs des co
 
 #: text-utils/column.c:904
 msgid " -d, --table-noheadings           don't print header\n"
-msgstr " -d, --table noheadings           ne pas affiche l'en-tête\n"
+msgstr " -d, --table-noheadings           ne pas affiche l'en-tête\n"
 
 #: text-utils/column.c:905
 msgid " -m, --table-maxout               fill all available space\n"
