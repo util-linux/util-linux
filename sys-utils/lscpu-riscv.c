@@ -40,19 +40,19 @@ void lscpu_format_isa_riscv(struct lscpu_cputype *ct)
 	char **split;
 	size_t i;
 
-	split = strv_split(ct->isa, "_");
+	split = ul_strv_split(ct->isa, "_");
 
 	/* Sort multi-letter extensions alphabetically */
-	if (strv_length(split) > 1)
-		qsort(&split[1], strv_length(split) - 1, sizeof(char *), riscv_cmp_func);
+	if (ul_strv_length(split) > 1)
+		qsort(&split[1], ul_strv_length(split) - 1, sizeof(char *), riscv_cmp_func);
 
 	/* Keep Base ISA and single-letter extensions at the start */
 	strcpy(ct->isa, split[0]);
 
-	for (i = 1; i < strv_length(split); i++) {
+	for (i = 1; i < ul_strv_length(split); i++) {
 		strcat(ct->isa, " ");
 		strcat(ct->isa, split[i]);
 	}
 
-	strv_free(split);
+	ul_strv_free(split);
 }

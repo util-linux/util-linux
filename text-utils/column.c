@@ -318,7 +318,7 @@ static wchar_t *local_wcstok(struct column_control const *const ctl, wchar_t *p,
 
 static char **split_or_error(const char *str, const char *errmsg)
 {
-	char **res = strv_split(str, ",");
+	char **res = ul_strv_split(str, ",");
 	if (!res) {
 		if (errno == ENOMEM)
 			err_oom();
@@ -350,7 +350,7 @@ static void init_table(struct column_control *ctl)
 	if (ctl->tab_columns) {
 		char **opts;
 
-		STRV_FOREACH(opts, ctl->tab_columns) {
+		UL_STRV_FOREACH(opts, ctl->tab_columns) {
 			struct libscols_column *cl;
 
 			cl = scols_table_new_column(ctl->tab, NULL, 0, 0);
@@ -360,7 +360,7 @@ static void init_table(struct column_control *ctl)
 	} else if (ctl->tab_colnames) {
 		char **name;
 
-		STRV_FOREACH(name, ctl->tab_colnames)
+		UL_STRV_FOREACH(name, ctl->tab_colnames)
 			scols_table_new_column(ctl->tab, *name, 0, 0);
 	} else
 		scols_table_enable_noheadings(ctl->tab, 1);
@@ -436,13 +436,13 @@ static int has_unnamed(const char *list)
 
 	all = split_or_error(list, NULL);
 	if (all) {
-		STRV_FOREACH(one, all) {
+		UL_STRV_FOREACH(one, all) {
 			if (strcmp(*one, "-") == 0) {
 				rc = 1;
 				break;
 			}
 		}
-		strv_free(all);
+		ul_strv_free(all);
 	}
 
 	return rc;
@@ -473,7 +473,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 	all = split_or_error(list, errmsg);
 
 	/* apply to columns specified by name */
-	STRV_FOREACH(one, all) {
+	UL_STRV_FOREACH(one, all) {
 		int low = 0, up = 0;
 
 		if (strcmp(*one, "-") == 0) {
@@ -499,7 +499,7 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 		if (cl)
 			column_set_flag(cl, flag);
 	}
-	strv_free(all);
+	ul_strv_free(all);
 
 	/* apply flag to all columns without name */
 	if (unnamed) {
@@ -527,7 +527,7 @@ static void reorder_table(struct column_control *ctl)
 
 	wanted = xcalloc(ncols, sizeof(struct libscols_column *));
 
-	STRV_FOREACH(one, order) {
+	UL_STRV_FOREACH(one, order) {
 		struct libscols_column *cl = string_to_column(ctl, *one);
 		if (cl)
 			wanted[count++] = cl;
@@ -539,7 +539,7 @@ static void reorder_table(struct column_control *ctl)
 	}
 
 	free(wanted);
-	strv_free(order);
+	ul_strv_free(order);
 }
 
 static void create_tree(struct column_control *ctl)
@@ -998,7 +998,7 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'C':
-			if (strv_extend(&ctl.tab_columns, optarg))
+			if (ul_strv_extend(&ctl.tab_columns, optarg))
 				err_oom();
 			break;
 		case 'c':
@@ -1143,9 +1143,9 @@ int main(int argc, char **argv)
 
 			scols_unref_table(ctl.tab);
 			if (ctl.tab_colnames)
-				strv_free(ctl.tab_colnames);
+				ul_strv_free(ctl.tab_colnames);
 			if (ctl.tab_columns)
-				strv_free(ctl.tab_columns);
+				ul_strv_free(ctl.tab_columns);
 		}
 		break;
 	case COLUMN_MODE_FILLCOLS:

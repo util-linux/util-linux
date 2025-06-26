@@ -934,7 +934,7 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 
-		ctl.command = strv_join(argv, " ");
+		ctl.command = ul_strv_join(argv, " ");
 		if (!ctl.command)
 			errx(EXIT_FAILURE, _("failed to concatenate arguments"));
 
