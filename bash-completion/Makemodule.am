@@ -6,6 +6,9 @@ endif
 if BUILD_CAL
 dist_bashcompletion_DATA += bash-completion/cal
 endif
+if BUILD_CHOOM
+dist_bashcompletion_DATA += bash-completion/choom
+endif
 if BUILD_COL
 dist_bashcompletion_DATA += bash-completion/col
 endif
@@ -17,6 +20,9 @@ dist_bashcompletion_DATA += bash-completion/colrm
 endif
 if BUILD_COLUMN
 dist_bashcompletion_DATA += bash-completion/column
+endif
+if BUILD_CORESCHED
+dist_bashcompletion_DATA += bash-completion/coresched
 endif
 if BUILD_EXCH
 dist_bashcompletion_DATA += bash-completion/exch
