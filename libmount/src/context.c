@@ -2737,7 +2737,7 @@ void mnt_context_syscall_reset_status(struct libmnt_context *cxt)
 void mnt_context_reset_mesgs(struct libmnt_context *cxt)
 {
 	DBG(CXT, ul_debug("reset messages"));
-	strv_free(cxt->mesgs);
+	ul_strv_free(cxt->mesgs);
 	cxt->mesgs = NULL;
 }
 
@@ -2746,7 +2746,7 @@ int mnt_context_append_mesg(struct libmnt_context *cxt, const char *msg)
 	if (msg) {
 		DBG(CXT, ul_debug("mesg: '%s'", msg));
 	}
-	return strv_extend(&cxt->mesgs, msg);
+	return ul_strv_extend(&cxt->mesgs, msg);
 }
 
 int mnt_context_sprintf_mesg(struct libmnt_context *cxt, const char *msg, ...)
@@ -2755,7 +2755,7 @@ int mnt_context_sprintf_mesg(struct libmnt_context *cxt, const char *msg, ...)
 	va_list ap;
 
 	va_start(ap, msg);
-	rc = strv_extendv(&cxt->mesgs, msg, ap);
+	rc = ul_strv_extendv(&cxt->mesgs, msg, ap);
 	va_end(ap);
 
 	return rc;
@@ -2808,10 +2808,10 @@ size_t mnt_context_get_nmesgs(struct libmnt_context *cxt, char type)
 	if (!cxt || !cxt->mesgs)
 		return 0;
 
-	n = strv_length(cxt->mesgs);
+	n = ul_strv_length(cxt->mesgs);
 	if (n && type) {
 		n = 0;
-		STRV_FOREACH(s, cxt->mesgs) {
+		UL_STRV_FOREACH(s, cxt->mesgs) {
 			if (*s && **s == type)
 				n++;
 		}

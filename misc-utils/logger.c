@@ -622,7 +622,7 @@ static void add_structured_data_param(struct list_head *ls, const char *param)
 
 	sd = list_last_entry(ls, struct structured_data, sds);
 
-	if (strv_extend(&sd->params,  param))
+	if (ul_strv_extend(&sd->params,  param))
 		err_oom();
 }
 
@@ -638,7 +638,7 @@ static void __attribute__ ((__format__ (__printf__, 2, 3)))
 
 	sd = list_last_entry(ls, struct structured_data, sds);
 	va_start(ap, fmt);
-	x = strv_extendv(&sd->params, fmt, ap);
+	x = ul_strv_extendv(&sd->params, fmt, ap);
 	va_end(ap);
 
 	if (x)
@@ -649,11 +649,11 @@ static char *strdup_structured_data(struct structured_data *sd)
 {
 	char *res, *tmp;
 
-	if (strv_isempty(sd->params))
+	if (ul_strv_isempty(sd->params))
 		return NULL;
 
 	xasprintf(&res, "[%s %s]", sd->id,
-			(tmp = strv_join(sd->params, " ")));
+			(tmp = ul_strv_join(sd->params, " ")));
 	free(tmp);
 	return res;
 }

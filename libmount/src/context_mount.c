@@ -1449,10 +1449,10 @@ static void join_err_mesgs(struct libmnt_context *cxt, char *buf, size_t bufsz)
 	char **s;
 	int n = 0;
 
-	if (!cxt || !buf || strv_isempty(cxt->mesgs))
+	if (!cxt || !buf || ul_strv_isempty(cxt->mesgs))
 		return;
 
-	STRV_FOREACH(s, cxt->mesgs) {
+	UL_STRV_FOREACH(s, cxt->mesgs) {
 		size_t len;
 
 		if (!bufsz)
