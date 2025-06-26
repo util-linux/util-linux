@@ -379,7 +379,7 @@ static size_t libmount_mesgs(struct libmnt_context *cxt, char type)
 	}
 
 	/* Messages */
-	STRV_FOREACH(s, mesgs) {
+	UL_STRV_FOREACH(s, mesgs) {
 		switch (type) {
 		case 'e':
 			if (!startswith(*s, "e "))

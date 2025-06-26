@@ -150,14 +150,14 @@ struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls, const char *str
 	if (!str)
 		return ls;
 
-	all = strv_split(str, ",");
+	all = ul_strv_split(str, ",");
 	if (!all)
 		return ls;
 
-	STRV_FOREACH(name, all)
+	UL_STRV_FOREACH(name, all)
 		ls = env_list_add_getenv(ls, *name, NULL);
 
-	strv_free(all);
+	ul_strv_free(all);
 	return ls;
 }
 
