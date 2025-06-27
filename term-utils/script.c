@@ -191,7 +191,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [file] [-- program [arguments]]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [<file>] [-- <command> [<argument>...]]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Make a typescript of a terminal session.\n"), out);
@@ -208,8 +208,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -a, --append                  append to the log file\n"), out);
-	fputs(_(" -c, --command <command>       run command rather than interactive shell\n"
-		"                                 (alternative to '-- program [arguments]')\n"), out);
+	fputs(_(" -c, --command <command>       run <command> rather than an interactive shell\n"
+		"                                 (alternative to '-- <command> [<argument...>]')\n"), out);
 	fputs(_(" -e, --return                  return exit code of the child process\n"), out);
 	fputs(_(" -f, --flush                   run flush after each write\n"), out);
 	fputs(_("     --force                   use output file even when it is a link\n"), out);
@@ -930,7 +930,7 @@ int main(int argc, char **argv)
 	/* concat non-option arguments as command */
 	if (argc > 0 && strcmp(argv[-1], "--") == 0) {
 		if (ctl.command != NULL) {
-			warnx(_("option --command and '-- program' are mutually exclusive"));
+			warnx(_("option --command and a command after '--' cannot be combined"));
 			errtryhelp(EXIT_FAILURE);
 		}
 
