@@ -77,6 +77,7 @@ Interpret _mask_ as numerical list of processors instead of a bitmask. Numbers a
 
 *-p*, *--pid*::
 Operate on an existing PID and do not launch a new task.
+If PID is zero, then operate on the *taskset* process.
 
 include::man-common/help-version.adoc[]
 
@@ -133,6 +134,13 @@ pid 14's current affinity mask: 1 +
 taskset: failed to set pid 14's affinity: Invalid argument +
 $ echo $? +
 1 +
+
+== EXAMPLES
+
+Print the current CPU affinity as a list.
+
+$ taskset -pc 0 +
+pid 1355988's current affinity list: 0-47 +
 
 == AUTHORS
 

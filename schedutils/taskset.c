@@ -186,7 +186,18 @@ int main(int argc, char **argv)
 			all_tasks = 1;
 			break;
 		case 'p':
-			pid = strtopid_or_err(argv[argc - 1], _("invalid PID argument"));
+			/*
+			 * strtopid_or_err() is not suitable here; 0 can be
+			 * passed.
+			 */
+			pid = strtos32_or_err(argv[argc - 1],
+					      _("invalid PID argument"));
+			if (pid == 0)
+				pid = getpid();
+			/*
+			 * After this point, pid == 0 means "no pid" and that
+			 * we will exec a command.
+			 */
 			break;
 		case 'c':
 			ts.use_list = 1;
