@@ -16,11 +16,12 @@ ifdef::neverdefined[---]
 
 == NAME
 
-fincore - count pages of file contents in core
+fincore, mu - count pages of file contents in core
 
 == SYNOPSIS
 
 *fincore* [options] _file_...
+*mu* [options] _file_...
 
 == DESCRIPTION
 
