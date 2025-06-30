@@ -420,13 +420,13 @@ static inline size_t normalize_whitespace(unsigned char *str)
 	return __normalize_whitespace(str, sz, str, sz + 1);
 }
 
-static inline void strrep(char *s, int find, int replace)
+static inline void ul_strrep(char *s, int find, int replace)
 {
 	while (s && *s && (s = strchr(s, find)) != NULL)
 		*s++ = replace;
 }
 
-static inline void strrem(char *s, int rem)
+static inline void ul_strrem(char *s, int rem)
 {
 	char *p;
 
