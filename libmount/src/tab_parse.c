@@ -395,7 +395,7 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, const char *s)
 	/* (1) source */
 	p = unmangle(s, &s);
 	if (p) {
-		char *x = (char *) endswith(p, PATH_DELETED_SUFFIX);
+		char *x = (char *) ul_endswith(p, PATH_DELETED_SUFFIX);
 		if (x && *x)
 			*x = '\0';
 	}

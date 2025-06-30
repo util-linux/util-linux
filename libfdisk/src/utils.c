@@ -143,7 +143,7 @@ char *fdisk_partname(const char *dev, size_t partno)
 
 	/* devfs kludge - note: fdisk partition names are not supposed
 	   to equal kernel names, so there is no reason to do this */
-	if (endswith(dev, "disc")) {
+	if (ul_endswith(dev, "disc")) {
 		w -= 4;
 		p = "part";
 	}

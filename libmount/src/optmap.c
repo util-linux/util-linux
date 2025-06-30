@@ -250,7 +250,7 @@ const struct libmnt_optmap *mnt_optmap_get_entry(
 
 		for (ent = map; ent && ent->name; ent++) {
 			if (ent->mask & MNT_PREFIX) {
-				if (startswith(name, ent->name)) {
+				if (ul_startswith(name, ent->name)) {
 					if (mapent)
 						*mapent = ent;
 					return map;

@@ -39,16 +39,16 @@ static void parse_mask_or_list(const char *cmdline_arg,
 	arg = cmdline_arg;
 
 	/* strip optional operator first */
-	if (startswith(arg, "&")) {
+	if (ul_startswith(arg, "&")) {
 		bitwise_op = '&';
 		arg++;
-	} else if (startswith(arg, "^")) {
+	} else if (ul_startswith(arg, "^")) {
 		bitwise_op = '^';
 		arg++;
-	} else if (startswith(arg, "~")) {
+	} else if (ul_startswith(arg, "~")) {
 		bitwise_op = '~';
 		arg++;
-	} else if (startswith(arg, "|")) {
+	} else if (ul_startswith(arg, "|")) {
 		arg++;
 	}
 
@@ -56,8 +56,8 @@ static void parse_mask_or_list(const char *cmdline_arg,
 	if (bits == NULL)
 		errx(EXIT_FAILURE, _("error: cannot allocate bit mask"));
 
-	if (startswith(arg, ",") || startswith(arg, "0x")) {
-		if (startswith(arg, ","))
+	if (ul_startswith(arg, ",") || ul_startswith(arg, "0x")) {
+		if (ul_startswith(arg, ","))
 			arg++;
 		if (cpumask_parse(arg, bits, size) < 0)
 			errx(EXIT_FAILURE, _("error: invalid bit mask: %s"), cmdline_arg);

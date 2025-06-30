@@ -725,7 +725,7 @@ static int exec_helper(struct libmnt_context *cxt)
 			args[i++] = "-r";			/* 7 */
 		if (type
 		    && strchr(type, '.')
-		    && !endswith(cxt->helper, type)) {
+		    && !ul_endswith(cxt->helper, type)) {
 			args[i++] = "-t";			/* 8 */
 			args[i++] = type;			/* 9 */
 		}

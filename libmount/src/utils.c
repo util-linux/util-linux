@@ -1393,7 +1393,7 @@ static int test_startswith(struct libmnt_test *ts __attribute__((unused)),
 	char *optstr = argv[1];
 	char *pattern = argv[2];
 
-	printf("%s\n", startswith(optstr, pattern) ? "YES" : "NOT");
+	printf("%s\n", ul_startswith(optstr, pattern) ? "YES" : "NOT");
 	return 0;
 }
 
@@ -1406,7 +1406,7 @@ static int test_endswith(struct libmnt_test *ts __attribute__((unused)),
 	char *optstr = argv[1];
 	char *pattern = argv[2];
 
-	printf("%s\n", endswith(optstr, pattern) ? "YES" : "NOT");
+	printf("%s\n", ul_endswith(optstr, pattern) ? "YES" : "NOT");
 	return 0;
 }
 

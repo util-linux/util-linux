@@ -447,7 +447,7 @@ static int exec_helper(struct libmnt_context *cxt)
 		}
 		if (type
 		    && strchr(type, '.')
-		    && !endswith(cxt->helper, type)) {
+		    && !ul_endswith(cxt->helper, type)) {
 			args[i++] = "-t";		/* 10 */
 			args[i++] = type;		/* 11 */
 		}
@@ -1457,7 +1457,7 @@ static void join_err_mesgs(struct libmnt_context *cxt, char *buf, size_t bufsz)
 
 		if (!bufsz)
 			break;
-		if (!startswith(*s, "e "))
+		if (!ul_startswith(*s, "e "))
 			continue;
 		if (n) {
 			len = xstrncpy(buf, "; ", bufsz);
