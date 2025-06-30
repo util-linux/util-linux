@@ -467,7 +467,7 @@ extern int strfappend(char **a, const char *format, ...)
 extern int ul_strvfappend(char **a, const char *format, va_list ap)
 		 __attribute__ ((__format__ (__printf__, 2, 0)));
 
-extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
+extern const char *ul_split(const char **state, size_t *l, const char *separator, int quoted);
 
 extern char *ul_strchr_escaped(const char *s, int c);
 

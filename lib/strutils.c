@@ -1122,7 +1122,7 @@ char *ul_strchr_escaped(const char *s, int c)
 }
 
 /* Split a string into words. */
-const char *split(const char **state, size_t *l, const char *separator, int quoted)
+const char *ul_split(const char **state, size_t *l, const char *separator, int quoted)
 {
         const char *current;
 
