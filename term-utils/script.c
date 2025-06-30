@@ -824,7 +824,7 @@ int main(int argc, char **argv)
 		case 'c':
 			ctl.command = optarg;
 			ctl.command_norm = xstrdup(ctl.command);
-			strrep(ctl.command_norm, '\n', ' ');
+			ul_strrep(ctl.command_norm, '\n', ' ');
 			break;
 		case 'E':
 			if (strcmp(optarg, "auto") == 0)
