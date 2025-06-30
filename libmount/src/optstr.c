@@ -914,7 +914,7 @@ int mnt_match_options(const char *optstr, const char *pattern)
 
 		if (*name == '+')
 			name++, namesz--;
-		else if ((no = (startswith(name, "no") != NULL))) {
+		else if ((no = (ul_startswith(name, "no") != NULL))) {
 			name += 2, namesz -= 2;
 			if (!*name || *name == ',') {
 				match = 0;

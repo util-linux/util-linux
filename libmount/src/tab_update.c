@@ -763,7 +763,7 @@ static int update_modify_target(struct libmnt_update *upd)
 			char *p;
 			const char *e;
 
-			e = startswith(mnt_fs_get_target(fs), upd_source);
+			e = ul_startswith(mnt_fs_get_target(fs), upd_source);
 			if (!e || (*e && *e != '/'))
 				continue;
 			if (*e == '/')

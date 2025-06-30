@@ -258,7 +258,7 @@ static int64_t get_namespace_offset(const char *name)
 		line = strtok_r(tokstr, "\n", &saveptr);
 		if (!line)
 			continue;
-		line = (char *) startswith(line, name);
+		line = (char *) ul_startswith(line, name);
 		if (!line || line[0] != ' ')
 			continue;
 

@@ -138,7 +138,7 @@ static int is_wakeup_enabled(const char *devname)
 	FILE	*f;
 	size_t	skip = 0;
 
-	if (startswith(devname, "/dev/"))
+	if (ul_startswith(devname, "/dev/"))
 		skip = 5;
 	snprintf(buf, sizeof buf, SYS_WAKEUP_PATH_TEMPLATE, devname + skip);
 	f = fopen(buf, "r");
@@ -402,7 +402,7 @@ static int open_dev_rtc(const char *devname)
 	int fd;
 	char *devpath = NULL;
 
-	if (startswith(devname, "/dev"))
+	if (ul_startswith(devname, "/dev"))
 		devpath = xstrdup(devname);
 	else
 		xasprintf(&devpath, "/dev/%s", devname);

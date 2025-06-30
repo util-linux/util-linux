@@ -269,7 +269,7 @@ extern int streq_paths(const char *a, const char *b);
 /*
  * Match string beginning.
  */
-static inline const char *startswith(const char *s, const char *prefix)
+static inline const char *ul_startswith(const char *s, const char *prefix)
 {
 	size_t sz = prefix ? strlen(prefix) : 0;
 
@@ -295,7 +295,7 @@ static inline const char *startswith_no_case(const char *s, const char *prefix)
  */
 static inline const char *startswithpath(const char *s, const char *prefix)
 {
-	const char *p = startswith(s, prefix);
+	const char *p = ul_startswith(s, prefix);
 
 	if (p && (*p == '/' || *p == '\0'))
 		return p;
@@ -306,7 +306,7 @@ static inline const char *startswithpath(const char *s, const char *prefix)
 /*
  * Match string ending.
  */
-static inline const char *endswith(const char *s, const char *postfix)
+static inline const char *ul_endswith(const char *s, const char *postfix)
 {
 	size_t sl = s ? strlen(s) : 0;
 	size_t pl = postfix ? strlen(postfix) : 0;

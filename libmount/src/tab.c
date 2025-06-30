@@ -1818,7 +1818,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 
 		DBG(FS, ul_debugobj(fs, "source root: %s, source FS root: %s", root, src_root));
 
-		if (src_root && root && !startswith(root, src_root)) {
+		if (src_root && root && !ul_startswith(root, src_root)) {
 			if (strcmp(root, "/") == 0) {
 				free(root);
 				root = strdup(src_root);
@@ -1948,7 +1948,7 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 			int flags = 0;
 
 			if (!mnt_fs_get_srcpath(fs) ||
-			    !startswith(mnt_fs_get_srcpath(fs), "/dev/loop"))
+			    !ul_startswith(mnt_fs_get_srcpath(fs), "/dev/loop"))
 				continue;	/* does not look like loopdev */
 
 			if (mnt_fs_get_option(fstab_fs, "offset", &val, &len) == 0) {

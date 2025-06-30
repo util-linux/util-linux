@@ -978,7 +978,7 @@ dev_t __sysfs_devname_to_devno(const char *prefix, const char *name, const char 
 	/*
 	 * Read from /sys/block/<parent>/<partition>/dev
 	 */
-	if (!dev && parent && startswith(name, parent)) {
+	if (!dev && parent && ul_startswith(name, parent)) {
 		len = snprintf(buf, sizeof(buf),
 				"%s" _PATH_SYS_BLOCK "/%s/%s/dev",
 				prefix, _parent, _name);

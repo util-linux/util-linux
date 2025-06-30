@@ -157,7 +157,7 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 		const char *name = udev_list_entry_get_name(le);
 		size_t sz;
 
-		if (!name || !startswith(name,  LSBLK_UDEV_BYID_PREFIX))
+		if (!name || !ul_startswith(name,  LSBLK_UDEV_BYID_PREFIX))
 			continue;
 		name += LSBLK_UDEV_BYID_PREFIXSZ;
 		if (!*name)

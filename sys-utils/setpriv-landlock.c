@@ -120,7 +120,7 @@ void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 		return;
 	}
 
-	type = startswith(str, "fs:");
+	type = ul_startswith(str, "fs:");
 	if (type)
 		opts->access_fs |= parse_landlock_fs_access(type);
 }
@@ -132,7 +132,7 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 	char *accesses_part;
 	int parent_fd;
 
-	accesses = startswith(str, "path-beneath:");
+	accesses = ul_startswith(str, "path-beneath:");
 	if (!accesses)
 		errx(EXIT_FAILURE, _("invalid landlock rule: %s"), str);
 	path = strchr(accesses, ':');
