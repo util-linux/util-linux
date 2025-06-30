@@ -164,7 +164,7 @@ int ul_strv_extend_strv_concat(char ***a, char **b, const char *suffix) {
         UL_STRV_FOREACH(s, b) {
                 char *v;
 
-                v = strconcat(*s, suffix);
+                v = ul_strconcat(*s, suffix);
                 if (!v)
                         return -ENOMEM;
 

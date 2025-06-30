@@ -964,7 +964,7 @@ int streq_paths(const char *a, const char *b)
 }
 
 /* concatenate two strings to a new string, the size of the second string is limited by @b */
-char *strnconcat(const char *s, const char *suffix, size_t b)
+char *ul_strnconcat(const char *s, const char *suffix, size_t b)
 {
         size_t a;
         char *r;
@@ -995,13 +995,13 @@ char *strnconcat(const char *s, const char *suffix, size_t b)
 }
 
 /* concatenate two strings to a new string */
-char *strconcat(const char *s, const char *suffix)
+char *ul_strconcat(const char *s, const char *suffix)
 {
-        return strnconcat(s, suffix, suffix ? strlen(suffix) : 0);
+        return ul_strnconcat(s, suffix, suffix ? strlen(suffix) : 0);
 }
 
 /* concatenate @s and string defined by @format to a new string */
-char *strfconcat(const char *s, const char *format, ...)
+char *ul_strfconcat(const char *s, const char *format, ...)
 {
 	va_list ap;
 	char *val, *res;
@@ -1014,7 +1014,7 @@ char *strfconcat(const char *s, const char *format, ...)
 	if (sz < 0)
 		return NULL;
 
-	res = strnconcat(s, val, sz);
+	res = ul_strnconcat(s, val, sz);
 	free(val);
 	return res;
 }

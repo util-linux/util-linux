@@ -279,7 +279,7 @@ static void add_short_options(struct getopt_control *ctl, char *options)
 {
 	free(ctl->optstr);
 	if (*options != '+' && getenv("POSIXLY_CORRECT"))
-		ctl->optstr = strconcat("+", options);
+		ctl->optstr = ul_strconcat("+", options);
 	else
 		ctl->optstr = xstrdup(options);
 	if (!ctl->optstr)

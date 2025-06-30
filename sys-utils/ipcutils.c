@@ -715,7 +715,7 @@ int posix_ipc_msg_get_info(const char *name, struct posix_msg_data **msgds)
 		}
 		fclose(f);
 
-		p->mname = strconcat("/", de->d_name);
+		p->mname = ul_strconcat("/", de->d_name);
 
 		mqd_t mq = mq_open(p->mname, O_RDONLY);
 		struct mq_attr attr;

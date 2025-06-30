@@ -1900,7 +1900,7 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 			src = mnt_fs_get_srcpath(rootfs);
 			if (fstype && strncmp(fstype, "nfs", 3) == 0 && root) {
 				/* NFS stores the root at the end of the source */
-				src = src2 = strconcat(src, root);
+				src = src2 = ul_strconcat(src, root);
 				free(root);
 				root = NULL;
 			}

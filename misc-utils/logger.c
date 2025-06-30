@@ -670,7 +670,7 @@ static char *strdup_structured_data_list(struct list_head *ls)
 
 		if (!one)
 			continue;
-		res = strconcat(tmp, one);
+		res = ul_strconcat(tmp, one);
 		free(tmp);
 		free(one);
 	}
@@ -688,7 +688,7 @@ static char *get_structured_data_string(struct logger_ctl *ctl)
 		usr = strdup_structured_data_list(&ctl->user_sds);
 
 	if (sys && usr) {
-		res = strconcat(sys, usr);
+		res = ul_strconcat(sys, usr);
 		free(sys);
 		free(usr);
 	} else

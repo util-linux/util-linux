@@ -456,9 +456,9 @@ static inline char *ul_next_string(char *p, char *end)
 	return NULL;
 }
 
-extern char *strnconcat(const char *s, const char *suffix, size_t b);
-extern char *strconcat(const char *s, const char *suffix);
-extern char *strfconcat(const char *s, const char *format, ...)
+extern char *ul_strnconcat(const char *s, const char *suffix, size_t b);
+extern char *ul_strconcat(const char *s, const char *suffix);
+extern char *ul_strfconcat(const char *s, const char *format, ...)
 		 __attribute__ ((__format__ (__printf__, 2, 3)));
 
 extern int strappend(char **a, const char *b);
