@@ -139,7 +139,7 @@ int xvasprintf(char **strp, const char *fmt, va_list ap)
 
 static inline void xstrappend(char **a, const char *b)
 {
-	if (strappend(a, b) < 0)
+	if (ul_strappend(a, b) < 0)
 		err(XALLOC_EXIT_CODE, "cannot allocate string");
 }
 
@@ -153,7 +153,7 @@ static inline
 __attribute__((__format__(printf, 2, 0)))
 int xstrvfappend(char **a, const char *format, va_list ap)
 {
-	int ret = strvfappend(a, format, ap);
+	int ret = ul_strvfappend(a, format, ap);
 
 	if (ret < 0)
 		err(XALLOC_EXIT_CODE, "cannot allocate string");
