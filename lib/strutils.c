@@ -1019,7 +1019,7 @@ char *ul_strfconcat(const char *s, const char *format, ...)
 	return res;
 }
 
-int strappend(char **a, const char *b)
+int ul_strappend(char **a, const char *b)
 {
 	size_t al, bl;
 	char *tmp;
@@ -1051,13 +1051,13 @@ int strfappend(char **a, const char *format, ...)
 	int res;
 
 	va_start(ap, format);
-	res = strvfappend(a, format, ap);
+	res = ul_strvfappend(a, format, ap);
 	va_end(ap);
 
 	return res;
 }
 
-extern int strvfappend(char **a, const char *format, va_list ap)
+extern int ul_strvfappend(char **a, const char *format, va_list ap)
 {
 	char *val;
 	int sz;
@@ -1067,7 +1067,7 @@ extern int strvfappend(char **a, const char *format, va_list ap)
 	if (sz < 0)
 		return -errno;
 
-	res = strappend(a, val);
+	res = ul_strappend(a, val);
 	free(val);
 	return res;
 }
