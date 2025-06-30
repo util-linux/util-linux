@@ -106,7 +106,7 @@ The *--cpu-list* form is applicable only for launching new commands{colon}::
 
 A user can change the CPU affinity of a process belonging to the same user. A user must possess *CAP_SYS_NICE* to change the CPU affinity of a process belonging to another user. A user can retrieve the affinity mask of any process.
 
-== RETURN VALUE
+== EXIT STATUS
 
 *taskset* returns 0 in its affinity-getting mode as long as the provided PID exists.
 

@@ -96,7 +96,7 @@ Copy the cookie from a task with pid _123_ to the process group ID _456_{colon}:
 Retrieving or modifying the core scheduling cookie of a process requires *PTRACE_MODE_READ_REALCREDS* ptrace access to that process.
 See the section "Ptrace access mode checking" in *ptrace*(2) for more information.
 
-== RETURN VALUE
+== EXIT STATUS
 On success, *{command}* returns 0.
 If *{command}* fails, it will print an error and return 1.
 
