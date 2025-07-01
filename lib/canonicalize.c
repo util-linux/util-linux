@@ -83,7 +83,7 @@ static int is_dm_devname(char *canonical, char **name)
  * relative path. If the path is no relative than returns NULL. The path does
  * not have to exist.
  */
-char *absolute_path(const char *path)
+char *ul_absolute_path(const char *path)
 {
 	char cwd[PATH_MAX], *res, *p;
 	size_t psz, csz;
