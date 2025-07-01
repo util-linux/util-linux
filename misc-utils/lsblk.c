@@ -484,6 +484,7 @@ static char *get_type(struct lsblk_device *dev)
 
 		ul_path_read_string(dev->sysfs, &md_level, "md/level");
 		res = (md_level && *md_level) ? md_level : xstrdup("md");
+		free(md_level);
 
 	} else {
 		const char *type = NULL;
