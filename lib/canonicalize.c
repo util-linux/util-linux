@@ -256,13 +256,23 @@ done:
 #ifdef TEST_PROGRAM_CANONICALIZE
 int main(int argc, char **argv)
 {
+	char *p;
+
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <device>\n", argv[0]);
 		exit(EXIT_FAILURE);
 	}
 
-	fprintf(stdout, "orig: %s\n", argv[1]);
-	fprintf(stdout, "real: %s\n", canonicalize_path(argv[1]));
+	fprintf(stdout, "orig:            %s\n", argv[1]);
+
+	p = canonicalize_path(argv[1]);
+	fprintf(stdout, "real:            %s\n", p);
+	free(p);
+
+	p = canonicalize_path_restricted(argv[1]);
+	fprintf(stdout, "real-restricted: %s\n", p);
+	free(p);
+
 	exit(EXIT_SUCCESS);
 }
 #endif
