@@ -2144,8 +2144,11 @@ int main(int argc, char **argv)
 	if (getenv("MORESECURE") || getenv("PAGERSECURE"))
 		ctl.is_secure = 1;
 
-	if ((s = getenv("MORE_SHELL_LINES")) && isdigit_string(s))
-		ul_strtou16(s, (uint16_t *) &ctl.lines_per_screen, 10);
+	if ((s = getenv("MORE_SHELL_LINES")) && isdigit_string(s)) {
+		uint16_t x = 0;
+		if (ul_strtou16(s, (uint16_t *) &x, 10) == 0)
+			ctl.lines_per_screen = x;
+	}
 
 	if ((s = getenv("MORE")) != NULL)
 		env_argscan(&ctl, s);
