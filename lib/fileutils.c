@@ -323,6 +323,7 @@ done:
 	return rc;
 }
 
+
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
 {
@@ -359,7 +360,13 @@ int main(int argc, char *argv[])
 
 		printf("'%s': %s\n", argv[2],
 				is_mkdir_permitted(argv[2]) ? "yes" : "not");
+
+	} else if (strcmp(argv[1], "--mkdir-restricted") == 0) {
+
+		printf("'%s': %s\n", argv[2],
+			ul_mkdir_p_restricted(argv[2], 0755) == 0 ? "ok" : "failed");
 	}
+
 	return EXIT_SUCCESS;
 }
 #endif
@@ -398,6 +405,37 @@ int ul_mkdir_p(const char *path, mode_t mode)
 
 	free(dir);
 	return rc;
+}
+
+/* callback for ul_restricted_path_oper() */
+static int do_mkdir_p_oper(const char *path, char **result, void *data)
+{
+	int rc;
+	mode_t mode = *((mode_t *) data);
+
+	rc = ul_mkdir_p(path, mode);
+	if (rc == 0 && result)
+		*result = strdup(path);
+
+	return rc;
+}
+
+
+/* like ul_mkdir_p() but drops permissions before mkdir() */
+int ul_mkdir_p_restricted(const char *path, mode_t mode)
+{
+	int rc;
+	char *result;
+
+	result = ul_restricted_path_oper(path, do_mkdir_p_oper, (void *) &mode);
+	if (result)
+		rc = 0;
+	else
+		rc = errno;
+
+	free(result);
+	return rc;
+
 }
 
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)

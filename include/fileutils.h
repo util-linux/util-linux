@@ -65,6 +65,8 @@ extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern unsigned int get_fd_tabsize(void);
 
 extern int ul_mkdir_p(const char *path, mode_t mode);
+extern int ul_mkdir_p_restricted(const char *path, mode_t mode);
+
 extern char *stripoff_last_component(char *path);
 
 /* This is readdir()-like function, but skips "." and ".." directory entries */
