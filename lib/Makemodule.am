@@ -203,7 +203,7 @@ test_fileutils_SOURCES = lib/fileutils.c
 test_fileutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEUTILS
 test_fileutils_LDADD = $(LDADD) libcommon.la
 
-test_canonicalize_SOURCES = lib/canonicalize.c
+test_canonicalize_SOURCES = lib/canonicalize.c lib/fileutils.c
 test_canonicalize_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CANONICALIZE
 test_canonicalize_LDADD = $(LDADD) libcommon.la
 

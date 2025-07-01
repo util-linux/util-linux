@@ -14,12 +14,12 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/wait.h>
 
 #include "canonicalize.h"
 #include "pathnames.h"
 #include "all-io.h"
 #include "strutils.h"
+#include "fileutils.h"
 
 /*
  * Converts private "dm-N" names to "/dev/mapper/<name>"
@@ -122,7 +122,8 @@ char *ul_absolute_path(const char *path)
  * Returns: <0 on error, 1 is cannot be canonicalized (errno is set); 0 on success
  */
 static int __attribute__((nonnull(2)))
-do_canonicalize(const char *path, char **result)
+do_canonicalize(const char *path, char **result,
+		void *data __attribute__((__unused__)))
 {
 	char *canonical, *dmname;
 
@@ -160,98 +161,20 @@ char *canonicalize_path(const char *path)
 {
 	char *canonical = NULL;
 
-	if (do_canonicalize(path, &canonical) == 1)
+	if (do_canonicalize(path, &canonical, NULL) == 1)
 		return strdup(path);
 
 	return canonical;
 }
+
 /*
- * Almost like canonicalize_path() but drops permissions (suid, etc.) to
- * canonicalize the path. Returns NULL if the path is unreachable
+ * Drop permissions (e.g., suid) and canonicalize the path. If the path is
+ * unreadable (for example, due to missing permissions), it returns NULL.
  */
 char *canonicalize_path_restricted(const char *path)
 {
-	char *canonical = NULL;
-	int errsv = 0;
-	int pipes[2];
-	ssize_t len;
-	pid_t pid;
-
-	if (!path || !*path)
-		return NULL;
-
-	if (pipe(pipes) != 0)
-		return NULL;
-
-	/*
-	 * To accurately assume identity of getuid() we must use setuid()
-	 * but if we do that, we lose ability to reassume euid of 0, so
-	 * we fork to do the check to keep euid intact.
-	 */
-	pid = fork();
-	switch (pid) {
-	case -1:
-		close(pipes[0]);
-		close(pipes[1]);
-		return NULL;			/* fork error */
-	case 0:
-		close(pipes[0]);		/* close unused end */
-		pipes[0] = -1;
-		errno = 0;
-
-		if (drop_permissions() != 0)
-			canonical = NULL;	/* failed */
-		else
-			do_canonicalize(path, &canonical);
-
-		len = canonical ?(ssize_t) strlen(canonical) :
-				errno ? -errno : -EINVAL;
-
-		/* send length or errno */
-		write_all(pipes[1], (char *) &len, sizeof(len));
-		if (canonical)
-			write_all(pipes[1], canonical, len);
-		_exit(0);
-	default:
-		break;
-	}
-
-	close(pipes[1]);		/* close unused end */
-	pipes[1] = -1;
-
-	/* read size or -errno */
-	if (read_all(pipes[0], (char *) &len, sizeof(len)) != sizeof(len))
-		goto done;
-	if (len < 0) {
-		errsv = -len;
-		goto done;
-	}
-
-	canonical = malloc(len + 1);
-	if (!canonical) {
-		errsv = ENOMEM;
-		goto done;
-	}
-	/* read path */
-	if (read_all(pipes[0], canonical, len) != len) {
-		errsv = errno;
-		goto done;
-	}
-	canonical[len] = '\0';
-done:
-	if (errsv) {
-		free(canonical);
-		canonical = NULL;
-	}
-	close(pipes[0]);
-
-	/* We make a best effort to reap child */
-	ignore_result( waitpid(pid, NULL, 0) );
-
-	errno = errsv;
-	return canonical;
+	return ul_restricted_path_oper(path, do_canonicalize, NULL);
 }
-
 
 #ifdef TEST_PROGRAM_CANONICALIZE
 int main(int argc, char **argv)
