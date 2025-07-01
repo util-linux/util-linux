@@ -953,7 +953,7 @@ int main(int argc, char **argv)
 			device = argv[optind];
 			wholedisk = xstrdup(argv[optind + 1]);
 
-			if (device && wholedisk && !startswith(device, wholedisk))
+			if (device && wholedisk && !ul_startswith(device, wholedisk))
 				errx(EXIT_FAILURE, _("partition and disk name do not match"));
 		}
 	} else if (optind == argc - 1) {

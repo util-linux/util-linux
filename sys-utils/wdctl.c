@@ -594,7 +594,7 @@ static int read_governors(struct wd_device *wd)
 		while ((sz = getline(&line, &dummy, f)) >= 0) {
 			if (rtrim_whitespace((unsigned char *) line) == 0)
 				continue;
-			strv_consume(&wd->available_governors, line);
+			ul_strv_consume(&wd->available_governors, line);
 			dummy = 0;
 			line = NULL;
 		}
@@ -663,7 +663,7 @@ static void show_governors(struct wd_device *wd)
 	if (wd->governor)
 		printf(_("%-14s %s\n"), _("Pre-timeout governor:"), wd->governor);
 	if (wd->available_governors) {
-		char *tmp = strv_join(wd->available_governors, " ");
+		char *tmp = ul_strv_join(wd->available_governors, " ");
 
 		if (tmp)
 			printf(_("%-14s %s\n"),

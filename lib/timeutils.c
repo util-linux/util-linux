@@ -118,7 +118,7 @@ static int parse_sec(const char *t, usec_t *usec)
 		e += strspn(e, WHITESPACE);
 
 		for (i = 0; i < ARRAY_SIZE(table); i++)
-			if (startswith(e, table[i].suffix)) {
+			if (ul_startswith(e, table[i].suffix)) {
 				usec_t k = (usec_t) z * table[i].usec;
 
 				for (; n > 0; n--)
@@ -278,7 +278,7 @@ static int parse_timestamp_reference(time_t x, const char *t, usec_t *usec)
 			goto finish;
 
 		return -EINVAL;
-	} else if (endswith(t, " ago")) {
+	} else if (ul_endswith(t, " ago")) {
 		char *z;
 
 		z = strndup(t, strlen(t) - 4);

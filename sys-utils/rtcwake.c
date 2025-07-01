@@ -138,7 +138,7 @@ static int is_wakeup_enabled(const char *devname)
 	FILE	*f;
 	size_t	skip = 0;
 
-	if (startswith(devname, "/dev/"))
+	if (ul_startswith(devname, "/dev/"))
 		skip = 5;
 	snprintf(buf, sizeof buf, SYS_WAKEUP_PATH_TEMPLATE, devname + skip);
 	f = fopen(buf, "r");
@@ -267,7 +267,7 @@ static char **get_sys_power_states(struct rtcwake_control *ctl)
 		if (ss <= 0)
 			goto nothing;
 		buf[ss] = '\0';
-		ctl->possible_modes = strv_split(buf, " \n");
+		ctl->possible_modes = ul_strv_split(buf, " \n");
 		close(fd);
 	}
 	return ctl->possible_modes;
@@ -385,7 +385,7 @@ static int get_rtc_mode(struct rtcwake_control *ctl, const char *s)
 	size_t i;
 	char **modes = get_sys_power_states(ctl), **m;
 
-	STRV_FOREACH(m, modes) {
+	UL_STRV_FOREACH(m, modes) {
 		if (strcmp(s, *m) == 0)
 			return SYSFS_MODE;
 	}
@@ -402,7 +402,7 @@ static int open_dev_rtc(const char *devname)
 	int fd;
 	char *devpath = NULL;
 
-	if (startswith(devname, "/dev"))
+	if (ul_startswith(devname, "/dev"))
 		devpath = xstrdup(devname);
 	else
 		xasprintf(&devpath, "/dev/%s", devname);
@@ -421,7 +421,7 @@ static void list_modes(struct rtcwake_control *ctl)
 	if (!modes)
 		errx(EXIT_FAILURE, _("could not read: %s"), SYS_POWER_STATE_PATH);
 
-	STRV_FOREACH(m, modes)
+	UL_STRV_FOREACH(m, modes)
 		printf("%s ", *m);
 
 	for (i = 0; i < ARRAY_SIZE(rtcwake_mode_string); i++)

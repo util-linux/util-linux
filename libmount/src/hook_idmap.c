@@ -434,15 +434,15 @@ static int hook_prepare_options(
 		idmap_type_t map_type;
 		uint32_t nsid = UINT_MAX, hostid = UINT_MAX, range = UINT_MAX;
 
-		if (startswith(tok, "b:")) {
+		if (ul_startswith(tok, "b:")) {
 			/* b:id-mount:id-host:id-range */
 			map_type = ID_TYPE_UIDGID;
 			tok += 2;
-		} else if (startswith(tok, "g:")) {
+		} else if (ul_startswith(tok, "g:")) {
 			/* g:id-mount:id-host:id-range */
 			map_type = ID_TYPE_GID;
 			tok += 2;
-		} else if (startswith(tok, "u:")) {
+		} else if (ul_startswith(tok, "u:")) {
 			/* u:id-mount:id-host:id-range */
 			map_type = ID_TYPE_UID;
 			tok += 2;

@@ -962,14 +962,14 @@ int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
 		/* Name */
 		vu->name = xstrdup(d->d_name);
 		*vu->name = toupper(*vu->name);
-		strrep(vu->name, '_', ' ');
+		ul_strrep(vu->name, '_', ' ');
 
 		/* Description */
 		vu->text = str;
-		p = (char *) startswith(vu->text, "Mitigation");
+		p = (char *) ul_startswith(vu->text, "Mitigation");
 		if (p) {
 			*p = ';';
-			strrem(vu->text, ':');
+			ul_strrem(vu->text, ':');
 		}
 	}
 	closedir(dir);

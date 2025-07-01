@@ -695,7 +695,7 @@ int is_loopdev(const char *device)
 		cn = canonicalize_path(name);
 		if (cn)
 			p = stripoff_last_component(cn);
-		rc = p && startswith(p, "loop");
+		rc = p && ul_startswith(p, "loop");
 		free(cn);
 	}
 

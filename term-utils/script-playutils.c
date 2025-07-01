@@ -359,7 +359,7 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 			break;
 		}
 		if (*buf) {
-			strrem(buf, '\n');
+			ul_strrem(buf, '\n');
 			step->value = strrealloc(step->value, buf);
 			if (!step->value)
 				err_oom();

@@ -98,9 +98,9 @@ _pam_parse_args (pam_handle_t *pamh,
 			ctrl |= LASTLOG2_DEBUG;
 		else if (strcmp (*argv, "silent") == 0)
 			ctrl |= LASTLOG2_QUIET;
-		else if ((str = startswith (*argv, "database=")) != NULL)
+		else if ((str = ul_startswith (*argv, "database=")) != NULL)
 			lastlog2_path = str;
-		else if ((str = startswith (*argv, "silent_if=")) != NULL) {
+		else if ((str = ul_startswith (*argv, "silent_if=")) != NULL) {
 			const void *void_str = NULL;
 			const char *service;
 			if ((pam_get_item (pamh, PAM_SERVICE, &void_str) != PAM_SUCCESS) ||
@@ -143,7 +143,7 @@ write_login_data (pam_handle_t *pamh, int ctrl, const char *user)
 		tty = void_str;
 
 	/* strip leading "/dev/" from tty. */
-	const char *str = startswith(tty, "/dev/");
+	const char *str = ul_startswith(tty, "/dev/");
 	if (str != NULL)
 		tty = str;
 

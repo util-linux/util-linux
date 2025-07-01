@@ -61,7 +61,6 @@
 #include "pathnames.h"
 #include "env.h"
 #include "closestream.h"
-#include "strv.h"
 #include "strutils.h"
 #include "ttyutils.h"
 #include "pwdutils.h"

@@ -319,14 +319,14 @@ static void parse_parameter(struct chmem_desc *desc, char *param)
 {
 	char **split;
 
-	split = strv_split(param, "-");
-	if (strv_length(split) > 2)
+	split = ul_strv_split(param, "-");
+	if (ul_strv_length(split) > 2)
 		errx(EXIT_FAILURE, _("Invalid parameter: %s"), param);
-	if (strv_length(split) == 1)
+	if (ul_strv_length(split) == 1)
 		parse_single_param(desc, split[0]);
 	else
 		parse_range_param(desc, split[0], split[1]);
-	strv_free(split);
+	ul_strv_free(split);
 	if (desc->start > desc->end)
 		errx(EXIT_FAILURE, _("Invalid range: %s"), param);
 }
