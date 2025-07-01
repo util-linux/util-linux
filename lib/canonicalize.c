@@ -262,7 +262,10 @@ int main(int argc, char **argv)
 	}
 
 	fprintf(stdout, "orig: %s\n", argv[1]);
-	fprintf(stdout, "real: %s\n", canonicalize_path(argv[1]));
+
+	fprintf(stdout, "real:            %s\n", canonicalize_path(argv[1]));
+	fprintf(stdout, "real-restricted: %s\n", canonicalize_path_restricted(argv[1]));
+
 	exit(EXIT_SUCCESS);
 }
 #endif
