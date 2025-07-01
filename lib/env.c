@@ -280,7 +280,7 @@ return secure_getenv(arg);
 #endif
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_ENV
 int main(void)
 {
 	char *const *bad;
