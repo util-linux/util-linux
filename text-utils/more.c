@@ -204,6 +204,7 @@ struct more_control {
 #endif
 	unsigned int
 		ignore_stdin,  		/* POLLHUP; peer closed pipe */
+		pending_stdin,		/* data on stdin temporary ignored when waiting for stderr */
 		bad_stdout,  		/* true if overwriting does not turn off standout */
 		catch_suspend,  	/* we should catch the SIGTSTP signal */
 		clear_line_ends,  	/* do not scroll, paint each screen from the top */
@@ -1378,11 +1379,14 @@ static int more_poll(struct more_control *ctl, int timeout, int *stderr_active)
 
 	if (stderr_active)
 		*stderr_active = 0;
+	else
+		/* always check stdin if not care about stderr */
+		ctl->pending_stdin = 0;
 
 	while (!has_data) {
 		int rc;
 
-		if (ctl->ignore_stdin)
+		if (ctl->ignore_stdin || ctl->pending_stdin)
 			pfd[POLLFD_STDIN].fd = -1;	/* probably closed, ignore */
 
 		rc = poll(pfd, ARRAY_SIZE(pfd), timeout);
@@ -1440,8 +1444,11 @@ static int more_poll(struct more_control *ctl, int timeout, int *stderr_active)
 			if ((pfd[POLLFD_STDIN].revents & POLLHUP) ||
 			    (pfd[POLLFD_STDIN].revents & POLLNVAL))
 				ctl->ignore_stdin = 1;
-			else
+			else {
 				has_data++;
+				if (ctl->current_file == stdin)
+					ctl->pending_stdin = 1;
+			}
 		}
 
 		/* event on stderr (we reads user commands from stderr!) */
@@ -1690,6 +1697,13 @@ static int more_key_command(struct more_control *ctl, char *filename)
 			continue;
 		if (stderr_active == 0)
 			continue;
+
+		/* There could be new data on stdin (e.g. prog | more) while
+		 * we are waiting for user's activity on stderr. These stdin
+		 * events are temporarily ignored to avoid a busy loop. Let's
+		 * reset this to ensure stdin is checked next time. */
+		ctl->pending_stdin = 0;
+
 		cmd = read_command(ctl);
 		if (cmd.key == more_kc_unknown_command)
 			continue;
