@@ -1161,7 +1161,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	}
 
 	/* try absolute path */
-	if (is_relative_path(path) && (cn = absolute_path(path))) {
+	if (is_relative_path(path) && (cn = ul_absolute_path(path))) {
 		DBG(TAB, ul_debugobj(tb, "lookup absolute TARGET: '%s'", cn));
 		mnt_reset_iter(&itr, direction);
 		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
