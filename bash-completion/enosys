@@ -1,4 +1,4 @@
-_waitpid_module()
+_enosys_module()
 {
 	local cur prev OPTS
 	COMPREPLY=()
