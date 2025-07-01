@@ -112,8 +112,10 @@ extern void ul_close_all_fds(unsigned int first, unsigned int last);
 #define UL_COPY_WRITE_ERROR (-2)
 int ul_copy_file(int from, int to);
 
-
 extern int ul_reopen(int fd, int flags);
 extern char *ul_basename(char *path);
+
+extern char *ul_restricted_path_oper(const char *path,
+		int (*oper)(const char *path, char **result));
 
 #endif /* UTIL_LINUX_FILEUTILS */

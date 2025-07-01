@@ -3615,6 +3615,7 @@ endif
 exe = executable(
   'test_canonicalize',
   'lib/canonicalize.c',
+  'lib/fileutils.c',
   c_args : ['-DTEST_PROGRAM_CANONICALIZE'],
   include_directories : dir_include,
   build_by_default: program_tests)

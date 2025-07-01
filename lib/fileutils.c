@@ -12,6 +12,7 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #include "c.h"
 #include "all-io.h"
@@ -168,6 +169,93 @@ void ul_close_all_fds(unsigned int first, unsigned int last)
 				close(fd);
 		}
 	}
+}
+
+/*
+ * Fork, drop permissions, and call oper() and return result.
+ */
+char *ul_restricted_path_oper(const char *path,
+				  int (*oper)(const char *path, char **result))
+{
+	char *result = NULL;
+	int errsv = 0;
+	int pipes[2];
+	ssize_t len;
+	pid_t pid;
+
+	if (!path || !*path)
+		return NULL;
+
+	if (pipe(pipes) != 0)
+		return NULL;
+	/*
+	 * To accurately assume identity of getuid() we must use setuid()
+	 * but if we do that, we lose ability to reassume euid of 0, so
+	 * we fork to do the check to keep euid intact.
+	 */
+	pid = fork();
+	switch (pid) {
+	case -1:
+		close(pipes[0]);
+		close(pipes[1]);
+		return NULL;			/* fork error */
+	case 0:
+		close(pipes[0]);		/* close unused end */
+		pipes[0] = -1;
+		errno = 0;
+
+		if (drop_permissions() != 0)
+			result = NULL;	/* failed */
+		else
+			oper(path, &result);
+
+		len = result ? (ssize_t) strlen(result) :
+		          errno ? -errno : -EINVAL;
+
+		/* send length or errno */
+		write_all(pipes[1], (char *) &len, sizeof(len));
+		if (result)
+			write_all(pipes[1], result, len);
+		_exit(0);
+	default:
+		break;
+	}
+
+	close(pipes[1]);		/* close unused end */
+	pipes[1] = -1;
+
+	/* read size or -errno */
+	if (read_all(pipes[0], (char *) &len, sizeof(len)) != sizeof(len))
+		goto done;
+	if (len < 0) {
+		errsv = -len;
+		goto done;
+	}
+
+	result = malloc(len + 1);
+	if (!result) {
+		errsv = ENOMEM;
+		goto done;
+	}
+	/* read path */
+	if (read_all(pipes[0], result, len) != len) {
+		errsv = errno;
+		goto done;
+	}
+	result[len] = '\0';
+done:
+	if (errsv) {
+		free(result);
+		result = NULL;
+	}
+	close(pipes[0]);
+
+	/* We make a best effort to reap child */
+	ignore_result( waitpid(pid, NULL, 0) );
+
+	errno = errsv;
+	return result;
+
 }
 
 #ifdef TEST_PROGRAM_FILEUTILS
