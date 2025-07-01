@@ -18,6 +18,7 @@
 #include "all-io.h"
 #include "fileutils.h"
 #include "pathnames.h"
+#include "canonicalize.h"
 
 int mkstemp_cloexec(char *template)
 {
@@ -258,11 +259,73 @@ done:
 
 }
 
+/*
+ * Ensure the existing part of the path is accessible to the current user,
+ * and they can create a directory there (if the complete path is
+ * unreachable).
+ */
+static int do_mkdir_precheck(const char *path, char **result)
+{
+	char *src = NULL, *base = NULL;
+	int rc = 1;
+
+	if (result)
+		*result = NULL;
+	src = strdup(path);
+	if (!src)
+		return -ENOMEM;
+
+	do {
+		struct stat sb;
+
+		if (stat(src, &sb) == 0) {
+			if (S_ISDIR(sb.st_mode)
+			    && access(src, W_OK | X_OK) == 0) {
+
+				*result = src;
+				src = NULL;
+				rc = 0;
+			}
+			break;
+		}
+
+		base = stripoff_last_component(src);
+	} while (base && *base);
+
+	free(src);
+	return rc;
+}
+
+/* Fork, drop permissions and try if mkdir-p is possible */
+int is_mkdir_permitted(const char *path)
+{
+	char *src = NULL, *result = NULL;
+	int rc = 0;
+
+	if (is_relative_path(path)) {
+		src = ul_absolute_path(path);
+		if (!src)
+			goto done;
+	} else
+		src = strdup(path);
+
+	if (ul_normalize_path(src) != 0)
+		goto done;
+
+	result = ul_restricted_path_oper(src, do_mkdir_precheck);
+	if (result)
+		rc = 1;
+done:
+	free(src);
+	free(result);
+	return rc;
+}
+
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file}", argv[0]);
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file,mkdir-precheck}", argv[0]);
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
 		FILE *f;
@@ -289,6 +352,11 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, "read");
 		else if (ret == UL_COPY_WRITE_ERROR)
 			err(EXIT_FAILURE, "write");
+
+	} else if (strcmp(argv[1], "--mkdir-precheck") == 0) {
+
+		printf("'%s': %s\n", argv[2],
+				is_mkdir_permitted(argv[2]) ? "yes" : "not");
 	}
 	return EXIT_SUCCESS;
 }

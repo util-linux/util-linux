@@ -118,4 +118,6 @@ extern char *ul_basename(char *path);
 extern char *ul_restricted_path_oper(const char *path,
 		int (*oper)(const char *path, char **result));
 
+extern int is_mkdir_permitted(const char *path);
+
 #endif /* UTIL_LINUX_FILEUTILS */

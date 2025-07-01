@@ -3605,6 +3605,8 @@ endif
 exe = executable(
   'test_fileutils',
   'lib/fileutils.c',
+  'lib/canonicalize.c',
+  'lib/strutils.c',
   c_args : ['-DTEST_PROGRAM_FILEUTILS'],
   include_directories : dir_include,
   build_by_default: program_tests)
