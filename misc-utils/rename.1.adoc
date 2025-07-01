@@ -20,11 +20,11 @@ rename - rename files
 
 == SYNOPSIS
 
-*rename* [options] _expression replacement file_...
+*rename* [options] _substring replacement file_...
 
 == DESCRIPTION
 
-*rename* will rename the specified files by replacing the first occurrence of _expression_ in their name by _replacement_.
+*rename* will rename the specified files by replacing the first occurrence of _substring_ in their name by _replacement_.
 
 == OPTIONS
 
@@ -38,10 +38,10 @@ Show which files were renamed, if any.
 Do not make any changes; add *--verbose* to see what would be made.
 
 *-a*, *--all*::
-Replace all occurrences of _expression_ rather than only the first one.
+Replace all occurrences of _substring_ rather than only the first one.
 
 *-l*, *--last*::
-Replace the last occurrence of _expression_ rather than the first one.
+Replace the last occurrence of _substring_ rather than the first one.
 
 *-o*, *--no-overwrite*::
 Do not overwrite existing files. When *--symlink* is active, do not overwrite symlinks pointing to existing targets.
@@ -57,9 +57,9 @@ The renaming has no safeguards by default or without any one of the options *--n
 
 == EDGE CASES
 
-If the _expression_ is empty, then by default _replacement_ will be added to the start of the filename. With *--all*, _replacement_ will be inserted in between every two characters of the filename, as well as at the start and end.
+If _substring_ is empty, then by default _replacement_ will be added to the start of the filename. With *--all*, _replacement_ will be inserted in between every two characters of the filename, as well as at the start and end.
 
-Normally, only the final path component of a filename is updated. (Or with *--symlink*, only the final path component of the link.) But if either _expression_ or _replacement_ contains a _/_, the full path is updated. This can cause a file to be moved between folders. Creating folders, and moving files between filesystems, is not supported.
+Normally, only the final path component of a filename is updated. (Or with *--symlink*, only the final path component of the link.) But if either _substring_ or _replacement_ contains a _/_, the full path is updated. This can cause a file to be moved between folders. Creating folders, and moving files between filesystems, is not supported.
 
 == INTERACTIVE MODE
 

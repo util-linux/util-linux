@@ -251,7 +251,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %s [options] <expression> <replacement> <file>...\n"),
+	      _(" %s [options] <substring> <replacement> <file>...\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
