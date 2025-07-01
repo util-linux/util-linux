@@ -21,7 +21,7 @@ lsclocks - display system clocks
 It allows to display information like current time and resolution of clocks.
 Different kinds of clocks are supported.
 
-* POSIX clocks: *CLOCK_MONOTONIC*, *CLOCK_REALTIME*, *CLOCK_BOOTTIME*\, etc.
+* POSIX clocks: *CLOCK_MONOTONIC*, *CLOCK_REALTIME*, *CLOCK_BOOTTIME*, etc.
 * CPU clocks: *clock_getcpuclockid()*.
 * PTP clocks: */dev/ptp0*.
 * RTC clocks: */dev/rtc0*.
@@ -44,7 +44,7 @@ Output all columns.
 *-r*, *--raw*::
 Use raw output format.
 
-*-r*, *--time* _clock_::
+*-t*, *--time* _clock_::
 Show current time of one specific clock.
 
 *--no-discover-dynamic*::
