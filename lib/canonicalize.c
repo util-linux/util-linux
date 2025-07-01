@@ -118,28 +118,57 @@ char *ul_absolute_path(const char *path)
 	return res;
 }
 
-char *canonicalize_path(const char *path)
+/*
+ * Returns: <0 on error, 1 is cannot be canonicalized (errno is set); 0 on success
+ */
+static int __attribute__((nonnull(2)))
+do_canonicalize(const char *path, char **result)
 {
 	char *canonical, *dmname;
 
-	if (!path || !*path)
-		return NULL;
+	*result = NULL;
 
+	if (!path || !*path) {
+		errno = EINVAL;
+		return -errno;
+	}
+
+	errno = 0;
 	canonical = realpath(path, NULL);
 	if (!canonical)
-		return strdup(path);
+		return 1;
 
 	if (is_dm_devname(canonical, &dmname)) {
 		char *dm = canonicalize_dm_name(dmname);
 		if (dm) {
 			free(canonical);
-			return dm;
+			canonical = dm;
 		}
 	}
 
-	return canonical;
+	if (canonical)
+		*result = canonical;
+	return 0;
 }
 
+/*
+ * Always returns a newly allocated string or NULL in case of an error. An
+ * unreachable path is not an error (!), and in this case, it just duplicates
+ * @path.
+ */
+char *canonicalize_path(const char *path)
+{
+	char *canonical = NULL;
+
+	if (do_canonicalize(path, &canonical) == 1)
+		return strdup(path);
+
+	return canonical;
+}
+/*
+ * Almost like canonicalize_path() but drops permissions (suid, etc.) to
+ * canonicalize the path. Returns NULL if the path is unreachable
+ */
 char *canonicalize_path_restricted(const char *path)
 {
 	char *canonical = NULL;
@@ -172,21 +201,11 @@ char *canonicalize_path_restricted(const char *path)
 
 		if (drop_permissions() != 0)
 			canonical = NULL;	/* failed */
-		else {
-			char *dmname = NULL;
+		else
+			do_canonicalize(path, &canonical);
 
-			canonical = realpath(path, NULL);
-			if (canonical && is_dm_devname(canonical, &dmname)) {
-				char *dm = canonicalize_dm_name(dmname);
-				if (dm) {
-					free(canonical);
-					canonical = dm;
-				}
-			}
-		}
-
-		len = canonical ? (ssize_t) strlen(canonical) :
-		          errno ? -errno : -EINVAL;
+		len = canonical ?(ssize_t) strlen(canonical) :
+				errno ? -errno : -EINVAL;
 
 		/* send length or errno */
 		write_all(pipes[1], (char *) &len, sizeof(len));
