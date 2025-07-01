@@ -176,7 +176,8 @@ void ul_close_all_fds(unsigned int first, unsigned int last)
  * Fork, drop permissions, and call oper() and return result.
  */
 char *ul_restricted_path_oper(const char *path,
-				  int (*oper)(const char *path, char **result))
+			  int (*oper)(const char *path, char **result, void *data),
+			  void *data)
 {
 	char *result = NULL;
 	int errsv = 0;
@@ -208,7 +209,7 @@ char *ul_restricted_path_oper(const char *path,
 		if (drop_permissions() != 0)
 			result = NULL;	/* failed */
 		else
-			oper(path, &result);
+			oper(path, &result, data);
 
 		len = result ? (ssize_t) strlen(result) :
 		          errno ? -errno : -EINVAL;
@@ -264,7 +265,8 @@ done:
  * and they can create a directory there (if the complete path is
  * unreachable).
  */
-static int do_mkdir_precheck(const char *path, char **result)
+static int do_mkdir_precheck(const char *path, char **result,
+			void *data __attribute__((__unused__)))
 {
 	char *src = NULL, *base = NULL;
 	int rc = 1;
@@ -312,7 +314,7 @@ int is_mkdir_permitted(const char *path)
 	if (ul_normalize_path(src) != 0)
 		goto done;
 
-	result = ul_restricted_path_oper(src, do_mkdir_precheck);
+	result = ul_restricted_path_oper(src, do_mkdir_precheck, NULL);
 	if (result)
 		rc = 1;
 done:

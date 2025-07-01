@@ -116,7 +116,8 @@ extern int ul_reopen(int fd, int flags);
 extern char *ul_basename(char *path);
 
 extern char *ul_restricted_path_oper(const char *path,
-		int (*oper)(const char *path, char **result));
+		int (*oper)(const char *path, char **result, void *data),
+		void *data);
 
 extern int is_mkdir_permitted(const char *path);
 

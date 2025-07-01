@@ -120,8 +120,11 @@ char *ul_absolute_path(const char *path)
 
 /*
  * Returns: <0 on error, 1 is cannot be canonicalized (errno is set); 0 on success
+ *
+ * May be used as a ul_restricted_path_oper() callback.
  */
-static int do_canonicalize(const char *path, char **result)
+static int do_canonicalize(const char *path, char **result,
+			void *data __attribute__((__unused__)))
 {
 	char *canonical, *dmname;
 
@@ -160,7 +163,7 @@ char *canonicalize_path(const char *path)
 {
 	char *canonical = NULL;
 
-	if (do_canonicalize(path, &canonical) == 1)
+	if (do_canonicalize(path, &canonical, NULL) == 1)
 		return strdup(path);
 
 	return canonical;
@@ -172,7 +175,7 @@ char *canonicalize_path(const char *path)
  */
 char *canonicalize_path_restricted(const char *path)
 {
-	return ul_restricted_path_oper(path, do_canonicalize);
+	return ul_restricted_path_oper(path, do_canonicalize, NULL);
 }
 
 #ifdef TEST_PROGRAM_CANONICALIZE
