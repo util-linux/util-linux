@@ -98,9 +98,18 @@ findmnt -nr -o  VFS-OPTIONS --mountpoint $A_MOUNTPOINT | grep -q 'noexec' \
 ts_finalize_subtest
 
 
-## cleanup
 $TS_CMD_UMOUNT $A_MOUNTPOINT &> /dev/null
 $TS_CMD_UMOUNT $B_MOUNTPOINT &> /dev/null
+rm -rf $A_MOUNTPOINT $B_MOUNTPOINT
+
+ts_init_subtest "X-mount.mkdir"
+$TS_CMD_MOUNT -o "X-mount.mkdir" $DEVICE $A_MOUNTPOINT 2>> $TS_ERRLOG
+findmnt -nr -o VFS-OPTIONS --mountpoint $A_MOUNTPOINT | grep -q 'rw' \
+	|| ts_log "Cannot find mountpoint"
+ts_finalize_subtest
+
+## cleanup
+$TS_CMD_UMOUNT $A_MOUNTPOINT &> /dev/null
 $TS_CMD_UMOUNT $ROOT_MOUNTPOINT &> /dev/null
 
 ts_finalize
