@@ -1057,8 +1057,10 @@ static int ul_path_cpuparse(struct path_cxt *pc, cpu_set_t **set, int maxcpus, i
 	rc = 0;
 
 out:
-	if (rc)
+	if (rc) {
 		cpuset_free(*set);
+		*set = NULL;
+	}
 	free(buf);
 	return rc;
 }
