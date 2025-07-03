@@ -507,9 +507,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (((ctl->pid > -1) && argc - optind < (need_prio ? 1 : 0)) ||
-	    ((ctl->pid == -1) && argc - optind < (need_prio ? 2 : 1))) {
-		warnx(_("bad usage"));
+	if (argc - optind < (ctl->pid > -1 ? 1 : 2)) {
+		warnx(_("too few arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
@@ -530,11 +529,10 @@ int main(int argc, char **argv)
 	if (ctl->verbose)
 		show_sched_info(ctl);
 
-	errno = 0;
-
-	if (need_prio || argc - optind > 1)
+	if (argc - optind > 1) {
+		errno = 0;
 		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
-	else
+	} else
 		ctl->priority = 0;
 
 	if (ctl->runtime && !supports_runtime_param(ctl->policy))
