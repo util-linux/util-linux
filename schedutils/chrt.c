@@ -530,7 +530,7 @@ int main(int argc, char **argv)
 
 	errno = 0;
 
-	if (need_prio || argc - optind == 2)
+	if (need_prio || argc - optind > 1)
 		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 	else
 		ctl->priority = 0;
