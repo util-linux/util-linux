@@ -474,11 +474,7 @@ int main(int argc, char **argv)
 			policy_given = true;
 			break;
 		case 'p':
-			if (argc - optind == 0)
-				errx(EXIT_FAILURE, _("too few arguments"));
-			errno = 0;
-			/* strtopid_or_err() is not suitable here; 0 can be passed.*/
-			ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
+			ctl->pid = 0;  /* indicate that a PID is expected */
 			break;
 		case 'r':
 			ctl->policy = SCHED_RR;
@@ -507,20 +503,22 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (argc - optind < (ctl->pid > -1 ? 1 : 2)) {
+	if (argc - optind < (ctl->pid == 0 ? 1 : 2)) {
 		warnx(_("too few arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	/* pid exists but priority not given */
-	if (ctl->pid > -1 && argc - optind == 1) {
-		/* Error if priority is missing for a policy that requires it */
-		if (policy_given && need_prio)
-			errx(EXIT_FAILURE, ("policy %s requires a priority argument"),
+	/* If option --pid was given, parse the very last argument as a PID. */
+	if (ctl->pid == 0) {
+		if (need_prio && argc - optind < 2)
+			errx(EXIT_FAILURE, _("policy %s requires a priority argument"),
 						get_policy_name(ctl->policy));
+		errno = 0;
+		/* strtopid_or_err() is not suitable here, as 0 can be passed. */
+		ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
 
-		/* If no policy specified, show current settings */
-		if (!policy_given) {
+		/* If no policy nor priority was given, show current settings. */
+		if (!policy_given && argc - optind == 1) {
 			show_sched_info(ctl);
 			return EXIT_SUCCESS;
 		}
