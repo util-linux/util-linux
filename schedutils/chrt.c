@@ -474,6 +474,8 @@ int main(int argc, char **argv)
 			policy_given = true;
 			break;
 		case 'p':
+			if (argc - optind == 0)
+				errx(EXIT_FAILURE, _("too few arguments"));
 			errno = 0;
 			/* strtopid_or_err() is not suitable here; 0 can be passed.*/
 			ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
