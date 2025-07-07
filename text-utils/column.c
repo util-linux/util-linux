@@ -346,6 +346,7 @@ static void init_table(struct column_control *ctl)
 		scols_table_enable_noencoding(ctl->tab, 1);
 
 	scols_table_enable_maxout(ctl->tab, ctl->maxout ? 1 : 0);
+	scols_table_enable_colors(ctl->tab, 1);
 
 	if (ctl->tab_columns) {
 		char **opts;

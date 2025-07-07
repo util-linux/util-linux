@@ -136,6 +136,13 @@ Allow using a multi-line cell for long text if necessary. See *--table-wrap* for
 Don't print the column. See *--table-hide* for more details.
 **json=**_type_;;
 Define the column type for JSON output. Supported types are *string*, *number* and *boolean*.
+**color=**_name_;;
+Define the column color for output on the terminal. The _name_ is a color name 
+(black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, 
+lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, magenta, 
+red, reset, reverse, and yellow) or ANSI color sequence number(s) separated by 
+a semicolon, but without the 'ESC[' prefix and 'm' suffix. For example, "37;41" 
+defines sequences for a red background and white foreground.
 
 *-N, --table-columns* _names_::
 Specify column names with a comma-separated list. The names are used for the table header
