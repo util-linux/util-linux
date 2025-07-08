@@ -68,5 +68,6 @@ void blkid_init_debug(int mask)
 
 static void __attribute__ ((constructor)) blkid_init_default_debug(void)
 {
+	UL_PROTECT_ERRNO;
 	blkid_init_debug(0);
 }
