@@ -9,6 +9,10 @@ _column_module()
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
+		'--color')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
+			return 0
+			;;
 		'-s'|'--separator'|'-o'|'--output-separator'|'-n'|'--table-name'|'-O')
 			COMPREPLY=( $(compgen -W "string" -- $cur) )
 			return 0
@@ -51,6 +55,7 @@ _column_module()
 				--output-separator
 				--fillrows
 				--use-spaces
+				--color
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

@@ -34,7 +34,7 @@ usrbin_exec_PROGRAMS += column
 MANPAGES += text-utils/column.1
 dist_noinst_DATA += text-utils/column.1.adoc
 column_SOURCES = text-utils/column.c
-column_LDADD = $(LDADD) libcommon.la libsmartcols.la
+column_LDADD = $(LDADD) libcommon.la libsmartcols.la libtcolors.la
 column_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 

@@ -54,6 +54,7 @@
 #include "strv.h"
 #include "optutils.h"
 #include "mbsalign.h"
+#include "colors.h"
 
 #include "libsmartcols.h"
 
@@ -346,7 +347,7 @@ static void init_table(struct column_control *ctl)
 		scols_table_enable_noencoding(ctl->tab, 1);
 
 	scols_table_enable_maxout(ctl->tab, ctl->maxout ? 1 : 0);
-	scols_table_enable_colors(ctl->tab, 1);
+	scols_table_enable_colors(ctl->tab, colors_wanted() ? 1 : 0);
 
 	if (ctl->tab_columns) {
 		char **opts;
@@ -926,7 +927,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 	fputs(_(" -S, --use-spaces <number>        minimal whitespaces between columns (no tabs)\n"), out);
 
-
+	fputs(USAGE_SEPARATOR, out);
+	fprintf(out, _("     --color[=<when>]             colorize output (%s, %s or %s)\n"), "auto", "always", "never");
+	fprintf(out,
+	        "                                    %s\n", USAGE_COLORS_DEFAULT);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(34));
 	fprintf(out, USAGE_MAN_TAIL("column(1)"));
@@ -944,10 +948,15 @@ int main(int argc, char **argv)
 
 	int c;
 	unsigned int eval = 0;		/* exit value */
+	int colormode = UL_COLORMODE_UNDEF;
+	enum {
+		OPT_COLOR	= CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] =
 	{
 		{ "columns",             required_argument, NULL, 'c' }, /* deprecated */
+		{ "color",               optional_argument, NULL, OPT_COLOR },
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
 		{ "json",                no_argument,       NULL, 'J' },
@@ -1083,6 +1092,11 @@ int main(int argc, char **argv)
 		case 'x':
 			ctl.mode = COLUMN_MODE_FILLROWS;
 			break;
+		case OPT_COLOR:
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg)
+				colormode = colormode_or_err(optarg);
+			break;
 
 		case 'h':
 			usage();
@@ -1113,6 +1127,9 @@ int main(int argc, char **argv)
 
 	if (!ctl.tab_colnames && !ctl.tab_columns && ctl.json)
 		errx(EXIT_FAILURE, _("option --table-columns or --table-column required for --json"));
+
+	if (ctl.mode == COLUMN_MODE_TABLE)
+		colors_init(colormode, "column");
 
 	if (!*argv)
 		eval += read_input(&ctl, stdin);

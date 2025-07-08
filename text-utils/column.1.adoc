@@ -195,7 +195,12 @@ Specify the column that contains each line's parent ID for a child-parent relati
 *-x, --fillrows*::
 Fill rows before filling columns.
 
+*--color*[**=**_when_]::
+Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
+
 include::man-common/help-version.adoc[]
+
+include::man-common/colors.adoc[]
 
 == ENVIRONMENT
 
