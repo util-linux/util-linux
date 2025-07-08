@@ -148,42 +148,69 @@ int __cpuset_count_s(size_t setsize, const cpu_set_t *set)
 #endif
 
 /*
+ * Finds the first CPU present after the specified index.
+ *
+ * start: starting index, inclusive.
+ * setsize: size of the set in *bytes*.
+ * set: CPU set to search.
+ *
+ * Return: the index of the first CPU present in `set`, starting at `start`.
+ * If no such CPU exists, returns the size of the set in *bits*.
+ */
+static size_t find_next_cpu(size_t start, size_t setsize, cpu_set_t *set)
+{
+	size_t nbits = cpuset_nbits(setsize);
+	for (; start < nbits; start++)
+		if (CPU_ISSET_S(start, setsize, set))
+			return start;
+	return start;
+}
+
+/*
  * Returns human readable representation of the cpuset. The output format is
- * a list of CPUs with ranges (for example, "0,1,3-9").
+ * a list of CPUs with ranges (for example, "0,1,3-9:3").
  */
 char *cpulist_create(char *str, size_t len,
 			cpu_set_t *set, size_t setsize)
 {
-	size_t i;
 	char *ptr = str;
 	int entry_made = 0;
 	size_t max = cpuset_nbits(setsize);
+	size_t a = 0;  /* min for cpu range */
+	size_t next = 0;  /* where to start looking for next cpu */
 
-	for (i = 0; i < max; i++) {
-		if (CPU_ISSET_S(i, setsize, set)) {
-			int rlen;
-			size_t j, run = 0;
-			entry_made = 1;
-			for (j = i + 1; j < max; j++) {
-				if (CPU_ISSET_S(j, setsize, set))
-					run++;
-				else
-					break;
+	while ((a = find_next_cpu(next, setsize, set)) < max) {
+		int rlen;
+		next = find_next_cpu(a + 1, setsize, set);
+		if (next == max) {
+			rlen = snprintf(ptr, len, "%zu,", a);
+		} else {
+			/* Extend range as long as we have the same stride. */
+			size_t b = next;
+			size_t s = b - a;
+			while (((next = find_next_cpu(b + 1, setsize, set)) <
+				max) && next - b == s) {
+				b = next;
 			}
-			if (!run)
-				rlen = snprintf(ptr, len, "%zu,", i);
-			else if (run == 1) {
-				rlen = snprintf(ptr, len, "%zu,%zu,", i, i + 1);
-				i++;
+			if (b - a == s) {
+				/*
+				 * Only print one CPU.  Hope the next one can
+				 * be put in the next range.
+				 */
+				rlen = snprintf(ptr, len, "%zu,", a);
+				next = b;
+			} else if (s == 1) {
+				rlen = snprintf(ptr, len, "%zu-%zu,", a, b);
 			} else {
-				rlen = snprintf(ptr, len, "%zu-%zu,", i, i + run);
-				i += run;
+				rlen = snprintf(ptr, len, "%zu-%zu:%zu,",
+						a, b, s);
 			}
-			if (rlen < 0 || (size_t) rlen >= len)
-				return NULL;
-			ptr += rlen;
-			len -= rlen;
 		}
+		if (rlen < 0 || (size_t) rlen >= len)
+			return NULL;
+		ptr += rlen;
+		len -= rlen;
+		entry_made = 1;
 	}
 	ptr -= entry_made;
 	*ptr = '\0';
