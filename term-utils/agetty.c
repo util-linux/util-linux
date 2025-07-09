@@ -32,10 +32,7 @@
 #include <langinfo.h>
 #include <grp.h>
 #include <pwd.h>
-#include <arpa/inet.h>
 #include <netdb.h>
-#include <ifaddrs.h>
-#include <net/if.h>
 #include <sys/utsname.h>
 
 #include "strutils.h"
@@ -50,6 +47,9 @@
 #include "env.h"
 #include "path.h"
 #include "fileutils.h"
+#ifdef AGETTY_RELOAD
+#include "netaddrq.h"
+#endif
 
 #include "logindefs.h"
 
@@ -145,7 +145,6 @@
 # define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
 # define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
-static int netlink_fd = AGETTY_RELOAD_FDNONE;
 static uint32_t netlink_groups;
 #endif
 
@@ -155,6 +154,7 @@ struct issue {
 	size_t mem_sz;
 
 #ifdef AGETTY_RELOAD
+	struct ul_nl_data nl;
 	char *mem_old;
 #endif
 	unsigned int do_tcsetattr : 1,
@@ -365,6 +365,7 @@ int main(int argc, char **argv)
 	};
 	struct issue issue = {
 		.mem = NULL,
+		.nl.fd = -1
 	};
 	char *login_argv[LOGIN_ARGV_MAX + 1];
 	int login_argc = 0;
@@ -1604,81 +1605,7 @@ done:
 }
 
 #ifdef AGETTY_RELOAD
-static void open_netlink(void)
-{
-	struct sockaddr_nl addr = { 0, };
-	int sock;
-
-	if (netlink_fd != AGETTY_RELOAD_FDNONE)
-		return;
-
-	sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
-	if (sock >= 0) {
-		addr.nl_family = AF_NETLINK;
-		addr.nl_pid = getpid();
-		addr.nl_groups = netlink_groups;
-		if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
-			close(sock);
-		else
-			netlink_fd = sock;
-	}
-}
-
-static int process_netlink_msg(int *triggered)
-{
-	char buf[4096];
-	struct sockaddr_nl snl;
-	struct nlmsghdr *h;
-	int rc;
-
-	struct iovec iov = {
-		.iov_base = buf,
-		.iov_len = sizeof(buf)
-	};
-	struct msghdr msg = {
-		.msg_name = &snl,
-		.msg_namelen = sizeof(snl),
-		.msg_iov = &iov,
-		.msg_iovlen = 1,
-		.msg_control = NULL,
-		.msg_controllen = 0,
-		.msg_flags = 0
-	};
-
-	rc = recvmsg(netlink_fd, &msg, MSG_DONTWAIT);
-	if (rc < 0) {
-		if (errno == EWOULDBLOCK || errno == EAGAIN)
-			return 0;
-
-		/* Failure, just stop listening for changes */
-		close(netlink_fd);
-		netlink_fd = AGETTY_RELOAD_FDNONE;
-		return 0;
-	}
-
-	for (h = (struct nlmsghdr *)buf; NLMSG_OK(h, (unsigned int)rc); h = NLMSG_NEXT(h, rc)) {
-		if (h->nlmsg_type == NLMSG_DONE ||
-		    h->nlmsg_type == NLMSG_ERROR) {
-			close(netlink_fd);
-			netlink_fd = AGETTY_RELOAD_FDNONE;
-			return 0;
-		}
-
-		*triggered = 1;
-		break;
-	}
-
-	return 1;
-}
-
-static int process_netlink(void)
-{
-	int triggered = 0;
-	while (process_netlink_msg(&triggered));
-	return triggered;
-}
-
-static int wait_for_term_input(int fd)
+static int wait_for_term_input(struct issue *ie, int fd)
 {
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
 	fd_set rfds;
@@ -1712,9 +1639,9 @@ static int wait_for_term_input(int fd)
 			FD_SET(inotify_fd, &rfds);
 			nfds = max(nfds, inotify_fd);
 		}
-		if (netlink_fd >= 0) {
-			FD_SET(netlink_fd, &rfds);
-			nfds = max(nfds, netlink_fd);
+		if (ie->nl.fd >= 0) {
+			FD_SET(ie->nl.fd, &rfds);
+			nfds = max(nfds, ie->nl.fd);
 		}
 
 		/* If waiting fails, just fall through, presumably reading input will fail */
@@ -1726,9 +1653,10 @@ static int wait_for_term_input(int fd)
 
 		}
 
-		if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
-			if (!process_netlink())
-				continue;
+		if (ie->nl.fd >= 0 && FD_ISSET(ie->nl.fd, &rfds)) {
+			/* We are ignoring errors here to prevent unability of
+			 * further processing. */
+			ul_nl_process(&(ie->nl), UL_NL_ASYNC, UL_NL_ONESHOT);
 
 		/* Just drain the inotify buffer */
 		} else if (inotify_fd >= 0 && FD_ISSET(inotify_fd, &rfds)) {
@@ -1938,11 +1866,44 @@ static void eval_issue_file(struct issue *ie,
 			    struct options *op,
 			    struct termios *tp)
 {
-#ifdef AGETTY_RELOAD
-	netlink_groups = 0;
-#endif
 	if (!(op->flags & F_ISSUE))
 		goto done;
+
+#ifdef AGETTY_RELOAD
+/* TODO:
+ * Two pass processing for eval_issue_file()
+ * Implement pass 1: Just evaluate list of netlink_groups (IP protocols) and
+ * intefaces to monitor.
+ * That is why again label is here: netlink_groups will be re-evaluated and
+ * dump will be performed again.
+ */
+	/* netlink_groups = 0; */
+	netlink_groups = RTMGRP_IPV4_IFADDR | RTMGRP_IPV6_IFADDR;
+
+	/* Already initialized? */
+	if (ie->nl.fd >= 0)
+		goto skip;
+	/* Prepare netlink. */
+	ul_nl_init(&(ie->nl));
+	if ((ul_netaddrq_init(&(ie->nl), NULL, NULL, (void *)ie)))
+		goto skip;
+
+	/* Open netlink and create address list. */
+	if (ul_nl_open(&(ie->nl),
+		       RTMGRP_LINK | netlink_groups))
+		goto skip;
+	if (ul_nl_request_dump(&(ie->nl), RTM_GETADDR))
+		goto error;
+	if (ul_nl_process(&(ie->nl), UL_NL_SYNC, UL_NL_LOOP) != UL_NL_DONE)
+		goto error;
+	goto skip;
+error:
+	/* In case of any error, the addrq list is just empty, and we can use
+	 * the code without any error checking. */
+	ul_nl_close(&(ie->nl));
+	ie->nl.fd = -1;
+skip:
+#endif
 	/*
 	 * The custom issue file or directory list specified by:
 	 *   agetty --issue-file <path[:path]...>
@@ -1993,11 +1954,6 @@ static void eval_issue_file(struct issue *ie,
 #endif
 
 done:
-
-#ifdef AGETTY_RELOAD
-	if (netlink_groups != 0)
-		open_netlink();
-#endif
 	if (ie->output) {
 		fclose(ie->output);
 		ie->output = NULL;
@@ -2009,7 +1965,7 @@ done:
  */
 static void show_issue(struct options *op)
 {
-	struct issue ie = { .output = NULL };
+	struct issue ie = { .output = NULL, .nl.fd = -1 };
 	struct termios tp;
 
 	memset(&tp, 0, sizeof(struct termios));
@@ -2039,13 +1995,19 @@ again:
 		puts(_("[press ENTER to login]"));
 #ifdef AGETTY_RELOAD
 		/* reload issue */
-		if (!wait_for_term_input(STDIN_FILENO)) {
+		if (!wait_for_term_input(ie, STDIN_FILENO)) {
 			eval_issue_file(ie, op, tp);
 			if (issue_is_changed(ie)) {
 				if ((op->flags & F_VCONSOLE)
 				    && (op->flags & F_NOCLEAR) == 0)
 					termio_clear(STDOUT_FILENO);
-				goto again;
+				{
+					/* TODO: Close to set netlink_groups again using pass 1 */
+					/* if (ie->nl.fd >= 0) ul_nl_close(&(ie->nl));
+					 * ie->nl.fd = -1; */
+
+					goto again;
+				}
 			}
 		}
 #endif
@@ -2189,7 +2151,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 
 	no_reload:
 #ifdef AGETTY_RELOAD
-		if (!wait_for_term_input(STDIN_FILENO)) {
+		if (!wait_for_term_input(ie, STDIN_FILENO)) {
 			/* refresh prompt -- discard input data, clear terminal
 			 * and call do_prompt() again
 			 */
@@ -2198,6 +2160,8 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 			eval_issue_file(ie, op, tp);
 			if (!issue_is_changed(ie))
 				goto no_reload;
+			/* if (ie->nl.fd >= 0) ul_nl_close(&(ie->nl));
+			 * ie->nl.fd = -1; */
 			tcflush(STDIN_FILENO, TCIFLUSH);
 			if ((op->flags & F_VCONSOLE)
 			    && (op->flags & F_NOCLEAR) == 0)
@@ -2614,92 +2578,170 @@ static void log_warn(const char *fmt, ...)
 	va_end(ap);
 }
 
-static void print_addr(struct issue *ie, sa_family_t family, void *addr)
+static void print_iface_best(struct issue *ie,
+			     const char *ifname,
+			     uint8_t ifa_family)
 {
-	char buff[INET6_ADDRSTRLEN + 1];
+	struct ul_netaddrq_ip *best[__ULNETLINK_RATING_MAX];
+	struct ul_netaddrq_iface *ifaceq;
+	struct list_head *l;
+	enum ul_netaddrq_ip_rating threshold;
 
-	inet_ntop(family, addr, buff, sizeof(buff));
-	fprintf(ie->output, "%s", buff);
+	if (!ie->nl.data_addr)
+		return; /* error: init failed */
+
+	if ((ifaceq = ul_netaddrq_iface_by_name(&(ie->nl), ifname)))
+	{
+		memset(best, 0, sizeof(best));
+		if (ifa_family == AF_INET)
+			l = &(ifaceq->ip_quality_list_4);
+		else
+		/* if (ifa_family == AF_INET6) */
+			l = &(ifaceq->ip_quality_list_6);
+
+		threshold =
+			ul_netaddrq_iface_bestaddr(l, &best);
+		if (best[threshold])
+			fputs(ul_nl_addr_ntop_address(best[threshold]->addr),
+			      ie->output);
+	}
 }
 
-/*
- * Prints IP for the specified interface (@iface), if the interface is not
- * specified then prints the "best" one (UP, RUNNING, non-LOOPBACK). If not
- * found the "best" interface then prints at least host IP.
- */
-static void output_iface_ip(struct issue *ie,
-			    struct ifaddrs *addrs,
-			    const char *iface,
-			    sa_family_t family)
+static void print_addrq_bestofall(struct issue *ie,
+				  uint8_t ifa_family)
 {
-	struct ifaddrs *p;
-	struct addrinfo hints, *info = NULL;
-	char *host = NULL;
-	void *addr = NULL;
+	struct ul_netaddrq_iface *best_ifaceq;
+	enum ul_netaddrq_ip_rating threshold;
+	const char *best_ipp;
 
-	if (!addrs)
-		return;
+	if (!ie->nl.data_addr)
+		return; /* error: init failed */
 
-	for (p = addrs; p; p = p->ifa_next) {
+	best_ipp = ul_netaddrq_get_best_ipp(&(ie->nl), ifa_family,
+					    &threshold, &best_ifaceq);
+	if (best_ipp)
+		fputs(best_ipp, ie->output);
+}
 
-		if (!p->ifa_name ||
-		    !p->ifa_addr ||
-		    p->ifa_addr->sa_family != family)
-			continue;
+static void dump_iface_good(struct issue *ie,
+			    struct ul_netaddrq_iface *ifaceq)
+{
+	struct ul_netaddrq_ip *best4[__ULNETLINK_RATING_MAX];
+	struct ul_netaddrq_ip *best6[__ULNETLINK_RATING_MAX];
+	struct list_head *li;
+	enum ul_netaddrq_ip_rating threshold = __ULNETLINK_RATING_MAX - 1;
+	enum ul_netaddrq_ip_rating fthreshold; /* per family threshold */
+	bool first = true;
 
-		if (iface) {
-			/* Filter out by interface name */
-		       if (strcmp(p->ifa_name, iface) != 0)
-				continue;
-		} else {
-			/* Select the "best" interface */
-			if ((p->ifa_flags & IFF_LOOPBACK) ||
-			    !(p->ifa_flags & IFF_UP) ||
-			    !(p->ifa_flags & IFF_RUNNING))
-				continue;
+	memset(best4, 0, sizeof(best4));
+	threshold = ul_netaddrq_iface_bestaddr(&(ifaceq->ip_quality_list_4),
+					       &best4);
+	memset(best6, 0, sizeof(best6));
+	fthreshold = ul_netaddrq_iface_bestaddr(&(ifaceq->ip_quality_list_6),
+						&best6);
+	if (fthreshold < threshold)
+		threshold = fthreshold;
+
+	list_for_each(li, &(ifaceq->ip_quality_list_4))
+	{
+		struct ul_netaddrq_ip *ipq;
+
+		ipq = list_entry(li, struct ul_netaddrq_ip, entry);
+		if (threshold <= ULNETLINK_RATING_SCOPE_LINK &&
+		    ( ipq->quality <= threshold ||
+		      /* Consider site addresses equally good as global */
+		      ipq->quality == ULNETLINK_RATING_SCOPE_SITE) &&
+		    best4[threshold])
+		{
+			if (first)
+			{
+				fprintf(ie->output, "%s: ", ifaceq->ifname);
+				first = false;
+			}
+			else
+				fprintf(ie->output, " ");
+			/* Write only the longest living temporary address */
+			if (threshold == ULNETLINK_RATING_F_TEMPORARY)
+			{
+				fputs(ul_nl_addr_ntop_address(best4[ULNETLINK_RATING_F_TEMPORARY]->addr),
+				      ie->output);
+				goto temp_cont4;
+			}
+			else
+				fputs(ul_nl_addr_ntop_address(ipq->addr),
+				      ie->output);
 		}
-
-		addr = NULL;
-		switch (p->ifa_addr->sa_family) {
-		case AF_INET:
-			addr = &((struct sockaddr_in *)	p->ifa_addr)->sin_addr;
-			break;
-		case AF_INET6:
-			addr = &((struct sockaddr_in6 *) p->ifa_addr)->sin6_addr;
-			break;
-		}
-
-		if (addr) {
-			print_addr(ie, family, addr);
-			return;
-		}
+	temp_cont4:;
 	}
 
-	if (iface)
-		return;
+	list_for_each(li, &(ifaceq->ip_quality_list_6))
+	{
+		struct ul_netaddrq_ip *ipq;
 
-	/* Hmm.. not found the best interface, print host IP at least */
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = family;
-	if (family == AF_INET6)
-		hints.ai_flags = AI_V4MAPPED;
-
-	host = xgethostname();
-	if (host && getaddrinfo(host, NULL, &hints, &info) == 0 && info) {
-		switch (info->ai_family) {
-		case AF_INET:
-			addr = &((struct sockaddr_in *) info->ai_addr)->sin_addr;
-			break;
-		case AF_INET6:
-			addr = &((struct sockaddr_in6 *) info->ai_addr)->sin6_addr;
-			break;
+		ipq = list_entry(li, struct ul_netaddrq_ip, entry);
+		if (threshold <= ULNETLINK_RATING_SCOPE_LINK &&
+		    ( ipq->quality <= threshold ||
+		      /* Consider site addresses equally good as global */
+		      ipq->quality == ULNETLINK_RATING_SCOPE_SITE) &&
+		    best6[threshold])
+		{
+			if (first)
+			{
+				fprintf(ie->output, "%s: ", ifaceq->ifname);
+				first = false;
+			}
+			else
+				fprintf(ie->output, " ");
+			/* Write only the longest living temporary address */
+			if (threshold == ULNETLINK_RATING_F_TEMPORARY)
+			{
+				fputs(ul_nl_addr_ntop_address(best6[ULNETLINK_RATING_F_TEMPORARY]->addr),
+				      ie->output);
+				goto temp_cont6;
+			}
+			else
+				fputs(ul_nl_addr_ntop_address(ipq->addr),
+				      ie->output);
 		}
-		if (addr)
-			print_addr(ie, family, addr);
-
-		freeaddrinfo(info);
+	temp_cont6:;
 	}
-	free(host);
+	if (!first)
+		fputs("\n", ie->output);
+}
+
+static void dump_iface_all(struct issue *ie,
+			   struct ul_netaddrq_iface *ifaceq)
+{
+	struct list_head *li;
+	struct ul_netaddrq_ip *ipq;
+	bool first = true;
+
+	list_for_each(li, &(ifaceq->ip_quality_list_4))
+	{
+		ipq = list_entry(li, struct ul_netaddrq_ip, entry);
+		if (first)
+		{
+			fprintf(ie->output, "%s: ", ifaceq->ifname);
+			first = false;
+		}
+		else
+			fprintf(ie->output, " ");
+		fputs(ul_nl_addr_ntop_address(ipq->addr), ie->output);
+	}
+	list_for_each(li, &(ifaceq->ip_quality_list_6))
+	{
+		ipq = list_entry(li, struct ul_netaddrq_ip, entry);
+		if (first)
+		{
+			fprintf(ie->output, "%s: ", ifaceq->ifname);
+			first = false;
+		}
+		else
+			fprintf(ie->output, " ");
+		fputs(ul_nl_addr_ntop_address(ipq->addr), ie->output);
+	}
+	if (!first)
+		fputs("\n", ie->output);
 }
 
 /*
@@ -2898,26 +2940,47 @@ static void output_special_char(struct issue *ie,
 	case '4':
 	case '6':
 	{
-		sa_family_t family = c == '4' ? AF_INET : AF_INET6;
-		struct ifaddrs *addrs = NULL;
-		char iface[128];
-
-		if (getifaddrs(&addrs))
-			break;
+		char iface[IF_NAMESIZE];
+		uint8_t ifa_family = c == '4' ? AF_INET : AF_INET6;
 
 		if (get_escape_argument(fp, iface, sizeof(iface)))
-			output_iface_ip(ie, addrs, iface, family);
+			print_iface_best(ie, iface, ifa_family);
 		else
-			output_iface_ip(ie, addrs, NULL, family);
+			print_addrq_bestofall(ie, ifa_family);
 
-		freeifaddrs(addrs);
-
+		/* TODO: Move to pass 1 */
 		if (c == '4')
 			netlink_groups |= RTMGRP_IPV4_IFADDR;
 		else
 			netlink_groups |= RTMGRP_IPV6_IFADDR;
 		break;
 	}
+	case 'a':
+	{
+		struct list_head *li;
+		struct ul_netaddrq_iface *ifaceq;
+
+		list_for_each_netaddrq_iface(li, &(ie->nl))
+		{
+			ifaceq = list_entry(li, struct ul_netaddrq_iface, entry);
+
+			dump_iface_good(ie, ifaceq);
+		}
+	}
+	break;
+	case 'A':
+	{
+		struct list_head *li;
+		struct ul_netaddrq_iface *ifaceq;
+
+		list_for_each_netaddrq_iface(li, &(ie->nl))
+		{
+			ifaceq = list_entry(li, struct ul_netaddrq_iface, entry);
+
+			dump_iface_all(ie, ifaceq);
+		}
+	}
+	break;
 #endif
 	default:
 		putc(c, ie->output);
