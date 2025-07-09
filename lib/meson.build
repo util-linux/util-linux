@@ -17,6 +17,8 @@ lib_common_sources = '''
 	mbsalign.c
 	mbsedit.c
 	md5.c
+	netaddrq.c
+	netlink.c
 	pidutils.c
 	procfs.c
 	pwdutils.c
