@@ -386,16 +386,16 @@ int main(int argc, char **argv)
 		if (length == -2LL)
 			length = 0;
 		if (length < 0)
-			errx(EXIT_FAILURE, _("invalid length value specified"));
+			errx(EXIT_FAILURE, _("invalid length"));
 	} else {
 		/* it's safer to require the range specification (--length --offset) */
 		if (length == -2LL)
 			errx(EXIT_FAILURE, _("no length argument specified"));
 		if (length <= 0)
-			errx(EXIT_FAILURE, _("invalid length value specified"));
+			errx(EXIT_FAILURE, _("invalid length"));
 	}
 	if (offset < 0)
-		errx(EXIT_FAILURE, _("invalid offset value specified"));
+		errx(EXIT_FAILURE, _("invalid offset"));
 
 	/* O_CREAT makes sense only for the default fallocate(2) behavior
 	 * when mode is no specified and new space is allocated */

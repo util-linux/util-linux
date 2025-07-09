@@ -813,7 +813,7 @@ int main(int argc, char **argv)
 				errx(BLKID_EXIT_OTHER, _("unsupported output format %s"), optarg);
 			break;
 		case 'O':
-			ctl.offset = strtosize_or_err(optarg, _("invalid offset argument"));
+			ctl.offset = strtosize_or_err(optarg, _("invalid offset"));
 			break;
 		case 'p':
 			ctl.lowprobe_superblocks = 1;
@@ -826,7 +826,7 @@ int main(int argc, char **argv)
 			ctl.show[numtag++] = optarg;
 			break;
 		case 'S':
-			ctl.size = strtosize_or_err(optarg, _("invalid size argument"));
+			ctl.size = strtosize_or_err(optarg, _("invalid size"));
 			break;
 		case 't':
 			if (search_type) {

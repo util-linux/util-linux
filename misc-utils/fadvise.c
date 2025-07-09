@@ -111,11 +111,11 @@ int main(int argc, char ** argv)
 			break;
 		case 'l':
 			len = strtosize_or_err(optarg,
-					       _("invalid length argument"));
+					       _("invalid length"));
 			break;
 		case 'o':
 			offset = strtosize_or_err(optarg,
-						  _("invalid offset argument"));
+						  _("invalid offset"));
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);

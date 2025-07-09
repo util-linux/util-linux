@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	if (partx_add_partition(fd,
 			strtou32_or_err(argv[2], _("invalid partition number argument")),
 			strtou64_or_err(argv[3], _("invalid start argument")),
-			strtou64_or_err(argv[4], _("invalid length argument"))))
+			strtou64_or_err(argv[4], _("invalid length"))))
 		err(EXIT_FAILURE, _("failed to add partition"));
 
 	return EXIT_SUCCESS;

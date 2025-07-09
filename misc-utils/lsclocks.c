@@ -266,7 +266,7 @@ static int64_t get_namespace_offset(const char *name)
 		space = strchr(line, ' ');
 		if (space)
 			*space = '\0';
-		ret = strtos64_or_err(line, _("Invalid offset"));
+		ret = strtos64_or_err(line, _("invalid offset"));
 		break;
 	}
 

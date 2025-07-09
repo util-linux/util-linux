@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 				wholedisk, argv[2]);
 
 	if (partx_resize_partition(fd, partno, start,
-			strtou64_or_err(argv[3], _("invalid length argument"))))
+			strtou64_or_err(argv[3], _("invalid length"))))
 		err(EXIT_FAILURE, _("failed to resize partition"));
 
 	if (close_fd(fd) != 0)

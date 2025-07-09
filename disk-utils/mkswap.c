@@ -641,10 +641,10 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			ctl.offset = str2unum_or_err(optarg,
-					10, _("Invalid offset"), SINT_MAX(off_t));
+					10, _("invalid offset"), SINT_MAX(off_t));
 			break;
 		case 's':
-			ctl.filesz = strtosize_or_err(optarg, _("Invalid size"));
+			ctl.filesz = strtosize_or_err(optarg, _("invalid size"));
 			break;
 		case 'F':
 			ctl.file = 1;

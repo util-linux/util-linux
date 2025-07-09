@@ -737,7 +737,7 @@ main(int argc, char **argv)
 			break;
 		case 'o':
 			add_offset(&ctl.offsets, strtosize_or_err(optarg,
-					 _("invalid offset argument")));
+						 _("invalid offset")));
 			break;
 		case 'p':
 			ctl.parsable = 1;

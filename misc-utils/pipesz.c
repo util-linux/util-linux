@@ -269,7 +269,7 @@ int main(int argc, char **argv)
 			opt_quiet = TRUE;
 			break;
 		case 's':
-			sz = strtosize_or_err(optarg, _("invalid size argument"));
+			sz = strtosize_or_err(optarg, _("invalid size"));
 			opt_size = sz >= INT_MAX ? INT_MAX : (int)sz;
 			++n_opt_size;
 			break;
