@@ -323,7 +323,7 @@ static char **split_or_error(const char *str, const char *errmsg)
 		if (errno == ENOMEM)
 			err_oom();
 		if (errmsg)
-			errx(EXIT_FAILURE, "%s: '%s'", errmsg, str);
+			errx(EXIT_FAILURE, "%s: '%s'", _(errmsg), str);
 		else
 			return NULL;
 	}
@@ -522,7 +522,7 @@ static void reorder_table(struct column_control *ctl)
 	struct libscols_column **wanted, *last = NULL;
 	size_t i, count = 0;
 	size_t ncols = scols_table_get_ncols(ctl->tab);
-	char **order = split_or_error(ctl->tab_order, _("failed to parse --table-order list"));
+	char **order = split_or_error(ctl->tab_order, N_("failed to parse --table-order list"));
 	char **one;
 
 	wanted = xcalloc(ncols, sizeof(struct libscols_column *));
@@ -600,23 +600,23 @@ static void modify_table(struct column_control *ctl)
 
 	if (ctl->tab_colhide)
 		apply_columnflag_from_list(ctl, ctl->tab_colhide,
-				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
+				SCOLS_FL_HIDDEN , N_("failed to parse --table-hide list"));
 
 	if (ctl->tab_colright)
 		apply_columnflag_from_list(ctl, ctl->tab_colright,
-				SCOLS_FL_RIGHT, _("failed to parse --table-right list"));
+				SCOLS_FL_RIGHT, N_("failed to parse --table-right list"));
 
 	if (ctl->tab_coltrunc)
 		apply_columnflag_from_list(ctl, ctl->tab_coltrunc,
-				SCOLS_FL_TRUNC , _("failed to parse --table-trunc list"));
+				SCOLS_FL_TRUNC , N_("failed to parse --table-trunc list"));
 
 	if (ctl->tab_colnoextrem)
 		apply_columnflag_from_list(ctl, ctl->tab_colnoextrem,
-				SCOLS_FL_NOEXTREMES , _("failed to parse --table-noextreme list"));
+				SCOLS_FL_NOEXTREMES , N_("failed to parse --table-noextreme list"));
 
 	if (ctl->tab_colwrap)
 		apply_columnflag_from_list(ctl, ctl->tab_colwrap,
-				SCOLS_FL_WRAP , _("failed to parse --table-wrap list"));
+				SCOLS_FL_WRAP , N_("failed to parse --table-wrap list"));
 
 	if (!ctl->tab_colnoextrem) {
 		struct libscols_column *cl = get_last_visible_column(ctl, 0);
@@ -1036,7 +1036,7 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("columns limit must be greater than zero"));
 			break;
 		case 'N':
-			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
+			ctl.tab_colnames = split_or_error(optarg, N_("failed to parse column names"));
 			break;
 		case 'n':
 			ctl.tab_name = optarg;
