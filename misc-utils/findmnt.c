@@ -1998,7 +1998,7 @@ int main(int argc, char *argv[])
 			findmnt.flags |= FL_UNIQ;
 			break;
 		case 'w':
-			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
+			timeout = strtos32_or_err(optarg, _("invalid timeout"));
 			break;
 		case 'x':
 			verify = 1;

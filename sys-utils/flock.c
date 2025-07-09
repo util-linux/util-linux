@@ -273,8 +273,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'w':
 			have_timeout = 1;
-			strtotimeval_or_err(optarg, &timeout.it_value,
-				_("invalid timeout value"));
+			strtotimeval_or_err(optarg, &timeout.it_value, _("invalid timeout"));
 			break;
 		case 'E':
 			conflict_exit_code = strtos32_or_err(optarg,

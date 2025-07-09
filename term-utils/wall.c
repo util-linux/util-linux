@@ -240,9 +240,9 @@ int main(int argc, char **argv)
 				warnx(_("--nobanner is available only for root"));
 			break;
 		case 't':
-			timeout = strtou32_or_err(optarg, _("invalid timeout argument"));
+			timeout = strtou32_or_err(optarg, _("invalid timeout"));
 			if (timeout < 1)
-				errx(EXIT_FAILURE, _("invalid timeout argument: %s"), optarg);
+				errx(EXIT_FAILURE, _("invalid timeout: %s"), optarg);
 			break;
 		case 'g':
 			group_buf = init_group_workspace(optarg);

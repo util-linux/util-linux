@@ -792,11 +792,11 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 's':
-			ctl.timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
+			ctl.timeout = strtos32_or_err(optarg, _("invalid timeout"));
 			ctl.set_timeout = 1;
 			break;
 		case 'p':
-			ctl.pretimeout = strtos32_or_err(optarg, _("invalid pretimeout argument"));
+			ctl.pretimeout = strtos32_or_err(optarg, _("invalid pretimeout"));
 			ctl.set_pretimeout = 1;
 			break;
 		case 'f':

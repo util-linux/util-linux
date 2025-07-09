@@ -852,7 +852,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags |= F_KEEPSPEED;
 			break;
 		case 't':
-			op->timeout = strtou32_or_err(optarg,  _("invalid timeout argument"));
+			op->timeout = strtou32_or_err(optarg,  _("invalid timeout"));
 			break;
 		case 'U':
 			op->flags |= F_LCUC;
