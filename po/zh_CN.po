@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: util-linux-2.40.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2025-02-18 11:36+0100\n"
-"PO-Revision-Date: 2024-08-27 13:09+0800\n"
-"Last-Translator: Mingye Wang (Artoria2e5) <arthur200126@gmail.com>\n"
+"PO-Revision-Date: 2025-07-13 19:01+0800\n"
+"Last-Translator: Haolin Xue <tzbkk@outlook.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.6\n"
 
 #: disk-utils/addpart.c:25
 #, c-format
@@ -531,7 +531,7 @@ msgstr "  b          切换当前分区的 可启动 标志；"
 
 #: disk-utils/cfdisk.c:2257
 msgid "               implemented for DOS (MBR) and SGI labels only"
-msgstr ""
+msgstr "               仅对 DOS (MBR) 和 SGI 标签实施"
 
 #: disk-utils/cfdisk.c:2258
 msgid "  d          Delete the current partition"
@@ -736,10 +736,8 @@ msgid " -r, --read-only          forced open cfdisk in read-only mode\n"
 msgstr " -r, --read-only          强制以只读模式打开 cfdisk\n"
 
 #: disk-utils/cfdisk.c:2734
-#, fuzzy
-#| msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgid " -b, --sector-size <size> physical and logical sector size\n"
-msgstr " -b, --sectors-size <大小>     显示扇区计数和大小\n"
+msgstr " -b, --sector-size <大小>     显示扇区物理和逻辑扇区大小\n"
 
 #: disk-utils/cfdisk.c:2774 disk-utils/cfdisk.c:2777 disk-utils/fdisk.c:1191
 #: disk-utils/fdisk.c:1193 disk-utils/partx.c:889 disk-utils/sfdisk.c:2469
@@ -1031,10 +1029,9 @@ msgid "All data in the region (%<PRIu64>-%<PRIu64>) will be lost! Continue?"
 msgstr ""
 
 #: disk-utils/fdisk.c:811 disk-utils/sfdisk.c:1428
-#, fuzzy
 #| msgid "%s: BLKDISCARD ioctl failed"
 msgid "BLKDISCARD ioctl failed"
-msgstr "%s：BLKDISCARD ioctl 失败"
+msgstr "BLKDISCARD ioctl 失败"
 
 #: disk-utils/fdisk.c:822
 msgid ""
@@ -1044,22 +1041,18 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdisk.c:833
-#, fuzzy, c-format
-#| msgid "Partition %zu has been resized."
+#, c-format
 msgid "Partition %zu has an unspecified range."
-msgstr "分区 %zu 已调整大小。"
+msgstr "分区 %zu 有未指定的范围。"
 
 #: disk-utils/fdisk.c:838
-#, fuzzy, c-format
-#| msgid "Failed to resize partition #%zu."
+#, c-format
 msgid "Discarded sectors on partition %zu."
-msgstr "调整分区 #%zu 的大小失败。"
+msgstr "分区 %zu 上丢弃的扇区。"
 
 #: disk-utils/fdisk.c:853
-#, fuzzy
-#| msgid "Free space"
 msgid "No free space."
-msgstr "剩余空间"
+msgstr "没有剩余空间。"
 
 #: disk-utils/fdisk.c:856
 msgid ""
@@ -1069,10 +1062,8 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdisk.c:860
-#, fuzzy
-#| msgid "Free space"
 msgid "Free space number"
-msgstr "剩余空间"
+msgstr "剩余空间数"
 
 #: disk-utils/fdisk.c:868
 #, c-format
@@ -1080,40 +1071,28 @@ msgid "Free space %<PRIu64>has an unspecified range"
 msgstr ""
 
 #: disk-utils/fdisk.c:873
-#, fuzzy
-#| msgid "Discard the content of sectors on a device.\n"
 msgid "Discarded sectors on free space."
-msgstr "丢弃一个设备上的扇区内容。\n"
+msgstr "剩余空间上的丢弃扇区。"
 
 #: disk-utils/fdisk.c:883
-#, fuzzy
-#| msgid "Device is open in read-only mode."
 msgid "Discarding sectors is not possible in read-only mode."
-msgstr "设备以只读方式打开。"
+msgstr "只读模式不允许丢弃扇区。"
 
 #: disk-utils/fdisk.c:887
-#, fuzzy
-#| msgid "type of the device"
 msgid "Type of area to be discarded"
-msgstr "设备的类型"
+msgstr "将要丢弃位置的类型"
 
 #: disk-utils/fdisk.c:888
-#, fuzzy
-#| msgid "partition number"
 msgid "partition sectors"
-msgstr "分区号"
+msgstr "分区扇区"
 
 #: disk-utils/fdisk.c:889
-#, fuzzy
-#| msgid "Free space"
 msgid "free space sectors"
-msgstr "剩余空间"
+msgstr "剩余空间扇区"
 
 #: disk-utils/fdisk.c:905 disk-utils/sfdisk.c:1441
-#, fuzzy
-#| msgid "--reload is unsupported on your system"
 msgid "Discard unsupported on your system."
-msgstr "您的系统不支持 --reload"
+msgstr "您的系统不支持丢弃。"
 
 #: disk-utils/fdisk.c:998
 #, c-format
@@ -2322,7 +2301,7 @@ msgstr "  正在将 %lu 处的块解压到 %lu (%lu)\n"
 #: disk-utils/fsck.cramfs.c:416
 #, c-format
 msgid "non-block (%ld) bytes"
-msgstr "非块(%ld)字节 "
+msgstr "非块(%ld)字节"
 
 #: disk-utils/fsck.cramfs.c:420
 #, c-format
@@ -2745,7 +2724,7 @@ msgstr "正确"
 #: disk-utils/fsck.minix.c:969 disk-utils/fsck.minix.c:1042
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
-msgstr "目录 '%s' 包含了一个不正确的 inode number 文件 '%.*s'. "
+msgstr "目录 '%s' 包含了一个不正确的 inode number 文件 '%.*s'."
 
 #: disk-utils/fsck.minix.c:971 disk-utils/fsck.minix.c:1044
 msgid " Remove"
@@ -6892,7 +6871,7 @@ msgstr "将忽略额外的扩展分区 %zu"
 #: libfdisk/src/dos.c:974
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
-msgstr "分区表 %3$zu 的无效标志 0x%1$02x%2$02x 将通过写入来更正"
+msgstr "分区表 %3$zu 的无效标志 0x%1$02x%2$02x 将通过写入来更正。"
 
 #: libfdisk/src/dos.c:1045
 #, c-format
@@ -8899,10 +8878,8 @@ msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY 失败：%m"
 
 #: login-utils/login.c:1207
-#, fuzzy
-#| msgid "failed to set the %s environment variable"
 msgid "failed to set the environment variables"
-msgstr "设置环境变量 %s 失败"
+msgstr "设置环境变量失败"
 
 #: login-utils/login.c:1289
 #, c-format
@@ -9497,10 +9474,8 @@ msgid "failed to set the PATH environment variable"
 msgstr "设置 PATH 环境变量失败"
 
 #: login-utils/su-common.c:734 sys-utils/nsenter.c:807
-#, fuzzy
-#| msgid "failed to set the %s environment variable"
 msgid "failed to set environment variables"
-msgstr "设置环境变量 %s 失败"
+msgstr "设置环境变量失败"
 
 #: login-utils/su-common.c:772
 msgid "cannot set groups"
@@ -9646,7 +9621,7 @@ msgstr "--pty 在您的系统上不受支持"
 
 #: login-utils/su-common.c:1137
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
-msgstr "将忽略 --preserve-environment，它与 --login 互斥。"
+msgstr "将忽略 --preserve-environment，它与 --login 互斥"
 
 #: login-utils/su-common.c:1151
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
@@ -11021,7 +10996,7 @@ msgstr "解析列失败"
 #: misc-utils/cal.c:476
 #, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
-msgstr " 解析时间戳失败或月份名未知：%s"
+msgstr "解析时间戳失败或月份名未知：%s"
 
 #: misc-utils/cal.c:485
 msgid "illegal day value"
@@ -12111,7 +12086,7 @@ msgstr "文件系统类型是 %s"
 #: misc-utils/findmnt-verify.c:494
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
-msgstr " 根文件系统的 passno 推荐值为 1 (当前是 %d)"
+msgstr "根文件系统的 passno 推荐值为 1 (当前是 %d)"
 
 #: misc-utils/findmnt-verify.c:565
 msgid ""
@@ -14506,7 +14481,7 @@ msgstr "套接字名称过长：%s"
 
 #: misc-utils/uuidd.c:727
 msgid "Both --socket-activation and --socket specified. Ignoring --socket."
-msgstr "同时指定了 --socket-activation 和 --socket。将忽略 --socket"
+msgstr "同时指定了 --socket-activation 和 --socket。将忽略 --socket 。"
 
 #: misc-utils/uuidd.c:738 misc-utils/uuidd.c:773
 #, c-format
@@ -20572,11 +20547,11 @@ msgstr "权限"
 
 #: sys-utils/lsipc.c:173
 msgid "Creator UID"
-msgstr " 创建者 UID"
+msgstr "创建者 UID"
 
 #: sys-utils/lsipc.c:174
 msgid "Creator user"
-msgstr " 创建者 用户"
+msgstr "创建者 用户"
 
 #: sys-utils/lsipc.c:175
 msgid "Creator GID"
@@ -20600,7 +20575,7 @@ msgstr "用户名"
 
 #: sys-utils/lsipc.c:179
 msgid "Group ID"
-msgstr " 组 ID"
+msgstr "组 ID"
 
 #: sys-utils/lsipc.c:179
 msgid "GID"
@@ -20654,7 +20629,7 @@ msgstr "上次发消息的时间"
 
 #: sys-utils/lsipc.c:190
 msgid "Msg sent"
-msgstr " 消息已发送"
+msgstr "消息已发送"
 
 #: sys-utils/lsipc.c:191
 msgid "Time of last msg received"
@@ -20670,7 +20645,7 @@ msgstr "上条消息发送者的 PID"
 
 #: sys-utils/lsipc.c:192
 msgid "Msg sender"
-msgstr " 消息发送者"
+msgstr "消息发送者"
 
 #: sys-utils/lsipc.c:193
 msgid "PID of the last msg receiver"
@@ -20718,11 +20693,11 @@ msgstr "创建者的 PID"
 
 #: sys-utils/lsipc.c:202
 msgid "Creator PID"
-msgstr " 创建者 PID"
+msgstr "创建者 PID"
 
 #: sys-utils/lsipc.c:203
 msgid "PID of last user"
-msgstr " 上个用户的 PID"
+msgstr "上个用户的 PID"
 
 #: sys-utils/lsipc.c:203
 msgid "Last user PID"
@@ -20738,7 +20713,7 @@ msgstr "信号量"
 
 #: sys-utils/lsipc.c:207
 msgid "Time of the last operation"
-msgstr " 上次操作的时间"
+msgstr "上次操作的时间"
 
 #: sys-utils/lsipc.c:207
 msgid "Last operation"
@@ -24151,7 +24126,7 @@ msgstr "libmount 表分配失败"
 
 #: sys-utils/umount.c:311 sys-utils/umount.c:403
 msgid "libmount iterator allocation failed"
-msgstr "分配 libmount 迭代器失败！"
+msgstr "分配 libmount 迭代器失败"
 
 #: sys-utils/umount.c:324
 #, c-format
@@ -24739,7 +24714,7 @@ msgstr "标识："
 
 #: sys-utils/wdctl.c:732
 msgid "version"
-msgstr "版本："
+msgstr "版本"
 
 #: sys-utils/wdctl.c:799
 #, fuzzy
@@ -26176,16 +26151,12 @@ msgid " -l, --list          display bits as a compressed list of bit IDs"
 msgstr " -l, --list             使用列表格式的输出\n"
 
 #: text-utils/bits.c:285
-#, fuzzy
-#| msgid "invalid id"
 msgid "invalid --width"
-msgstr "无效 id"
+msgstr "无效 --width"
 
 #: text-utils/bits.c:306 text-utils/bits.c:315
-#, fuzzy
-#| msgid "Cannot allocate memory!"
 msgid "cannot allocate memory"
-msgstr "无法分配内存！"
+msgstr "无法分配内存"
 
 #: text-utils/col.c:173
 #, fuzzy
@@ -26502,10 +26473,8 @@ msgid "option --table required for all --table-*"
 msgstr "所有 --table-* 均需要 --table 选项"
 
 #: text-utils/column.c:1112
-#, fuzzy
-#| msgid "option --table-columns required for --json"
 msgid "option --table-columns or --table-column required for --json"
-msgstr "使用 --json 需要 --table-columns 选项"
+msgstr "使用 --json 需要 --table-columns 或 --table-column 选项"
 
 #: text-utils/hexdump.c:167 text-utils/more.c:241
 #, c-format
@@ -26521,10 +26490,8 @@ msgid " -b, --one-byte-octal      one-byte octal display\n"
 msgstr " -b, --one-byte-octal      单字节八进制显示\n"
 
 #: text-utils/hexdump.c:174
-#, fuzzy
-#| msgid " -x, --two-bytes-hex       two-byte hexadecimal display\n"
 msgid " -X, --one-byte-hex        one-byte hexadecimal display\n"
-msgstr " -x, --two-bytes-hex       双字节十六进制显示\n"
+msgstr " -X, --two-bytes-hex       单字节十六进制显示\n"
 
 #: text-utils/hexdump.c:175
 msgid " -c, --one-byte-char       one-byte character display\n"
@@ -26786,41 +26753,15 @@ msgid "Pattern not found"
 msgstr "找不到模式"
 
 #: text-utils/more.c:1548
-#, fuzzy
-#| msgid ""
-#| "\n"
-#| "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
-#| "Star (*) indicates argument becomes new default.\n"
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
-"\n"
-"多数命令可在前面加整数参数 k。方括号中为参数的默认值\n"
+"多数命令可在前面加整数参数 k。方括号中为参数的默认值。\n"
 "星号(*)表示参数将成为新的默认值。\n"
 
 #: text-utils/more.c:1554
-#, fuzzy, c-format
-#| msgid ""
-#| "<space>                 Display next k lines of text [current screen size]\n"
-#| "z                       Display next k lines of text [current screen size]*\n"
-#| "<return>                Display next k lines of text [1]*\n"
-#| "d or ctrl-D             Scroll k lines [current scroll size, initially 11]*\n"
-#| "q or Q or <interrupt>   Exit from more\n"
-#| "s                       Skip forward k lines of text [1]\n"
-#| "f                       Skip forward k screenfuls of text [1]\n"
-#| "b or ctrl-B             Skip backwards k screenfuls of text [1]\n"
-#| "'                       Go to place where previous search started\n"
-#| "=                       Display current line number\n"
-#| "/<regular expression>   Search for kth occurrence of regular expression [1]\n"
-#| "n                       Search for kth occurrence of last r.e [1]\n"
-#| "!<cmd> or :!<cmd>       Execute <cmd> in a subshell\n"
-#| "v                       Start up /usr/bin/vi at current line\n"
-#| "ctrl-L                  Redraw screen\n"
-#| ":n                      Go to kth next file [1]\n"
-#| ":p                      Go to kth previous file [1]\n"
-#| ":f                      Display current file name and line number\n"
-#| ".                       Repeat previous command\n"
+#, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -26855,7 +26796,7 @@ msgstr ""
 "/<正则表达式>           搜索正则表达式第 k 次出现处[1]\n"
 "n                       搜索前一正则表达式第 k 次出现处[1]\n"
 "!<cmd> 或 :!<cmd>       在子 shell 中执行 <cmd> 命令\n"
-"v                       在当前行启动 /usr/bin/vi\n"
+"v                       在当前行启动 '%s'\n"
 "ctrl-L                  重绘屏幕\n"
 ":n                      转到后面第 k 个文件[1]\n"
 ":p                      转到前面第 k 个文件 [1]\n"
