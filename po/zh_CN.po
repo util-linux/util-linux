@@ -4,6 +4,7 @@
 # Ray Wang <wanglei1123@gmail.com>, 2008.
 # Wylmer Wang <wantinghard@gmail.com>, 2012, 2013, 2014, 2015, 2016.
 # Boyuan Yang <073plan@gmail.com>, 2019, 2020, 2021, 2022.
+# Haolin Xue <tzbkk@outlook.com>, 2025.
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.40.1-rc1\n"
