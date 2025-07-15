@@ -259,5 +259,7 @@ SMARTCOLS_2.41 {
 
 SMARTCOLS_2.42 {
 	scols_filter_has_holder;
+	scols_column_set_headercolor;
+	scols_column_get_headercolor;
 } SMARTCOLS_2.41;
 
