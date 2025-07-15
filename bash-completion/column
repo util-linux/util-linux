@@ -33,6 +33,7 @@ _column_module()
 		-*)
 			OPTS="--columns
 				--table
+				--table-colorscheme
 				--table-name
 				--table-order
 				--table-columns

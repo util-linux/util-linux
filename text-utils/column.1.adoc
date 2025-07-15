@@ -108,6 +108,9 @@ When not in table mode, use spaces instead of tabulators to align the columns. T
 *-t, --table*::
 Determine the number of columns the input contains and create a table. Columns are by default delimited with whitespace, or with characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
 
+*--table-colorscheme* _name_::
+Specifies color scheme. The default is name is "column". For more details see the *COLORS* section.
+
 *-C, --table-column* _attributes_::
 Define a column with a comma-separated list of attributes.
 This option can be used more than once, every use defines a single column.
@@ -142,7 +145,14 @@ Define the column color for output on the terminal. The _name_ is a color name
 lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, magenta, 
 red, reset, reverse, and yellow) or ANSI color sequence number(s) separated by 
 a semicolon, but without the 'ESC[' prefix and 'm' suffix. For example, "37;41" 
-defines sequences for a red background and white foreground.
+defines sequences for a red background and white foreground. For more details 
+see the *COLORS* section.
+**colorkey=**_name_;;
+Addresses color as defined in the color scheme. See *--table-colorscheme*.
+**headercolor=**_name_;;
+Like color=, but define the color for column header only.
+**headercolorkey=**_name_;;
+Addresses color for header as defined in the color scheme. See *--table-colorscheme*.
 
 *-N, --table-columns* _names_::
 Specify column names with a comma-separated list. The names are used for the table header
@@ -201,6 +211,31 @@ Colorize the output. The optional argument _when_ can be *auto*, *never* or *alw
 include::man-common/help-version.adoc[]
 
 include::man-common/colors.adoc[]
+
+The default color scheme name is "column," and it can be overridden by
+____
+*--table-colorscheme name*
+____
+
+Then _name_[.disable|enable|scheme] file may be used in /etc/terminal-colors.d/,
+$XDG_CONFIG_HOME/terminal-colors.d, or $HOME/.config/terminal-colors.d/.
+
+The logical color name (key) in the color scheme may be addressed by column properties
+colorkey= and headercolorkey=. For example
+
+....
+echo 'important red'           > ~/.config/terminal-colors.d/cooltable.scheme
+echo 'important-header 37;41' >> ~/.config/terminal-colors.d/cooltable.scheme
+echo -e "a b c\naa bb cc\naaa bbb ccc" | column -t \
+	--table-colorscheme=cooltable \
+	-C name=AAA,colorkey=important,headercolorkey=important-header \
+	-C name=BBB,color=magenta,headercolor=cyan \
+	-C name=CCC,color=green
+....
+
+This will create a color scheme with the name "cooltable" and colorize the first
+column header and data according to keys from the scheme. The other two columns
+will be colorized by direct color names.
 
 == ENVIRONMENT
 
