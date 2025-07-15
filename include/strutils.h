@@ -476,5 +476,6 @@ extern int ul_stralnumcmp(const char *p1, const char *p2);
 
 extern int ul_optstr_next(char **optstr, char **name, size_t *namesz, char **value, size_t *valsz);
 extern int ul_optstr_is_valid(const char *optstr);
+extern char *ul_optstr_get_value(const char *optstr, const char *key);
 
 #endif
