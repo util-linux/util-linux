@@ -28,6 +28,7 @@ scols_column_get_color
 scols_column_get_data_type
 scols_column_get_flags
 scols_column_get_header
+scols_column_get_headercolor
 scols_column_get_json_type
 scols_column_get_name
 scols_column_get_name_as_shellvar
@@ -51,6 +52,7 @@ scols_column_set_color
 scols_column_set_data_func
 scols_column_set_data_type
 scols_column_set_flags
+scols_column_set_headercolor
 scols_column_set_json_type
 scols_column_set_name
 scols_column_set_properties
