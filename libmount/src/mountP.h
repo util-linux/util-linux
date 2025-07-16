@@ -286,6 +286,26 @@ struct libmnt_fs {
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
+#define MNT_FS_STATUS_ATTACH	(1 << 6)
+#define MNT_FS_STATUS_DETACH	(1 << 7)
+
+static inline void mnt_fs_mark_attached(struct libmnt_fs *fs)
+{
+	fs->flags &= ~MNT_FS_STATUS_DETACH;
+	fs->flags |= MNT_FS_STATUS_ATTACH;
+}
+
+static inline void mnt_fs_mark_detached(struct libmnt_fs *fs)
+{
+	fs->flags &= ~MNT_FS_STATUS_ATTACH;
+	fs->flags |= MNT_FS_STATUS_DETACH;
+}
+
+static inline void mnt_fs_mark_moved(struct libmnt_fs *fs)
+{
+	fs->flags |= MNT_FS_STATUS_ATTACH | MNT_FS_STATUS_DETACH;
+}
+
 #ifdef HAVE_STATMOUNT_API
 # define	mnt_fs_try_statmount(FS, MEMBER, FLAGS) __extension__ ({	\
 			if (!(FS)->MEMBER					\

@@ -577,6 +577,10 @@ extern int mnt_fs_is_netfs(struct libmnt_fs *fs);
 extern int mnt_fs_is_pseudofs(struct libmnt_fs *fs);
 extern int mnt_fs_is_regularfs(struct libmnt_fs *fs);
 
+extern int mnt_fs_is_moved(struct libmnt_fs *fs);
+extern int mnt_fs_is_attached(struct libmnt_fs *fs);
+extern int mnt_fs_is_detached(struct libmnt_fs *fs);
+
 extern void mnt_free_mntent(struct mntent *mnt);
 extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt);
 
