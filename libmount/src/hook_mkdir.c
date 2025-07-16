@@ -107,13 +107,13 @@ static int hook_prepare_target(
 
 		struct libmnt_cache *cache;
 
-		/* supported only for root or non-suid mount(8) */
-		if (!mnt_context_is_restricted(cxt)) {
+		if (mnt_context_is_restricted(cxt))
+			rc = ul_mkdir_p_restricted(tgt, mode);
+		else
 			rc = ul_mkdir_p(tgt, mode);
-			if (rc)
-				DBG(HOOK, ul_debugobj(hs, "mkdir %s failed: %m", tgt));
-		} else
-			rc = -EPERM;
+
+		if (rc)
+			DBG(HOOK, ul_debugobj(hs, "mkdir %s failed: %m", tgt));
 
 		if (rc == 0) {
 			cache = mnt_context_get_cache(cxt);

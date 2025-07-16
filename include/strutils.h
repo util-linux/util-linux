@@ -266,6 +266,8 @@ extern int ul_parse_range(const char *str, int *lower, int *upper, int def);
 
 extern int streq_paths(const char *a, const char *b);
 
+extern int ul_normalize_path(char *path);
+
 /*
  * Match string beginning.
  */

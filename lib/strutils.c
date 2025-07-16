@@ -963,6 +963,31 @@ int streq_paths(const char *a, const char *b)
 	return 0;
 }
 
+int ul_normalize_path(char *path)
+{
+	char *src = path, *dst = path;
+
+	if (!src || !*src)
+		return -EINVAL;
+
+	/* remove duplicate '/' */
+	while (*src) {
+		*dst = *src++;
+		if (*dst == '/') {
+	            while (*src == '/')
+			    src++;
+		}
+		dst++;
+	}
+
+	/* remove tailing '/' */
+	if (dst > path + 1 && *(dst - 1) == '/')
+		*(dst - 1) = '\0';
+	else
+		*dst = '\0';
+	return 0;
+}
+
 /* concatenate two strings to a new string, the size of the second string is limited by @b */
 char *ul_strnconcat(const char *s, const char *suffix, size_t b)
 {
@@ -1394,6 +1419,24 @@ done:
 	return EXIT_SUCCESS;
 }
 
+static int test_strutils_normalize_path(int argc, char *argv[])
+{
+	char *path;
+
+	if (argc < 2)
+		return EXIT_FAILURE;
+
+	path = strdup(argv[1]);
+	if (!path)
+		return EXIT_FAILURE;
+
+	ul_normalize_path(path);
+	printf("'%s' --> '%s'\n", argv[1], path);
+
+	free(path);
+	return EXIT_SUCCESS;
+}
+
 static int test_strutils_cstrcasecmp(int argc, char *argv[])
 {
 	char *a, *b;
@@ -1443,6 +1486,9 @@ int main(int argc, char *argv[])
 
 	} else if (argc == 3 && strcmp(argv[1], "--normalize") == 0) {
 		return test_strutils_normalize(argc - 1, argv + 1);
+
+	} else if (argc == 3 && strcmp(argv[1], "--normalize-path") == 0) {
+		return test_strutils_normalize_path(argc - 1, argv + 1);
 
 	} else if (argc == 3 && strcmp(argv[1], "--strtos64") == 0) {
 		printf("'%s'-->%jd\n", argv[2], strtos64_or_err(argv[2], "strtos64 failed"));
@@ -1502,6 +1548,7 @@ int main(int argc, char *argv[])
 				"       %1$s --stralnumcmp <str> <str>\n"
 				"       %1$s --cstrcasecmp <str> <str>\n"
 				"       %1$s --normalize <str>\n"
+				"       %1$s --normalize-path <str>\n"
 				"       %1$s --strto{s,u}{16,32,64} <str>\n"
 				"       %1$s --optstr <str>\n",
 				argv[0]);
