@@ -3243,8 +3243,11 @@ exe = executable(
   install : true)
 if not is_disabler(exe)
   exes += exe
+  meson.add_install_script(meson_make_symlink, 'fincore', usrbin_exec_dir / 'mu')
   manadocs += fincore_manadocs
+  manlinks += {'mu.1': 'fincore.1'}
   bashcompletions += ['fincore']
+  bashcompletionslinks += {'mu': 'fincore'}
 endif
 
 opt = get_option('build-hardlink').allowed()
