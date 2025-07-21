@@ -462,10 +462,11 @@ static void __attribute__((__noreturn__))
 
 static void do_directory(char *path, struct cramfs_inode *i)
 {
-	int pathlen = strlen(path);
+	size_t pathlen = strlen(path);
+	size_t pathbufsz = pathlen + MAX_INPUT_NAMELEN + 1;
 	int count = i->size;
 	unsigned long offset = i->offset << 2;
-	char *newpath = xmalloc(pathlen + 256);
+	char *newpath = xmalloc(pathbufsz);
 
 	if (offset == 0 && count != 0)
 		errx(FSCK_EX_UNCORRECTED,
@@ -503,10 +504,13 @@ static void do_directory(char *path, struct cramfs_inode *i)
 			errx_path(_("illegal filename"), name, newlen);
 		if (*extract_dir != '\0' && is_dangerous_filename(name, newlen))
 			errx_path(_("dangerous filename"), name, newlen);
-		memcpy(newpath + pathlen, name, newlen);
-		newpath[pathlen + newlen] = 0;
 		if (newlen == 0)
 			errx(FSCK_EX_UNCORRECTED, _("filename length is zero"));
+		if (pathlen + newlen + 1 > pathbufsz)
+			errx(FSCK_EX_UNCORRECTED, _("filename length is too large"));
+
+		memcpy(newpath + pathlen, name, newlen);
+		newpath[pathlen + newlen] = '\0';
 		if ((pathlen + newlen) - strlen(newpath) > 3)
 			errx(FSCK_EX_UNCORRECTED, _("bad filename length"));
 		expand_fs(newpath, child);

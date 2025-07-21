@@ -40,6 +40,15 @@
 #endif
 
 /*
+ * The longest file name component to allow for in the input directory tree.
+ * Ext2fs (and many others) allow up to 255 bytes.  A couple of filesystems
+ * allow longer (e.g. smbfs 1024), but there isn't much use in supporting
+ * >255-byte names in the input directory tree given that such names get
+ * truncated to 255 bytes when written to cramfs.
+ */
+#define MAX_INPUT_NAMELEN 255
+
+/*
  * Reasonably terse representation of the inode data.
  */
 struct cramfs_inode {
