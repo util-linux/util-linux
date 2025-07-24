@@ -48,7 +48,7 @@
  *
  * @UUID: filesystem UUID (lower case)
  *
- * @UUID_SUB: subvolume uuid (e.g. btrfs)
+ * @UUID_SUB: pool member UUID or device item UUID, etc. (e.g., zfs, btrfs, ...)
  *
  * @LOGUUID: external log UUID (e.g. xfs)
  *
