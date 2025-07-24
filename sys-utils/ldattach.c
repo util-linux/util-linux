@@ -217,6 +217,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
+	fputs(_("\nOptions relevant to GSM0710:\n"), out);
+	fputs(_(" -m, --mtu <value>  set CMUX maximum frame size\n"), out);
+
 	fputs(_("\nKnown <ldisc> names:\n"), out);
 	print_table(out, ld_discs);
 	fputs(USAGE_SEPARATOR, out);
@@ -260,22 +263,19 @@ static void handler(int s)
 	_exit(EXIT_SUCCESS);
 }
 
-static void gsm0710_set_conf(int tty_fd)
+static void gsm0710_set_conf(int tty_fd, unsigned int mtu)
 {
 	struct gsm_config c;
 
-	/* Add by guowenxue */
 	/*  get n_gsm configuration */
 	ioctl(tty_fd, GSMIOC_GETCONF, &c);
 	/*  we are initiator and need encoding 0 (basic) */
 	c.initiator = 1;
 	c.encapsulation = 0;
-	/*  our modem defaults to a maximum size of 127 bytes */
-	c.mru = 127;
-	c.mtu = 127;
+	c.mru = mtu;
+	c.mtu = mtu;
 	/*  set the new configuration */
 	ioctl(tty_fd, GSMIOC_SETCONF, &c);
-	/* Add by guowenxue end*/
 }
 
 int main(int argc, char **argv)
@@ -289,6 +289,7 @@ int main(int argc, char **argv)
 	char *dev;
 	int intropause = 1;
 	char *introparm = NULL;
+	unsigned int gsm_mtu = 127; /* traditional default */
 
 	static const struct option opttbl[] = {
 		{"speed", required_argument, NULL, 's'},
@@ -305,6 +306,7 @@ int main(int argc, char **argv)
 		{"debug", no_argument, NULL, 'd'},
 	        {"intro-command", required_argument, NULL, 'c'},
 	        {"pause", required_argument, NULL, 'p'},
+	        {"mtu", required_argument, NULL, 'm'},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -321,7 +323,7 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("bad usage"));
 
 	while ((optc =
-		getopt_long(argc, argv, "dhV78neo12s:i:c:p:", opttbl,
+		getopt_long(argc, argv, "dhV78neo12s:i:c:p:m:", opttbl,
 			    NULL)) >= 0) {
 		switch (optc) {
 		case 'd':
@@ -347,6 +349,9 @@ int main(int argc, char **argv)
 			intropause = strtou32_or_err(optarg, _("invalid pause argument"));
 			if (intropause > 10)
 				errx(EXIT_FAILURE, "invalid pause: %s", optarg);
+			break;
+		case 'm':
+			gsm_mtu = str2num_or_err(optarg, 10, _("invalid MTU argument"), 1, 32768);
 			break;
 		case 'c':
 			introparm = optarg;
@@ -476,7 +481,7 @@ int main(int argc, char **argv)
 
 	/* ldisc specific post-attach actions */
 	if (ldisc == N_GSM0710)
-		gsm0710_set_conf(tty_fd);
+		gsm0710_set_conf(tty_fd, gsm_mtu);
 
 	/* Go into background if not in debug mode. */
 	if (!debug && daemon(0, 0) < 0)
