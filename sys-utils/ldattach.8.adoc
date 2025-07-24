@@ -18,7 +18,7 @@ ldattach - attach a line discipline to a serial line
 
 == SYNOPSIS
 
-*ldattach* [*-1278denoVh*] [*-i* _iflag_] [*-s* _speed_] _ldisc device_
+*ldattach* [*-1278denoVh*] [*-i* _iflag_] [*-s* _speed_] [*-m* _mtu_] _ldisc device_
 
 == DESCRIPTION
 
@@ -110,6 +110,9 @@ Define an intro command that is sent through the serial line before the invocati
 
 *-p*, *--pause* _value_::
 Sleep for _value_ seconds before the invocation of *ldattach*. Default is one second.
+
+*-m*, *--mtu* _value_::
+Set maximum frame size for GSM0710 CMUX. If not specified, traditionally the default of 127 have been set by *ldattach*. This differs from 3GPP TS 27.010 default value of 31 bytes, so it is recommended to specify
 
 include::man-common/help-version.adoc[]
 

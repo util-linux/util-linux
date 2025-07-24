@@ -28,6 +28,10 @@ _ldattach_module()
 			COMPREPLY=( $(compgen -W "$IFLAGS" -- $cur) )
 			return 0
 			;;
+		'-m'|'--mtu')
+			COMPREPLY=( $(compgen -W "mtu" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -46,6 +50,7 @@ _ldattach_module()
 				--onestopbit
 				--twostopbits
 				--iflag
+				--mtu
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
