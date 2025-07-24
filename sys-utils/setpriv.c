@@ -295,19 +295,15 @@ static void dump_label(const char *name)
 static void dump_groups(void)
 {
 	int n = getgroups(0, NULL);
-	gid_t *groups;
+	gid_t *groups = NULL;
 
-	if (n < 0) {
-		warn("getgroups failed");
-		return;
-	}
-
-	groups = xmalloc(n * sizeof(gid_t));
-	n = getgroups(n, groups);
-	if (n < 0) {
-		free(groups);
-		warn("getgroups failed");
-		return;
+	if (n < 0)
+		goto failed;
+	if (n) {
+		groups = xmalloc(n * sizeof(gid_t));
+		n = getgroups(n, groups);
+		if (n < 0)
+			goto failed;
 	}
 
 	printf(_("Supplementary groups: "));
@@ -323,6 +319,10 @@ static void dump_groups(void)
 	}
 	printf("\n");
 	free(groups);
+	return;
+failed:
+	free(groups);
+	warn("getgroups failed");
 }
 
 static void dump_pdeathsig(void)
