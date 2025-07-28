@@ -180,6 +180,15 @@ static struct ext2_super_block *ext_get_super(
 			return NULL;
 #endif
 		}
+	} else {
+		/*
+		 * For legacy fs without checksum, additionally verify the
+		 * block size to reduce false positive. Currently max allowed
+		 * block size is 64KiB (s_log_block_size <= 6), check for 256
+		 * to be more future proof.
+		 */
+		if (le32_to_cpu(es->s_log_block_size) >= 256)
+			return NULL;
 	}
 	if (fc)
 		*fc = le32_to_cpu(es->s_feature_compat);
