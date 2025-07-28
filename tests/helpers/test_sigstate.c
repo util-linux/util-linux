@@ -68,6 +68,7 @@ int main(int argc _U_, char **argv _U_)
 	sigignore(SIGPIPE);
 	sigignore(SIGALRM);
 
+	signal(SIGINT, SIG_DFL);
 	signal(SIGBUS, SIG_DFL);
 	signal(SIGFPE, SIG_DFL);
 	signal(SIGSEGV, SIG_DFL);
