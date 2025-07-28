@@ -93,11 +93,14 @@ static int __color_canonicalize(const char *str, char **seq)
 	*seq = NULL;
 
 	/* convert color names like "red" to the real sequence */
-	if (*str != '\\' && isalpha(*str)) {
+	if (*str != '\\' && !strchr(str, ';') && isalpha(*str)) {
 		const char *s = color_sequence_from_colorname(str);
-		*seq = strdup(s ? s : str);
 
-		return *seq ? 0 : -ENOMEM;
+		if (s) {
+			*seq = strdup(s);
+			return *seq ? 0 : -ENOMEM;
+		}
+		return 1;
 	}
 
 	/* convert xx;yy sequences to "\033[xx;yy" */

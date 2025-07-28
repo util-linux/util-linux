@@ -54,6 +54,7 @@
 #include "strv.h"
 #include "optutils.h"
 #include "mbsalign.h"
+#include "colors.h"
 
 #include "libsmartcols.h"
 
@@ -83,6 +84,7 @@ struct column_control {
 	const char *tab_colnoextrem;	/* --table-noextreme */
 	const char *tab_colwrap;	/* --table-wrap */
 	const char *tab_colhide;	/* --table-hide */
+	const char *tab_colorscheme;	/* --table-colorscheme */
 
 	const char *tree;
 	const char *tree_id;
@@ -330,6 +332,20 @@ static char **split_or_error(const char *str, const char *errmsg)
 	return res;
 }
 
+/* @key= is expected in the options string */
+static const char *colorseq_from_colorkey(char *opts, const char *key)
+{
+	char *cs = ul_optstr_get_value(opts, key);
+	const char *seq = NULL;
+
+	if (cs) {
+		seq = color_scheme_get_sequence(cs, NULL);
+		free(cs);
+	}
+
+	return seq;
+}
+
 static void init_table(struct column_control *ctl)
 {
 	scols_init_debug(0);
@@ -346,6 +362,7 @@ static void init_table(struct column_control *ctl)
 		scols_table_enable_noencoding(ctl->tab, 1);
 
 	scols_table_enable_maxout(ctl->tab, ctl->maxout ? 1 : 0);
+	scols_table_enable_colors(ctl->tab, colors_wanted() ? 1 : 0);
 
 	if (ctl->tab_columns) {
 		char **opts;
@@ -355,6 +372,18 @@ static void init_table(struct column_control *ctl)
 
 			cl = scols_table_new_column(ctl->tab, NULL, 0, 0);
 			scols_column_set_properties(cl, *opts);
+
+			if (ctl->tab_colorscheme) {
+				const char *seq;
+
+				seq = colorseq_from_colorkey(*opts, "colorkey");
+				if (seq)
+					scols_column_set_color(cl, seq);
+
+				seq = colorseq_from_colorkey(*opts, "headercolorkey");
+				if (seq)
+					scols_column_set_headercolor(cl, seq);
+			}
 		}
 
 	} else if (ctl->tab_colnames) {
@@ -899,6 +928,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
+	fputs(_("     --table-colorscheme <name>   specify color scheme name\n"), out);
 	fputs(_(" -C, --table-column <properties>  define column\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -l, --table-columns-limit <num>  maximal number of input columns\n"), out);
@@ -925,7 +955,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 	fputs(_(" -S, --use-spaces <number>        minimal whitespaces between columns (no tabs)\n"), out);
 
-
+	fputs(USAGE_SEPARATOR, out);
+	fprintf(out, _("     --color[=<when>]             colorize output (%s, %s or %s)\n"), "auto", "always", "never");
+	fprintf(out,
+	        "                                    %s\n", USAGE_COLORS_DEFAULT);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(34));
 	fprintf(out, USAGE_MAN_TAIL("column(1)"));
@@ -943,10 +976,16 @@ int main(int argc, char **argv)
 
 	int c;
 	unsigned int eval = 0;		/* exit value */
+	int colormode = UL_COLORMODE_UNDEF;
+	enum {
+		OPT_COLOR	= CHAR_MAX + 1,
+		OPT_COLORSCHEME,
+	};
 
 	static const struct option longopts[] =
 	{
 		{ "columns",             required_argument, NULL, 'c' }, /* deprecated */
+		{ "color",               optional_argument, NULL, OPT_COLOR },
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
 		{ "json",                no_argument,       NULL, 'J' },
@@ -955,6 +994,7 @@ int main(int argc, char **argv)
 		{ "output-width",        required_argument, NULL, 'c' },
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
+		{ "table-colorscheme",   required_argument, NULL,  OPT_COLORSCHEME },
 		{ "table-columns",       required_argument, NULL, 'N' },
 		{ "table-column",        required_argument, NULL, 'C' },
 		{ "table-columns-limit", required_argument, NULL, 'l' },
@@ -1082,6 +1122,14 @@ int main(int argc, char **argv)
 		case 'x':
 			ctl.mode = COLUMN_MODE_FILLROWS;
 			break;
+		case OPT_COLOR:
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg)
+				colormode = colormode_or_err(optarg);
+			break;
+		case OPT_COLORSCHEME:
+			ctl.tab_colorscheme = optarg;
+			break;
 
 		case 'h':
 			usage();
@@ -1112,6 +1160,9 @@ int main(int argc, char **argv)
 
 	if (!ctl.tab_colnames && !ctl.tab_columns && ctl.json)
 		errx(EXIT_FAILURE, _("option --table-columns or --table-column required for --json"));
+
+	if (ctl.mode == COLUMN_MODE_TABLE)
+		colors_init(colormode, ctl.tab_colorscheme ? : "column");
 
 	if (!*argv)
 		eval += read_input(&ctl, stdin);

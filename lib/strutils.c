@@ -1290,6 +1290,25 @@ int ul_optstr_is_valid(const char *optstr)
 	return rc < 0 ? 0 : 1;
 }
 
+char *ul_optstr_get_value(const char *optstr, const char *key)
+{
+	size_t sz, namesz = 0, valsz = 0;
+	char *name = NULL, *value = NULL;
+	char *p = (char *) optstr;
+
+	if (!optstr || !key || !*key)
+		return NULL;
+
+	sz = strlen(key);
+	while (ul_optstr_next(&p, &name, &namesz, &value, &valsz) == 0) {
+		if (namesz != sz || !valsz)
+			continue;
+		if (strncmp(name, key, namesz) == 0)
+			return strndup(value, valsz);
+	}
+	return NULL;
+}
+
 #ifdef TEST_PROGRAM_STRUTILS
 
 #include "cctype.h"
