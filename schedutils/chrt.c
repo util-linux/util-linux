@@ -503,7 +503,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (argc - optind < (ctl->pid == 0 ? 1 : 2)) {
+	if (argc - optind < 1) {
 		warnx(_("too few arguments"));
 		errtryhelp(EXIT_FAILURE);
 	}
@@ -527,7 +527,10 @@ int main(int argc, char **argv)
 	if (ctl->verbose)
 		show_sched_info(ctl);
 
-	if (argc - optind > 1) {
+	bool have_prio = need_prio ||
+		(ctl->pid == -1 ? (optind < argc && isdigit_string(argv[optind])) : (argc - optind > 1));
+
+	if (have_prio) {
 		errno = 0;
 		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 	} else
@@ -568,9 +571,19 @@ int main(int argc, char **argv)
 		show_sched_info(ctl);
 
 	if (!ctl->pid) {
-		argv += optind + 1;
-		if (strcmp(argv[0], "--") == 0)
+		argv += optind;
+
+		if (need_prio)
 			argv++;
+		else if (argv[0] && isdigit_string(argv[0]))
+			argv++;
+
+		if (argv[0] && strcmp(argv[0], "--") == 0)
+			argv++;
+
+		if (!argv[0])
+			errx(EXIT_FAILURE, _("no command specified"));
+
 		execvp(argv[0], argv);
 		errexec(argv[0]);
 	}
