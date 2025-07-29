@@ -290,7 +290,7 @@ static int cramsort (const struct dirent **a, const struct dirent **b)
 
 static unsigned int parse_directory(struct entry *root_entry, const char *name, struct entry **prev, loff_t *fslen_ub)
 {
-	struct dirent **dirlist;
+	struct dirent **dirlist = NULL;
 	int totalsize = 0, dircount, dirindex;
 	char *path, *endpath;
 	size_t len = strlen(name);
