@@ -264,11 +264,10 @@ function ts_has_option {
 }
 
 function ts_option_argument {
-	NAME="$1"
-	ALL="$2"
+	local NAME="$1"
+	local ALL="$2"
 
-	# last option wins!
-	echo "$ALL" | sed -n "s/.*[ \t\n]--$NAME=\([^ \t\n]*\).*/\1/p" | tail -n 1
+	echo "$ALL" | grep -oP "(?<=--$NAME=)[^\s]+"
 }
 
 function ts_init_core_env {
@@ -426,6 +425,7 @@ function ts_init_env {
 
 	if [ "$TS_VERBOSE" == "yes" ]; then
 		echo
+		echo "   builddir: $top_builddir"
 		echo "     script: $TS_SCRIPT"
 		echo "   commands: $ts_commandsdir"
 		echo "    helpers: $ts_helpersdir"

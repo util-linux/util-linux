@@ -1,0 +1,114 @@
+#!/bin/bash
+
+# Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="user"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_test_command "$TS_CMD_MOUNT_STATIC"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_prog "useradd"
+ts_check_prog "userdel"
+ts_check_prog "runuser"
+
+# Init Paths
+#
+MOUNT_TOPDIR="${TS_MOUNTPOINT}"
+MOUNT_SOURCE="${TS_MOUNTPOINT}/src"
+MOUNT_TARGET="${TS_MOUNTPOINT}/tgt"
+
+[ -d "$MOUNT_SOURCE" ] || mkdir -p "$MOUNT_SOURCE"
+[ -d "$MOUNT_TARGET" ] || mkdir -p "$MOUNT_TARGET"
+
+# Ensure non-root users do not have permission to write to the working directory
+#
+chown root:root $MOUNT_TOPDIR
+chmod g-w,o-w $MOUNT_TOPDIR
+
+# Set mount command suid
+#
+owner=$(stat -c "%U:%G" "$TS_CMD_MOUNT_STATIC")
+mode=$(stat -c "%a" "$TS_CMD_MOUNT_STATIC")
+
+if [ "$mode" != "4755" ]; then
+	chown "root:root" $TS_CMD_MOUNT_STATIC
+	chmod "4755" $TS_CMD_MOUNT_STATIC
+fi
+
+# Add test user
+#
+useradd -u 9899 --shell /bin/bash testuser_mount
+
+
+#
+# classic user-mount
+#
+ts_init_subtest "basic"
+TS_FSTAB="/etc/fstab"
+ts_fstab_add $MOUNT_SOURCE $MOUNT_TARGET "none" "bind,user,default,noauto"
+runuser -u testuser_mount -- $TS_CMD_MOUNT_STATIC $MOUNT_TARGET >> $TS_OUTPUT 2>> $TS_ERRLOG
+opts=$(findmnt -nr -o VFS-OPTIONS --mountpoint $MOUNT_TARGET)
+[[ $opts == *"noexec"* && $opts == *"nosuid"* && $opts == *"nodev"* ]] \
+	|| ts_log "Cannot find user options"
+$TS_CMD_UMOUNT $MOUNT_TARGET >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_fstab_clean
+ts_finalize_subtest
+
+
+#
+# user-mount + X-mount.mkdir; user does NOT have write permissions to create $MOUNT_TARGET
+#
+ts_init_subtest "mkdir-eperm"
+rm -rf $MOUNT_TARGET
+TS_FSTAB="/etc/fstab"
+ts_fstab_add $MOUNT_SOURCE $MOUNT_TARGET "none" "bind,X-mount.mkdir,user,default,noauto"
+runuser -u testuser_mount -- $TS_CMD_MOUNT_STATIC $MOUNT_TARGET &> /dev/null
+[[ $? -eq 0 ]] && ts_log "Unexpected mount success"
+[[ -d $MOUNT_TARGET ]] && ts_log "Unexpected mkdir success"
+ts_fstab_clean
+ts_finalize_subtest
+
+
+#
+# user-mount + X-mount.mkdir; user have write permissions to create $MOUNT_TARGET
+#
+ts_init_subtest "mkdir"
+rm -rf $MOUNT_TARGET
+chmod o+w $MOUNT_TOPDIR
+TS_FSTAB="/etc/fstab"
+ts_fstab_add $MOUNT_SOURCE $MOUNT_TARGET "none" "bind,X-mount.mkdir,user,default,noauto"
+runuser -u testuser_mount -- $TS_CMD_MOUNT_STATIC $MOUNT_TARGET &> /dev/null
+[[ -d $MOUNT_TARGET ]] || ts_log "Unexpected mkdir fail"
+opts=$(findmnt -nr -o VFS-OPTIONS --mountpoint $MOUNT_TARGET)
+[[ $opts == *"noexec"* && $opts == *"nosuid"* && $opts == *"nodev"* ]] \
+	|| ts_log "Cannot find user options"
+$TS_CMD_UMOUNT $MOUNT_TARGET >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_fstab_clean
+ts_finalize_subtest
+
+
+#
+# Cleanup and restore old permissions
+#
+userdel --remove testuser_mount &> /dev/null
+
+chown "$owner" $TS_CMD_MOUNT_STATIC
+chmod "$mode" $TS_CMD_MOUNT_STATIC
+
+ts_finalize
