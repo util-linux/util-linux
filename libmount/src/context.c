@@ -572,7 +572,7 @@ int mnt_context_is_lazy(struct libmnt_context *cxt)
  * @cxt: mount context
  * @enable: TRUE or FALSE
  *
- * Enable/disable only-once mount (check if FS is not already mounted).
+ * Enable/disable only-once mount (check if source + target is not already mounted).
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -590,6 +590,31 @@ int mnt_context_enable_onlyonce(struct libmnt_context *cxt, int enable)
 int mnt_context_is_onlyonce(struct libmnt_context *cxt)
 {
 	return cxt->flags & MNT_FL_ONLYONCE ? 1 : 0;
+}
+
+/**
+ * mnt_context_enable_exclusive
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Enable/disable exclusive mount (only one FS instance is allowed).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_exclusive(struct libmnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_EXCL, enable);
+}
+
+/**
+ * mnt_context_is_exclusive:
+ * @cxt: mount context
+ *
+ * Returns: 1 if exclisive mount is enabled or 0
+ */
+int mnt_context_is_exclusive(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_EXCL ? 1 : 0;
 }
 
 /**

@@ -31,6 +31,7 @@ mnt_context_disable_canonicalize
 mnt_context_disable_helpers
 mnt_context_disable_mtab
 mnt_context_disable_swapmatch
+mnt_context_enable_exclusive
 mnt_context_enable_fake
 mnt_context_enable_force
 mnt_context_enable_fork
@@ -71,6 +72,7 @@ mnt_context_helper_executed
 mnt_context_helper_setopt
 mnt_context_init_helper
 mnt_context_is_child
+mnt_context_is_exclusive
 mnt_context_is_fake
 mnt_context_is_force
 mnt_context_is_fork
