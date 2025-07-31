@@ -559,6 +559,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               mount all filesystems mentioned in fstab\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
+	fputs(_("     --exclusive         allow only one filesystem instance"), out);
 	fputs(_(" -f, --fake              dry run; skip the mount(2) syscall\n"), out);
 	fputs(_(" -F, --fork              fork off for each device (use with -a)\n"), out);
 	fputs(_(" -T, --fstab <path>      alternative file to /etc/fstab\n"), out);
@@ -578,7 +579,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                         mount options source\n"), out);
 	fputs(_("     --options-source-force\n"
 		"                         force use of options from fstab/mtab\n"), out);
-	fputs(_("     --onlyonce          check if filesystem is already mounted\n"), out);
+	fputs(_("     --onlyonce          check if filesystem is already mounted on target\n"), out);
 	fputs(_(" -o, --options <list>    comma-separated list of mount options\n"), out);
 	fputs(_(" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"), out);
 	fputs(_(" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"), out);
@@ -708,11 +709,13 @@ int main(int argc, char **argv)
 		MOUNT_OPT_OPTMODE,
 		MOUNT_OPT_OPTSRC,
 		MOUNT_OPT_OPTSRC_FORCE,
-		MOUNT_OPT_ONLYONCE
+		MOUNT_OPT_ONLYONCE,
+		MOUNT_OPT_EXCL
 	};
 
 	static const struct option longopts[] = {
 		{ "all",              no_argument,       NULL, 'a'                   },
+		{ "exclusive",        no_argument,       NULL, MOUNT_OPT_EXCL        },
 		{ "fake",             no_argument,       NULL, 'f'                   },
 		{ "fstab",            required_argument, NULL, 'T'                   },
 		{ "fork",             no_argument,       NULL, 'F'                   },
@@ -786,7 +789,8 @@ int main(int argc, char **argv)
 		if (mnt_context_is_restricted(cxt) &&
 		    !strchr("hlLUVvrist", c) &&
 		    c != MOUNT_OPT_TARGET &&
-		    c != MOUNT_OPT_SOURCE)
+		    c != MOUNT_OPT_SOURCE &&
+		    c != MOUNT_OPT_EXCL)
 			suid_drop(cxt);
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -975,6 +979,10 @@ int main(int argc, char **argv)
 		case MOUNT_OPT_ONLYONCE:
 			mnt_context_enable_onlyonce(cxt, 1);
 			break;
+		case MOUNT_OPT_EXCL:
+			mnt_context_enable_exclusive(cxt, 1);
+			break;
+
 		case 'h':
 			mnt_free_context(cxt);
 			usage();

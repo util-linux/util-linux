@@ -408,3 +408,8 @@ MOUNT_2_41 {
 	mnt_table_refer_statmnt;
 	mnt_unref_statmnt;
 } MOUNT_2_40;
+
+MOUNT_2_42 {
+	mnt_context_enable_exclusive;
+	mnt_context_is_exclusive;
+} MOUNT_2_41;

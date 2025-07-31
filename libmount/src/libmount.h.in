@@ -803,6 +803,7 @@ extern int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *ar
 extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable);
 extern int mnt_context_enable_onlyonce(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_exclusive(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable);
@@ -819,6 +820,8 @@ extern int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable
 extern int mnt_context_get_optsmode(struct libmnt_context *cxt);
 
 extern int mnt_context_is_onlyonce(struct libmnt_context *cxt)
+			__ul_attribute__((nonnull));
+extern int mnt_context_is_exclusive(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 extern int mnt_context_is_lazy(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));

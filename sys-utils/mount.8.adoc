@@ -325,6 +325,18 @@ Do not canonicalize any paths or tags during the mount process. The *mount* comm
 +
 Note that *mount* does not pass this option to the **/sbin/mount.**__type__ helpers.
 
+*--exclusive*::
+Ensures that the filesystem is mounted as a unique instance and that the
+filesystem superblock is not reused by the kernel. The filesystem may be reused
+later if mounted without the option. The option affects only the current mount
+and is allowed for non-root users as well.
++
+See also the **--onlyonce** option. The difference between *--onlyonce* and
+*--exclusive* is that "onlyonce" ensures the same source is not mounted on the
+same mount point; this means mounting twice on /A is not allowed, but mounting
+on /A and /B is allowed. The "exclusive" mount ensures the filesystem itself is
+not reused, regardless of the mount point.
+
 *-F*, *--fork*::
 (Used in conjunction with *-a*.) Fork off a new incarnation of *mount* for each device. This will do the mounts on different devices or different NFS servers in parallel. This has the advantage that it is faster; also NFS timeouts proceed in parallel. A disadvantage is that the order of the mount operations is undefined. Thus, you cannot use this option if you want to mount both _/usr_ and _/usr/spool_.
 
@@ -392,7 +404,10 @@ Also, options on the command line override options from fstab.
 For more details, see the *FILESYSTEM-INDEPENDENT MOUNT OPTIONS* and *FILESYSTEM-SPECIFIC MOUNT OPTIONS* sections.
 
 *--onlyonce*::
-Forces *mount* command to check if the filesystem is already mounted. This behavior is the default for *--all*; otherwise, it depends on the kernel filesystem driver. Some filesystems may be mounted more than once on the same mount point (e.g. tmpfs).
+Forces *mount* command to check if the filesystem is already mounted on
+specified mountpoint. This behavior is the default for *--all*; otherwise, it
+depends on the kernel filesystem driver. Some filesystems may be mounted more
+than once on the same mount point (e.g. tmpfs). See also *--exclusive*.
 
 *--options-mode* _mode_::
 Controls how to combine options from _fstab_/_mtab_ with options from the command line. _mode_ can be one of *ignore*, *append*, *prepend* or *replace*. For example, *append* means that options from _fstab_ are appended to options from the command line. The default value is *prepend* -- it means command line options are evaluated after _fstab_ options. Note that the last option wins if there are conflicting ones.

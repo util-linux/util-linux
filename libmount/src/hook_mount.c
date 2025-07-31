@@ -216,6 +216,26 @@ done:
 	return rc != 0 && errno ? -errno : rc;
 }
 
+static int create_superblock(struct libmnt_context *cxt,
+		const struct libmnt_hookset *hs, int fd)
+{
+	int rc = 0;
+
+	DBG(HOOK, ul_debugobj(hs, " create FS %s",
+			mnt_context_is_exclusive(cxt) ? "excl" : ""));
+	errno = 0;
+
+	if (mnt_context_is_exclusive(cxt))
+		rc = fsconfig(fd, FSCONFIG_CMD_CREATE_EXCL, NULL, NULL, 0);
+	else
+		rc = fsconfig(fd, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
+
+	hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
+
+	DBG(HOOK, ul_debugobj(hs, " create done [rc=%d]", rc));
+	return rc != 0 && errno ? -errno : rc;;
+}
+
 static int open_fs_configuration_context(struct libmnt_context *cxt,
 					 struct libmnt_sysapi *api,
 					 const char *type)
@@ -272,11 +292,8 @@ static int hook_create_mount(struct libmnt_context *cxt,
 
 	if (!rc)
 		rc = configure_superblock(cxt, hs, api->fd_fs, 0);
-	if (!rc) {
-		DBG(HOOK, ul_debugobj(hs, "create FS"));
-		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_CREATE, NULL, NULL, 0);
-		hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
-	}
+	if (!rc)
+		rc = create_superblock(cxt, hs, api->fd_fs);
 
 	if (!rc) {
 		int fd = fsmount(api->fd_fs, FSMOUNT_CLOEXEC, 0);
