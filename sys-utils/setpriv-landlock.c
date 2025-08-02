@@ -79,6 +79,9 @@ static const struct {
 #ifdef LANDLOCK_ACCESS_FS_TRUNCATE
 	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate"    },
 #endif
+#ifdef LANDLOCK_ACCESS_FS_IOCTL_DEV
+	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev"   },
+#endif
 };
 
 static long landlock_access_to_mask(const char *str, size_t len)
