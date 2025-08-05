@@ -38,7 +38,7 @@ chrt - manipulate the real-time attributes of a process
 
 == SYNOPSIS
 
-*chrt* [options] _priority command_ [_argument_...]
+*chrt* [options] [_priority_] _command_ [_argument_...]
 
 *chrt* [options] *--pid* [_priority_] _PID_
 
