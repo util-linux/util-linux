@@ -122,17 +122,17 @@ ____
 //TRANSLATORS: Keep {colon} untranslated
 Or set them{colon}::
 ____
-*chrt -r --pid* _priority PID_
+*chrt* _policy-option_ *--pid* _priority PID_
 ____
-This, for example, sets real-time scheduling to priority _30_ for the process _PID_ with the *SCHED_RR* (round-robin) class{colon}::
+For example, to set the scheduling policy to *SCHED_RR* (round-robin) and the priority to *30* for process *1234*{colon}::
 ____
-*chrt -r --pid 30* _PID_
+*chrt -r --pid 30 1234*
 ____
 Reset priorities to default for a process{colon}::
 ____
 *chrt -o --pid 0* _PID_
 ____
-Set a custom slice of 1 ms for a SCHED_OTHER task (priority is optional for policies other than SCHED_FIFO and SCHED_RR){colon}::
+Set a custom slice of 1 ms for a *SCHED_OTHER* task (priority is optional for policies other than *SCHED_FIFO* and *SCHED_RR*){colon}::
 ____
 *chrt -o -T 1000000 --pid* _PID_
 ____
