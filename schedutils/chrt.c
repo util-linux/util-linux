@@ -524,6 +524,9 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (ctl->policy == SCHED_RR)
+		need_prio = true;
+
 	if (ctl->verbose)
 		show_sched_info(ctl);
 
