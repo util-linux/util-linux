@@ -145,16 +145,33 @@ static inline int mount_setattr(int dfd, const char *path, unsigned int flags,
 #ifndef HAVE_ENUM_FSCONFIG_COMMAND
 # ifndef FSOPEN_CLOEXEC /* For case mount.h comes from a place invisible for autotools/meson */
 enum fsconfig_command {
-	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
-	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
-	FSCONFIG_SET_BINARY	= 2,	/* Set parameter, supplying a binary blob value */
-	FSCONFIG_SET_PATH	= 3,	/* Set parameter, supplying an object by path */
-	FSCONFIG_SET_PATH_EMPTY	= 4,	/* Set parameter, supplying an object by (empty) path */
-	FSCONFIG_SET_FD		= 5,	/* Set parameter, supplying an object by fd */
-	FSCONFIG_CMD_CREATE	= 6,	/* Invoke superblock creation */
-	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
+	FSCONFIG_SET_FLAG       = 0,    /* Set parameter, supplying no value */
+#  define FSCONFIG_SET_FLAG FSCONFIG_SET_FLAG
+	FSCONFIG_SET_STRING     = 1,    /* Set parameter, supplying a string value */
+#  define FSCONFIG_SET_STRING FSCONFIG_SET_STRING
+	FSCONFIG_SET_BINARY     = 2,    /* Set parameter, supplying a binary blob value */
+#  define FSCONFIG_SET_BINARY FSCONFIG_SET_BINARY
+	FSCONFIG_SET_PATH       = 3,    /* Set parameter, supplying an object by path */
+#  define FSCONFIG_SET_PATH FSCONFIG_SET_PATH
+	FSCONFIG_SET_PATH_EMPTY = 4,    /* Set parameter, supplying an object by (empty) path */
+#  define FSCONFIG_SET_PATH_EMPTY FSCONFIG_SET_PATH_EMPTY
+	FSCONFIG_SET_FD         = 5,    /* Set parameter, supplying an object by fd */
+#  define FSCONFIG_SET_FD FSCONFIG_SET_FD
+	FSCONFIG_CMD_CREATE     = 6,    /* Invoke superblock creation */
+#  define FSCONFIG_CMD_CREATE FSCONFIG_CMD_CREATE
+	FSCONFIG_CMD_RECONFIGURE = 7,   /* Invoke superblock reconfiguration */
+#  define FSCONFIG_CMD_RECONFIGURE FSCONFIG_CMD_RECONFIGURE
+	FSCONFIG_CMD_CREATE_EXCL = 8,    /* Create new superblock, fail if reusing existing superblock */
+# define FSCONFIG_CMD_CREATE_EXCL FSCONFIG_CMD_CREATE_EXCL
 };
-# endif
+# endif /* !FSOPEN_CLOEXEC */
+#endif /*!HAVE_ENUM_FSCONFIG_COMMAND */
+
+/*
+ * Fallbacks for incomplete enum fsconfig_command in system headrs
+ */
+#ifndef FSCONFIG_CMD_CREATE_EXCL
+# define FSCONFIG_CMD_CREATE_EXCL 8		/* since kernel 6.6 */
 #endif
 
 #if !defined(HAVE_FSCONFIG) && defined(SYS_fsconfig)
