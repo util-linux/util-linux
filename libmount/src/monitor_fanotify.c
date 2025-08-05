@@ -125,8 +125,8 @@ static int fanotify_process_event(
 	struct monitor_entrydata *data;
 	ssize_t len;
 
-	if (!mn || !me || me->fd < 0)
-		return 0;
+	if (!mn || !me || me->fd < 0 || !me->data)
+		return -EINVAL;
 
 	DBG(MONITOR, ul_debugobj(mn, "reading fanotify event"));
 
@@ -148,13 +148,72 @@ static int fanotify_process_event(
 	}
 
 	len = read(me->fd, data->buf, sizeof(data->buf));
-	if (len < 0)
+	if (len <= 0)
 		return 1;	/* nothing */
 
 	data->remaining = (size_t) len;
-	DBG(MONITOR, ul_debugobj(mn, " fanotify event [len=%zu]", data->remaining));
+	DBG(MONITOR, ul_debugobj(mn, " fanotify event [len=%zu %p]",
+				data->remaining, data->current));
 
 	return 0;
+}
+
+/* Returns: <0 error; 0 success; 1 nothing */
+static int fanotify_next_fs(struct libmnt_monitor *mn, struct monitor_entry *me,
+			struct libmnt_fs *fs)
+{
+	struct monitor_entrydata *data;
+	size_t thislen;
+
+	struct fanotify_event_metadata *meta;
+	struct fanotify_event_info_mnt *mnt;
+
+	if (!mn || !me || me->fd < 0 || !me->data)
+		return -EINVAL;
+
+	DBG(MONITOR, ul_debugobj(mn, "next fanotify fs"));
+
+	data = (struct monitor_entrydata *) me->data;
+	if (!fs || !data->remaining)
+		goto nothing;
+	 else {
+		struct libmnt_statmnt *tmp = fs->stmnt;
+		fs->stmnt = NULL;
+		mnt_reset_fs(fs);
+		fs->stmnt = tmp;
+	}
+
+	meta = (struct fanotify_event_metadata *) data->current;
+
+	if (!FAN_EVENT_OK(meta, data->remaining) ||
+	    meta->vers != FANOTIFY_METADATA_VERSION)
+		goto nothing;
+
+	thislen = meta->event_len - sizeof(*meta);
+
+	mnt = (struct fanotify_event_info_mnt *)
+			(data->current + meta->event_len - thislen);
+
+
+	mnt_fs_set_uniq_id(fs, mnt->mnt_id);
+
+	if (meta->mask & FAN_MNT_ATTACH)
+		fs->flags |= MNT_FS_STATUS_ATTACH;
+	if (meta->mask & FAN_MNT_DETACH)
+		fs->flags |= MNT_FS_STATUS_DETACH;
+
+	DBG(MONITOR, ul_debugobj(mn, "fanotify fs id=%ju %s\n",
+		(uintmax_t) mnt_fs_get_uniq_id(fs),
+		mnt_fs_is_attached(fs) ? "ATTACHED" :
+		mnt_fs_is_detached(fs) ? "DETACHED" :
+		mnt_fs_is_moved(fs) ? "MOVED" : "???"));
+
+	data->current = (char *) FAN_EVENT_NEXT(meta, data->remaining);
+	return 0;
+
+nothing:
+	data->remaining = 0;
+	return 1;
 }
 
 /*
@@ -164,7 +223,8 @@ static const struct monitor_opers fanotify_opers = {
 	.op_get_fd		= fanotify_get_fd,
 	.op_close_fd		= fanotify_close_fd,
 	.op_free_data		= fanotify_free_data,
-	.op_process_event	= fanotify_process_event
+	.op_process_event	= fanotify_process_event,
+	.op_next_fs		= fanotify_next_fs
 };
 
 /**

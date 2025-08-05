@@ -449,7 +449,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	if (type)
 		*type = me->type;
 
-	DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s]", me->path));
+	DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s, type=%d]", me->path, me->type));
 	return 0;
 }
 
@@ -564,6 +564,7 @@ static int __test_epoll(struct libmnt_test *ts __attribute__((unused)),
 	int fd, efd = -1, rc = -1;
 	struct epoll_event ev;
 	struct libmnt_monitor *mn = create_test_monitor(argc, argv);
+	struct libmnt_fs *fs = NULL;
 
 	if (!mn)
 		return -1;
@@ -609,8 +610,25 @@ static int __test_epoll(struct libmnt_test *ts __attribute__((unused)),
 		if (cleanup)
 			mnt_monitor_event_cleanup(mn);
 		else {
-			while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
+			int type = 0;
+
+			while (mnt_monitor_next_change(mn, &filename, &type) == 0) {
 				printf("  %s: change detected\n", filename);
+
+				if (type == MNT_MONITOR_TYPE_FANOTIFY) {
+					if (!fs)
+						fs = mnt_new_fs();
+					while (mnt_monitor_event_next_fs(mn, fs) == 0) {
+						mnt_fs_fetch_statmount(fs, 0);
+						printf("ID=%ju (%s %s)\n",
+							mnt_fs_get_uniq_id(fs),
+							mnt_fs_get_target(fs),
+							mnt_fs_is_attached(fs) ? "ATTACHED" :
+							mnt_fs_is_detached(fs) ? "DETACHED" :
+							mnt_fs_is_moved(fs) ? "MOVED" : "???");
+					}
+				}
+			}
 		}
 	} while (1);
 
@@ -619,6 +637,7 @@ done:
 	if (efd >= 0)
 		close(efd);
 	mnt_unref_monitor(mn);
+	mnt_unref_fs(fs);
 	return rc;
 }
 
