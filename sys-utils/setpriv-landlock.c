@@ -59,28 +59,29 @@ struct landlock_rule_entry {
 static const struct {
 	unsigned long long value;
 	const char *type;
+	const char *help;
 } landlock_access_fs[] = {
-	{ LANDLOCK_ACCESS_FS_EXECUTE,     "execute"     },
-	{ LANDLOCK_ACCESS_FS_WRITE_FILE,  "write-file"  },
-	{ LANDLOCK_ACCESS_FS_READ_FILE,   "read-file"   },
-	{ LANDLOCK_ACCESS_FS_READ_DIR,    "read-dir"    },
-	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,  "remove-dir"  },
-	{ LANDLOCK_ACCESS_FS_REMOVE_FILE, "remove-file" },
-	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,   "make-char"   },
-	{ LANDLOCK_ACCESS_FS_MAKE_DIR,    "make-dir"    },
-	{ LANDLOCK_ACCESS_FS_MAKE_REG,    "make-reg"    },
-	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,   "make-sock"   },
-	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,   "make-fifo"   },
-	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,  "make-block"  },
-	{ LANDLOCK_ACCESS_FS_MAKE_SYM,    "make-sym"    },
+	{ LANDLOCK_ACCESS_FS_EXECUTE,     "execute",     N_("execute a file") },
+	{ LANDLOCK_ACCESS_FS_WRITE_FILE,  "write-file",  N_("open a file with write access") },
+	{ LANDLOCK_ACCESS_FS_READ_FILE,   "read-file",   N_("open a file with read access") },
+	{ LANDLOCK_ACCESS_FS_READ_DIR,    "read-dir",    N_("open a directory or list its content") },
+	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,  "remove-dir",  N_("remove an empty directory or rename one")  },
+	{ LANDLOCK_ACCESS_FS_REMOVE_FILE, "remove-file", N_("unlink (or rename) a file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,   "make-char",   N_("create (or rename or link) a character device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_DIR,    "make-dir",    N_("create (or rename) a directory") },
+	{ LANDLOCK_ACCESS_FS_MAKE_REG,    "make-reg",    N_("create (or rename or link) a regular file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,   "make-sock",   N_("create (or rename or link) a UNIX domain socket") },
+	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,   "make-fifo",   N_("create (or rename or link) a named pipe") },
+	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,  "make-block",  N_("create (or rename or link) a block device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SYM,    "make-sym",    N_("create (or rename or link) a symbolic link") },
 #ifdef LANDLOCK_ACCESS_FS_REFER
-	{ LANDLOCK_ACCESS_FS_REFER,       "refer"       },
+	{ LANDLOCK_ACCESS_FS_REFER,       "refer",       N_("link or rename a file from or to a different directory") },
 #endif
 #ifdef LANDLOCK_ACCESS_FS_TRUNCATE
-	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate"    },
+	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate",    N_("truncate a file with truncate(2)") },
 #endif
 #ifdef LANDLOCK_ACCESS_FS_IOCTL_DEV
-	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev"   },
+	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev",   N_("invoke ioctl(2) on an opened character or block device") },
 #endif
 };
 
@@ -197,21 +198,23 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 		err(SETPRIV_EXIT_PRIVERR, _("landlock_restrict_self failed"));
 }
 
-void usage_setpriv(FILE *out)
+void usage_landlock(FILE *out)
 {
 	size_t i;
 
-	fprintf(out, "\n");
-	fprintf(out, _("Landlock accesses:\n"));
-	fprintf(out, " Access: fs\n");
-	fprintf(out, " Rule types: path-beneath\n");
+	fputs(USAGE_ARGUMENTS, out);
+	fputs(_(" <access> is a landlock access; syntax is fs[:<right>, ...>]\n"), out);
+	fputs(_(" <rule> is a landlock rule; syntax is <type>:<right>:<argument>\n"), out);
 
-	fprintf(out, " Rules: ");
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" available landlock rule types are:\n"), out);
+	/* TRANSLATORS: Keep *{path-beneath}* untranslated, it's a type name */
+	fputs(_("  path-beneath - filesystem based rule; <argument> is a path\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" available landlock filesystems rights are:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++) {
-		fprintf(out, "%s", landlock_access_fs[i].type);
-		if (i == ARRAY_SIZE(landlock_access_fs) - 1)
-			fprintf(out, "\n");
-		else
-			fprintf(out, ",");
+		fprintf(out, "  %12s - %s\n", landlock_access_fs[i].type,
+					_(landlock_access_fs[i].help));
 	}
 }
