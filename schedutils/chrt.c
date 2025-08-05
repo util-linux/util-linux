@@ -61,7 +61,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Set policy:\n"
 		" chrt [options] [<priority>] <command> [<argument>...]\n"
-		" chrt [options] --pid [<priority>] <PID>\n"), out);
+		" chrt --pid <policy-option> [options] [<priority>] <PID>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Get policy:\n"
 		" chrt --pid <PID>\n"), out);
