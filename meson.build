@@ -290,7 +290,7 @@ if lib_ncursesw.found()
   lib_ncurses = disabler()
 else
   lib_ncurses = dependency(
-    'ncurses',
+    'curses',
     disabler : true,
     required : get_option('ncurses'))
   headers += ['ncurses.h',
