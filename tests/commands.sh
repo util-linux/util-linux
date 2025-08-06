@@ -113,6 +113,7 @@ TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"${ts_commandsdir}mkfs.cramfs"}
 TS_CMD_MKMINIX=${TS_CMD_MKMINIX:-"${ts_commandsdir}mkfs.minix"}
 TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"${ts_commandsdir}mkswap"}
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"${ts_commandsdir}mount"}
+TS_CMD_MOUNT_STATIC=${TS_CMD_MOUNT_STATIC:-"${ts_commandsdir}mount.static"}
 TS_CMD_MOUNTPOINT=${TS_CMD_MOUNTPOINT:-"${ts_commandsdir}mountpoint"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"${ts_commandsdir}namei"}
 TS_CMD_NSENTER=${TS_CMD_NSENTER-"${ts_commandsdir}nsenter"}
