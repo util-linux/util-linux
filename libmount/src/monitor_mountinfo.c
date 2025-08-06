@@ -19,7 +19,7 @@
 
 #include <sys/epoll.h>
 
-static int kernel_monitor_close_fd(struct libmnt_monitor *mn __attribute__((__unused__)),
+static int mountinfo_close_fd(struct libmnt_monitor *mn __attribute__((__unused__)),
 				   struct monitor_entry *me)
 {
 	assert(me);
@@ -30,7 +30,7 @@ static int kernel_monitor_close_fd(struct libmnt_monitor *mn __attribute__((__un
 	return 0;
 }
 
-static int kernel_monitor_get_fd(struct libmnt_monitor *mn,
+static int mountinfo_get_fd(struct libmnt_monitor *mn,
 				 struct monitor_entry *me)
 {
 	int rc;
@@ -55,7 +55,7 @@ err:
 }
 
 /* Returns: <0 error; 0 success; 1 nothing */
-static int kernel_process_event(struct libmnt_monitor *mn,
+static int mountinfo_process_event(struct libmnt_monitor *mn,
 			        struct monitor_entry *me)
 {
 	if (!mn || !me || me->fd < 0)
@@ -71,10 +71,10 @@ static int kernel_process_event(struct libmnt_monitor *mn,
 /*
  * kernel monitor operations
  */
-static const struct monitor_opers kernel_opers = {
-	.op_get_fd		= kernel_monitor_get_fd,
-	.op_close_fd		= kernel_monitor_close_fd,
-	.op_process_event	= kernel_process_event
+static const struct monitor_opers mountinfo_opers = {
+	.op_get_fd		= mountinfo_get_fd,
+	.op_close_fd		= mountinfo_close_fd,
+	.op_process_event	= mountinfo_process_event
 };
 
 /**
@@ -102,7 +102,7 @@ int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
 	if (me) {
 		rc = monitor_modify_epoll(mn, me, enable);
 		if (!enable)
-			kernel_monitor_close_fd(mn, me);
+			mountinfo_close_fd(mn, me);
 		return rc;
 	}
 	if (!enable)
@@ -130,7 +130,7 @@ int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
 	me->events = EPOLLIN | EPOLLET;
 
 	me->type = MNT_MONITOR_TYPE_KERNEL;
-	me->opers = &kernel_opers;
+	me->opers = &mountinfo_opers;
 	me->path = strdup(_PATH_PROC_MOUNTINFO);
 	if (!me->path)
 		goto err;
