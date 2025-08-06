@@ -22,7 +22,7 @@
  * const char *filename;
  * struct libmount_monitor *mn = mnt_new_monitor();
  *
- * mnt_monitor_enable_kernel(mn, TRUE));
+ * mnt_monitor_enable_mountinfo(mn, TRUE));
  *
  * printf("waiting for changes...\n");
  * while (mnt_monitor_wait(mn, -1) > 0) {
@@ -530,8 +530,8 @@ static struct libmnt_monitor *create_test_monitor(int argc, char *argv[])
 				goto err;
 			}
 
-		} else if (strcmp(argv[i], "kernel") == 0) {
-			if (mnt_monitor_enable_kernel(mn, TRUE)) {
+		} else if (strcmp(argv[i], "mountinfo") == 0) {
+			if (mnt_monitor_enable_mountinfo(mn, TRUE)) {
 				warn("failed to initialize kernel monitor");
 				goto err;
 			}
@@ -658,9 +658,9 @@ static int test_wait(struct libmnt_test *ts __attribute__((unused)),
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-		{ "--epoll", test_epoll, "<userspace kernel veil ...>  monitor in epoll" },
-		{ "--epoll-clean", test_epoll_cleanup, "<userspace kernel veil ...>  monitor in epoll and clean events" },
-		{ "--wait",  test_wait,  "<userspace kernel veil ...>  monitor wait function" },
+		{ "--epoll", test_epoll, "<userspace mountinfo veil ...>  monitor in epoll" },
+		{ "--epoll-clean", test_epoll_cleanup, "<userspace mountinfo veil ...>  monitor in epoll and clean events" },
+		{ "--wait",  test_wait,  "<userspace mountinfo veil ...>  monitor wait function" },
 		{ NULL }
 	};
 

@@ -78,19 +78,22 @@ static const struct monitor_opers mountinfo_opers = {
 };
 
 /**
- * mnt_monitor_enable_kernel:
+ * mnt_monitor_enable_mountinfo:
  * @mn: monitor
  * @enable: 0 or 1
  *
- * Enables or disables kernel VFS monitoring. If the monitor does not exist and
- * enable=1 then allocates new resources necessary for the monitor.
+ * Enables or disables kernel VFS monitoring based on /proc/self/mountinfo. If
+ * the monitor does not exist and enable=1 then allocates new resources
+ * necessary for the monitor.
  *
  * If the top-level monitor has been already created (by mnt_monitor_get_fd()
  * or mnt_monitor_wait()) then it's updated according to @enable.
  *
  * Return: 0 on success and <0 on error
+ *
+ * Since: v2.42
  */
-int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
+int mnt_monitor_enable_mountinfo(struct libmnt_monitor *mn, int enable)
 {
 	struct monitor_entry *me;
 	int rc = 0;
@@ -98,7 +101,7 @@ int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
 	if (!mn)
 		return -EINVAL;
 
-	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_KERNEL, -1);
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_MOUNTINFO, -1);
 	if (me) {
 		rc = monitor_modify_epoll(mn, me, enable);
 		if (!enable)
@@ -129,7 +132,7 @@ int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
 	 */
 	me->events = EPOLLIN | EPOLLET;
 
-	me->type = MNT_MONITOR_TYPE_KERNEL;
+	me->type = MNT_MONITOR_TYPE_MOUNTINFO;
 	me->opers = &mountinfo_opers;
 	me->path = strdup(_PATH_PROC_MOUNTINFO);
 	if (!me->path)
@@ -142,6 +145,18 @@ err:
 	DBG(MONITOR, ul_debugobj(mn, "failed to allocate kernel monitor [rc=%d]", rc));
 	return rc;
 }
+
+/**
+ * mnt_monitor_enable_kernel:
+ * @mn: monitor
+ * @enable: 0 or 1
+ *
+ * Deprecated alias to mnt_monitor_enable_mountinfo().
+ *
+ * Return: 0 on success and <0 on error
+ */
+int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
+		 __attribute__((alias("mnt_monitor_enable_mountinfo")));
 
 /**
  * mnt_monitor_veil_kernel:
