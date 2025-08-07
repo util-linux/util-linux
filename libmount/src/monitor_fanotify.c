@@ -14,6 +14,14 @@
 #include "mountP.h"
 #include "monitor.h"
 
+/*
+ * The fanotify info header is suppported since kernel v5.1 (commit 5e469c830fdb5).
+ *
+ * We do not provide fallback for so old systems. There is fallback only for
+ * missing "struct fanotify_event_info_mnt" (since v6.15, commit 0f46d81f2bce9).
+ */
+#ifdef HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER
+
 #include "strutils.h"
 #include "pathnames.h"
 
@@ -319,3 +327,16 @@ err:
 	DBG(MONITOR, ul_debugobj(mn, "failed to allocate fanotify monitor [rc=%d]", rc));
 	return rc;
 }
+
+
+#else /* !HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER */
+
+int mnt_monitor_enable_fanotify(
+		struct libmnt_monitor *mn __attribute__((__unused__)),
+		int enable __attribute__((__unused__)),
+		int ns __attribute__((__unused__)))
+{
+	errno = ENOTSUP;
+	return -errno;
+}
+#endif
