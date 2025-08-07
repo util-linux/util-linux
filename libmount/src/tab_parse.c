@@ -188,6 +188,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	char *p;
 
 	fs->flags |= MNT_FS_KERNEL;
+	mnt_fs_mark_attached(fs);
 
 	/* (1) id */
 	s = next_s32(s, &fs->id, &rc);
@@ -755,9 +756,9 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	 * parser sets the flag properly
 	 */
 	if (tb->fmt == MNT_FMT_SWAPS)
-		flags = MNT_FS_SWAP;
+		flags = MNT_FS_SWAP | MNT_FS_STATUS_ATTACH;
 	else if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
-		flags = MNT_FS_KERNEL;
+		flags = MNT_FS_KERNEL | MNT_FS_STATUS_ATTACH;
 
 	do {
 		struct libmnt_fs *fs;

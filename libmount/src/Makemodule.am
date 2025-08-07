@@ -42,7 +42,11 @@ libmount_la_SOURCES += \
 	libmount/src/hook_idmap.c \
 	libmount/src/hook_loopdev.c \
 	libmount/src/hook_veritydev.c \
-	libmount/src/monitor.c
+	libmount/src/monitor.c \
+	libmount/src/monitor.h \
+	libmount/src/monitor_utab.c \
+	libmount/src/monitor_mountinfo.c \
+	libmount/src/monitor_fanotify.c
 
 if HAVE_BTRFS
 libmount_la_SOURCES += libmount/src/btrfs.c
@@ -159,7 +163,10 @@ test_mount_tab_diff_CFLAGS = $(libmount_tests_cflags)
 test_mount_tab_diff_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_tab_diff_LDADD = $(libmount_tests_ldadd)
 
-test_mount_monitor_SOURCES = libmount/src/monitor.c
+test_mount_monitor_SOURCES = libmount/src/monitor.c \
+			     libmount/src/monitor.h \
+			     libmount/src/monitor_utab.c \
+			     libmount/src/monitor_mountinfo.c
 test_mount_monitor_CFLAGS = $(libmount_tests_cflags)
 test_mount_monitor_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_monitor_LDADD = $(libmount_tests_ldadd)

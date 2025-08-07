@@ -934,6 +934,7 @@ static int do_umount(struct libmnt_context *cxt)
 		}
 		cxt->syscall_status = 0;
 		DBG(CXT, ul_debugobj(cxt, "read-only re-mount(2) success"));
+		mnt_fs_mark_attached(cxt->fs);
 		return 0;
 	}
 
@@ -944,6 +945,7 @@ static int do_umount(struct libmnt_context *cxt)
 	}
 
 	cxt->syscall_status = 0;
+	mnt_fs_mark_detached(cxt->fs);
 	DBG(CXT, ul_debugobj(cxt, "umount(2) success"));
 	return 0;
 }

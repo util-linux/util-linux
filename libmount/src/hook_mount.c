@@ -545,6 +545,15 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
 
+	if (rc == 0) {
+		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+
+		if (ol && mnt_optlist_is_move(ol))
+			mnt_fs_mark_moved(cxt->fs);
+		else
+			mnt_fs_mark_attached(cxt->fs);
+	}
+
 	return rc == 0 ? 0 : -errno;
 }
 
