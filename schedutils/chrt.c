@@ -60,8 +60,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Show or change the real-time scheduling attributes of a process.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Set policy:\n"
-		" chrt [options] <priority> <command> [<argument>...]\n"
-		" chrt [options] --pid <priority> <PID>\n"), out);
+		" chrt [options] [<priority>] <command> [<argument>...]\n"
+		" chrt --pid <policy-option> [options] [<priority>] <PID>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Get policy:\n"
 		" chrt --pid <PID>\n"), out);
@@ -523,6 +523,9 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		}
 	}
+
+	if (ctl->policy == SCHED_RR)
+		need_prio = true;
 
 	if (ctl->verbose)
 		show_sched_info(ctl);
