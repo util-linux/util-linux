@@ -121,10 +121,11 @@
 #ifdef	SYSV_STYLE
 #  define ISSUE_SUPPORT
 #  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
+#    include "config-files.h"
 #    include <dirent.h>
 #    define ISSUEDIR_SUPPORT
-#    define ISSUEDIR_EXT	".issue"
-#    define ISSUEDIR_EXTSIZ	(sizeof(ISSUEDIR_EXT) - 1)
+#    define ISSUEDIR_EXT	"issue"
+#    define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
 #  endif
 #endif
 
@@ -1754,7 +1755,7 @@ static int issuedir_filter(const struct dirent *d)
 
 	namesz = strlen(d->d_name);
 	if (!namesz || namesz < ISSUEDIR_EXTSIZ + 1 ||
-	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), ISSUEDIR_EXT) != 0)
+	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), "." ISSUEDIR_EXT) != 0)
 		return 0;
 
 	/* Accept this */
@@ -1933,10 +1934,18 @@ static void print_issue_file(struct issue *ie,
 #endif
 }
 
+static void free_element(struct file_element *element)
+{
+	free(element->filename);
+}
+
 static void eval_issue_file(struct issue *ie,
 			    struct options *op,
 			    struct termios *tp)
 {
+	struct list_head file_list;
+	struct list_head *file_entry = NULL;
+
 #ifdef AGETTY_RELOAD
 	netlink_groups = 0;
 #endif
@@ -1968,22 +1977,23 @@ static void eval_issue_file(struct issue *ie,
 		goto done;
 	}
 
-	/* The default /etc/issue and optional /etc/issue.d directory as
-	 * extension to the file. The /etc/issue.d directory is ignored if
-	 * there is no /etc/issue file. The file may be empty or symlink.
+        /* Reading all issue files and concatinating all contents to one content.
+         * The ordering rules are defineded in:
+         * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
 	 */
-	if (access(_PATH_ISSUE, F_OK|R_OK) == 0) {
-		issuefile_read(ie, _PATH_ISSUE, op, tp);
-		issuedir_read(ie, _PATH_ISSUEDIR, op, tp);
+	config_file_list (&file_list,
+			  NULL,
+			  _PATH_ETC_ISSUEDIR,
+			  _PATH_USR_ISSUEDIR,
+			  _PATH_ISSUE_FILENAME,
+			  ISSUEDIR_EXT);
+
+	list_for_each(file_entry, &file_list) {
+		struct file_element *element;
+	        element = list_entry(file_entry, struct file_element, file_list);
+		issuefile_read(ie, element->filename, op, tp);
 	}
-
-	/* Fallback @runstatedir (usually /run) */
-	issuefile_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_FILENAME, op, tp);
-	issuedir_read(ie, _PATH_RUNSTATEDIR "/" _PATH_ISSUE_DIRNAME, op, tp);
-
-	/* Fallback @sysconfstaticdir (usually /usr/lib)*/
-	issuefile_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_FILENAME, op, tp);
-	issuedir_read(ie, _PATH_SYSCONFSTATICDIR "/" _PATH_ISSUE_DIRNAME, op, tp);
+	list_free(&file_list, struct file_element,  file_list, free_element);
 
 done:
 
