@@ -256,7 +256,10 @@ mnt_fs_get_userdata
 mnt_fs_get_user_options
 mnt_fs_get_vfs_options
 mnt_fs_get_vfs_options_all
+mnt_fs_is_attached
+mnt_fs_is_detached
 mnt_fs_is_kernel
+mnt_fs_is_moved
 mnt_fs_is_netfs
 mnt_fs_is_pseudofs
 mnt_fs_is_regularfs
@@ -482,12 +485,15 @@ libmnt_monitor
 mnt_new_monitor
 mnt_ref_monitor
 mnt_unref_monitor
-mnt_monitor_enable_userspace
+mnt_monitor_enable_fanotify
 mnt_monitor_enable_kernel
+mnt_monitor_enable_mountinfo
+mnt_monitor_enable_userspace
 mnt_monitor_get_fd
 mnt_monitor_close_fd
 mnt_monitor_next_change
 mnt_monitor_event_cleanup
+mnt_monitor_event_next_fs
 mnt_monitor_veil_kernel
 mnt_monitor_wait
 </SECTION>
