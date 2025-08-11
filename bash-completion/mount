@@ -56,6 +56,7 @@ _mount_module()
 		-*)
 			OPTS="	--all
 				--exclusive
+				--beneath
 				--no-canonicalize
 				--fake
 				--fork

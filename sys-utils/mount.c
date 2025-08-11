@@ -559,7 +559,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               mount all filesystems mentioned in fstab\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
-	fputs(_("     --exclusive         allow only one filesystem instance"), out);
+	fputs(_("     --beneath           attach the filesystem beneath the top mount\n"), out);
+	fputs(_("     --exclusive         allow only one filesystem instance\n"), out);
 	fputs(_(" -f, --fake              dry run; skip the mount(2) syscall\n"), out);
 	fputs(_(" -F, --fork              fork off for each device (use with -a)\n"), out);
 	fputs(_(" -T, --fstab <path>      alternative file to /etc/fstab\n"), out);
@@ -710,11 +711,13 @@ int main(int argc, char **argv)
 		MOUNT_OPT_OPTSRC,
 		MOUNT_OPT_OPTSRC_FORCE,
 		MOUNT_OPT_ONLYONCE,
-		MOUNT_OPT_EXCL
+		MOUNT_OPT_EXCL,
+		MOUNT_OPT_BENEATH,
 	};
 
 	static const struct option longopts[] = {
 		{ "all",              no_argument,       NULL, 'a'                   },
+		{ "beneath",          no_argument,       NULL, MOUNT_OPT_BENEATH     },
 		{ "exclusive",        no_argument,       NULL, MOUNT_OPT_EXCL        },
 		{ "fake",             no_argument,       NULL, 'f'                   },
 		{ "fstab",            required_argument, NULL, 'T'                   },
@@ -981,6 +984,9 @@ int main(int argc, char **argv)
 			break;
 		case MOUNT_OPT_EXCL:
 			mnt_context_enable_exclusive(cxt, 1);
+			break;
+		case MOUNT_OPT_BENEATH:
+			mnt_context_enable_beneath(cxt, 1);
 			break;
 
 		case 'h':

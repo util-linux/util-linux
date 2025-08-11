@@ -317,6 +317,18 @@ Since version 2.35 it is possible to use the command line option *-o* to alter m
 +
 Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recommended solution is *findmnt --verify*.
 
+*--beneath*::
+Mount the filesystem beneath the top mount of the specified target (mountpoint), allowing the  top mount to be unmounted. This option replaces the filesystem at the mountpoint in an atomic manner, ensuring there is no moment when the filesystem is absent.
++
+For example update from a Btrfs filesystem to an XFS filesystem without ever revealing the underlying mountpoint:
+____
+....
+mount           -t btrfs /dev/sdA /mnt
+mount --beneath -t xfs   /dev/sdB /mnt
+umount /mnt
+....
+____
+
 *-B*, *--bind*::
 Remount a subtree somewhere else (so that its contents are available in both places). See above, under *Bind mount operation*.
 
