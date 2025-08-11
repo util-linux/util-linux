@@ -618,6 +618,32 @@ int mnt_context_is_exclusive(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_enable_beneath
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Enable/disable underlying mount (move). The filesystem is attached beneath the current
+ * top-level mount of the mountpoint. See mount_move( MOVE_MOUNT_BENEATH ).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_beneath(struct libmnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_BENEATH, enable);
+}
+
+/**
+ * mnt_context_is_beneath:
+ * @cxt: mount context
+ *
+ * Returns: 1 if beneath mount is enabled or 0
+ */
+int mnt_context_is_beneath(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_BENEATH ? 1 : 0;
+}
+
+/**
  * mnt_context_enable_fork:
  * @cxt: mount context
  * @enable: TRUE or FALSE

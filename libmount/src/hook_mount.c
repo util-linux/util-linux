@@ -517,6 +517,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		void *data __attribute__((__unused__)))
 {
 	struct libmnt_sysapi *api;
+	unsigned int flags;
 	const char *target;
 	int rc = 0;
 
@@ -542,7 +543,11 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		umount2(target, MNT_DETACH);
 	}
 
-	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+	flags = MOVE_MOUNT_F_EMPTY_PATH;
+	if (mnt_context_is_beneath(cxt))
+		flags |= MOVE_MOUNT_BENEATH;
+
+	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, flags);
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
 
 	if (rc == 0) {

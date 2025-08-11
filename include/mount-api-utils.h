@@ -65,8 +65,12 @@ static inline int open_tree(int dfd, const char *filename, unsigned int flags)
 # define MOVE_MOUNT_SET_GROUP    0x00000100 /* Set sharing group instead */
 #endif
 
+#ifndef MOVE_MOUNT_BENEATH
+# define MOVE_MOUNT_BENEATH      0x00000200 /* Mount beneath top mount */
+#endif
+
 #ifndef MOVE_MOUNT__MASK
-# define MOVE_MOUNT__MASK 0x00000077
+# define MOVE_MOUNT__MASK        0x00000377
 #endif
 
 #if !defined(HAVE_MOVE_MOUNT) && defined(SYS_move_mount)

@@ -410,7 +410,9 @@ MOUNT_2_41 {
 } MOUNT_2_40;
 
 MOUNT_2_42 {
+	mnt_context_enable_beneath;
 	mnt_context_enable_exclusive;
+	mnt_context_is_beneath;
 	mnt_context_is_exclusive;
 	mnt_monitor_enable_mountinfo;
 	mnt_monitor_enable_fanotify;
