@@ -48,43 +48,43 @@ static inline clockid_t FD_TO_CLOCKID(int fd)
 }
 
 #ifndef CLOCK_REALTIME
-#define CLOCK_REALTIME			0
+# define CLOCK_REALTIME			0
 #endif
 
 #ifndef CLOCK_MONOTONIC
-#define CLOCK_MONOTONIC			1
+# define CLOCK_MONOTONIC			1
 #endif
 
 #ifndef CLOCK_MONOTONIC_RAW
-#define CLOCK_MONOTONIC_RAW		4
+# define CLOCK_MONOTONIC_RAW		4
 #endif
 
 #ifndef CLOCK_REALTIME_COARSE
-#define CLOCK_REALTIME_COARSE		5
+# define CLOCK_REALTIME_COARSE		5
 #endif
 
 #ifndef CLOCK_MONOTONIC_COARSE
-#define CLOCK_MONOTONIC_COARSE		6
+# define CLOCK_MONOTONIC_COARSE		6
 #endif
 
 #ifndef CLOCK_BOOTTIME
-#define CLOCK_BOOTTIME			7
+# define CLOCK_BOOTTIME			7
 #endif
 
 #ifndef CLOCK_REALTIME_ALARM
-#define CLOCK_REALTIME_ALARM		8
+# define CLOCK_REALTIME_ALARM		8
 #endif
 
 #ifndef CLOCK_BOOTTIME_ALARM
-#define CLOCK_BOOTTIME_ALARM		9
+# define CLOCK_BOOTTIME_ALARM		9
 #endif
 
 #ifndef CLOCK_TAI
-#define CLOCK_TAI			11
+# define CLOCK_TAI			11
 #endif
 
 #ifndef CLOCK_AUX
-#define CLOCK_AUX			16
+# define CLOCK_AUX			MAX_CLOCKS
 #endif
 
 #define CLOCK_AUX0			(CLOCK_AUX + 0)
