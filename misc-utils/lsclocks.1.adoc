@@ -25,6 +25,7 @@ Different kinds of clocks are supported.
 * CPU clocks: *clock_getcpuclockid()*.
 * PTP clocks: */dev/ptp0*.
 * RTC clocks: */dev/rtc0*.
+* Auxiliary clocks: *CLOCK_AUX0*, *CLOCK_AUX1*, etc.
 
 == OPTIONS
 
