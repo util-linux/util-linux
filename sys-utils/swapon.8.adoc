@@ -30,6 +30,7 @@ Calls to *swapon* normally occur in the system boot scripts making all swap devi
 
 *-a*, *--all*::
 All devices marked as "swap" in _/etc/fstab_ are made available, except for those with the "noauto" option. Devices that are already being used as swap are silently skipped.
+See the *FSTAB CONFIGURATION* section for more details.
 
 *-T*, *--fstab* _path_::
 Specifies an alternative fstab file for compatibility with *mount*(8). If _path_ is a directory, then the files in the directory are sorted by *strverscmp*(3); files that start with "." or without an .fstab extension are ignored. The option can be specified more than once. This option is mostly designed for initramfs or chroot scripts where additional configuration is specified beyond standard system configuration.
@@ -90,6 +91,52 @@ Use the partition that has the specified _uuid_.
 Be verbose.
 
 include::man-common/help-version.adoc[]
+
+== FSTAB CONFIGURATION
+
+The command *swapon --all* reads configuration from _/etc/fstab_ (or from a file specified by the *--fstab* command line option). Only fstab entries with the filesystem type (3rd field) set to "swap" are relevant.
+
+The option *--options* accepts values in the same form as can be specified in the fourth field in fstab.
+
+=== The first field (source)
+
+Specify the swap source. If the source is a regular file, it is addressed by an absolute path.
+
+If the swap is a block device, it can be addressed by device path, swap area tags *LABEL=* or *UUID=* (see *mkswap*(8) for more details), or by partition tags like *PARTLABEL=* or *PARTUUID=*.
+
+=== The second field (target)
+
+Unused by *swapon*, the recommended convention is to use "none".
+
+=== The third field (type)
+
+Requires "swap" as the filesystem type.
+
+=== The fourth field (options)
+
+It is formatted as a comma-separated list of options. All unknown options are silently ignored. If options are unnecessary, the recommended convention is to use "default". The options specified in fstab extend or overwrite settings specified on the swapon command line.
+
+Supported swap options:
+
+*noauto*::
+Ignore entry when *swapon --all* is given.
+
+*nofail*::
+Do not report errors for this device if it does not exist.
+
+*discard*[**=**_policy_]::
+Enable swap discard. The supported settings are *discard*, *discard=once*, or *discard=pages*. For more details, see the **--discard** command line option.
+
+**pri=**_priority_::
+Specify the priority of the swap device. For more details, see the **--priority** command line option.
+
+=== The fifth field
+
+Unused by *swapon*, the recommended convention is to keep it empty.
+
+=== The sixth field
+
+Unused by *swapon*, the recommended convention is to keep it empty.
 
 == EXIT STATUS
 
