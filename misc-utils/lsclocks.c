@@ -84,7 +84,7 @@ static inline clockid_t FD_TO_CLOCKID(int fd)
 #endif
 
 #ifndef CLOCK_AUX
-# define CLOCK_AUX			MAX_CLOCKS
+# define CLOCK_AUX			16
 #endif
 
 #define CLOCK_AUX0			(CLOCK_AUX + 0)
