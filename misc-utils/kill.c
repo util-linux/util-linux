@@ -325,7 +325,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	char *arg;
 
 	/* Loop through the arguments.  Actually, -a is the only option
-	 * can be used with other options.  The 'kill' is basically a
+	 * that can be used with other options.  The 'kill' is basically a
 	 * one-option-at-most program. */
 	for (argc--, argv++; 0 < argc; argc--, argv++) {
 		arg = *argv;
