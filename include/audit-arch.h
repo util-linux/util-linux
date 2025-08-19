@@ -75,6 +75,8 @@
 #    endif
 #elif __alpha__
 #    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_ALPHA
+#elif __e2k__
+#    define SECCOMP_ARCH_NATIVE AUDIT_ARCH_E2K
 #else
 #    error Unknown target architecture
 #endif
