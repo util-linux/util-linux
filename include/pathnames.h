@@ -109,6 +109,7 @@
 #define _PATH_PROC_GIDMAP	"/proc/self/gid_map"
 #define _PATH_PROC_SETGROUPS	"/proc/self/setgroups"
 
+#define _PATH_PROC_NSDIR	"/proc/self/ns"
 #define _PATH_PROC_FDDIR	"/proc/self/fd"
 #define _PATH_PROC_TIMENS_OFF   "/proc/self/timens_offsets"
 

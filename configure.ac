@@ -550,6 +550,8 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 [AC_DEFINE([HAVE_TM_GMTOFF], [1], [Does struct tm have a field tm_gmtoff?])
 ])
 
+AC_CHECK_TYPES([struct fanotify_event_info_header], [], [], [[#include <linux/fanotify.h>]])
+
 AC_CHECK_TYPES([struct mount_attr], [], [], [[#include <linux/mount.h>]])
 AC_CHECK_TYPES([enum fsconfig_command], [], [], [[#include <linux/mount.h>]])
 

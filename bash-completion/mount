@@ -55,6 +55,8 @@ _mount_module()
 	case $cur in
 		-*)
 			OPTS="	--all
+				--exclusive
+				--beneath
 				--no-canonicalize
 				--fake
 				--fork

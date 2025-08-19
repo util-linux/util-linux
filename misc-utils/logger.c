@@ -1296,7 +1296,7 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 	if (stdout_reopened && argc)
-		warnx(_("--file <file> and <message> are mutually exclusive, message is ignored"));
+		warnx(_("--file <file> and <message> are mutually exclusive; file is ignored"));
 #ifdef HAVE_LIBSYSTEMD
 	if (jfd) {
 		int ret = journald_entry(&ctl, jfd);

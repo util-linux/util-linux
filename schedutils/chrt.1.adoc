@@ -38,15 +38,15 @@ chrt - manipulate the real-time attributes of a process
 
 == SYNOPSIS
 
-*chrt* [options] _priority command_ [_argument_...]
+*chrt* [options] [_priority_] _command_ [_argument_...]
 
-*chrt* [options] *--pid* [_priority_] _PID_
+*chrt --pid* [options] [_priority_] _PID_
 
 == DESCRIPTION
 
 *chrt* sets or retrieves the real-time scheduling attributes of an existing _PID_, or runs _command_ with the given attributes.
 
-== POLICIES
+== POLICY OPTIONS
 
 *-o*, *--other*::
 Set scheduling policy to *SCHED_OTHER* (time-sharing scheduling). This is the default Linux scheduling policy. Since util-linux v2.42, the priority argument is optional; if specified, it must be set to zero.
@@ -122,19 +122,19 @@ ____
 //TRANSLATORS: Keep {colon} untranslated
 Or set them{colon}::
 ____
-*chrt -r --pid* _priority PID_
+*chrt --pid* _policy-option priority PID_
 ____
-This, for example, sets real-time scheduling to priority _30_ for the process _PID_ with the *SCHED_RR* (round-robin) class{colon}::
+For example, to set the scheduling policy to *SCHED_RR* (round-robin) and the priority to *30* for process *1234*{colon}::
 ____
-*chrt -r --pid 30* _PID_
+*chrt --pid -r 30 1234*
 ____
 Reset priorities to default for a process{colon}::
 ____
-*chrt -o --pid 0* _PID_
+*chrt --pid -o 0* _PID_
 ____
-Set a custom slice of 1 ms for a SCHED_OTHER task (priority is optional for policies other than SCHED_FIFO and SCHED_RR){colon}::
+Set a custom slice of 1 ms for a *SCHED_OTHER* task (priority is optional for policies other than *SCHED_FIFO* and *SCHED_RR*){colon}::
 ____
-*chrt -o -T 1000000 --pid* _PID_
+*chrt --pid -o -T 1000000* _PID_
 ____
 See *sched*(7) for a detailed discussion of the different scheduler classes and how they interact.
 

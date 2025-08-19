@@ -99,10 +99,12 @@ login_lastlogin = get_option('login-lastlogin')
 conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
 summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
 
+have = cc.has_type('struct fanotify_event_info_header', prefix : '#include <linux/fanotify.h>')
+conf.set('HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER', have ? 1 : false)
+
 have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mount.h>')
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
-
 
 have_struct_statx = cc.has_type('struct statx', prefix : '#include <sys/stat.h>')
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
@@ -290,7 +292,7 @@ if lib_ncursesw.found()
   lib_ncurses = disabler()
 else
   lib_ncurses = dependency(
-    'ncurses',
+    'curses',
     disabler : true,
     required : get_option('ncurses'))
   headers += ['ncurses.h',

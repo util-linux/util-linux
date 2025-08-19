@@ -408,3 +408,16 @@ MOUNT_2_41 {
 	mnt_table_refer_statmnt;
 	mnt_unref_statmnt;
 } MOUNT_2_40;
+
+MOUNT_2_42 {
+	mnt_context_enable_beneath;
+	mnt_context_enable_exclusive;
+	mnt_context_is_beneath;
+	mnt_context_is_exclusive;
+	mnt_monitor_enable_mountinfo;
+	mnt_monitor_enable_fanotify;
+	mnt_monitor_event_next_fs;
+	mnt_fs_is_moved;
+	mnt_fs_is_attached;
+	mnt_fs_is_detached;
+} MOUNT_2_41;

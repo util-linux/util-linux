@@ -577,6 +577,10 @@ extern int mnt_fs_is_netfs(struct libmnt_fs *fs);
 extern int mnt_fs_is_pseudofs(struct libmnt_fs *fs);
 extern int mnt_fs_is_regularfs(struct libmnt_fs *fs);
 
+extern int mnt_fs_is_moved(struct libmnt_fs *fs);
+extern int mnt_fs_is_attached(struct libmnt_fs *fs);
+extern int mnt_fs_is_detached(struct libmnt_fs *fs);
+
 extern void mnt_free_mntent(struct mntent *mnt);
 extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt);
 
@@ -742,14 +746,21 @@ extern int mnt_tabdiff_next_change(struct libmnt_tabdiff *df,
 /* monitor.c */
 enum {
 	MNT_MONITOR_TYPE_USERSPACE = 1,	/* userspace mount options */
-	MNT_MONITOR_TYPE_KERNEL		/* kernel mount table */
+	MNT_MONITOR_TYPE_MOUNTINFO = 2, /* /proc/self/mountinfo based kernel monitor */
+	MNT_MONITOR_TYPE_FANOTIFY = 3,	/* advanced fanotify based kernel monitor */
+
+	MNT_MONITOR_TYPE_KERNEL = MNT_MONITOR_TYPE_MOUNTINFO,	/* deprecated */
 };
 
 extern struct libmnt_monitor *mnt_new_monitor(void);
 extern void mnt_ref_monitor(struct libmnt_monitor *mn);
 extern void mnt_unref_monitor(struct libmnt_monitor *mn);
 
+/* deprecated alias to mnt_monitor_enable_mountinfo() */
 extern int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable);
+
+extern int mnt_monitor_enable_mountinfo(struct libmnt_monitor *mn, int enable);
+extern int mnt_monitor_enable_fanotify(struct libmnt_monitor *mn, int enable, int ns);
 extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
 				int enable, const char *filename);
 
@@ -761,7 +772,10 @@ extern int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout);
 
 extern int mnt_monitor_next_change(struct libmnt_monitor *mn,
 			     const char **filename, int *type);
+
 extern int mnt_monitor_event_cleanup(struct libmnt_monitor *mn);
+extern int mnt_monitor_event_next_fs(struct libmnt_monitor *mn,
+			     struct libmnt_fs *fs);
 
 
 /* context.c */
@@ -803,6 +817,8 @@ extern int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *ar
 extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable);
 extern int mnt_context_enable_onlyonce(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_exclusive(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_beneath(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable);
@@ -819,6 +835,10 @@ extern int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable
 extern int mnt_context_get_optsmode(struct libmnt_context *cxt);
 
 extern int mnt_context_is_onlyonce(struct libmnt_context *cxt)
+			__ul_attribute__((nonnull));
+extern int mnt_context_is_exclusive(struct libmnt_context *cxt)
+			__ul_attribute__((nonnull));
+extern int mnt_context_is_beneath(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 extern int mnt_context_is_lazy(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));

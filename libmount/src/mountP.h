@@ -286,6 +286,26 @@ struct libmnt_fs {
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
+#define MNT_FS_STATUS_ATTACH	(1 << 6)
+#define MNT_FS_STATUS_DETACH	(1 << 7)
+
+static inline void mnt_fs_mark_attached(struct libmnt_fs *fs)
+{
+	fs->flags &= ~MNT_FS_STATUS_DETACH;
+	fs->flags |= MNT_FS_STATUS_ATTACH;
+}
+
+static inline void mnt_fs_mark_detached(struct libmnt_fs *fs)
+{
+	fs->flags &= ~MNT_FS_STATUS_ATTACH;
+	fs->flags |= MNT_FS_STATUS_DETACH;
+}
+
+static inline void mnt_fs_mark_moved(struct libmnt_fs *fs)
+{
+	fs->flags |= MNT_FS_STATUS_ATTACH | MNT_FS_STATUS_DETACH;
+}
+
 #ifdef HAVE_STATMOUNT_API
 # define	mnt_fs_try_statmount(FS, MEMBER, FLAGS) __extension__ ({	\
 			if (!(FS)->MEMBER					\
@@ -516,6 +536,8 @@ struct libmnt_context
 #define MNT_FL_NOSWAPMATCH	(1 << 13)
 #define MNT_FL_RWONLY_MOUNT	(1 << 14)	/* explicit mount -w; never try read-only  */
 #define MNT_FL_ONLYONCE		(1 << 15)
+#define MNT_FL_EXCL		(1 << 16)
+#define MNT_FL_BENEATH		(1 << 17)
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* fstab merged to cxt->fs */

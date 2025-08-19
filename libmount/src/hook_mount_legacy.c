@@ -158,6 +158,9 @@ static int hook_bindremount(struct libmnt_context *cxt,
 	if (rc)
 		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed"
 				  " [rc=%d errno=%d %m]", rc, errno));
+	else
+		mnt_fs_mark_attached(cxt->fs);
+
 	return rc;
 }
 
@@ -242,6 +245,11 @@ static int hook_mount(struct libmnt_context *cxt,
 		rc = -cxt->syscall_status;
 		return rc;
 	}
+
+	if (mnt_optlist_is_move(ol))
+		mnt_fs_mark_moved(cxt->fs);
+	else
+		mnt_fs_mark_attached(cxt->fs);
 
 	cxt->syscall_status = 0;
 	return rc;

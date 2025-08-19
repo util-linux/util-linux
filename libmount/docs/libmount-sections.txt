@@ -31,6 +31,8 @@ mnt_context_disable_canonicalize
 mnt_context_disable_helpers
 mnt_context_disable_mtab
 mnt_context_disable_swapmatch
+mnt_context_enable_beneath
+mnt_context_enable_exclusive
 mnt_context_enable_fake
 mnt_context_enable_force
 mnt_context_enable_fork
@@ -70,7 +72,9 @@ mnt_context_get_user_mflags
 mnt_context_helper_executed
 mnt_context_helper_setopt
 mnt_context_init_helper
+mnt_context_is_beneath
 mnt_context_is_child
+mnt_context_is_exclusive
 mnt_context_is_fake
 mnt_context_is_force
 mnt_context_is_fork
@@ -254,7 +258,10 @@ mnt_fs_get_userdata
 mnt_fs_get_user_options
 mnt_fs_get_vfs_options
 mnt_fs_get_vfs_options_all
+mnt_fs_is_attached
+mnt_fs_is_detached
 mnt_fs_is_kernel
+mnt_fs_is_moved
 mnt_fs_is_netfs
 mnt_fs_is_pseudofs
 mnt_fs_is_regularfs
@@ -480,12 +487,15 @@ libmnt_monitor
 mnt_new_monitor
 mnt_ref_monitor
 mnt_unref_monitor
-mnt_monitor_enable_userspace
+mnt_monitor_enable_fanotify
 mnt_monitor_enable_kernel
+mnt_monitor_enable_mountinfo
+mnt_monitor_enable_userspace
 mnt_monitor_get_fd
 mnt_monitor_close_fd
 mnt_monitor_next_change
 mnt_monitor_event_cleanup
+mnt_monitor_event_next_fs
 mnt_monitor_veil_kernel
 mnt_monitor_wait
 </SECTION>

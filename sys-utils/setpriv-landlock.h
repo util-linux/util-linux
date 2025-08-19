@@ -27,7 +27,7 @@ void do_landlock(const struct setpriv_landlock_opts *opts);
 void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str);
 void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str);
 void init_landlock_opts(struct setpriv_landlock_opts *opts);
-void usage_setpriv(FILE *out);
+void usage_landlock(FILE *out);
 
 #else
 
@@ -45,7 +45,7 @@ static inline void parse_landlock_access(
 }
 #define parse_landlock_rule parse_landlock_access
 static inline void init_landlock_opts(void *opts __attribute__((unused))) {}
-static inline void usage_setpriv(FILE *out __attribute__((unused))) {}
+static inline void usage_landlock(FILE *out __attribute__((unused))) {}
 
 #endif /* HAVE_LINUX_LANDLOCK_H */
 
