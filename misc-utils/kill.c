@@ -280,7 +280,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
 	fputs(_(" -l, --list[=<signal>|=0x<sigmask>]\n"
 		"                        list signal names, convert a signal number to a name,\n"
-		"                         or convert a signal mask to names\n"), out);
+		"                          or convert a signal mask to names\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
 	fputs(_(" -r, --require-handler  do not send signal if signal handler is not present\n"), out);
 	fputs(_(" -d, --show-process-state <pid>\n"
@@ -325,7 +325,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	char *arg;
 
 	/* Loop through the arguments.  Actually, -a is the only option
-	 * can be used with other options.  The 'kill' is basically a
+	 * that can be used with other options.  The 'kill' is basically a
 	 * one-option-at-most program. */
 	for (argc--, argv++; 0 < argc; argc--, argv++) {
 		arg = *argv;
