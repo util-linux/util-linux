@@ -39,12 +39,12 @@ Returns NULL on an error.
 
 == AUTHORS
 
-Thorsten Kukuk (kukuk@suse.de)
+mailto:kukuk@suse.de[Thorsten Kukuk]
 
 == SEE ALSO
 
 *lastlog2*(3),
-*ll2_unref_context(3),
+*ll2_unref_context*(3),
 *ll2_read_all*(3),
 *ll2_write_entry*(3),
 *ll2_read_entry*(3),

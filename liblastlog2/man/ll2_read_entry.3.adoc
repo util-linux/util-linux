@@ -49,13 +49,13 @@ The evaluated values are returned by _ll_time_, _tty_, _rhost_ and _pam_service_
 
 == AUTHORS
 
-Thorsten Kukuk (kukuk@suse.de)
+mailto:kukuk@suse.de[Thorsten Kukuk]
 
 == SEE ALSO
 
 *lastlog2*(3),
-*ll2_new_context(3),
-*ll2_unref_context(3),
+*ll2_new_context*(3),
+*ll2_unref_context*(3),
 *ll2_read_all*(3),
 *ll2_write_entry*(3),
 *ll2_update_login_time*(3),
