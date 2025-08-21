@@ -22,18 +22,18 @@ lastlog2 - Y2038 safe version of lastlog library.
 It's using sqlite3 as database backend. Data is only collected via a PAM module, so that all
 tools can make use of it, without modifying existing packages.
 The output is as compatible as possible with the old lastlog implementation.
-By default the database will be written as `/var/lib/lastlog/lastlog2.db`.
+By default the database will be written as _/var/lib/lastlog/lastlog2.db_.
 The size of the database depends on the amount of users, not how big the biggest UID is.
 
 == AUTHORS
 
-Thorsten Kukuk (kukuk@suse.de)
+mailto:kukuk@suse.de[Thorsten Kukuk]
 
 == SEE ALSO
 
 *lastlog2*(3),
-*ll2_new_context(3),
-*ll2_unref_context(3),
+*ll2_new_context*(3),
+*ll2_unref_context*(3),
 *ll2_write_entry*(3),
 *ll2_read_all*(3),
 *ll2_read_entry*(3),
