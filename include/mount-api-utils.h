@@ -6,7 +6,6 @@
 #define UTIL_LINUX_MOUNT_API_UTILS
 
 #ifdef HAVE_LINUX_MOUNT_H
-#include <sys/mount.h>
 #include <linux/mount.h>
 #include <linux/unistd.h>
 #include <sys/syscall.h>
