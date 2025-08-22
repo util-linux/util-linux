@@ -65,6 +65,8 @@ static struct file_element *new_list_entry(const char *filename)
 	return file_element;
 }
 
+#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
+
 static int issuedir_filter(const struct dirent *d)
 {
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -85,9 +87,6 @@ static int  read_dir( struct list_head *file_list,
 		      const char *config_name,
 		      const char *config_suffix)
 {
-	INIT_LIST_HEAD(file_list);
-
-#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 	bool found = false;
 	char *dirname = NULL;
 	char *filename = NULL;
@@ -154,10 +153,9 @@ static int  read_dir( struct list_head *file_list,
         free(dirname);
 	close(dd);
 	return counter;
-#else /* defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT) */
-	return 0;
-#endif
 }
+
+#endif
 
 static void free_element(struct file_element *element)
 {
@@ -207,6 +205,10 @@ size_t config_file_list( struct list_head *file_list,
 		list_add_tail(&add_element->file_list, file_list);
 	}
 
+	INIT_LIST_HEAD(&etc_file_list);
+	INIT_LIST_HEAD(&usr_file_list);
+
+#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
         read_dir(&etc_file_list,
 		 project,
 		 etc_subdir,
@@ -217,6 +219,7 @@ size_t config_file_list( struct list_head *file_list,
 		 usr_subdir,
 		 config_name,
 		 config_suffix);
+#endif
 
 	list_for_each(etc_entry, &etc_file_list) {
 		etc_element = list_entry(etc_entry, struct file_element, file_list);
