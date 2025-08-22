@@ -85,6 +85,9 @@ static int  read_dir( struct list_head *file_list,
 		      const char *config_name,
 		      const char *config_suffix)
 {
+	INIT_LIST_HEAD(file_list);
+
+#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 	bool found = false;
 	char *dirname = NULL;
 	char *filename = NULL;
@@ -93,10 +96,6 @@ static int  read_dir( struct list_head *file_list,
 	int counter = 0;
         struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
-
-	INIT_LIST_HEAD(file_list);
-
-#if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 
 	if (config_suffix) {
 		xasprintf(&dirname, "%s/%s/%s.%s.d",
