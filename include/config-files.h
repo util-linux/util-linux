@@ -12,11 +12,6 @@
 
 #include "list.h"
 
-struct file_element {
-	struct list_head file_list;
-	char *filename;
-};
-
 /**
  * config_file_list - Evaluting a list of sorted configuration filenames which have to be handled
  *                    in the correct order.
@@ -28,10 +23,10 @@ struct file_element {
  * @config_name: basename of the configuration file. If it is NULL, drop-ins without a main configuration file will be parsed only. 
  * @config_suffix: suffix of the configuration file. Can also be NULL.
  *
- * Returns the length of the file_list.
+ * Returns the length of the file_list, or -ENOMEM, or -ENOTEMPTY if config_name is NULL
  *
  * Example:
- * size_t count = 0;
+ * int count = 0;
  * struct list_head *file_list;
  *
  * count = config_file_list (&file_list,
@@ -45,11 +40,53 @@ struct file_element {
  * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
  *
  */
+int config_file_list( struct list_head *file_list,
+		      const char *project,
+		      const char *etc_subdir,
+		      const char *usr_subdir,
+		      const char *config_name,
+		      const char *config_suffix);
 
-size_t config_file_list( struct list_head *file_list,
-			 const char *project,
-			 const char *etc_subdir,
-			 const char *usr_subdir,
-			 const char *config_name,
-			 const char *config_suffix);
+
+/**
+ * free_config_file_list - Freeing configuration list.
+ *
+ * @file_list: List of filenames which has to be freed.
+ *
+ */
+void free_config_file_list(struct list_head *file_list);
+
+
+/**
+ * config_files_next_filename - Going through the file list which has to be handled/parsed.
+ *
+ * @file_list: List of filenames which have to be handled.
+ * @current_entry: Current list entry. Has to be initialized with NULL for the first call.
+ * @name: Returned file name for each call.
+ *
+ * Returns true/false. Call has been successful.
+ *
+ * Example:
+ * int count = 0;
+ * struct list_head *file_list = NULL;
+ * struct list_head *current = NULL;
+ * char *name = NULL;
+ *
+ * count = config_file_list (&file_list,
+ *                           "foo",
+ *                           "/etc",
+ *                           "/usr/lib",
+ *                           "example",
+ *                           "conf");
+ *
+ * while (config_files_next_filename(&file_list, &current, &name))
+ *       printf("filename: %s\n", name);
+ *
+ * free_config_file_list(&file_list);
+ *
+ */
+bool config_files_next_filename(struct list_head *file_list,
+				struct list_head **current_entry,
+				char **name);
+
 #endif

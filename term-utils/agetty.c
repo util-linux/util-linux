@@ -1934,18 +1934,10 @@ static void print_issue_file(struct issue *ie,
 #endif
 }
 
-static void free_element(struct file_element *element)
-{
-	free(element->filename);
-}
-
 static void eval_issue_file(struct issue *ie,
 			    struct options *op,
 			    struct termios *tp)
 {
-	struct list_head file_list;
-	struct list_head *file_entry = NULL;
-
 #ifdef AGETTY_RELOAD
 	netlink_groups = 0;
 #endif
@@ -1977,6 +1969,11 @@ static void eval_issue_file(struct issue *ie,
 		goto done;
 	}
 
+#ifdef 	ISSUEDIR_SUPPORT
+	struct list_head file_list;
+	struct list_head *current = NULL;
+	char *name = NULL;
+	
         /* Reading all issue files and concatinating all contents to one content.
          * The ordering rules are defineded in:
          * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
@@ -1988,12 +1985,12 @@ static void eval_issue_file(struct issue *ie,
 			  _PATH_ISSUE_FILENAME,
 			  ISSUEDIR_EXT);
 
-	list_for_each(file_entry, &file_list) {
-		struct file_element *element;
-	        element = list_entry(file_entry, struct file_element, file_list);
-		issuefile_read(ie, element->filename, op, tp);
+	while (config_files_next_filename(&file_list, &current, &name)) {
+		issuefile_read(ie, name, op, tp);
 	}
-	list_free(&file_list, struct file_element,  file_list, free_element);
+
+	free_config_file_list(&file_list);
+#endif	
 
 done:
 
