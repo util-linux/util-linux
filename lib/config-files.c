@@ -14,7 +14,6 @@
 #include "xalloc.h"
 #include "fileutils.h"
 
-#define RUN_SUBDIR "/run"
 #define DEFAULT_ETC_SUBDIR "/etc"
 
 /* Checking for main configuration file 
@@ -201,7 +200,7 @@ size_t config_file_list( struct list_head *file_list,
 	/* in the following order : /etc /run /usr             */
  	filename = main_config_file(etc_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
-		filename = main_config_file(RUN_SUBDIR, project, config_name, config_suffix);
+		filename = main_config_file(_PATH_RUNSTATEDIR, project, config_name, config_suffix);
 	if (filename == NULL)
 		filename = main_config_file(usr_subdir, project, config_name, config_suffix);
 	if (filename != NULL) {
