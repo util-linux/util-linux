@@ -67,7 +67,7 @@ This section specifies the format of the second part of the parameters of *getop
 
 The parameters are parsed from left to right. Each parameter is classified as a short option, a long option, an argument to an option, or a non-option parameter.
 
-A simple short option is a '*-*' followed by a short option character. If the option has a required argument, it may be written directly after the option character or as the next parameter (i.e., separated by whitespace on the command line). If the option has an optional argument, it must be written directly after the option character if present.
+A simple short option is a '*-*' followed by a short option character, except for the ':', ';' and '?' characters, as these are reserved by *getopt*(3). If the option has a required argument, it may be written directly after the option character or as the next parameter (i.e., separated by whitespace on the command line). If the option has an optional argument, it must be written directly after the option character if present.
 
 It is possible to specify several short options after one '*-*', as long as all (except possibly the last) do not have required or optional arguments.
 

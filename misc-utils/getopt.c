@@ -201,6 +201,10 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		 (argc, argv, ctl->optstr,
 		  (const struct option *)ctl->long_options, &longindex)))
 	       != EOF) {
+		/* Given that these two characters are returned by the getopt(3) routines 
+		 * to distinguish between two distinct internal error states, they should
+		 * not be used as option characters.
+		*/
 		if (opt == '?' || opt == ':')
 			exit_code = GETOPT_EXIT_CODE;
 		else if (!ctl->quiet_output) {
