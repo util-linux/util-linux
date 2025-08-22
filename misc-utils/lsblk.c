@@ -2362,7 +2362,7 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 
-static void __attribute__((__noreturn__)) list_colunms(void)
+static void __attribute__((__noreturn__)) list_columns(void)
 {
 	size_t i;
 	struct libscols_table *tb = xcolumn_list_table_new("lsblk-columns", stdout,
@@ -2697,7 +2697,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms();        /* print end exit */
+		list_columns();        /* print end exit */
 
 	if (force_tree)
 		lsblk->flags |= LSBLK_TREE;
