@@ -2714,6 +2714,7 @@ int main(int argc, char *argv[])
 		add_column(COL_TARGETS);
 	}
 
+	outarg = outarg == NULL ? getenv("LSBLK_COLUMNS") : outarg;
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
