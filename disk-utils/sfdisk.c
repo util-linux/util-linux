@@ -1025,13 +1025,14 @@ static int command_delete(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_reorder(struct sfdisk *sf, int argc, char **argv)
 {
-	const char *devname = NULL;
+	const char *devname;
 	int rc;
 
-	if (argc)
-		devname = argv[0];
-	if (!devname)
+	if (!argc)
 		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+	if (argc > 1)
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	assign_device(sf, devname, 0);	/* read-write */
 
@@ -1049,14 +1050,15 @@ static int command_reorder(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_dump(struct sfdisk *sf, int argc, char **argv)
 {
-	const char *devname = NULL;
 	struct fdisk_script *dp;
+	const char *devname;
 	int rc;
 
-	if (argc)
-		devname = argv[0];
-	if (!devname)
+	if (!argc)
 		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+	if (argc > 1)
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	assign_device(sf, devname, 1);	/* read-only */
 
@@ -1085,12 +1087,13 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_backup_sectors(struct sfdisk *sf, int argc, char **argv)
 {
-	const char *devname = NULL;
+	const char *devname;
 
-	if (argc)
-		devname = argv[0];
-	if (!devname)
+	if (!argc)
 		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+	if (argc > 1)
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	assign_device(sf, devname, 1);	/* read-only */
 
