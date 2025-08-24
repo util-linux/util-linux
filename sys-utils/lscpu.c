@@ -924,6 +924,8 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 
 	if (ct->stepping)
 		add_summary_s(tb, sec, _("Stepping:"), ct->stepping);
+	if (ct->microcode)
+		add_summary_s(tb, sec, _("Microcode version:"), ct->microcode);
 	if (ct->freqboost >= 0)
 		add_summary_s(tb, sec, _("Frequency boost:"), ct->freqboost ?
 				_("enabled") : _("disabled"));
@@ -1042,7 +1044,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		 */
 		set = cpuset_alloc(cxt->maxcpus, NULL, NULL);
 		if (!set)
-			err(EXIT_FAILURE, _("failed to callocate cpu set"));
+			err(EXIT_FAILURE, _("failed to allocate cpu set"));
 		CPU_ZERO_S(cxt->setsize, set);
 		for (i = 0; i < cxt->npossibles; i++) {
 			struct lscpu_cpu *cpu = cxt->cpus[i];
@@ -1067,7 +1069,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		print_summary_cputype(cxt, cxt->cputypes[i], tb, sec);
 	sec = NULL;
 
-	/* Section: vitualiazation */
+	/* Section: virtualization */
 	if (cxt->virt) {
 		sec = add_summary_e(tb, NULL, _("Virtualization features:"));
 		if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "svm"))

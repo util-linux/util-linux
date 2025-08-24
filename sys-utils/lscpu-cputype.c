@@ -91,6 +91,7 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->bios_vendor);
 		free(ct->machinetype);	/* s390 */
 		free(ct->family);
+		free(ct->microcode);
 		free(ct->model);
 		free(ct->modelname);
 		free(ct->bios_modelname);
@@ -140,6 +141,8 @@ static void fprintf_cputypes(FILE *f, struct lscpu_cxt *cxt)
 			fprintf(f, " machinetype: %s\n", ct->machinetype);
 		if (ct->family)
 			fprintf(f, " family: %s\n", ct->family);
+		if (ct->microcode)
+			fprintf(f, " microcode: %s\n", ct->microcode);
 		if (ct->model)
 			fprintf(f, " model: %s\n", ct->model);
 		if (ct->modelname)
@@ -183,6 +186,7 @@ enum {
 	PAT_FLAGS,
 	PAT_IMPLEMENTER,
 	PAT_MAX_THREAD_ID,
+	PAT_MICROCODE,
 	PAT_MHZ,
 	PAT_MHZ_DYNAMIC,
 	PAT_MHZ_STATIC,
@@ -236,6 +240,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "isa",			PAT_ISA,	isa),		/* riscv */
 	DEF_PAT_CPUTYPE( "marchid",		PAT_FAMILY,	family),	/* riscv */
 	DEF_PAT_CPUTYPE( "max thread id",	PAT_MAX_THREAD_ID, mtid),	/* s390 */
+	DEF_PAT_CPUTYPE( "microcode",	        PAT_MICROCODE, microcode),
 	DEF_PAT_CPUTYPE( "mimpid",		PAT_MODEL,	model),		/* riscv */
 	DEF_PAT_CPUTYPE( "model",		PAT_MODEL,	model),
 	DEF_PAT_CPUTYPE( "model name",		PAT_MODEL_NAME,	modelname),
