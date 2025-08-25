@@ -30,6 +30,7 @@ libcommon_la_SOURCES = \
 	lib/mbsalign.c \
 	lib/mbsedit.c\
 	lib/md5.c \
+	lib/pidutils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
 	lib/sha1.c \

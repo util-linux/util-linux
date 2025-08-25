@@ -17,6 +17,7 @@ lib_common_sources = '''
 	mbsalign.c
 	mbsedit.c
 	md5.c
+	pidutils.c
 	procfs.c
 	pwdutils.c
 	randutils.c
