@@ -4,6 +4,7 @@ TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 # helpers
 TS_HELPER_BOILERPLATE="${ts_helpersdir}test_boilerplate"
 TS_HELPER_BYTESWAP="${ts_helpersdir}test_byteswap"
+TS_HELPER_COLORS="${ts_helpersdir}test_colors"
 TS_HELPER_CPUSET="${ts_helpersdir}test_cpuset"
 TS_HELPER_CAP="${ts_helpersdir}test_cap"
 TS_HELPER_DMESG="${ts_helpersdir}test_dmesg"
