@@ -10,6 +10,7 @@ Thread(s) per core:              2
 Core(s) per socket:              24
 Socket(s):                       2
 Stepping:                        2
+Microcode version:               0x8001227
 Frequency boost:                 enabled
 CPU(s) scaling MHz:              126%
 CPU max MHz:                     2300.0000

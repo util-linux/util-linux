@@ -74,6 +74,7 @@ struct lscpu_cputype {
 	char	*bios_vendor;	/* aarch64 */
 	char	*machinetype;	/* s390 */
 	char	*family;
+	char    *microcode;
 	char	*model;
 	char	*modelname;
 	char	*bios_modelname; /* aarch64 */
