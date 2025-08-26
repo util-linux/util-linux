@@ -6,7 +6,6 @@
 #define UTIL_LINUX_MOUNT_API_UTILS
 
 #ifdef HAVE_LINUX_MOUNT_H
-#include <sys/mount.h>
 #include <linux/mount.h>
 #include <linux/unistd.h>
 #include <sys/syscall.h>
@@ -294,7 +293,12 @@ struct ul_statmount {
 	uint32_t opt_array;       /* [str] Array of nul terminated fs options */
 	uint32_t opt_sec_num;     /* Number of security options */
 	uint32_t opt_sec_array;   /* [str] Array of nul terminated security options */
-	uint64_t __spare2[46];
+	uint64_t supported_mask;  /* Mask flags that this kernel supports */
+	uint32_t mnt_uidmap_num;  /* Number of uid mappings */
+	uint32_t mnt_uidmap;      /* [str] Array of uid mappings (as seen from callers namespace) */
+	uint32_t mnt_gidmap_num;  /* Number of gid mappings */
+	uint32_t mnt_gidmap;      /* [str] Array of gid mappings (as seen from callers namespace) */
+	uint64_t __spare2[43];
 	char str[];               /* Variable size part containing strings */
 };
 
@@ -356,8 +360,15 @@ struct ul_statmount {
 #ifndef STATMOUNT_OPT_SEC_ARRAY
 # define STATMOUNT_OPT_SEC_ARRAY       0x00000800U   /* Want/got opt_sec... */
 #endif
-
-
+#ifndef STATMOUNT_SUPPORTED_MASK
+# define STATMOUNT_SUPPORTED_MASK      0x00001000U   /* Want/got supported mask flags */
+#endif
+#ifndef STATMOUNT_MNT_UIDMAP
+# define STATMOUNT_MNT_UIDMAP          0x00002000U   /* Want/got uidmap... */
+#endif
+#ifndef STATMOUNT_MNT_GIDMAP
+# define STATMOUNT_MNT_GIDMAP          0x00004000U   /* Want/got gidmap... */
+#endif
 /*
  * Special @mnt_id values that can be passed to listmount
  */
