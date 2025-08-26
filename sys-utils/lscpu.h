@@ -346,6 +346,7 @@ struct dmi_info {
 	char *processor_manufacturer;
 	char *processor_version;
 	uint16_t current_speed;
+	uint16_t max_speed;
 	char *part_num;
 };
 
