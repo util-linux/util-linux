@@ -20,6 +20,7 @@
 #include "all-io.h"
 #include "debug.h"
 #include "strutils.h"
+#include "statfs_magic.h"
 
 static void procfs_process_deinit_path(struct path_cxt *pc);
 
@@ -412,7 +413,7 @@ int fd_is_procfs(int fd)
 		}
 	} while (ret != 0);
 
-	return st.f_type == STATFS_PROC_MAGIC;
+	return F_TYPE_EQUAL(st.f_type, STATFS_PROC_MAGIC);
 	return 0;
 }
 #else
