@@ -23,6 +23,7 @@
 #include <fcntl.h>		/* open(2) */
 #include <ifaddrs.h>		/* getifaddrs */
 #include <inttypes.h>		/* SCNu16 */
+#include <netdb.h>		/* getprotobyname */
 #include <net/if.h>		/* if_nametoindex */
 #include <linux/if_ether.h>	/* ETH_P_* */
 #include <linux/net.h>		/* SS_* */
@@ -1436,9 +1437,102 @@ struct raw_xinfo {
 	uint16_t protocol;
 };
 
+static const char *raw_decode_protocol(uint16_t proto, bool decoded_as_ipv6)
+{
+	struct protoent *pent;
+
+	if (proto == 0) {
+		if (decoded_as_ipv6)
+			return "hopopts"; /* IPPROTO_HOPOPTS */
+		else
+			return "ip"; /* IPPROTO_IP */
+	}
+
+	switch (proto) {
+	case IPPROTO_ICMP:
+		return "icmp";
+	case IPPROTO_IGMP:
+		return "igmp";
+	case IPPROTO_IPIP:
+		return "ipip";
+	case IPPROTO_TCP:
+		return "tcp";
+	case IPPROTO_EGP:
+		return "egp";
+	case IPPROTO_PUP:
+		return "pup";
+	case IPPROTO_UDP:
+		return "udp";
+	case IPPROTO_IDP:
+		return "idp";
+	case IPPROTO_TP:
+		return "tp";
+	case IPPROTO_DCCP:
+		return "dccp";
+	case IPPROTO_IPV6:
+		return "ipv6";
+	case IPPROTO_RSVP:
+		return "rsvp";
+	case IPPROTO_GRE:
+		return "gre";
+	case IPPROTO_ESP:
+		return "esp";
+	case IPPROTO_AH:
+		return "ah";
+	case IPPROTO_MTP:
+		return "mtp";
+	case IPPROTO_BEETPH:
+		return "beetph";
+	case IPPROTO_ENCAP:
+		return "encap";
+	case IPPROTO_PIM:
+		return "pim";
+	case IPPROTO_COMP:
+		return "comp";
+#ifdef IPPROTO_L2TP
+	case IPPROTO_L2TP:
+		return "l2tp";
+#endif
+	case IPPROTO_SCTP:
+		return "sctp";
+	case IPPROTO_UDPLITE:
+		return "udplite";
+	case IPPROTO_MPLS:
+		return "mpls";
+#ifdef IPPROTO_ETHERNET
+	case IPPROTO_ETHERNET:
+		return "ethernet";
+#endif
+	case IPPROTO_RAW:
+		return "raw";
+#ifdef IPPROTO_MPTCP
+	case IPPROTO_MPTCP:
+		return "mptcp";
+#endif
+	case IPPROTO_ROUTING:
+		return "routing";
+	case IPPROTO_FRAGMENT:
+		return "fragment";
+	case IPPROTO_ICMPV6:
+		return "icmpv6";
+	case IPPROTO_NONE:
+		return "none";
+	case IPPROTO_DSTOPTS:
+		return "dstopts";
+	case IPPROTO_MH:
+		return "mh";
+	}
+
+	pent = getprotobynumber(proto);
+	if (pent && pent->p_name)
+		return pent->p_name;
+
+	return NULL;
+}
+
 static char *raw_get_name_common(struct sock_xinfo *sock_xinfo,
 				 struct sock *sock  __attribute__((__unused__)),
-				 const char *port_label)
+				 const char *port_label, bool decode_as_protocol)
 {
 	char *str = NULL;
 	struct l4_xinfo_class *class = (struct l4_xinfo_class *)sock_xinfo->class;
@@ -1452,30 +1546,73 @@ static char *raw_get_name_common(struct sock_xinfo *sock_xinfo,
 
 	if (!inet_ntop(class->family, laddr, local_s, sizeof(local_s)))
 		xasprintf(&str, "state=%s", st_str);
-	else if (class->is_any_addr(raddr)
-		 || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
-		xasprintf(&str, "state=%s %s=%"PRIu16" laddr=%s",
-			  st_str,
-			  port_label,
-			  raw->protocol, local_s);
-	else
-		xasprintf(&str, "state=%s %s=%"PRIu16" laddr=%s raddr=%s",
-			  st_str,
-			  port_label,
-			  raw->protocol, local_s, remote_s);
+	else {
+		const char *protocol_str = NULL;
+		char protocol_buf[ sizeof ("unknown(")
+				   + sizeof (stringify_value(UINT16_MA))
+				   + sizeof (")") ];
+
+		if (decode_as_protocol) {
+			protocol_str = raw_decode_protocol(raw->protocol,
+							   class->family == AF_INET6);
+			if (protocol_str == NULL) {
+				snprintf(protocol_buf, sizeof(protocol_buf),
+					 "unknown(%"PRIu16")", raw->protocol);
+				protocol_str = protocol_buf;
+			}
+		} else {
+			snprintf(protocol_buf, sizeof(protocol_buf), "%"PRIu16, raw->protocol);
+			protocol_str = protocol_buf;
+		}
+
+		if (class->is_any_addr(raddr)
+		    || !inet_ntop(class->family, raddr, remote_s, sizeof(remote_s)))
+			xasprintf(&str, "state=%s %s=%s laddr=%s",
+				  st_str,
+				  port_label,
+				  protocol_str, local_s);
+		else
+			xasprintf(&str, "state=%s %s=%s laddr=%s raddr=%s",
+				  st_str,
+				  port_label,
+				  protocol_str, local_s, remote_s);
+	}
 	return str;
 }
 
 static char *raw_get_name(struct sock_xinfo *sock_xinfo,
 			  struct sock *sock  __attribute__((__unused__)))
 {
-	return raw_get_name_common(sock_xinfo, sock, "protocol");
+	return raw_get_name_common(sock_xinfo, sock, "protocol", true);
 }
 
 static char *raw_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
 			  struct sock *sock __attribute__((__unused__)))
 {
 	return xstrdup("raw");
+}
+
+static bool raw_fill_column_common(struct raw_xinfo *raw,
+				   int column_id,
+				   char **str,
+				   bool decoded_as_ipv6)
+{
+	const char *pname;
+
+	switch (column_id) {
+	case COL_RAW_PROTOCOL:
+		pname = raw_decode_protocol(raw->protocol, decoded_as_ipv6);
+		if (pname) {
+			*str = xstrdup(pname);
+			return true;
+		}
+		FALLTHROUGH;
+	case COL_RAW_PROTOCOL_RAW:
+		xasprintf(str, "%"PRIu16, raw->protocol);
+		return true;
+	}
+
+	return false;
 }
 
 static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -1489,13 +1626,8 @@ static bool raw_fill_column(struct proc *proc __attribute__((__unused__)),
 	if (l3_fill_column_handler(INET, sock_xinfo, column_id, str))
 		return true;
 
-	if (column_id == COL_RAW_PROTOCOL) {
-		xasprintf(str, "%"PRIu16,
-			  ((struct raw_xinfo *)sock_xinfo)->protocol);
-		return true;
-	}
-
-	return false;
+	return raw_fill_column_common((struct raw_xinfo *)sock_xinfo,
+				      column_id, str, false);
 }
 
 static struct sock_xinfo *raw_xinfo_scan_line(const struct sock_xinfo_class *class,
@@ -1564,7 +1696,7 @@ static void load_xinfo_from_proc_raw(ino_t netns_inode, enum sysfs_byteorder byt
 static char *ping_get_name(struct sock_xinfo *sock_xinfo,
 			  struct sock *sock  __attribute__((__unused__)))
 {
-	return raw_get_name_common(sock_xinfo, sock, "id");
+	return raw_get_name_common(sock_xinfo, sock, "id", false);
 }
 
 static char *ping_get_type(struct sock_xinfo *sock_xinfo __attribute__((__unused__)),
@@ -1845,18 +1977,11 @@ static bool raw6_fill_column(struct proc *proc  __attribute__((__unused__)),
 			     size_t column_index  __attribute__((__unused__)),
 			     char **str)
 {
-	struct raw_xinfo *raw;
-
 	if (l3_fill_column_handler(INET6, sock_xinfo, column_id, str))
 		return true;
 
-	raw = (struct raw_xinfo *)sock_xinfo;
-	if (column_id == COL_RAW_PROTOCOL) {
-		xasprintf(str, "%"PRIu16, raw->protocol);
-		return true;
-	}
-
-	return false;
+	return raw_fill_column_common((struct raw_xinfo *)sock_xinfo,
+				      column_id, str, true);
 }
 
 static const struct l4_xinfo_class raw6_xinfo_class = {

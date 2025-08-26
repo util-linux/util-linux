@@ -1,2 +1,6 @@
-3 RAW state=established protocol=5 laddr=127.0.0.1 raddr=127.0.0.2 established raw 127.0.0.1 127.0.0.2 5
-ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET.LADDR,INET.RADDR,RAW.PROTOCOL: 0
+3 RAW state=established protocol=st laddr=127.0.0.1 raddr=127.0.0.2 established raw 127.0.0.1 127.0.0.2 st 5
+ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET.LADDR,INET.RADDR,RAW.PROTOCOL,RAW.PROTOCOL.RAW: 0
+3 RAW state=established protocol=tcp laddr=127.0.0.1 raddr=127.0.0.2 established raw 127.0.0.1 127.0.0.2 tcp 6
+ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET.LADDR,INET.RADDR,RAW.PROTOCOL,RAW.PROTOCOL.RAW: 0
+3 RAW state=established protocol=unknown(61) laddr=127.0.0.1 raddr=127.0.0.2 established raw 127.0.0.1 127.0.0.2 61 61
+ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET.LADDR,INET.RADDR,RAW.PROTOCOL,RAW.PROTOCOL.RAW: 0
