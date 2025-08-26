@@ -43,7 +43,7 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "halfbright", UL_COLOR_HALFBRIGHT	 },
 		{ "lightblue",	UL_COLOR_BOLD_BLUE       },
 		{ "lightcyan",	UL_COLOR_BOLD_CYAN       },
-		{ "lightgray,",	UL_COLOR_GRAY            },
+		{ "lightgray",	UL_COLOR_GRAY            },
 		{ "lightgreen", UL_COLOR_BOLD_GREEN      },
 		{ "lightmagenta", UL_COLOR_BOLD_MAGENTA  },
 		{ "lightred",	UL_COLOR_BOLD_RED        },
@@ -51,8 +51,8 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "red",	UL_COLOR_RED             },
 		{ "reset",      UL_COLOR_RESET,          },
 		{ "reverse",    UL_COLOR_REVERSE         },
-		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
-		{ "white",      UL_COLOR_WHITE           }
+		{ "white",      UL_COLOR_WHITE           },
+		{ "yellow",	UL_COLOR_BOLD_YELLOW     }
 	};
 	struct ul_color_name key = { .name = str }, *res;
 
