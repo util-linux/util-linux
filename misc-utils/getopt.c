@@ -92,6 +92,7 @@ struct getopt_control {
 	int long_options_nr;		/* number of used elements in array */
 	bool	compatible,		/* compatibility mode for 'difficult' programs */
 		ignore_unknown,		/* leave unknown options as they are */
+		posixly_correct,        /* POSIXLY_CORRECT environmental variable is set */
 		quiet_errors,		/* print errors */
 		quiet_output,		/* print output */
 		quote;			/* quote output */
@@ -205,7 +206,7 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		  (const struct option *)ctl->long_options, &longindex)))
 	       != EOF) {
 
-		if (ctl->ignore_unknown && opt == '?' && !getenv("POSIXLY_CORRECT") && !ctl->quiet_output) {
+		if (ctl->ignore_unknown && opt == '?' && !ctl->posixly_correct && !ctl->quiet_output) {
 			print_normalized(ctl, argv[optind-1]);
 			if ((optind <= argc-1) && !IS_OPT(argv[optind])) {
 				print_normalized(ctl, argv[optind++]);
@@ -292,7 +293,7 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 static void add_short_options(struct getopt_control *ctl, char *options)
 {
 	free(ctl->optstr);
-	if (*options != '+' && getenv("POSIXLY_CORRECT"))
+	if (*options != '+' && ctl->posixly_correct)
 		ctl->optstr = ul_strconcat("+", options);
 	else
 		ctl->optstr = xstrdup(options);
@@ -411,6 +412,8 @@ int main(int argc, char *argv[])
 
 	if (getenv("GETOPT_COMPATIBLE"))
 		ctl.compatible = 1;
+	if (getenv("POSIXLY_CORRECT"))
+		ctl.posixly_correct = 1;
 
 	if (argc == 1) {
 		if (ctl.compatible) {
