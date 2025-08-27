@@ -171,7 +171,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	if (!S_ISBLK(st.st_mode))
 		return NULL;
 
-	path = canonicalize_path(dev);
+	path = ul_canonicalize_path(dev);
 	if (!path)
 		return NULL;
 
@@ -298,7 +298,7 @@ char *blkid_evaluate_spec(const char *spec, blkid_cache *cache)
 	if (v)
 		res = blkid_evaluate_tag(t, v, cache);
 	else
-		res = canonicalize_path(spec);
+		res = ul_canonicalize_path(spec);
 
 	free(t);
 	free(v);

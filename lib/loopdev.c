@@ -692,7 +692,7 @@ int is_loopdev(const char *device)
 
 		snprintf(name, sizeof(name), _PATH_SYS_DEVBLOCK "/%d:%d",
 				major(st.st_rdev), minor(st.st_rdev));
-		cn = canonicalize_path(name);
+		cn = ul_canonicalize_path(name);
 		if (cn)
 			p = stripoff_last_component(cn);
 		rc = p && ul_startswith(p, "loop");
@@ -1257,7 +1257,7 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	if (!lc)
 		return -EINVAL;
 
-	lc->filename = canonicalize_path(filename);
+	lc->filename = ul_canonicalize_path(filename);
 	if (!lc->filename)
 		return -errno;
 

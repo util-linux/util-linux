@@ -26,8 +26,11 @@
  *
  * Since 2.6.29 (patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128) kernel sysfs
  * provides the real DM device names in /sys/block/<ptname>/dm/name
+ *
+ * The @prefix allows /sys to be mounted or stored outside the system root
+ * (/prefix/sys/...).
  */
-char *__canonicalize_dm_name(const char *prefix, const char *ptname)
+char *ul_canonicalize_dm_name_prefixed(const char *prefix, const char *ptname)
 {
 	FILE	*f;
 	size_t	sz;
@@ -55,9 +58,9 @@ char *__canonicalize_dm_name(const char *prefix, const char *ptname)
 	return res;
 }
 
-char *canonicalize_dm_name(const char *ptname)
+char *ul_canonicalize_dm_name(const char *ptname)
 {
-	return __canonicalize_dm_name(NULL, ptname);
+	return ul_canonicalize_dm_name_prefixed(NULL, ptname);
 }
 
 static int is_dm_devname(char *canonical, char **name)
@@ -88,7 +91,7 @@ char *ul_absolute_path(const char *path)
 	char cwd[PATH_MAX], *res, *p;
 	size_t psz, csz;
 
-	if (!is_relative_path(path)) {
+	if (!ul_is_relative_path(path)) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -140,7 +143,7 @@ do_canonicalize(const char *path, char **result,
 		return 1;
 
 	if (is_dm_devname(canonical, &dmname)) {
-		char *dm = canonicalize_dm_name(dmname);
+		char *dm = ul_canonicalize_dm_name(dmname);
 		if (dm) {
 			free(canonical);
 			canonical = dm;
@@ -157,7 +160,7 @@ do_canonicalize(const char *path, char **result,
  * unreachable path is not an error (!), and in this case, it just duplicates
  * @path.
  */
-char *canonicalize_path(const char *path)
+char *ul_canonicalize_path(const char *path)
 {
 	char *canonical = NULL;
 
@@ -171,7 +174,7 @@ char *canonicalize_path(const char *path)
  * Drop permissions (e.g., suid) and canonicalize the path. If the path is
  * unreadable (for example, due to missing permissions), it returns NULL.
  */
-char *canonicalize_path_restricted(const char *path)
+char *ul_canonicalize_path_restricted(const char *path)
 {
 	return ul_restricted_path_oper(path, do_canonicalize, NULL);
 }
@@ -188,11 +191,11 @@ int main(int argc, char **argv)
 
 	fprintf(stdout, "orig:            %s\n", argv[1]);
 
-	p = canonicalize_path(argv[1]);
+	p = ul_canonicalize_path(argv[1]);
 	fprintf(stdout, "real:            %s\n", p);
 	free(p);
 
-	p = canonicalize_path_restricted(argv[1]);
+	p = ul_canonicalize_path_restricted(argv[1]);
 	fprintf(stdout, "real-restricted: %s\n", p);
 	free(p);
 
