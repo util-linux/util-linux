@@ -59,6 +59,9 @@ Test if your *getopt*(1) is this enhanced version or an old version. This genera
 *-u*, *--unquoted*::
 Do not quote the output. Note that whitespace and special (shell-dependent) characters can cause havoc in this mode (like they do with other *getopt*(1) implementations).
 
+*-U*, *--unknown*::
+Leave unknown options as they are and surpress error messages from *getopt(3)*. Since there is no way to know whether an unknown option requires an argument, a non-option argument that follows the unknown option after a whitespace, is considered an option argument, therefore the argument will be left untouched and printed next to the respective unknown option. To prevent unexpected behavior, short options should be specified individually.
+
 include::man-common/help-version.adoc[]
 
 == PARSING

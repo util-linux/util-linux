@@ -77,6 +77,8 @@
 #define NON_OPT 1
 /* LONG_OPT is the code that is returned when a long option is found. */
 #define LONG_OPT 0
+/* IS_OPT tests whether the token is an option or not. */
+#define IS_OPT(a) (*a == '-')
 
 /* The shells recognized. */
 typedef enum { BASH, TCSH } shell_t;
@@ -89,6 +91,7 @@ struct getopt_control {
 	int long_options_length;	/* length of options array */
 	int long_options_nr;		/* number of used elements in array */
 	bool	compatible,		/* compatibility mode for 'difficult' programs */
+		ignore_unknown,		/* leave unknown options as they are */
 		quiet_errors,		/* print errors */
 		quiet_output,		/* print output */
 		quote;			/* quote output */
@@ -190,7 +193,7 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 	int longindex;
 	const char *charptr;
 
-	if (ctl->quiet_errors)
+	if (ctl->quiet_errors || ctl->ignore_unknown)
 		/* No error reporting from getopt(3) */
 		opterr = 0;
 	/* Reset getopt(3) */
@@ -201,6 +204,13 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		 (argc, argv, ctl->optstr,
 		  (const struct option *)ctl->long_options, &longindex)))
 	       != EOF) {
+
+		if (ctl->ignore_unknown && opt == '?' && !getenv("POSIXLY_CORRECT") && !ctl->quiet_output) {
+			print_normalized(ctl, argv[optind-1]);
+			if ((optind <= argc-1) && !IS_OPT(argv[optind])) {
+				print_normalized(ctl, argv[optind++]);
+			}
+		}
 		/* Given that these two characters are returned by the getopt(3) routines 
 		 * to distinguish between two distinct internal error states, they should
 		 * not be used as option characters.
@@ -270,7 +280,7 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 		ctl->long_options[nr].val = ctl->long_options_nr;
 		ctl->long_options[nr].name = xstrdup(name);
 	} else {
-		/* lets use add_longopt(ct, NULL, 0) to terminate the array */
+		/* lets use add_longopt(ctl, NULL, 0) to terminate the array */
 		ctl->long_options[nr].name = NULL;
 		ctl->long_options[nr].has_arg = 0;
 		ctl->long_options[nr].flag = NULL;
@@ -361,6 +371,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stdout);
 	fputs(_(" -T, --test                    test for getopt(1) version\n"), stdout);
 	fputs(_(" -u, --unquoted                do not quote the output\n"), stdout);
+	fputs(_(" -U, --unknown                 leave unknown options as they are and disable getopt(3) error messages\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(31));
 	fprintf(stdout, USAGE_MAN_TAIL("getopt(1)"));
@@ -376,7 +387,7 @@ int main(int argc, char *argv[])
 	int opt;
 
 	/* Stop scanning as soon as a non-option argument is found! */
-	static const char *shortopts = "+ao:l:n:qQs:TuhV";
+	static const char *shortopts = "+ao:l:n:qQs:TuUhV";
 	static const struct option longopts[] = {
 		{"options", required_argument, NULL, 'o'},
 		{"longoptions", required_argument, NULL, 'l'},
@@ -385,6 +396,7 @@ int main(int argc, char *argv[])
 		{"shell", required_argument, NULL, 's'},
 		{"test", no_argument, NULL, 'T'},
 		{"unquoted", no_argument, NULL, 'u'},
+		{"unknown", no_argument, NULL, 'U'},
 		{"help", no_argument, NULL, 'h'},
 		{"alternative", no_argument, NULL, 'a'},
 		{"name", required_argument, NULL, 'n'},
@@ -453,7 +465,9 @@ int main(int argc, char *argv[])
 		case 'u':
 			ctl.quote = 0;
 			break;
-
+		case 'U':
+			ctl.ignore_unknown = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case '?':

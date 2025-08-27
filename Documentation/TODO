@@ -103,15 +103,6 @@ partx
 
  - support mapping by device-mapper if argv[0] is "kpartx" or --dm option is used.
 
-
-getopt
-------
-  It would be great if getopt could optionally ignore unknown options.
-  Currently, it outputs -- for every option it doesn't recognize but leaving the
-  option as it is could beneficial wrapper scripts which could then pass the
-  options they don't recognize as they are to the command they are wrapping.
-  https://github.com/util-linux/util-linux/issues/701
-
 docs
 ----
 
