@@ -83,7 +83,13 @@ _umount_module()
 			;;
 	esac
 
-	local IFS=$'\n'
-	COMPREPLY=( $( compgen -W '$( _umount_points_list )'  -- "$cur" ) )
+	if command grep -q "^$cur" <(findmnt -lno TARGET); then
+		local IFS=$'\n'
+		COMPREPLY=( $( compgen -W '$( _umount_points_list )'  -- "$cur" ) )
+	else
+		compopt -o filenames
+		COMPREPLY=( $(compgen -o dirnames -- "$cur") )
+		return 0
+	fi
 }
 complete -F _umount_module -o nospace umount
