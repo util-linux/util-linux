@@ -108,7 +108,7 @@ This option implies *--skip-reflinks* to ignore already cloned files.
 +
 The optional argument _when_ can be *never*, *always*, or *auto*. If the _when_ argument
 is omitted, it defaults to *auto*, which means that *hardlink* checks the filesystem type
-and uses reflinks on BTRFS and XFS only, and falls back to hardlinks when creating a
+and uses reflinks on BTRFS, XFS and ZFS only, and falls back to hardlinks when creating a
 reflink is impossible.
 The argument *always* disables filesystem-type detection and the fallback to hardlinks,
 which means that only reflinks are allowed.
