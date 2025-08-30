@@ -973,7 +973,8 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("%s: failed to reset"), zram->devname);
 
 		if (nstreams &&
-		    zram_set_u64parm(zram, "max_comp_streams", nstreams))
+		    zram_set_u64parm(zram, "max_comp_streams", nstreams) &&
+		    errno != ENOENT)
 			err(EXIT_FAILURE, _("%s: failed to set number of streams"), zram->devname);
 
 		if (algorithm &&
