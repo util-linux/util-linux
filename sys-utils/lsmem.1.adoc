@@ -65,6 +65,11 @@ This option controls summary lines output. The optional argument _when_ can be *
 
 include::man-common/help-version.adoc[]
 
+== ENVIRONMENT
+
+LSMEM_COLUMNS=::
+Specifies a comma-separated list of output columns to print. All columns listed in *--help* can be used.
+
 == AUTHORS
 
 *lsmem* was originally written by Gerald Schaefer for s390-tools in Perl. The C version for util-linux was written by Clemens von Mann, Heiko Carstens and Karel Zak.
