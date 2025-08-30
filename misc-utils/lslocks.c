@@ -952,6 +952,8 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_PATH;
 	}
 
+	if (!outarg)
+		outarg = getenv("LSLOCKS_COLUMNS");
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
