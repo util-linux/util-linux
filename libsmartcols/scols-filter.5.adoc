@@ -62,11 +62,11 @@ holder: [a-zA-Z][a-zA-Z_.%:/\-0-9]*
 The filter expression can be used by application linked with libsmartcols to filter
 output data. The application can use the filter before it gathers all data for the
 output to reduce resources and improve performance. This makes scols filter more
-effective than grep(1) on the complete output. For example
+effective than *grep*(1) on the complete output. For example
 ....
  lsblk --output NAME,LABEL,FSTYPE --filter 'NAME=="sda1"'
 ....
-helps lsblk(1) to not read LABELs for all block device from udevd or libblkid,
+helps *lsblk*(1) to not read LABELs for all block device from udevd or libblkid,
 but read it only for device sda1.
 
 The filter can be also used for columns which are not used in the output.
