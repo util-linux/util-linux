@@ -66,6 +66,11 @@ Can be specified multiple times.
 Also display CPU clock of specified process.
 Can be specified multiple times.
 
+== ENVIRONMENT
+
+LSCLOCKS_COLUMNS=::
+Specifies a comma-separated list of output columns to print. All columns listed in *OUTPUT COLUMNS* can be used.
+
 include::man-common/help-version.adoc[]
 
 == OUTPUT COLUMNS
