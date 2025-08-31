@@ -109,7 +109,7 @@ When not in table mode, use spaces instead of tabulators to align the columns. T
 Determine the number of columns the input contains and create a table. Columns are by default delimited with whitespace, or with characters supplied using the *--output-separator* option. Table output is useful for pretty-printing.
 
 *--table-colorscheme* _name_::
-Specifies color scheme. The default is name is "column". For more details see the *COLORS* section.
+Specifies color scheme. The default name is "column". For more details see the *COLORS* section.
 
 *-C, --table-column* _attributes_::
 Define a column with a comma-separated list of attributes.
@@ -150,7 +150,7 @@ see the *COLORS* section.
 **colorkey=**_name_;;
 Addresses color as defined in the color scheme. See *--table-colorscheme*.
 **headercolor=**_name_;;
-Like color=, but define the color for column header only.
+Like *color=*, but define the color for column header only.
 **headercolorkey=**_name_;;
 Addresses color for header as defined in the color scheme. See *--table-colorscheme*.
 
@@ -217,11 +217,11 @@ ____
 *--table-colorscheme name*
 ____
 
-Then _name_[.disable|enable|scheme] file may be used in /etc/terminal-colors.d/,
-$XDG_CONFIG_HOME/terminal-colors.d, or $HOME/.config/terminal-colors.d/.
+Then _name_[.disable|enable|scheme] file may be used in _/etc/terminal-colors.d/_,
+$XDG_CONFIG_HOME/terminal-colors.d, or _$HOME/.config/terminal-colors.d/_.
 
 The logical color name (key) in the color scheme may be addressed by column properties
-colorkey= and headercolorkey=. For example
+*colorkey=* and *headercolorkey=*. For example
 
 ....
 echo 'important red'           > ~/.config/terminal-colors.d/cooltable.scheme
