@@ -114,7 +114,7 @@ Requires "swap" as the filesystem type.
 
 === The fourth field (options)
 
-It is formatted as a comma-separated list of options. All unknown options are silently ignored. If options are unnecessary, the recommended convention is to use "default". The options specified in fstab extend or overwrite settings specified on the swapon command line.
+It is formatted as a comma-separated list of options. All unknown options are silently ignored. If options are unnecessary, the recommended convention is to use "default". The options specified in _fstab_ extend or overwrite settings specified on the *swapon* command line.
 
 Supported swap options:
 
