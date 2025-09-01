@@ -17,7 +17,7 @@ pam_lastlog2 - PAM module to display date of last login
 
 == DESCRIPTION
 
-pam_lastlog2 is a PAM module to display a line of information about the last login of the user. The module uses the /var/lib/lastlog/lastlog2.db database file to store all information.
+*pam_lastlog2* is a PAM module to display a line of information about the last login of the user. The module uses the _/var/lib/lastlog/lastlog2.db_ database file to store all information.
 
 Compared to pam_lastlog this PAM module is Y2038 safe and uses sqlite3 to store the information.
 
@@ -63,7 +63,7 @@ pam_lastlog2 has returned an error.
 
 == AUTHOR
 
-pam_lastlog2 was written by Thorsten Kukuk <kukuk@suse.com>.
+*pam_lastlog2* was written by Thorsten Kukuk <kukuk@suse.com>.
 
 == SEE ALSO
 

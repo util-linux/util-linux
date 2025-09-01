@@ -22,9 +22,9 @@ login - begin session on the system
 
 == DESCRIPTION
 
-*login* is used when signing onto a system. If no argument is given, *login* prompts for the username.
+** is used when signing onto a system. If no argument is given, ** prompts for the username.
 
-The user is then prompted for a password, where appropriate. Echoing is disabled to prevent revealing the password. Only a number of password failures are permitted before *login* exits and the communications link is severed. See *LOGIN_RETRIES* in the *CONFIG FILE ITEMS* section.
+The user is then prompted for a password, where appropriate. Echoing is disabled to prevent revealing the password. Only a number of password failures are permitted before ** exits and the communications link is severed. See *_RETRIES* in the *CONFIG FILE ITEMS* section.
 
 If password aging has been enabled for the account, the user may be prompted for a new password before proceeding. In such case old password must be provided and the new password entered before continuing. Please refer to *passwd*(1) for more information.
 
@@ -144,7 +144,7 @@ If set, it will be used to define the PATH environment variable when the superus
 
 *LOGIN_SHELL_FALLBACK* (boolean)::
 
-If set to _yes_, login will provide a valid shell from `/etc/shells` when the shell specified in `/etc/passwd` is invalid or inaccessible due to administrative errors. This ensures users can still log in. However, it may bypass intended shell restrictions, potentially causing unexpected behavior if the fallback shell differs from the configured one.
+If set to _yes_, login will provide a valid shell from _/etc/shells_ when the shell specified in _/etc/passwd_ is invalid or inaccessible due to administrative errors. This ensures users can still log in. However, it may bypass intended shell restrictions, potentially causing unexpected behavior if the fallback shell differs from the configured one.
 
 == FILES
 

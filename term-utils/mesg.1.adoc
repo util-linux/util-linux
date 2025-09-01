@@ -59,7 +59,7 @@ more conscious of various security risks, there is a trend to remove write
 access by default, at least for the primary login shell.
 
 The initial permissions for the terminal are set by *login*(1) according to TTYPERM
-and TTYGROUP from /etc/login.defs. The default is mode _0620_ if a tty group is used,
+and TTYGROUP from _/etc/login.defs_. The default is mode _0620_ if a tty group is used,
 and _0600_ without the group. The default tty group name is "tty".
 
 To ensure that your ttys are set in a portable and independent manner from system
