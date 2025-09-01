@@ -1591,7 +1591,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(bool raw, bool json)
+static void __attribute__((__noreturn__)) list_columns(bool raw, bool json)
 {
    struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, raw, json);
 
@@ -1731,7 +1731,7 @@ int main(int argc, char *argv[])
 			ls.filter = new_filter(optarg);
 			break;
 		case 'H':
-			list_colunms(ls.raw, ls.json);
+			list_columns(ls.raw, ls.json);
 
 		case 'h':
 			usage();

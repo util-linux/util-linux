@@ -19,8 +19,8 @@
  * @pfd_ino: stores pidfd inode number
  *
  * If @pfd_ino is not destined to be set, pass it as NULL.
- * 
- * Return: On success, 0 is returned. 
+ *
+ * Return: On success, 0 is returned.
  *         On failure, a negative errno number will be returned.
  */
 int ul_parse_pid_str(char *pidstr, pid_t *pid_num, ino_t *pfd_ino)
@@ -31,7 +31,7 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, ino_t *pfd_ino)
 
 	if (!pidstr || !*pidstr || !pid_num)
 		return -EINVAL;
-	
+
 	num = strtoimax(pidstr, &end, 10);
 	if (errno == 0 && ((num && num < 1) || (num && num > SINT_MAX(pid_t))))
 		return -ERANGE;

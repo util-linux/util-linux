@@ -827,7 +827,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(void)
+static void __attribute__((__noreturn__)) list_columns(void)
 {
 	struct libscols_table *col_tb = xcolumn_list_table_new(
 					"lslocks-columns", stdout, raw, json);
@@ -935,7 +935,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms();	/* print end exit */
+		list_columns();	/* print end exit */
 
 	INIT_LIST_HEAD(&proc_locks);
 
