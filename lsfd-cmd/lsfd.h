@@ -235,8 +235,7 @@ struct file_class {
 			    struct file *file,
 			    struct libscols_line *ln,
 			    int column_id,
-			    size_t column_index,
-			    const char *uri);
+			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
 	void (*attach_xinfo)(struct file *file);
 	void (*initialize_content)(struct file *file);

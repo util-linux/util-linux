@@ -116,8 +116,7 @@ static bool abst_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
-			     size_t column_index,
-			     const char *uri __attribute__((__unused__)))
+			     size_t column_index)
 {
 	char *str = NULL;
 
@@ -261,8 +260,7 @@ static bool error_fill_column(struct proc *proc __attribute__((__unused__)),
 			      struct file *file __attribute__((__unused__)),
 			      struct libscols_line *ln,
 			      int column_id,
-			      size_t column_index,
-			      const char *uri __attribute__((__unused__)))
+			      size_t column_index)
 {
 	char *str = NULL;
 	const char *ename;
@@ -303,8 +301,7 @@ static bool readlink_error_fill_column(struct proc *proc __attribute__((__unused
 				       struct file *file __attribute__((__unused__)),
 				       struct libscols_line *ln __attribute__((__unused__)),
 				       int column_id,
-				       size_t column_index __attribute__((__unused__)),
-				       const char *uri __attribute__((__unused__)))
+				       size_t column_index __attribute__((__unused__)))
 {
 	switch(column_id) {
 	case COL_NAME:
@@ -405,8 +402,7 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
-			     size_t column_index,
-			     const char *uri __attribute__((__unused__)))
+			     size_t column_index)
 {
 	char *str = NULL;
 	mode_t ftype;
@@ -424,11 +420,6 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 				*d = '(';
 				if (r)
 					err(EXIT_FAILURE, _("failed to add output data"));
-				if (uri) {
-					struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
-					if (ce)
-						scols_cell_disable_uri(ce, 1);
-				}
 				return true;
 			}
 		}
@@ -437,15 +428,6 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (file->name
 		    && scols_line_set_data(ln, column_index, file->name))
 			err(EXIT_FAILURE, _("failed to add output data"));
-
-		ftype = file->stat.st_mode & S_IFMT;
-		if (uri && (!file->name || *file->name != '/'
-			    || (ftype != S_IFREG && ftype != S_IFDIR)
-			    || file->stat.st_nlink == 0)) {
-			struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
-			if (ce)
-				scols_cell_disable_uri(ce, 1);
-		}
 		return true;
 	case COL_STTYPE:
 	case COL_TYPE:
@@ -815,8 +797,7 @@ static bool nsfs_file_fill_column(struct proc *proc __attribute__((__unused__)),
 				  struct file *file,
 				  struct libscols_line *ln,
 				  int column_id,
-				  size_t column_index,
-				  const char *uri __attribute__((__unused__)))
+				  size_t column_index)
 {
 	struct nsfs_file *nsfs_file = (struct nsfs_file *)file;
 	char *name = NULL;
@@ -893,8 +874,7 @@ static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)
 				    struct file *file __attribute__((__unused__)),
 				    struct libscols_line *ln,
 				    int column_id,
-				    size_t column_index,
-				    const char *uri __attribute__((__unused__)))
+				    size_t column_index)
 {
 	switch (column_id) {
 	case COL_TYPE:
@@ -1006,8 +986,7 @@ static bool pidfs_file_fill_column(struct proc *proc __attribute__((__unused__))
 				   struct file *file,
 				   struct libscols_line *ln,
 				   int column_id,
-				   size_t column_index,
-				   const char *uri __attribute__((__unused__)))
+				   size_t column_index)
 {
 	struct pidfs_file *pidfs_file = (struct pidfs_file *)file;
 	char *buf = NULL;

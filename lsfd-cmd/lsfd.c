@@ -171,6 +171,7 @@ struct colinfo {
 	int flags;
 	int json_type;
 	const char *help;
+	bool hyperlink;
 };
 
 /* columns descriptions */
@@ -264,7 +265,8 @@ static const struct colinfo infos[] = {
 				   N_("list of monitoring inodes (raw, don't decode devices)") },
 	[COL_KNAME]            = { "KNAME",
 				   0.4, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
-				   N_("name of the file (raw)") },
+				   N_("name of the file (raw)"),
+				   .hyperlink = true },
 	[COL_KTHREAD]          = { "KTHREAD",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_BOOLEAN,
 				   N_("opened by a kernel thread") },
@@ -285,7 +287,8 @@ static const struct colinfo infos[] = {
 				   N_("access mode (rwx)") },
 	[COL_NAME]             = { "NAME",
 				   0.4, SCOLS_FL_TRUNC, SCOLS_JSON_STRING,
-				   N_("name of the file (cooked)") },
+				   N_("name of the file (cooked)"),
+				   .hyperlink = true },
 	[COL_NETLINK_GROUPS]   = { "NETLINK.GROUPS",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("netlink multicast groups") },
@@ -575,7 +578,7 @@ static const struct counter_spec default_counter_specs[] = {
 struct filler_data {
 	struct proc *proc;
 	struct file *file;
-	const char *uri;
+	bool hyperlink_enabled;
 };
 
 struct lsfd_control {
@@ -664,7 +667,7 @@ static struct libscols_column *add_column(struct libscols_table *tb,
 			scols_column_set_safechars(cl, "\n");
 		}
 		if (!(extra & SCOLS_FL_HIDDEN) && uri &&
-		    (id == COL_NAME || id == COL_KNAME))
+		    col->hyperlink)
 			scols_column_set_uri(cl, uri);
 	}
 
@@ -1482,20 +1485,40 @@ void add_endpoint(struct ipc_endpoint *endpoint, struct ipc *ipc)
 }
 
 
+static bool should_disable_hyperlink(const struct file * file)
+{
+	mode_t ftype = file->stat.st_mode & S_IFMT;
+
+	return (file->name == NULL
+		|| file->stat.st_nlink == 0
+		|| *file->name != '/'
+		|| (ftype != S_IFREG && ftype != S_IFDIR));
+}
+
 static void fill_column(struct proc *proc,
 			struct file *file,
 			struct libscols_line *ln,
 			int column_id,
 			size_t column_index,
-			const char *uri __attribute__((__unused__)))
+			bool hyperlink_enabled)
 {
 	const struct file_class *class = file->class;
 
 	while (class) {
 		if (class->fill_column
 		    && class->fill_column(proc, file, ln,
-					  column_id, column_index, uri))
+					  column_id, column_index)) {
+
+			if (hyperlink_enabled
+			    && infos[column_id].hyperlink
+			    && should_disable_hyperlink(file)) {
+				struct libscols_cell *ce = scols_line_get_cell(ln, column_index);
+				if (ce)
+					scols_cell_disable_uri(ce, 1);
+			}
+
 			break;
+		}
 		class = class->super;
 	}
 }
@@ -1509,14 +1532,14 @@ static int filter_filler_cb(
 	struct filler_data *fid = (struct filler_data *) userdata;
 
 	fill_column(fid->proc, fid->file, ln, get_column_id(colnum), colnum,
-		    fid->uri);
+		    fid->hyperlink_enabled);
 	return 0;
 }
 
 static void convert_file(struct proc *proc,
 		     struct file *file,
 		     struct libscols_line *ln,
-		     const char *uri __attribute__((__unused__)))
+		     bool hyperlink_enabled)
 
 {
 	size_t i;
@@ -1524,13 +1547,14 @@ static void convert_file(struct proc *proc,
 	for (i = 0; i < ncolumns; i++) {
 		if (scols_line_is_filled(ln, i))
 			continue;
-		fill_column(proc, file, ln, get_column_id(i), i, uri);
+		fill_column(proc, file, ln, get_column_id(i), i, hyperlink_enabled);
 	}
 }
 
 static void convert(struct list_head *procs, struct lsfd_control *ctl)
 {
 	struct list_head *p;
+	bool hyperlink_enabled = (ctl->uri != NULL);
 
 	list_for_each (p, procs) {
 		struct proc *proc = list_entry(p, struct proc, procs);
@@ -1548,7 +1572,7 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 				struct filler_data fid = {
 					.proc = proc,
 					.file = file,
-					.uri = ctl->uri,
+					.hyperlink_enabled = hyperlink_enabled,
 				};
 
 				scols_filter_set_filler_cb(ctl->filter,
@@ -1561,7 +1585,7 @@ static void convert(struct list_head *procs, struct lsfd_control *ctl)
 				}
 			}
 
-			convert_file(proc, file, ln, ctl->uri);
+			convert_file(proc, file, ln, hyperlink_enabled);
 
 			if (!ctl->ct_filters)
 				continue;
