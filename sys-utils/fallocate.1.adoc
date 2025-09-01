@@ -77,11 +77,11 @@ Option *--keep-size* can be specified to prevent file length modification.
 Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
 
 *-w*, *--write-zeroes*::
-Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes, subsequent writes to that range do not require further changes to the file mapping metadata.
+Zeroes space in the byte range starting at _offset_ and continuing for _length_ bytes. Within the specified range, written blocks are preallocated for the regions that span the holes in the file. After a successful call, subsequent reads from this range will return zeroes and subsequent writes to that range do not require further changes to the file mapping metadata.
 +
-Zeroing is done within the filesystem by preferably submitting write zeores commands, the alternative way is submitting actual zeroed data, the specified range will be converted into written extents. The write zeroes command is typically faster than write actual data if the device supports unmap write zeroes, the specified range will not be physically zeroed out on the device.
+Zeroing is done within the filesystem. The filesystem may use a hardware-accelerated zeroing command or may submit regular writes. The behavior depends on the filesystem design and the available hardware.
 +
-Options *--keep-size* can not be specified for the write-zeroes operation.
+Options *--keep-size* cannot be specified for the write-zeroes operation because allocating written blocks beyond the inode size is not permitted.
 
 include::man-common/help-version.adoc[]
 
