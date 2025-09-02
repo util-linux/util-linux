@@ -99,6 +99,7 @@ enum {
 	COL_CPU_ADDRESS,
 	COL_CPU_CONFIGURED,
 	COL_CPU_ONLINE,
+	COL_CPU_MICROCODE,
 	COL_CPU_MHZ,
 	COL_CPU_SCALMHZ,
 	COL_CPU_MAXMHZ,
@@ -147,6 +148,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU"), 0, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
+	[COL_CPU_MICROCODE]    = { "MICROCODE", N_("shows the loaded CPU microcode version"), 0, 0, SCOLS_JSON_STRING },
 	[COL_CPU_MHZ]          = { "MHZ", N_("shows the current MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
@@ -432,6 +434,10 @@ static char *get_cell_data(
 		break;
 	case COL_CPU_ONLINE:
 		get_cell_boolean(cxt, !!cxt->online, is_cpu_online(cxt, cpu), buf, bufsz);
+		break;
+	case COL_CPU_MICROCODE:
+		if (cpu->type && cpu->type->microcode)
+			xstrncpy(buf, cpu->type->microcode, bufsz);
 		break;
 	case COL_CPU_MHZ:
 		if (cpu->mhz_cur_freq)
