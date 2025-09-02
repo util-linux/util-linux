@@ -22,7 +22,7 @@ _lscpu_module()
 			COMPREPLY=( $(compgen -P "$prefix" -W "$OPTS" -S ',' -- $realcur) )
 			return 0
 			;;
-		'-h'|'--help'|'-V'|'--version')
+		'-H'|'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
@@ -41,6 +41,7 @@ _lscpu_module()
 				--physical
 				--output-all
 				--raw
+				--list-columns
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )
