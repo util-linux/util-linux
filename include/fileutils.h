@@ -65,6 +65,8 @@ extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern unsigned int get_fd_tabsize(void);
 
 extern int ul_mkdir_p(const char *path, mode_t mode);
+extern int ul_mkdir_p_restricted(const char *path, mode_t mode);
+
 extern char *stripoff_last_component(char *path);
 
 /* This is readdir()-like function, but skips "." and ".." directory entries */
@@ -112,8 +114,13 @@ extern void ul_close_all_fds(unsigned int first, unsigned int last);
 #define UL_COPY_WRITE_ERROR (-2)
 int ul_copy_file(int from, int to);
 
-
 extern int ul_reopen(int fd, int flags);
 extern char *ul_basename(char *path);
+
+extern char *ul_restricted_path_oper(const char *path,
+		int (*oper)(const char *path, char **result, void *data),
+		void *data);
+
+extern int is_mkdir_permitted(const char *path);
 
 #endif /* UTIL_LINUX_FILEUTILS */

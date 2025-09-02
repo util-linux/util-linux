@@ -12,11 +12,13 @@
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <string.h>
+#include <sys/wait.h>
 
 #include "c.h"
 #include "all-io.h"
 #include "fileutils.h"
 #include "pathnames.h"
+#include "canonicalize.h"
 
 int mkstemp_cloexec(char *template)
 {
@@ -170,11 +172,163 @@ void ul_close_all_fds(unsigned int first, unsigned int last)
 	}
 }
 
+/*
+ * Fork, drop permissions, and call oper() and return result.
+ */
+char *ul_restricted_path_oper(const char *path,
+			  int (*oper)(const char *path, char **result, void *data),
+			  void *data)
+{
+	char *result = NULL;
+	int errsv = 0;
+	int pipes[2];
+	ssize_t len;
+	pid_t pid;
+
+	if (!path || !*path)
+		return NULL;
+
+	if (pipe(pipes) != 0)
+		return NULL;
+	/*
+	 * To accurately assume identity of getuid() we must use setuid()
+	 * but if we do that, we lose ability to reassume euid of 0, so
+	 * we fork to do the check to keep euid intact.
+	 */
+	pid = fork();
+	switch (pid) {
+	case -1:
+		close(pipes[0]);
+		close(pipes[1]);
+		return NULL;			/* fork error */
+	case 0:
+		close(pipes[0]);		/* close unused end */
+		pipes[0] = -1;
+		errno = 0;
+
+		if (drop_permissions() != 0)
+			result = NULL;	/* failed */
+		else
+			oper(path, &result, data);
+
+		len = result ? (ssize_t) strlen(result) :
+		          errno ? -errno : -EINVAL;
+
+		/* send length or errno */
+		write_all(pipes[1], (char *) &len, sizeof(len));
+		if (result)
+			write_all(pipes[1], result, len);
+		_exit(0);
+	default:
+		break;
+	}
+
+	close(pipes[1]);		/* close unused end */
+	pipes[1] = -1;
+
+	/* read size or -errno */
+	if (read_all(pipes[0], (char *) &len, sizeof(len)) != sizeof(len))
+		goto done;
+	if (len < 0) {
+		errsv = -len;
+		goto done;
+	}
+
+	result = malloc(len + 1);
+	if (!result) {
+		errsv = ENOMEM;
+		goto done;
+	}
+	/* read path */
+	if (read_all(pipes[0], result, len) != len) {
+		errsv = errno;
+		goto done;
+	}
+	result[len] = '\0';
+done:
+	if (errsv) {
+		free(result);
+		result = NULL;
+	}
+	close(pipes[0]);
+
+	/* We make a best effort to reap child */
+	ignore_result( waitpid(pid, NULL, 0) );
+
+	errno = errsv;
+	return result;
+
+}
+
+/*
+ * Ensure the existing part of the path is accessible to the current user,
+ * and they can create a directory there (if the complete path is
+ * unreachable).
+ */
+static int do_mkdir_precheck(const char *path, char **result,
+			void *data __attribute__((__unused__)))
+{
+	char *src = NULL, *base = NULL;
+	int rc = 1;
+
+	if (result)
+		*result = NULL;
+	src = strdup(path);
+	if (!src)
+		return -ENOMEM;
+
+	do {
+		struct stat sb;
+
+		if (stat(src, &sb) == 0) {
+			if (S_ISDIR(sb.st_mode)
+			    && access(src, W_OK | X_OK) == 0) {
+
+				*result = src;
+				src = NULL;
+				rc = 0;
+			}
+			break;
+		}
+
+		base = stripoff_last_component(src);
+	} while (base && *base);
+
+	free(src);
+	return rc;
+}
+
+/* Fork, drop permissions and try if mkdir-p is possible */
+int is_mkdir_permitted(const char *path)
+{
+	char *src = NULL, *result = NULL;
+	int rc = 0;
+
+	if (is_relative_path(path)) {
+		src = ul_absolute_path(path);
+		if (!src)
+			goto done;
+	} else
+		src = strdup(path);
+
+	if (ul_normalize_path(src) != 0)
+		goto done;
+
+	result = ul_restricted_path_oper(src, do_mkdir_precheck, NULL);
+	if (result)
+		rc = 1;
+done:
+	free(src);
+	free(result);
+	return rc;
+}
+
+
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file}", argv[0]);
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file,mkdir-precheck}", argv[0]);
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
 		FILE *f;
@@ -201,7 +355,18 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, "read");
 		else if (ret == UL_COPY_WRITE_ERROR)
 			err(EXIT_FAILURE, "write");
+
+	} else if (strcmp(argv[1], "--mkdir-precheck") == 0) {
+
+		printf("'%s': %s\n", argv[2],
+				is_mkdir_permitted(argv[2]) ? "yes" : "not");
+
+	} else if (strcmp(argv[1], "--mkdir-restricted") == 0) {
+
+		printf("'%s': %s\n", argv[2],
+			ul_mkdir_p_restricted(argv[2], 0755) == 0 ? "ok" : "failed");
 	}
+
 	return EXIT_SUCCESS;
 }
 #endif
@@ -240,6 +405,37 @@ int ul_mkdir_p(const char *path, mode_t mode)
 
 	free(dir);
 	return rc;
+}
+
+/* callback for ul_restricted_path_oper() */
+static int do_mkdir_p_oper(const char *path, char **result, void *data)
+{
+	int rc;
+	mode_t mode = *((mode_t *) data);
+
+	rc = ul_mkdir_p(path, mode);
+	if (rc == 0 && result)
+		*result = strdup(path);
+
+	return rc;
+}
+
+
+/* like ul_mkdir_p() but drops permissions before mkdir() */
+int ul_mkdir_p_restricted(const char *path, mode_t mode)
+{
+	int rc;
+	char *result;
+
+	result = ul_restricted_path_oper(path, do_mkdir_p_oper, (void *) &mode);
+	if (result)
+		rc = 0;
+	else
+		rc = errno;
+
+	free(result);
+	return rc;
+
 }
 
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)

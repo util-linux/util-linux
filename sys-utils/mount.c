@@ -32,6 +32,7 @@
 #include "canonicalize.h"
 #include "pathnames.h"
 #include "strv.h"
+#include "fileutils.h"
 
 #define XALLOC_EXIT_CODE MNT_EX_SYSERR
 #include "xalloc.h"
@@ -497,8 +498,22 @@ static int sanitize_paths(struct libmnt_context *cxt)
 	p = mnt_fs_get_target(fs);
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
+
+		/*
+		 * The restricted path canonicalization fails if the user has
+		 * no permissions or when the path is unreachable. mount(8)
+		 * may be called with 'X-mount.mkdir,user' in fstab. For this
+		 * case, we need to require that at least the last accessible
+		 * part of the path can be used by the current user for mkdir.
+		 *
+		 * Note that the final mkdir is done with dropped permissions,
+		 * this is just pre-check.
+		 */
+		if (!np && is_mkdir_permitted(p))
+			np = xstrdup(p);
 		if (!np)
 			return -EPERM;
+
 		mnt_fs_set_target(fs, np);
 		free(np);
 	}
