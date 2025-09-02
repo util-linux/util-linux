@@ -1395,6 +1395,11 @@ int main(int argc, char *argv[])
 	if (hierarchic == -1)
 		hierarchic = isatty(STDOUT_FILENO);	/* default */
 
+	if (!outarg && (cxt->mode == LSCPU_OUTPUT_CACHES))
+		outarg = getenv("LSCPU_CACHES_COLUMNS");
+	if (!outarg && ((cxt->mode == LSCPU_OUTPUT_PARSABLE) || (cxt->mode == LSCPU_OUTPUT_READABLE)))
+		outarg = getenv("LSCPU_COLUMNS");
+
 	switch(cxt->mode) {
 	case LSCPU_OUTPUT_SUMMARY:
 		print_summary(cxt);
