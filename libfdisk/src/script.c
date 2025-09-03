@@ -691,30 +691,36 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (fdisk_table_next_partition(dp->table, &itr, &pa) == 0) {
 		char *p = NULL;
+		int sep = 0;
 
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
 		if (p) {
 			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
-			fprintf(f, "%s :", p);
+			fprintf(f, "%s : ", p);
 			free(p);
 		} else
-			fprintf(f, "%zu :", pa->partno + 1);
+			fprintf(f, "%zu : ", pa->partno + 1);
 
 		if (fdisk_partition_has_start(pa))
-			fprintf(f, " start=%12ju", (uintmax_t)pa->start);
+			sep = fprintf(f, "start=%12ju", (uintmax_t)pa->start);
 		if (fdisk_partition_has_size(pa))
-			fprintf(f, ", size=%12ju", (uintmax_t)pa->size);
+			sep = fprintf(f, "%ssize=%12ju",
+					sep ? ", " : " ", (uintmax_t)pa->size);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
-			fprintf(f, ", type=%s", fdisk_parttype_get_string(pa->type));
+			sep = fprintf(f, "%stype=%s",
+					sep ? ", " : " ",
+					fdisk_parttype_get_string(pa->type));
 		else if (pa->type)
-			fprintf(f, ", type=%x", fdisk_parttype_get_code(pa->type));
+			sep = fprintf(f, "%stype=%x",
+					sep ? ", " : " ",
+					fdisk_parttype_get_code(pa->type));
 
 		if (pa->uuid)
-			fprintf(f, ", uuid=%s", pa->uuid);
+			sep = fprintf(f, "%suuid=%s", sep ? ", " : " ", pa->uuid);
 		if (pa->name && *pa->name) {
-			fputs(", name=", f);
+			sep = fprintf(f, "%sname=", sep ? ", " : " ");
 			fputs_quoted(pa->name, f);
 		}
 
@@ -723,10 +729,12 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 			struct fdisk_label *lb = script_get_label(dp);
 
 			if (!lb || fdisk_label_get_type(lb) != FDISK_DISKLABEL_DOS)
-				fprintf(f, ", attrs=\"%s\"", pa->attrs);
+				sep = fprintf(f, "%sattrs=\"%s\"",
+						sep ? ", " : " ",
+						pa->attrs);
 		}
 		if (fdisk_partition_is_bootable(pa))
-			fprintf(f, ", bootable");
+			sep = fprintf(f, "%sbootable", sep ? ", " : " ");
 		fputc('\n', f);
 	}
 
@@ -1147,7 +1155,14 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	fdisk_partition_partno_follow_default(pa, 1);
 
 	/* set partno */
-	p = strchr(s, ':');
+	p = strstr(s, " : ");			/* device : start=  */
+	if (!p)
+		p = strstr(s, " :");		/* device :start=  */
+	if (!p)
+		p = strstr(s, ": ");		/* device: start=  */
+	if (!p)
+		p = strchr(s, ':');
+
 	x = strchr(s, '=');
 	if (p && (!x || p < x)) {
 		*p = '\0';
@@ -1158,6 +1173,8 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			fdisk_partition_partno_follow_default(pa, 0);
 			fdisk_partition_set_partno(pa, pno);
 		}
+		if (*p == ':')
+			p++;
 	} else
 		p = s;
 
