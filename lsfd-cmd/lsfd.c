@@ -2177,7 +2177,7 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 	ul_unref_path(pc);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(const char *table_name,
+static void __attribute__((__noreturn__)) list_columns(const char *table_name,
 						       FILE *out,
 						       int raw,
 						       int json)
@@ -2694,7 +2694,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
+		list_columns("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
 
 	if (argv[optind])
 		errtryhelp(EXIT_FAILURE);

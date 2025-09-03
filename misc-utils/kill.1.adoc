@@ -19,7 +19,9 @@ kill - terminate a process
 
 == SYNOPSIS
 
-*kill*  [**-**_signal_|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] [*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_name_...
+*kill*  [**-**_signal_|*-s* _signal_|*-p*]  [*-q* _value_] [*-a*] [*--timeout* _milliseconds_ _signal_] [*--*] _pid_|_pid_:_pidfd_inode_|_name_...
+
+*kill*  [**-**_signal_|*-s* _signal_] _pid_|_pid_:_pidfd_inode_...
 
 *kill* *-l* [_number_|``0x``_sigmask_] | *-L*
 
@@ -49,6 +51,9 @@ All processes in the current process group are signaled.
 All processes with a PID larger than 1 are signaled.
 **-**__n__;;
 where _n_ is larger than 1. All processes in process group _n_ are signaled. When an argument of the form '-n' is given, and it is meant to denote a process group, either a signal must be specified first, or the argument must be preceded by a '--' option, otherwise it will be taken as the signal to send.
+
+_pid_:_pidfd_inode_::
+A process can be referenced by its _pid_ plus _pidfd_inode_ (pid:pidfd_inode), to uniquely identify it and perform race-free signalling. This works only for the options -s, --signal and -_signal_. Requires kernel version 6.9 and later.
 
 _name_::
 All processes invoked using this _name_ will be signaled.

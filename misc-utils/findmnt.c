@@ -1601,7 +1601,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_colunms(struct findmnt *findmnt)
+static void __attribute__((__noreturn__)) list_columns(struct findmnt *findmnt)
 {
 	size_t i;
 	struct libscols_table *tb = xcolumn_list_table_new("findmnt-columns", stdout,
@@ -2059,7 +2059,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms(&findmnt);		/* print end exit */
+		list_columns(&findmnt);		/* print end exit */
 
 	if (!ncolumns && (findmnt.flags & FL_DF)) {
 		add_column(COL_SOURCE);

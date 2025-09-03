@@ -3896,6 +3896,16 @@ exe = executable(
   build_by_default: program_tests)
 exes += exe
 
+exe = executable(
+  'test_kill_pidfdino',
+  'tests/helpers/test_kill_pidfdino.c',
+  include_directories : includes,
+  link_with : lib_common,
+  build_by_default: program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 if LINUX and lib_rt.found()
   exe = executable(
     'test_mkfds',

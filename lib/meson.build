@@ -5,7 +5,7 @@ lib_common_sources = '''
 	color-names.c
 	crc32.c
 	crc32c.c
-        crc64.c
+	crc64.c
 	c_strtod.c
 	encode.c
 	env.c
@@ -17,6 +17,7 @@ lib_common_sources = '''
 	mbsalign.c
 	mbsedit.c
 	md5.c
+	pidutils.c
 	procfs.c
 	pwdutils.c
 	randutils.c
