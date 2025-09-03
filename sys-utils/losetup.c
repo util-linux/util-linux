@@ -209,7 +209,7 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 
 			used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 			if (!used && !cn_file) {
-				bf = cn_file = canonicalize_path(file);
+				bf = cn_file = ul_canonicalize_path(file);
 				used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 			}
 			if (!used)
@@ -430,7 +430,7 @@ static int show_table(struct loopdev_cxt *lc,
 
 				used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 				if (!used && !cn_file) {
-					bf = cn_file = canonicalize_path(file);
+					bf = cn_file = ul_canonicalize_path(file);
 					used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 				}
 				if (!used)

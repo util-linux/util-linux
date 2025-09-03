@@ -401,7 +401,7 @@ static char *get_device_path(struct lsblk_device *dev)
 	assert(dev->name);
 
 	if (is_dm(dev->name))
-		return __canonicalize_dm_name(lsblk->sysroot, dev->name);
+		return ul_canonicalize_dm_name_prefixed(lsblk->sysroot, dev->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", dev->name);
 	sysfs_devname_sys_to_dev(path);

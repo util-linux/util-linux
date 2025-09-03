@@ -3487,6 +3487,7 @@ exe = executable(
   'lib/strutils.c',
   c_args : ['-DTEST_PROGRAM_STRUTILS'],
   include_directories : dir_include,
+  link_with : lib_common,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3530,8 +3531,6 @@ if conf.get('HAVE_OPENAT').to_string() == '1' \
   exe = executable(
     'test_path',
     'lib/path.c',
-    'lib/fileutils.c',
-    have_cpu_set_t ? 'lib/cpuset.c' : [],
     c_args : ['-DTEST_PROGRAM_PATH'],
     include_directories : dir_include,
     link_with : lib_common,
@@ -3564,6 +3563,7 @@ if LINUX
     'lib/cpuset.c',
     c_args : ['-DTEST_PROGRAM_CPUSET'],
     include_directories : dir_include,
+    link_with : lib_common,
     build_by_default: program_tests)
   if not is_disabler(exe)
     exes += exe
@@ -3573,13 +3573,9 @@ endif
 exe = executable(
   'test_sysfs',
   'lib/sysfs.c',
-  'lib/path.c',
-  'lib/buffer.c',
-  'lib/mbsalign.c',
-  'lib/fileutils.c',
-  have_cpu_set_t ? 'lib/cpuset.c' : [],
   c_args : ['-DTEST_PROGRAM_SYSFS'],
   include_directories : dir_include,
+  link_with : lib_common,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3610,6 +3606,7 @@ exe = executable(
   'lib/fileutils.c',
   c_args : ['-DTEST_PROGRAM_FILEUTILS'],
   include_directories : dir_include,
+  link_with : lib_common,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3618,8 +3615,10 @@ endif
 exe = executable(
   'test_canonicalize',
   'lib/canonicalize.c',
+  'lib/fileutils.c',
   c_args : ['-DTEST_PROGRAM_CANONICALIZE'],
   include_directories : dir_include,
+  link_with : lib_common,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3628,9 +3627,9 @@ endif
 exe = executable(
   'test_timeutils',
   'lib/timeutils.c',
-  'lib/strutils.c',
   c_args : ['-DTEST_PROGRAM_TIMEUTILS'],
   include_directories : dir_include,
+  link_with : lib_common,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe

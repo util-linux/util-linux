@@ -66,7 +66,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 	}
 
 	/* try canonicalize the name */
-	if (!dev && (cn = canonicalize_path(devname))) {
+	if (!dev && (cn = ul_canonicalize_path(devname))) {
 		if (strcmp(cn, devname) != 0) {
 			DBG(DEVNAME, ul_debug("search canonical %s", cn));
 			list_for_each(p, &cache->bic_devs) {
@@ -200,7 +200,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	 * to standard /dev/mapper/<name>.
 	 */
 	if (!strncmp(ptname, "dm-", 3) && isdigit(ptname[3])) {
-		devname = canonicalize_dm_name(ptname);
+		devname = ul_canonicalize_dm_name(ptname);
 		if (!devname)
 			blkid__scan_dir("/dev/mapper", devno, NULL, &devname);
 		if (devname)

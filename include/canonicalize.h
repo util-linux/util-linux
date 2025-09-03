@@ -15,14 +15,14 @@
 #include "c.h"	/* for PATH_MAX */
 #include "strutils.h"
 
-extern char *canonicalize_path(const char *path);
-extern char *canonicalize_path_restricted(const char *path);
-extern char *canonicalize_dm_name(const char *ptname);
-extern char *__canonicalize_dm_name(const char *prefix, const char *ptname);
+extern char *ul_canonicalize_path(const char *path);
+extern char *ul_canonicalize_path_restricted(const char *path);
+extern char *ul_canonicalize_dm_name(const char *ptname);
+extern char *ul_canonicalize_dm_name_prefixed(const char *prefix, const char *ptname);
 
-extern char *absolute_path(const char *path);
+extern char *ul_absolute_path(const char *path);
 
-static inline int is_relative_path(const char *path)
+static inline int ul_is_relative_path(const char *path)
 {
 	if (!path || *path == '/')
 		return 0;

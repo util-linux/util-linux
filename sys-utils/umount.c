@@ -446,7 +446,7 @@ static char *sanitize_path(const char *path)
 	if (!path)
 		return NULL;
 
-	p = canonicalize_path_restricted(path);
+	p = ul_canonicalize_path_restricted(path);
 	if (!p)
 		err(MNT_EX_USAGE, "%s", path);
 
