@@ -1591,15 +1591,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_columns(bool raw, bool json)
+static void __attribute__((__noreturn__)) list_colunms(struct lsns *ls)
 {
-   struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, raw, json);
+   struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, ls->raw, ls->json);
 
    for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
            xcolumn_list_table_append_line(col_tb, infos[i].name,
 					  infos[i].json_type, NULL,
 					  _(infos[i].help));
-
    scols_print_table(col_tb);
    scols_unref_table(col_tb);
 
@@ -1619,7 +1618,7 @@ static dev_t read_nsfs_dev(void)
 int main(int argc, char *argv[])
 {
 	struct lsns ls;
-	int c, force_list = 0;
+	int c, force_list = 0, collist = 0;
 	int r = 0;
 	char *outarg = NULL;
 	enum {
@@ -1731,8 +1730,8 @@ int main(int argc, char *argv[])
 			ls.filter = new_filter(optarg);
 			break;
 		case 'H':
-			list_columns(ls.raw, ls.json);
-
+			collist = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1741,6 +1740,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_colunms(&ls);
 
 	if (!ls.fltr_ntypes) {
 		size_t i;
