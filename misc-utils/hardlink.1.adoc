@@ -153,6 +153,11 @@ include::man-common/help-version.adoc[]
 
 *hardlink* takes one or more directories which will be searched for files to be linked.
 
+== ENVIRONMENT
+
+*ULFILEEQ_DEBUG*=all::
+Enables debug output for file comparisons.
+
 == BUGS
 
 The original *hardlink* implementation uses the option *-f* to force hardlinks creation between filesystem. This very rarely usable feature is no more supported by the current *hardlink*.
