@@ -667,6 +667,8 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_ISO_TIME;
 	}
 
+	if (!outarg)
+		outarg = getenv("LSCLOCKS_COLUMNS");
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					    &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;

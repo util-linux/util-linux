@@ -34,6 +34,7 @@
 #include "optutils.h"
 #include "c_strtod.h"
 #include "sysfs.h"
+#include "column-list-table.h"
 
 #include "lscpu.h"
 
@@ -1182,7 +1183,6 @@ static void print_summary(struct lscpu_cxt *cxt)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
@@ -1206,17 +1206,34 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns      list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
-	fputs(_("\nAvailable output columns for -e or -p:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
-		fprintf(out, " %13s  %s\n", coldescs_cpu[i].name, _(coldescs_cpu[i].help));
-
-	fputs(_("\nAvailable output columns for -C:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
-		fprintf(out, " %13s  %s\n", coldescs_cache[i].name, _(coldescs_cache[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
+
+	exit(EXIT_SUCCESS);
+}
+
+static void __attribute__((__noreturn__)) list_columns(struct lscpu_cxt *cxt)
+{
+	struct libscols_table *col_tb = xcolumn_list_table_new("lscpu-columns", stdout, cxt->raw, cxt->json);
+	struct libscols_table *col_caches_tb = xcolumn_list_table_new("lscpu-caches-columns", stdout, cxt->raw, cxt->json);
+
+	fputs(_("Available output columns for -e or -p:\n"), stdout);
+	for (size_t i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
+		xcolumn_list_table_append_line(col_tb, coldescs_cpu[i].name,
+					coldescs_cpu[i].json_type, NULL,
+					_(coldescs_cpu[i].help));
+	scols_print_table(col_tb);
+	scols_unref_table(col_tb);
+
+	fputs(_("\nAvailable output columns for -C:\n"), stdout);
+	for (size_t i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
+		xcolumn_list_table_append_line(col_caches_tb, coldescs_cache[i].name,
+						coldescs_cache[i].json_type, NULL,
+						_(coldescs_cache[i].help));
+	scols_print_table(col_caches_tb);
+	scols_unref_table(col_caches_tb);
 
 	exit(EXIT_SUCCESS);
 }
@@ -1224,7 +1241,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct lscpu_cxt *cxt;
-	int c, all = 0;
+	int c, all = 0, collist = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)];
 	int cpu_modifier_specified = 0;
 	char *outarg = NULL;
@@ -1250,6 +1267,7 @@ int main(int argc, char *argv[])
 		{ "version",	no_argument,	   NULL, 'V' },
 		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
 		{ "hierarchic", optional_argument, NULL, OPT_HIERARCHIC },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL,		0, NULL, 0 }
 	};
 
@@ -1267,7 +1285,7 @@ int main(int argc, char *argv[])
 
 	cxt = lscpu_new_context();
 
-	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::rs:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "aBbC::ce::HhJp::rs:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1336,6 +1354,9 @@ int main(int argc, char *argv[])
 			} else
 				hierarchic = 1;
 			break;
+		case 'H':
+			collist = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1344,6 +1365,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_columns(cxt);
 
 	if (all && ncolumns == 0) {
 		size_t maxsz = cxt->mode == LSCPU_OUTPUT_CACHES ?
@@ -1394,6 +1418,11 @@ int main(int argc, char *argv[])
 
 	if (hierarchic == -1)
 		hierarchic = isatty(STDOUT_FILENO);	/* default */
+
+	if (!outarg && (cxt->mode == LSCPU_OUTPUT_CACHES))
+		outarg = getenv("LSCPU_CACHES_COLUMNS");
+	if (!outarg && ((cxt->mode == LSCPU_OUTPUT_PARSABLE) || (cxt->mode == LSCPU_OUTPUT_READABLE)))
+		outarg = getenv("LSCPU_COLUMNS");
 
 	switch(cxt->mode) {
 	case LSCPU_OUTPUT_SUMMARY:

@@ -24,7 +24,7 @@ ts_check_test_command "$TS_CMD_LSMEM"
 ts_check_prog "tar"
 ts_check_prog "bzip2"
 
-LSCOLUMNS="RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE"
+LSCOLUMNS="RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES"
 
 
 function do_lsmem {
