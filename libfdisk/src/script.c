@@ -1147,7 +1147,14 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	fdisk_partition_partno_follow_default(pa, 1);
 
 	/* set partno */
-	p = strchr(s, ':');
+	p = strstr(s, " : ");			/* device : start=  */
+	if (!p)
+		p = strstr(s, " :");		/* device :start=  */
+	if (!p)
+		p = strstr(s, ": ");		/* device: start=  */
+	if (!p)
+		p = strchr(s, ':');
+
 	x = strchr(s, '=');
 	if (p && (!x || p < x)) {
 		*p = '\0';
@@ -1158,6 +1165,8 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			fdisk_partition_partno_follow_default(pa, 0);
 			fdisk_partition_set_partno(pa, pno);
 		}
+		if (*p == ':')
+			p++;
 	} else
 		p = s;
 
