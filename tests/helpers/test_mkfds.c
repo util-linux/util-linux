@@ -22,6 +22,9 @@
 #include "test_mkfds.h"
 #include "exitcodes.h"
 #include "pidfd-utils.h"
+#include <libsmartcols.h>
+#include "nls.h"
+#include "column-list-table.h"
 
 #include <arpa/inet.h>
 #include <ctype.h>
@@ -4530,22 +4533,113 @@ static int count_parameters(const struct factory *factory)
 	return p - factory->params;
 }
 
-static void print_factory(const struct factory *factory)
+struct colinfo {
+	const char *name;
+	double whint;
+	int flags;
+	const char *help;
+};
+
+static void list_items(const char *tbname,
+		       const struct colinfo * colinfos,
+		       size_t n_columns,
+		       const void * items,
+		       size_t n_items,
+		       int (* fill_column) (struct libscols_line *, int, const void *, int),
+		       const char *sort_key_name)
+
 {
-	printf("%-20s %4s %5d %7d %6d %s\n",
-	       factory->name,
-	       factory->priv? "yes": "no",
-	       factory->N,
-	       factory->EX_O + 1,
-	       count_parameters(factory),
-	       factory->desc);
+	struct libscols_table *tb;
+	struct libscols_column *col;
+	struct libscols_column *sort_key_col;
+
+	scols_init_debug(0);
+	tb = scols_new_table();
+	scols_table_set_name(tb, tbname);
+
+	for (size_t i = 0; i < n_columns; i++) {
+		const struct colinfo *colinfo = colinfos + i;
+		col = scols_table_new_column(tb, colinfo->name, colinfo->whint, colinfo->flags);
+		if (!col)
+			errx(EXIT_FAILURE, "failed to allocate output column");
+	}
+
+	for (size_t i = 0; i < n_items; i++) {
+		struct libscols_line *ln = scols_table_new_line(tb, NULL);
+		for (size_t j = 0; j < n_columns; j++) {
+			(* fill_column) (ln, i, items, j); /* TODO: retval */
+		}
+	}
+
+	if (sort_key_name) {
+		sort_key_col = scols_table_get_column_by_name(tb, sort_key_name);
+		assert(sort_key_col);
+		scols_column_set_cmpfunc(sort_key_col, scols_cmpstr_cells, NULL);
+		scols_sort_table(tb, sort_key_col);
+	}
+	scols_print_table(tb);
+	scols_unref_table(tb);
+}
+
+enum {
+	COL_FACTORY_NAME,
+	COL_FACTORY_PRIV,
+	COL_FACTORY_COUNT,
+	COL_FACTORY_NRETURN,
+	COL_FACTORY_NPARAM,
+	COL_FACTORY_DESCRIPTION,
+	FACTORY_N_COLS
+};
+
+static const struct colinfo factory_infos[] = {
+	[COL_FACTORY_NAME]        = { "FACTORY", 0, 0,
+				      "the name of factory" },
+	[COL_FACTORY_PRIV]        = { "PRIV", 0, SCOLS_FL_RIGHT,
+				      "whether root privilege is needed or not" },
+	[COL_FACTORY_COUNT]       = { "COUNT", 0, SCOLS_FL_RIGHT,
+				       "the number of file descriptors this factory may open" },
+	[COL_FACTORY_NRETURN]     = { "NRETURN", 0, SCOLS_FL_RIGHT,
+				      "the number of values the factory may returns via stdout" },
+	[COL_FACTORY_NPARAM]      = { "NPARAM", 0, SCOLS_FL_RIGHT,
+				      "the number of parameters the factory may takes from command line" },
+	[COL_FACTORY_DESCRIPTION] = { "DESCRIPTION", 0, 0,
+				      "the description about this factory" },
+};
+
+static int factory_fill_column(struct libscols_line *ln, int nth_item, const void *data,
+			       int nth_column)
+{
+	const struct factory *f = ((struct factory *)data) + nth_item;
+
+	switch (nth_column) {
+	case COL_FACTORY_NAME:
+		scols_line_sprintf(ln, nth_column, "%s", f->name);
+		break;
+	case COL_FACTORY_PRIV:
+		scols_line_sprintf(ln, nth_column, "%s", f->priv? "yes": "no");
+		break;
+	case COL_FACTORY_COUNT:
+		scols_line_sprintf(ln, nth_column, "%d", f->N);
+		break;
+	case COL_FACTORY_NRETURN:
+		scols_line_sprintf(ln, nth_column, "%d", f->EX_O + 1);
+		break;
+	case COL_FACTORY_NPARAM:
+		scols_line_sprintf(ln, nth_column, "%d", count_parameters(f));
+		break;
+	case COL_FACTORY_DESCRIPTION:
+		scols_line_sprintf(ln, nth_column, "%s", f->desc);
+		break;
+	}
+
+	return 0;
 }
 
 static void list_factories(void)
 {
-	printf("%-20s PRIV COUNT NRETURN NPARAM DESCRIPTION\n", "FACTORY");
-	for (size_t i = 0; i < ARRAY_SIZE(factories); i++)
-		print_factory(factories + i);
+	list_items ("factories", factory_infos, FACTORY_N_COLS,
+		    factories, ARRAY_SIZE(factories),
+		    factory_fill_column, factory_infos[COL_FACTORY_NAME].name);
 }
 
 static const struct factory *find_factory(const char *name)
