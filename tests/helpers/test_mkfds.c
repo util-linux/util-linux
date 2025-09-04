@@ -4650,23 +4650,72 @@ static const struct factory *find_factory(const char *name)
 	return NULL;
 }
 
+enum {
+	COL_PARAMETER_NAME,
+	COL_PARAMETER_TYPE,
+	COL_PARAMETER_DEFAULT_VALUE,
+	COL_PARAMETER_DESCRIPTION,
+	PARAMETER_N_COLS
+};
+
+static const struct colinfo parameter_infos[] = {
+	[COL_PARAMETER_NAME]          = { "PARAMETER", 0, 0,
+					  "the name of parameter" },
+	[COL_PARAMETER_TYPE]          = { "TYPE", 0, SCOLS_FL_RIGHT,
+					  "data type of parameter: string, integer, uinteger, or boolean" },
+	[COL_PARAMETER_DEFAULT_VALUE] = { "DEFAULT_VALUE", 0, SCOLS_FL_RIGHT,
+					  "default valuea" },
+	[COL_PARAMETER_DESCRIPTION]   = { "DESCRIPTION", 0, 0,
+					  "the description about this parameter" },
+};
+
+static int parameter_fill_column(struct libscols_line *ln, int nth_item, const void *data,
+				 int nth_column)
+{
+	const struct parameter *p = ((struct parameter *)data) + nth_item;
+
+	switch (nth_column) {
+	case COL_PARAMETER_NAME:
+		scols_line_sprintf(ln, nth_column, "%s", p->name);
+		break;
+	case COL_PARAMETER_TYPE:
+		scols_line_sprintf(ln, nth_column, "%s", ptype_classes[p->type].name);
+		break;
+	case COL_PARAMETER_DEFAULT_VALUE: {
+		char *defv = ptype_classes[p->type].sprint(&p->defv);
+		scols_line_sprintf(ln, nth_column, "%s", defv);
+		free(defv);
+		break;
+	}
+	case COL_PARAMETER_DESCRIPTION:
+		scols_line_sprintf(ln, nth_column, "%s", p->desc);
+		break;
+	}
+
+	return 0;
+}
+
 static void list_parameters(const char *factory_name)
 {
-	const struct factory *factory = find_factory(factory_name);
-	const char *fmt = "%-15s %-8s %15s %s\n";
+	char *name = NULL;
+	size_t n_parameters = 0;
 
+	const struct factory *factory = find_factory(factory_name);
 	if (!factory)
 		errx(EXIT_FAILURE, "no such factory: %s", factory_name);
 
-	if (!factory->params)
-		return;
+	xasprintf(&name, "parameters of %s", factory_name);
 
-	printf(fmt, "PARAMETER", "TYPE", "DEFAULT_VALUE", "DESCRIPTION");
-	for (const struct parameter *p = factory->params; p->name != NULL; p++) {
-		char *defv = ptype_classes[p->type].sprint(&p->defv);
-		printf(fmt, p->name, ptype_classes[p->type].name, defv, p->desc);
-		free(defv);
+	if (factory->params) {
+		for (const struct parameter *p = factory->params; p->name != NULL; p++)
+			n_parameters++;
 	}
+
+	list_items (name, parameter_infos, PARAMETER_N_COLS,
+		    factory->params, n_parameters,
+		    parameter_fill_column,
+		    parameter_infos[COL_PARAMETER_NAME].name);
+	free(name);
 }
 
 static void list_output_values(const char *factory_name)
