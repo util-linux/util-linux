@@ -22,7 +22,7 @@ login - begin session on the system
 
 == DESCRIPTION
 
-*login* is used when signing onto a system. If no argument is given, ** prompts for the username.
+*login* is used when signing onto a system. If no argument is given, *login* prompts for the username.
 
 The user is then prompted for a password, where appropriate. Echoing is disabled to prevent revealing the password. Only a number of password failures are permitted before *login* exits and the communications link is severed. See *LOGIN_RETRIES* in the *CONFIG FILE ITEMS* section.
 
