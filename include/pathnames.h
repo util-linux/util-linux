@@ -72,10 +72,12 @@
 #endif
 
 #define _PATH_ISSUE_FILENAME	"issue"
-#define _PATH_ISSUE_DIRNAME	_PATH_ISSUE_FILENAME ".d"
-
-#define _PATH_ISSUE		"/etc/" _PATH_ISSUE_FILENAME
-#define _PATH_ISSUEDIR		"/etc/" _PATH_ISSUE_DIRNAME
+#define _PATH_ETC_ISSUEDIR	"/etc"
+#ifdef USE_VENDORDIR
+#  define _PATH_USR_ISSUEDIR	_PATH_VENDORDIR
+#else
+#  define _PATH_USR_ISSUEDIR	"/usr/lib"
+#endif
 
 #define _PATH_OS_RELEASE_ETC	"/etc/os-release"
 #define _PATH_OS_RELEASE_USR	"/usr/lib/os-release"
