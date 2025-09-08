@@ -80,6 +80,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Reverse lines characterwise.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -0, --zero     use the NUL byte as line separator\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(16));
 	fprintf(out, USAGE_MAN_TAIL("rev(1)"));
 
