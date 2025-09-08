@@ -844,6 +844,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --summary            display summary about used swap devices (DEPRECATED)\n"), out);
 	fputs(_(" -T, --fstab <path>       alternative file to /etc/fstab\n"), out);
 	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
+	fputs(_("     --output-all         output all available columns\n"), out);
 	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
 	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
 	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
