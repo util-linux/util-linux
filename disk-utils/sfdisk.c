@@ -1737,22 +1737,32 @@ static void follow_wipe_mode(struct sfdisk *sf)
 	if (sf->quiet)
 		return;
 
-	if (dowipe) {
-		if (!fdisk_is_ptcollision(sf->cxt)) {
-			fdisk_warnx(sf->cxt, _(
-				"The device contains '%s' signature and it may be removed by a write command. "
-				"See sfdisk(8) man page and --wipe option for more details."),
-				fdisk_get_collision(sf->cxt));
-			fputc('\n', stdout);
-		}
-	} else {
+	if (!dowipe) {
 		fdisk_warnx(sf->cxt, _(
 			"The device contains '%s' signature and it may remain on the device. "
 			"It is recommended to wipe the device with wipefs(8) or "
 			"sfdisk --wipe, in order to avoid possible collisions."),
 			fdisk_get_collision(sf->cxt));
 		fputc('\n', stderr);
+		return;
 	}
+
+	if (fdisk_is_ptcollision(sf->cxt))
+		return;		/* PT will be replaced */
+
+	if (sf->append && fdisk_has_label(sf->cxt)
+	    && fdisk_is_collision_area(sf->cxt, 0, fdisk_get_sector_size(sf->cxt)))
+		fdisk_warnx(sf->cxt, _(
+			"The device contains a '%s' signature in the first sector; it will not be wiped "
+			"unless you create a new partition table. Alternatively, use wipefs(8)."),
+			fdisk_get_collision(sf->cxt));
+	else
+		fdisk_warnx(sf->cxt, _(
+			"The device contains '%s' signature and it may be removed by a write command. "
+			"See sfdisk(8) man page and --wipe option for more details."),
+			fdisk_get_collision(sf->cxt));
+
+	fputc('\n', stdout);
 }
 
 static int wipe_partition(struct sfdisk *sf, size_t partno)

@@ -410,6 +410,7 @@ struct fdisk_context {
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */
+	uint64_t collision_offset;
 	struct list_head wipes;			/* list of areas to wipe before write */
 
 	int sizeunit;				/* SIZE fields, FDISK_SIZEUNIT_* */
