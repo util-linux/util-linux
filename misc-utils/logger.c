@@ -1025,7 +1025,9 @@ static void logger_stdin(struct logger_ctl *ctl)
 		if (ctl->prio_prefix && c == '<') {
 			pri = 0;
 			buf[i++] = c;
-			while (isdigit(c = getchar()) && pri <= 191) {
+			while (i < ctl->max_message_size
+			       && isdigit(c = getchar()) && pri <= 191) {
+
 				buf[i++] = c;
 				pri = pri * 10 + c - '0';
 			}
