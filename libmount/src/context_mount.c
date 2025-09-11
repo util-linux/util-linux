@@ -1662,6 +1662,12 @@ int mnt_context_get_mount_excode(
 
 	/* Error with already generated messages (by kernel or libmount) */
 	if (buf && mnt_context_get_nmesgs(cxt, 'e')) {
+		if (syserr == ENOENT
+		    && uflags & MNT_MS_NOFAIL
+		    && cxt->syscall_name && strcmp(cxt->syscall_name, "fsconfig") == 0
+		    && src && !mnt_is_path(src))
+			return MNT_EX_SUCCESS;
+
 		if (cxt->syscall_name) {
 			size_t len = snprintf(buf, bufsz,
 					_("%s() failed: "),
