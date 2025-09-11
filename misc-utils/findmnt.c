@@ -1533,8 +1533,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -F, --tab-file <path>  alternative file for -s, -m or -k options\n"), out);
 	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"
 		"                          (includes user space mount options)\n"), out);
-	fputs(_(" -k                     alias to '--kernel mountinfo'\n"), out);
-	fputs(_(" --kernel[=<method>]    search in kernel mount table (default)\n"
+	fputs(_(" -k                     an alias for '--kernel=mountinfo'\n"), out);
+	fputs(_(" --kernel[=<method>]    search in kernel mount table (default behavior);\n"
 		"                          <method> is mountinfo or listmount\n"), out);
 	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
 	fputs(_(" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"), out);
