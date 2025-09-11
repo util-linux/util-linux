@@ -1,0 +1,105 @@
+util-linux 2.41.2 Release Notes
+===============================
+
+bash-completion:
+    - fix function name of enosys completion (by Koichi Murase)
+    - add choom and coresched (by Karel Zak)
+
+findmnt:
+    - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
+
+fsck.cramfs:
+    - check buffer size for memcpy() (by Karel Zak)
+
+getopt:
+    - document special symbols that should not be used as option characters (by cgoesche)
+
+gitignore:
+    - Ignore tests/diff/ and test/output/ (by Jesse Rosenstock)
+
+hardlink:
+    - (man) add note note about ULFILEEQ_DEBUG= (by Karel Zak)
+
+include/mount-api-utils:
+    - avoid using sys/mount.h (by Karel Zak)
+
+libblkid:
+    - (ext) reduce false positive (by 胡玮文)
+    - improve UUID_SUB= description (by Karel Zak)
+
+lib/color-names:
+    - fix stupid bugs (by Karel Zak)
+    - Fix color name canonicalization (by Karel Zak)
+
+libfdisk:
+    - (script) improve separator usage in named-fields dump (by Karel Zak)
+    - (script) fix device name separator parsing (by Karel Zak)
+
+liblastlog2:
+    - markup fixes for man pages (by Mario Blättermann)
+
+libmount:
+    - don't report fsconfig errors with "nofail" (by Karel Zak)
+
+lib/path:
+    - avoid double free() for cpusets (by Karel Zak)
+
+lib/strutils:
+    - add ul_ prefix to strrep() and strrem() functions (by Karel Zak)
+    - add ul_ prefix to split() function (by Karel Zak)
+    - add ul_ prefix to strappend() functions (by Karel Zak)
+    - add ul_ prefix to strconcat() functions (by Karel Zak)
+    - add ul_ prefix to startswith() and endswith() (by Karel Zak)
+
+lib/strv:
+    - use ul_ prefix for strv functions (by Karel Zak)
+
+logger:
+    - fix buffer overflow when read stdin (by Karel Zak)
+    - fix incorrect warning message when both --file and a message are specified (by Alexander Kappner)
+
+lsblk:
+    - fix possible use-after-free (by Karel Zak)
+    - fix memory leak [coverity scan] (by Karel Zak)
+    - use md as fallback TYPE when md/level empty (by codefiles)
+
+lscpu:
+    - New Arm C1 parts (by Jeremy Linton)
+    - Add NVIDIA Olympus arm64 core (by Matthew R. Ochs)
+
+man:
+    - Fixed incorrect ipcrm options (by Prasanna Paithankar)
+    - Replace RETURN VALUE with EXIT STATUS in section 1 (by Jesse Rosenstock)
+
+mkfs.cramfs:
+    - avoid uninitialized value [coverity scan] (by Karel Zak)
+
+more:
+    - temporarily ignore stdin when waiting for stderr (by Karel Zak)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+
+rev:
+    - add --zero option to --help output (by Christian Goeschel Ndjomouo)
+
+setpriv:
+    - Improve getgroups() Portability (by Karel Zak)
+
+sfdisk:
+    - reject spurious arguments for --reorder/--backup-pt-sectors (by Thomas Weißschuh)
+
+tests:
+    - add color names test (by Karel Zak)
+
+tests/helpers/test_sigstate.c:
+    - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
+
+zramctl:
+    - ignore ENOENT when setting max_comp_streams (by Jiang XueQian)
+    - fix MEM-USED column description (by Jérôme Poulin)
+
+Misc:
+    - Add missing ;; to -m case (#1) (by Nate Drake)
+
