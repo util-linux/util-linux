@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man-2.41-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2025-06-23 13:47+0200\n"
+"POT-Creation-Date: 2025-09-11 10:55+0200\n"
 "PO-Revision-Date: 2025-03-09 17:17+0100\n"
 "Last-Translator: Michał Kułach <michalkulach@gmail.com>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -1682,15 +1682,15 @@ msgstr ""
 #: ../lib/terminal-colors.d.5.adoc:128 ../login-utils/sulogin.8.adoc:66
 #: ../login-utils/vipw.8.adoc:61 ../misc-utils/blkid.8.adoc:173
 #: ../misc-utils/findfs.8.adoc:58 ../misc-utils/findmnt.8.adoc:219
-#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/look.1.adoc:79
-#: ../misc-utils/lsblk.8.adoc:214 ../misc-utils/whereis.1.adoc:112
-#: ../misc-utils/wipefs.8.adoc:83 ../sys-utils/hwclock.8.adoc:357
-#: ../sys-utils/losetup.8.adoc:131 ../sys-utils/lsns.8.adoc:99
-#: ../sys-utils/mount.8.adoc:1682 ../sys-utils/mountpoint.1.adoc:52
-#: ../sys-utils/swapon.8.adoc:123 ../sys-utils/umount.8.adoc:187
-#: ../term-utils/script.1.adoc:127 ../text-utils/column.1.adoc:180
-#: ../text-utils/more.1.adoc:164 ../text-utils/pg.1.adoc:117
-#: ../text-utils/ul.1.adoc:65
+#: ../misc-utils/getopt.1.adoc:133 ../misc-utils/hardlink.1.adoc:153
+#: ../misc-utils/look.1.adoc:79 ../misc-utils/lsblk.8.adoc:214
+#: ../misc-utils/whereis.1.adoc:112 ../misc-utils/wipefs.8.adoc:83
+#: ../sys-utils/hwclock.8.adoc:357 ../sys-utils/losetup.8.adoc:131
+#: ../sys-utils/lsns.8.adoc:99 ../sys-utils/mount.8.adoc:1682
+#: ../sys-utils/mountpoint.1.adoc:52 ../sys-utils/swapon.8.adoc:123
+#: ../sys-utils/umount.8.adoc:187 ../term-utils/script.1.adoc:127
+#: ../text-utils/column.1.adoc:180 ../text-utils/more.1.adoc:164
+#: ../text-utils/pg.1.adoc:117 ../text-utils/ul.1.adoc:65
 #, no-wrap
 msgid "ENVIRONMENT"
 msgstr "ŚRODOWISKO"
@@ -3892,7 +3892,8 @@ msgstr "*-y*"
 #: ../misc-utils/findmnt.8.adoc:213 ../misc-utils/kill.1.adoc:107
 #: ../misc-utils/logger.1.adoc:192 ../misc-utils/look.1.adoc:75
 #: ../misc-utils/lsblk.8.adoc:200 ../misc-utils/rename.1.adoc:70
-#: ../misc-utils/waitpid.1.adoc:40 ../sys-utils/blkdiscard.8.adoc:59
+#: ../misc-utils/waitpid.1.adoc:40 ../schedutils/coresched.1.adoc:101
+#: ../schedutils/taskset.1.adoc:108 ../sys-utils/blkdiscard.8.adoc:59
 #: ../sys-utils/chcpu.8.adoc:59 ../sys-utils/chmem.8.adoc:54
 #: ../sys-utils/dmesg.1.adoc:188 ../sys-utils/eject.1.adoc:93
 #: ../sys-utils/flock.1.adoc:93 ../sys-utils/fstrim.8.adoc:74
@@ -4412,7 +4413,7 @@ msgstr ""
 #: ../disk-utils/mkfs.8.adoc:41 ../disk-utils/raw.8.adoc:51
 #: ../login-utils/login.1.adoc:163 ../login-utils/utmpdump.1.adoc:67
 #: ../misc-utils/cal.1.adoc:185 ../misc-utils/getopt.1.adoc:141
-#: ../misc-utils/hardlink.1.adoc:153 ../misc-utils/mcookie.1.adoc:50
+#: ../misc-utils/hardlink.1.adoc:158 ../misc-utils/mcookie.1.adoc:50
 #: ../misc-utils/namei.1.adoc:65 ../misc-utils/pipesz.1.adoc:91
 #: ../sys-utils/lscpu.1.adoc:98 ../sys-utils/mount.8.adoc:1725
 #: ../sys-utils/readprofile.8.adoc:67 ../term-utils/agetty.8.adoc:332
@@ -8680,7 +8681,8 @@ msgstr ""
 
 #. type: Plain text
 #: ../libblkid/libblkid.3.adoc:71
-msgid "UUID_SUB - subvolume uuid (e.g. btrfs)"
+msgid ""
+"UUID_SUB - pool member UUID or device item UUID, etc. (e.g., zfs, btrfs, ...)"
 msgstr ""
 
 #. type: Plain text
@@ -8869,8 +8871,6 @@ msgstr ""
 msgid "SYNTAX"
 msgstr ""
 
-#.  Simplified https://en.wikipedia.org/wiki/Wirth_syntax_notation
-#.  TRANSLATORS: don't translate the expressions syntax, please.
 #. type: delimited block -
 #: ../libsmartcols/scols-filter.5.adoc:38
 #, no-wrap
@@ -9268,8 +9268,7 @@ msgstr ""
 #. type: Title ==
 #: ../libuuid/man/uuid_compare.3.adoc:55 ../libuuid/man/uuid_copy.3.adoc:55
 #: ../libuuid/man/uuid_generate.3.adoc:72 ../libuuid/man/uuid_parse.3.adoc:58
-#: ../libuuid/man/uuid_time.3.adoc:55 ../schedutils/coresched.1.adoc:101
-#: ../schedutils/taskset.1.adoc:108
+#: ../libuuid/man/uuid_time.3.adoc:55
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:36
 #: ../liblastlog2/man/ll2_read_all.3.adoc:43
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:39
@@ -18777,12 +18776,20 @@ msgstr ""
 
 #. type: Plain text
 #: ../misc-utils/getopt.1.adoc:71
+#, fuzzy
+#| msgid ""
+#| "A simple short option is a '*-*' followed by a short option character. If "
+#| "the option has a required argument, it may be written directly after the "
+#| "option character or as the next parameter (i.e., separated by whitespace "
+#| "on the command line). If the option has an optional argument, it must be "
+#| "written directly after the option character if present."
 msgid ""
-"A simple short option is a '*-*' followed by a short option character. If "
-"the option has a required argument, it may be written directly after the "
-"option character or as the next parameter (i.e., separated by whitespace on "
-"the command line). If the option has an optional argument, it must be "
-"written directly after the option character if present."
+"A simple short option is a '*-*' followed by a short option character, "
+"except for the ':', ';' and '?' characters, as these are reserved by "
+"*getopt*(3). If the option has a required argument, it may be written "
+"directly after the option character or as the next parameter (i.e., "
+"separated by whitespace on the command line). If the option has an optional "
+"argument, it must be written directly after the option character if present."
 msgstr ""
 "Prostą krótką opcją jest \"*-*\" po którym następuje znak krótkiej opcji. "
 "Jeśli opcja ma wymagany argument, może być on zapisany bezpośrednio po znaku "
@@ -19195,7 +19202,7 @@ msgstr ""
 "opcjami (trzeba je ustawić jawnie na pusty łańcuch)."
 
 #. type: Title ==
-#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:159
+#: ../misc-utils/getopt.1.adoc:147 ../misc-utils/hardlink.1.adoc:164
 #: ../misc-utils/uuidd.8.adoc:84 ../pam_lastlog2/man/pam_lastlog2.8.adoc:64
 #, no-wrap
 msgid "AUTHOR"
@@ -19732,8 +19739,22 @@ msgstr ""
 "*hardlink* przyjmuje jeden lub więcej katalogów, które zostaną przeszukane "
 "pod kątem plików do zlinkowania."
 
+#. type: Labeled list
+#: ../misc-utils/hardlink.1.adoc:155
+#, fuzzy, no-wrap
+#| msgid "*FDISK_DEBUG*=all"
+msgid "*ULFILEEQ_DEBUG*=all"
+msgstr "*FDISK_DEBUG*=all"
+
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:156
+#: ../misc-utils/hardlink.1.adoc:157
+#, fuzzy
+#| msgid "enables debug output."
+msgid "Enables debug output for file comparisons."
+msgstr "włącza wyjście debugowania."
+
+#. type: Plain text
+#: ../misc-utils/hardlink.1.adoc:161
 msgid ""
 "The original *hardlink* implementation uses the option *-f* to force "
 "hardlinks creation between filesystem. This very rarely usable feature is no "
@@ -19744,7 +19765,7 @@ msgstr ""
 "opcja nie jest już obsługiwana przez niniejszy program *hardlink*."
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:158
+#: ../misc-utils/hardlink.1.adoc:163
 msgid ""
 "*hardlink* assumes that the trees it operates on do not change during "
 "operation. If a tree does change, the result is undefined and potentially "
@@ -19764,7 +19785,7 @@ msgstr ""
 "drzewie ani drzewie, które kontroluje inny użytkownik."
 
 #. type: Plain text
-#: ../misc-utils/hardlink.1.adoc:162
+#: ../misc-utils/hardlink.1.adoc:167
 msgid ""
 "There are multiple *hardlink* implementations. The very first implementation "
 "is from Jakub Jelinek for Fedora distribution, this implementation has been "
@@ -32142,8 +32163,9 @@ msgstr ""
 
 #. type: Labeled list
 #: ../sys-utils/ipcrm.1.adoc:49
-#, no-wrap
-msgid "*-x*, *--posix-shmem* _name_"
+#, fuzzy, no-wrap
+#| msgid "*-x*, *--posix-shmem* _name_"
+msgid "*--posix-shmem* _name_"
 msgstr "*-x*, *--posix-shmem* _nazwa_"
 
 #. type: Plain text
@@ -32175,8 +32197,9 @@ msgstr "Usuwa kolejkę komunikatów identyfikowaną przez _id-komunik_."
 
 #. type: Labeled list
 #: ../sys-utils/ipcrm.1.adoc:58
-#, no-wrap
-msgid "*-y*, *--posix-mqueue* _name_"
+#, fuzzy, no-wrap
+#| msgid "*-y*, *--posix-mqueue* _name_"
+msgid "*--posix-mqueue* _name_"
 msgstr "*-y*, *--posix-mqueue* _nazwa_"
 
 #. type: Plain text
@@ -32208,8 +32231,9 @@ msgstr "Usuwa semafor identyfikowany przez _id-semafora_."
 
 #. type: Labeled list
 #: ../sys-utils/ipcrm.1.adoc:67
-#, no-wrap
-msgid "*-z*, *--posix-semaphore* _name_"
+#, fuzzy, no-wrap
+#| msgid "*-z*, *--posix-semaphore* _name_"
+msgid "*--posix-semaphore* _name_"
 msgstr "*-z*, *--posix-semaphore* _nazwa_"
 
 #. type: Plain text
@@ -54553,8 +54577,8 @@ msgid ""
 "It's using sqlite3 as database backend. Data is only collected via a PAM "
 "module, so that all tools can make use of it, without modifying existing "
 "packages.  The output is as compatible as possible with the old lastlog "
-"implementation.  By default the database will be written as `/var/lib/"
-"lastlog/lastlog2.db`.  The size of the database depends on the amount of "
+"implementation.  By default the database will be written as _/var/lib/"
+"lastlog/lastlog2.db_.  The size of the database depends on the amount of "
 "users, not how big the biggest UID is."
 msgstr ""
 
@@ -54567,13 +54591,13 @@ msgstr ""
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:47
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:48
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:51
-msgid "Thorsten Kukuk (kukuk@suse.de)"
+msgid "mailto:kukuk@suse.de[Thorsten Kukuk]"
 msgstr ""
 
 #. type: Plain text
 #: ../liblastlog2/man/lastlog2.3.adoc:44
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_write_entry*(3), *ll2_read_all*(3), *ll2_read_entry*(3), "
 "*ll2_update_login_time*(3), *ll2_remove_entry*(3), *ll2_rename_user*(3), "
 "*ll2_import_lastlog*(3)"
@@ -54637,7 +54661,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:58
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_update_login_time*(3), *ll2_rename_user*(3), *ll2_remove_entry*(3)"
 msgstr ""
@@ -54716,7 +54740,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_read_all.3.adoc:67
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_write_entry*(3), *ll2_read_entry*(3), *ll2_update_login_time*(3), "
 "*ll2_remove_entry*(3), *ll2_rename_user*(3), *ll2_import_lastlog*(3)"
 msgstr ""
@@ -54777,7 +54801,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:65
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_update_login_time*(3), "
 "*ll2_remove_entry*(3), *ll2_rename_user*(3), *ll2_import_lastlog*(3)"
 msgstr ""
@@ -54826,7 +54850,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:56
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_update_login_time*(3), *ll2_rename_user*(3), *ll2_import_lastlog*(3)"
 msgstr ""
@@ -54877,7 +54901,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:59
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_remove_entry*(3), *ll2_update_login_time*(3), *ll2_import_lastlog*(3)"
 msgstr ""
@@ -54929,7 +54953,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:60
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_remove_entry*(3), *ll2_rename_user*(3), *ll2_import_lastlog*(3)"
 msgstr ""
@@ -54990,7 +55014,7 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:63
 msgid ""
-"*lastlog2*(3), *ll2_new_context(3), *ll2_unref_context(3), "
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_read_entry*(3), *ll2_update_login_time*(3), "
 "*ll2_remove_entry*(3), *ll2_rename_user*(3), *ll2_import_lastlog*(3)"
 msgstr ""
