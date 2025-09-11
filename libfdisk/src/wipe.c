@@ -181,25 +181,34 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE |
+					      BLKID_SUBLKS_MAGIC |
 			                      BLKID_SUBLKS_BADCSUM);
 	blkid_probe_enable_partitions(pr, 1);
-	blkid_probe_set_partitions_flags(pr,  BLKID_PARTS_FORCE_GPT);
+	blkid_probe_set_partitions_flags(pr,  BLKID_PARTS_FORCE_GPT |
+					      BLKID_PARTS_MAGIC);
 
 	/* we care about the first found FS/raid, so don't call blkid_do_probe()
 	 * in loop or don't use blkid_do_fullprobe() ... */
 	rc = blkid_do_probe(pr);
 	if (rc == 0) {
 		const char *name = NULL;
+		const char *off = NULL;
 
-		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0)
-			cxt->collision = strdup(name);
-		else if (blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
-			cxt->collision = strdup(name);
+		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0) {
+			blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL);
+
+		} else if (blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
+			blkid_probe_lookup_value(pr, "PTMAGIC_OFFSET", &off, NULL);
 			cxt->pt_collision = 1;
 		}
 
-		if (name && !cxt->collision)
-			rc = -ENOMEM;
+		if (name) {
+			cxt->collision = strdup(name);
+			if (!cxt->collision)
+				rc = -ENOMEM;
+		}
+		if (!rc && off)
+			cxt->collision_offset = strtoumax(off, NULL, 10);
 	}
 
 	blkid_free_probe(pr);
