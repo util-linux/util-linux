@@ -121,7 +121,7 @@
 #ifdef	SYSV_STYLE
 #  define ISSUE_SUPPORT
 #  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-#    include "configs-file.h"
+#    include "configs.h"
 #    include <dirent.h>
 #    define ISSUEDIR_SUPPORT
 #    define ISSUEDIR_EXT	"issue"
@@ -1978,18 +1978,18 @@ static void eval_issue_file(struct issue *ie,
          * The ordering rules are defineded in:
          * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
 	 */
-	config_file_list (&file_list,
-			  NULL,
-			  _PATH_ETC_ISSUEDIR,
-			  _PATH_USR_ISSUEDIR,
-			  _PATH_ISSUE_FILENAME,
-			  ISSUEDIR_EXT);
+	ul_configs_file_list(&file_list,
+			     NULL,
+			     _PATH_ETC_ISSUEDIR,
+			     _PATH_USR_ISSUEDIR,
+			     _PATH_ISSUE_FILENAME,
+			     ISSUEDIR_EXT);
 
-	while (config_files_next_filename(&file_list, &current, &name)) {
+	while (ul_configs_next_filename(&file_list, &current, &name)) {
 		issuefile_read(ie, name, op, tp);
 	}
 
-	free_config_file_list(&file_list);
+	ul_configs_free_list(&file_list);
 #endif	
 
 done:

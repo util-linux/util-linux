@@ -12,7 +12,7 @@
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 #include <dirent.h>
 #endif
-#include "configs-file.h"
+#include "configs.h"
 #include "list.h"
 #include "fileutils.h"
 
@@ -28,10 +28,10 @@ struct file_element {
  * Returning absolute path or NULL if not found
  * The return value has to be freed by the caller.
  */
-static char *main_config_file(const char *root,
-		       const char *project,
-		       const char *config_name,
-		       const char *config_suffix)
+static char *main_configs(const char *root,
+			  const char *project,
+			  const char *config_name,
+			  const char *config_suffix)
 {
 	bool found = false;
 	char *path = NULL;
@@ -98,11 +98,11 @@ static int filter(const struct dirent *d)
 	return 1;
 }
 
-static int read_dir( struct list_head *file_list,
-		     const char *project,
-		     const char *root,
-		     const char *config_name,
-		     const char *config_suffix)
+static int read_dir(struct list_head *file_list,
+		    const char *project,
+		    const char *root,
+		    const char *config_name,
+		    const char *config_suffix)
 {
 	bool found = false;
 	char *dirname = NULL;
@@ -110,7 +110,7 @@ static int read_dir( struct list_head *file_list,
 	struct stat st;
 	int dd, nfiles, i;
 	int counter = 0;
-        struct dirent **namelist = NULL;
+	struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
 
 	if (config_suffix) {
@@ -177,7 +177,7 @@ static int read_dir( struct list_head *file_list,
 	for (i = 0; i < nfiles; i++)
 		free(namelist[i]);
 	free(namelist);
-        free(dirname);
+	free(dirname);
 	close(dd);
 	return counter;
 }
@@ -190,12 +190,12 @@ static void free_element(struct file_element *element)
 }
 
 
-int config_file_list( struct list_head *file_list,
-		      const char *project,
-		      const char *etc_subdir,
-		      const char *usr_subdir,
-		      const char *config_name,
-		      const char *config_suffix)
+int ul_configs_file_list(struct list_head *file_list,
+			 const char *project,
+			 const char *etc_subdir,
+			 const char *usr_subdir,
+			 const char *config_name,
+			 const char *config_suffix)
 {
 	char *filename = NULL, *usr_basename = NULL, *etc_basename = NULL;
 	struct list_head etc_file_list;
@@ -222,11 +222,11 @@ int config_file_list( struct list_head *file_list,
 
 	/* Evaluating first "main" file which has to be parsed */
 	/* in the following order : /etc /run /usr             */
- 	filename = main_config_file(etc_subdir, project, config_name, config_suffix);
+	filename = main_configs(etc_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
-		filename = main_config_file(_PATH_RUNSTATEDIR, project, config_name, config_suffix);
+		filename = main_configs(_PATH_RUNSTATEDIR, project, config_name, config_suffix);
 	if (filename == NULL)
-		filename = main_config_file(usr_subdir, project, config_name, config_suffix);
+		filename = main_configs(usr_subdir, project, config_name, config_suffix);
 	if (filename != NULL) {
 		add_element = new_list_entry(filename);
 		if (add_element == NULL)
@@ -299,20 +299,20 @@ int config_file_list( struct list_head *file_list,
 	}
 
 finish:
-	free_config_file_list(&etc_file_list);
-	free_config_file_list(&usr_file_list);
+	ul_configs_free_list(&etc_file_list);
+	ul_configs_free_list(&usr_file_list);
 
 	return counter;
 }
 
-void free_config_file_list(struct list_head *file_list)
+void ul_configs_free_list(struct list_head *file_list)
 {
 	list_free(file_list, struct file_element,  file_list, free_element);
 }
 
-bool config_files_next_filename(struct list_head *file_list,
-				struct list_head **current_entry,
-				char **name)
+bool ul_configs_next_filename(struct list_head *file_list,
+			      struct list_head **current_entry,
+			      char **name)
 {
 	struct file_element *element = NULL;
 

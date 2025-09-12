@@ -41,7 +41,7 @@ libcommon_la_SOURCES = \
 	lib/timeutils.c \
 	lib/ttyutils.c \
 	lib/xxhash.c \
-	lib/configs-file.c
+	lib/configs.c
 
 if LINUX
 libcommon_la_SOURCES += \

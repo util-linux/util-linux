@@ -84,4 +84,4 @@ dist_noinst_HEADERS += \
 	include/widechar.h \
 	include/xalloc.h \
 	include/xxhash.h \
-	include/configs-file.h
+	include/configs.h
