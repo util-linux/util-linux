@@ -144,7 +144,7 @@ If set, it will be used to define the PATH environment variable when the superus
 
 *LOGIN_SHELL_FALLBACK* (boolean)::
 
-If set to _yes_, login will provide a valid shell from `/etc/shells` when the shell specified in `/etc/passwd` is invalid or inaccessible due to administrative errors. This ensures users can still log in. However, it may bypass intended shell restrictions, potentially causing unexpected behavior if the fallback shell differs from the configured one.
+If set to _yes_, login will provide a valid shell from _/etc/shells_ when the shell specified in _/etc/passwd_ is invalid or inaccessible due to administrative errors. This ensures users can still log in. However, it may bypass intended shell restrictions, potentially causing unexpected behavior if the fallback shell differs from the configured one.
 
 == FILES
 

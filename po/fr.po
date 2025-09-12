@@ -23366,8 +23366,8 @@ msgid "memory limit used to store compressed data"
 msgstr "Limite de mémoire utilisée pour stocker des données compressées"
 
 #: sys-utils/zramctl.c:85
-msgid "memory zram have been consumed to store compressed data"
-msgstr "la mémoire zRAM a été consommée pour stocker des données compressées"
+msgid "peak memory usage to store compressed data"
+msgstr "pointe d'utilisation mémoire pour stocker les données compressées"
 
 #: sys-utils/zramctl.c:86
 msgid "number of objects migrated by compaction"

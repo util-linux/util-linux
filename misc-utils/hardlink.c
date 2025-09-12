@@ -974,6 +974,7 @@ static int is_reflink_compatible(dev_t devno, const char *filename)
 		switch (vfs.f_type) {
 			case STATFS_BTRFS_MAGIC:
 			case STATFS_XFS_MAGIC:
+			case STATFS_ZFS_MAGIC:
 				last_status = 1;
 				break;
 			default:

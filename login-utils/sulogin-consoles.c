@@ -227,7 +227,7 @@ dev_t devattr(const char * const tty)
 /*
  * Search below /dev for the character device in `dev_t comparedev' variable.
  * Note that realpath(3) is used here to avoid not existent devices due the
- * strdup(3) used in our canonicalize_path()!
+ * strdup(3) used in our ul_canonicalize_path()!
  */
 static
 #ifdef __GNUC__

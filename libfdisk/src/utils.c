@@ -128,7 +128,7 @@ char *fdisk_partname(const char *dev, size_t partno)
 
 	/* It is impossible to predict /dev/dm-N partition names. */
 	if (strncmp(dev, "/dev/dm-", sizeof("/dev/dm-") - 1) == 0) {
-		dev_mapped = canonicalize_dm_name (dev + 5);
+		dev_mapped = ul_canonicalize_dm_name (dev + 5);
 		if (dev_mapped)
 			dev = dev_mapped;
 	}

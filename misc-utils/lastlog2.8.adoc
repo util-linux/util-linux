@@ -49,7 +49,7 @@ Clear the last-login record of a user.
 This option can only be used together with *-u* (*--user*).
 
 *-d*, *--database* _file_::
-Use _file_ as lastlog2 database.
+Use _file_ as *lastlog2* database.
 
 *-i*, *--import* _file_::
 Import data from an old lastlog file named _file_.

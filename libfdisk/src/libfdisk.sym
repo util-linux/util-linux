@@ -328,3 +328,7 @@ FDISK_2.40 {
 FDISK_2_41 {
 	fdisk_ask_menu;
 } FDISK_2.40;
+
+FDISK_2_42 {
+	fdisk_is_collision_area;
+} FDISK_2_41;

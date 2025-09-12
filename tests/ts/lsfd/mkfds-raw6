@@ -32,19 +32,30 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 EXPR='(TYPE == "RAWv6") and (FD == 3)'
-PROTOCOL=5
 
+test_lsfd_raw6()
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" raw6 $FD protocol=$PROTOCOL; }
+    local protocol=$1
+
+    coproc MKFDS { "$TS_HELPER_MKFDS" raw6 $FD protocol=$protocol; }
     if read -r -u "${MKFDS[0]}" PID; then
 	${TS_CMD_LSFD} -n \
-		       -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET6.LADDR,INET6.RADDR,RAW.PROTOCOL \
+		       -o ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET6.LADDR,INET6.RADDR,RAW.PROTOCOL,RAW.PROTOCOL.RAW \
 		       -p "${PID}" -Q "${EXPR}"
-	echo 'ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET6.LADDR,INET6.RADDR,RAW.PROTOCOL': $?
+	echo 'ASSOC,TYPE,NAME,SOCK.STATE,SOCK.TYPE,INET6.LADDR,INET6.RADDR,RAW.PROTOCOL,RAW.PROTOCOL.RAW': $?
 	echo DONE >&"${MKFDS[1]}"
     fi
 
     wait "${MKFDS_PID}"
+}
+
+{
+    # 5 is only in /etc/protocol
+    # 6 is in linux/in.h.
+    # 61 is not in neither sources.
+    for p in 5 6 61; do
+	test_lsfd_raw6 $p
+    done
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize

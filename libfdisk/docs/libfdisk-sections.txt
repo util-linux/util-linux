@@ -336,6 +336,7 @@ fdisk_has_dialogs
 fdisk_has_label
 fdisk_has_protected_bootbits
 fdisk_has_wipe
+fdisk_is_collision_area
 fdisk_is_details
 fdisk_is_labeltype
 fdisk_is_listonly

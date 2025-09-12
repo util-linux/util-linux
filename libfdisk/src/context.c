@@ -450,6 +450,27 @@ int fdisk_is_ptcollision(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_is_collision_area:
+ * @cxt: fdisk context
+ *
+ * If there is a collision with the filesystem or another partition table,
+ * verify that the detected magic string is within the specified area.
+ *
+ * Returns: 0 or 1
+ *
+ * Since: v2.42
+ */
+int fdisk_is_collision_area(struct fdisk_context *cxt,
+		uint64_t start, uint64_t size)
+{
+	if (cxt->collision &&
+	    start <= cxt->collision_offset && cxt->collision_offset <= start + size)
+		return 1;
+
+	return 0;
+}
+
+/**
  * fdisk_get_npartitions:
  * @cxt: context
  *

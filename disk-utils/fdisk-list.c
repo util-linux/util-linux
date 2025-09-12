@@ -421,7 +421,7 @@ char *next_proc_partition(FILE **f)
 		if (!sysfs_devno_to_devpath(devno, buf, sizeof(buf)))
 			continue;
 
-		cn = canonicalize_path(buf);
+		cn = ul_canonicalize_path(buf);
 		if (!cn)
 			continue;
 

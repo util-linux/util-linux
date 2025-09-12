@@ -62,11 +62,11 @@ holder: [a-zA-Z][a-zA-Z_.%:/\-0-9]*
 The filter expression can be used by application linked with libsmartcols to filter
 output data. The application can use the filter before it gathers all data for the
 output to reduce resources and improve performance. This makes scols filter more
-effective than grep(1) on the complete output. For example
+effective than *grep*(1) on the complete output. For example
 ....
  lsblk --output NAME,LABEL,FSTYPE --filter 'NAME=="sda1"'
 ....
-helps lsblk(1) to not read LABELs for all block device from udevd or libblkid,
+helps *lsblk*(1) to not read LABELs for all block device from udevd or libblkid,
 but read it only for device sda1.
 
 The filter can be also used for columns which are not used in the output.
@@ -76,7 +76,7 @@ The filter can be also used for columns which are not used in the output.
 An expression consists of holders, params, and operators. 
 
 The currently supported `holder` type is column name only. The name has to be
-used without quotes. Before evaluation, application map column names in the
+used without quotes. Before evaluation, application maps column names in the
 given expression to the output table columns and assign column data type to the
 holder. The default type is "string".
 
@@ -86,7 +86,7 @@ types are integer, float, string and boolean.
 An operator works with one or two operand(s). An operator has an expectation
 about the data type(s) of its operands. Giving an unexpected data type to an
 operator causes a syntax error. The library can cast between data types, the
-prefferred is always the type as specified by `param` and in case of expression with
+preferred is always the type as specified by `param` and in case of expression with
 number and float the preferred is the float.
 
 Operators taking two operands are `and`, `or`, `eq`, `ne`, `le`, `lt`, `ge`, `gt`, `=~`, `!~`.
@@ -94,11 +94,11 @@ Alphabetically named operators have C-language
 flavored aliases: `&&`, `||`, `==`, `!=`, `<`, `<=`, `>=`, and `>`.
 
 `!` is the only operator that takes one operand. If no operator is specified then
-expression is true if param or holder are not empty. For example `--filter NAME` will
+expression is true if param or holder are not empty. For example *--filter NAME* will
 return lines where column NAME is not empty.
 
 `=~` and `!~` is for regular expression matching; if a string at the right side
-matches (or not matches for `!~` a regular expression at the left side, the result
+matches (or not matches for `!~` a regular expression at the left side), the result
 is true. The right side operand must be a string literal.
 
 The precedences within operators is `or`, `and`, and `eq`, `ne`, `le`, `gt`, `ge`, `=~`, `!~`, `not`.

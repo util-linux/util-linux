@@ -202,7 +202,7 @@ Run *more* in "secure" mode. See SECURITY for details.
 Equivalent to MORESECURE.
 
 *MORE_SHELL_LINES*::
-Specify the _number_ of lines per screenful. It has the same effect as the '-n' and '--lines' options. See in OPTIONS for details. Also, note that the environment variable's value will be overridden if any of these options are set.
+Specify the _number_ of lines per screenful. It has the same effect as the *-n* and *--lines* options. See in OPTIONS for details. Also, note that the environment variable's value will be overridden if any of these options are set.
 
 == HISTORY
 

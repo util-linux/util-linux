@@ -4,6 +4,8 @@ TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 # helpers
 TS_HELPER_BOILERPLATE="${ts_helpersdir}test_boilerplate"
 TS_HELPER_BYTESWAP="${ts_helpersdir}test_byteswap"
+TS_HELPER_CANONICALIZE="${ts_helpersdir}test_canonicalize"
+TS_HELPER_COLORS="${ts_helpersdir}test_colors"
 TS_HELPER_CPUSET="${ts_helpersdir}test_cpuset"
 TS_HELPER_CAP="${ts_helpersdir}test_cap"
 TS_HELPER_DMESG="${ts_helpersdir}test_dmesg"
@@ -62,6 +64,7 @@ TS_HELPER_MKFDS="${ts_helpersdir}test_mkfds"
 TS_HELPER_BLKID_FUZZ="${ts_helpersdir}test_blkid_fuzz"
 TS_HELPER_PROCFS="${ts_helpersdir}test_procfs"
 TS_HELPER_TIMEUTILS="${ts_helpersdir}test_timeutils"
+TS_HELPER_KILL_PIDFDINO="${ts_helpersdir}test_kill_pidfdino"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}

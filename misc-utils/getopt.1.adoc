@@ -59,6 +59,9 @@ Test if your *getopt*(1) is this enhanced version or an old version. This genera
 *-u*, *--unquoted*::
 Do not quote the output. Note that whitespace and special (shell-dependent) characters can cause havoc in this mode (like they do with other *getopt*(1) implementations).
 
+*-U*, *--unknown*::
+Leave unknown options as they are and suppress error messages from *getopt*(3). Since there is no way to know whether an unknown option requires an argument, a non-option argument that follows the unknown option after a whitespace, is considered an option argument, therefore the argument will be left untouched and printed next to the respective unknown option. To prevent unexpected behavior, short options should be specified individually.
+
 include::man-common/help-version.adoc[]
 
 == PARSING
@@ -67,7 +70,7 @@ This section specifies the format of the second part of the parameters of *getop
 
 The parameters are parsed from left to right. Each parameter is classified as a short option, a long option, an argument to an option, or a non-option parameter.
 
-A simple short option is a '*-*' followed by a short option character. If the option has a required argument, it may be written directly after the option character or as the next parameter (i.e., separated by whitespace on the command line). If the option has an optional argument, it must be written directly after the option character if present.
+A simple short option is a '*-*' followed by a short option character, except for the ':', ';' and '?' characters, as these are reserved by *getopt*(3). If the option has a required argument, it may be written directly after the option character or as the next parameter (i.e., separated by whitespace on the command line). If the option has an optional argument, it must be written directly after the option character if present.
 
 It is possible to specify several short options after one '*-*', as long as all (except possibly the last) do not have required or optional arguments.
 

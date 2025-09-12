@@ -95,4 +95,22 @@ ts_init_subtest "deleted-file"
 wait "${MKFDS_PID}"
 ts_finalize_subtest
 
+ts_init_subtest "UNKN-type-file"
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" eventpoll $FD $((FD + 1)) $((FD + 2)); }
+    if read -r -u "${MKFDS[0]}" PID; then
+	for o in NAME KNAME; do
+	    echo "# $o"
+	    "${TS_CMD_LSFD}" -n --hyperlink=always -o "$o" -p "${PID}" -Q "$EXPR" \
+		| replace_hostname \
+		| replace_filename \
+		| "$TS_CMD_HEXDUMP" -C
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+} > "$TS_OUTPUT" 2>&1
+wait "${MKFDS_PID}"
+ts_finalize_subtest
+
+
 ts_finalize

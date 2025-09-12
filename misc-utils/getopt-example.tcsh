@@ -26,6 +26,9 @@
 # as a list. The ':q`  copies that list without doing any substitutions:
 # each element of argv becomes a separate argument for getopt. The braces
 # are needed because the result is also a list.
+#
+# Note: We can use '--long' instead of '--longoptions', because getopt(3) 
+# allows unique abbreviations of long option names.
 set temp=(`getopt -s tcsh -o ab:c:: --long a-long,b-long:,c-long:: -- $argv:q`)
 if ($? != 0) then
   echo "Terminating..." >/dev/stderr

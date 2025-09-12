@@ -82,8 +82,7 @@ static bool unkn_fill_column(struct proc *proc,
 			     struct file *file,
 			     struct libscols_line *ln,
 			     int column_id,
-			     size_t column_index,
-			     const char *uri __attribute__((__unused__)))
+			     size_t column_index)
 {
 	char *str = NULL;
 	struct unkn *unkn = (struct unkn *)file;

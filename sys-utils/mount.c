@@ -496,7 +496,7 @@ static int sanitize_paths(struct libmnt_context *cxt)
 
 	p = mnt_fs_get_target(fs);
 	if (p) {
-		char *np = canonicalize_path_restricted(p);
+		char *np = ul_canonicalize_path_restricted(p);
 		if (!np)
 			return -EPERM;
 		mnt_fs_set_target(fs, np);
@@ -505,7 +505,7 @@ static int sanitize_paths(struct libmnt_context *cxt)
 
 	p = mnt_fs_get_srcpath(fs);
 	if (p) {
-		char *np = canonicalize_path_restricted(p);
+		char *np = ul_canonicalize_path_restricted(p);
 		if (!np)
 			return -EPERM;
 		mnt_fs_set_source(fs, np);

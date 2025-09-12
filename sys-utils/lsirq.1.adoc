@@ -26,7 +26,7 @@ The default output is subject to change. So whenever possible, you should avoid 
 Don't print headings.
 
 *-i*, *--input* _file_::
-Read data from _file_ (Which was created by other tools, e.g. sosreport).
+Read data from _file_ (Which was created by other tools, e.g. *sosreport*(1)).
 
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
@@ -55,7 +55,7 @@ include::man-common/help-version.adoc[]
 
 mailto:pizhenwei@bytedance.com[Zhenwei Pi],
 mailto:kerolasa@iki.fi[Sami Kerola],
-mailto:kzak@redhat.com[Karel Zak]
+mailto:kzak@redhat.com[Karel Zak],
 mailto:robin@jarry.cc[Robin Jarry]
 
 include::man-common/bugreports.adoc[]

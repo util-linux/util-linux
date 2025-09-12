@@ -478,4 +478,4 @@ extern int ul_optstr_next(char **optstr, char **name, size_t *namesz, char **val
 extern int ul_optstr_is_valid(const char *optstr);
 extern char *ul_optstr_get_value(const char *optstr, const char *key);
 
-#endif
+#endif /* UTIL_LINUX_STRUTILS */

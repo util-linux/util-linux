@@ -234,6 +234,9 @@ enables *libsmartcols* debug output.
 *LIBSMARTCOLS_DEBUG_PADDING*=on::
 use visible padding characters.
 
+*LSBLK_COLUMNS*=::
+specifies a comma-separated list of output columns to print. All columns listed by *--list-columns* can be used.
+
 == NOTES
 
 For partitions, some information (e.g., queue attributes) is inherited from the parent device.

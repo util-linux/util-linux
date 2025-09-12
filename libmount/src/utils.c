@@ -1416,7 +1416,7 @@ static int test_mountpoint(struct libmnt_test *ts __attribute__((unused)),
 	if (argc != 2)
 		return -1;
 
-	char *path = canonicalize_path(argv[1]),
+	char *path = ul_canonicalize_path(argv[1]),
 	     *mnt = path ? mnt_get_mountpoint(path) :  NULL;
 
 	printf("%s: %s\n", argv[1], mnt ? : "unknown");
@@ -1451,7 +1451,7 @@ static int test_chdir(struct libmnt_test *ts __attribute__((unused)),
 		return -1;
 
 	int rc;
-	char *path = canonicalize_path(argv[1]),
+	char *path = ul_canonicalize_path(argv[1]),
 	     *last = NULL;
 
 	if (!path)

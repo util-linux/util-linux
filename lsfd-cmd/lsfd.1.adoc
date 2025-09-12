@@ -436,8 +436,13 @@ ICMP echo request id used on the PING socket.
 POS <``number``>::
 File position.
 
-RAW.PROTOCOL <``number``>::
-Protocol number of the raw socket.
+RAW.PROTOCOL <``string``>::
+Protocol name of the raw socket (decoded).
++
+NOTE: The data type of this column was <``number``> from v2.39 to v2.41.
+
+RAW.PROTOCOL.RAW <``number``>::
+Protocol number of the raw socket (raw).
 
 RDEV <``string``>::
 Device ID (if special file).
@@ -611,8 +616,8 @@ descriptor, _L_ is used as the flag.
 +
 [-m]:::
 Multiplexed. If the file descriptor is targeted by a eventpoll file
-or classical system calls for multiplexing (select, pselect, poll, and
-ppoll), this bit flag is set. Note that if an invocation of the
+or classical system calls for multiplexing (*select*(), *pselect*(), *poll*(), and
+*ppoll*()), this bit flag is set. Note that if an invocation of the
 classical system calls is interrupted, *lsfd* may fail to mark _m_
 on the file descriptors monitored by the invocation.
 See *restart_syscall*(2).

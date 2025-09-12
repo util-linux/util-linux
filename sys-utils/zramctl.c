@@ -89,7 +89,7 @@ static const struct colinfo infos[] = {
 	[COL_ZEROPAGES] = { "ZERO-PAGES",   3, SCOLS_FL_RIGHT, N_("empty pages with no allocated memory") },
 	[COL_MEMTOTAL]  = { "TOTAL",        5, SCOLS_FL_RIGHT, N_("all memory including allocator fragmentation and metadata overhead") },
 	[COL_MEMLIMIT]  = { "MEM-LIMIT",    5, SCOLS_FL_RIGHT, N_("memory limit used to store compressed data") },
-	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have been consumed to store compressed data") },
+	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("peak memory usage to store compressed data") },
 	[COL_MIGRATED]  = { "MIGRATED",     5, SCOLS_FL_RIGHT, N_("number of objects migrated by compaction") },
 	[COL_COMPRATIO] = { "COMP-RATIO",   5, SCOLS_FL_RIGHT, N_("compression ratio: DATA/TOTAL") },
 	[COL_MOUNTPOINT]= { "MOUNTPOINT",0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
@@ -973,7 +973,8 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("%s: failed to reset"), zram->devname);
 
 		if (nstreams &&
-		    zram_set_u64parm(zram, "max_comp_streams", nstreams))
+		    zram_set_u64parm(zram, "max_comp_streams", nstreams) &&
+		    errno != ENOENT)
 			err(EXIT_FAILURE, _("%s: failed to set number of streams"), zram->devname);
 
 		if (algorithm &&

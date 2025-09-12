@@ -102,7 +102,7 @@ setterm:  libtinfo
 write:  
 test_byteswap:  
 test_md5:  
-test_pathnames:  
+test_pathnames:
 test_sysinfo:  
 col:  
 colcrt:  
@@ -113,4 +113,5 @@ line:
 more:  libtinfo 
 pg:  libncursesw libtinfo 
 rev:  
-ul:  libtinfo 
+ul:  libtinfo
+test_kill_pidfdino:

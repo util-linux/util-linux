@@ -401,7 +401,7 @@ static char *get_device_path(struct lsblk_device *dev)
 	assert(dev->name);
 
 	if (is_dm(dev->name))
-		return __canonicalize_dm_name(lsblk->sysroot, dev->name);
+		return ul_canonicalize_dm_name_prefixed(lsblk->sysroot, dev->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", dev->name);
 	sysfs_devname_sys_to_dev(path);
@@ -2362,7 +2362,7 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 
-static void __attribute__((__noreturn__)) list_colunms(void)
+static void __attribute__((__noreturn__)) list_columns(void)
 {
 	size_t i;
 	struct libscols_table *tb = xcolumn_list_table_new("lsblk-columns", stdout,
@@ -2697,7 +2697,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_colunms();        /* print end exit */
+		list_columns();        /* print end exit */
 
 	if (force_tree)
 		lsblk->flags |= LSBLK_TREE;
@@ -2714,6 +2714,7 @@ int main(int argc, char *argv[])
 		add_column(COL_TARGETS);
 	}
 
+	outarg = outarg == NULL ? getenv("LSBLK_COLUMNS") : outarg;
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;

@@ -12,7 +12,7 @@ _lscpu_module()
 			prefix="${cur%$realcur}"
 			OPTS_ALL="CPU CORE SOCKET NODE
 				BOOK DRAWER CACHE POLARIZATION ADDRESS
-				CONFIGURED ONLINE MAXMHZ MINMHZ"
+				CONFIGURED ONLINE MICROCODE MAXMHZ MINMHZ"
 			for WORD in $OPTS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OPTS="$WORD ${OPTS:-""}"
@@ -22,7 +22,7 @@ _lscpu_module()
 			COMPREPLY=( $(compgen -P "$prefix" -W "$OPTS" -S ',' -- $realcur) )
 			return 0
 			;;
-		'-h'|'--help'|'-V'|'--version')
+		'-H'|'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
@@ -41,6 +41,7 @@ _lscpu_module()
 				--physical
 				--output-all
 				--raw
+				--list-columns
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )

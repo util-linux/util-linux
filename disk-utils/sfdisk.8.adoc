@@ -245,6 +245,8 @@ Display help text and exit.
 *-v*, *--version*::
 Display version and exit.
 
+// Do not include::man-common/help-version.adoc[], as -V is not --version.
+
 == INPUT FORMATS
 
 *sfdisk* supports two input formats and generic header lines.

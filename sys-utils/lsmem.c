@@ -691,6 +691,8 @@ int main(int argc, char **argv)
 		add_column(columns, ncolumns++, COL_BLOCK);
 	}
 
+	if (!outarg)
+		outarg = getenv("LSMEM_COLUMNS");
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;

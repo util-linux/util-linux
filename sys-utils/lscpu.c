@@ -34,6 +34,7 @@
 #include "optutils.h"
 #include "c_strtod.h"
 #include "sysfs.h"
+#include "column-list-table.h"
 
 #include "lscpu.h"
 
@@ -99,6 +100,7 @@ enum {
 	COL_CPU_ADDRESS,
 	COL_CPU_CONFIGURED,
 	COL_CPU_ONLINE,
+	COL_CPU_MICROCODE,
 	COL_CPU_MHZ,
 	COL_CPU_SCALMHZ,
 	COL_CPU_MAXMHZ,
@@ -147,6 +149,7 @@ static struct lscpu_coldesc coldescs_cpu[] =
 	[COL_CPU_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CPU_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU"), 0, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
 	[COL_CPU_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_BOOLEAN_OPTIONAL },
+	[COL_CPU_MICROCODE]    = { "MICROCODE", N_("shows the loaded CPU microcode version"), 0, 0, SCOLS_JSON_STRING },
 	[COL_CPU_MHZ]          = { "MHZ", N_("shows the current MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
 	[COL_CPU_SCALMHZ]      = { "SCALMHZ%", N_("shows scaling percentage of the CPU frequency"), SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER },
 	[COL_CPU_MAXMHZ]       = { "MAXMHZ", N_("shows the maximum MHz of the CPU"), SCOLS_FL_RIGHT, 0, SCOLS_JSON_NUMBER },
@@ -432,6 +435,10 @@ static char *get_cell_data(
 		break;
 	case COL_CPU_ONLINE:
 		get_cell_boolean(cxt, !!cxt->online, is_cpu_online(cxt, cpu), buf, bufsz);
+		break;
+	case COL_CPU_MICROCODE:
+		if (cpu->type && cpu->type->microcode)
+			xstrncpy(buf, cpu->type->microcode, bufsz);
 		break;
 	case COL_CPU_MHZ:
 		if (cpu->mhz_cur_freq)
@@ -924,6 +931,8 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 
 	if (ct->stepping)
 		add_summary_s(tb, sec, _("Stepping:"), ct->stepping);
+	if (ct->microcode)
+		add_summary_s(tb, sec, _("Microcode version:"), ct->microcode);
 	if (ct->freqboost >= 0)
 		add_summary_s(tb, sec, _("Frequency boost:"), ct->freqboost ?
 				_("enabled") : _("disabled"));
@@ -1042,7 +1051,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		 */
 		set = cpuset_alloc(cxt->maxcpus, NULL, NULL);
 		if (!set)
-			err(EXIT_FAILURE, _("failed to callocate cpu set"));
+			err(EXIT_FAILURE, _("failed to allocate cpu set"));
 		CPU_ZERO_S(cxt->setsize, set);
 		for (i = 0; i < cxt->npossibles; i++) {
 			struct lscpu_cpu *cpu = cxt->cpus[i];
@@ -1067,7 +1076,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		print_summary_cputype(cxt, cxt->cputypes[i], tb, sec);
 	sec = NULL;
 
-	/* Section: vitualiazation */
+	/* Section: virtualization */
 	if (cxt->virt) {
 		sec = add_summary_e(tb, NULL, _("Virtualization features:"));
 		if (cxt->virt->cpuflag && !strcmp(cxt->virt->cpuflag, "svm"))
@@ -1180,7 +1189,6 @@ static void print_summary(struct lscpu_cxt *cxt)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
@@ -1204,17 +1212,34 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -H, --list-columns      list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
-	fputs(_("\nAvailable output columns for -e or -p:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
-		fprintf(out, " %13s  %s\n", coldescs_cpu[i].name, _(coldescs_cpu[i].help));
-
-	fputs(_("\nAvailable output columns for -C:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
-		fprintf(out, " %13s  %s\n", coldescs_cache[i].name, _(coldescs_cache[i].help));
-
 	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
+
+	exit(EXIT_SUCCESS);
+}
+
+static void __attribute__((__noreturn__)) list_columns(struct lscpu_cxt *cxt)
+{
+	struct libscols_table *col_tb = xcolumn_list_table_new("lscpu-columns", stdout, cxt->raw, cxt->json);
+	struct libscols_table *col_caches_tb = xcolumn_list_table_new("lscpu-caches-columns", stdout, cxt->raw, cxt->json);
+
+	fputs(_("Available output columns for -e or -p:\n"), stdout);
+	for (size_t i = 0; i < ARRAY_SIZE(coldescs_cpu); i++)
+		xcolumn_list_table_append_line(col_tb, coldescs_cpu[i].name,
+					coldescs_cpu[i].json_type, NULL,
+					_(coldescs_cpu[i].help));
+	scols_print_table(col_tb);
+	scols_unref_table(col_tb);
+
+	fputs(_("\nAvailable output columns for -C:\n"), stdout);
+	for (size_t i = 0; i < ARRAY_SIZE(coldescs_cache); i++)
+		xcolumn_list_table_append_line(col_caches_tb, coldescs_cache[i].name,
+						coldescs_cache[i].json_type, NULL,
+						_(coldescs_cache[i].help));
+	scols_print_table(col_caches_tb);
+	scols_unref_table(col_caches_tb);
 
 	exit(EXIT_SUCCESS);
 }
@@ -1222,7 +1247,7 @@ static void __attribute__((__noreturn__)) usage(void)
 int main(int argc, char *argv[])
 {
 	struct lscpu_cxt *cxt;
-	int c, all = 0;
+	int c, all = 0, collist = 0;
 	int columns[ARRAY_SIZE(coldescs_cpu)];
 	int cpu_modifier_specified = 0;
 	char *outarg = NULL;
@@ -1248,6 +1273,7 @@ int main(int argc, char *argv[])
 		{ "version",	no_argument,	   NULL, 'V' },
 		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
 		{ "hierarchic", optional_argument, NULL, OPT_HIERARCHIC },
+		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL,		0, NULL, 0 }
 	};
 
@@ -1265,7 +1291,7 @@ int main(int argc, char *argv[])
 
 	cxt = lscpu_new_context();
 
-	while ((c = getopt_long(argc, argv, "aBbC::ce::hJp::rs:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "aBbC::ce::HhJp::rs:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1334,6 +1360,9 @@ int main(int argc, char *argv[])
 			} else
 				hierarchic = 1;
 			break;
+		case 'H':
+			collist = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1342,6 +1371,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_columns(cxt);
 
 	if (all && ncolumns == 0) {
 		size_t maxsz = cxt->mode == LSCPU_OUTPUT_CACHES ?
@@ -1392,6 +1424,11 @@ int main(int argc, char *argv[])
 
 	if (hierarchic == -1)
 		hierarchic = isatty(STDOUT_FILENO);	/* default */
+
+	if (!outarg && (cxt->mode == LSCPU_OUTPUT_CACHES))
+		outarg = getenv("LSCPU_CACHES_COLUMNS");
+	if (!outarg && ((cxt->mode == LSCPU_OUTPUT_PARSABLE) || (cxt->mode == LSCPU_OUTPUT_READABLE)))
+		outarg = getenv("LSCPU_COLUMNS");
 
 	switch(cxt->mode) {
 	case LSCPU_OUTPUT_SUMMARY:

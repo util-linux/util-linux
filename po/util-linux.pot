@@ -23086,7 +23086,7 @@ msgid "memory limit used to store compressed data"
 msgstr ""
 
 #: sys-utils/zramctl.c:85
-msgid "memory zram have been consumed to store compressed data"
+msgid "peak memory usage to store compressed data"
 msgstr ""
 
 #: sys-utils/zramctl.c:86

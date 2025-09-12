@@ -76,6 +76,7 @@ int parse_dmi_table(uint16_t len, uint16_t num,
 				di->processor_manufacturer = dmi_string(&h, data[0x7]);
 				di->processor_version = dmi_string(&h, data[0x10]);
 				di->current_speed = *((uint16_t *)(&data[0x16]));
+				di->max_speed = *((uint16_t *)(&data[0x14]));
 				di->part_num = dmi_string(&h, data[0x22]);
 
 				if (data[0x6] == 0xfe)
@@ -122,10 +123,22 @@ int dmi_decode_cputype(struct lscpu_cputype *ct)
 	if (di.processor_manufacturer)
 		ct->bios_vendor = xstrdup(di.processor_manufacturer);
 
-	snprintf(buf, sizeof(buf), "%s %s CPU @ %d.%dGHz",
-			(di.processor_version ?: ""), (di.part_num ?: ""),
-			di.current_speed/1000, (di.current_speed % 1000) / 100);
-	ct->bios_modelname = xstrdup(buf);
+	/* The CPU version string may include the maximum speed (e.g., on Intel); in
+	 * this case, use the version string as the complete model name. */
+	if (di.processor_version && strstr(di.processor_version, " CPU @ "))
+		ct->bios_modelname = xstrdup(di.processor_version);
+	else {
+		/* DMI may provide incorrect data (max_speed < current_speed) */
+		uint16_t speed = max(di.current_speed, di.max_speed);
+
+		snprintf(buf, sizeof(buf), "%s %s CPU @ %d.%dGHz",
+			(di.processor_version ?: ""),
+			(di.part_num ?: ""),
+			speed/1000,
+			(speed % 1000) / 100);
+
+		ct->bios_modelname = xstrdup(buf);
+	}
 
 	/* Get CPU family */
 	memset(buf, 0, sizeof(buf));
