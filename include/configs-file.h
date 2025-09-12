@@ -7,8 +7,8 @@
  * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
  */
 
-#ifndef UTIL_LINUX_CONFIG_FILES_H
-#define UTIL_LINUX_CONFIG_FILES_H
+#ifndef UTIL_LINUX_CONFIGS_FILE_H
+#define UTIL_LINUX_CONFIGS_FILE_H
 
 #include "list.h"
 

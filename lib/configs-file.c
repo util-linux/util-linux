@@ -1,5 +1,5 @@
 /*
- * config_files.c instantiates functions defined and described in config_files.h
+ * configs_file.c instantiates functions defined and described in configs_file.h
  */
 #include <err.h>
 #include <errno.h>

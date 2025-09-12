@@ -121,7 +121,7 @@
 #ifdef	SYSV_STYLE
 #  define ISSUE_SUPPORT
 #  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-#    include "config-files.h"
+#    include "configs-file.h"
 #    include <dirent.h>
 #    define ISSUEDIR_SUPPORT
 #    define ISSUEDIR_EXT	"issue"
