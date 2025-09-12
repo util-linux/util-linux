@@ -12,7 +12,7 @@
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 #include <dirent.h>
 #endif
-#include "config-files.h"
+#include "configs-file.h"
 #include "list.h"
 #include "fileutils.h"
 
