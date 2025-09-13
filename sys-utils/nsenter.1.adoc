@@ -44,6 +44,8 @@ The process will have a virtualized view of _/proc/self/cgroup_, and new cgroup 
 *time namespace*::
 The process can have a distinct view of *CLOCK_MONOTONIC* and/or *CLOCK_BOOTTIME* which can be changed using _/proc/self/timens_offsets_. For further details, see *time_namespaces*(7).
 
+If you want to create a new namespace, use *unshare*(1). Once created, you can run a program in it using *nsenter*.
+
 == OPTIONS
 
 //TRANSLATORS: Keep {asterisk} untranslated.
@@ -162,6 +164,8 @@ mailto:kzak@redhat.com[Karel Zak]
 
 == SEE ALSO
 
+*unshare*(1),
+*lsns*(8),
 *clone*(2),
 *setns*(2),
 *namespaces*(7)
