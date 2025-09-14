@@ -268,10 +268,16 @@ endif
 if BUILD_FINCORE
 usrbin_exec_PROGRAMS += fincore
 MANPAGES += misc-utils/fincore.1
+MANLINKS += misc-utils/mu.1
 dist_noinst_DATA += misc-utils/fincore.1.adoc
 fincore_SOURCES = misc-utils/fincore.c
 fincore_LDADD = $(LDADD) libsmartcols.la libcommon.la
 fincore_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+
+install-exec-hook-fincore:
+	cd $(DESTDIR)$(usrbin_execdir) && ln -sf fincore mu
+
+INSTALL_EXEC_HOOKS += install-exec-hook-fincore
 endif
 
 if BUILD_HARDLINK
