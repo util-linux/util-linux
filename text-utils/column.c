@@ -92,6 +92,7 @@ struct column_control {
 
 	wchar_t *input_separator;
 	const char *output_separator;
+	const char *wrap_separator;
 
 	wchar_t	**ents;		/* input entries */
 	size_t	nents;		/* number of entries */
@@ -285,6 +286,35 @@ static char *wcs_to_mbs(const wchar_t *s)
 #else
 	return xstrdup(s);
 #endif
+}
+
+static char *apply_wrap_separator(const char *data, const char *wrap_sep, size_t *result_size)
+{
+	char *result, *p;
+	const char *q;
+	size_t sep_len, data_len;
+
+	if (!data || !wrap_sep || !result_size)
+		return NULL;
+
+	sep_len = strlen(wrap_sep);
+	data_len = strlen(data);
+
+	result = xmalloc(data_len + 1);
+	p = result;
+	q = data;
+
+	while (*q) {
+		if (strncmp(q, wrap_sep, sep_len) == 0) {
+			*p++ = '\0';
+			q += sep_len;
+		} else
+			*p++ = *q++;
+	}
+	*p = '\0';
+
+	*result_size = p - result + 1;
+	return result;
 }
 
 static wchar_t *local_wcstok(struct column_control const *const ctl, wchar_t *p,
@@ -647,6 +677,43 @@ static void modify_table(struct column_control *ctl)
 		apply_columnflag_from_list(ctl, ctl->tab_colwrap,
 				SCOLS_FL_WRAP , N_("failed to parse --table-wrap list"));
 
+	if (ctl->wrap_separator && ctl->tab_colwrap) {
+		struct libscols_iter *itr_col, *itr_line;
+		struct libscols_column *cl;
+		struct libscols_line *ln;
+
+		itr_col = scols_new_iter(SCOLS_ITER_FORWARD);
+		itr_line = scols_new_iter(SCOLS_ITER_FORWARD);
+		if (!itr_col || !itr_line)
+			err_oom();
+
+		/* Apply wrap separator to existing data in wrapped columns */
+		while (scols_table_next_column(ctl->tab, itr_col, &cl) == 0) {
+			 if (!scols_column_is_wrap(cl))
+				 continue;
+
+			while (scols_table_next_line(ctl->tab, itr_line, &ln) == 0) {
+				struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
+				const char *data = scols_cell_get_data(ce);
+				char *wrapped;
+				size_t sz;
+
+				if  (!data)
+					continue;
+				wrapped = apply_wrap_separator(data, ctl->wrap_separator, &sz);
+				if (wrapped)
+					scols_cell_refer_memory(ce, wrapped, sz);
+			}
+			scols_reset_iter(itr_line, SCOLS_ITER_FORWARD);
+
+			/* Set wrapzero function for wrapped columns */
+			scols_column_set_wrapfunc(cl, NULL, scols_wrapzero_nextchunk, NULL);
+		}
+
+		scols_free_iter(itr_col);
+		scols_free_iter(itr_line);
+	}
+
 	if (!ctl->tab_colnoextrem) {
 		struct libscols_column *cl = get_last_visible_column(ctl, 0);
 		if (cl)
@@ -940,6 +1007,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
+	fputs(_("     --wrap-separator <string>    wrap text at this separator (implies --table-wrap)\n"), out);
 	fputs(_(" -L, --keep-empty-lines           don't ignore empty lines\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
@@ -980,6 +1048,7 @@ int main(int argc, char **argv)
 	enum {
 		OPT_COLOR	= CHAR_MAX + 1,
 		OPT_COLORSCHEME,
+		OPT_WRAP_SEPARATOR,
 	};
 
 	static const struct option longopts[] =
@@ -1014,6 +1083,7 @@ int main(int argc, char **argv)
 		{ "tree-parent",         required_argument, NULL, 'p' },
 		{ "use-spaces",          required_argument, NULL, 'S' },
 		{ "version",             no_argument,       NULL, 'V' },
+		{ "wrap-separator",      required_argument, NULL, OPT_WRAP_SEPARATOR },
 		{ NULL,	0, NULL, 0 },
 	};
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
@@ -1129,6 +1199,9 @@ int main(int argc, char **argv)
 			break;
 		case OPT_COLORSCHEME:
 			ctl.tab_colorscheme = optarg;
+			break;
+		case OPT_WRAP_SEPARATOR:
+			ctl.wrap_separator = optarg;
 			break;
 
 		case 'h':

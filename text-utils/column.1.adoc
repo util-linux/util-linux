@@ -176,7 +176,10 @@ This option is active by default for the last visible column.
 Print header line for each page.
 
 *-W, --table-wrap* _columns_::
-Specify the columns where multi-line cells can be used for long text.
+Specify the columns where multi-line cells can be used for long text. By default, text is wrapped according to column width. Use *--wrap-separator* to wrap at custom separator characters instead.
+
+*--wrap-separator* _string_::
+Use _string_ as a separator for wrapping text within columns that have wrapping enabled. The separator is replaced with newlines when the text is displayed. This option requires table mode and columns with wrapping enabled (see *--table-wrap*). For example, use `|` to allow wrapping at pipe characters within column data.
 
 *-H, --table-hide* _columns_::
 Don't print the specified columns. The special placeholder '*-*' may be used to hide all unnamed columns (see *--table-columns*).
@@ -292,6 +295,19 @@ echo -e '1 0 A\n2 1 AA\n3 1 AB\n4 2 AAA\n5 2 AAB' | column --tree-id 1 --tree-pa
 4  2  | |-AAA
 5  2  | `-AAB
 3  1  `-AB
+....
+
+Print table with custom wrap separator:
+
+....
+echo -e 'Name:Description\nJohn:A|software|developer\nJane:A|data|scientist' | column --table --separator ':' --table-wrap 2 --wrap-separator '|'
+Name  Description
+John  A
+      software
+      developer
+Jane  A
+      data
+      scientist
 ....
 
 == SEE ALSO
