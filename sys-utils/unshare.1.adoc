@@ -286,6 +286,8 @@ mailto:kzak@redhat.com[Karel Zak]
 
 *newuidmap*(1),
 *newgidmap*(1),
+*nsenter*(1),
+*lsns*(8),
 *clone*(2),
 *unshare*(2),
 *namespaces*(7),
