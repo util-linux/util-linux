@@ -651,7 +651,7 @@ static char **list_to_types(const char *list, int *flag)
 		p += 2;
 	}
 	if (!p || !*p) {
-		warnx(_("error: -u <list> argument is empty"));
+		warnx(_("invalid argument: %s"), list);
 		goto err;
 	}
 	for (i = 1; p && (p = strchr(p, ',')); i++, p++);
