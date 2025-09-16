@@ -50,9 +50,24 @@ if ! touch $FILE; then
     ts_skip "failed to touch a file on a btrfs filesystem: $FILE"
 fi
 
-# The major number may be 0. So we can assume the device number is the
-# same as that of minor number.
-EXPECTED="btrfs:$(stat -c %d $FILE)"
+#
+# We cannot use %d of the stat command here.
+#
+# The major number may be 0. But we cannot assume the device number is
+# the same as that of the minor number. A device number is composed of a
+# major number and a minor number in a more complicated way on Linux.
+# See /usr/include/bits/sysmacros.h.
+#
+# Fortunately, stat command provides %Ld format specifier for
+# printing the minor number of a given file.
+#
+MIN=$(stat -c %Ld $FILE)
+# %Ld is available since version 9.0 of coreutils.
+# We cannot expect it to be available in any environment.
+if ! [[ "$MIN" =~ [0-9]+ ]]; then
+    ts_skip "stat commands doesn't support %Ld format specifier"
+fi
+EXPECTED="btrfs:$MIN"
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD file=$FILE; }
