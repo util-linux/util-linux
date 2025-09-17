@@ -46,7 +46,7 @@ static int probe_ioctl_tp(blkid_probe pr,
 
 	if (ioctl(pr->fd, BLKGETDISKSEQ, &u64) == -1)
 		return 1;
-	if (blkid_topology_set_physical_sector_size(pr, u64))
+	if (blkid_topology_set_diskseq(pr, u64))
 		return -1;
 
 	return 0;
