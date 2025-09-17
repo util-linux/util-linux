@@ -1985,7 +1985,7 @@ static void eval_issue_file(struct issue *ie,
 			     _PATH_ISSUE_FILENAME,
 			     ISSUEDIR_EXT);
 
-	while (ul_configs_next_filename(&file_list, &current, &name)) {
+	while (ul_configs_next_filename(&file_list, &current, &name) == 0) {
 		issuefile_read(ie, name, op, tp);
 	}
 

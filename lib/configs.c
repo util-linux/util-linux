@@ -311,14 +311,14 @@ void ul_configs_free_list(struct list_head *file_list)
 	list_free(file_list, struct file_element,  file_list, free_list_entry);
 }
 
-bool ul_configs_next_filename(struct list_head *file_list,
-			      struct list_head **current_entry,
-			      char **name)
+int ul_configs_next_filename(struct list_head *file_list,
+			     struct list_head **current_entry,
+			     char **name)
 {
 	struct file_element *element = NULL;
 
 	if (*current_entry == file_list)
-		return false;
+		return 1;
 
 	if (*current_entry == NULL)
 		*current_entry = file_list;
@@ -326,5 +326,5 @@ bool ul_configs_next_filename(struct list_head *file_list,
 	*name = element->filename;
 	*current_entry = (*current_entry)->next;
 
-	return true;
+	return 0;
 }

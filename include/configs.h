@@ -64,7 +64,7 @@ void ul_configs_free_list(struct list_head *file_list);
  * @current_entry: Current list entry. Has to be initialized with NULL for the first call.
  * @name: Returned file name for each call.
  *
- * Returns true/false. Call has been successful.
+ * Returns 0 on success, <0 on error and 1 if the end of the list has been reached.
  *
  * Example:
  * int count = 0;
@@ -79,14 +79,14 @@ void ul_configs_free_list(struct list_head *file_list);
  *                              "example",
  *                              "conf");
  *
- * while (ul_configs_next_filename(&file_list, &current, &name))
+ * while (ul_configs_next_filename(&file_list, &current, &name) == 0)
  *       printf("filename: %s\n", name);
  *
  * ul_configs_free_list(&file_list);
  *
  */
-bool ul_configs_next_filename(struct list_head *file_list,
-			      struct list_head **current_entry,
-			      char **name);
+int ul_configs_next_filename(struct list_head *file_list,
+			     struct list_head **current_entry,
+			     char **name);
 
 #endif
