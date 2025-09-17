@@ -107,16 +107,19 @@ enum {
 	COL_UUID,
 	COL_LABEL
 };
+
 static const struct colinfo infos[] = {
-	[COL_PATH]     = { "NAME",	0.20, 0, N_("device file or partition path") },
-	[COL_TYPE]     = { "TYPE",	0.20, SCOLS_FL_TRUNC, N_("type of the device")},
-	[COL_SIZE]     = { "SIZE",	0.20, SCOLS_FL_RIGHT, N_("size of the swap area")},
-	[COL_USED]     = { "USED",	0.20, SCOLS_FL_RIGHT, N_("bytes in use")},
-	[COL_PRIO]     = { "PRIO",	0.20, SCOLS_FL_RIGHT, N_("swap priority")},
-	[COL_UUID]     = { "UUID",	0.20, 0, N_("swap uuid")},
-	[COL_LABEL]    = { "LABEL",	0.20, 0, N_("swap label")},
+	[COL_PATH]     = { N_("NAME"),	0.20, 0, N_("device file or partition path") },
+	[COL_TYPE]     = { N_("TYPE"),	0.20, SCOLS_FL_TRUNC, N_("type of the device")},
+	[COL_SIZE]     = { N_("SIZE"),	0.20, SCOLS_FL_RIGHT, N_("size of the swap area")},
+	[COL_USED]     = { N_("USED"),	0.20, SCOLS_FL_RIGHT, N_("bytes in use")},
+	[COL_PRIO]     = { N_("PRIO"),	0.20, SCOLS_FL_RIGHT, N_("swap priority")},
+	[COL_UUID]     = { N_("UUID"),	0.20, 0, N_("swap uuid")},
+	[COL_LABEL]    = { N_("LABEL"),	0.20, 0, N_("swap label")},
 };
 
+static char *translated_cols[ARRAY_SIZE(infos)];
+static size_t translated_ncols;
 
 /* swap area properties */
 struct swap_prop {
@@ -159,7 +162,14 @@ static int column_name_to_id(const char *name, size_t namesz)
 	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
-		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
+		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz)) {
+			return i;
+		}
+		if (translated_ncols <= i) {
+			translated_cols[translated_ncols] = (char*) _(infos[i].name);
+			translated_ncols++;
+		}
+		if (translated_cols[i] && *translated_cols[i] && strncasecmp(name, translated_cols[i], namesz) == 0)
 			return i;
 	}
 	warnx(_("unknown column: %s"), name);
@@ -316,7 +326,7 @@ static int show_table(struct swapon_ctl *ctl)
 	for (i = 0; i < ctl->ncolumns; i++) {
 		const struct colinfo *col = get_column_info(ctl, i);
 
-		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
+		if (!scols_table_new_column(table, _(col->name), col->whint, col->flags))
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
@@ -834,6 +844,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --summary            display summary about used swap devices (DEPRECATED)\n"), out);
 	fputs(_(" -T, --fstab <path>       alternative file to /etc/fstab\n"), out);
 	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
+	fputs(_("     --output-all         output all available columns\n"), out);
 	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
 	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
 	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
@@ -859,7 +870,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_COLUMNS, out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %-5s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(out, " %-5s  %s\n", _(infos[i].name), _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
 	exit(EXIT_SUCCESS);
