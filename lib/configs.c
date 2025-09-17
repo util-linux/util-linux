@@ -165,6 +165,7 @@ static int read_dir(struct list_head *file_list,
 			break;
 		}
 		entry = new_list_entry(filename);
+		free(filename);
 		if (entry == NULL) {
 			counter = -ENOMEM;
 			break;
@@ -229,6 +230,7 @@ int ul_configs_file_list(struct list_head *file_list,
 		filename = main_configs(usr_subdir, project, config_name, config_suffix);
 	if (filename != NULL) {
 		add_element = new_list_entry(filename);
+		free(filename);
 		if (add_element == NULL)
 			return -ENOMEM;
 		list_add_tail(&add_element->file_list, file_list);
