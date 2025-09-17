@@ -2131,20 +2131,30 @@ static void next_speed(struct options *op, struct termios *tp)
 	tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
 
-/* Get user name, establish parity, speed, erase, kill & eol. */
-static char *get_logname(struct issue *ie, struct options *op, struct termios *tp, struct chardata *cp)
+/* Erase visual characters for one stored character */
+static void erase_char(int visual_count, struct chardata *cp)
 {
-	static char logname[BUFSIZ];
-	char *bp;
-	char c;			/* input character, full eight bits */
-	char ascval;		/* low 7 bits of input character */
-	int eightbit;
 	static const char *const erase[] = {	/* backspace-space-backspace */
 		"\010\040\010",		/* space parity */
 		"\010\040\010",		/* odd parity */
 		"\210\240\210",		/* even parity */
 		"\210\240\210",		/* no parity */
 	};
+	int i;
+	for (i = 0; i < visual_count; i++)
+		write_all(1, erase[cp->parity], 3);
+}
+
+/* Get user name, establish parity, speed, erase, kill & eol. */
+static char *get_logname(struct issue *ie, struct options *op, struct termios *tp, struct chardata *cp)
+{
+	static char logname[BUFSIZ];
+	static int visual_widths[BUFSIZ];	/* visual char count for each stored byte */
+	char *bp;
+	int *visual_bp;
+	char c;			/* input character, full eight bits */
+	char ascval;		/* low 7 bits of input character */
+	int eightbit;
 
 	/* Initialize kill, erase, parity etc. (also after switching speeds). */
 	INIT_CHARDATA(cp);
@@ -2158,7 +2168,11 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 	tcflush(STDIN_FILENO, TCIFLUSH);
 
 	eightbit = (op->flags & (F_EIGHTBITS|F_UTF8));
+
+	/* Initialize buffer pointers. visual_widths tracks how many visual
+	 * characters each stored byte represents (e.g. ESC = 2 for "^[", tab = 1-8 spaces) */
 	bp = logname;
+	visual_bp = visual_widths;
 	*bp = '\0';
 
 	eval_issue_file(ie, op, tp);
@@ -2182,6 +2196,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 			    && (op->flags & F_NOCLEAR) == 0)
 				termio_clear(STDOUT_FILENO);
 			bp = logname;
+			visual_bp = visual_widths;
 			*bp = '\0';
 			continue;
 		}
@@ -2259,8 +2274,9 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				cp->erase = ascval; /* set erase character */
 				if (bp > logname) {
 					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
+						erase_char(*(visual_bp - 1), cp);
 					bp--;
+					visual_bp--;
 				}
 				break;
 			case CTL('U'):
@@ -2272,8 +2288,9 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 					break;
 				while (bp > logname) {
 					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
+						erase_char(*(visual_bp - 1), cp);
 					bp--;
+					visual_bp--;
 				}
 				break;
 			case CTL('D'):
@@ -2283,15 +2300,29 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 					log_err(_("%s: input overrun"), op->tty);
 				if ((tp->c_lflag & ECHO) == 0) {
 					/* Visualize escape sequence instead of its execution */
-					if (ascval == CTL('['))
+					if (ascval == CTL('[')) {
 						/* Ideally it should be "\xe2\x90\x9b"
 						 * if (op->flags & (F_UTF8)),
 						 * but only some fonts contain it */
 						write_all(1, "^[", 2);
-					else
+						*visual_bp = 2;		/* ESC shows as ^[ (2 chars) */
+					} else if (ascval == '\t') {
+						/* Tab expands to spaces */
+						int pos = bp - logname;
+						int spaces = 8 - (pos % 8);
+						int i;
+						for (i = 0; i < spaces; i++)
+							write_all(1, " ", 1);
+						*visual_bp = spaces;
+					} else {
 						write_all(1, &c, 1);	/* echo the character */
+						*visual_bp = 1;		/* normal char shows as 1 */
+					}
+				} else {
+					*visual_bp = 1;		/* when echo is on, assume 1 char */
 				}
 				*bp++ = ascval;			/* and store it */
+				visual_bp++;
 				break;
 			}
 			/* Everything was erased. */
