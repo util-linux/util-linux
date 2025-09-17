@@ -152,4 +152,24 @@ echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
 	--table-right 2-3 --output-width=80 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "wrap-separator-basic"
+echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 3 --wrap-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "wrap-separator-all-columns"
+echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 0 --wrap-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "wrap-separator-without-wrap"
+echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --wrap-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "wrap-separator-multichar"
+echo -e 'Name:Description\nJohn:A||software||developer\nJane:A||data||scientist' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '||' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "wrap-separator-multiple-separators"
+echo -e 'A:B:C\naa:b1|b2|b3:cc\nxx:y1|y2:zz' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_finalize
