@@ -185,9 +185,10 @@ static int read_dir(struct list_head *file_list,
 
 #endif
 
-static void free_list_entry(struct file_element *element)
+static void free_element(struct file_element *element)
 {
 	free(element->filename);
+	free(element);
 }
 
 
@@ -309,7 +310,7 @@ finish:
 
 void ul_configs_free_list(struct list_head *file_list)
 {
-	list_free(file_list, struct file_element,  file_list, free_list_entry);
+	list_free(file_list, struct file_element,  file_list, free_element);
 }
 
 bool ul_configs_next_filename(struct list_head *file_list,
