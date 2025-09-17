@@ -153,7 +153,7 @@ static int read_dir(struct list_head *file_list,
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
 		size_t namesz = strlen(d->d_name);
-		if (strlen(config_suffix)>0 &&
+		if (config_suffix && strlen(config_suffix) > 0 &&
 		    (!namesz || namesz < strlen(config_suffix) + 1 ||
 		     strcmp(d->d_name + (namesz - strlen(config_suffix)), config_suffix) != 0)) {
 			/* filename does not have requested suffix */
@@ -185,7 +185,7 @@ static int read_dir(struct list_head *file_list,
 
 #endif
 
-static void free_element(struct file_element *element)
+static void free_list_entry(struct file_element *element)
 {
 	free(element->filename);
 }
@@ -309,7 +309,7 @@ finish:
 
 void ul_configs_free_list(struct list_head *file_list)
 {
-	list_free(file_list, struct file_element,  file_list, free_element);
+	list_free(file_list, struct file_element,  file_list, free_list_entry);
 }
 
 bool ul_configs_next_filename(struct list_head *file_list,
