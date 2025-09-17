@@ -108,7 +108,7 @@ static int read_dir(struct list_head *file_list,
 	char *dirname = NULL;
 	char *filename = NULL;
 	struct stat st;
-	int dd, nfiles, i;
+	int dd = 0, nfiles = 0, i;
 	int counter = 0;
 	struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
@@ -136,19 +136,15 @@ static int read_dir(struct list_head *file_list,
 	}
 
 	if (dirname==NULL)
-		return 0;
+		goto finish;
 
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
-	if (dd < 0) {
-		free(dirname);
-		return 0;
-	}
+	if (dd < 0)
+		goto finish;
 
 	nfiles = scandirat(dd, ".", &namelist, filter, alphasort);
-	if (nfiles <= 0) {
-		free(dirname);
-		return 0;
-	}
+	if (nfiles <= 0)
+		goto finish;
 
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
@@ -175,11 +171,13 @@ static int read_dir(struct list_head *file_list,
 		counter++;
 	}
 
+finish:
 	for (i = 0; i < nfiles; i++)
 		free(namelist[i]);
 	free(namelist);
 	free(dirname);
-	close(dd);
+	if (dd > 0)
+		close(dd);
 	return counter;
 }
 
