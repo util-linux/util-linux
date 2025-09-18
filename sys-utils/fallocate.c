@@ -17,9 +17,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://gnu.org/licenses/>.
  */
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -396,16 +395,16 @@ int main(int argc, char **argv)
 		if (length == -2LL)
 			length = 0;
 		if (length < 0)
-			errx(EXIT_FAILURE, _("invalid length value specified"));
+			errx(EXIT_FAILURE, _("invalid length"));
 	} else {
 		/* it's safer to require the range specification (--length --offset) */
 		if (length == -2LL)
 			errx(EXIT_FAILURE, _("no length argument specified"));
 		if (length <= 0)
-			errx(EXIT_FAILURE, _("invalid length value specified"));
+			errx(EXIT_FAILURE, _("invalid length"));
 	}
 	if (offset < 0)
-		errx(EXIT_FAILURE, _("invalid offset value specified"));
+		errx(EXIT_FAILURE, _("invalid offset"));
 
 	/* O_CREAT makes sense only for the default fallocate(2) behavior
 	 * when mode is no specified and new space is allocated */
