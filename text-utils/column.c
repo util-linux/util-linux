@@ -1007,7 +1007,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
-	fputs(_("     --wrap-separator <string>    wrap text at this separator (implies --table-wrap)\n"), out);
+	fputs(_("     --wrap-separator <string>    wrap at this separator (requires --table-wrap)\n"), out);
 	fputs(_(" -L, --keep-empty-lines           don't ignore empty lines\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
