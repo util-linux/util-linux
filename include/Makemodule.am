@@ -83,4 +83,5 @@ dist_noinst_HEADERS += \
 	include/ttyutils.h \
 	include/widechar.h \
 	include/xalloc.h \
-	include/xxhash.h
+	include/xxhash.h \
+	include/configs.h
