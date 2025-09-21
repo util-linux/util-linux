@@ -107,11 +107,13 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 		goto err;
 	if (scols_cell_copy_content(&ret->header, &cl->header))
 		goto err;
+	if (scols_column_refer_annotation(ret, cl->annotation))
+		goto err;
 
-	ret->width	= cl->width;
-	ret->width_hint	= cl->width_hint;
-	ret->flags	= cl->flags;
-	ret->is_groups  = cl->is_groups;
+	ret->width		= cl->width;
+	ret->width_hint		= cl->width_hint;
+	ret->flags		= cl->flags;
+	ret->is_groups		= cl->is_groups;
 
 	memcpy(&ret->wstat, &cl->wstat, sizeof(cl->wstat));
 
@@ -317,6 +319,37 @@ int scols_column_set_name(struct libscols_column *cl, const char *name)
 const char *scols_column_get_name(struct libscols_column *cl)
 {
 	return scols_cell_get_data(&cl->header);
+}
+
+/**
+ * scols_column_refer_annotation:
+ * @cl: a pointer to a struct libscols_column instance
+ * @annotation: column annotation
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.42
+ */
+int scols_column_refer_annotation(struct libscols_column *cl, const char *annotation)
+{
+	if (!annotation)
+		return -1;
+
+	cl->annotation = (char *) annotation;
+	return 0;
+}
+
+/**
+ * scols_column_get_annotation:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: A pointer to a column annotation, which is stored in column annotation
+ *
+ * Since: 2.42
+ */
+const char *scols_column_get_annotation(struct libscols_column *cl)
+{
+	return cl->annotation;
 }
 
 /**
