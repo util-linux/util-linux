@@ -92,10 +92,10 @@ enum {
 
 /* column names */
 struct colinfo {
-        const char * const	name; /* header */
-        double			whint; /* width hint (N < 1 is in percent of termwidth) */
+	const char * const	name; /* header */
+	double			whint; /* width hint (N < 1 is in percent of termwidth) */
 	int			flags; /* SCOLS_FL_* */
-        const char		*help;
+	const char		*help;
 };
 
 enum {
@@ -140,14 +140,14 @@ struct swapon_ctl {
 
 	struct swap_prop props;		/* global settings for all devices */
 
-	bool	all,			/* turn on all swap devices */
-		bytes,			/* display --show in bytes */
-		fix_page_size,		/* reinitialize page size */
-		no_heading,		/* toggle --show headers */
-		raw,			/* toggle --show alignment */
-		show,			/* display --show information */
-		summarize,		/* display summary of swap use */
-		verbose;		/* be chatty */
+	bool	all,		/* turn on all swap devices */
+		bytes,		/* display --show in bytes */
+		fix_page_size,	/* reinitialize page size */
+		no_heading,	/* toggle --show headers */
+		raw,		/* toggle --show alignment */
+		show,		/* display --show information */
+		summarize,	/* display summary of swap use */
+		verbose;	/* be chatty */
 };
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -296,6 +296,7 @@ static int show_table(struct swapon_ctl *ctl)
 	struct libmnt_fs *fs;
 	int i;
 	struct libscols_table *table = NULL;
+	struct libscols_column *cl = NULL;
 
 	if (!st)
 		return -1;
@@ -316,8 +317,10 @@ static int show_table(struct swapon_ctl *ctl)
 	for (i = 0; i < ctl->ncolumns; i++) {
 		const struct colinfo *col = get_column_info(ctl, i);
 
-		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
+		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
+		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
+		scols_column_refer_annotation(cl, col->help);
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
@@ -880,22 +883,22 @@ int main(int argc, char *argv[])
 	};
 
 	static const struct option long_opts[] = {
-		{ "priority",   required_argument, NULL, 'p'               },
-		{ "discard",    optional_argument, NULL, 'd'               },
-		{ "ifexists",   no_argument,       NULL, 'e'               },
-		{ "options",    optional_argument, NULL, 'o'               },
-		{ "summary",    no_argument,       NULL, 's'               },
-		{ "fixpgsz",    no_argument,       NULL, 'f'               },
-		{ "all",        no_argument,       NULL, 'a'               },
-		{ "help",       no_argument,       NULL, 'h'               },
-		{ "verbose",    no_argument,       NULL, 'v'               },
-		{ "version",    no_argument,       NULL, 'V'               },
-		{ "show",       optional_argument, NULL, SHOW_OPTION       },
-		{ "output-all", no_argument,       NULL, OPT_LIST_TYPES    },
-		{ "noheadings", no_argument,       NULL, NOHEADINGS_OPTION },
-		{ "raw",        no_argument,       NULL, RAW_OPTION        },
-		{ "bytes",      no_argument,       NULL, BYTES_OPTION      },
-		{ "fstab",      required_argument, NULL, 'T'               },
+		{ "priority",     required_argument, NULL, 'p'                 },
+		{ "discard",      optional_argument, NULL, 'd'                 },
+		{ "ifexists",     no_argument,       NULL, 'e'                 },
+		{ "options",      optional_argument, NULL, 'o'                 },
+		{ "summary",      no_argument,       NULL, 's'                 },
+		{ "fixpgsz",      no_argument,       NULL, 'f'                 },
+		{ "all",          no_argument,       NULL, 'a'                 },
+		{ "help",         no_argument,       NULL, 'h'                 },
+		{ "verbose",      no_argument,       NULL, 'v'                 },
+		{ "version",      no_argument,       NULL, 'V'                 },
+		{ "show",         optional_argument, NULL, SHOW_OPTION         },
+		{ "output-all",   no_argument,       NULL, OPT_LIST_TYPES      },
+		{ "noheadings",   no_argument,       NULL, NOHEADINGS_OPTION   },
+		{ "raw",          no_argument,       NULL, RAW_OPTION          },
+		{ "bytes",        no_argument,       NULL, BYTES_OPTION        },
+		{ "fstab",        required_argument, NULL, 'T'                 },
 		{ NULL, 0, NULL, 0 }
 	};
 
