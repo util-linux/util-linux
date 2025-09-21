@@ -34,6 +34,7 @@ Since version 2.38 *runuser* resets process resource limits RLIMIT_NICE, RLIMIT_
 
 *-c*, *--command*=_command_::
 Pass _command_ to the shell with the *-c* option.
+Creates a new session via *setsid*(2).
 
 *-f*, *--fast*::
 Pass *-f* to the shell, which may or may not be useful, depending on the shell.
@@ -59,6 +60,7 @@ Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LO
 Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* _command_ *&*). If the pseudo-terminal is enabled, then *runuser* works as a proxy between the sessions (sync stdin and stdout).
 +
 This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | runuser --pty -u* _user_), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
+Furthermore note that using a pseudo-terminal to prevent TIOCSTI/TIOCLINUX ioctl command injection is irrelevant when using *-c* which creates a new session via *setsid*(2) anyway.
 
 *-s*, *--shell*=_shell_::
 Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
@@ -76,6 +78,7 @@ Same as *-c*, but do not create a new session. (Discouraged.)
 *-T*, *--no-pty*::
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
 Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
+Furthermore note that using a pseudo-terminal to prevent TIOCSTI/TIOCLINUX ioctl command injection is irrelevant when using *-c* which creates a new session via *setsid*(2) anyway.
 
 *-u*, *--user*=_user_::
 Run _command_ with the effective user ID and group ID of the user name _user_.
