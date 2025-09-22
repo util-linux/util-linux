@@ -5,7 +5,17 @@ bash-completion:
     - fix function name of enosys completion (by Koichi Murase)
     - add choom and coresched (by Karel Zak)
 
+blkid:
+    - correct an erroneous error message (by Benno Schulenberg)
+
+build-sys:
+    - update release dates (by Karel Zak)
+
+docs:
+    - add v2.41.2-ReleaseNotes (by Karel Zak)
+
 findmnt:
+    - (usage) add a needed equals sign before an optional argument (by Benno Schulenberg)
     - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
 
 fsck.cramfs:
@@ -24,6 +34,7 @@ include/mount-api-utils:
     - avoid using sys/mount.h (by Karel Zak)
 
 libblkid:
+    - Fix probe_ioctl_tp assigning BLKGETDISKSEQ as physical sector size (by Sam Fink)
     - (ext) reduce false positive (by 胡玮文)
     - improve UUID_SUB= description (by Karel Zak)
 
@@ -77,7 +88,25 @@ mkfs.cramfs:
 more:
     - temporarily ignore stdin when waiting for stderr (by Karel Zak)
 
+po:
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+
 po-man:
+    - merge changes (by Karel Zak)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Michał Kułach)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
     - merge changes (by Karel Zak)
     - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
 
@@ -95,6 +124,9 @@ tests:
 
 tests/helpers/test_sigstate.c:
     - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
+
+tools:
+    - add git-version-next script release versioning (by Karel Zak)
 
 zramctl:
     - ignore ENOENT when setting max_comp_streams (by Jiang XueQian)
