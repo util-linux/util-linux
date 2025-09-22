@@ -46,6 +46,7 @@ enum {
 	A_SET_CAPACITY,		/* set device capacity */
 	A_SET_DIRECT_IO,	/* set accessing backing file by direct io */
 	A_SET_BLOCKSIZE,	/* set logical block size of the loop device */
+	A_REMOVE,       /* remove given device */
 };
 
 enum {
@@ -257,6 +258,13 @@ static int detach_all_loops(struct loopdev_cxt *lc)
 
 	loopcxt_deinit_iterator(lc);
 	return res;
+}
+
+static int remove_loop(struct loopdev_cxt *lc)
+{
+    if (loopcxt_remove_device(lc))
+        return -1;
+    return 0;
 }
 
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
@@ -479,6 +487,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --set-capacity <loopdev>  resize the device\n"), out);
 	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(_(" -L, --nooverlap               avoid possible conflict between devices\n"), out);
+	fputs(_(" -R, --remove <loopdev>...     remove one or more devices\n"), out);
 
 	/* commands options */
 	fputs(USAGE_SEPARATOR, out);
@@ -720,6 +729,7 @@ int main(int argc, char **argv)
 		{ "show",         no_argument,       NULL, OPT_SHOW      },
 		{ "verbose",      no_argument,       NULL, 'v'           },
 		{ "version",      no_argument,       NULL, 'V'           },
+		{ "remove",       required_argument, NULL, 'R'           },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -740,7 +750,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ab:c:d:Dfhj:JlLno:O:PrvV",
+	while ((c = getopt_long(argc, argv, "ab:c:d:Dfhj:JlLno:O:PrvVR:",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -833,6 +843,13 @@ int main(int argc, char **argv)
 			usage();
 		case 'V':
 			print_version(EXIT_SUCCESS);
+
+		case 'R':
+			act = A_REMOVE;
+			if (loopcxt_set_device(&lc, optarg))
+				err(EXIT_FAILURE, _("%s: failed to use device"),
+						optarg);
+			break;
 
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -995,6 +1012,18 @@ int main(int argc, char **argv)
 			warn(_("%s: set logical block size failed"),
 			        loopcxt_get_device(&lc));
 		break;
+
+	case A_REMOVE:
+		res = remove_loop(&lc);
+		while (optind < argc) {
+			if (loopcxt_set_device(&lc, argv[optind]))
+				warn(_("%s: failed to use device"),
+						argv[optind]);
+			optind++;
+			res += remove_loop(&lc);
+		}
+		break;
+
 	default:
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);

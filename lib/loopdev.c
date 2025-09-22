@@ -1622,6 +1622,37 @@ int loopcxt_detach_device(struct loopdev_cxt *lc)
 	return 0;
 }
 
+int loopcxt_remove_device(struct loopdev_cxt *lc)
+{
+       int rc = -EINVAL;
+       int ctl, nr = -1;
+       const char *p, *dev = loopcxt_get_device(lc);
+
+       if (!dev)
+               goto done;
+
+       if (!(lc->flags & LOOPDEV_FL_CONTROL)) {
+               rc = -ENOSYS;
+               goto done;
+       }
+
+       p = strrchr(dev, '/');
+       if (!p || (sscanf(p, "/loop%d", &nr) != 1 && sscanf(p, "/%d", &nr) != 1)
+              || nr < 0)
+               goto done;
+
+       ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
+       if (ctl >= 0) {
+               DBG(CXT, ul_debugobj(lc, "remove_device %d", nr));
+               rc = ioctl(ctl, LOOP_CTL_REMOVE, nr);
+               close(ctl);
+       }
+       lc->control_ok = rc >= 0 ? 1 : 0;
+done:
+       DBG(CXT, ul_debugobj(lc, "remove_device done [rc=%d]", rc));
+       return rc;
+}
+
 int loopcxt_add_device(struct loopdev_cxt *lc)
 {
 	int rc = -EINVAL;

@@ -36,6 +36,10 @@ Resize a loop device:
 
 *losetup* *-c* _loopdev_
 
+Remove a loop device:
+
+*losetup* *-R* _loopdev_ ...
+
 == DESCRIPTION
 
 *losetup* is used to associate loop devices with regular files or block devices, to detach loop devices, and to query the status of a loop device. If only the _loopdev_ argument is given, the status of the corresponding loop device is shown. If no option is given, all loop devices are shown.
@@ -122,6 +126,12 @@ Use the raw *--list* output format.
 
 *-J*, *--json*::
 Use JSON format for *--list* output.
+
+*-R*, *--remove* _loopdev_...::
+The parameter is not recommended for direct use.
+*-d* or *-D* option to disconnect the file from the loop device, we can see a loop device
+of size 0 by running 'lsblk -a'. At this point, the loop device will still in the system.
+This parameter can truly remove the loop device, and there is no command or interface to view it.
 
 include::man-common/help-version.adoc[]
 
