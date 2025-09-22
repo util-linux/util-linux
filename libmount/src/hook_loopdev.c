@@ -398,7 +398,7 @@ static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd)
 		hd->loopdev_fd = -1;
 	}
 
-	rc = loopdev_delete(src);	/* see lib/loopdev.c */
+	rc = loopdev_detach(src);	/* see lib/loopdev.c */
 
 	DBG(LOOP, ul_debugobj(cxt, "deleted [rc=%d]", rc));
 	return rc;

@@ -38,8 +38,8 @@
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
-	A_DELETE,		/* delete given device(s) */
-	A_DELETE_ALL,		/* delete all devices */
+	A_DETACH,		/* detach given device(s) */
+	A_DETACH_ALL,		/* detach all devices */
 	A_SHOW,			/* list devices */
 	A_SHOW_ONE,		/* print info about one device */
 	A_FIND_FREE,		/* find first unused */
@@ -233,9 +233,9 @@ static void warn_lost(struct loopdev_cxt *lc)
 			loopcxt_get_device(lc), major(devno), minor(devno));
 }
 
-static int delete_loop(struct loopdev_cxt *lc)
+static int detach_loop(struct loopdev_cxt *lc)
 {
-	if (loopcxt_delete_device(lc)) {
+	if (loopcxt_detach_device(lc)) {
 		warn(_("%s: detach failed"), loopcxt_get_device(lc));
 		if (loopcxt_is_lost(lc))
 			warn_lost(lc);
@@ -245,7 +245,7 @@ static int delete_loop(struct loopdev_cxt *lc)
 	return -1;
 }
 
-static int delete_all_loops(struct loopdev_cxt *lc)
+static int detach_all_loops(struct loopdev_cxt *lc)
 {
 	int res = 0;
 
@@ -253,7 +253,7 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 		return -1;
 
 	while (loopcxt_next(lc) == 0)
-		res += delete_loop(lc);
+		res += detach_loop(lc);
 
 	loopcxt_deinit_iterator(lc);
 	return res;
@@ -766,13 +766,13 @@ int main(int argc, char **argv)
 			refname = optarg;
 			break;
 		case 'd':
-			act = A_DELETE;
+			act = A_DETACH;
 			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
 		case 'D':
-			act = A_DELETE_ALL;
+			act = A_DETACH_ALL;
 			break;
 		case 'f':
 			act = A_FIND_FREE;
@@ -833,6 +833,7 @@ int main(int argc, char **argv)
 			usage();
 		case 'V':
 			print_version(EXIT_SUCCESS);
+
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -943,18 +944,18 @@ int main(int argc, char **argv)
 			warn_size(file, sizelimit, offset, flags);
 		}
 		break;
-	case A_DELETE:
-		res = delete_loop(&lc);
+	case A_DETACH:
+		res = detach_loop(&lc);
 		while (optind < argc) {
 			if (loopcxt_set_device(&lc, argv[optind]))
 				warn(_("%s: failed to use device"),
 						argv[optind]);
 			optind++;
-			res += delete_loop(&lc);
+			res += detach_loop(&lc);
 		}
 		break;
-	case A_DELETE_ALL:
-		res = delete_all_loops(&lc);
+	case A_DETACH_ALL:
+		res = detach_all_loops(&lc);
 		break;
 	case A_FIND_FREE:
 		res = find_unused(&lc);

@@ -1603,14 +1603,14 @@ int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 	return 0;
 }
 
-int loopcxt_delete_device(struct loopdev_cxt *lc)
+int loopcxt_detach_device(struct loopdev_cxt *lc)
 {
 	int rc, fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
 		return -EINVAL;
 
-	DBG(SETUP, ul_debugobj(lc, "calling LOOP_SET_CLR_FD"));
+	DBG(SETUP, ul_debugobj(lc, "calling LOOP_CLR_FD"));
 
 	rc = repeat_on_eagain( ioctl(fd, LOOP_CLR_FD, 0) );
 	if (rc != 0) {
@@ -1786,7 +1786,7 @@ int loopdev_is_used(const char *device, const char *filename,
 /*
  * Returns: 0 = success, < 0 error
  */
-int loopdev_delete(const char *device)
+int loopdev_detach(const char *device)
 {
 	struct loopdev_cxt lc;
 	int rc;
@@ -1798,7 +1798,7 @@ int loopdev_delete(const char *device)
 	if (!rc)
 		rc = loopcxt_set_device(&lc, device);
 	if (!rc)
-		rc = loopcxt_delete_device(&lc);
+		rc = loopcxt_detach_device(&lc);
 	loopcxt_deinit(&lc);
 	return rc;
 }

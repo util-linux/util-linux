@@ -160,7 +160,7 @@ extern int loopdev_is_used(const char *device, const char *filename,
 extern char *loopdev_find_by_backing_file(const char *filename,
 				uint64_t offset, uint64_t sizelimit, int flags);
 extern int loopcxt_find_unused(struct loopdev_cxt *lc);
-extern int loopdev_delete(const char *device);
+extern int loopdev_detach(const char *device);
 extern int loopdev_count_by_backing_file(const char *filename, char **loopdev);
 
 /*
@@ -185,7 +185,7 @@ extern int loopcxt_deinit_iterator(struct loopdev_cxt *lc);
 extern int loopcxt_next(struct loopdev_cxt *lc);
 
 extern int loopcxt_setup_device(struct loopdev_cxt *lc);
-extern int loopcxt_delete_device(struct loopdev_cxt *lc);
+extern int loopcxt_detach_device(struct loopdev_cxt *lc);
 
 extern int loopcxt_ioctl_status(struct loopdev_cxt *lc);
 extern int loopcxt_ioctl_capacity(struct loopdev_cxt *lc);
