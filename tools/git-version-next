@@ -1,0 +1,270 @@
+#!/bin/bash
+
+set -e
+
+# Git utility to determine the next version number for util-linux releases
+# Based on the current stable/* branch and latest git tags
+
+SCRIPT_NAME=$(basename "$0")
+
+usage() {
+    cat << EOF
+Usage: $SCRIPT_NAME [OPTIONS]
+
+Determine the next version number for util-linux releases based on git tags and current branch.
+
+Options:
+  --rc              Generate next release candidate version
+  --release-master  Generate final major release version (vX.Y)
+  --release-update  Generate maintenance release version (vX.Y.Z)
+  --last-release TAG    Override last release tag (for testing)
+  --last-xy-release TAG Override last X.Y release tag (for testing)
+  -h, --help        Show this help message
+
+Version Schema:
+  Major releases:      vX.Y-rc1, vX.Y-rc2, [vX.Y-rc3], vX.Y
+  Maintenance releases: vX.Y.Z-rc1, vX.Y.Z
+
+Notes:
+  - Only stable/* branches are used for releases
+  - Version tags are always prefixed with "v"
+  - X.Y is frozen within a stable branch
+  - Z increments for maintenance releases (vX.Y.1, vX.Y.2, etc.)
+  - Release candidates are optional, created only when --rc is specified
+
+EOF
+}
+
+# Parse command line options
+RELEASE_TYPE=""
+RC_REQUESTED=""
+OVERRIDE_LAST_RELEASE=""
+OVERRIDE_LAST_XY_RELEASE=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --rc)
+            RC_REQUESTED="yes"
+            if [ -z "$RELEASE_TYPE" ]; then
+                RELEASE_TYPE="rc"
+            fi
+            shift
+            ;;
+        --release-master)
+            RELEASE_TYPE="master"
+            shift
+            ;;
+        --release-update)
+            RELEASE_TYPE="update"
+            shift
+            ;;
+        --last-release)
+            OVERRIDE_LAST_RELEASE="$2"
+            shift 2
+            ;;
+        --last-xy-release)
+            OVERRIDE_LAST_XY_RELEASE="$2"
+            shift 2
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo "Error: Unknown option '$1'" >&2
+            echo "Use --help for usage information." >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Get current branch
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+# Validate we're on a stable branch
+case "$BRANCH" in
+    stable/*)
+        ;;
+    *)
+        echo "Error: Not on a stable/* branch. Current branch: $BRANCH" >&2
+        echo "Releases are only generated from stable/* branches." >&2
+        exit 1
+        ;;
+esac
+
+# Get last tag (most recent by date) or use override
+if [ -n "$OVERRIDE_LAST_RELEASE" ]; then
+    UL_LAST_RELEASE="$OVERRIDE_LAST_RELEASE"
+else
+    UL_LAST_RELEASE=$(git for-each-ref --sort='-creatordate' \
+        --format='%(tag)' refs/tags \
+        | grep '^v[0-9]' \
+        | head -1)
+fi
+
+# Get last vX.Y release (major releases only, no .Z or -rc suffixes) or use override
+if [ -n "$OVERRIDE_LAST_XY_RELEASE" ]; then
+    UL_LAST_XY_RELEASE="$OVERRIDE_LAST_XY_RELEASE"
+else
+    UL_LAST_XY_RELEASE=$(git for-each-ref --sort='-creatordate' \
+        --format='%(tag)' 'refs/tags/v[0-9]*.[0-9]*[!-.]' \
+        | grep '^v[0-9][0-9]*\.[0-9][0-9]*$' \
+        | head -1)
+fi
+
+# For --release-master, use the last major release as base, ignoring maintenance releases
+if [ "$RELEASE_TYPE" = "master" ] && [ -z "$OVERRIDE_LAST_RELEASE" ]; then
+    UL_LAST_RELEASE="$UL_LAST_XY_RELEASE"
+fi
+
+# Safety check for --release-master: verify we're in a new branch without branch-specific tags
+if [ "$RELEASE_TYPE" = "master" ]; then
+    # Check if there are any tags specific to this branch (not inherited from master)
+    TAGS_MERGED_HEAD=$(git tag --merged HEAD | grep '^v[0-9]' || true)
+    TAGS_MERGED_MASTER=$(git tag --merged master | grep '^v[0-9]' || true)
+
+    # Tags specific to this branch are those merged into HEAD but not into master
+    BRANCH_SPECIFIC_TAGS=""
+    if [ -n "$TAGS_MERGED_HEAD" ]; then
+        for tag in $TAGS_MERGED_HEAD; do
+            if ! echo "$TAGS_MERGED_MASTER" | grep -q "^${tag}$"; then
+                BRANCH_SPECIFIC_TAGS="$BRANCH_SPECIFIC_TAGS$tag"$'\n'
+            fi
+        done
+        BRANCH_SPECIFIC_TAGS=$(echo "$BRANCH_SPECIFIC_TAGS" | grep -v '^$' || true)
+    fi
+
+    if [ -n "$BRANCH_SPECIFIC_TAGS" ] && [ -z "$OVERRIDE_LAST_RELEASE" ]; then
+        TAG_COUNT=$(echo "$BRANCH_SPECIFIC_TAGS" | wc -l)
+        echo "Error: --release-master should only be used in a new stable branch without branch-specific tags" >&2
+        echo "Current branch '$BRANCH' has $TAG_COUNT branch-specific version tags:" >&2
+        echo "$BRANCH_SPECIFIC_TAGS" | sed 's/^/  /' >&2
+        echo "Use --release-update for maintenance releases in existing branches." >&2
+        exit 1
+    fi
+fi
+
+# Functions to extract version components
+get_rc_number() {
+    echo "$1" | sed 's/.*-rc\([0-9][0-9]*\)$/\1/'
+}
+
+get_z_version() {
+    echo "$1" | sed 's/^v[0-9][0-9]*\.[0-9][0-9]*\.\([0-9][0-9]*\).*/\1/'
+}
+
+increment_version() {
+    echo $(( $1 + 1 ))
+}
+
+# Determine next version based on current state and requested type
+determine_next_version() {
+    local last_tag="$1"
+    local type="$2"
+    local rc_flag="$3"
+
+    case "$last_tag:$type" in
+        # Maintenance release candidates: vX.Y.Z-rcN
+        v*.*.*-rc*:rc)
+            local base_version=$(echo "$last_tag" | sed 's/-rc[0-9]*$//')
+            local rc_num=$(get_rc_number "$last_tag")
+            echo "${base_version}-rc$(increment_version $rc_num)"
+            ;;
+        v*.*.*-rc*:update|v*.*.*-rc*:)
+            local base_version=$(echo "$last_tag" | sed 's/-rc[0-9]*$//')
+            echo "$base_version"
+            ;;
+        v*.*.*-rc*:master)
+            echo "Error: Cannot create major release from maintenance release candidate" >&2
+            exit 1
+            ;;
+
+        # Final maintenance releases: vX.Y.Z
+        v*.*.*:rc)
+            local base_xy=$(echo "$last_tag" | sed 's/\.[0-9][0-9]*$//')
+            local z_ver=$(get_z_version "$last_tag")
+            echo "${base_xy}.$(increment_version $z_ver)-rc1"
+            ;;
+        v*.*.*:update|v*.*.*:)
+            local base_xy=$(echo "$last_tag" | sed 's/\.[0-9][0-9]*$//')
+            local z_ver=$(get_z_version "$last_tag")
+            echo "${base_xy}.$(increment_version $z_ver)"
+            ;;
+        v*.*.*:master)
+            # Create new major release: increment Y from last X.Y release
+            if [ -z "$UL_LAST_XY_RELEASE" ]; then
+                echo "Error: Cannot determine last X.Y release for new major version" >&2
+                exit 1
+            fi
+            local x_ver=$(echo "$UL_LAST_XY_RELEASE" | sed 's/^v\([0-9][0-9]*\)\..*/\1/')
+            local y_ver=$(echo "$UL_LAST_XY_RELEASE" | sed 's/^v[0-9][0-9]*\.\([0-9][0-9]*\)$/\1/')
+            local new_version="v${x_ver}.$(increment_version $y_ver)"
+            if [ "$rc_flag" = "yes" ]; then
+                echo "${new_version}-rc1"
+            else
+                echo "$new_version"
+            fi
+            ;;
+
+        # Major release candidates: vX.Y-rcN
+        v*.*-rc*:rc)
+            local base_version=$(echo "$last_tag" | sed 's/-rc[0-9]*$//')
+            local rc_num=$(get_rc_number "$last_tag")
+            echo "${base_version}-rc$(increment_version $rc_num)"
+            ;;
+        v*.*-rc*:master|v*.*-rc*:)
+            local base_version=$(echo "$last_tag" | sed 's/-rc[0-9]*$//')
+            echo "$base_version"
+            ;;
+        v*.*-rc*:update)
+            local base_version=$(echo "$last_tag" | sed 's/-rc[0-9]*$//')
+            echo "${base_version}.1"
+            ;;
+
+        # Final major releases: vX.Y
+        v*.*:rc)
+            echo "${last_tag}.1-rc1"
+            ;;
+        v*.*:update|v*.*:)
+            echo "${last_tag}.1"
+            ;;
+        v*.*:master)
+            # Create next major release: increment Y from current X.Y release
+            local x_ver=$(echo "$last_tag" | sed 's/^v\([0-9][0-9]*\)\..*/\1/')
+            local y_ver=$(echo "$last_tag" | sed 's/^v[0-9][0-9]*\.\([0-9][0-9]*\)$/\1/')
+            local new_version="v${x_ver}.$(increment_version $y_ver)"
+            if [ "$rc_flag" = "yes" ]; then
+                echo "${new_version}-rc1"
+            else
+                echo "$new_version"
+            fi
+            ;;
+
+        *)
+            echo "Error: Unexpected tag format: $last_tag" >&2
+            exit 1
+            ;;
+    esac
+}
+
+# Determine next version
+UL_NEXT_RELEASE=$(determine_next_version "$UL_LAST_RELEASE" "$RELEASE_TYPE" "$RC_REQUESTED")
+
+# For RC releases, also provide the final release version (without -rc suffix)
+UL_NEXT_FINAL_RELEASE=""
+if [[ "$UL_NEXT_RELEASE" =~ -rc[0-9]+$ ]]; then
+    UL_NEXT_FINAL_RELEASE=$(echo "$UL_NEXT_RELEASE" | sed 's/-rc[0-9]*$//')
+fi
+
+# Output results
+echo "UL_LAST_RELEASE=$UL_LAST_RELEASE"
+echo "UL_LAST_RELEASE_RAW=$(echo $UL_LAST_RELEASE | sed 's/^v//')"
+echo "UL_LAST_XY_RELEASE=$UL_LAST_XY_RELEASE"
+echo "UL_LAST_XY_RELEASE_RAW=$(echo $UL_LAST_XY_RELEASE | sed 's/^v//')"
+echo "UL_NEXT_RELEASE=$UL_NEXT_RELEASE"
+echo "UL_NEXT_RELEASE_RAW=$(echo $UL_NEXT_RELEASE | sed 's/^v//')"
+
+if [ -n "$UL_NEXT_FINAL_RELEASE" ]; then
+    echo "UL_NEXT_FINAL_RELEASE=$UL_NEXT_FINAL_RELEASE"
+    echo "UL_NEXT_FINAL_RELEASE_RAW=$(echo $UL_NEXT_FINAL_RELEASE | sed 's/^v//')"
+fi
