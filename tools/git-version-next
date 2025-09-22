@@ -247,24 +247,30 @@ determine_next_version() {
     esac
 }
 
+# Determine last final (non-RC) release
+if [[ "$UL_LAST_RELEASE" =~ -rc[0-9]+$ ]]; then
+    UL_LAST_FINAL_RELEASE=$(git for-each-ref --sort='-creatordate' \
+        --format='%(tag)' refs/tags \
+        | grep '^v[0-9]' \
+        | grep -v -- '-rc[0-9]*$' \
+        | head -1)
+else
+    UL_LAST_FINAL_RELEASE="$UL_LAST_RELEASE"
+fi
+
 # Determine next version
 UL_NEXT_RELEASE=$(determine_next_version "$UL_LAST_RELEASE" "$RELEASE_TYPE" "$RC_REQUESTED")
 
-# For RC releases, also provide the final release version (without -rc suffix)
-UL_NEXT_FINAL_RELEASE=""
+# Always provide the final release version (after code stabilization)
 if [[ "$UL_NEXT_RELEASE" =~ -rc[0-9]+$ ]]; then
     UL_NEXT_FINAL_RELEASE=$(echo "$UL_NEXT_RELEASE" | sed 's/-rc[0-9]*$//')
+else
+    UL_NEXT_FINAL_RELEASE="$UL_NEXT_RELEASE"
 fi
 
 # Output results
 echo "UL_LAST_RELEASE=$UL_LAST_RELEASE"
-echo "UL_LAST_RELEASE_RAW=$(echo $UL_LAST_RELEASE | sed 's/^v//')"
+echo "UL_LAST_FINAL_RELEASE=$UL_LAST_FINAL_RELEASE"
 echo "UL_LAST_XY_RELEASE=$UL_LAST_XY_RELEASE"
-echo "UL_LAST_XY_RELEASE_RAW=$(echo $UL_LAST_XY_RELEASE | sed 's/^v//')"
 echo "UL_NEXT_RELEASE=$UL_NEXT_RELEASE"
-echo "UL_NEXT_RELEASE_RAW=$(echo $UL_NEXT_RELEASE | sed 's/^v//')"
-
-if [ -n "$UL_NEXT_FINAL_RELEASE" ]; then
-    echo "UL_NEXT_FINAL_RELEASE=$UL_NEXT_FINAL_RELEASE"
-    echo "UL_NEXT_FINAL_RELEASE_RAW=$(echo $UL_NEXT_FINAL_RELEASE | sed 's/^v//')"
-fi
+echo "UL_NEXT_FINAL_RELEASE=$UL_NEXT_FINAL_RELEASE"
