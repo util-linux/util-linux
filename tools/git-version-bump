@@ -12,17 +12,82 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 #
-VERSION="$1"
 
-if [ -z "$VERSION" ]; then
-	echo "$(basename "$0") <new-version>"
-	exit 1
-fi
+function show_help() {
+	cat <<EOF
+$(basename "$0") - update util-linux versions and release dates
 
+Usage: $(basename "$0") [OPTIONS] <new-version>
+
+This script updates NEWS file and release dates in configure.ac and meson.build
+for a new util-linux release. It must be run from a stable/vX.Y branch.
+
+Arguments:
+  <new-version>    Version in format X.Y, X.Y.Z, X.Y-rcN, or X.Y.Z-rcN
+
+Options:
+  -h, --help       Show this help message
+
+EOF
+}
+
+function validate_version() {
+	local version="$1"
+
+	# Valid formats: X.Y, X.Y.Z, X.Y-rcN, X.Y.Z-rcN
+	if [[ ! "$version" =~ ^[0-9]+\.[0-9]+(\.[0-9]+)?(-rc[0-9]+)?$ ]]; then
+		echo "Error: Invalid version format '$version'" >&2
+		echo "Valid formats: X.Y, X.Y.Z, X.Y-rcN, X.Y.Z-rcN" >&2
+		return 1
+	fi
+	return 0
+}
+
+function validate_branch() {
+	local current_branch
+	current_branch=$(git branch --show-current)
+
+	if [[ ! "$current_branch" =~ ^stable/v[0-9]+\.[0-9]+$ ]]; then
+		echo "Error: This script must be run from a stable/vX.Y branch" >&2
+		echo "Current branch: $current_branch" >&2
+		return 1
+	fi
+	return 0
+}
+
+# Parse arguments
+case "$1" in
+	-h|--help)
+		show_help
+		exit 0
+		;;
+	-*)
+		echo "Error: Unknown option '$1'" >&2
+		echo "Use --help for usage information." >&2
+		exit 1
+		;;
+	"")
+		echo "Error: Missing version argument" >&2
+		echo "Usage: $(basename "$0") <new-version>" >&2
+		echo "Use --help for more information." >&2
+		exit 1
+		;;
+	*)
+		VERSION="$1"
+		;;
+esac
+
+# Verify we're in a Git repository
 git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
 	echo "Error: Not inside a Git repository." >&2
 	exit 1
 }
+
+# Validate version format
+validate_version "$VERSION" || exit 1
+
+# Validate branch
+validate_branch || exit 1
 
 function bump_news_version {
 	local version="$1"
