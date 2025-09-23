@@ -216,7 +216,8 @@ ll2_read_entry(struct ll2_context *context, const char *user,
 	sqlite3 *db;
 	int retval;
 
-	if ((retval = open_database_ro(context, &db, error)) != 0)
+	retval = open_database_ro(context, &db, error);
+	if (retval != 0)
 		return retval;
 
 	retval = read_entry(db, user, ll_time, tty, rhost, pam_service, error);
@@ -336,7 +337,8 @@ ll2_write_entry(struct ll2_context *context, const char *user,
 	sqlite3 *db;
 	int retval;
 
-	if ((retval = open_database_rw(context, &db, error)) != 0)
+	retval = open_database_rw(context, &db, error);
+	if (retval != 0)
 		return retval;
 
 	retval = write_entry(db, user, ll_time, tty, rhost, pam_service, error);
@@ -358,10 +360,12 @@ ll2_update_login_time(struct ll2_context *context, const char *user,
 	char *rhost;
 	char *pam_service;
 
-	if ((retval = open_database_rw(context , &db, error)) != 0)
+	retval = open_database_rw(context , &db, error);
+	if (retval != 0)
 		return retval;
 
-	if ((retval = read_entry(db, user, 0, &tty, &rhost, &pam_service, error)) != 0) {
+	retval = read_entry(db, user, 0, &tty, &rhost, &pam_service, error);
+	if (retval != 0) {
 		sqlite3_close(db);
 		return retval;
 	}
@@ -415,7 +419,8 @@ ll2_read_all(struct ll2_context *context,
 	char *err_msg = NULL;
 	int retval = 0;
 
-	if ((retval = open_database_ro(context, &db, error)) != 0)
+	retval = open_database_ro(context, &db, error);
+	if (retval != 0)
 		return retval;
 
 	static const char *sql = "SELECT Name,Time,TTY,RemoteHost,Service FROM Lastlog2 ORDER BY Name ASC";
@@ -493,7 +498,8 @@ ll2_remove_entry(struct ll2_context *context, const char *user,
 	sqlite3 *db;
 	int retval;
 
-	if ((retval = open_database_rw(context, &db, error)) != 0)
+	retval = open_database_rw(context, &db, error);
+	if (retval != 0)
 		return retval;
 
 	retval = remove_entry(db, user, error);
@@ -516,15 +522,18 @@ ll2_rename_user(struct ll2_context *context, const char *user,
 	char *pam_service;
 	int retval;
 
-	if ((retval = open_database_rw(context, &db, error)) != 0)
+	retval = open_database_rw(context, &db, error);
+	if (retval != 0)
 		return retval;
 
-	if ((retval = read_entry(db, user, &ll_time, &tty, &rhost, &pam_service, error)) != 0) {
+	retval = read_entry(db, user, &ll_time, &tty, &rhost, &pam_service, error);
+	if (retval != 0) {
 		sqlite3_close(db);
 		return retval;
 	}
 
-	if ((retval = write_entry(db, newname, ll_time, tty, rhost, pam_service, error)) != 0) {
+	retval = write_entry(db, newname, ll_time, tty, rhost, pam_service, error);
+	if (retval != 0) {
 		sqlite3_close(db);
 		free(tty);
 		free(rhost);
@@ -554,7 +563,8 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 	FILE *ll_fp;
 	int retval = 0;
 
-	if ((retval = open_database_rw(context, &db, error)) != 0)
+	retval = open_database_rw(context, &db, error);
+	if (retval != 0)
 		return retval;
 
 	ll_fp = fopen(lastlog_file, "r");
