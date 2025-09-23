@@ -519,12 +519,12 @@ ll2_rename_user(struct ll2_context *context, const char *user,
 	if ((retval = open_database_rw(context, &db, error)) != 0)
 		return retval;
 
-	if ((retval = read_entry(db, user, &ll_time, &tty, &rhost, &pam_service, error) != 0)) {
+	if ((retval = read_entry(db, user, &ll_time, &tty, &rhost, &pam_service, error)) != 0) {
 		sqlite3_close(db);
 		return retval;
 	}
 
-	if ((retval = write_entry(db, newname, ll_time, tty, rhost, pam_service, error) != 0)) {
+	if ((retval = write_entry(db, newname, ll_time, tty, rhost, pam_service, error)) != 0) {
 		sqlite3_close(db);
 		free(tty);
 		free(rhost);
