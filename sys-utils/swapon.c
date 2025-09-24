@@ -141,6 +141,7 @@ struct swapon_ctl {
 	struct swap_prop props;		/* global settings for all devices */
 
 	bool	all,		/* turn on all swap devices */
+		annotation,	/* annotate columns with a tooltip (always|never|auto)*/
 		bytes,		/* display --show in bytes */
 		fix_page_size,	/* reinitialize page size */
 		no_heading,	/* toggle --show headers */
@@ -320,7 +321,8 @@ static int show_table(struct swapon_ctl *ctl)
 		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
-		scols_column_refer_annotation(cl, col->help);
+		if (ctl->annotation && col->help)
+			scols_column_refer_annotation(cl, col->help);
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
@@ -828,19 +830,21 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Enable devices and files for paging and swapping.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"), out);
-	fputs(_(" -d, --discard[=<policy>] enable swap discards, if supported by device\n"), out);
-	fputs(_(" -e, --ifexists           silently skip devices that do not exist\n"), out);
-	fputs(_(" -f, --fixpgsz            reinitialize the swap space if necessary\n"), out);
-	fputs(_(" -o, --options <list>     comma-separated list of swap options\n"), out);
-	fputs(_(" -p, --priority <prio>    specify the priority of the swap device\n"), out);
-	fputs(_(" -s, --summary            display summary about used swap devices (DEPRECATED)\n"), out);
-	fputs(_(" -T, --fstab <path>       alternative file to /etc/fstab\n"), out);
-	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
-	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
-	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
-	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
-	fputs(_(" -v, --verbose            verbose mode\n"), out);
+	fputs(_(" -a, --all                	enable all swaps from /etc/fstab\n"), out);
+	fputs(_(" -d, --discard[=<policy>] 	enable swap discards, if supported by device\n"), out);
+	fputs(_(" -e, --ifexists           	silently skip devices that do not exist\n"), out);
+	fputs(_(" -f, --fixpgsz            	reinitialize the swap space if necessary\n"), out);
+	fputs(_(" -o, --options <list>     	comma-separated list of swap options\n"), out);
+	fputs(_(" -p, --priority <prio>    	specify the priority of the swap device\n"), out);
+	fputs(_(" -s, --summary            	display summary about used swap devices (DEPRECATED)\n"), out);
+	fputs(_(" -T, --fstab <path>       	alternative file to /etc/fstab\n"), out);
+	fputs(_("     --show[=<columns>]   	display summary in definable table\n"), out);
+	fputs(_("     --output-all         	output all available columns\n"), out);
+	fputs(_("     --annotation=[<when>]     annotate columns with a tooltip (always|never|auto)\n"), out);
+	fputs(_("     --noheadings         	don't print table heading (with --show)\n"), out);
+	fputs(_("     --raw                	use the raw output format (with --show)\n"), out);
+	fputs(_("     --bytes              	display swap size in bytes in --show output\n"), out);
+	fputs(_(" -v, --verbose            	verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(26));
@@ -872,10 +876,11 @@ int main(int argc, char *argv[])
 {
 	int status = 0, c;
 	size_t i;
-	char *options = NULL, *fstab_filename = NULL;
+	char *options = NULL, *fstab_filename = NULL, *annotation_opt_arg = NULL;
 
 	enum {
 		BYTES_OPTION = CHAR_MAX + 1,
+		ANNOTATION_OPTION,
 		NOHEADINGS_OPTION,
 		RAW_OPTION,
 		SHOW_OPTION,
@@ -895,6 +900,7 @@ int main(int argc, char *argv[])
 		{ "version",      no_argument,       NULL, 'V'                 },
 		{ "show",         optional_argument, NULL, SHOW_OPTION         },
 		{ "output-all",   no_argument,       NULL, OPT_LIST_TYPES      },
+		{ "annotation",   optional_argument, NULL, ANNOTATION_OPTION   },
 		{ "noheadings",   no_argument,       NULL, NOHEADINGS_OPTION   },
 		{ "raw",          no_argument,       NULL, RAW_OPTION          },
 		{ "bytes",        no_argument,       NULL, BYTES_OPTION        },
@@ -990,6 +996,9 @@ int main(int argc, char *argv[])
 			for (ctl.ncolumns = 0; (size_t)ctl.ncolumns < ARRAY_SIZE(infos); ctl.ncolumns++)
 				ctl.columns[ctl.ncolumns] = ctl.ncolumns;
 			break;
+		case ANNOTATION_OPTION:
+			annotation_opt_arg = optarg;
+			break;
 		case NOHEADINGS_OPTION:
 			ctl.no_heading = 1;
 			break;
@@ -1011,6 +1020,9 @@ int main(int argc, char *argv[])
 		}
 	}
 	argv += optind;
+
+	if (annotationwanted(annotation_opt_arg))
+		ctl.annotation = 1;
 
 	if (ctl.summarize)
 		return display_summary();
