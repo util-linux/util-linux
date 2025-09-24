@@ -999,7 +999,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --table-column <properties>  define column\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -l, --table-columns-limit <num>  maximal number of input columns\n"), out);
-	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
+	fputs(_(" -E, --table-noextreme <columns>  don't count long text in these columns\n"
+		"                                    to the column's width\n"), out);
 	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
 	fputs(_(" -m, --table-maxout               fill all available space\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
@@ -1007,7 +1008,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
-	fputs(_("     --wrap-separator <string>    wrap text at this separator (implies --table-wrap)\n"), out);
+	fputs(_("     --wrap-separator <string>    wrap at this separator (requires --table-wrap)\n"), out);
 	fputs(_(" -L, --keep-empty-lines           don't ignore empty lines\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
@@ -1018,7 +1019,8 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -c, --output-width <width>       width of output in number of characters\n"), out);
-	fputs(_(" -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"), out);
+	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
+		"                                    (default is two spaces)\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 	fputs(_(" -S, --use-spaces <number>        minimal whitespaces between columns (no tabs)\n"), out);

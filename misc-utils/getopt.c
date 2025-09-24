@@ -372,7 +372,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stdout);
 	fputs(_(" -T, --test                    test for getopt(1) version\n"), stdout);
 	fputs(_(" -u, --unquoted                do not quote the output\n"), stdout);
-	fputs(_(" -U, --unknown                 leave unknown options as they are and disable getopt(3) error messages\n"), stdout);
+	fputs(_(" -U, --unknown                 leave unknown options as they are (implies -q)\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(31));
 	fprintf(stdout, USAGE_MAN_TAIL("getopt(1)"));
