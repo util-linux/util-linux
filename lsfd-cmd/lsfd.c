@@ -1017,6 +1017,12 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			 * "stat by the file name" may not work. In that case,
 			 */
 			goto try_map_files;
+		if (sb.st_ino != ino || sb.st_dev != devno)
+			/* There are two files having the same absolute file names!
+			 *
+			 * Maybe the file is bind-mount'ed after mapped.
+			 */
+			goto try_map_files;
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
