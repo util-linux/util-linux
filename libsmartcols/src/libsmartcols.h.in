@@ -267,6 +267,9 @@ extern const char *scols_column_get_name(struct libscols_column *cl);
 extern const char *scols_column_get_name_as_shellvar(struct libscols_column *cl);
 extern int scols_shellvar_name(const char *name, char **buf, size_t *bufsz);
 
+extern int scols_column_refer_annotation(struct libscols_column *cl, const char *annotation);
+extern const char *scols_column_get_annotation(struct libscols_column *cl);
+
 extern int scols_column_set_properties(struct libscols_column *cl, const char *opts);
 
 extern int scols_column_set_cmpfunc(struct libscols_column *cl,

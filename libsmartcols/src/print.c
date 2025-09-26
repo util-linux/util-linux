@@ -590,7 +590,7 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 	struct libscols_cell *ce;
 	size_t len = 0, i, width, bytes;
 	char *data = NULL;
-	const char *name = NULL, *uri = NULL;
+	const char *name = NULL, *annot = NULL, *uri = NULL;
 	int is_last;
 
 	assert(tb);
@@ -640,6 +640,9 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 
 	if (cl->uri || ce->uri)
 		uri = mk_cell_uri(cl, ce, buf);
+
+	if (cl->annotation)
+		annot = scols_column_get_annotation(cl);
 
 	/* Encode. Note that 'len' and 'width' are number of glyphs not bytes.
 	 */
@@ -700,8 +703,12 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 					fputc(data[i], tb->out);
 			}
 			ul_fputs_hyperlink(uri, link, tb->out);
-		} else
+		} else if (!ln && annot && *annot) {
+			/* Printing the header with a column annotation as tooltip */
+			ul_fputs_hyperlink(annot, data, tb->out);
+		} else {
 			fputs(data, tb->out);
+		}
 	}
 
 	/* minout -- don't fill */
