@@ -29,6 +29,7 @@ lib_common_sources = '''
 	timeutils.c
 	ttyutils.c
 	xxhash.c
+	configs.c
 '''.split()
 
 idcache_c = files('idcache.c')
