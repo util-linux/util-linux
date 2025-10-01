@@ -4,6 +4,7 @@ AM_CPPFLAGS = \
 	-DLOCALEDIR=\"$(localedir)\" \
 	-D_PATH_RUNSTATEDIR=\"${runstatedir}\" \
 	-D_PATH_LOCALSTATEDIR=\"${localstatedir}\" \
+	-D_PATH_SYSCONFDIR=\"${sysconfdir}\" \
 	-D_PATH_SYSCONFSTATICDIR=\"${sysconfstaticdir}\"
 
 if USE_VENDORDIR
