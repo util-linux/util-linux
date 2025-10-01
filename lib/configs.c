@@ -12,6 +12,7 @@
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 #include <dirent.h>
 #endif
+
 #include "configs.h"
 #include "list.h"
 #include "fileutils.h"
@@ -21,8 +22,8 @@ struct file_element {
 	char *filename;
 };
 
-/* Checking for main configuration file 
- * 
+/* Checking for main configuration file
+ *
  * Returning absolute path or NULL if not found
  * The return value has to be freed by the caller.
  */
@@ -34,7 +35,7 @@ static char *main_configs(const char *root,
 	bool found = false;
 	char *path = NULL;
 	struct stat st;
-	
+
 	if (config_suffix) {
 		if (asprintf(&path, "%s/%s/%s.%s", root, project, config_name, config_suffix) < 0)
 			return NULL;
@@ -179,14 +180,13 @@ finish:
 	return counter;
 }
 
-#endif
+#endif /* HAVE_SCANDIRAT */
 
 static void free_list_entry(struct file_element *element)
 {
 	free(element->filename);
 	free(element);
 }
-
 
 int ul_configs_file_list(struct list_head *file_list,
 			 const char *project,
@@ -201,7 +201,7 @@ int ul_configs_file_list(struct list_head *file_list,
 	struct list_head *etc_entry = NULL, *usr_entry = NULL;
 	struct file_element *add_element = NULL, *usr_element = NULL, *etc_element = NULL;
 	int counter = 0;
-	
+
 	INIT_LIST_HEAD(file_list);
 
 	if (!config_name){
@@ -256,11 +256,15 @@ int ul_configs_file_list(struct list_head *file_list,
 #endif
 
 	list_for_each(etc_entry, &etc_file_list) {
+
 		etc_element = list_entry(etc_entry, struct file_element, file_list);
 		etc_basename = ul_basename(etc_element->filename);
+
 		list_for_each(usr_entry, &usr_file_list) {
+
 			usr_element = list_entry(usr_entry, struct file_element, file_list);
 			usr_basename = ul_basename(usr_element->filename);
+
 			if (strcmp(usr_basename, etc_basename) <= 0) {
 				if (strcmp(usr_basename, etc_basename) < 0) {
 					add_element = new_list_entry(usr_element->filename);
