@@ -16,8 +16,6 @@
 #include "list.h"
 #include "fileutils.h"
 
-#define DEFAULT_ETC_SUBDIR "/etc"
-
 struct file_element {
 	struct list_head file_list;
 	char *filename;
@@ -212,7 +210,7 @@ int ul_configs_file_list(struct list_head *file_list,
 
 	/* Default is /etc */
 	if (!etc_subdir)
-		etc_subdir = DEFAULT_ETC_SUBDIR;
+		etc_subdir = _PATH_SYSCONFDIR;
 
 	if (!usr_subdir)
 		usr_subdir = "";

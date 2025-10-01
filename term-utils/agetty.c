@@ -1969,7 +1969,7 @@ static void eval_issue_file(struct issue *ie,
 		goto done;
 	}
 
-#ifdef 	ISSUEDIR_SUPPORT
+#ifdef ISSUEDIR_SUPPORT
 	struct list_head file_list;
 	struct list_head *current = NULL;
 	char *name = NULL;
@@ -1977,12 +1977,14 @@ static void eval_issue_file(struct issue *ie,
         /* Reading all issue files and concatinating all contents to one content.
          * The ordering rules are defineded in:
          * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
+	 *
+	 * Note that _PATH_RUNSTATEDIR (/run) is always read by ul_configs_file_list().
 	 */
 	ul_configs_file_list(&file_list,
 			     NULL,
-			     _PATH_ETC_ISSUEDIR,
-			     _PATH_USR_ISSUEDIR,
-			     _PATH_ISSUE_FILENAME,
+			     _PATH_SYSCONFDIR,
+			     _PATH_SYSCONFSTATICDIR,
+			     "issue",
 			     ISSUEDIR_EXT);
 
 	while (ul_configs_next_filename(&file_list, &current, &name) == 0) {
