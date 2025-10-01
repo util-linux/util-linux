@@ -20,6 +20,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SETARCH"
 ts_skip_docker
+ts_skip_qemu_user
 
 ARCH=$(uname -m)
 
