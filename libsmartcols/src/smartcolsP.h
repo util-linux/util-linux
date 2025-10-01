@@ -125,6 +125,7 @@ struct libscols_column {
 
 	int	flags;
 	char	*color;		/* default column color */
+	char	*annotation;	/* column annotation */
 	char	*uri;		/* default column URI prefix */
 	struct ul_buffer uri_buf; /* temporary buffer to compose URIs */
 	char	*safechars;	/* do not encode this bytes */

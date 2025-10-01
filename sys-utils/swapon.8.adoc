@@ -75,6 +75,8 @@ Display a definable table of swap areas. See the *--help* output for a list of a
 *--output-all*::
 Output all available columns.
 
+include::man-common/annotation.adoc[]
+
 *--noheadings*::
 Do not print headings when displaying *--show* output.
 

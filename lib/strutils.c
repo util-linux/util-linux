@@ -551,6 +551,20 @@ bool hyperlinkwanted(const char *mode)
 	errx(EXIT_FAILURE, _("invalid argument of --hyperlink: %s"), mode);
 }
 
+bool annotationwanted(const char *mode)
+{
+	if (mode && strcmp(mode, "never") == 0)
+		return false;
+
+	if (mode && strcmp(mode, "always") == 0)
+		return true;
+
+	if (!mode || strcmp(mode, "auto") == 0)
+		return isatty(STDOUT_FILENO) ? true : false;
+
+	errx(EXIT_FAILURE, _("invalid argument of --annotation: %s"), mode);
+}
+
 /*
  * Converts stat->st_mode to ls(1)-like mode string. The size of "str" must
  * be 11 bytes.

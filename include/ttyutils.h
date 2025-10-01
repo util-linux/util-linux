@@ -221,7 +221,7 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
  * Alternatively, BEL (\a) can be used instead of ST.
  */
 #define UL_HYPERLINK_START		UL_OSC8
-#define UL_HYPERLINK_PARAMS		";;"
+#define UL_HYPERLINK_PARAMS		";;"	/* Reserved for future extendability by the OSC8 */
 #define UL_HYPERLINK_LINK		UL_ST
 #define UL_HYPERLINK_END		(UL_OSC8 ";;" UL_ST)
 
