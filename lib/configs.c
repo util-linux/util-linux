@@ -107,7 +107,7 @@ static int read_dir(struct list_head *file_list,
 	char *dirname = NULL;
 	char *filename = NULL;
 	struct stat st;
-	int dd = 0, nfiles = 0, i;
+	int dd = -1, nfiles = 0, i;
 	int counter = 0;
 	struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
@@ -175,7 +175,7 @@ finish:
 		free(namelist[i]);
 	free(namelist);
 	free(dirname);
-	if (dd > 0)
+	if (dd >= 0)
 		close(dd);
 	return counter;
 }
