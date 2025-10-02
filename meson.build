@@ -3014,6 +3014,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += lsfd_manadocs
+  bashcompletions += ['lsfd']
 endif
 
 exe = executable(
