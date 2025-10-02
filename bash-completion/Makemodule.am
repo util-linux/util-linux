@@ -222,6 +222,9 @@ endif
 if BUILD_LSBLK
 dist_bashcompletion_DATA += bash-completion/lsblk
 endif
+if BUILD_LSFD
+dist_bashcompletion_DATA += bash-completion/lsfd
+endif
 if BUILD_LSLOCKS
 dist_bashcompletion_DATA += bash-completion/lslocks
 endif
