@@ -1734,6 +1734,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += blkpr_manadocs
+  bashcompletions += ['blkpr']
 endif
 
 opt = get_option('build-ldattach').require(cc.has_header('linux/if.h')).allowed()
