@@ -3,7 +3,8 @@
  * it what you wish.
  *
  * Evaluting a list of configuration filenames which have to be handled/parsed.
- * The order of this file list has been defined by 
+ *
+ * The order of this file list has been defined by
  * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
  */
 
@@ -89,4 +90,4 @@ int ul_configs_next_filename(struct list_head *file_list,
 			     struct list_head **current_entry,
 			     char **name);
 
-#endif
+#endif /* UTIL_LINUX_CONFIGS_H */

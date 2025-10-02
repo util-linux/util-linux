@@ -71,10 +71,6 @@
 # define _PATH_BTMP		"/var/log/btmp"
 #endif
 
-#define _PATH_ISSUE_FILENAME	"issue"
-#define _PATH_ETC_ISSUEDIR	"/etc"
-#define _PATH_USR_ISSUEDIR	"/usr/lib"
-
 #define _PATH_OS_RELEASE_ETC	"/etc/os-release"
 #define _PATH_OS_RELEASE_USR	"/usr/lib/os-release"
 #define _PATH_NUMLOCK_ON	_PATH_RUNSTATEDIR "/numlock-on"
