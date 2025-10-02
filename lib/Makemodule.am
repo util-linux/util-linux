@@ -1,4 +1,5 @@
 #
+
 # Use only LGPL or Public domain (preferred) code in libcommon, otherwise add
 # your lib/file.c directly to the _SOURCES= of the target binary.
 #
@@ -30,6 +31,8 @@ libcommon_la_SOURCES = \
 	lib/mbsalign.c \
 	lib/mbsedit.c\
 	lib/md5.c \
+	lib/netaddrq.c \
+	lib/netlink.c \
 	lib/pidutils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
@@ -93,6 +96,8 @@ check_PROGRAMS += \
 	test_ismounted \
 	test_pwdutils \
 	test_mangle \
+	test_netlink \
+	test_netaddrq \
 	test_randutils \
 	test_remove_env \
 	test_strutils \
@@ -139,6 +144,12 @@ test_ismounted_LDADD = libcommon.la $(LDADD)
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_MANGLE
+
+test_netlink_SOURCES = lib/netlink.c
+test_netlink_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETLINK
+
+test_netaddrq_SOURCES = lib/netaddrq.c lib/netlink.c
+test_netaddrq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETADDRQ
 
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_STRUTILS

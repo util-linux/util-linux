@@ -253,6 +253,12 @@ Insert the IPv4 address of the specified network interface (for example: \4\{eth
 6 or 6{_interface_}::
 The same as \4 but for IPv6.
 
+a::
+Insert list of "good" IP addresses for all interfaces. It prints best candidates for remote login IP addresses: global and site addresses; if not available, temporary address with the longest lifetime, if not available, link address. Note that link addresses are printed with local interface name, but they has to be done with the interface name on the machine where they will be used.
+
+A::
+Insert list of all IP addresses for all interfaces.
+
 b::
 Insert the baudrate of the current line.
 
