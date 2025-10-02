@@ -127,6 +127,9 @@ endif
 if BUILD_BFS
 dist_bashcompletion_DATA += bash-completion/mkfs.bfs
 endif
+if BUILD_BITS
+dist_bashcompletion_DATA += bash-completion/bits
+endif
 
 if BUILD_MINIX
 dist_bashcompletion_DATA += \
