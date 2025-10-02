@@ -4,7 +4,8 @@
 # This script verifies bash-completion consistency by checking:
 # 1. All user-facing programs have bash-completion files
 # 2. All bash-completion files are registered in bash-completion/Makemodule.am
-# 3. All bash-completion files correspond to actual programs
+# 3. All bash-completion files are registered in meson.build
+# 4. All bash-completion files correspond to actual programs
 #
 # Copyright (C) 2025 Karel Zak <kzak@redhat.com>
 #
@@ -23,6 +24,7 @@ usage() {
 	echo "  - Program definitions in */Makemodule.am"
 	echo "  - bash-completion/ directory contents"
 	echo "  - bash-completion/Makemodule.am registrations"
+	echo "  - meson.build registrations"
 	exit 1
 }
 
@@ -79,11 +81,30 @@ get_completion_files() {
 		| sort
 }
 
+# Extract programs from meson.build
+extract_meson_registered() {
+	if [ -f "meson.build" ]; then
+		grep "bashcompletions +=" meson.build \
+			| sed "s/.*bashcompletions += //" \
+			| sed "s/\[//" \
+			| sed "s/\]//" \
+			| sed "s/'//g" \
+			| tr ',' '\n' \
+			| sed 's/^ *//' \
+			| sed 's/ *$//' \
+			| grep -v '^$' \
+			| sort -u
+	fi
+}
+
 # Get programs that should have completions
 programs=$(extract_programs | grep -v -w -E "(${exclude_programs}|${special_handling})")
 
 # Get registered completions
 registered=$(extract_completion_registered)
+
+# Get meson registered completions
+meson_registered=$(extract_meson_registered)
 
 # Get actual completion files
 files=$(get_completion_files)
@@ -96,6 +117,9 @@ unregistered=$(comm -23 <(echo "$files") <(echo "$registered"))
 
 # Find completion files without corresponding programs
 orphaned=$(comm -23 <(echo "$files") <(echo "$programs"))
+
+# Find completion files not registered in meson.build
+meson_unregistered=$(comm -23 <(echo "$files") <(echo "$meson_registered"))
 
 # Report findings
 errors=0
@@ -117,6 +141,13 @@ fi
 if [ -n "$orphaned" ]; then
 	echo "bash-completion files without corresponding programs:"
 	echo "$orphaned" | sed 's/^/  /'
+	echo
+	errors=$((errors + 1))
+fi
+
+if [ -n "$meson_unregistered" ]; then
+	echo "bash-completion files not registered in meson.build:"
+	echo "$meson_unregistered" | sed 's/^/  /'
 	echo
 	errors=$((errors + 1))
 fi
