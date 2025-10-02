@@ -1605,14 +1605,28 @@ static void __attribute__((__noreturn__)) list_colunms(struct lsns *ls)
    exit(EXIT_SUCCESS);
 }
 
+static int stat_self_ns (const char *ns, struct stat *st)
+{
+	int r;
+	char *fname = NULL;
+
+	xasprintf(&fname, "/proc/self/ns/%s", ns);
+	r = stat(fname, st);
+	free(fname);
+
+	return r;
+}
+
 static dev_t read_nsfs_dev(void)
 {
 	struct stat st;
 
-	if (stat("/proc/self/ns/user", &st) < 0)
-		err(EXIT_FAILURE, _("failed to do stat /proc/self/ns/user"));
+	for (size_t i = 0; i < ARRAY_SIZE(ns_names); i++) {
+		if (stat_self_ns(ns_names[i], &st) == 0)
+			return st.st_dev;
+	}
 
-	return st.st_dev;
+	return -1;
 }
 
 int main(int argc, char *argv[])
