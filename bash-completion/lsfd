@@ -1,0 +1,67 @@
+_lsfd_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-o'|'--output')
+			local prefix realcur COLLIST
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			COLLIST="$(lsfd --list-columns 2>/dev/null | awk '{print $1}' | tail -n +2)"
+			COMPREPLY=( $(compgen -P "$prefix" -W "$COLLIST" -- $realcur) )
+			return 0
+			;;
+		'-p'|'--pid')
+			COMPREPLY=( $(compgen -W "$(cd /proc && echo [0-9]*)" -- $cur) )
+			return 0
+			;;
+		'-i'|'--inet')
+			COMPREPLY=( $(compgen -W "4 6" -- $cur) )
+			return 0
+			;;
+		'-Q'|'--filter'|'-C'|'--counter')
+			COMPREPLY=( $(compgen -W "expr" -- $cur) )
+			return 0
+			;;
+		'--summary')
+			COMPREPLY=( $(compgen -W "never only append" -- $cur) )
+			return 0
+			;;
+		'--hyperlink')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version'|'-H'|'--list-columns')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="
+				--noheadings
+				--output
+				--version
+				--help
+				--json
+				--raw
+				--threads
+				--notruncate
+				--pid
+				--inet
+				--filter
+				--debug-filter
+				--summary
+				--counter
+				--dump-counters
+				--list-columns
+				--hyperlink
+			"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	return 0
+}
+complete -F _lsfd_module lsfd

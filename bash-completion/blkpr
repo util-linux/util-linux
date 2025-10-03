@@ -1,0 +1,47 @@
+_blkpr_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-c'|'--command')
+			COMPREPLY=( $(compgen -W "register reserve release preempt preempt-abort clear" -- $cur) )
+			return 0
+			;;
+		'-t'|'--type')
+			COMPREPLY=( $(compgen -W "write-exclusive exclusive-access write-exclusive-reg-only exclusive-access-reg-only write-exclusive-all-regs exclusive-access-all-regs" -- $cur) )
+			return 0
+			;;
+		'-f'|'--flag')
+			COMPREPLY=( $(compgen -W "ignore-key" -- $cur) )
+			return 0
+			;;
+		'-k'|'--key'|'-K'|'--oldkey')
+			COMPREPLY=( $(compgen -W "num" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="
+				--command
+				--key
+				--oldkey
+				--flag
+				--type
+				--help
+				--version
+			"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o bashdefault -o default
+	COMPREPLY=( $(compgen -W "$(command lsblk -pnro name)" -- $cur) )
+	return 0
+}
+complete -F _blkpr_module blkpr

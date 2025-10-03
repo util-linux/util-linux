@@ -149,6 +149,7 @@ for phase in "${PHASES[@]}"; do
     CODECHECK)
         make checklibdoc
         make checkxalloc
+        make checkcompletion
         ;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
