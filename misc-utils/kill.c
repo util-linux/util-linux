@@ -203,13 +203,13 @@ static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 	fprintf(fp, "%2d %-8s", signum, name);
 }
 
-static void print_all_signals(FILE *fp, int pretty)
+static void print_all_signals(FILE *fp, int with_signum)
 {
 	size_t n, lth, lpos = 0, width;
 	const char *signame = NULL;
 	int signum = 0;
 
-	if (!pretty) {
+	if (!with_signum) {
 		for (n = 0; get_signame_by_idx(n, &signame, NULL) == 0; n++) {
 			lth = 1 + strlen(signame);
 			if (KILL_OUTPUT_WIDTH < lpos + lth) {
@@ -227,7 +227,7 @@ static void print_all_signals(FILE *fp, int pretty)
 		return;
 	}
 
-	/* pretty print */
+	/* with signal numbers */
 	width = get_terminal_width(KILL_OUTPUT_WIDTH + 1) - 1;
 	for (n = 0; get_signame_by_idx(n, &signame, &signum) == 0; n++)
 		pretty_print_signal(fp, width, &lpos, signum, signame);
