@@ -130,7 +130,9 @@ static int process_addr(struct ul_nl_data *nl, struct nlmsghdr *nh)
 		nl->addr.ifname = ifname;
 	else
 	{
-		/* There can be race, we do not return error here */
+		/* There can be race, we do not return error here.
+		 * It also happens on RTM_DELADDR, as interface name could
+		 * disappear from kernel tables before we process it. */
 		/* FIXME I18N: *"unknown"* is too generic. Use context. */
 		/* TRANSLATORS: unknown network interface, maximum 15
 		 * (IF_NAMESIZE-1) bytes */
@@ -289,7 +291,8 @@ int ul_nl_process(struct ul_nl_data *nl, bool async, bool loop)
 				    ul_debugobj(nl,
 						"process_msg() returned %d",
 						rc));
-				return rc;
+				if (rc != UL_NL_SOFT_ERROR)
+					return rc;
 			}
 		}
 		if (!loop)
