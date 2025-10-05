@@ -328,7 +328,7 @@ int ul_nl_close(struct ul_nl_data *nl) {
 	return close(nl->fd);
 }
 
-struct ul_nl_addr *ul_nl_addr_dup (struct ul_nl_addr *addr) {
+struct ul_nl_addr *ul_nl_addr_dup(struct ul_nl_addr *addr) {
 	struct ul_nl_addr *newaddr;
 	newaddr = calloc(1, sizeof(struct ul_nl_addr));
 	if (!newaddr)
@@ -348,7 +348,7 @@ struct ul_nl_addr *ul_nl_addr_dup (struct ul_nl_addr *addr) {
 		memcpy(newaddr->ifa_local, addr->ifa_local,
 		       addr->ifa_local_len);
 	}
-	if (&(addr->ifa_address) == &(addr->ifa_local))
+	if (addr->address == addr->ifa_local)
 		newaddr->address = newaddr->ifa_local;
 	else
 		newaddr->address = newaddr->ifa_address;
@@ -360,7 +360,7 @@ error:
 	return NULL;
 }
 
-void ul_nl_addr_free (struct ul_nl_addr *addr) {
+void ul_nl_addr_free(struct ul_nl_addr *addr) {
 	if (addr) {
 		free(addr->ifa_address);
 		free(addr->ifa_local);
