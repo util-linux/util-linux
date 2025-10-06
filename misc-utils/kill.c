@@ -192,6 +192,11 @@ static void print_process_signal_state(pid_t pid)
 	ul_unref_path(pc);
 }
 
+static void print_signal_number_and_name(FILE *fp, int signum, const char *name, bool newline)
+{
+	fprintf(fp, "%2d %-8s%s", signum, name, newline? "\n": "");
+}
+
 static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 				int signum, const char *name)
 {
@@ -200,17 +205,22 @@ static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 		*lpos = 0;
 	}
 	*lpos += KILL_FIELD_WIDTH;
-	fprintf(fp, "%2d %-8s", signum, name);
+	print_signal_number_and_name(fp, signum, name, false);
 }
 
-static void print_all_signals(FILE *fp, int pretty)
+static void print_all_signals(FILE *fp, int with_signum)
 {
-	size_t n, lth, lpos = 0, width;
+	size_t n, lth, lpos = 0;
 	const char *signame = NULL;
 	int signum = 0;
+	int pretty = isatty(STDOUT_FILENO);
 
-	if (!pretty) {
+	if (!with_signum) {
 		for (n = 0; get_signame_by_idx(n, &signame, NULL) == 0; n++) {
+			if (!pretty) {
+				fprintf(fp, "%s\n", signame);
+				continue;
+			}
 			lth = 1 + strlen(signame);
 			if (KILL_OUTPUT_WIDTH < lpos + lth) {
 				fputc('\n', fp);
@@ -221,21 +231,33 @@ static void print_all_signals(FILE *fp, int pretty)
 			fputs(signame, fp);
 		}
 #ifdef SIGRTMIN
-		fputs(" RT<N> RTMIN+<N> RTMAX-<N>", fp);
+		if (!pretty)
+			fputs("RT<N>\nRTMIN+<N>\nRTMAX-<N>", fp);
+		else
+			fputs(" RT<N> RTMIN+<N> RTMAX-<N>", fp);
 #endif
 		fputc('\n', fp);
 		return;
 	}
 
-	/* pretty print */
-	width = get_terminal_width(KILL_OUTPUT_WIDTH + 1) - 1;
-	for (n = 0; get_signame_by_idx(n, &signame, &signum) == 0; n++)
-		pretty_print_signal(fp, width, &lpos, signum, signame);
+	/* with signal numbers */
+	if (!pretty) {
+		for (n = 0; get_signame_by_idx(n, &signame, &signum) == 0; n++)
+			print_signal_number_and_name(fp, signum, signame, true);
 #ifdef SIGRTMIN
-	pretty_print_signal(fp, width, &lpos, SIGRTMIN, "RTMIN");
-	pretty_print_signal(fp, width, &lpos, SIGRTMAX, "RTMAX");
+		print_signal_number_and_name(fp, SIGRTMIN, "RTMIN", true);
+		print_signal_number_and_name(fp, SIGRTMAX, "RTMAX", true);
 #endif
-	fputc('\n', fp);
+	} else {
+		size_t width = get_terminal_width(KILL_OUTPUT_WIDTH + 1) - 1;
+		for (n = 0; get_signame_by_idx(n, &signame, &signum) == 0; n++)
+			pretty_print_signal(fp, width, &lpos, signum, signame);
+#ifdef SIGRTMIN
+		pretty_print_signal(fp, width, &lpos, SIGRTMIN, "RTMIN");
+		pretty_print_signal(fp, width, &lpos, SIGRTMAX, "RTMAX");
+#endif
+		fputc('\n', fp);
+	}
 }
 
 static void err_nosig(char *name)
