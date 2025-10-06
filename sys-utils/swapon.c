@@ -141,7 +141,7 @@ struct swapon_ctl {
 	struct swap_prop props;		/* global settings for all devices */
 
 	bool	all,		/* turn on all swap devices */
-		annotation,	/* annotate columns with a tooltip (always|never|auto)*/
+		annotate,	/* annotate columns with a tooltip (always|never|auto)*/
 		bytes,		/* display --show in bytes */
 		fix_page_size,	/* reinitialize page size */
 		no_heading,	/* toggle --show headers */
@@ -321,7 +321,7 @@ static int show_table(struct swapon_ctl *ctl)
 		cl = scols_table_new_column(table, col->name, col->whint, col->flags);
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
-		if (ctl->annotation && col->help)
+		if (ctl->annotate && col->help)
 			scols_column_refer_annotation(cl, col->help);
 	}
 
@@ -876,11 +876,11 @@ int main(int argc, char *argv[])
 {
 	int status = 0, c;
 	size_t i;
-	char *options = NULL, *fstab_filename = NULL, *annotation_opt_arg = NULL;
+	char *options = NULL, *fstab_filename = NULL, *annotate_opt_arg = NULL;
 
 	enum {
 		BYTES_OPTION = CHAR_MAX + 1,
-		ANNOTATION_OPTION,
+		ANNOTATE_OPTION,
 		NOHEADINGS_OPTION,
 		RAW_OPTION,
 		SHOW_OPTION,
@@ -900,7 +900,7 @@ int main(int argc, char *argv[])
 		{ "version",      no_argument,       NULL, 'V'                 },
 		{ "show",         optional_argument, NULL, SHOW_OPTION         },
 		{ "output-all",   no_argument,       NULL, OPT_LIST_TYPES      },
-		{ "annotate",     optional_argument, NULL, ANNOTATION_OPTION   },
+		{ "annotate",     optional_argument, NULL, ANNOTATE_OPTION     },
 		{ "noheadings",   no_argument,       NULL, NOHEADINGS_OPTION   },
 		{ "raw",          no_argument,       NULL, RAW_OPTION          },
 		{ "bytes",        no_argument,       NULL, BYTES_OPTION        },
@@ -996,8 +996,8 @@ int main(int argc, char *argv[])
 			for (ctl.ncolumns = 0; (size_t)ctl.ncolumns < ARRAY_SIZE(infos); ctl.ncolumns++)
 				ctl.columns[ctl.ncolumns] = ctl.ncolumns;
 			break;
-		case ANNOTATION_OPTION:
-			annotation_opt_arg = optarg;
+		case ANNOTATE_OPTION:
+			annotate_opt_arg = optarg;
 			break;
 		case NOHEADINGS_OPTION:
 			ctl.no_heading = 1;
@@ -1021,8 +1021,8 @@ int main(int argc, char *argv[])
 	}
 	argv += optind;
 
-	if (annotationwanted(annotation_opt_arg))
-		ctl.annotation = 1;
+	if (annotationwanted(annotate_opt_arg))
+		ctl.annotate = 1;
 
 	if (ctl.summarize)
 		return display_summary();
