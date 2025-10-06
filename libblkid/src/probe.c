@@ -2012,8 +2012,8 @@ static void blkid_probe_log_csum_mismatch(blkid_probe pr, size_t n, const void *
 	int hex_size = min(sizeof(csum_hex), n * 2);
 
 	for (int i = 0; i < hex_size; i+=2) {
-		sprintf(&csum_hex[i], "%02X", ((const unsigned char *) csum)[i / 2]);
-		sprintf(&expected_hex[i], "%02X", ((const unsigned char *) expected)[i / 2]);
+		snprintf(&csum_hex[i], sizeof(csum_hex) - i, "%02X", ((const unsigned char *) csum)[i / 2]);
+		snprintf(&expected_hex[i], sizeof(expected_hex) - i, "%02X", ((const unsigned char *) expected)[i / 2]);
 	}
 
 	DBG(LOWPROBE, ul_debug(
