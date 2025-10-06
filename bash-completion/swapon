@@ -56,7 +56,7 @@ _swapon_module()
 	case $cur in
 		-*)
 			OPTS="--all
-				--annotation
+				--annotate
 				--discard
 				--ifexists
 				--fixpgsz

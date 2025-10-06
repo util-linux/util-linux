@@ -562,7 +562,7 @@ bool annotationwanted(const char *mode)
 	if (!mode || strcmp(mode, "auto") == 0)
 		return isatty(STDOUT_FILENO) ? true : false;
 
-	errx(EXIT_FAILURE, _("invalid argument of --annotation: %s"), mode);
+	errx(EXIT_FAILURE, _("invalid argument of --annotate: %s"), mode);
 }
 
 /*

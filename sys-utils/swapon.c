@@ -840,7 +840,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --fstab <path>       alternative file to /etc/fstab\n"), out);
 	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
 	fputs(_("     --output-all         output all available columns\n"), out);
-	fputs(_("     --annotation[=<when>]  annotate columns with a tooltip (always|never|auto)\n"), out);
+	fputs(_("     --annotate[=<when>]  annotate columns with a tooltip (always|never|auto)\n"), out);
 	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
 	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
 	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
@@ -900,7 +900,7 @@ int main(int argc, char *argv[])
 		{ "version",      no_argument,       NULL, 'V'                 },
 		{ "show",         optional_argument, NULL, SHOW_OPTION         },
 		{ "output-all",   no_argument,       NULL, OPT_LIST_TYPES      },
-		{ "annotation",   optional_argument, NULL, ANNOTATION_OPTION   },
+		{ "annotate",     optional_argument, NULL, ANNOTATION_OPTION   },
 		{ "noheadings",   no_argument,       NULL, NOHEADINGS_OPTION   },
 		{ "raw",          no_argument,       NULL, RAW_OPTION          },
 		{ "bytes",        no_argument,       NULL, BYTES_OPTION        },
