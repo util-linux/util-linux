@@ -76,8 +76,11 @@ TSTP
 TTIN
 TTOU
 ....
+If neither *NUMBER* nor `0x`*SIGMASK* is given, list all signal names.
+In that case, print one signal per line when the output is not a terminal.
 *-L*, *--table*::
 Similar to *-l*, but it will print signal names and their corresponding numbers.
+Print one signal per line when the output is not a terminal.
 *-a*, *--all*::
 Do not restrict the command-name-to-PID conversion to processes with the same UID as the present process.
 *-p*, *--pid*::
