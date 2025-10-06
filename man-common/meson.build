@@ -1,5 +1,5 @@
 man_common_adocs = files(
-  'annotation.adoc',
+  'annotate.adoc',
   'bugreports.adoc',
   'colors.adoc',
   'footer.adoc',
