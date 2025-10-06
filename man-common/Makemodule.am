@@ -1,5 +1,5 @@
 ADOCFILES_COMMON += \
-	      man-common/annotation.adoc \
+	      man-common/annotate.adoc \
 	      man-common/bugreports.adoc \
 	      man-common/colors.adoc \
 	      man-common/footer.adoc \

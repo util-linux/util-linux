@@ -1,6 +1,0 @@
-*--annotation*[**=**_when_]::
-Adds an annotation to column header names which can be printed as a
-tooltip by supporting terminals. The optional _when_ argument can be
-*always*, *never*, or *auto*. If the argument is omitted, it defaults to
-*auto*, which means that annotations will only be used when the output
-goes to a terminal.

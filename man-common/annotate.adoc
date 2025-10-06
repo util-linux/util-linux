@@ -1,0 +1,6 @@
+*--annotate*[**=**_when_]::
+Adds an annotation to each column header name. Such an annotation can be shown
+as a tooltip by terminals that support this feature. The optional _when_ argument
+can be *always*, *never*, or *auto*. If the argument is omitted, it defaults to
+*auto*, which means that annotations will only be used when the output
+goes to a terminal.
