@@ -191,9 +191,11 @@ int blkid_encode_string(const char *str, char *str_enc, size_t len)
 			j += seqlen;
 			i += (seqlen-1);
 		} else if (str[i] == '\\' || !is_whitelisted(str[i], NULL)) {
-			if (len-j < 4)
+			int rc;
+
+			rc = snprintf(&str_enc[j], len-j, "\\x%02x", (unsigned char) str[i]);
+			if (rc != 4)
 				goto err;
-			sprintf(&str_enc[j], "\\x%02x", (unsigned char) str[i]);
 			j += 4;
 		} else {
 			if (len-j < 1)
