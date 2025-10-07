@@ -678,7 +678,7 @@ int main(int argc, char **argv)
 				c = getchar();
 				if (c == EOF)
 					break;
-				sprintf(buf, "\\x%02x", (unsigned char) c);
+				snprintf(buf, sizeof(buf), "\\x%02x", (unsigned char) c);
 				len = strlen(buf);
 				for (i = 0; i < len; i++) {
 					lns.ch = buf[i];
