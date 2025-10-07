@@ -296,7 +296,7 @@ ul_netaddrq_iface_bestaddr(struct list_head *ipq_list,
 	struct ul_netaddrq_ip *ipq;
 	enum ul_netaddrq_ip_rating threshold;
 
-	threshold = ULNETLINK_RATING_BAD;
+	threshold = __ULNETLINK_RATING_MAX;
 	list_for_each(li, ipq_list)
 	{
 		ipq = list_entry(li, struct ul_netaddrq_ip, entry);
@@ -342,7 +342,7 @@ ul_netaddrq_bestaddr(struct ul_nl_data *nl,
 		ipqo = offsetof(struct ul_netaddrq_iface, ip_quality_list_6);
 	}
 
-	threshold = ULNETLINK_RATING_BAD;
+	threshold = __ULNETLINK_RATING_MAX;
 	list_for_each(li, &(addrq->ifaces))
 	{
 		struct list_head *ipq_list;
@@ -374,7 +374,7 @@ const char *ul_netaddrq_get_best_ipp(struct ul_nl_data *nl,
 
 	memset(best, 0, sizeof(best));
 	*threshold = ul_netaddrq_bestaddr(nl, best_ifaceq, &best, ifa_family);
-	if (best[*threshold])
+	if (*threshold != __ULNETLINK_RATING_MAX)
 		return ul_nl_addr_ntop_address(best[*threshold]->addr);
 	return NULL;
 }
@@ -423,7 +423,7 @@ static void dump_iface_best(struct ul_nl_data *nl,
 	memset(best, 0, sizeof(best));
 	threshold = ul_netaddrq_iface_bestaddr(&(ifaceq->ip_quality_list_4),
 					       &best);
-	if (best[threshold])
+	if (threshold != __ULNETLINK_RATING_MAX)
 	{
 		fprintf(netout, "%s IPv4: %s", (first ? "best address" : " "),
 		       ul_nl_addr_ntop_address(best[threshold]->addr));
@@ -432,7 +432,7 @@ static void dump_iface_best(struct ul_nl_data *nl,
 	memset(best, 0, sizeof(best));
 	threshold = ul_netaddrq_iface_bestaddr(&(ifaceq->ip_quality_list_6),
 					       &best);
-	if (best[threshold])
+	if (threshold != __ULNETLINK_RATING_MAX)
 	{
 		fprintf(netout, "%s IPv6: %s", (first ? "best address" : " "),
 		       ul_nl_addr_ntop_address(best[threshold]->addr));
