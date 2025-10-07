@@ -195,11 +195,15 @@ int ul_configs_file_list(struct list_head *file_list,
 			 const char *config_name,
 			 const char *config_suffix)
 {
-	char *filename = NULL, *usr_basename = NULL, *etc_basename = NULL;
+	char *filename = NULL, *run_basename = NULL, *usr_basename = NULL,
+		*etc_basename = NULL, *etc_run_basename = NULL;
 	struct list_head etc_file_list;
+	struct list_head run_file_list;
+	struct list_head etc_run_file_list;
 	struct list_head usr_file_list;
-	struct list_head *etc_entry = NULL, *usr_entry = NULL;
-	struct file_element *add_element = NULL, *usr_element = NULL, *etc_element = NULL;
+	struct list_head *etc_entry = NULL, *usr_entry = NULL, *run_entry = NULL, *etc_run_entry = NULL;
+	struct file_element *add_element = NULL, *usr_element = NULL,
+		*run_element = NULL, *etc_element = NULL, *etc_run_element = NULL;
 	int counter = 0;
 
 	INIT_LIST_HEAD(file_list);
@@ -235,13 +239,20 @@ int ul_configs_file_list(struct list_head *file_list,
 	}
 
 	INIT_LIST_HEAD(&etc_file_list);
+	INIT_LIST_HEAD(&run_file_list);
+	INIT_LIST_HEAD(&etc_run_file_list);
 	INIT_LIST_HEAD(&usr_file_list);
 
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-	int ret_usr = 0, ret_etc = 0;
+	int ret_usr = 0, ret_etc = 0, ret_run = 0;
         ret_etc = read_dir(&etc_file_list,
 			   project,
 			   etc_subdir,
+			   config_name,
+			   config_suffix);
+	ret_run = read_dir(&run_file_list,
+			   project,
+			   _PATH_RUNSTATEDIR,
 			   config_name,
 			   config_suffix);
 	ret_usr = read_dir(&usr_file_list,
@@ -249,24 +260,73 @@ int ul_configs_file_list(struct list_head *file_list,
 			   usr_subdir,
 			   config_name,
 			   config_suffix);
-	if (ret_etc == -ENOMEM || ret_usr == -ENOMEM) {
+	if (ret_etc == -ENOMEM || ret_usr == -ENOMEM || ret_run == -ENOMEM) {
 		counter = -ENOMEM;
 		goto finish;
 	}
 #endif
 
+	/* Merging run and etc list in the correct order. Output: etc_run_list */
 	list_for_each(etc_entry, &etc_file_list) {
 
 		etc_element = list_entry(etc_entry, struct file_element, file_list);
 		etc_basename = ul_basename(etc_element->filename);
+
+		list_for_each(run_entry, &run_file_list) {
+
+			run_element = list_entry(run_entry, struct file_element, file_list);
+			run_basename = ul_basename(run_element->filename);
+
+			if (strcmp(run_basename, etc_basename) <= 0) {
+				if (strcmp(run_basename, etc_basename) < 0) {
+					add_element = new_list_entry(run_element->filename);
+					if (add_element == NULL) {
+						counter = -ENOMEM;
+						goto finish;
+					}
+					list_add_tail(&add_element->file_list, &etc_run_file_list);
+					counter++;
+				}
+				list_del(&run_element->file_list);
+			} else {
+				break;
+			}
+		}
+		add_element = new_list_entry(etc_element->filename);
+		if (add_element == NULL) {
+			counter = -ENOMEM;
+			goto finish;
+		}
+		list_add_tail(&add_element->file_list, &etc_run_file_list);
+		counter++;
+	}
+
+	/* taking the rest of /run */
+	list_for_each(run_entry, &run_file_list) {
+		run_element = list_entry(run_entry, struct file_element, file_list);
+		add_element = new_list_entry(run_element->filename);
+		if (add_element == NULL) {
+			counter = -ENOMEM;
+			goto finish;
+		}
+		list_add_tail(&add_element->file_list, &etc_run_file_list);
+		counter++;
+	}
+
+	/* Merging etc_run list and var list in the correct order. Output: file_list
+	   which will be returned. */
+	list_for_each(etc_run_entry, &etc_run_file_list) {
+
+		etc_run_element = list_entry(etc_run_entry, struct file_element, file_list);
+		etc_run_basename = ul_basename(etc_run_element->filename);
 
 		list_for_each(usr_entry, &usr_file_list) {
 
 			usr_element = list_entry(usr_entry, struct file_element, file_list);
 			usr_basename = ul_basename(usr_element->filename);
 
-			if (strcmp(usr_basename, etc_basename) <= 0) {
-				if (strcmp(usr_basename, etc_basename) < 0) {
+			if (strcmp(usr_basename, etc_run_basename) <= 0) {
+				if (strcmp(usr_basename, etc_run_basename) < 0) {
 					add_element = new_list_entry(usr_element->filename);
 					if (add_element == NULL) {
 						counter = -ENOMEM;
@@ -280,7 +340,7 @@ int ul_configs_file_list(struct list_head *file_list,
 				break;
 			}
 		}
-		add_element = new_list_entry(etc_element->filename);
+		add_element = new_list_entry(etc_run_element->filename);
 		if (add_element == NULL) {
 			counter = -ENOMEM;
 			goto finish;
@@ -303,6 +363,7 @@ int ul_configs_file_list(struct list_head *file_list,
 
 finish:
 	ul_configs_free_list(&etc_file_list);
+	ul_configs_free_list(&etc_run_file_list);
 	ul_configs_free_list(&usr_file_list);
 
 	return counter;
@@ -319,11 +380,12 @@ int ul_configs_next_filename(struct list_head *file_list,
 {
 	struct file_element *element = NULL;
 
-	if (*current_entry == file_list)
+	if (list_empty(file_list) || *current_entry == file_list)
 		return 1;
 
 	if (*current_entry == NULL)
-		*current_entry = file_list;
+		*current_entry = file_list->next;
+
 	element = list_entry(*current_entry, struct file_element, file_list);
 	*name = element->filename;
 	*current_entry = (*current_entry)->next;
