@@ -394,3 +394,86 @@ int ul_configs_next_filename(struct list_head *file_list,
 
 	return 0;
 }
+
+#ifdef TEST_PROGRAM_CONFIGS
+# include <getopt.h>
+
+int main(int argc, char *argv[])
+{
+	struct list_head file_list;
+	struct list_head *current = NULL;
+	char *name = NULL;
+	const char *etc_path = NULL;
+	const char *run_path = NULL;
+	const char *usr_path = NULL;
+	const char *project = NULL;
+	const char *config_name = NULL;
+	const char *config_suffix = NULL;
+	static const struct option longopts[] = {
+		{ "etc", required_argument, NULL, 'e' },
+		{ "run", required_argument, NULL, 'r' },
+		{ "usr", required_argument, NULL, 'u' },
+		{ "project", required_argument, NULL, 'p' },
+		{ "name", required_argument, NULL, 'n' },
+		{ "suffix", required_argument, NULL, 's' },
+		{ "help", no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+	int ch, count;
+
+	while ((ch = getopt_long(argc, argv, "e:r:u:p:n:s:h", longopts, NULL)) != -1) {
+		switch (ch) {
+		case 'e':
+			etc_path = optarg;
+			break;
+		case 'r':
+			run_path = optarg;
+			break;
+		case 'u':
+			usr_path = optarg;
+			break;
+		case 'p':
+			project = optarg;
+			break;
+		case 'n':
+			config_name = optarg;
+			break;
+		case 's':
+			config_suffix = optarg;
+			break;
+		case 'h':
+			printf("usage: %s [options]\n"
+				" -e, --etc <path>      path to /etc directory\n"
+				" -r, --run <path>      path to /run directory\n"
+				" -u, --usr <path>      path to /usr directory\n"
+				" -p, --project <name>  project name subdirectory\n"
+				" -n, --name <name>     config file base name\n"
+				" -s, --suffix <suffix> config file suffix\n"
+				" -h, --help            display this help\n",
+				program_invocation_short_name);
+			return EXIT_SUCCESS;
+		default:
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (!config_name) {
+		fprintf(stderr, "config name is required (use --name)\n");
+		return EXIT_FAILURE;
+	}
+
+	count = ul_configs_file_list(&file_list, project, etc_path, run_path, usr_path,
+				     config_name, config_suffix);
+	if (count < 0) {
+		fprintf(stderr, "failed to get config file list: %d\n", count);
+		return EXIT_FAILURE;
+	}
+
+	printf("Found %d configuration file(s):\n", count);
+	while (ul_configs_next_filename(&file_list, &current, &name) == 0)
+		printf("  %s\n", name);
+
+	ul_configs_free_list(&file_list);
+	return EXIT_SUCCESS;
+}
+#endif /* TEST_PROGRAM_CONFIGS */
