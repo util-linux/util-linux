@@ -2603,7 +2603,7 @@ static void print_iface_best(struct issue *ie,
 
 		threshold =
 			ul_netaddrq_iface_bestaddr(l, &best);
-		if (best[threshold])
+		if (threshold != __ULNETLINK_RATING_MAX)
 			fputs(ul_nl_addr_ntop_address(best[threshold]->addr),
 			      ie->output);
 	}

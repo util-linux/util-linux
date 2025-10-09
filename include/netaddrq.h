@@ -94,8 +94,11 @@ ul_netaddrq_iface_bestaddr(struct list_head *ipq_list,
  *   best_iface: interface where the best address was seen
  *   best array: best ifa_valid lifetime seen per quality rating
  *   return value: best rating seen
- * Note: It can be needed to call it twice: once for ip_quality_list_4, once
- * for ip_quality_list_6.
+ * Notes:
+ * - It can be needed to call it twice: once for ip_quality_list_4, once
+ *   for ip_quality_list_6.
+ * - If no IP addresses are found, the function can return
+ *   _ULNETLINK_RATING_MAX!
  */
 enum ul_netaddrq_ip_rating
 ul_netaddrq_bestaddr(struct ul_nl_data *nl,
@@ -109,8 +112,11 @@ ul_netaddrq_bestaddr(struct ul_nl_data *nl,
  *   return value: The best address as a string
  *   threshold: The best rating ever seen.
  *   best_ifaceq: The best rated interfece ever seen.
- * Note: It can be needed to call it twice: once for AF_INET, once
- * for AF_INET6.
+ * Notes:
+ * - It can be needed to call it twice: once for AF_INET, once
+ *   for AF_INET6.
+ * - If the return value is NULL (i. e. there are no usable interfaces), then
+ *   *best_ifaceq remains unchanges and cannot be used.
  */
 const char *ul_netaddrq_get_best_ipp(struct ul_nl_data *nl,
 				     uint8_t ifa_family,
