@@ -1952,6 +1952,7 @@ skip:
 	ul_configs_file_list(&file_list,
 			     NULL,
 			     _PATH_SYSCONFDIR,
+			     _PATH_SYSCONFDIR,
 			     _PATH_SYSCONFSTATICDIR,
 			     "issue",
 			     ISSUEDIR_EXT);

@@ -191,6 +191,7 @@ static void free_list_entry(struct file_element *element)
 int ul_configs_file_list(struct list_head *file_list,
 			 const char *project,
 			 const char *etc_subdir,
+			 const char *run_subdir,
 			 const char *usr_subdir,
 			 const char *config_name,
 			 const char *config_suffix)
@@ -215,7 +216,8 @@ int ul_configs_file_list(struct list_head *file_list,
 	/* Default is /etc */
 	if (!etc_subdir)
 		etc_subdir = _PATH_SYSCONFDIR;
-
+	if (!run_subdir)
+		run_subdir = "";
 	if (!usr_subdir)
 		usr_subdir = "";
 
@@ -226,7 +228,7 @@ int ul_configs_file_list(struct list_head *file_list,
 	/* in the following order : /etc /run /usr             */
 	filename = main_configs(etc_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
-		filename = main_configs(_PATH_RUNSTATEDIR, project, config_name, config_suffix);
+		filename = main_configs(run_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
 		filename = main_configs(usr_subdir, project, config_name, config_suffix);
 	if (filename != NULL) {
@@ -252,7 +254,7 @@ int ul_configs_file_list(struct list_head *file_list,
 			   config_suffix);
 	ret_run = read_dir(&run_file_list,
 			   project,
-			   _PATH_RUNSTATEDIR,
+			   run_subdir,
 			   config_name,
 			   config_suffix);
 	ret_usr = read_dir(&usr_file_list,
