@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <sys/syslog.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,40 +23,52 @@ struct file_element {
 	char *filename;
 };
 
+static __attribute__ ((__format__ (__printf__, 2, 0)))
+	char *config_mk_path(int types, const char *fmt, ...)
+{
+	va_list ap;
+	char *path = NULL;
+	int rc;
+
+	errno = 0;
+
+	va_start(ap, fmt);
+	rc = vasprintf(&path, fmt, ap);
+	va_end(ap);
+
+	if (rc > 0 && types) {
+		struct stat st;
+
+		if (stat(path, &st) != 0 ||
+		    !((st.st_mode & S_IFMT) & types))
+			goto fail;
+
+	}
+
+	return path;
+fail:
+	free(path);
+	return NULL;
+}
+
 /* Checking for main configuration file
  *
- * Returning absolute path or NULL if not found
- * The return value has to be freed by the caller.
+ * Returning absolute path or NULL if not found The return value has to be
+ * freed by the caller.
  */
 static char *main_configs(const char *root,
 			  const char *project,
 			  const char *config_name,
 			  const char *config_suffix)
 {
-	bool found = false;
 	char *path = NULL;
-	struct stat st;
 
-	if (config_suffix) {
-		if (asprintf(&path, "%s/%s/%s.%s", root, project, config_name, config_suffix) < 0)
-			return NULL;
-		if (stat(path, &st) == 0) {
-			found = true;
-		} else {
-			free(path);
-			path = NULL;
-		}
-	}
-	if (!found) {
-		/* trying filename without suffix */
-		if (asprintf(&path, "%s/%s/%s", root, project, config_name) < 0)
-			return NULL;
-		if (stat(path, &st) != 0) {
-			/* not found */
-			free(path);
-			path = NULL;
-		}
-	}
+	if (config_suffix)
+		path = config_mk_path(S_IFREG, "%s/%s/%s.%s",
+				root, project, config_name, config_suffix);
+	if (!path)
+		path = config_mk_path(S_IFREG, "%s/%s/%s",
+				root, project, config_name);
 	return path;
 }
 
@@ -103,39 +116,21 @@ static int read_dir(struct list_head *file_list,
 		    const char *config_name,
 		    const char *config_suffix)
 {
-	bool found = false;
 	char *dirname = NULL;
 	char *filename = NULL;
-	struct stat st;
 	int dd = -1, nfiles = 0, i;
 	int counter = 0;
 	struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
 
-	if (config_suffix) {
-		if (asprintf(&dirname, "%s/%s/%s.%s.d",
-			     root, project, config_name, config_suffix) < 0)
-			return -ENOMEM;
-		if (stat(dirname, &st) == 0) {
-			found = true;
-		} else {
-			free(dirname);
-			dirname = NULL;
-		}
-	}
-	if (!found) {
-		/* trying path without suffix */
-		if (asprintf(&dirname, "%s/%s/%s.d", root, project, config_name) < 0)
-			return -ENOMEM;
-		if (stat(dirname, &st) != 0) {
-			/* not found */
-			free(dirname);
-			dirname = NULL;
-		}
-	}
-
-	if (dirname==NULL)
-		goto finish;
+	if (config_suffix)
+		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.%s.d",
+				root, project, config_name, config_suffix);
+	if (!dirname)
+		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.d",
+				root, project, config_name);
+	if (!dirname)
+		return errno == ENOMEM ? -ENOMEM : 0;
 
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
 	if (dd < 0)
@@ -148,6 +143,7 @@ static int read_dir(struct list_head *file_list,
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
 		size_t namesz = strlen(d->d_name);
+
 		if (config_suffix && strlen(config_suffix) > 0 &&
 		    (!namesz || namesz < strlen(config_suffix) + 1 ||
 		     strcmp(d->d_name + (namesz - strlen(config_suffix)), config_suffix) != 0)) {
@@ -191,6 +187,7 @@ static void free_list_entry(struct file_element *element)
 int ul_configs_file_list(struct list_head *file_list,
 			 const char *project,
 			 const char *etc_subdir,
+			 const char *run_subdir,
 			 const char *usr_subdir,
 			 const char *config_name,
 			 const char *config_suffix)
@@ -215,7 +212,8 @@ int ul_configs_file_list(struct list_head *file_list,
 	/* Default is /etc */
 	if (!etc_subdir)
 		etc_subdir = _PATH_SYSCONFDIR;
-
+	if (!run_subdir)
+		run_subdir = "";
 	if (!usr_subdir)
 		usr_subdir = "";
 
@@ -226,7 +224,7 @@ int ul_configs_file_list(struct list_head *file_list,
 	/* in the following order : /etc /run /usr             */
 	filename = main_configs(etc_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
-		filename = main_configs(_PATH_RUNSTATEDIR, project, config_name, config_suffix);
+		filename = main_configs(run_subdir, project, config_name, config_suffix);
 	if (filename == NULL)
 		filename = main_configs(usr_subdir, project, config_name, config_suffix);
 	if (filename != NULL) {
@@ -252,7 +250,7 @@ int ul_configs_file_list(struct list_head *file_list,
 			   config_suffix);
 	ret_run = read_dir(&run_file_list,
 			   project,
-			   _PATH_RUNSTATEDIR,
+			   run_subdir,
 			   config_name,
 			   config_suffix);
 	ret_usr = read_dir(&usr_file_list,
@@ -392,3 +390,86 @@ int ul_configs_next_filename(struct list_head *file_list,
 
 	return 0;
 }
+
+#ifdef TEST_PROGRAM_CONFIGS
+# include <getopt.h>
+
+int main(int argc, char *argv[])
+{
+	struct list_head file_list;
+	struct list_head *current = NULL;
+	char *name = NULL;
+	const char *etc_path = NULL;
+	const char *run_path = NULL;
+	const char *usr_path = NULL;
+	const char *project = NULL;
+	const char *config_name = NULL;
+	const char *config_suffix = NULL;
+	static const struct option longopts[] = {
+		{ "etc", required_argument, NULL, 'e' },
+		{ "run", required_argument, NULL, 'r' },
+		{ "usr", required_argument, NULL, 'u' },
+		{ "project", required_argument, NULL, 'p' },
+		{ "name", required_argument, NULL, 'n' },
+		{ "suffix", required_argument, NULL, 's' },
+		{ "help", no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+	int ch, count;
+
+	while ((ch = getopt_long(argc, argv, "e:r:u:p:n:s:h", longopts, NULL)) != -1) {
+		switch (ch) {
+		case 'e':
+			etc_path = optarg;
+			break;
+		case 'r':
+			run_path = optarg;
+			break;
+		case 'u':
+			usr_path = optarg;
+			break;
+		case 'p':
+			project = optarg;
+			break;
+		case 'n':
+			config_name = optarg;
+			break;
+		case 's':
+			config_suffix = optarg;
+			break;
+		case 'h':
+			printf("usage: %s [options]\n"
+				" -e, --etc <path>      path to /etc directory\n"
+				" -r, --run <path>      path to /run directory\n"
+				" -u, --usr <path>      path to /usr directory\n"
+				" -p, --project <name>  project name subdirectory\n"
+				" -n, --name <name>     config file base name\n"
+				" -s, --suffix <suffix> config file suffix\n"
+				" -h, --help            display this help\n",
+				program_invocation_short_name);
+			return EXIT_SUCCESS;
+		default:
+			return EXIT_FAILURE;
+		}
+	}
+
+	if (!config_name) {
+		fprintf(stderr, "config name is required (use --name)\n");
+		return EXIT_FAILURE;
+	}
+
+	count = ul_configs_file_list(&file_list, project, etc_path, run_path, usr_path,
+				     config_name, config_suffix);
+	if (count < 0) {
+		fprintf(stderr, "failed to get config file list: %d\n", count);
+		return EXIT_FAILURE;
+	}
+
+	printf("Found %d configuration file(s):\n", count);
+	while (ul_configs_next_filename(&file_list, &current, &name) == 0)
+		printf("  %s\n", name);
+
+	ul_configs_free_list(&file_list);
+	return EXIT_SUCCESS;
+}
+#endif /* TEST_PROGRAM_CONFIGS */

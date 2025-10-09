@@ -3639,6 +3639,17 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'test_configs',
+  'lib/configs.c',
+  c_args : ['-DTEST_PROGRAM_CONFIGS'],
+  include_directories : dir_include,
+  link_with : lib_common,
+  build_by_default: program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
   'test_pwdutils',
   'lib/pwdutils.c',
   c_args : ['-DTEST_PROGRAM'],

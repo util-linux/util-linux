@@ -44,6 +44,7 @@
 int ul_configs_file_list(struct list_head *file_list,
 			 const char *project,
 			 const char *etc_subdir,
+			 const char *run_subdir,
 			 const char *usr_subdir,
 			 const char *config_name,
 			 const char *config_suffix);
