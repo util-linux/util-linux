@@ -1273,7 +1273,7 @@ full_output:
 		} else {
 			char cidbuf[PID_CHARS_MAX+3] = {'\0'};
 
-			sprintf(cidbuf, "[%*s] ",
+			snprintf(cidbuf, sizeof(cidbuf), "[%*s] ",
 				(char)ctl->caller_id_size, rec->caller_id);
 			ctl->indent += strnlen(cidbuf, sizeof(cidbuf));
 			fputs(cidbuf, stdout);

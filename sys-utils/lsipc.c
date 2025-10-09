@@ -1243,15 +1243,17 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			case COL_STATUS: {
 					int comma = 0;
 					size_t offt = 0;
+					size_t arg_size;
 
 					free(arg);
-					arg = xcalloc(1, sizeof(char) * strlen(_("dest"))
+					arg_size = sizeof(char) * strlen(_("dest"))
 							+ strlen(_("locked"))
 							+ strlen(_("hugetlb"))
-							+ strlen(_("noreserve")) + 4);
+							+ strlen(_("noreserve")) + 4;
+					arg = xcalloc(1, arg_size);
 #ifdef SHM_DEST
 					if (p->shm_perm.mode & SHM_DEST) {
-						offt += sprintf(arg, "%s", _("dest"));
+						offt += snprintf(arg, arg_size, "%s", _("dest"));
 						comma++;
 					}
 #endif
@@ -1259,21 +1261,21 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					if (p->shm_perm.mode & SHM_LOCKED) {
 						if (comma)
 							arg[offt++] = ',';
-						offt += sprintf(arg + offt, "%s", _("locked"));
+						offt += snprintf(arg + offt, arg_size - offt, "%s", _("locked"));
 					}
 #endif
 #ifdef SHM_HUGETLB
 					if (p->shm_perm.mode & SHM_HUGETLB) {
 						if (comma)
 							arg[offt++] = ',';
-						offt += sprintf(arg + offt, "%s", _("hugetlb"));
+						offt += snprintf(arg + offt, arg_size - offt, "%s", _("hugetlb"));
 					}
 #endif
 #ifdef SHM_NORESERVE
 					if (p->shm_perm.mode & SHM_NORESERVE) {
 						if (comma)
 							arg[offt++] = ',';
-						sprintf(arg + offt, "%s", _("noreserve"));
+						snprintf(arg + offt, arg_size - offt, "%s", _("noreserve"));
 					}
 #endif
 					rc = scols_line_refer_data(ln, n, arg);

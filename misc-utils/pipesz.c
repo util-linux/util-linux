@@ -140,7 +140,7 @@ static void do_fd(int fd)
 {
 	char name[sizeof(stringify(INT_MIN)) + 3];
 
-	sprintf(name, "fd %d", fd);
+	snprintf(name, sizeof(name), "fd %d", fd);
 
 	if (opt_get)
 		do_get(fd, name);

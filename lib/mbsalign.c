@@ -165,32 +165,39 @@ size_t mbs_safe_width(const char *s)
  * The @buf has to be big enough to store mbs_safe_encode_size(strlen(s)))
  * bytes.
  */
-char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const char *safechars)
+char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz, const char *safechars)
 {
 	const char *p = s;
 	char *r;
+	int rsz;
 	size_t sz = s ? strlen(s) : 0;
 
 #ifdef HAVE_WIDECHAR
 	mbstate_t st;
 	memset(&st, 0, sizeof(st));
 #endif
-	if (!sz || !buf)
+	if (!sz || !buf || !bufsiz)
 		return NULL;
 
 	r = buf;
+	rsz = (int) bufsiz;
 	*width = 0;
 
 	while (p && *p) {
 		if (safechars && strchr(safechars, *p)) {
+			if (rsz < 2)
+				break;
 			*r++ = *p++;
+			rsz--;
 			continue;
 		}
 
 		if ((*p == '\\' && *(p + 1) == 'x')
 		    || iscntrl((unsigned char) *p)) {
-			sprintf(r, "\\x%02x", (unsigned char) *p);
+			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+				break;
 			r += 4;
+			rsz -= 4;
 			*width += 4;
 			p++;
 		}
@@ -209,35 +216,52 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const c
 				 * printable char according to the current locales.
 				 */
 				if (!isprint((unsigned char) *p)) {
-					sprintf(r, "\\x%02x", (unsigned char) *p);
+					if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+						break;
 					r += 4;
+					rsz -= 4;
 					*width += 4;
 				} else {
+					if (rsz < 2)
+						break;
 					(*width)++;
 					*r++ = *p;
+					rsz--;
 				}
 			} else if (!iswprint(wc)) {
 				size_t i;
 				for (i = 0; i < len; i++) {
-					sprintf(r, "\\x%02x", (unsigned char) p[i]);
+					if (snprintf(r, rsz, "\\x%02x", (unsigned char) p[i]) < 4)
+						break;
 					r += 4;
+					rsz -= 4;
 					*width += 4;
 				}
+				if (i < len)
+					break;
 			} else {
+				if (rsz < (int)len + 1)
+					break;
 				memcpy(r, p, len);
 				r += len;
+				rsz -= len;
 				*width += wcwidth(wc);
 			}
 			p += len;
 		}
 #else
 		else if (!isprint((unsigned char) *p)) {
-			sprintf(r, "\\x%02x", (unsigned char) *p);
+			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+				break;
 			p++;
 			r += 4;
+			rsz -= 4;
 			*width += 4;
 		} else {
+			if (rsz < 2)
+				break;
 			*r++ = *p++;
+			rsz--;
 			(*width)++;
 		}
 #endif
@@ -254,20 +278,22 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const c
  * The @buf has to be big enough to store mbs_safe_encode_size(strlen(s)))
  * bytes.
  */
-char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
+char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz)
 {
 	const char *p = s;
 	char *r;
+	int rsz;
 	size_t sz = s ? strlen(s) : 0;
 
 #ifdef HAVE_WIDECHAR
 	mbstate_t st;
 	memset(&st, 0, sizeof(st));
 #endif
-	if (!sz || !buf)
+	if (!sz || !buf || !bufsiz)
 		return NULL;
 
 	r = buf;
+	rsz = (int) bufsiz;
 	*width = 0;
 
 	while (p && *p) {
@@ -288,19 +314,29 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf)
 			 * printable char according to the current locales.
 			 */
 			if (!isprint((unsigned char) *p)) {
-				sprintf(r, "\\x%02x", (unsigned char) *p);
+				if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+					break;
 				r += 4;
+				rsz -= 4;
 				*width += 4;
 			} else {
+				if (rsz < 2)
+					break;
 				(*width)++;
 				*r++ = *p;
+				rsz--;
 			}
 		} else if (*p == '\\' && *(p + 1) == 'x') {
-			sprintf(r, "\\x%02x", (unsigned char) *p);
+			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+				break;
 			r += 4;
+			rsz -= 4;
 			*width += 4;
 		} else {
+			if (rsz < (int)len + 1)
+				break;
 			r = mempcpy(r, p, len);
+			rsz -= len;
 			*width += wcwidth(wc);
 		}
 		p += len;
@@ -343,13 +379,15 @@ size_t mbs_safe_decode_size(const char *p)
 char *mbs_safe_encode(const char *s, size_t *width)
 {
 	size_t sz = s ? strlen(s) : 0;
+	size_t bufsz;
 	char *buf, *ret = NULL;
 
 	if (!sz)
 		return NULL;
-	buf = malloc(mbs_safe_encode_size(sz));
+	bufsz = mbs_safe_encode_size(sz);
+	buf = malloc(bufsz);
 	if (buf)
-		ret = mbs_safe_encode_to_buffer(s, width, buf, NULL);
+		ret = mbs_safe_encode_to_buffer(s, width, buf, bufsz, NULL);
 	if (!ret)
 		free(buf);
 	return ret;
@@ -362,13 +400,15 @@ char *mbs_safe_encode(const char *s, size_t *width)
 char *mbs_invalid_encode(const char *s, size_t *width)
 {
 	size_t sz = s ? strlen(s) : 0;
+	size_t bufsz;
 	char *buf, *ret = NULL;
 
 	if (!sz)
 		return NULL;
-	buf = malloc(mbs_safe_encode_size(sz));
+	bufsz = mbs_safe_encode_size(sz);
+	buf = malloc(bufsz);
 	if (buf)
-		ret = mbs_invalid_encode_to_buffer(s, width, buf);
+		ret = mbs_invalid_encode_to_buffer(s, width, buf, bufsz);
 	if (!ret)
 		free(buf);
 	return ret;

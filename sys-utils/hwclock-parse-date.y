@@ -1513,7 +1513,7 @@ int parse_date(struct timespec *result, char const *p,
 
 				if (!tz_was_altered)
 					tz0 = get_tz (tz0buf);
-				sprintf (tz1buf, "XXX%s%jd:%02d",
+				snprintf (tz1buf, sizeof(tz1buf), "XXX%s%jd:%02d",
 					 &"-"[time_zone < 0],
 					 abs_time_zone_hour,
 					 abs_time_zone_min);
