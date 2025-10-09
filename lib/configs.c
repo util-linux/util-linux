@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <sys/syslog.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
@@ -22,40 +23,52 @@ struct file_element {
 	char *filename;
 };
 
+static __attribute__ ((__format__ (__printf__, 2, 0)))
+	char *config_mk_path(int types, const char *fmt, ...)
+{
+	va_list ap;
+	char *path = NULL;
+	int rc;
+
+	errno = 0;
+
+	va_start(ap, fmt);
+	rc = vasprintf(&path, fmt, ap);
+	va_end(ap);
+
+	if (rc > 0 && types) {
+		struct stat st;
+
+		if (stat(path, &st) != 0 ||
+		    !((st.st_mode & S_IFMT) & types))
+			goto fail;
+
+	}
+
+	return path;
+fail:
+	free(path);
+	return NULL;
+}
+
 /* Checking for main configuration file
  *
- * Returning absolute path or NULL if not found
- * The return value has to be freed by the caller.
+ * Returning absolute path or NULL if not found The return value has to be
+ * freed by the caller.
  */
 static char *main_configs(const char *root,
 			  const char *project,
 			  const char *config_name,
 			  const char *config_suffix)
 {
-	bool found = false;
 	char *path = NULL;
-	struct stat st;
 
-	if (config_suffix) {
-		if (asprintf(&path, "%s/%s/%s.%s", root, project, config_name, config_suffix) < 0)
-			return NULL;
-		if (stat(path, &st) == 0) {
-			found = true;
-		} else {
-			free(path);
-			path = NULL;
-		}
-	}
-	if (!found) {
-		/* trying filename without suffix */
-		if (asprintf(&path, "%s/%s/%s", root, project, config_name) < 0)
-			return NULL;
-		if (stat(path, &st) != 0) {
-			/* not found */
-			free(path);
-			path = NULL;
-		}
-	}
+	if (config_suffix)
+		path = config_mk_path(S_IFREG, "%s/%s/%s.%s",
+				root, project, config_name, config_suffix);
+	if (!path)
+		path = config_mk_path(S_IFREG, "%s/%s/%s",
+				root, project, config_name);
 	return path;
 }
 
@@ -103,39 +116,21 @@ static int read_dir(struct list_head *file_list,
 		    const char *config_name,
 		    const char *config_suffix)
 {
-	bool found = false;
 	char *dirname = NULL;
 	char *filename = NULL;
-	struct stat st;
 	int dd = -1, nfiles = 0, i;
 	int counter = 0;
 	struct dirent **namelist = NULL;
 	struct file_element *entry = NULL;
 
-	if (config_suffix) {
-		if (asprintf(&dirname, "%s/%s/%s.%s.d",
-			     root, project, config_name, config_suffix) < 0)
-			return -ENOMEM;
-		if (stat(dirname, &st) == 0) {
-			found = true;
-		} else {
-			free(dirname);
-			dirname = NULL;
-		}
-	}
-	if (!found) {
-		/* trying path without suffix */
-		if (asprintf(&dirname, "%s/%s/%s.d", root, project, config_name) < 0)
-			return -ENOMEM;
-		if (stat(dirname, &st) != 0) {
-			/* not found */
-			free(dirname);
-			dirname = NULL;
-		}
-	}
-
-	if (dirname==NULL)
-		goto finish;
+	if (config_suffix)
+		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.%s.d",
+				root, project, config_name, config_suffix);
+	if (!dirname)
+		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.d",
+				root, project, config_name);
+	if (!dirname)
+		return errno == ENOMEM ? -ENOMEM : 0;
 
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
 	if (dd < 0)
@@ -148,6 +143,7 @@ static int read_dir(struct list_head *file_list,
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
 		size_t namesz = strlen(d->d_name);
+
 		if (config_suffix && strlen(config_suffix) > 0 &&
 		    (!namesz || namesz < strlen(config_suffix) + 1 ||
 		     strcmp(d->d_name + (namesz - strlen(config_suffix)), config_suffix) != 0)) {
