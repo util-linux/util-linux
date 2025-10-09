@@ -91,6 +91,7 @@ check_PROGRAMS += \
 	test_buffer \
 	test_canonicalize \
 	test_colors \
+	test_configs \
 	test_fileeq \
 	test_fileutils \
 	test_ismounted \
@@ -208,6 +209,10 @@ test_loopdev_SOURCES = lib/loopdev.c
 test_loopdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LOOPDEV
 test_loopdev_LDADD = $(LDADD) libcommon.la
 endif
+
+test_configs_SOURCES = lib/configs.c
+test_configs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CONFIGS
+test_configs_LDADD = $(LDADD) libcommon.la
 
 test_fileeq_SOURCES = lib/fileeq.c
 test_fileeq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEEQ
