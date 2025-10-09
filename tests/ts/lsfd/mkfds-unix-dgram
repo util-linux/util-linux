@@ -74,7 +74,10 @@ ts_init_subtest "abstract"
 ts_finalize_subtest
 
 ts_init_subtest "ENDPOINTS-column"
-if ts_is_in_docker; then
+if ! lsfd_check_sockdiag --subtest unix; then
+    # lsfd_check_sockdiag calls ts_skip_subtest or ts_failed_subtest.
+    :
+elif ts_is_in_docker; then
     ts_skip_subtest "unsupported in docker environment"
 else
     {
@@ -103,7 +106,10 @@ else
 fi
 
 ts_init_subtest "UNIX.IPEEER-column"
-if ts_is_in_docker; then
+if ! lsfd_check_sockdiag --subtest unix; then
+    # lsfd_check_sockdiag calls ts_skip_subtest or ts_failed_subtest.
+    :
+elif ts_is_in_docker; then
     ts_skip_subtest "unsupported in docker environment"
 else
     {
