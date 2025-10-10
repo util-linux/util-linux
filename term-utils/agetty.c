@@ -1654,9 +1654,17 @@ static int wait_for_term_input(struct issue *ie, int fd)
 		}
 
 		if (ie->nl.fd >= 0 && FD_ISSET(ie->nl.fd, &rfds)) {
-			/* We are ignoring errors here to prevent unability of
-			 * further processing. */
-			ul_nl_process(&(ie->nl), UL_NL_ASYNC, UL_NL_ONESHOT);
+			int rc;
+
+			/* We are looping until it returns UL_NL_WOULDBLOCK.
+			 * To prevent infinite loop, we are leaving on any other
+			 * error except UL_NL_SOFT_ERROR. To prevent unability
+			 * of further processing, we never exit. */
+			do {
+				rc = ul_nl_process(&(ie->nl), UL_NL_ASYNC,
+						   UL_NL_ONESHOT);
+			}
+			while (!rc || rc == UL_NL_SOFT_ERROR);
 
 		/* Just drain the inotify buffer */
 		} else if (inotify_fd >= 0 && FD_ISSET(inotify_fd, &rfds)) {

@@ -40,7 +40,9 @@
 			     * reach unprocessed NLMSG_DONE */
 #define	UL_NL_SOFT_ERROR 4  /* soft error, indicating a race condition or
 			     * message relating to events before program
-			     * start); could be optionally ignored */
+			     * start); could be optionally ignored and it
+			     * should not considered as a reason to leave the
+			     * processing */
 
 struct ul_nl_data;
 
@@ -139,6 +141,8 @@ int ul_nl_request_dump(struct ul_nl_data *nl, uint16_t nlmsg_type);
 /* Process netlink messages.
  * async: If true, return UL_NL_WOULDBLOCK immediately if there is no data
  *   ready. If false, wait for a message.
+ *   NOTE: You should read all data until you get UL_NL_WOULDBLOCK, otherwise
+ *         select() will not trigger even if there is a netlink message.
  * loop: If true, run in a loop until NLMSG_DONE is received. Returns after
  *   finishing a reply from ul_nl_request_dump(), otherwise it acts as an
  *   infinite loop. If false, it returns after processing one message.
