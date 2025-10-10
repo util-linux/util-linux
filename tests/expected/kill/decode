@@ -13,8 +13,25 @@ PIPE
 ALRM
 encode-decode round-trip "USR1":
 USR1
-Pending (thread): INT ILL 
-Pending (process): USR1 
-Blocked: INT ILL ABRT FPE USR1 SEGV TERM 
-Ignored: HUP QUIT TRAP PIPE ALRM 
-Caught: ILL USR1 
+Pending (thread):
+ILL
+INT
+Pending (process):
+USR1
+Blocked:
+ABRT
+FPE
+ILL
+INT
+SEGV
+TERM
+USR1
+Ignored:
+ALRM
+HUP
+PIPE
+QUIT
+TRAP
+Caught:
+ILL
+USR1

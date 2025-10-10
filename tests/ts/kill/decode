@@ -29,6 +29,8 @@ ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGSTATE"
 
 ts_check_prog "sed"
+ts_check_prog "sort"
+ts_check_prog "tr"
 
 . "$TS_SELF/kill_functions.sh"
 
@@ -72,6 +74,17 @@ encode()
     printf "0x%0.16x\n" "$bits"
 }
 
+sort_signals_by_name()
+{
+    local field
+    local siglist
+
+    while IFS=: read field siglist; do
+	echo "${field}:"
+	echo $siglist | tr ' ' '\n' | sort
+    done
+}
+
 PID=
 ACK=
 {
@@ -107,7 +120,7 @@ ACK=
 		else
 		    cat
 		fi
-	    }
+	    } | sort_signals_by_name
 	fi
 	echo DONE >&"${SIGSTATE[1]}"
     fi
