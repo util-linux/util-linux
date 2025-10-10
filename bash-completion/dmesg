@@ -20,10 +20,6 @@ _dmesg_module()
 			COMPREPLY=( $(compgen -W "emerg alert crit err warn notice info debug" -- $cur) )
 			return 0
 			;;
-		'-s'|'--buffer-size')
-	                COMPREPLY=( $(compgen -W "size" -- $cur) )
-			return 0
-			;;
 		'--time-format')
 			COMPREPLY=( $(compgen -W "delta reltime ctime notime iso" -- $cur) )
 			return 0
