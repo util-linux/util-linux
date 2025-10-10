@@ -28,6 +28,8 @@ ts_skip_qemu_user
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGSTATE"
 
+ts_check_prog "sed"
+
 . "$TS_SELF/kill_functions.sh"
 
 decode()
