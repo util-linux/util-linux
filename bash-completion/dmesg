@@ -6,7 +6,7 @@ _dmesg_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-F'|'--file')
+		'-F'|'--file'|'-K'|'--kmsg-file')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
@@ -21,7 +21,7 @@ _dmesg_module()
 			return 0
 			;;
 		'-s'|'--buffer-size')
-			COMPREPLY=( $(compgen -W "size" -- $cur) )
+	                COMPREPLY=( $(compgen -W "size" -- $cur) )
 			return 0
 			;;
 		'--time-format')
