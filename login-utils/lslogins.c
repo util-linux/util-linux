@@ -63,6 +63,7 @@
 #include "logindefs.h"
 #include "procfs.h"
 #include "timeutils.h"
+#include "column-list-table.h"
 
 /* Types used for JSON and --list-columns */
 enum {
@@ -1549,7 +1550,6 @@ static int parse_time_mode(const char *s)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<username>]\n"), program_invocation_short_name);
@@ -1587,20 +1587,39 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --lastlog2 <path>    set an alternate path for lastlog2\n"), out);
 #endif
 	fputs(USAGE_SEPARATOR, out);
+	/* FIXME: Replace with USAGE_LIST_COLUMNS_OPTION() macro from include/c.h */
+	fputs(_(" -H, --list-columns       list the available columns\n"), out);
 	fprintf(out, USAGE_HELP_OPTIONS(26));
-
-	fputs(USAGE_COLUMNS, out);
-	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
-		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lslogins(1)"));
 
 	exit(EXIT_SUCCESS);
 }
 
+static void __attribute__((__noreturn__)) list_columns(void)
+{
+	size_t i;
+	struct libscols_table *tbl = xcolumn_list_table_new("lslogins-columns", stdout,
+						outmode == OUT_RAW ? 1 : 0,
+						outmode == OUT_JSON ? 1 : 0);
+
+	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
+		const struct lslogins_coldesc *ci = &coldescs[i];
+
+		xcolumn_list_table_append_line(tbl, ci->name,
+			ci->type == COLTYPE_NUM  ? SCOLS_JSON_NUMBER : SCOLS_JSON_STRING,
+			NULL, _(ci->help));
+	}
+
+	scols_print_table(tbl);
+	scols_unref_table(tbl);
+
+	exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
-	int c;
+	int c, collist = 0;
 	char *logins = NULL, *groups = NULL, *outarg = NULL;
 	char *path_lastlog = _PATH_LASTLOG, *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
 	struct lslogins_control *ctl = xcalloc(1, sizeof(struct lslogins_control));
@@ -1644,6 +1663,7 @@ int main(int argc, char *argv[])
 		{ "version",        no_argument,	0, 'V' },
 		{ "pwd",            no_argument,	0, 'p' },
 		{ "print0",         no_argument,	0, 'z' },
+		{ "list-columns",   no_argument,	0, 'H' },
 		{ "wtmp-file",      required_argument,	0, OPT_WTMP },
 		{ "btmp-file",      required_argument,	0, OPT_BTMP },
 		{ "lastlog-file",   required_argument,	0, OPT_LASTLOG },
@@ -1678,7 +1698,7 @@ int main(int argc, char *argv[])
 	add_column(columns, ncolumns++, COL_UID);
 	add_column(columns, ncolumns++, COL_USER);
 
-	while ((c = getopt_long(argc, argv, "acefGg:hJLl:no:prsuVyzZ",
+	while ((c = getopt_long(argc, argv, "acefGg:HhJLl:no:prsuVyzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1763,6 +1783,9 @@ int main(int argc, char *argv[])
 		case 'z':
 			outmode = OUT_NUL;
 			break;
+		case 'H':
+			collist = 1;
+			break;
 		case OPT_LASTLOG:
 			path_lastlog = optarg;
 			break;
@@ -1812,6 +1835,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (collist)
+		list_columns();
 
 	if (argc - optind == 1) {
 		if (strchr(argv[optind], ','))
