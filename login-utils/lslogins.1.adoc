@@ -80,6 +80,9 @@ Display information related to login by password (see also *-afL*).
 *-r*, *--raw*::
 Raw output (no columnation).
 
+*-J*, *--json*::
+JSON format output.
+
 *-s*, *--system-accs*::
 Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive),
 with the exception of either nobody or nfsnobody (UID 65534). This hardcoded default may be
