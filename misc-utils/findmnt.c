@@ -1593,7 +1593,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -H, --list-columns     list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(24));
 	fprintf(out, USAGE_HELP_OPTIONS(24));
 
 	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));

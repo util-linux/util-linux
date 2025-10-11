@@ -1584,7 +1584,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --tree[=<rel>]     use tree format (parent, owner, or process)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -H, --list-columns     list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(24));
 	fprintf(out, USAGE_HELP_OPTIONS(24));
 	fprintf(out, USAGE_MAN_TAIL("lsns(8)"));
 
