@@ -64,6 +64,12 @@
 #include "procfs.h"
 #include "timeutils.h"
 
+/* Types used for JSON and --list-columns */
+enum {
+	COLTYPE_STR	= 0,	/* default */
+	COLTYPE_NUM	= 1,	/* always u64 number */
+};
+
 /*
  * column description
  */
@@ -74,6 +80,7 @@ struct lslogins_coldesc {
 
 	double whint;	/* width hint */
 	long flag;
+	int type;	/* COLTYPE_* column type*/
 };
 
 static int lslogins_flag;
@@ -98,7 +105,8 @@ enum {
 	OUT_NEWLINE,
 	OUT_RAW,
 	OUT_NUL,
-	OUT_PRETTY
+	OUT_PRETTY,
+	OUT_JSON
 };
 
 enum {
@@ -228,33 +236,33 @@ static const char *const pretty_status[] = {
 
 static const struct lslogins_coldesc coldescs[] =
 {
-	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES },
-	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT},
-	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not defined"), N_("Password not required (empty)"), 1, SCOLS_FL_RIGHT },
-	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
-	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
-	[COL_PWDMETHOD]     = { "PWD-METHOD",   N_("password encryption method"), N_("Password encryption method"), 0.1 },
-	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT },
-	[COL_GROUP]         = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1 },
-	[COL_GID]           = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT },
-	[COL_SGROUPS]       = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
-	[COL_SGIDS]         = { "SUPP-GIDS",    N_("supplementary group IDs"), N_("Supplementary group IDs"), 0.1 },
-	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.1 },
-	[COL_SHELL]         = { "SHELL",	N_("login shell"), N_("Shell"), 0.1 },
-	[COL_GECOS]         = { "GECOS",	N_("full user name"), N_("Gecos field"), 0.1, SCOLS_FL_TRUNC },
-	[COL_LAST_LOGIN]    = { "LAST-LOGIN",	N_("date of last login"), N_("Last login"), 0.1, SCOLS_FL_RIGHT },
-	[COL_LAST_TTY]      = { "LAST-TTY",	N_("last tty used"), N_("Last terminal"), 0.05 },
-	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"),  0.1},
-	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1 },
-	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
-	[COL_HUSH_STATUS]   = { "HUSHED",	N_("user's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
-	[COL_PWD_WARN]      = { "PWD-WARN",	N_("days user is warned of password expiration"), N_("Password expiration warn interval"), 0.1, SCOLS_FL_RIGHT },
-	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1, SCOLS_FL_RIGHT },
-	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1, SCOLS_FL_RIGHT},
-	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimum change time"), 0.1, SCOLS_FL_RIGHT },
-	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximum change time"), 0.1, SCOLS_FL_RIGHT },
-	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1 },
-	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Running processes"), 1, SCOLS_FL_RIGHT },
+	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES, COLTYPE_STR },
+	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT, COLTYPE_NUM},
+	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not defined"), N_("Password not required (empty)"), 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_PWDMETHOD]     = { "PWD-METHOD",   N_("password encryption method"), N_("Password encryption method"), 0.1, 0, COLTYPE_NUM },
+	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_GROUP]         = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1, 0, COLTYPE_STR },
+	[COL_GID]           = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_SGROUPS]       = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1, 0, COLTYPE_STR },
+	[COL_SGIDS]         = { "SUPP-GIDS",    N_("supplementary group IDs"), N_("Supplementary group IDs"), 0.1, 0, COLTYPE_NUM },
+	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.1, 0, COLTYPE_STR },
+	[COL_SHELL]         = { "SHELL",	N_("login shell"), N_("Shell"), 0.1, 0, COLTYPE_STR },
+	[COL_GECOS]         = { "GECOS",	N_("full user name"), N_("Gecos field"), 0.1, SCOLS_FL_TRUNC, COLTYPE_STR },
+	[COL_LAST_LOGIN]    = { "LAST-LOGIN",	N_("date of last login"), N_("Last login"), 0.1, SCOLS_FL_RIGHT, COLTYPE_STR },
+	[COL_LAST_TTY]      = { "LAST-TTY",	N_("last tty used"), N_("Last terminal"), 0.05, 0, COLTYPE_STR },
+	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"), 0.1, 0, COLTYPE_STR},
+	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1, 0, COLTYPE_STR },
+	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05, 0, COLTYPE_STR },
+	[COL_HUSH_STATUS]   = { "HUSHED",	N_("user's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT, COLTYPE_STR },
+	[COL_PWD_WARN]      = { "PWD-WARN",	N_("days user is warned of password expiration"), N_("Password expiration warn interval"), 0.1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1, SCOLS_FL_RIGHT, COLTYPE_STR },
+	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1, SCOLS_FL_RIGHT, COLTYPE_STR },
+	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimum change time"), 0.1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximum change time"), 0.1, SCOLS_FL_RIGHT, COLTYPE_NUM },
+	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1, 0, COLTYPE_STR },
+	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Running processes"), 1, SCOLS_FL_RIGHT, COLTYPE_NUM },
 };
 
 struct lslogins_control {
@@ -1188,6 +1196,17 @@ static int create_usertree(struct lslogins_control *ctl)
 	return 0;
 }
 
+static void set_column_type(const struct lslogins_coldesc *cd, struct libscols_column *cl)
+{
+	if (cd->type == COLTYPE_NUM) {
+		scols_column_set_json_type(cl, SCOLS_JSON_NUMBER);
+		scols_column_set_data_type(cl, SCOLS_DATA_U64);
+		return;
+	}
+	scols_column_set_json_type(cl, SCOLS_JSON_STRING);
+	scols_column_set_data_type(cl, SCOLS_DATA_STRING);
+}
+
 static struct libscols_table *setup_table(struct lslogins_control *ctl)
 {
 	struct libscols_table *table = scols_new_table();
@@ -1219,21 +1238,28 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 		break;
 	case OUT_PRETTY:
 		scols_table_enable_noheadings(table, 1);
+		break;
+	case OUT_JSON:
+		scols_table_enable_json(table, 1);
 	default:
 		break;
 	}
 
 	while (n < ncolumns) {
 		int flags = coldescs[columns[n]].flag;
+		struct libscols_column *col;
 
 		if (ctl->notrunc)
 			flags &= ~SCOLS_FL_TRUNC;
 
-		if (!scols_table_new_column(table,
+		col = scols_table_new_column(table,
 				coldescs[columns[n]].name,
 				coldescs[columns[n]].whint,
-				flags))
+				flags);
+		if (!col)
 			goto fail;
+
+		set_column_type(&coldescs[columns[n]], col);
 		++n;
 	}
 
@@ -1466,8 +1492,11 @@ static int print_user_table(struct lslogins_control *ctl)
 		print_journal_tail(ctl->journal_path, ctl->uid, 3, ctl->time_mode);
 		fputc('\n', stdout);
 #endif
-	} else
+	} else {
+		if (outmode == OUT_JSON)
+			scols_table_set_name(tb, "logins");
 		scols_print_table(tb);
+	}
 	return 0;
 }
 
@@ -1544,6 +1573,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all         output all columns\n"), out);
 	fputs(_(" -p, --pwd                display information related to login by password\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
+	fputs(_(" -J, --json               display in JSON format mode\n"), out);
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          display user accounts\n"), out);
@@ -1607,6 +1637,7 @@ int main(int argc, char *argv[])
 		{ "output-all",     no_argument,	0, OPT_OUTPUT_ALL },
 		{ "last",           no_argument,	0, 'L', },
 		{ "raw",            no_argument,	0, 'r' },
+		{ "json",           no_argument,	0, 'J' },
 		{ "system-accs",    no_argument,	0, 's' },
 		{ "time-format",    required_argument,	0, OPT_TIME_FMT },
 		{ "user-accs",      no_argument,	0, 'u' },
@@ -1627,10 +1658,10 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'G', 'o' },
+		{ 'J','c','n','r','z' },
 		{ 'L', 'o' },
 		{ 'Z', 'o' },
 		{ 'a', 'o' },
-		{ 'c','n','r','z' },
 		{ 'o', 'p' },
 		{ 0 }
 	};
@@ -1647,7 +1678,7 @@ int main(int argc, char *argv[])
 	add_column(columns, ncolumns++, COL_UID);
 	add_column(columns, ncolumns++, COL_USER);
 
-	while ((c = getopt_long(argc, argv, "acefGg:hLl:no:prsuVyzZ",
+	while ((c = getopt_long(argc, argv, "acefGg:hJLl:no:prsuVyzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1704,6 +1735,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			outmode = OUT_RAW;
+			break;
+		case 'J':
+			outmode = OUT_JSON;
 			break;
 		case 's':
 			ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
