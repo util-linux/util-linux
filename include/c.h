@@ -516,8 +516,13 @@ static inline void __attribute__((__noreturn__)) ul_sig_err(int excode, const ch
 #define USAGE_DEFAULT_COLUMNS _("\nDefault columns:\n")
 #define USAGE_SEPARATOR    "\n"
 
-#define USAGE_OPTSTR_HELP     _("display this help")
-#define USAGE_OPTSTR_VERSION  _("display version")
+#define USAGE_OPTSTR_LIST_COLUMNS  _("list the available columns")
+#define USAGE_OPTSTR_HELP          _("display this help")
+#define USAGE_OPTSTR_VERSION       _("display version")
+
+#define USAGE_LIST_COLUMNS_OPTION(marg_dsc) \
+		"%-" #marg_dsc "s%s\n" \
+		, " -H, --list-columns",    USAGE_OPTSTR_LIST_COLUMNS
 
 #define USAGE_HELP_OPTIONS(marg_dsc) \
 		"%-" #marg_dsc "s%s\n" \
