@@ -139,7 +139,8 @@ static void success_message(struct libmnt_context *cxt)
 {
 	const char *tgt, *src;
 
-	if (mnt_context_helper_executed(cxt)
+	if ((mnt_context_helper_executed(cxt)
+	    && mnt_context_get_helper_status(cxt))
 	    || mnt_context_get_status(cxt) != 1)
 		return;
 

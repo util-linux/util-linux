@@ -198,7 +198,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		/*
 		 * superuser mount
 		 *
-		 * Let's convert user, users, owenr and groups to MS_* flags
+		 * Let's convert user, users, owner and groups to MS_* flags
 		 * to be compatible with non-root execution.
 		 *
 		 * The old deprecated way is to use mnt_optstr_get_flags().
