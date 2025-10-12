@@ -757,43 +757,40 @@ static struct file *new_file(struct proc *proc, const struct file_class *class,
 	return file;
 }
 
-static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+static struct file *new_error_file_common(const struct file_class *error_class, const char *syscall,
+					  struct proc *proc, int error_no, int association,
+					  const char *name)
 {
 	struct file *file;
 
-	file = xcalloc(1, readlink_error_class.size);
-	file->class = &readlink_error_class;
+	file = xcalloc(1, error_class->size);
+	file->class = error_class;
 
 	file->proc = proc;
 
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 
-	file->error.syscall = "readlink";
+	file->error.syscall = syscall;
 	file->error.number = error_no;
 	file->association = association;
-	file->name = NULL;
+	file->name = name ? xstrdup(name) : NULL;
 
 	return file;
 }
 
+static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+{
+	return new_error_file_common(&readlink_error_class, "readlink",
+				     proc, error_no, association,
+				     NULL);
+}
+
 static struct file *new_stat_error_file(struct proc *proc, const char *name, int error_no, int association)
 {
-	struct file *file;
-
-	file = xcalloc(1, stat_error_class.size);
-	file->class = &stat_error_class;
-
-	file->proc = proc;
-
-	INIT_LIST_HEAD(&file->files);
-	list_add_tail(&file->files, &proc->files);
-
-	file->error.syscall = "stat";
-	file->error.number = error_no;
-	file->association = association;
-	file->name = xstrdup(name);
-
+	struct file *file = new_error_file_common(&stat_error_class, "stat",
+						  proc, error_no, association,
+						  name);
 	return file;
 }
 
