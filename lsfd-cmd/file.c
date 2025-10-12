@@ -257,7 +257,7 @@ static const char *get_errno_name(int ern)
 }
 
 static bool error_fill_column(struct proc *proc __attribute__((__unused__)),
-			      struct file *file __attribute__((__unused__)),
+			      struct file *file,
 			      struct libscols_line *ln,
 			      int column_id,
 			      size_t column_index)
@@ -877,7 +877,7 @@ static inline char *mqueue_file_xstrendpoint(struct file *file)
 }
 
 static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)),
-				    struct file *file __attribute__((__unused__)),
+				    struct file *file,
 				    struct libscols_line *ln,
 				    int column_id,
 				    size_t column_index)
