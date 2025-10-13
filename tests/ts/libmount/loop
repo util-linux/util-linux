@@ -142,7 +142,8 @@ ts_finalize_subtest
 ts_init_subtest "explicit-rw"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT -o rw "$BACKFILE" "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_FINDMNT -no FS-OPTIONS --mountpoint "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
+FINDMNT_RES=$( $TS_CMD_FINDMNT -Q 'OPTIONS =~ "[,]?rw[,]?"' -no OPTIONS --mountpoint "$TS_MOUNTPOINT" )
+[ -n "$FINDMNT_RES" ] || ts_log "$TS_MOUNTPOINT not mounted as read-write"
 $TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> $TS_OUTPUT 2>> $TS_ERRLOG
 udevadm settle
 ts_log "Success"
