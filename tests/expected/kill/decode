@@ -1,20 +1,37 @@
-decode "0x00000000000044aa":
+encode-decode round-trip "INT ILL ABRT FPE SEGV TERM":
 INT
 ILL
 ABRT
 FPE
 SEGV
 TERM
-decode "0x0000000000003015":
+encode-decode round-trip "HUP QUIT TRAP PIPE ALRM":
 HUP
 QUIT
 TRAP
 PIPE
 ALRM
-decode "0x0000000000000200":
+encode-decode round-trip "USR1":
 USR1
-Pending (thread): INT ILL 
-Pending (process): USR1 
-Blocked: INT ILL ABRT FPE USR1 SEGV TERM 
-Ignored: HUP QUIT TRAP PIPE ALRM 
-Caught: ILL USR1 
+Pending (thread):
+ILL
+INT
+Pending (process):
+USR1
+Blocked:
+ABRT
+FPE
+ILL
+INT
+SEGV
+TERM
+USR1
+Ignored:
+ALRM
+HUP
+PIPE
+QUIT
+TRAP
+Caught:
+ILL
+USR1

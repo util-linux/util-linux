@@ -28,20 +28,71 @@ ts_skip_qemu_user
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGSTATE"
 
+ts_check_prog "sed"
+ts_check_prog "sort"
+ts_check_prog "tr"
+
 . "$TS_SELF/kill_functions.sh"
 
 decode()
 {
-    echo decode "\"$1\":"
     "$TS_CMD_KILL" -l "$1"
+}
+
+signame2num()
+{
+    local name=$1
+    local n s
+
+    "$TS_CMD_KILL" -L | while read n s; do
+	if [[ "$s" == "$name" ]]; then
+	    echo "$n"
+	    return 0
+	fi
+    done
+
+    return 1
+}
+
+encode()
+{
+    local s
+    local n
+    local -i bits=0
+
+    for s in "$@"; do
+	n=$(signame2num "$s")
+	if [[ -z "$n" ]]; then
+	    ts_log_both "failed to encode the signal name: $s"
+	    # The test may fail.
+	    continue
+	fi
+
+	(( bits |= 1 << (n - 1) ))
+    done
+
+    printf "0x%0.16x\n" "$bits"
+}
+
+sort_signals_by_name()
+{
+    local field
+    local siglist
+
+    while IFS=: read field siglist; do
+	echo "${field}:"
+	echo $siglist | tr ' ' '\n' | sort
+    done
 }
 
 PID=
 ACK=
 {
-    for d in 0x00000000000044aa \
-		 0x0000000000003015 \
-		 0x0000000000000200; do
+    for siglist in "INT ILL ABRT FPE SEGV TERM" \
+		       "HUP QUIT TRAP PIPE ALRM" \
+		       "USR1"; do
+	printf 'encode-decode round-trip "%s":\n' "${siglist}"
+	d=$(encode ${siglist})
 	decode "$d"
     done
 
@@ -69,7 +120,7 @@ ACK=
 		else
 		    cat
 		fi
-	    }
+	    } | sort_signals_by_name
 	fi
 	echo DONE >&"${SIGSTATE[1]}"
     fi
