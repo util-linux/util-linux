@@ -65,6 +65,7 @@ _mount_module()
 				--internal-only
 				--show-labels
 				--no-mtab
+				--onlyonce
 				--options
 				--options-mode
 				--options-source
@@ -74,8 +75,10 @@ _mount_module()
 				--types
 				--source
 				--target
+				--target-prefix
 				--verbose
 				--version
+				--rw
 				--read-write
 				--namespace
 				--label
@@ -83,6 +86,8 @@ _mount_module()
 				--bind
 				--move
 				--rbind
+				--map-groups
+				--map-users
 				--make-shared
 				--make-slave
 				--make-private
