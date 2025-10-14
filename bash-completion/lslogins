@@ -60,8 +60,10 @@ _lslogins_module()
 			--notruncate
 			--output
 			--output-all
+			--list-columns
 			--pwd
 			--raw
+			--json
 			--system-accs
 			--time-format
 			--user-accs
@@ -71,8 +73,7 @@ _lslogins_module()
 			--btmp-file
 			--lastlog
 			--help
-			--version
-		" -- $cur) )
+			--version" -- $cur) )
 	return 0
 }
 complete -F _lslogins_module lslogins

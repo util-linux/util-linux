@@ -72,13 +72,20 @@ Don't truncate output.
 Specify which output columns to print. The default list of columns may be extended if _list_ is specified in the format _+list_.
 
 *--output-all*::
-Output all available columns. *--help* to get a list of all supported columns.
+Output all available columns. *--list-columns* to get a list of all supported columns.
+
+*-H*, *--list-columns*::
+List the columns that can be specified with the *--output* option.
+Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 *-p*, *--pwd*::
 Display information related to login by password (see also *-afL*).
 
 *-r*, *--raw*::
 Raw output (no columnation).
+
+*-J*, *--json*::
+JSON format output.
 
 *-s*, *--system-accs*::
 Show system accounts. These are by default all accounts with a UID between 101 and 999 (inclusive),
