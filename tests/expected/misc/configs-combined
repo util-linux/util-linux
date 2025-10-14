@@ -1,4 +1,4 @@
-Found 6 configuration file(s):
+Found 4 configuration file(s):
   @TESTDIR@/etc/proj/example.conf
   @TESTDIR@/usr/proj/example.conf.d/10-base.conf
   @TESTDIR@/run/proj/example.conf.d/20-override.conf

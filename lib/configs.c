@@ -283,7 +283,6 @@ int ul_configs_file_list(struct list_head *file_list,
 						goto finish;
 					}
 					list_add_tail(&add_element->file_list, &etc_run_file_list);
-					counter++;
 				}
 				list_del(&run_element->file_list);
 			} else {
@@ -296,7 +295,6 @@ int ul_configs_file_list(struct list_head *file_list,
 			goto finish;
 		}
 		list_add_tail(&add_element->file_list, &etc_run_file_list);
-		counter++;
 	}
 
 	/* taking the rest of /run */
@@ -308,7 +306,6 @@ int ul_configs_file_list(struct list_head *file_list,
 			goto finish;
 		}
 		list_add_tail(&add_element->file_list, &etc_run_file_list);
-		counter++;
 	}
 
 	/* Merging etc_run list and var list in the correct order. Output: file_list
