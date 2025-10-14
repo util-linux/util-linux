@@ -102,12 +102,26 @@ function lsfd_check_mkfds_factory
 	fi
 }
 
+# Usage lsfd_check_sockdiag [--subtest] FAMILY [TYPE=dgram]
 function lsfd_check_sockdiag
 {
+	local is_subtest
+	local suffix=
+
+	case "$1" in
+	    (--subtest)
+		suffix=_subtest
+		is_subtest=1
+		shift
+		;;
+	esac
+
 	local family=$1
 	local type=${2:-dgram}
 
-	ts_check_test_command "$TS_HELPER_MKFDS"
+	if [[ -z "$is_subtest" ]]; then
+	    ts_check_test_command "$TS_HELPER_MKFDS"
+	fi
 
 	local msg
 	local err
@@ -117,16 +131,18 @@ function lsfd_check_sockdiag
 
 	case $err in
 	    0)
-		return;;
+		return 0;;
 	    "$EPROTONOSUPPORT")
-		ts_skip "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
+		ts_skip$suffix "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
 	    "$EACCES")
-		ts_skip "sending a msg via a sockdiag netlink socket is not permitted";;
+		ts_skip$suffix "sending a msg via a sockdiag netlink socket is not permitted";;
 	    "$ENOENT")
-		ts_skip "sockdiag netlink socket is not available";;
+		ts_skip$suffix "sockdiag netlink socket is not available";;
 	    *)
-		ts_failed "failed to create a sockdiag netlink socket $family ($err): $msg";;
+		ts_failed$suffix "failed to create a sockdiag netlink socket $family ($err): $msg";;
 	esac
+
+	return 1
 }
 
 function lsfd_check_vsock
