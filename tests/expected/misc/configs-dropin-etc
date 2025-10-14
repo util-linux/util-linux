@@ -1,3 +1,5 @@
+@TESTDIR@/etc/proj/example.conf.d/10-first.conf
+@TESTDIR@/etc/proj/example.conf.d/20-second.conf
 Found 2 configuration file(s):
   @TESTDIR@/etc/proj/example.conf.d/10-first.conf
   @TESTDIR@/etc/proj/example.conf.d/20-second.conf

@@ -28,6 +28,7 @@ mkdir -p "$USR_DIR/proj"
 # Test 1: Main config file in /etc
 ts_init_subtest "main-etc"
 echo "main config" > "$ETC_DIR/proj/example.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -37,6 +38,7 @@ ts_finalize_subtest
 # Test 2: Main config file in /usr (fallback)
 ts_init_subtest "main-usr"
 echo "usr config" > "$USR_DIR/proj/example.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -48,6 +50,7 @@ ts_init_subtest "dropin-etc"
 mkdir -p "$ETC_DIR/proj/example.conf.d"
 echo "etc drop-in 1" > "$ETC_DIR/proj/example.conf.d/10-first.conf"
 echo "etc drop-in 2" > "$ETC_DIR/proj/example.conf.d/20-second.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -59,6 +62,7 @@ ts_init_subtest "dropin-usr"
 mkdir -p "$USR_DIR/proj/example.conf.d"
 echo "usr drop-in 1" > "$USR_DIR/proj/example.conf.d/10-first.conf"
 echo "usr drop-in 2" > "$USR_DIR/proj/example.conf.d/20-second.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -74,6 +78,7 @@ mkdir -p "$USR_DIR/proj/example.conf.d"
 echo "usr drop-in" > "$USR_DIR/proj/example.conf.d/10-base.conf"
 echo "run drop-in" > "$RUN_DIR/proj/example.conf.d/20-override.conf"
 echo "etc drop-in" > "$ETC_DIR/proj/example.conf.d/30-local.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -89,6 +94,7 @@ mkdir -p "$ETC_DIR/proj/example.conf.d"
 mkdir -p "$USR_DIR/proj/example.conf.d"
 echo "usr version" > "$USR_DIR/proj/example.conf.d/10-config.conf"
 echo "etc version" > "$ETC_DIR/proj/example.conf.d/10-config.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--project "proj" --name "example" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
@@ -100,6 +106,7 @@ ts_finalize_subtest
 ts_init_subtest "no-project"
 mkdir -p "$ETC_DIR"
 echo "root config" > "$ETC_DIR/test.conf"
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
 $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 	--name "test" --suffix "conf" \
 	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
