@@ -1212,7 +1212,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -H, --list-columns      list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(25));
 	fprintf(out, USAGE_HELP_OPTIONS(25));
 
 	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));

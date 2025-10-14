@@ -2353,7 +2353,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                      methods used to gather data (default: file,udev,blkid)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -H, --list-columns   list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(22));
 	fprintf(out, USAGE_HELP_OPTIONS(22));
 
 	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));

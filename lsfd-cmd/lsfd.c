@@ -2237,7 +2237,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -H, --list-columns           list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(30));
 	fprintf(out, USAGE_HELP_OPTIONS(30));
 
 	fputs(USAGE_DEFAULT_COLUMNS, out);
