@@ -60,17 +60,17 @@ fail:
  */
 static char *main_configs(const char *root,
 			  const char *project,
-			  const char *config_name,
-			  const char *config_suffix)
+			  const char *confname,
+			  const char *suffix)
 {
 	char *path = NULL;
 
-	if (config_suffix)
+	if (suffix)
 		path = config_mk_path(S_IFREG, "%s/%s/%s.%s",
-				root, project, config_name, config_suffix);
+				root, project, confname, suffix);
 	if (!path)
 		path = config_mk_path(S_IFREG, "%s/%s/%s",
-				root, project, config_name);
+				root, project, confname);
 	return path;
 }
 
@@ -106,8 +106,8 @@ static int filter(const struct dirent *d)
 static int read_dir(struct list_head *file_list,
 		    const char *project,
 		    const char *root,
-		    const char *config_name,
-		    const char *config_suffix)
+		    const char *confname,
+		    const char *suffix)
 {
 	char *dirname = NULL;
 	char *filename = NULL;
@@ -115,12 +115,12 @@ static int read_dir(struct list_head *file_list,
 	int ret = 0;
 	struct dirent **namelist = NULL;
 
-	if (config_suffix)
+	if (suffix)
 		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.%s.d",
-				root, project, config_name, config_suffix);
+				root, project, confname, suffix);
 	if (!dirname)
 		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.d",
-				root, project, config_name);
+				root, project, confname);
 	if (!dirname)
 		return errno == ENOMEM ? -ENOMEM : 0;
 
@@ -135,8 +135,8 @@ static int read_dir(struct list_head *file_list,
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
 
-		if (config_suffix) {
-			const char *p = ul_endswith(d->d_name, config_suffix);
+		if (suffix) {
+			const char *p = ul_endswith(d->d_name, suffix);
 
 			if (!p || p == d->d_name || *(p - 1) != '.')
 				continue;
@@ -215,71 +215,71 @@ static int config_merge_list(struct list_head *main_list,
 
 int ul_configs_file_list(struct list_head *file_list,
 			 const char *project,
-			 const char *etc_subdir,
-			 const char *run_subdir,
-			 const char *usr_subdir,
-			 const char *config_name,
-			 const char *config_suffix)
+			 const char *etcdir,
+			 const char *rundir,
+			 const char *usrdir,
+			 const char *confname,
+			 const char *suffix)
 {
 	char *main_file = NULL;
-	struct list_head etc_file_list;
-	struct list_head run_file_list;
-	struct list_head usr_file_list;
+	struct list_head etc_list;
+	struct list_head run_list;
+	struct list_head usr_list;
 	int counter = 0;
 	int ret;
 
 	INIT_LIST_HEAD(file_list);
 
-	if (!config_name)
+	if (!confname)
 		return -ENOTEMPTY;
 
 	/* Default is /etc */
-	if (!etc_subdir)
-		etc_subdir = _PATH_SYSCONFDIR;
-	if (!run_subdir)
-		run_subdir = "";
-	if (!usr_subdir)
-		usr_subdir = "";
+	if (!etcdir)
+		etcdir = _PATH_SYSCONFDIR;
+	if (!rundir)
+		rundir = "";
+	if (!usrdir)
+		usrdir = "";
 
 	if (!project)
 		project = "";
 
 	/* Find "main" config file (but don't add to list yet) */
 	/* Search order: /etc /run /usr */
-	main_file = main_configs(etc_subdir, project, config_name, config_suffix);
+	main_file = main_configs(etcdir, project, confname, suffix);
 	if (main_file == NULL)
-		main_file = main_configs(run_subdir, project, config_name, config_suffix);
+		main_file = main_configs(rundir, project, confname, suffix);
 	if (main_file == NULL)
-		main_file = main_configs(usr_subdir, project, config_name, config_suffix);
+		main_file = main_configs(usrdir, project, confname, suffix);
 
-	INIT_LIST_HEAD(&etc_file_list);
-	INIT_LIST_HEAD(&run_file_list);
-	INIT_LIST_HEAD(&usr_file_list);
+	INIT_LIST_HEAD(&etc_list);
+	INIT_LIST_HEAD(&run_list);
+	INIT_LIST_HEAD(&usr_list);
 
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-	ret = read_dir(&etc_file_list, project, etc_subdir, config_name, config_suffix);
+	ret = read_dir(&etc_list, project, etcdir, confname, suffix);
 	if (ret == -ENOMEM)
 		goto finish;
 
-	ret = read_dir(&run_file_list, project, run_subdir, config_name, config_suffix);
+	ret = read_dir(&run_list, project, rundir, confname, suffix);
 	if (ret == -ENOMEM)
 		goto finish;
 
-	ret = read_dir(&usr_file_list, project, usr_subdir, config_name, config_suffix);
+	ret = read_dir(&usr_list, project, usrdir, confname, suffix);
 	if (ret == -ENOMEM)
 		goto finish;
 #endif
 
 	/* Merge drop-in directories in priority order (high to low) */
-	ret = config_merge_list(file_list, &etc_file_list);
+	ret = config_merge_list(file_list, &etc_list);
 	if (ret < 0)
 		goto finish;
 
-	ret = config_merge_list(file_list, &run_file_list);
+	ret = config_merge_list(file_list, &run_list);
 	if (ret < 0)
 		goto finish;
 
-	ret = config_merge_list(file_list, &usr_file_list);
+	ret = config_merge_list(file_list, &usr_list);
 	if (ret < 0)
 		goto finish;
 
@@ -302,9 +302,9 @@ int ul_configs_file_list(struct list_head *file_list,
 	counter = list_count_entries(file_list);
 
 finish:
-	ul_configs_free_list(&etc_file_list);
-	ul_configs_free_list(&run_file_list);
-	ul_configs_free_list(&usr_file_list);
+	ul_configs_free_list(&etc_list);
+	ul_configs_free_list(&run_list);
+	ul_configs_free_list(&usr_list);
 
 	return counter;
 }
