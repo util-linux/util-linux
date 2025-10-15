@@ -228,7 +228,6 @@ int ul_configs_file_list(struct list_head *file_list,
 	struct list_head etc_list;
 	struct list_head run_list;
 	struct list_head usr_list;
-	int counter = 0;
 	int ret;
 
 	INIT_LIST_HEAD(file_list);
@@ -295,14 +294,12 @@ int ul_configs_file_list(struct list_head *file_list,
 		}
 	}
 
-	counter = list_count_entries(file_list);
-
 finish:
 	ul_configs_free_list(&etc_list);
 	ul_configs_free_list(&run_list);
 	ul_configs_free_list(&usr_list);
 
-	return counter;
+	return ret < 0 ? ret : (int) list_count_entries(file_list);
 }
 
 void ul_configs_free_list(struct list_head *file_list)
