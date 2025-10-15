@@ -96,6 +96,18 @@ static struct file_element *new_list_entry(const char *filename)
 	return file_element;
 }
 
+static int configs_add_filename(struct list_head *list, const char *filename)
+{
+	struct file_element *e;
+
+	e = new_list_entry(filename);
+	if (e == NULL)
+		return -ENOMEM;
+
+	list_add_tail(&e->file_list, list);
+	return 0;
+}
+
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
 
 static int filter(const struct dirent *d)
@@ -120,9 +132,8 @@ static int read_dir(struct list_head *file_list,
 	char *dirname = NULL;
 	char *filename = NULL;
 	int dd = -1, nfiles = 0, i;
-	int counter = 0;
+	int ret = 0;
 	struct dirent **namelist = NULL;
-	struct file_element *entry = NULL;
 
 	if (config_suffix)
 		dirname = config_mk_path(S_IFDIR, "%s/%s/%s.%s.d",
@@ -152,18 +163,14 @@ static int read_dir(struct list_head *file_list,
 		}
 
 		if (asprintf(&filename, "%s/%s", dirname, d->d_name) < 0) {
-			counter = -ENOMEM;
-			break;
-		}
-		entry = new_list_entry(filename);
-		free(filename);
-		if (entry == NULL) {
-			counter = -ENOMEM;
+			ret = -ENOMEM;
 			break;
 		}
 
-		list_add_tail(&entry->file_list, file_list);
-		counter++;
+		ret = configs_add_filename(file_list, filename);
+		free(filename);
+		if (ret < 0)
+			break;
 	}
 
 finish:
@@ -173,15 +180,56 @@ finish:
 	free(dirname);
 	if (dd >= 0)
 		close(dd);
-	return counter;
+	return ret;
 }
 
 #endif /* HAVE_SCANDIRAT */
+
+static int config_cmp(struct list_head *a, struct list_head *b,
+		      void *data __attribute__((__unused__)))
+{
+	struct file_element *ea = list_entry(a, struct file_element, file_list);
+	struct file_element *eb = list_entry(b, struct file_element, file_list);
+	char *na = ul_basename(ea->filename);
+	char *nb = ul_basename(eb->filename);
+
+	return strcoll(na, nb);
+}
 
 static void free_list_entry(struct file_element *element)
 {
 	free(element->filename);
 	free(element);
+}
+
+static int config_merge_list(struct list_head *main_list,
+			      struct list_head *new_list)
+{
+	struct list_head *n, *m, *next;
+
+	list_for_each_safe(n, next, new_list) {
+		struct file_element *ne = list_entry(n, struct file_element, file_list);
+		char *nn = ul_basename(ne->filename);
+		int duplicate = 0;
+
+		list_for_each(m, main_list) {
+			struct file_element *me = list_entry(m, struct file_element, file_list);
+			char *mn = ul_basename(me->filename);
+
+			if (strcoll(mn, nn) == 0) {
+				duplicate = 1;
+				break;
+			}
+		}
+
+		if (!duplicate) {
+			list_del_init(n);
+			list_add_tail(n, main_list);
+		}
+	}
+
+	list_sort(main_list, config_cmp, NULL);
+	return 0;
 }
 
 int ul_configs_file_list(struct list_head *file_list,
@@ -192,22 +240,17 @@ int ul_configs_file_list(struct list_head *file_list,
 			 const char *config_name,
 			 const char *config_suffix)
 {
-	char *filename = NULL, *run_basename = NULL, *usr_basename = NULL,
-		*etc_basename = NULL, *etc_run_basename = NULL;
+	char *main_file = NULL;
 	struct list_head etc_file_list;
 	struct list_head run_file_list;
-	struct list_head etc_run_file_list;
 	struct list_head usr_file_list;
-	struct list_head *etc_entry = NULL, *usr_entry = NULL, *run_entry = NULL, *etc_run_entry = NULL;
-	struct file_element *add_element = NULL, *usr_element = NULL,
-		*run_element = NULL, *etc_element = NULL, *etc_run_element = NULL;
 	int counter = 0;
+	int ret;
 
 	INIT_LIST_HEAD(file_list);
 
-	if (!config_name){
+	if (!config_name)
 		return -ENOTEMPTY;
-	}
 
 	/* Default is /etc */
 	if (!etc_subdir)
@@ -220,145 +263,65 @@ int ul_configs_file_list(struct list_head *file_list,
 	if (!project)
 		project = "";
 
-	/* Evaluating first "main" file which has to be parsed */
-	/* in the following order : /etc /run /usr             */
-	filename = main_configs(etc_subdir, project, config_name, config_suffix);
-	if (filename == NULL)
-		filename = main_configs(run_subdir, project, config_name, config_suffix);
-	if (filename == NULL)
-		filename = main_configs(usr_subdir, project, config_name, config_suffix);
-	if (filename != NULL) {
-		add_element = new_list_entry(filename);
-		free(filename);
-		if (add_element == NULL)
-			return -ENOMEM;
-		list_add_tail(&add_element->file_list, file_list);
-		counter++;
-	}
+	/* Find "main" config file (but don't add to list yet) */
+	/* Search order: /etc /run /usr */
+	main_file = main_configs(etc_subdir, project, config_name, config_suffix);
+	if (main_file == NULL)
+		main_file = main_configs(run_subdir, project, config_name, config_suffix);
+	if (main_file == NULL)
+		main_file = main_configs(usr_subdir, project, config_name, config_suffix);
 
 	INIT_LIST_HEAD(&etc_file_list);
 	INIT_LIST_HEAD(&run_file_list);
-	INIT_LIST_HEAD(&etc_run_file_list);
 	INIT_LIST_HEAD(&usr_file_list);
 
 #if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-	int ret_usr = 0, ret_etc = 0, ret_run = 0;
-        ret_etc = read_dir(&etc_file_list,
-			   project,
-			   etc_subdir,
-			   config_name,
-			   config_suffix);
-	ret_run = read_dir(&run_file_list,
-			   project,
-			   run_subdir,
-			   config_name,
-			   config_suffix);
-	ret_usr = read_dir(&usr_file_list,
-			   project,
-			   usr_subdir,
-			   config_name,
-			   config_suffix);
-	if (ret_etc == -ENOMEM || ret_usr == -ENOMEM || ret_run == -ENOMEM) {
-		counter = -ENOMEM;
+	ret = read_dir(&etc_file_list, project, etc_subdir, config_name, config_suffix);
+	if (ret == -ENOMEM)
 		goto finish;
-	}
+
+	ret = read_dir(&run_file_list, project, run_subdir, config_name, config_suffix);
+	if (ret == -ENOMEM)
+		goto finish;
+
+	ret = read_dir(&usr_file_list, project, usr_subdir, config_name, config_suffix);
+	if (ret == -ENOMEM)
+		goto finish;
 #endif
 
-	/* Merging run and etc list in the correct order. Output: etc_run_list */
-	list_for_each(etc_entry, &etc_file_list) {
+	/* Merge drop-in directories in priority order (high to low) */
+	ret = config_merge_list(file_list, &etc_file_list);
+	if (ret < 0)
+		goto finish;
 
-		etc_element = list_entry(etc_entry, struct file_element, file_list);
-		etc_basename = ul_basename(etc_element->filename);
+	ret = config_merge_list(file_list, &run_file_list);
+	if (ret < 0)
+		goto finish;
 
-		list_for_each(run_entry, &run_file_list) {
+	ret = config_merge_list(file_list, &usr_file_list);
+	if (ret < 0)
+		goto finish;
 
-			run_element = list_entry(run_entry, struct file_element, file_list);
-			run_basename = ul_basename(run_element->filename);
+	/* Add main config file at the beginning (highest priority) */
+	if (main_file != NULL) {
+		struct list_head *e;
 
-			if (strcmp(run_basename, etc_basename) <= 0) {
-				if (strcmp(run_basename, etc_basename) < 0) {
-					add_element = new_list_entry(run_element->filename);
-					if (add_element == NULL) {
-						counter = -ENOMEM;
-						goto finish;
-					}
-					list_add_tail(&add_element->file_list, &etc_run_file_list);
-				}
-				list_del(&run_element->file_list);
-			} else {
-				break;
-			}
-		}
-		add_element = new_list_entry(etc_element->filename);
-		if (add_element == NULL) {
-			counter = -ENOMEM;
+		ret = configs_add_filename(file_list, main_file);
+		free(main_file);
+		if (ret < 0)
 			goto finish;
-		}
-		list_add_tail(&add_element->file_list, &etc_run_file_list);
+
+		/* Move last element (just added) to front */
+		e = file_list->prev;
+		list_del(e);
+		list_add(e, file_list);
 	}
 
-	/* taking the rest of /run */
-	list_for_each(run_entry, &run_file_list) {
-		run_element = list_entry(run_entry, struct file_element, file_list);
-		add_element = new_list_entry(run_element->filename);
-		if (add_element == NULL) {
-			counter = -ENOMEM;
-			goto finish;
-		}
-		list_add_tail(&add_element->file_list, &etc_run_file_list);
-	}
-
-	/* Merging etc_run list and var list in the correct order. Output: file_list
-	   which will be returned. */
-	list_for_each(etc_run_entry, &etc_run_file_list) {
-
-		etc_run_element = list_entry(etc_run_entry, struct file_element, file_list);
-		etc_run_basename = ul_basename(etc_run_element->filename);
-
-		list_for_each(usr_entry, &usr_file_list) {
-
-			usr_element = list_entry(usr_entry, struct file_element, file_list);
-			usr_basename = ul_basename(usr_element->filename);
-
-			if (strcmp(usr_basename, etc_run_basename) <= 0) {
-				if (strcmp(usr_basename, etc_run_basename) < 0) {
-					add_element = new_list_entry(usr_element->filename);
-					if (add_element == NULL) {
-						counter = -ENOMEM;
-						goto finish;
-					}
-					list_add_tail(&add_element->file_list, file_list);
-					counter++;
-				}
-				list_del(&usr_element->file_list);
-			} else {
-				break;
-			}
-		}
-		add_element = new_list_entry(etc_run_element->filename);
-		if (add_element == NULL) {
-			counter = -ENOMEM;
-			goto finish;
-		}
-		list_add_tail(&add_element->file_list, file_list);
-		counter++;
-	}
-
-	/* taking the rest of /usr */
-	list_for_each(usr_entry, &usr_file_list) {
-		usr_element = list_entry(usr_entry, struct file_element, file_list);
-		add_element = new_list_entry(usr_element->filename);
-		if (add_element == NULL) {
-			counter = -ENOMEM;
-			goto finish;
-		}
-		list_add_tail(&add_element->file_list, file_list);
-		counter++;
-	}
+	counter = list_count_entries(file_list);
 
 finish:
 	ul_configs_free_list(&etc_file_list);
-	ul_configs_free_list(&etc_run_file_list);
+	ul_configs_free_list(&run_file_list);
 	ul_configs_free_list(&usr_file_list);
 
 	return counter;
