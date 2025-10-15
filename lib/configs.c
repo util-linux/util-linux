@@ -74,36 +74,16 @@ static char *main_configs(const char *root,
 	return path;
 }
 
-static struct file_element *new_list_entry(const char *filename)
-{
-	struct file_element *file_element = calloc(1, sizeof(*file_element));
-
-	if (file_element == NULL)
-		return NULL;
-
-	INIT_LIST_HEAD(&file_element->file_list);
-
-	if (filename != NULL) {
-		file_element->filename = strdup(filename);
-		if (file_element->filename == NULL) {
-			free(file_element);
-			return NULL;
-		}
-	} else {
-		file_element->filename = NULL;
-	}
-
-	return file_element;
-}
-
-static int configs_add_filename(struct list_head *list, const char *filename)
+static int configs_refer_filename(struct list_head *list, char *filename)
 {
 	struct file_element *e;
 
-	e = new_list_entry(filename);
+	e = calloc(1, sizeof(*e));
 	if (e == NULL)
 		return -ENOMEM;
 
+	INIT_LIST_HEAD(&e->file_list);
+	e->filename = filename;
 	list_add_tail(&e->file_list, list);
 	return 0;
 }
@@ -167,10 +147,11 @@ static int read_dir(struct list_head *file_list,
 			break;
 		}
 
-		ret = configs_add_filename(file_list, filename);
-		free(filename);
-		if (ret < 0)
+		ret = configs_refer_filename(file_list, filename);
+		if (ret < 0) {
+			free(filename);
 			break;
+		}
 	}
 
 finish:
@@ -306,10 +287,11 @@ int ul_configs_file_list(struct list_head *file_list,
 	if (main_file != NULL) {
 		struct list_head *e;
 
-		ret = configs_add_filename(file_list, main_file);
-		free(main_file);
-		if (ret < 0)
+		ret = configs_refer_filename(file_list, main_file);
+		if (ret < 0) {
+			free(main_file);
 			goto finish;
+		}
 
 		/* Move last element (just added) to front */
 		e = file_list->prev;
