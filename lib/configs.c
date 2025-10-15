@@ -14,7 +14,9 @@
 #include <dirent.h>
 #endif
 
+#include "c.h"
 #include "configs.h"
+#include "strutils.h"
 #include "list.h"
 #include "fileutils.h"
 
@@ -103,10 +105,9 @@ static int filter(const struct dirent *d)
 	    d->d_type != DT_LNK)
 		return 0;
 #endif
-	if (*d->d_name == '.')
+	if (is_dotdir_dirent(d))
 		return 0;
 
-	/* Accept this */
 	return 1;
 }
 
@@ -142,13 +143,12 @@ static int read_dir(struct list_head *file_list,
 
 	for (i = 0; i < nfiles; i++) {
 		struct dirent *d = namelist[i];
-		size_t namesz = strlen(d->d_name);
 
-		if (config_suffix && strlen(config_suffix) > 0 &&
-		    (!namesz || namesz < strlen(config_suffix) + 1 ||
-		     strcmp(d->d_name + (namesz - strlen(config_suffix)), config_suffix) != 0)) {
-			/* filename does not have requested suffix */
-			continue;
+		if (config_suffix) {
+			const char *p = ul_endswith(d->d_name, config_suffix);
+
+			if (!p || p == d->d_name || *(p - 1) != '.')
+				continue;
 		}
 
 		if (asprintf(&filename, "%s/%s", dirname, d->d_name) < 0) {
