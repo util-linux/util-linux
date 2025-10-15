@@ -273,16 +273,9 @@ int ul_configs_file_list(struct list_head *file_list,
 #endif
 
 	/* Merge drop-in directories in priority order (high to low) */
-	ret = config_merge_list(file_list, &etc_list);
-	if (ret < 0)
-		goto finish;
-
-	ret = config_merge_list(file_list, &run_list);
-	if (ret < 0)
-		goto finish;
-
-	ret = config_merge_list(file_list, &usr_list);
-	if (ret < 0)
+	if ((ret = config_merge_list(file_list, &etc_list)) < 0 ||
+	    (ret = config_merge_list(file_list, &run_list)) < 0 ||
+	    (ret = config_merge_list(file_list, &usr_list)) < 0)
 		goto finish;
 
 	/* Add main config file at the beginning (highest priority) */
