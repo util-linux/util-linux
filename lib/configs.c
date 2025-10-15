@@ -74,7 +74,7 @@ static char *main_configs(const char *root,
 	return path;
 }
 
-static int configs_refer_filename(struct list_head *list, char *filename)
+static int configs_refer_filename(struct list_head *list, char *filename, int head)
 {
 	struct file_element *e;
 
@@ -84,7 +84,10 @@ static int configs_refer_filename(struct list_head *list, char *filename)
 
 	INIT_LIST_HEAD(&e->file_list);
 	e->filename = filename;
-	list_add_tail(&e->file_list, list);
+	if (head)
+		list_add(&e->file_list, list);
+	else
+		list_add_tail(&e->file_list, list);
 	return 0;
 }
 
@@ -147,7 +150,7 @@ static int read_dir(struct list_head *file_list,
 			break;
 		}
 
-		ret = configs_refer_filename(file_list, filename);
+		ret = configs_refer_filename(file_list, filename, 0);
 		if (ret < 0) {
 			free(filename);
 			break;
@@ -285,18 +288,11 @@ int ul_configs_file_list(struct list_head *file_list,
 
 	/* Add main config file at the beginning (highest priority) */
 	if (main_file != NULL) {
-		struct list_head *e;
-
-		ret = configs_refer_filename(file_list, main_file);
+		ret = configs_refer_filename(file_list, main_file, 1);
 		if (ret < 0) {
 			free(main_file);
 			goto finish;
 		}
-
-		/* Move last element (just added) to front */
-		e = file_list->prev;
-		list_del(e);
-		list_add(e, file_list);
 	}
 
 	counter = list_count_entries(file_list);
