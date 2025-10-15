@@ -13,6 +13,8 @@ TS_DESC="configs"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+[ "$("$TS_HELPER_SYSINFO" scandirat-ok)" = "1" ] || ts_skip "no scandirat"
+
 ts_check_test_command "$TS_HELPER_CONFIGS"
 
 # Create test directory structure

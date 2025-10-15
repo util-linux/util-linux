@@ -149,6 +149,18 @@ static int hlp_fsopen_ok(void)
 	return 0;
 }
 
+static int hlp_scandirat_ok(void)
+{
+	printf("%d\n",
+#ifdef HAVE_SCANDIRAT
+		1
+#else
+		0
+#endif
+	);
+	return 0;
+}
+
 static int hlp_statmount_ok(void)
 {
 	printf("%d\n",
@@ -321,6 +333,7 @@ static const mntHlpfnc hlps[] =
 	{ "wcsspn-ok",  hlp_wcsspn_ok   },
 	{ "enotty-ok",  hlp_enotty_ok   },
 	{ "fsopen-ok",  hlp_fsopen_ok   },
+	{ "scandirat-ok", hlp_scandirat_ok },
 	{ "statmount-ok", hlp_statmount_ok },
 	{ "listmount-ok", hlp_listmount_ok },
 	{ "sz(time_t)", hlp_sz_time     },
