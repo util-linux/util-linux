@@ -119,4 +119,12 @@ extern char *ul_restricted_path_oper(const char *path,
 		int (*oper)(const char *path, char **result, void *data),
 		void *data);
 
+/* return 1 if @d is "." or ".." */
+static inline bool is_dotdir_dirent(const struct dirent *d)
+{
+	return (d && d->d_name[0] == '.'
+		&& (d->d_name[1] == 0
+		    || (d->d_name[1] == '.' && d->d_name[2] == 0)));
+}
+
 #endif /* UTIL_LINUX_FILEUTILS */
