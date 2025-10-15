@@ -478,7 +478,7 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 		    d->d_type != DT_LNK)
 			continue;
 #endif
-		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+		if (is_dotdir_dirent(d))
 			continue;
 
 		if (hasprefix) {
@@ -584,9 +584,7 @@ static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
 
 		DBG(ITER, ul_debugobj(iter, "check %s", d->d_name));
 
-		if (strcmp(d->d_name, ".") == 0
-		    || strcmp(d->d_name, "..") == 0
-		    || strncmp(d->d_name, "loop", 4) != 0)
+		if (is_dotdir_dirent(d) || strncmp(d->d_name, "loop", 4) != 0)
 			continue;
 
 		snprintf(name, sizeof(name), "%s/loop/backing_file", d->d_name);

@@ -39,6 +39,7 @@
 #include "nls.h"
 #include "closestream.h"
 #include "statfs_magic.h"
+#include "fileutils.h"
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -81,7 +82,7 @@ static int recursiveRemove(int fd)
 			break;	/* end of directory */
 		}
 
-		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+		if (is_dotdir_dirent(d))
 			continue;
 #ifdef _DIRENT_HAVE_D_TYPE
 		if (d->d_type == DT_DIR || d->d_type == DT_UNKNOWN)

@@ -53,6 +53,7 @@
 #include "pathnames.h"
 #include "sysfs.h"
 #include "monotonic.h"
+#include "fileutils.h"
 
 /*
  * sg_io_hdr_t driver_status -- see kernel include/scsi/sg.h
@@ -779,7 +780,7 @@ static int umount_partitions(struct eject_control *ctl)
 
 	/* scan for partition subdirs */
 	while ((d = readdir(dir))) {
-		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+		if (is_dotdir_dirent(d))
 			continue;
 
 		if (sysfs_blkdev_is_partition_dirent(dir, d, ctl->device)) {

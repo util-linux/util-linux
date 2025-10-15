@@ -57,6 +57,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "canonicalize.h"
+#include "fileutils.h"
 
 #include "debug.h"
 
@@ -297,7 +298,7 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 				dir, buf, postfix ? postfix : ""));
 
 	while ((dp = readdir(dirp)) != NULL) {
-		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+		if (is_dotdir_dirent(dp))
 			continue;
 		if (postfix)
 			snprintf(d, PATH_MAX - len, "%s%s", dp->d_name, postfix);

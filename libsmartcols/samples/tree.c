@@ -16,6 +16,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "fileutils.h"
 
 #include "libsmartcols.h"
 
@@ -124,7 +125,7 @@ static int add_children(struct libscols_table *tb,
 	while ((d = readdir(dir))) {
 		struct stat st;
 
-		if (strcmp(d->d_name, ".") == 0 || strcmp(d->d_name, "..") == 0)
+		if (is_dotdir_dirent(d))
 			continue;
 		if (fstatat(fd, d->d_name, &st, AT_SYMLINK_NOFOLLOW) != 0)
 			continue;

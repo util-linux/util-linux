@@ -41,6 +41,7 @@
 #include "loopdev.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "fileutils.h"
 
 /* this is the default upper limit, could be modified by --nr */
 #define SLICES_MAX	256
@@ -245,8 +246,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 	while ((d = readdir(dir))) {
 		int fd;
 
-		if (!strcmp(d->d_name, ".") ||
-		    !strcmp(d->d_name, ".."))
+		if (is_dotdir_dirent(d))
 			continue;
 #ifdef _DIRENT_HAVE_D_TYPE
 		if (d->d_type != DT_DIR && d->d_type != DT_UNKNOWN)
