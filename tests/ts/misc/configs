@@ -115,4 +115,24 @@ $TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
 rm -f "$ETC_DIR/test.conf"
 ts_finalize_subtest
 
+# Test 8: Alphabetical sorting order with main config and masking
+ts_init_subtest "sorting"
+echo "main config" > "$ETC_DIR/proj/example.conf"
+mkdir -p "$ETC_DIR/proj/example.conf.d"
+mkdir -p "$USR_DIR/proj/example.conf.d"
+# Create files with names that test sorting and masking
+echo "aaa from usr" > "$USR_DIR/proj/example.conf.d/aaa.conf"
+echo "zzz from usr" > "$USR_DIR/proj/example.conf.d/zzz.conf"
+echo "mmm from usr" > "$USR_DIR/proj/example.conf.d/mmm.conf"
+echo "bbb from etc" > "$ETC_DIR/proj/example.conf.d/bbb.conf"
+echo "mmm from etc" > "$ETC_DIR/proj/example.conf.d/mmm.conf"  # masks usr/mmm.conf
+find "$TESTDIR" -type f | sed "s|$TESTDIR|@TESTDIR@|g" | sort >> $TS_OUTPUT
+$TS_HELPER_CONFIGS --etc "$ETC_DIR" --run "$RUN_DIR" --usr "$USR_DIR" \
+	--project "proj" --name "example" --suffix "conf" \
+	| sed "s|$TESTDIR|@TESTDIR@|g" >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f "$ETC_DIR/proj/example.conf"
+rm -rf "$ETC_DIR/proj/example.conf.d"
+rm -rf "$USR_DIR/proj/example.conf.d"
+ts_finalize_subtest
+
 ts_finalize
