@@ -24,7 +24,45 @@ The *lsmem* command lists a new memory range always when the current memory bloc
 
 Note that some output columns may provide inaccurate information if a split policy forces *lsmem* to ignore differences in some attributes. For example if you merge removable and non-removable memory blocks to the one range than all the range will be marked as non-removable on *lsmem* output.
 
-Not all columns are supported on all systems. If an unsupported column is specified, *lsmem* prints the column but does not provide any data for it.
+The supported columns are RANGE, SIZE, STATE, REMOVABLE, BLOCK, NODE, ZONES, CONFIGURED, MEMMAP-ON-MEMORY.
+RANGE
+The start and end physical address of the memory range.
+
+SIZE
+The size of the memory range, representing the total amount of memory in that range.
+
+STATE
+The current online status of the memory range. Common states include online, offline or transitional states.
+
+BLOCK
+The specific memory block number.
+
+NODE
+The NUMA (Non-Uniform Memory Access) node to which the memory block belongs.
+
+ZONES
+The memory zones to which the blocks belongs, such as DMA, Normal, Movable.
+
+CONFIGURED
+The configuration state of a memory block. Refer to *chmem* for details on configuring or deconfiguring memory blocks.
+
+MEMMAP-ON-MEMORY
+The memmap-on-memory state of the memory block at configuration time. This setting indicates where memory hotplug stores its internal metadata (the struct pages array or memmap). If MEMMAP-ON-MEMORY is set to 1, the metadata is allocated directly from the newly added hotplugged memory, enabling hot-add operations even when the system is under high memory pressure. If set to 0, the memmap metadata is allocated from existing system memory.
+
+Possible BLOCK, CONFIGURED, STATE, MEMMAP-ON-MEMORY states::
+
+[cols="10,10,10,15,60", options="header"]
+|===
+| BLOCK | STATE   | CONFIGURED | MEMMAP-ON-MEMORY | Description
+
+| 0     | online  | yes        | yes/no           | The memory is configured with memmap-on-memory set to (1 or 0) and memory is currently online.
+
+| 1     | offline | yes        | yes/no           | The memory is configured, but memory is offline.
+
+| 2     | offline | no         | yes/no           | The memory is offline and deconfigured.
+|===
+
+Not all columns are supported on all systems. If an unsupported column is specified, *lsmem* prints the column but does not provide any data for it. Additionally, *lsmem* may skip columns like CONFIGURED or MEMMAP-ON-MEMORY if these states are not relevant to the system's architecture.
 
 Use the *--help* option to see the columns description.
 
@@ -45,7 +83,7 @@ Use JSON output format.
 Do not print a header line.
 
 *-o*, *--output* _list_::
-Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if _list_ is specified in the format **+**__list__ (e.g., *lsmem -o +NODE*).
+Specify which output columns to print. Use *--help* to obtain a list of all supported columns. To extend the default list of columns specify _list_ in the format **+**__list__. For example, *lsmem -o +NODE*.
 
 *--output-all*::
 Output all available columns.
@@ -57,7 +95,7 @@ Produce output in the form of key="value" pairs. All potentially unsafe value ch
 Produce output in raw format. All potentially unsafe characters are hex-escaped (\x<code>).
 
 *-S*, *--split* _list_::
-Specify which columns (attributes) use to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE and ZONES, or "none". The other columns are silently ignored. For more details see *DESCRIPTION* above.
+Specify which columns are used to split memory blocks to ranges. The supported columns are STATE, REMOVABLE, NODE, ZONES, CONFIGURED, MEMMAP-ON-MEMORY or "none". The other columns are silently ignored. For more details see *DESCRIPTION* above.
 
 *-s*, *--sysroot* _directory_::
 Gather memory data for a Linux instance other than the instance from which the *lsmem* command is issued. The specified _directory_ is the system root of the Linux instance to be inspected.
