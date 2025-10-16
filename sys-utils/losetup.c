@@ -489,7 +489,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --set-capacity <loopdev>  resize the device\n"), out);
 	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(_(" -L, --nooverlap               avoid possible conflict between devices\n"), out);
-	fputs(_(" -R, --remove <loopdev>...     remove one or more devices\n"), out);
+	fputs(_("     --remove <loopdev>...     remove one or more devices\n"), out);
 
 	/* commands options */
 	fputs(USAGE_SEPARATOR, out);
@@ -704,7 +704,8 @@ int main(int argc, char **argv)
 		OPT_RAW,
 		OPT_REF,
 		OPT_DIO,
-		OPT_OUTPUT_ALL
+		OPT_OUTPUT_ALL,
+		OPT_REMOVE
 	};
 	static const struct option longopts[] = {
 		{ "all",          no_argument,       NULL, 'a'           },
@@ -731,14 +732,14 @@ int main(int argc, char **argv)
 		{ "show",         no_argument,       NULL, OPT_SHOW      },
 		{ "verbose",      no_argument,       NULL, 'v'           },
 		{ "version",      no_argument,       NULL, 'V'           },
-		{ "remove",       required_argument, NULL, 'R'           },
+		{ "remove",       required_argument, NULL, OPT_REMOVE    },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'D','a','c','d','f','j' },
-		{ 'D','c','d','f','l' },
-		{ 'D','c','d','f','O' },
+		{ 'D','a','c','d','f','j',OPT_REMOVE },
+		{ 'D','c','d','f','l',OPT_REMOVE },
+		{ 'D','c','d','f','O',OPT_REMOVE },
 		{ 'J',OPT_RAW },
 		{ 0 }
 	};
@@ -752,7 +753,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ab:c:d:Dfhj:JlLno:O:PrvVR:",
+	while ((c = getopt_long(argc, argv, "ab:c:d:Dfhj:JlLno:O:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -846,7 +847,7 @@ int main(int argc, char **argv)
 		case 'V':
 			print_version(EXIT_SUCCESS);
 
-		case 'R':
+		case OPT_REMOVE:
 			act = A_REMOVE;
 			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
