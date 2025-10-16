@@ -14,6 +14,9 @@ _chmem_module()
 			OPTS="
 				--enable
 				--disable
+				--configure
+				--deconfigure
+				--memmap-on-memory
 				--blocks
 				--verbose
 				--zone
