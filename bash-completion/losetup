@@ -15,7 +15,7 @@ _losetup_module()
 			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
 			return 0
 			;;
-		'-c'|'--set-capacity')
+		'-c'|'--set-capacity'|'--remove')
 			ARG="$(for I in /dev/loop[0-9]*; do if [ -e $I ]; then echo $I; fi; done)"
 			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
 			return 0
@@ -57,6 +57,7 @@ _losetup_module()
 				--sizelimit
 				--partscan
 				--read-only
+				--remove
 				--show
 				--verbose
 				--json
