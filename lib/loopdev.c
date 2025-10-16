@@ -1601,6 +1601,45 @@ int loopcxt_ioctl_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 	return 0;
 }
 
+/*
+ * @lc: context
+ * @nr: returns loop device number
+ *
+ * Extracts the loop device number from the device path.
+ * Supports both /dev/loop<N> and /dev/loop/<N> formats.
+ *
+ * Returns: 0 on success, <0 on error
+ */
+static int loopcxt_get_device_nr(struct loopdev_cxt *lc, int *nr)
+{
+	const char *p, *dev;
+	int rc = -EINVAL;
+
+	errno = 0;
+	if (!lc || !nr)
+		goto done;
+
+	dev = loopcxt_get_device(lc);
+	if (!dev)
+		goto done;
+
+	p = strrchr(dev, '/');
+	if (!p)
+		goto done;
+
+	if (sscanf(p, "/loop%d", nr) != 1 && sscanf(p, "/%d", nr) != 1)
+		goto done;
+
+	if (*nr < 0)
+		goto done;
+	rc = 0;
+done:
+	if (rc && !errno)
+		errno = -rc;
+	DBG(CXT, ul_debugobj(lc, "get_device_nr [nr=%d]", *nr));
+	return rc;
+}
+
 int loopcxt_detach_device(struct loopdev_cxt *lc)
 {
 	int rc, fd = loopcxt_get_fd(lc);
@@ -1624,19 +1663,14 @@ int loopcxt_remove_device(struct loopdev_cxt *lc)
 {
        int rc = -EINVAL;
        int ctl, nr = -1;
-       const char *p, *dev = loopcxt_get_device(lc);
-
-       if (!dev)
-               goto done;
 
        if (!(lc->flags & LOOPDEV_FL_CONTROL)) {
                rc = -ENOSYS;
                goto done;
        }
 
-       p = strrchr(dev, '/');
-       if (!p || (sscanf(p, "/loop%d", &nr) != 1 && sscanf(p, "/%d", &nr) != 1)
-              || nr < 0)
+       rc = loopcxt_get_device_nr(lc, &nr);
+       if (rc)
                goto done;
 
        ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
@@ -1655,19 +1689,14 @@ int loopcxt_add_device(struct loopdev_cxt *lc)
 {
 	int rc = -EINVAL;
 	int ctl, nr = -1;
-	const char *p, *dev = loopcxt_get_device(lc);
-
-	if (!dev)
-		goto done;
 
 	if (!(lc->flags & LOOPDEV_FL_CONTROL)) {
 		rc = -ENOSYS;
 		goto done;
 	}
 
-	p = strrchr(dev, '/');
-	if (!p || (sscanf(p, "/loop%d", &nr) != 1 && sscanf(p, "/%d", &nr) != 1)
-	       || nr < 0)
+	rc = loopcxt_get_device_nr(lc, &nr);
+	if (rc)
 		goto done;
 
 	ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
