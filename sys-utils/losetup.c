@@ -262,9 +262,11 @@ static int detach_all_loops(struct loopdev_cxt *lc)
 
 static int remove_loop(struct loopdev_cxt *lc)
 {
-    if (loopcxt_remove_device(lc))
-        return -1;
-    return 0;
+	if (loopcxt_remove_device(lc)) {
+		warn(_("%s: remove failed"), loopcxt_get_device(lc));
+		return -1;
+	}
+	return 0;
 }
 
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
