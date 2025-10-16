@@ -32,6 +32,7 @@
 #include "optutils.h"
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
+#define _PATH_SYS_MEMMAP_PARM		"/sys/module/memory_hotplug/parameters/memmap_on_memory"
 
 #define MEMORY_STATE_ONLINE		0
 #define MEMORY_STATE_OFFLINE		1
@@ -306,8 +307,24 @@ static void fill_scols_table(struct lsmem *lsmem)
 		add_scols_line(lsmem, &lsmem->blocks[i]);
 }
 
+static int get_memmap_mode(char *res, char *src, int len)
+{
+	if (!strncmp(src, "Y", 1))
+		strncpy(res, N_("yes"), len);
+	else if (!strncmp(src, "N", 1))
+		strncpy(res, N_("no"), len);
+	else if (!strncmp(src, "force", 5))
+		strncpy(res, N_("force"), len);
+	else
+		return -1;
+	return 0;
+}
+
 static void print_summary(struct lsmem *lsmem)
 {
+	char buf[8], res[8];
+	FILE *memmap;
+
 	if (lsmem->bytes) {
 		printf("%-32s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
 		printf("%-32s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
@@ -327,6 +344,18 @@ static void print_summary(struct lsmem *lsmem)
 			printf("%-32s %5s\n",_("Total offline memory:"), p);
 		free(p);
 	}
+	memmap = fopen(_PATH_SYS_MEMMAP_PARM, "r");
+	if (!memmap)
+		return;
+	if (fgets(buf, sizeof(buf), memmap)) {
+		if (!get_memmap_mode(res, buf, sizeof(res))) {
+			if (lsmem->bytes)
+				printf("%-32s %15s\n", _("Memmap on memory parameter:"), _(res));
+			else
+				printf("%-32s %5s\n", _("Memmap on memory parameter:"), _(res));
+		}
+	}
+	fclose(memmap);
 }
 
 static int memory_block_get_node(struct lsmem *lsmem, char *name)

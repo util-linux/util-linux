@@ -28,6 +28,8 @@ Not all columns are supported on all systems. If an unsupported column is specif
 
 Use the *--help* option to see the columns description.
 
+Memmap on memory parameter output displays the globally enabled memmap-on-memory setting for memory_hotplug. This is typically set on the kernel command line via memory_hotplug.memmap_on_memory.
+
 == OPTIONS
 
 *-a*, *--all*::
