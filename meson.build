@@ -932,6 +932,8 @@ conf.set('USE_COLORS_BY_DEFAULT', get_option('colors-default') ? 1 : false)
 
 is_glibc = cc.has_header_symbol('limits.h', '__GLIBC__')
 
+conf.set_quoted('DEFAULT_MOUNT_TYPE_NTFS', get_option('default-mount-type-ntfs'))
+
 ############################################################
 
 

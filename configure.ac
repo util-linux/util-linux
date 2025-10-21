@@ -3100,6 +3100,23 @@ if test "x${build_alias}" != "x${host_alias}"; then
   link_all_deplibs=unknown
 fi
 
+AC_ARG_WITH([default-mount-type-ntfs],
+  [AS_HELP_STRING([--with-default-mount-type-ntfs=TYPE],
+                  [select the kernel driver to use as default mount type (ntfsplus, ntfs3, ntfs) [default=ntfs3]])],
+  [default_mount_type_ntfs="$withval"],
+  [default_mount_type_ntfs="ntfs3"]
+)
+case "$default_mount_type_ntfs" in
+  ntfsplus|ntfs3|ntfs)
+    AC_MSG_NOTICE([Using default NTFS mount type: $default_mount_type_ntfs])
+    ;;
+  *)
+    AC_MSG_ERROR([Invalid value for --with-default-mount-type-ntfs: $default_mount_type_ntfs. Choose from: ntfsplus, ntfs3, ntfs.])
+    ;;
+esac
+AC_SUBST([DEFAULT_MOUNT_TYPE_NTFS], [$default_mount_type_ntfs])
+AC_DEFINE_UNQUOTED([DEFAULT_MOUNT_TYPE_NTFS], ["$default_mount_type_ntfs"], [Default NTFS mount type])
+
 
 LIBS=""
 
