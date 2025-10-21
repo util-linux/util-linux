@@ -1747,7 +1747,7 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 		DBG(CXT, ul_debugobj(lc, "find_unused by loop-control [rc=%d]", rc));
 	}
 
-	if (rc < 0) {
+	if (rc < 0 && rc != -EACCES) {
 		DBG(CXT, ul_debugobj(lc, "using loop scan"));
 		rc = loopcxt_init_iterator(lc, LOOPITER_FL_FREE);
 		if (rc)
