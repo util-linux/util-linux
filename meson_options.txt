@@ -316,3 +316,9 @@ option('login-lastlogin', type : 'boolean',
 option('tty-setgid', type : 'boolean',
        value : true,
        description : 'setgid tty group for wall and write programs')
+
+option('default-mount-type-ntfs',
+       type : 'combo',
+       choices : ['ntfsplus', 'ntfs3', 'ntfs'],
+       value : 'ntfs3',
+       description : 'select the kernel driver to use as default mount type option')'
