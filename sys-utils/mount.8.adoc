@@ -315,6 +315,8 @@ The option *--all* is possible to use for remount operation too. In this case al
 +
 Since version 2.35 it is possible to use the command line option *-o* to alter mount options from _fstab_ (see also *--options-mode*).
 +
+Note that swap entries in _fstab_ are silently ignored by *mount -a*. Use *swapon -a* to enable swap devices and files. See *swapon*(8).
++
 Note that it is a bad practice to use *mount -a* for _fstab_ checking. The recommended solution is *findmnt --verify*.
 
 *--beneath*::
