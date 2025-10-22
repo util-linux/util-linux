@@ -262,9 +262,11 @@ static int detach_all_loops(struct loopdev_cxt *lc)
 
 static int remove_loop(struct loopdev_cxt *lc)
 {
-    if (loopcxt_remove_device(lc))
-        return -1;
-    return 0;
+	if (loopcxt_remove_device(lc)) {
+		warn(_("%s: remove failed"), loopcxt_get_device(lc));
+		return -1;
+	}
+	return 0;
 }
 
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
@@ -487,7 +489,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --set-capacity <loopdev>  resize the device\n"), out);
 	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(_(" -L, --nooverlap               avoid possible conflict between devices\n"), out);
-	fputs(_(" -R, --remove <loopdev>...     remove one or more devices\n"), out);
+	fputs(_("     --remove <loopdev>...     remove one or more devices\n"), out);
 
 	/* commands options */
 	fputs(USAGE_SEPARATOR, out);
@@ -689,7 +691,7 @@ int main(int argc, char **argv)
 {
 	struct loopdev_cxt lc;
 	int act = 0, flags = 0, no_overlap = 0, c;
-	char *file = NULL, *refname = NULL;
+	char *file = NULL, *refname = NULL, *devname = NULL;
 	uint64_t offset = 0, sizelimit = 0, blocksize = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
 	char *outarg = NULL;
@@ -702,12 +704,13 @@ int main(int argc, char **argv)
 		OPT_RAW,
 		OPT_REF,
 		OPT_DIO,
-		OPT_OUTPUT_ALL
+		OPT_OUTPUT_ALL,
+		OPT_REMOVE
 	};
 	static const struct option longopts[] = {
 		{ "all",          no_argument,       NULL, 'a'           },
-		{ "set-capacity", required_argument, NULL, 'c'           },
-		{ "detach",       required_argument, NULL, 'd'           },
+		{ "set-capacity", no_argument,       NULL, 'c'           },
+		{ "detach",       no_argument,       NULL, 'd'           },
 		{ "detach-all",   no_argument,       NULL, 'D'           },
 		{ "find",         no_argument,       NULL, 'f'           },
 		{ "nooverlap",    no_argument,       NULL, 'L'           },
@@ -729,14 +732,14 @@ int main(int argc, char **argv)
 		{ "show",         no_argument,       NULL, OPT_SHOW      },
 		{ "verbose",      no_argument,       NULL, 'v'           },
 		{ "version",      no_argument,       NULL, 'V'           },
-		{ "remove",       required_argument, NULL, 'R'           },
+		{ "remove",       no_argument,       NULL, OPT_REMOVE    },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'D','a','c','d','f','j' },
-		{ 'D','c','d','f','l' },
-		{ 'D','c','d','f','O' },
+		{ 'D','a','c','d','f','j',OPT_REMOVE },
+		{ 'D','c','d','f','l',OPT_REMOVE },
+		{ 'D','c','d','f','O',OPT_REMOVE },
 		{ 'J',OPT_RAW },
 		{ 0 }
 	};
@@ -750,7 +753,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ab:c:d:Dfhj:JlLno:O:PrvVR:",
+	while ((c = getopt_long(argc, argv, "ab:cdDfhj:JlLno:O:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -765,9 +768,6 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			act = A_SET_CAPACITY;
-			if (loopcxt_set_device(&lc, optarg))
-				err(EXIT_FAILURE, _("%s: failed to use device"),
-						optarg);
 			break;
 		case 'r':
 			lo_flags |= LO_FLAGS_READ_ONLY;
@@ -777,9 +777,6 @@ int main(int argc, char **argv)
 			break;
 		case 'd':
 			act = A_DETACH;
-			if (loopcxt_set_device(&lc, optarg))
-				err(EXIT_FAILURE, _("%s: failed to use device"),
-						optarg);
 			break;
 		case 'D':
 			act = A_DETACH_ALL;
@@ -844,11 +841,8 @@ int main(int argc, char **argv)
 		case 'V':
 			print_version(EXIT_SUCCESS);
 
-		case 'R':
+		case OPT_REMOVE:
 			act = A_REMOVE;
-			if (loopcxt_set_device(&lc, optarg))
-				err(EXIT_FAILURE, _("%s: failed to use device"),
-						optarg);
 			break;
 
 		default:
@@ -899,6 +893,15 @@ int main(int argc, char **argv)
 		 */
 		act = A_SHOW;
 
+	if (act == A_SET_CAPACITY
+	    || act == A_DETACH
+	    || act == A_REMOVE) {
+
+		if (optind >= argc)
+			errx(EXIT_FAILURE, _("no loop device specified"));
+		devname = argv[optind++];
+	}
+
 	if (!act && optind + 1 == argc) {
 		/*
 		 * losetup [--list] <device>
@@ -913,10 +916,9 @@ int main(int argc, char **argv)
 		else
 			act = A_SHOW_ONE;
 
-		if (loopcxt_set_device(&lc, argv[optind]))
-			err(EXIT_FAILURE, _("%s: failed to use device"),
-					argv[optind]);
-		optind++;
+		if (optind >= argc)
+			errx(EXIT_FAILURE, _("no loop device specified"));
+		devname = argv[optind++];
 	}
 	if (!act) {
 		/*
@@ -926,16 +928,16 @@ int main(int argc, char **argv)
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no loop device specified"));
-		/* don't use is_loopdev() here, the device does not have exist yet */
-		if (loopcxt_set_device(&lc, argv[optind]))
-			err(EXIT_FAILURE, _("%s: failed to use device"),
-					argv[optind]);
-		optind++;
+		devname = argv[optind++];
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no file specified"));
 		file = argv[optind++];
 	}
+
+	/* don't use is_loopdev() here, the device does not have exist yet */
+	if (devname && loopcxt_set_device(&lc, devname))
+		err(EXIT_FAILURE, _("%s: failed to use device"), devname);
 
 	if (act != A_CREATE &&
 	    (sizelimit || lo_flags || showdev))

@@ -38,7 +38,7 @@ Resize a loop device:
 
 Remove a loop device:
 
-*losetup* *-R* _loopdev_ ...
+*losetup* *--remove* _loopdev_ ...
 
 == DESCRIPTION
 
@@ -127,13 +127,23 @@ Use the raw *--list* output format.
 *-J*, *--json*::
 Use JSON format for *--list* output.
 
-*-R*, *--remove* _loopdev_...::
-The parameter is not recommended for direct use.
-*-d* or *-D* option to disconnect the file from the loop device, we can see a loop device
-of size 0 by running 'lsblk -a'. At this point, the loop device will still in the system.
-This parameter can truly remove the loop device, and there is no command or interface to view it.
+*--remove* _loopdev_...::
+Remove the specified loop device(s). The loop device must be unused (not associated with any backing file). This option removes the device node from the system. In most cases, *--detach* is sufficient for normal use. See the *LOOP DEVICE LIFECYCLE* section below.
 
 include::man-common/help-version.adoc[]
+
+== LOOP DEVICE LIFECYCLE
+
+Loop devices go through several states during their lifecycle:
+
+*Creation*::
+When *losetup* associates a loop device with a backing file, it automatically creates the device node (e.g., _/dev/loop0_) if it doesn't already exist. This happens on-demand when you use options like *-f* or specify a loop device explicitly. The device is created using the *LOOP_CTL_ADD* ioctl.
+
+*Detachment*::
+The *-d* (*--detach*) option disassociates the backing file from the loop device using the *LOOP_CLR_FD* ioctl. After detachment, the loop device node remains in _/dev_ and can be reused for another backing file. Use *lsblk -a* to see all loop device nodes, including unused ones.
+
+*Removal*::
+The *--remove* option completely removes the loop device node from the system using the *LOOP_CTL_REMOVE* ioctl. The device must be detached first (not associated with any backing file). After removal, the device node disappears from _/dev_.
 
 == ENCRYPTION
 
