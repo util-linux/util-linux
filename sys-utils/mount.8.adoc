@@ -307,7 +307,9 @@ The *mount* command does not pass all command-line options to the **/sbin/mount.
 Command-line options available for the *mount* command are:
 
 *-a*, *--all*::
-Mount all filesystems (of the given types) mentioned in _fstab_ (except for those whose line contains the *noauto* keyword). The filesystems are mounted following their order in _fstab_. The *mount* command compares filesystem source, target (and fs root for bind mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is cached during *mount --all*. This means that all duplicated _fstab_ entries will be mounted.
+Mount all filesystems (of the given types) mentioned in _fstab_ (except for those whose line contains the *noauto* keyword). This option was originally designed for use in init scripts. Note that many modern systemd-based distributions do not use *mount -a* on boot and instead mount filesystems in a more sophisticated way using systemd units.
++
+The filesystems are mounted following their order in _fstab_. The *mount* command compares filesystem source, target (and fs root for bind mount or btrfs) to detect already mounted filesystems. The kernel table with already mounted filesystems is cached during *mount --all*. This means that all duplicated _fstab_ entries will be mounted.
 +
 The correct functionality depends on _/proc_ (to detect already mounted filesystems) and on _/sys_ (to evaluate filesystem tags like UUID= or LABEL=). It's strongly recommended to mount _/proc_ and _/sys_ filesystems before *mount -a* is executed, or keep /proc and /sys at the beginning of _fstab_.
 +
