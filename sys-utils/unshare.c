@@ -469,6 +469,7 @@ static struct map_range read_subid_range(char *filename, uid_t uid, int identity
 		fclose(idmap);
 		free(pw);
 		free(pwbuf);
+		free(line);
 
 		return map;
 	}
