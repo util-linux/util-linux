@@ -1617,7 +1617,7 @@ static int loopcxt_get_device_nr(struct loopdev_cxt *lc, int *nr)
 
 	errno = 0;
 	if (!lc || !nr)
-		goto done;
+		return rc;
 
 	dev = loopcxt_get_device(lc);
 	if (!dev)
