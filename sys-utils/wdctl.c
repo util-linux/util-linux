@@ -780,7 +780,7 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:g:hFnITp:o:s:OrVx", long_opts, NULL)) != -1) {
+				"f:g:hFnITp:o:s:OrVx", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
