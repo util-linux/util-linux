@@ -501,7 +501,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"), out);
 	fputs(_("     --loop-ref <string>       loop device reference\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
-	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
 	/* output options */
 	fputs(USAGE_SEPARATOR, out);
@@ -730,7 +729,6 @@ int main(int argc, char **argv)
 		{ "raw",          no_argument,       NULL, OPT_RAW       },
 		{ "loop-ref",     required_argument, NULL, OPT_REF,      },
 		{ "show",         no_argument,       NULL, OPT_SHOW      },
-		{ "verbose",      no_argument,       NULL, 'v'           },
 		{ "version",      no_argument,       NULL, 'V'           },
 		{ "remove",       no_argument,       NULL, OPT_REMOVE    },
 		{ NULL, 0, NULL, 0 }
@@ -828,8 +826,6 @@ int main(int argc, char **argv)
 				use_dio = ul_parse_switch(optarg, "on", "off", NULL);
 			if (use_dio)
 				lo_flags |= LO_FLAGS_DIRECT_IO;
-			break;
-		case 'v':
 			break;
 		case OPT_SIZELIMIT:			/* --sizelimit */
 			sizelimit = strtosize_or_err(optarg, _("failed to parse size"));
