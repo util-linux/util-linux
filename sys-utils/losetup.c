@@ -726,7 +726,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'D','a','c','d','f','j' },
 		{ 'D','c','d','f','l' },
-		{ 'D','c','d','f','O' },
+		{ 'D','O','c','d','f' },
 		{ 'J',OPT_RAW },
 		{ 0 }
 	};
