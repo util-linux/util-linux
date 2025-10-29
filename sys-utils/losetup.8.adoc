@@ -12,31 +12,27 @@ losetup - set up and control loop devices
 
 == SYNOPSIS
 
+Set up a loop device:
+
+*losetup* [options] *-f*|_loopdev file_
+
 Get info:
 
-*losetup* [_loopdev_]
-
-*losetup* *-l* [*-a*]
+*losetup* [*-l*] [*-a*|_loopdev_]
 
 *losetup* *-j* _file_ [*-o* _offset_]
 
-Detach a loop device:
-
-*losetup* *-d* _loopdev_ ...
-
-Detach all associated loop devices:
-
-*losetup* *-D*
-
-Set up a loop device:
-
-*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*--loop-ref* _name_] [*-Pr*] [*--show*] *-f*|_loopdev file_
-
-Resize a loop device:
+Recalibrate the size of a loop device:
 
 *losetup* *-c* _loopdev_
 
-Remove a loop device:
+Detach loop devices:
+
+*losetup* *-d* _loopdev_ ...
+
+*losetup* *-D*
+
+Prevent loop devices from getting listed:
 
 *losetup* *--remove* _loopdev_ ...
 
