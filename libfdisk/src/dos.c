@@ -1241,8 +1241,8 @@ static int get_disk_ranges(struct fdisk_context *cxt, int logical,
 		else
 			*last = cxt->total_sectors - 1;
 
-		if (*last > UINT_MAX)
-			*last = UINT_MAX;
+		if (*last >= UINT_MAX)
+			*last = UINT_MAX - 1;
 		*first = cxt->first_lba;
 	}
 
