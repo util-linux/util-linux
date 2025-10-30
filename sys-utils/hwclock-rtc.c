@@ -498,6 +498,7 @@ int get_param_rtc(const struct hwclock_control *ctl,
 int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 {
 	int rtc_fd, rc = 1;
+	struct rtc_param current_param = { .index = ctl->param_idx };
 	struct rtc_param param = { .index = ctl->param_idx };
 	char *tok, *opt = xstrdup(opt0);
 
@@ -520,13 +521,25 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 		goto done;
 	}
 
-	/* set parameter */
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		warnx(_("cannot open %s"), rtc_dev_name);
 		goto done;
 	}
 
+	/* get parameter and compare with value */
+	current_param.param = param.param;
+	if (!ioctl(rtc_fd, RTC_PARAM_GET, &current_param)
+		&& current_param.uvalue == param.uvalue) {
+		/* value to be written matches current value, skip write */
+		if (ctl->verbose)
+			printf(_("skipping ioctl(%d, RTC_PARAM_GET, param) to %s: value unchanged\n"),
+				   rtc_fd, rtc_dev_name);
+		rc = 0;
+		goto done;
+	}
+
+	/* set parameter */
 	if (ioctl(rtc_fd, RTC_PARAM_SET, &param) == -1) {
 		warn(_("ioctl(%d, RTC_PARAM_SET, param) to %s failed"),
 		     rtc_fd, rtc_dev_name);
