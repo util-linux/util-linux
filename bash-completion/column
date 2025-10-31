@@ -36,6 +36,7 @@ _column_module()
 				--table-colorscheme
 				--table-name
 				--table-order
+				--table-column
 				--table-columns
 				--table-columns-limit
 				--table-noextreme
@@ -54,6 +55,7 @@ _column_module()
 				--output-width
 				--separator
 				--output-separator
+				--wrap-separator
 				--fillrows
 				--use-spaces
 				--color
