@@ -31,6 +31,7 @@ _fincore_module()
 				--noheadings
 				--output
 				--output-all
+				--total
 				--raw
 				--recursive
 				--cachestat
