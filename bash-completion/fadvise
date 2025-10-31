@@ -26,6 +26,7 @@ _fadvise_module()
     case $cur in
 	-*)
 	    OPTS='--advice
+			--fd
 		  --length
 		  --offset
 		  --help
