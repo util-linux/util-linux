@@ -27,7 +27,7 @@ _fsck_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-p -n -y -c -f -v -b -B -j -l -L"
+			OPTS="-p -n -y -c -f -v -b -B -j -l -L --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
