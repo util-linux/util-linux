@@ -86,6 +86,7 @@ _blkid_module()
 				--usages
 				--match-types
 				--no-part-details
+				--hint
 				--help
 				--version
 			"
