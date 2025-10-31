@@ -21,7 +21,7 @@ _mkfs.minix_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--namelength --inodes --check --badblocks --help --version -1 -2 -3"
+			OPTS="--namelength --inodes --check --badblocks --lock --help --version -1 -2 -3"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
