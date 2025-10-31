@@ -54,6 +54,8 @@ _hwclock_module()
 				--epoch
 				--param-get
 				--param-set
+				--param-index
+				--verbose
 				--vl-read
 				--vl-clear
 				--update-drift
