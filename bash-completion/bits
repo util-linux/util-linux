@@ -11,7 +11,7 @@ _bits_module()
 	esac
 	case $cur in
 	-*)
-		OPTS="--version --help --width --mask --grouped-mask --bit --list"
+		OPTS="--version --help --width --mask --grouped-mask --bit --binary --list"
 		COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 		return 0
 		;;
