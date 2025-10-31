@@ -97,6 +97,35 @@ extract_meson_registered() {
 	fi
 }
 
+# Check for the bash-completion file integrity, i.e. all long options are completed
+# Argument(s): program_name
+check_completion_file_integrity() {
+	local prog="$1"
+
+	if "./$prog" --version &>/dev/null; then
+		prog_long_opts="$( "./$prog" --help \
+			| grep -o -P '[[:space:]]*--(?![^[:alpha:]])[A-Za-z-]*' \
+			| sed -e 's/^ *//' \
+			-e 's/ *$//' \
+			| sort \
+			| uniq )"
+
+		comp_opts="$( cat "${completion_dir}/${prog}" \
+				| grep -o -P '[[:space:]]*--(?![^[:alpha:]])[A-Za-z-]*' \
+				| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
+				| sort \
+				| uniq )"
+
+		res="$( comm -23 <(echo "${prog_long_opts}") <(echo "${comp_opts}") )"
+		if [ -n "$res" ]; then
+			printf "%s\n%s\n" "${prog}:" "$res"
+			return 1
+		fi
+	fi
+
+	return 0
+}
+
 # Get programs that should have completions
 programs=$(extract_programs | grep -v -w -E "(${exclude_programs}|${special_handling})")
 
@@ -146,6 +175,12 @@ if [ -n "$meson_unregistered" ]; then
 	echo "bash-completion files not registered in meson.build:"
 	echo "$meson_unregistered" | sed 's/^/  /'
 	errors=$((errors + 1))
+fi
+
+if [ $errors -eq 0 ]; then
+	for f in $files; do
+		check_completion_file_integrity "$f" || errors=$((errors + 1))
+	done
 fi
 
 if [ $errors -eq 0 ]; then
