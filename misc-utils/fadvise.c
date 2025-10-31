@@ -50,6 +50,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --advice <advice> applying advice to the file (default: \"dontneed\")\n"), out);
+	fputs(_(" -d, --fd <num>        applying advice to the file descriptor\n"), out);
 	fputs(_(" -l, --length <num>    length for range operations, in bytes\n"), out);
 	fputs(_(" -o, --offset <num>    offset for range operations, in bytes\n"), out);
 
