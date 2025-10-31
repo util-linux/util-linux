@@ -19,7 +19,7 @@ _mkfs.bfs_module()
 	esac
 	case $cur in
 		-*)
-			OPTS='--inodes --vname --fname --verbose --help --version'
+			OPTS='--inodes --vname --fname --lock --verbose --help --version'
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

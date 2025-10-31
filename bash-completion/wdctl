@@ -56,6 +56,8 @@ _wdctl_module()
 				--notimeouts
 				--settimeout
 				--flags-only
+				--setpregovernor
+				--setpretimeout
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

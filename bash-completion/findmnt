@@ -136,6 +136,15 @@ _findmnt_module()
 				--real
 				--pseudo
 				--list-columns
+				--bytes
+				--filter
+				--nocanonicalize
+				--shadowed
+				--shell
+				--uniq
+				--verbose
+				--verify
+				--vfs-all
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0

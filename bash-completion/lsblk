@@ -96,6 +96,11 @@ _lsblk_module()
 				--virtio
 				--sort
 				--width
+				--noempty
+				--shell
+				--sysroot
+				--tree
+				--zoned
 				--list-columns
 				--help
 				--version"

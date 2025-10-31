@@ -38,6 +38,7 @@ _lscpu_module()
 				--parse=
 				--sysroot
 				--hex
+				--hierarchic
 				--physical
 				--output-all
 				--raw

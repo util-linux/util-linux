@@ -65,6 +65,7 @@ _swapon_module()
 				--summary
 				--show
 				--output-all
+				--options
 				--noheadings
 				--raw
 				--bytes

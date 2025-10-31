@@ -27,7 +27,18 @@ _getopt_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--alternative --help --longoptions --name --options --quiet --quiet-output --shell --test --unquoted --version"
+			OPTS="--alternative
+						--help
+						--longoptions
+						--name
+						--options
+						--quiet
+						--quiet-output
+						--shell
+						--test 
+						--unknown
+						--unquoted 
+						--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

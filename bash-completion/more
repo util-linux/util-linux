@@ -16,6 +16,7 @@ _more_module()
 	case $cur in
 		-*)
 			OPTS="
+				--exit-on-eof
 				--silent
 				--logical
 				--no-pause

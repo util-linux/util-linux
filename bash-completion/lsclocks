@@ -53,6 +53,7 @@ _lsclocks_module()
 				--raw
 				--time
 				--dynamic-clock
+				--no-discover-dynamic
 				--rtc
 				--cpu-clock
 				--help

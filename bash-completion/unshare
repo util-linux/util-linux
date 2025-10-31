@@ -39,6 +39,13 @@ _unshare_module()
 				--version
 				--root
 				--wd
+				--load-interp
+				--map-auto
+				--map-group
+				--map-groups
+				--map-user
+				--map-users
+				--mount-binfmt
 				--monotonic
 				--boottime
 				--setuid
