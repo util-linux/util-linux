@@ -29,7 +29,9 @@ _blockdev_module()
 		--getfra
 		--flushbufs
 		--rereadpt
-		$DEVS"
+		$DEVS
+		--help
+		--version"
 	case $prev in
 		'--setbsz')
 			COMPREPLY=( $(compgen -W "bytes" -- $cur) )
