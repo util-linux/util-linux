@@ -1087,9 +1087,7 @@ static void print_summary(struct lscpu_cxt *cxt)
 		if (cxt->virt->hypervisor)
 			add_summary_s(tb, sec, _("Hypervisor:"), cxt->virt->hypervisor);
 		if (cxt->virt->vendor) {
-            const char *vendor_str = (cxt->virt->vendor != VIRT_VENDOR_NONE) ?
-                hv_vendors[cxt->virt->vendor] : _("none");			
-			add_summary_s(tb, sec, _("Hypervisor vendor:"), vendor_str);
+			add_summary_s(tb, sec, _("Hypervisor vendor:"), hv_vendors[cxt->virt->vendor]);
 			add_summary_s(tb, sec, _("Virtualization type:"), _(virt_types[cxt->virt->type]));
 		}
 		sec = NULL;
