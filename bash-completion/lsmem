@@ -43,6 +43,7 @@ _lsmem_module()
 		--output-all
 		--raw
 		--sysroot
+		--split
 		--summary
 		--help
 		--version
