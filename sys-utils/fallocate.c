@@ -33,10 +33,6 @@
 #include <limits.h>
 #include <string.h>
 
-#ifndef HAVE_FALLOCATE
-# include <sys/syscall.h>
-#endif
-
 #if defined(HAVE_LINUX_FALLOC_H) && \
     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
      !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
@@ -129,11 +125,8 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 {
 	int error;
 
-#ifdef HAVE_FALLOCATE
 	error = fallocate(fd, mode, offset, length);
-#else
-	error = syscall(SYS_fallocate, fd, mode, offset, length);
-#endif
+
 	/*
 	 * EOPNOTSUPP: The FALLOC_FL_KEEP_SIZE is unsupported
 	 * ENOSYS: The filesystem does not support sys_fallocate

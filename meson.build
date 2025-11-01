@@ -2041,7 +2041,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['mountpoint']
 endif
 
-opt = not get_option('build-fallocate').disabled()
+opt = get_option('build-fallocate') \
+    .require(LINUX) \
+    .require(conf.get('HAVE_FALLOCATE').to_string() == '1') \
+    .allowed()
 exe = executable(
   'fallocate',
   fallocate_sources,

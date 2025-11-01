@@ -614,7 +614,6 @@ AC_CHECK_FUNCS([ \
 	explicit_bzero \
 	__fpending \
 	__fpurge \
-	fallocate \
 	fpurge \
 	fnmatch \
 	fsconfig \
@@ -687,6 +686,7 @@ AC_CHECK_FUNCS([ \
 ])
 AC_FUNC_FSEEKO
 
+AC_CHECK_FUNCS([fallocate], [have_fallocate=yes], [have_fallocate=no])
 AC_CHECK_FUNCS([futimens], [have_futimens=yes])
 AC_CHECK_FUNCS([getusershell], [have_getusershell=yes],[have_getusershell=no])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
@@ -1589,7 +1589,7 @@ AC_ARG_ENABLE([fallocate],
 )
 UL_BUILD_INIT([fallocate])
 UL_REQUIRES_LINUX([fallocate])
-UL_REQUIRES_SYSCALL_CHECK([fallocate], [UL_CHECK_SYSCALL([fallocate])])
+UL_REQUIRES_HAVE([fallocate], [fallocate], [fallocate functions])
 AM_CONDITIONAL([BUILD_FALLOCATE], [test "x$build_fallocate" = xyes])
 
 
