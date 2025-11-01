@@ -34,6 +34,7 @@ _nsenter_module()
 		-*)
 			OPTS="
 				--all
+				--follow-context
 				--target
 				--mount=
 				--uts=
