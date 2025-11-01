@@ -124,6 +124,9 @@ _setpriv_module()
 				--securebits
 				--pdeathsig
 				--reset-env
+				--init-groups
+				--nnp
+				--ptracer
 				--selinux-label
 				--apparmor-profile
 				--landlock-access
