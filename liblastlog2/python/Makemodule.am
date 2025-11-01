@@ -1,0 +1,25 @@
+if BUILD_PYLASTLOG2
+
+pylastlog2execdir = $(pyexecdir)/liblastlog2
+
+pylastlog2exec_LTLIBRARIES = pylastlog2.la
+pylastlog2exec_PYTHON = liblastlog2/python/__init__.py
+
+pylastlog2_la_SOURCES = \
+	liblastlog2/python/pylastlog2.c \
+	liblastlog2/python/pylastlog2.h
+
+pylastlog2_la_LIBADD = liblastlog2.la $(PYTHON_LIBS)
+
+pylastlog2_la_CFLAGS = \
+	$(AM_CFLAGS) \
+	$(PYTHON_CFLAGS) $(PYTHON_WARN_CFLAGS) \
+	-I$(ul_liblastlog2_incdir) \
+	-fno-strict-aliasing -O3 -fPIC
+
+pylastlog2_la_LDFLAGS = \
+	-avoid-version -module -shared -export-dynamic
+
+dist_check_SCRIPTS += liblastlog2/python/test.py
+
+endif # BUILD_PYLASTLOG2
