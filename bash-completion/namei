@@ -11,7 +11,15 @@ _namei_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--help --version --mountpoints --modes --owners --long --nosymlinks --vertical"
+			OPTS="	--context
+				--help
+				--version
+				--mountpoints
+				--modes
+				--owners
+				--long
+				--nosymlinks
+				--vertical"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
