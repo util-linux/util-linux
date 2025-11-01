@@ -15,7 +15,7 @@ _pg_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-number -c -e -f -n -p -r -s -h -V"
+			OPTS="-number -c -e -f -n -p -r -s -h -V --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
