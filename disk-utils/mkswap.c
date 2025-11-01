@@ -431,14 +431,9 @@ static void open_device(struct mkswap_control *ctl)
 #endif
 		if (ftruncate(ctl->fd, ctl->filesz) < 0)
 			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
-#ifdef HAVE_POSIX_FALLOCATE
 		errno = posix_fallocate(ctl->fd, 0, ctl->filesz);
 		if (errno)
 			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
-#elif defined(HAVE_FALLOCATE)
-		if (fallocate(ctl->fd, 0, 0, ctl->filesz) < 0)
-			err(EXIT_FAILURE, _("couldn't allocate swap file %s"), ctl->devname);
-#endif
 	}
 
 	if (blkdev_lock(ctl->fd, ctl->devname, ctl->lockmode) != 0)
@@ -658,9 +653,7 @@ int main(int argc, char **argv)
 #ifdef USE_NOCOW
 				"nocow",
 #endif
-#if defined(HAVE_POSIX_FALLOCATE) || defined(HAVE_FALLOCATE)
 				"fallocate",
-#endif
 #ifdef HAVE_LIBBLKID
 				"blkid-check",
 #endif
