@@ -370,7 +370,7 @@ static int fincore_fd (struct fincore_control *ctl,
 	if (errno != ENOSYS || ctl->cachestat)
 		warn(_("failed to do cachestat: %s"), st->name);
 
-	if (ctl->cachestat)
+	if (errno == EPERM || ctl->cachestat)
 		return -errno;
 
 	return mincore_fd(ctl, fd, st);
