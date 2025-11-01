@@ -95,9 +95,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
-#ifdef HAVE_POSIX_FALLOCATE
 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
-#endif
 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -138,7 +136,6 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 	}
 }
 
-#ifdef HAVE_POSIX_FALLOCATE
 static void xposix_fallocate(int fd, off_t offset, off_t length)
 {
 	errno = posix_fallocate(fd, offset, length);
@@ -146,7 +143,6 @@ static void xposix_fallocate(int fd, off_t offset, off_t length)
 		err(EXIT_FAILURE, _("fallocate failed"));
 	}
 }
-#endif
 
 /* The real buffer size has to be bufsize + sizeof(uintptr_t) */
 static int is_nul(void *buf, size_t bufsize)
@@ -287,9 +283,7 @@ int main(int argc, char **argv)
 	int	fd;
 	int	mode = 0;
 	int	dig = 0;
-#ifdef HAVE_POSIX_FALLOCATE
 	int	posix = 0;
-#endif
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
@@ -356,12 +350,8 @@ int main(int argc, char **argv)
 			mode |= FALLOC_FL_WRITE_ZEROES;
 			break;
 		case 'x':
-#ifdef HAVE_POSIX_FALLOCATE
 			posix = 1;
 			break;
-#else
-			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"));
-#endif
 		case 'v':
 			verbose++;
 			break;
@@ -409,11 +399,9 @@ int main(int argc, char **argv)
 	if (dig)
 		dig_holes(fd, offset, length);
 	else {
-#ifdef HAVE_POSIX_FALLOCATE
 		if (posix)
 			xposix_fallocate(fd, offset, length);
 		else
-#endif
 			xfallocate(fd, mode, offset, length);
 
 		if (verbose) {

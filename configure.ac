@@ -652,7 +652,6 @@ AC_CHECK_FUNCS([ \
 	pidfd_open \
 	pidfd_send_signal \
 	posix_fadvise \
-	posix_fallocate \
 	prctl \
 	qsort_r \
 	reallocarray \
@@ -693,6 +692,7 @@ AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
 AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
+AC_CHECK_FUNCS([posix_fallocate], [have_posix_fallocate=yes], [have_posix_fallocate=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
 
@@ -1590,6 +1590,7 @@ AC_ARG_ENABLE([fallocate],
 UL_BUILD_INIT([fallocate])
 UL_REQUIRES_LINUX([fallocate])
 UL_REQUIRES_HAVE([fallocate], [fallocate], [fallocate functions])
+UL_REQUIRES_HAVE([fallocate], [posix_fallocate], [posix_fallocate functions])
 AM_CONDITIONAL([BUILD_FALLOCATE], [test "x$build_fallocate" = xyes])
 
 

@@ -2044,6 +2044,7 @@ endif
 opt = get_option('build-fallocate') \
     .require(LINUX) \
     .require(conf.get('HAVE_FALLOCATE').to_string() == '1') \
+    .require(conf.get('HAVE_POSIX_FALLOCATE').to_string() == '1') \
     .allowed()
 exe = executable(
   'fallocate',
