@@ -908,20 +908,6 @@ int main(void) {
 have = cc.links(code, name : 'fallocate() function')
 conf.set('HAVE_FALLOCATE', have ? 1 : false)
 
-code = '''
-#define _POSIX_C_SOURCE 200112L
-#include <unistd.h>
-#include <fcntl.h>
-
-int main(void) {
-   long ret;
-   ret = posix_fallocate(0, 0xfffffffful, 0xfffffffful);
-   return ret == 0 ? 0 : 1;
-}
-'''
-have = cc.links(code, name : 'posix_fallocate() function')
-conf.set('HAVE_POSIX_FALLOCATE', have ? 1 : false)
-
 use_hwclock_cmos = host_machine.cpu_family() in ['x86', 'x86_64']
 message('Use CMOS clock: @0@'.format(use_hwclock_cmos))
 conf.set('USE_HWCLOCK_CMOS', use_hwclock_cmos ? 1 : false)
