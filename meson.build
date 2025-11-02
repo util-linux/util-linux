@@ -804,7 +804,7 @@ if not have
 endif
 conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
 
-thread_libs = dependency('threads')
+thread_libs = dependency('threads', required: false)
 conf.set('HAVE_LIBPTHREAD', thread_libs.found() ? 1 : false)
 
 have = cc.has_function('timer_create')
@@ -880,7 +880,7 @@ have = cc.has_header_symbol('linux/vm_sockets.h', 'VMADDR_CID_LOCAL',
                             prefix : '#include <sys/socket.h>')
 conf.set('HAVE_DECL_VMADDR_CID_LOCAL', have ? 1 : false)
 
-build_plymouth_support = (not build_plymouth_support.disabled() and 
+build_plymouth_support = (not build_plymouth_support.disabled() and
                           have_tiocglcktrmios and
                           have_sock_cloexec and
                           have_sock_nonblock and
