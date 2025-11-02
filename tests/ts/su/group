@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="group"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot 
+ts_check_test_command "$TS_CMD_SU"
+ts_check_prog "groupadd"
+ts_check_prog "groupdel"
+ts_check_prog "getent"
+
+TS_CMD_ID="id"
+
+username="$(whoami)"
+grp_name="ts_grp"
+
+if ! groupadd --force "$grp_name"; then
+        ts_skip "could not create group '$grp_name'"
+fi
+
+# Since here '-c' comes after <user> it'll be passed to the actual shell
+# instead of being interpreted by su(1).
+ts_init_subtest "primary-no-login"
+
+"$TS_CMD_SU" --group "$grp_name" "$username" \
+                        -c "$TS_CMD_ID --groups --name" 2>> "$TS_ERRLOG" \
+                        | grep -o "$grp_name" \
+                        | uniq >> "$TS_OUTPUT"
+
+ts_finalize_subtest
+
+ts_init_subtest "primary-login"
+"$TS_CMD_SU" --group "$grp_name" - "$username" \
+                        -c "$TS_CMD_ID --groups --name" 2>> "$TS_ERRLOG" \
+                        | grep -o "$grp_name" \
+                        | uniq >> "$TS_OUTPUT"
+
+grep -q 'Authentication failure' "$TS_ERRLOG"
+[ "$?" -eq 0 ] && ts_skip_subtest "authentication failure"
+ts_finalize_subtest
+
+ts_init_subtest "supplemental-no-login"
+"$TS_CMD_SU" --supp-group "$grp_name" "$username" \
+                        -c "$TS_CMD_ID --groups --name" 2>> "$TS_ERRLOG" \
+                        | grep -o "$grp_name" \
+                        | uniq >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "supplemental-login"
+"$TS_CMD_SU" --supp-group "$grp_name" - "$username" \
+                        -c "$TS_CMD_ID --groups --name" 2>> "$TS_ERRLOG" \
+                        | grep -o "$grp_name" \
+                        | uniq >> "$TS_OUTPUT"
+
+grep -q 'Authentication failure' "$TS_ERRLOG"
+[ "$?" -eq 0 ] && ts_skip_subtest "authentication failure"
+ts_finalize_subtest
+
+groupdel "$grp_name"
+
+ts_finalize
