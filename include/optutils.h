@@ -11,7 +11,11 @@
 #include "nls.h"
 #include "cctype.h"
 
-static inline const char *option_to_longopt(int c, const struct option *opts)
+/*
+ * Converts the short option @c to the corresponding long option from @opts, or
+ * returns NULL.
+ */
+static inline const char *ul_get_longopt(const struct option *opts, int c)
 {
 	const struct option *o;
 
@@ -20,6 +24,19 @@ static inline const char *option_to_longopt(int c, const struct option *opts)
 		if (o->val == c)
 			return o->name;
 	return NULL;
+}
+
+/*
+ * Converts the short options @c to "%c" or "0x<hex>" if not printable.
+ */
+static inline const char *ul_get_shortopt(char *buf, size_t bufsz, int c)
+{
+	if (c_isgraph(c))
+		snprintf(buf, bufsz, "%c", c);
+	else
+		snprintf(buf, bufsz, "<0x%02x>", c);	/* should not happen */
+
+	return buf;
 }
 
 #ifndef OPTUTILS_EXIT_CODE
@@ -84,23 +101,16 @@ static inline void err_exclusive_options(
 			if (status[e] == 0)
 				status[e] = c;
 			else if (status[e] != c) {
-				size_t ct = 0;
+				const char *a = ul_get_longopt(opts, status[e]);
+				const char *b = ul_get_longopt(opts, c);
+				char buf[16];	/* short option in hex */
 
-				fprintf(stderr, _("%s: mutually exclusive "
-						  "arguments:"),
-						program_invocation_short_name);
-
-				for (op = excl[e];
-				     ct + 1 < ARRAY_SIZE(excl[0]) && *op;
-				     op++, ct++) {
-					const char *n = option_to_longopt(*op, opts);
-					if (n)
-						fprintf(stderr, " --%s", n);
-					else if (c_isgraph(*op))
-						fprintf(stderr, " -%c", *op);
-				}
-				fputc('\n', stderr);
-				exit(OPTUTILS_EXIT_CODE);
+				errx(OPTUTILS_EXIT_CODE,
+					_("options %s%s and %s%s cannot be combined"),
+					a ? "--" : "-",
+					a ? a : ul_get_shortopt(buf, sizeof(buf), status[e]),
+					b ? "--" : "-",
+					b ? b : ul_get_shortopt(buf, sizeof(buf), c));
 			}
 			break;
 		}
@@ -108,4 +118,3 @@ static inline void err_exclusive_options(
 }
 
 #endif
-
