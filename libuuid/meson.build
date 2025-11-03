@@ -31,8 +31,6 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libuuid_sym_path))
 	libuuid_link_args += ['-Wl,--version-script=@0@'.format(libuuid_sym_path)]
 endif
 
-thread_dep = dependency('threads')
-
 lib_uuid = library(
   'uuid',
   list_h,
@@ -47,7 +45,7 @@ lib_uuid = library(
   link_depends : libuuid_link_depends,
   version : libuuid_version,
   link_args : libuuid_link_args,
-  dependencies : [socket_libs, thread_dep,
+  dependencies : [socket_libs, thread_libs,
                   build_libuuid ? [] : disabler()],
   install : build_libuuid)
 uuid_dep = declare_dependency(link_with: lib_uuid, include_directories: dir_libuuid)
