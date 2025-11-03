@@ -26,7 +26,7 @@ login - begin session on the system
 
 The user is then prompted for a password, where appropriate. Echoing is disabled to prevent revealing the password. Only a number of password failures are permitted before *login* exits and the communications link is severed. See *LOGIN_RETRIES* in the *CONFIG FILE ITEMS* section.
 
-If password aging has been enabled for the account, the user may be prompted for a new password before proceeding. In such case old password must be provided and the new password entered before continuing. Please refer to *passwd*(1) for more information.
+If password aging has been enabled for the account, the user may be prompted for a new password before proceeding. In such a case, the old password must be provided and the new password entered before continuing. Please refer to *passwd*(1) for more information.
 
 The user and group ID will be set according to their values in the _/etc/passwd_ file. There is one exception if the user ID is zero. In this case, only the primary group ID of the account is set. This should allow the system administrator to login even in case of network problems. The environment variable values for *$HOME*, *$USER*, *$SHELL*, *$PATH*, *$LOGNAME*, and *$MAIL* are set according to the appropriate fields in the password entry. *$PATH* defaults to _/usr/local/bin:/bin:/usr/bin_ for normal users, and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root, if not otherwise configured.
 
