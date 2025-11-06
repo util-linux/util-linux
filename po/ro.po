@@ -9119,8 +9119,8 @@ msgstr "nu s-a reușit să se inițializeze contextul rutei"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: a expirat după %u secunde"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: a expirat după %u secunde\n"
 
 #: login-utils/login.c:1376
 #, c-format

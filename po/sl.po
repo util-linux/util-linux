@@ -9615,7 +9615,7 @@ msgstr "Za medpomnilnik ni mogoèe dodeliti pomnilnika.\n"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
+msgid "%s: timed out after %u seconds\n"
 msgstr "Prijava je potekla po %d sekundah.\n"
 
 #: login-utils/login.c:1376

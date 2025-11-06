@@ -10696,7 +10696,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 #: login-utils/login.c:1347
 #, fuzzy, c-format
 #| msgid "Login timed out after %d seconds\n"
-msgid "%s: timed out after %u seconds"
+msgid "%s: timed out after %u seconds\n"
 msgstr "S'ha excedit el temps d'espera per a l'entrada al cap de %d segons.\n"
 
 #: login-utils/login.c:1376

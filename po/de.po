@@ -9155,8 +9155,8 @@ msgstr "Pfadkontext konnte nicht initialisiert werden"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: Zeit überschritten nach %u Sekunden"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: Zeit überschritten nach %u Sekunden\n"
 
 #: login-utils/login.c:1376
 #, c-format

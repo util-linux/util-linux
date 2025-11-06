@@ -9610,7 +9610,7 @@ msgstr "gagal menginisialisasi baris penyangga\n"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
+msgid "%s: timed out after %u seconds\n"
 msgstr "Waktu habis untuk Login sesudah %d detik\n"
 
 #: login-utils/login.c:1376

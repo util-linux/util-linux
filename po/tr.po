@@ -9501,8 +9501,8 @@ msgstr "loopcxt başlatılamadı"
 #: login-utils/login.c:1347
 #, fuzzy, c-format
 #| msgid "timed out after %u seconds"
-msgid "%s: timed out after %u seconds"
-msgstr "%u saniye sonra zaman aşımı"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%u saniye sonra zaman aşımı\n"
 
 #: login-utils/login.c:1376
 #, c-format

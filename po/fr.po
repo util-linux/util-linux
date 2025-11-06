@@ -8944,8 +8944,8 @@ msgstr "échec d'initialisation du contexte de chemin"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s : expiration du délai après %u secondes"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s : expiration du délai après %u secondes\n"
 
 #: login-utils/login.c:1376
 #, c-format

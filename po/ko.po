@@ -8898,8 +8898,8 @@ msgstr "경로 컨텍스트 초기화 실패"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: %u초 후 시간 초과"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: %u초 후 시간 초과\n"
 
 #: login-utils/login.c:1376
 #, c-format

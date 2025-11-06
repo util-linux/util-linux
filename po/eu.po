@@ -9426,8 +9426,8 @@ msgstr "huts egin da lerro buffer-a hasieratzen\n"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "Baliogabeko zilindro baloreak"
+msgid "%s: timed out after %u seconds\n"
+msgstr "Baliogabeko zilindro baloreak\n"
 
 #: login-utils/login.c:1376
 #, c-format

@@ -9607,7 +9607,7 @@ msgstr "Nem foglalható le puffert.\n"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
+msgid "%s: timed out after %u seconds\n"
 msgstr "A bejelentkezés %d másodperc után túllépte az időkorlátot\n"
 
 #: login-utils/login.c:1376

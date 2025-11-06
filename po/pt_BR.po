@@ -1178,7 +1178,7 @@ msgstr "O dispositivo já contém uma assinatura \"%s\" e ela será removida por
 msgid "The device contains '%s' signature and it may remain on the device. It is recommended to wipe the device with wipefs(8) or fdisk --wipe, in order to avoid possible collisions."
 msgstr "O dispositivo contém a assinatura \"%s\" e ela pode ser mantida no dispositivo. É recomendado apagar o dispositivo com wipefs(8) ou fdisk --wipe, para evitar possíveis colisões."
 
-# Alinhamento reajustado às demais opções abaixo; vide fdisk --help 
+# Alinhamento reajustado às demais opções abaixo; vide fdisk --help
 #: disk-utils/fdisk.c:1082
 #, c-format
 msgid ""
@@ -9032,8 +9032,8 @@ msgstr "falha ao inicializar o contexto de caminho"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: tempo esgotado após %u segundos"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: tempo esgotado após %u segundos\n"
 
 #: login-utils/login.c:1376
 #, c-format

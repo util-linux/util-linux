@@ -9626,8 +9626,8 @@ msgstr "初始化 loopcxt 時失敗"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "已逾時之後 %u 秒"
+msgid "%s: timed out after %u seconds\n"
+msgstr "已逾時之後 %u 秒\n"
 
 #: login-utils/login.c:1376
 #, fuzzy, c-format

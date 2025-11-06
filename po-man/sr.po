@@ -65207,8 +65207,8 @@ msgstr "*liblastlog2*(3), *pam.conf*(5), *pam.d*(5), *pam*(8)"
 #~ msgid " -H             suppress hostname in the login prompt"
 #~ msgstr " -H             потискује назив домаћина у упиту пријаве"
 
-#~ msgid "%s: timed out after %u seconds"
-#~ msgstr "%s: истекло је време након %u секунде"
+#~ msgid "%s: timed out after %u seconds\n"
+#~ msgstr "%s: истекло је време након %u секунде\n"
 
 #~ msgid "login: -h is for superuser only\n"
 #~ msgstr "пријава: „-h“ је само за администраторе\n"

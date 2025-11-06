@@ -9616,7 +9616,7 @@ msgstr "Impossibile allocare il buffer.\n"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, fuzzy, c-format
-msgid "%s: timed out after %u seconds"
+msgid "%s: timed out after %u seconds\n"
 msgstr "Login scaduto dopo %d secondi\n"
 
 #: login-utils/login.c:1376

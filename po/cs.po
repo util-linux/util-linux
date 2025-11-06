@@ -3,7 +3,7 @@
 # header is not removed and modified versions are marked
 # as such.
 #
-# Czech translation of util-linux. 
+# Czech translation of util-linux.
 # This file is distributed under the same license as the util-linux package.
 #
 # Jiří Pavlovský <pavlovsk@ff.cuni.cz>, 1999 - 2001.
@@ -9055,8 +9055,8 @@ msgstr "kontext cesty se nepodařilo inicializovat"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: vypršel časový limit %u sekund"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: vypršel časový limit %u sekund\n"
 
 #: login-utils/login.c:1376
 #, c-format
@@ -32982,7 +32982,7 @@ msgstr "terminál „%s“ není znám, použije se „dump“"
 #~ msgid "current"
 #~ msgstr "současná"
 
-# pid %d's _new_ scheduling policy 
+# pid %d's _new_ scheduling policy
 #~ msgid "new"
 #~ msgstr "nová"
 

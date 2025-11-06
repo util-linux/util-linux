@@ -9104,8 +9104,8 @@ msgstr "нисам успео да покренем контекст путањ�
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: истекло је време након %u секунде"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: истекло је време након %u секунде\n"
 
 #: login-utils/login.c:1376
 #, c-format

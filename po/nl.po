@@ -9038,8 +9038,8 @@ msgstr "initialiseren van padcontext is mislukt"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: afgebroken na %u seconden (duurde te lang)"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: afgebroken na %u seconden (duurde te lang)\n"
 
 #: login-utils/login.c:1376
 #, c-format

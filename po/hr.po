@@ -9068,8 +9068,8 @@ msgstr "nije uspjelo inicijalizirati kontekst staze"
 #. TRANSLATORS: The standard value for %u is 60.
 #: login-utils/login.c:1347
 #, c-format
-msgid "%s: timed out after %u seconds"
-msgstr "%s: %u sekunda za prijavu je isteklo"
+msgid "%s: timed out after %u seconds\n"
+msgstr "%s: %u sekunda za prijavu je isteklo\n"
 
 #: login-utils/login.c:1376
 #, c-format
