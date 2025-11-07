@@ -778,27 +778,35 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 	char out[FMT_ST_CHARS];
 	struct cal_month *i;
 
-	cal_enable_color(CAL_COLOR_HEADER);
 
 	if (ctl->header_hint || ctl->header_year) {
+		cal_enable_color(CAL_COLOR_HEADER);
 		for (i = month; i; i = i->next) {
 			snprintf(out, sizeof(out), "%s", ctl->full_month[i->month - 1]);
 			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
+		cal_disable_color(CAL_COLOR_HEADER);
+
 		if (!ctl->header_year) {
 			fputc('\n', stdout);
+			cal_enable_color(CAL_COLOR_HEADER);
 			for (i = month; i; i = i->next) {
 				snprintf(out, sizeof(out), "%04d", i->year);
 				center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 			}
+			cal_disable_color(CAL_COLOR_HEADER);
 		}
 	} else {
+		cal_enable_color(CAL_COLOR_HEADER);
 		for (i = month; i; i = i->next) {
 			snprintf(out, sizeof(out), "%s %04d", ctl->full_month[i->month - 1], i->year);
 			center(out, ctl->week_width, i->next == NULL ? 0 : ctl->gutter_width);
 		}
+		cal_disable_color(CAL_COLOR_HEADER);
 	}
 	fputc('\n', stdout);
+
+	cal_enable_color(CAL_COLOR_HEADER);
 	for (i = month; i; i = i->next) {
 		if (ctl->weektype) {
 			if (ctl->julian)
@@ -821,20 +829,25 @@ static void cal_vert_output_header(struct cal_month *month,
 	struct cal_month *m;
 	int month_width;
 
-	cal_enable_color(CAL_COLOR_HEADER);
 
 	month_width = ctl->day_width * (MAXDAYS / DAYS_IN_WEEK);
 
 	/* Padding for the weekdays */
+	cal_enable_color(CAL_COLOR_HEADER);
 	printf("%*s", (int)ctl->day_width + 1, "");
+	cal_disable_color(CAL_COLOR_HEADER);
 
 	if (ctl->header_hint || ctl->header_year) {
+		cal_enable_color(CAL_COLOR_HEADER);
 		for (m = month; m; m = m->next) {
 			snprintf(out, sizeof(out), "%s", ctl->full_month[m->month - 1]);
 			left(out, month_width, ctl->gutter_width);
 		}
+		cal_disable_color(CAL_COLOR_HEADER);
+
 		if (!ctl->header_year) {
 			fputc('\n', stdout);
+			cal_enable_color(CAL_COLOR_HEADER);
 			/* Padding for the weekdays */
 			printf("%*s", (int)ctl->day_width + 1, "");
 
@@ -842,15 +855,17 @@ static void cal_vert_output_header(struct cal_month *month,
 				snprintf(out, sizeof(out), "%04d", m->year);
 				left(out, month_width, ctl->gutter_width);
 			}
+			cal_disable_color(CAL_COLOR_HEADER);
 		}
 	} else {
+		cal_enable_color(CAL_COLOR_HEADER);
 		for (m = month; m; m = m->next) {
 			snprintf(out, sizeof(out), "%s %04d", ctl->full_month[m->month - 1], m->year);
 			left(out, month_width, ctl->gutter_width);
 		}
+		cal_disable_color(CAL_COLOR_HEADER);
 	}
 
-	cal_disable_color(CAL_COLOR_HEADER);
 	fputc('\n', stdout);
 }
 
