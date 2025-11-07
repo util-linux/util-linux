@@ -614,6 +614,7 @@ AC_CHECK_FUNCS([ \
 	explicit_bzero \
 	__fpending \
 	__fpurge \
+	fallocate \
 	fpurge \
 	fnmatch \
 	fsconfig \
@@ -652,6 +653,7 @@ AC_CHECK_FUNCS([ \
 	pidfd_open \
 	pidfd_send_signal \
 	posix_fadvise \
+	posix_fallocate \
 	prctl \
 	qsort_r \
 	reallocarray \
@@ -1589,67 +1591,6 @@ UL_BUILD_INIT([fallocate])
 UL_REQUIRES_LINUX([fallocate])
 UL_REQUIRES_SYSCALL_CHECK([fallocate], [UL_CHECK_SYSCALL([fallocate])])
 AM_CONDITIONAL([BUILD_FALLOCATE], [test "x$build_fallocate" = xyes])
-
-AS_IF([test "x$build_fallocate" = xyes], [
-  dnl check for valid fallocate() function
-  dnl with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
-  dnl when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
-  dnl and program can't be linked.
-  dnl AC_CHECK_FUNC can't catch such errors since it's redefining
-  dnl function prototype.
-  AC_MSG_CHECKING([for valid fallocate() function])
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-#ifdef HAVE_LINUX_FALLOC_H
-# include <linux/falloc.h>
-#endif
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
-]],[[
-   long ret;
-   ret = fallocate(0, FALLOC_FL_KEEP_SIZE, 0xfffffffful, 0xfffffffful);
-   if (ret != 0) {
-      return 1;
-   }
-   ]])],[
-  AC_MSG_RESULT([yes])
-  AC_DEFINE([HAVE_FALLOCATE], [1], [Have valid fallocate() function])],[
-  AC_MSG_RESULT([no])])
-])
-
-AS_IF([test "x$build_fallocate" = xyes], [
-  dnl check for valid posix_fallocate() function
-  AC_MSG_CHECKING([for valid posix_fallocate() function])
-  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
-#ifdef HAVE_LINUX_FALLOC_H
-# include <linux/falloc.h>
-#endif
-#ifdef HAVE_FCNTL_H
-# include <fcntl.h>
-#endif
-]],[[
-   long ret;
-   ret = posix_fallocate(0, 0xfffffffful, 0xfffffffful);
-   if (ret != 0) {
-      return 1;
-   }
-   ]])],[
-  AC_MSG_RESULT([yes])
-  AC_DEFINE([HAVE_POSIX_FALLOCATE], [1], [Have valid posix_fallocate() function])],[
-  AC_MSG_RESULT([no])])
-])
 
 
 AC_ARG_ENABLE([unshare],

@@ -606,6 +606,7 @@ funcs = '''
         err
         errx
         explicit_bzero
+        fallocate
         fnmatch
         fseeko
         fsconfig
@@ -644,6 +645,7 @@ funcs = '''
         pidfd_open
         pidfd_send_signal
         posix_fadvise
+        posix_fallocate
         prctl
         qsort_r
         reallocarray
@@ -889,38 +891,6 @@ conf.set('ENABLE_PLYMOUTH_SUPPORT', build_plymouth_support ? 1 : false)
 summary('plymouth support',
         build_plymouth_support  ? 'enabled' : 'disabled',
         section : 'components')
-
-# check for valid fallocate() function
-# with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
-# when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
-# and program can't be linked.
-code = '''
-#define _GNU_SOURCE
-#include <unistd.h>
-#include <fcntl.h>
-
-int main(void) {
-   long ret;
-   ret = fallocate(0, FALLOC_FL_KEEP_SIZE, 0xfffffffful, 0xfffffffful);
-   return ret == 0 ? 0 : 1;
-}
-'''
-have = cc.links(code, name : 'fallocate() function')
-conf.set('HAVE_FALLOCATE', have ? 1 : false)
-
-code = '''
-#define _POSIX_C_SOURCE 200112L
-#include <unistd.h>
-#include <fcntl.h>
-
-int main(void) {
-   long ret;
-   ret = posix_fallocate(0, 0xfffffffful, 0xfffffffful);
-   return ret == 0 ? 0 : 1;
-}
-'''
-have = cc.links(code, name : 'posix_fallocate() function')
-conf.set('HAVE_POSIX_FALLOCATE', have ? 1 : false)
 
 use_hwclock_cmos = host_machine.cpu_family() in ['x86', 'x86_64']
 message('Use CMOS clock: @0@'.format(use_hwclock_cmos))
