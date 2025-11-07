@@ -348,11 +348,11 @@ static void fill_scols_table(struct lsmem *lsmem)
 static int get_memmap_mode(char *res, char *src, int len)
 {
 	if (!strncmp(src, "Y", 1))
-		strncpy(res, N_("yes"), len);
+		xstrncpy(res, N_("yes"), len);
 	else if (!strncmp(src, "N", 1))
-		strncpy(res, N_("no"), len);
+		xstrncpy(res, N_("no"), len);
 	else if (!strncmp(src, "force", 5))
-		strncpy(res, N_("force"), len);
+		xstrncpy(res, N_("force"), len);
 	else
 		return -1;
 	return 0;
