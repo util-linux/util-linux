@@ -12,31 +12,27 @@ losetup - set up and control loop devices
 
 == SYNOPSIS
 
+Set up a loop device:
+
+*losetup* [options] *-f*|_loopdev file_
+
 Get info:
 
-*losetup* [_loopdev_]
-
-*losetup* *-l* [*-a*]
+*losetup* [*-l*] [*-a*|_loopdev_]
 
 *losetup* *-j* _file_ [*-o* _offset_]
 
-Detach a loop device:
-
-*losetup* *-d* _loopdev_ ...
-
-Detach all associated loop devices:
-
-*losetup* *-D*
-
-Set up a loop device:
-
-*losetup* [*-o* _offset_] [*--sizelimit* _size_] [*--sector-size* _size_] [*--loop-ref* _name_] [*-Pr*] [*--show*] *-f*|_loopdev file_
-
-Resize a loop device:
+Recalibrate the size of a loop device:
 
 *losetup* *-c* _loopdev_
 
-Remove a loop device:
+Detach loop devices:
+
+*losetup* *-d* _loopdev_ ...
+
+*losetup* *-D*
+
+Prevent loop devices from getting listed:
 
 *losetup* *--remove* _loopdev_ ...
 
@@ -105,9 +101,6 @@ Set up a read-only loop device.
 
 *--direct-io*[**=on**|*off*]::
 Enable or disable direct I/O for the backing file. The default is *off*. Specifying either *--direct-io* or *--direct-io=on* will enable it. But, *--direct-io=off* can be provided to explicitly turn it off.
-
-*-v*, *--verbose*::
-Verbose mode.
 
 *-l*, *--list*::
 If a loop device or the *-a* option is specified, print the default columns for either the specified loop device or all loop devices; the default is to print info about all devices. See also *--output*, *--noheadings*, *--raw*, and *--json*.
