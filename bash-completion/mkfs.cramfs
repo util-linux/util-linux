@@ -31,7 +31,7 @@ _mkfs.cramfs_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-h -v -E -b -e -N -i -n -p -s -z"
+			OPTS="-h -v -E -b -e -N -i -n -p -s -z --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

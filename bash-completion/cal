@@ -6,6 +6,9 @@ _cal_module()
 	case $cur in
 		-*)
 			OPTS="	--one
+				--columns
+				--iso
+				--reform
 				--three
 				--months
 				--sunday

@@ -60,6 +60,9 @@ _losetup_module()
 				--remove
 				--show
 				--verbose
+				--direct-io
+				--loop-ref
+				--sector-size
 				--json
 				--list
 				--noheadings
