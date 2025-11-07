@@ -89,6 +89,11 @@ _sfdisk_module()
 				--wipe-partitions
 				--label
 				--label-nested
+				--Linux
+				--move-use-fsync
+				--sector-size
+				--show-pt-geometry
+				--unit
 				--help
 				--version
 			"
