@@ -1340,7 +1340,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	/* TRANSLATORS: The standard value for %u is 60. */
-	xasprintf(&timeout_msg, _("%s: timed out after %u seconds"),
+	xasprintf(&timeout_msg, _("%s: timed out after %u seconds\n"),
 				  program_invocation_short_name, timeout);
 
 	signal(SIGALRM, timedout);
