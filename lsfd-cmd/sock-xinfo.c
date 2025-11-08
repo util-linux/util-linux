@@ -1896,11 +1896,11 @@ static char *netlink_get_name(struct sock_xinfo *sock_xinfo,
 	const char *protocol = netlink_decode_protocol(nl->protocol);
 
 	if (nl->groups)
-		xasprintf(&str, "protocol=%s lport=%"PRIu16 " groups=%"PRIu32,
+		xasprintf(&str, "protocol=%s lport=%"PRIu32 " groups=%"PRIu32,
 			  protocol,
 			  nl->lportid, nl->groups);
 	else
-		xasprintf(&str, "protocol=%s lport=%"PRIu16,
+		xasprintf(&str, "protocol=%s lport=%"PRIu32,
 			  protocol,
 			  nl->lportid);
 	return str;
