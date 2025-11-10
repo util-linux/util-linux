@@ -612,6 +612,8 @@ static int kill_verbose(const struct kill_control *ctl)
 			rc = pidfd_send_signal(pfd, ctl->numsig, 0, 0);
 			if (rc < 0)
 				err(EXIT_FAILURE, _("pidfd_send_signal() failed"));
+
+			close(pfd);
 		} else
 #endif
 			rc = kill(ctl->pid, ctl->numsig);
