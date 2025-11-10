@@ -533,7 +533,7 @@ int set_param_rtc(const struct hwclock_control *ctl, const char *opt0)
 		&& current_param.uvalue == param.uvalue) {
 		/* value to be written matches current value, skip write */
 		if (ctl->verbose)
-			printf(_("skipping ioctl(%d, RTC_PARAM_GET, param) to %s: value unchanged\n"),
+			printf(_("skipping ioctl(%d, RTC_PARAM_SET, param) to %s: value unchanged\n"),
 				   rtc_fd, rtc_dev_name);
 		rc = 0;
 		goto done;
