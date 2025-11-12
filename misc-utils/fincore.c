@@ -610,6 +610,7 @@ int main(int argc, char ** argv)
 					rc |= fincore_name(&ctl, ent->fts_accpath, ent->fts_path, ent->fts_statp);
 				}
 			}
+			fts_close(fts);
 		}
 #endif
 	} else {
