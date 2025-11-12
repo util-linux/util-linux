@@ -32,6 +32,8 @@
 #include "optutils.h"
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
+#define _PATH_SYS_MEMMAP_PARM		"/sys/module/memory_hotplug/parameters/memmap_on_memory"
+#define _PATH_SYS_MEMCONFIG		"/sys/firmware/memory"
 
 #define MEMORY_STATE_ONLINE		0
 #define MEMORY_STATE_OFFLINE		1
@@ -58,12 +60,17 @@ struct memory_block {
 	int		nr_zones;
 	int		zones[MAX_NR_ZONES];
 	bool		removable;
+	bool		config;
+	bool		memmap_on_memory;
 };
 
 struct lsmem {
 	struct path_cxt		*sysmem;		/* _PATH_SYS_MEMORY directory handler */
+	struct path_cxt		*sysmemconfig;		/* _PATH_SYS_MEMCONFIG directory handler */
 	struct dirent		**dirs;
+	struct dirent		**memconfig_dirs;
 	int			ndirs;
+	int			memconfig_ndirs;
 	struct memory_block	*blocks;
 	int			nblocks;
 	uint64_t		block_size;
@@ -85,7 +92,10 @@ struct lsmem {
 				split_by_state : 1,
 				split_by_removable : 1,
 				split_by_zones : 1,
-				have_zones : 1;
+				split_by_memmap_on_memory : 1,
+				split_by_config : 1,
+				have_zones : 1,
+				have_memconfig : 1;
 };
 
 
@@ -97,6 +107,8 @@ enum {
 	COL_BLOCK,
 	COL_NODE,
 	COL_ZONES,
+	COL_CONFIG,
+	COL_MEMMAP,
 };
 
 static const char *const zone_names[] = {
@@ -127,6 +139,10 @@ static struct coldesc coldescs[] = {
 	[COL_BLOCK]	= { "BLOCK", 0, SCOLS_FL_RIGHT, N_("memory block number or blocks range")},
 	[COL_NODE]	= { "NODE", 0, SCOLS_FL_RIGHT, N_("numa node of memory")},
 	[COL_ZONES]	= { "ZONES", 0, SCOLS_FL_RIGHT, N_("valid zones for the memory range")},
+	[COL_CONFIG]	= { "CONFIGURED", 0, SCOLS_FL_RIGHT,
+			    N_("configuration status of the memory range")},
+	[COL_MEMMAP]	= { "MEMMAP-ON-MEMORY", 0, SCOLS_FL_RIGHT,
+			    N_("memmap-on-memory status of the memory range")},
 };
 
 /* columns[] array specifies all currently wanted output column. The columns
@@ -196,6 +212,8 @@ static inline void reset_split_policy(struct lsmem *l, int enable)
 	l->split_by_node = enable;
 	l->split_by_removable = enable;
 	l->split_by_zones = enable;
+	l->split_by_memmap_on_memory = enable;
+	l->split_by_config = enable;
 }
 
 static void set_split_policy(struct lsmem *l, int cols[], size_t ncols)
@@ -218,10 +236,21 @@ static void set_split_policy(struct lsmem *l, int cols[], size_t ncols)
 		case COL_ZONES:
 			l->split_by_zones = 1;
 			break;
+		case COL_MEMMAP:
+			l->split_by_memmap_on_memory = 1;
+			break;
+		case COL_CONFIG:
+			l->split_by_config = 1;
+			break;
 		default:
 			break;
 		}
 	}
+}
+
+static bool skip_memconfig_column(struct lsmem *lsmem, int id)
+{
+	return (id == COL_MEMMAP || id == COL_CONFIG) && !lsmem->have_memconfig;
 }
 
 static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
@@ -236,6 +265,8 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 
+		if (skip_memconfig_column(lsmem, get_column_id(i)))
+			continue;
 		switch (get_column_id(i)) {
 		case COL_RANGE:
 		{
@@ -291,6 +322,14 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 				str = xstrdup(valid_zones);
 			}
 			break;
+		case COL_CONFIG:
+			if (lsmem->have_memconfig)
+				str = xstrdup(blk->config ? _("yes") : _("no"));
+			break;
+		case COL_MEMMAP:
+			if (lsmem->have_memconfig)
+				str = xstrdup(blk->memmap_on_memory ? _("yes") : _("no"));
+			break;
 		}
 
 		if (str && scols_line_refer_data(line, i, str) != 0)
@@ -306,8 +345,24 @@ static void fill_scols_table(struct lsmem *lsmem)
 		add_scols_line(lsmem, &lsmem->blocks[i]);
 }
 
+static int get_memmap_mode(char *res, char *src, int len)
+{
+	if (!strncmp(src, "Y", 1))
+		xstrncpy(res, N_("yes"), len);
+	else if (!strncmp(src, "N", 1))
+		xstrncpy(res, N_("no"), len);
+	else if (!strncmp(src, "force", 5))
+		xstrncpy(res, N_("force"), len);
+	else
+		return -1;
+	return 0;
+}
+
 static void print_summary(struct lsmem *lsmem)
 {
+	char buf[8], res[8];
+	FILE *memmap;
+
 	if (lsmem->bytes) {
 		printf("%-32s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
 		printf("%-32s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
@@ -327,6 +382,18 @@ static void print_summary(struct lsmem *lsmem)
 			printf("%-32s %5s\n",_("Total offline memory:"), p);
 		free(p);
 	}
+	memmap = fopen(_PATH_SYS_MEMMAP_PARM, "r");
+	if (!memmap)
+		return;
+	if (fgets(buf, sizeof(buf), memmap)) {
+		if (!get_memmap_mode(res, buf, sizeof(res))) {
+			if (lsmem->bytes)
+				printf("%-32s %15s\n", _("Memmap on memory parameter:"), _(res));
+			else
+				printf("%-32s %5s\n", _("Memmap on memory parameter:"), _(res));
+		}
+	}
+	fclose(memmap);
 }
 
 static int memory_block_get_node(struct lsmem *lsmem, char *name)
@@ -371,6 +438,15 @@ static int memory_block_read_attrs(struct lsmem *lsmem, char *name,
 	if (errno)
 		rc = -errno;
 
+	if (lsmem->have_memconfig) {
+		if (ul_path_readf_s32(lsmem->sysmemconfig, &x, "%s/config", name) == 0)
+			blk->config = x == 1;
+		if (ul_path_readf_s32(lsmem->sysmemconfig, &x, "%s/memmap_on_memory", name) == 0)
+			blk->memmap_on_memory = x == 1;
+		blk->state = MEMORY_STATE_OFFLINE;
+		if (!blk->config)
+			return rc;
+	}
 	if (ul_path_readf_s32(lsmem->sysmem, &x, "%s/removable", name) == 0)
 		blk->removable = x == 1;
 
@@ -434,6 +510,10 @@ static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 				return 0;
 		}
 	}
+	if (lsmem->split_by_config && curr->config != blk->config)
+		return 0;
+	if (lsmem->split_by_memmap_on_memory && curr->memmap_on_memory != blk->memmap_on_memory)
+		return 0;
 	return 1;
 }
 
@@ -449,11 +529,33 @@ static void free_info(struct lsmem *lsmem)
 	free(lsmem->dirs);
 }
 
+static int memory_block_filter(const struct dirent *de)
+{
+	if (strncmp("memory", de->d_name, 6) != 0)
+		return 0;
+	return isdigit_string(de->d_name + 6);
+}
+
+static void read_memconfig(struct lsmem *lsmem)
+{
+	char dir[PATH_MAX];
+
+	if (!lsmem->have_memconfig) {
+		lsmem->memconfig_ndirs = 0;
+		return;
+	}
+	ul_path_get_abspath(lsmem->sysmemconfig, dir, sizeof(dir), NULL);
+	lsmem->memconfig_ndirs = scandir(dir, &lsmem->memconfig_dirs,
+					 memory_block_filter, versionsort);
+	if (lsmem->memconfig_ndirs <= 0)
+		err(EXIT_FAILURE, _("Failed to read %s"), dir);
+}
+
 static void read_info(struct lsmem *lsmem)
 {
 	struct memory_block blk;
-	char buf[128];
-	int i;
+	char buf[128], *name;
+	int i, num_dirs;
 
 	if (ul_path_read_buffer(lsmem->sysmem, buf, sizeof(buf), "block_size_bytes") <= 0)
 		err(EXIT_FAILURE, _("failed to read memory block size"));
@@ -463,8 +565,17 @@ static void read_info(struct lsmem *lsmem)
 	if (errno)
 		err(EXIT_FAILURE, _("failed to read memory block size"));
 
-	for (i = 0; i < lsmem->ndirs; i++) {
-		memory_block_read_attrs(lsmem, lsmem->dirs[i]->d_name, &blk);
+	read_memconfig(lsmem);
+	if (lsmem->have_memconfig)
+		num_dirs = lsmem->memconfig_ndirs;
+	else
+		num_dirs = lsmem->ndirs;
+	for (i = 0; i < num_dirs; i++) {
+		if (lsmem->have_memconfig)
+			name = lsmem->memconfig_dirs[i]->d_name;
+		else
+			name = lsmem->dirs[i]->d_name;
+		memory_block_read_attrs(lsmem, name, &blk);
 		if (blk.state == MEMORY_STATE_ONLINE)
 			lsmem->mem_online += lsmem->block_size;
 		else
@@ -477,13 +588,6 @@ static void read_info(struct lsmem *lsmem)
 		lsmem->blocks = xreallocarray(lsmem->blocks, lsmem->nblocks, sizeof(blk));
 		*&lsmem->blocks[lsmem->nblocks - 1] = blk;
 	}
-}
-
-static int memory_block_filter(const struct dirent *de)
-{
-	if (strncmp("memory", de->d_name, 6) != 0)
-		return 0;
-	return isdigit_string(de->d_name + 6);
 }
 
 static void read_basic_info(struct lsmem *lsmem)
@@ -667,6 +771,12 @@ int main(int argc, char **argv)
 	lsmem->sysmem = ul_new_path(_PATH_SYS_MEMORY);
 	if (!lsmem->sysmem)
 		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
+	lsmem->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
+	/* Always check for the existence of /sys/firmware/memory/memory0 first */
+	if (ul_path_access(lsmem->sysmemconfig, F_OK, "memory0") == 0)
+		lsmem->have_memconfig = 1;
+	if (!lsmem->sysmemconfig)
+		err(EXIT_FAILURE, _("failed to initialized %s handler"), _PATH_SYS_MEMCONFIG);
 	if (prefix && ul_path_set_prefix(lsmem->sysmem, prefix) != 0)
 		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
 	if (!ul_path_is_accessible(lsmem->sysmem))
@@ -716,6 +826,8 @@ int main(int argc, char **argv)
 		struct coldesc *ci = get_column_desc(i);
 		struct libscols_column *cl;
 
+		if (skip_memconfig_column(lsmem, get_column_id(i)))
+			continue;
 		cl = scols_table_new_column(lsmem->table, ci->name, ci->whint, ci->flags);
 		if (!cl)
 			err(EXIT_FAILURE, _("failed to initialize output column"));

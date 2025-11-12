@@ -12,7 +12,7 @@ chmem - configure memory
 
 == SYNOPSIS
 
-*chmem* [*-h*] [*-V*] [*-v*] [*-e*|*-d*] [_SIZE_|_RANGE_|*-b* _BLOCKRANGE_] [*-z* _ZONE_]
+*chmem* [*-h*] [*-V*] [*-v*] [*-c*|*-e*|*-d*|*-g*] [_SIZE_|_RANGE_|*-b* _BLOCKRANGE_] [*-z* _ZONE_] [*-m* _MEMMAP-ON-MEMORY_]
 
 == DESCRIPTION
 
@@ -26,22 +26,47 @@ The *chmem* command sets a particular size or range of memory online or offline.
 
 * Specify _ZONE_ as the name of a memory zone, as shown in the output of the *lsmem -o +ZONES* command. The output shows one or more valid memory zones for each memory range. If multiple zones are shown, then the memory range currently belongs to the first zone. By default, *chmem* will set memory online to the zone Movable, if this is among the valid zones. This default can be changed by specifying the *--zone* option with another valid zone. For memory ballooning, it is recommended to select the zone Movable for memory online and offline, if possible. Memory in this zone is much more likely to be able to be offlined again, but it cannot be used for arbitrary kernel allocations, only for migratable pages (e.g., anonymous and page cache pages). Use the *--help* option to see all available zones.
 
+* Specify _MEMMAP-ON-MEMORY_ as 1 or 0. A value of 1 allocates hotplug metadata (such as the struct pages array) from the hotplug memory itself, enabling hot-add operations even under memory pressure and without requiring additional system memory to do so. A value of 0 stores hotplugged memory metadata in regular system memory, which helps avoid issues related to fragmentation of continuous physical memory across memory blocks. The value can only be set when the memory block is in a deconfigured state, and *--memmap-on-memory* is valid only with *--configure*. If not specified, and if supported, *chmem* uses the default value shown in *lsmem* output.
+
+The *--enable* option configures the memory, if this is supported by the architecture. If configuring memory is not supported by the architecture, *--enable* still brings the memory online.
+
+The *--disable* option brings the memory offline and performs an optional deconfigure step if this is supported by the architecture.
+
+The *--configure* option requests memory from the hypervisor without bringing it online, when supported by the architecture, allowing explicit control and use of *--memmap-on-memory*.
+
+The *--deconfigure* option returns memory resources to the hypervisor if supported by the architecture.
+
 _SIZE_ and _RANGE_ must be aligned to the Linux memory block size, as shown in the output of the *lsmem*(1) command.
 
 Setting memory online can fail for various reasons. On virtualized systems it can fail if the hypervisor does not have enough memory left, for example because memory was overcommitted. Setting memory offline can fail if Linux cannot free the memory. If only part of the requested memory can be set online or offline, a message tells you how much memory was set online or offline instead of the requested amount.
 
-When setting memory online *chmem* starts with the lowest memory block numbers. When setting memory offline *chmem* starts with the highest memory block numbers.
+When setting memory online or when configuring memory, *chmem* starts with the lowest memory block numbers. When setting memory offline or deconfiguring memory, *chmem* starts with the highest memory block numbers.
+
+== ARCHITECTURE
+
+* s390 architecture:
+
+_MEMMAP-ON-MEMORY_: For memory blocks configured online at boot, the default value is 0 because they are added without memmap-on-memory support. Memory added dynamically at runtime uses the default value displayed in *lsmem* output.
 
 == OPTIONS
 
 *-b*, *--blocks*::
 Use a _BLOCKRANGE_ parameter instead of _RANGE_ or _SIZE_ for the *--enable* and *--disable* options.
 
+*-c*, *--configure*::
+Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory to be configured.
+
 *-d*, *--disable*::
 Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory offline.
 
 *-e*, *--enable*::
 Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online.
+
+*-g*, *--deconfigure*::
+Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory to be deconfigured.
+
+*-m*, *--memmap-on-memory*::
+Select memmap-on-memory for the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory. This option is valid only with *--configure*.
 
 *-z*, *--zone*::
 Select the memory _ZONE_ where to set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online or offline. By default, memory will be set online to the zone Movable, if possible.
@@ -70,13 +95,25 @@ partial success
 This command requests 1024 MiB of memory to be set online.
 
 *chmem -e 2g*::
-This command requests 2 GiB of memory to be set online.
+This command requests 2 GB of memory to be brought online and, if supported by the architecture, configures the memory beforehand.
 
 *chmem --disable 0x00000000e4000000-0x00000000f3ffffff*::
-This command requests the memory range starting with 0x00000000e4000000 and ending with 0x00000000f3ffffff to be set offline.
+This command takes the memory range from 0x00000000e4000000 to 0x00000000f3ffffff offline and deconfigures it if supported by the architecture.
 
 *chmem -b -d 10*::
-This command requests the memory block number 10 to be set offline.
+This command takes memory block number 10 offline.
+
+*chmem -b -c 10 -m 1*::
+This command configures memory block 10 with  _MEMMAP-ON-MEMORY_ set. The block must be in a deconfigured state.
+
+*chmem -b -c 10*::
+This command configures memory block 10 with the default _MEMMAP-ON-MEMORY_ setting. The default value is displayed in *lsmem --output-all*. The block must be in a deconfigured state.
+
+*chmem -b -g 10*::
+This command deconfigures memory block 10. The block must be offline.
+
+*chmem -d 5g*::
+This command takes 5 GB of memory offline and deconfigures it if supported by the architecture. Blocks that are already offline but still configured are skipped and must be explicitly deconfigured with *--deconfigure*.
 
 == SEE ALSO
 
