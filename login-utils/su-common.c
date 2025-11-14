@@ -1036,7 +1036,7 @@ int su_main(int argc, char **argv, int mode)
 	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
-		getopt_long(argc, argv, "c:fg:G:lmpPTs:u:hVw:", longopts,
+		getopt_long(argc, argv, "+c:fg:G:lmpPTs:u:hVw:", longopts,
 			    NULL)) != -1) {
 
 		err_exclusive_options(optc, longopts, excl, excl_st);
@@ -1142,7 +1142,7 @@ int su_main(int argc, char **argv, int mode)
 		}
 		FALLTHROUGH;
 	case SU_MODE:
-		if (optind < argc)
+		if (optind < argc && *argv[optind] != '-')
 			su->new_user = argv[optind++];
 		break;
 	}
