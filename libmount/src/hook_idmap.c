@@ -492,7 +492,7 @@ done:
 	return 0;
 
 err:
-	DBG(HOOK, ul_debugobj(hs, " failed to setup idmap"));
+	DBG(HOOK, ul_debugobj(hs, " failed to set up idmap"));
 	free_hook_data(hd);
 	free(buf);
 	return -MNT_ERR_MOUNTOPT;
