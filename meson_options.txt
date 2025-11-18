@@ -303,6 +303,11 @@ option('fs-search-path',
 option('fs-search-path-extra',
        type : 'string',
        description : 'additional search path for fs helpers')
+
+option('ntfs-mounttype',
+       type : 'string',
+       description : 'overwrite default ntfs3 mount type for NTFS')
+
 option('vendordir',
        type: 'string',
        description : 'directory for distribution provided econf files')
