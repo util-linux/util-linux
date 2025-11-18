@@ -40,6 +40,8 @@
  *
  * @TYPE: filesystem type
  *
+ * @MOUNTTYPE: optional filesystem driver name
+ *
  * @SEC_TYPE: secondary filesystem type
  *
  * @LABEL: filesystem label
@@ -434,10 +436,16 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		}
 
 		/* all checks passed */
-		if (chn->flags & BLKID_SUBLKS_TYPE)
+		if (chn->flags & BLKID_SUBLKS_TYPE) {
 			rc = blkid_probe_set_value(pr, "TYPE",
 				(const unsigned char *) id->name,
 				strlen(id->name) + 1);
+
+			if (!rc && id->mounttype)
+				blkid_probe_set_value(pr, "MOUNTTYPE",
+					(const unsigned char *) id->mounttype,
+					strlen(id->mounttype) + 1);
+		}
 
 		if (!rc)
 			rc = blkid_probe_set_usage(pr, id->usage);
