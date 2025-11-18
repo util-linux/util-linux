@@ -339,8 +339,8 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	blkid_probe pr;
 	size_t i, ntags = 0;
 	int rc;
-	const char *tags[] = { "LABEL", "UUID", "TYPE", "PARTUUID", "PARTLABEL" };
-	const char *blktags[] = { "LABEL", "UUID", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
+	const char *tags[] = { "LABEL", "UUID", "MOUNTTYPE", "TYPE", "PARTUUID", "PARTLABEL" };
+	const char *blktags[] = { "LABEL", "UUID", "MOUNTTYPE", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
 
 	if (!cache || !devname)
 		return -EINVAL;
@@ -446,7 +446,7 @@ static int __mnt_cache_find_tag_value(struct libmnt_cache *cache,
  * mnt_cache_find_tag_value:
  * @cache: cache for results
  * @devname: device name
- * @token: tag name ("LABEL" or "UUID")
+ * @token: tag name ("LABEL", "UUID", ...)
  *
  * Returns: LABEL or UUID for the @devname or NULL in case of error.
  */
@@ -478,11 +478,19 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
 
+	if (ambi)
+		*ambi = FALSE;
+
 	if (cache) {
 		char *val = NULL;
-		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
-		if (ambi)
-			*ambi = rc == -2 ? TRUE : FALSE;
+
+		rc = __mnt_cache_find_tag_value(cache, devname, "MOUNTTYPE", &val);
+		if (rc == -2) {
+			if (ambi)
+				*ambi = TRUE;
+		} else if (rc != 0)
+			rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
+
 		return rc ? NULL : val;
 	}
 
@@ -500,7 +508,9 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	DBG(CACHE, ul_debugobj(cache, "libblkid rc=%d", rc));
 
-	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+	if (!rc && !blkid_probe_lookup_value(pr, "MOUNTTYPE", &data, NULL))
+		type = strdup(data);
+	if (!type && !rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
 		type = strdup(data);
 
 	if (ambi)
