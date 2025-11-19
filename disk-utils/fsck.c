@@ -442,7 +442,7 @@ static struct libmnt_fs *add_dummy_fs(const char *device)
 	}
 
 	mnt_unref_fs(fs);
-	err(FSCK_EX_ERROR, _("failed to setup description for %s"), device);
+	err(FSCK_EX_ERROR, _("failed to set up description for %s"), device);
 }
 
 static void fs_interpret_type(struct libmnt_fs *fs)

@@ -148,7 +148,7 @@ The *--remove* option completely removes the loop device node from the system us
 
 == NOTES
 
-Since version 2.37 *losetup* uses *LOOP_CONFIGURE* ioctl to setup a new loop device by one ioctl call. The old versions use *LOOP_SET_FD* and *LOOP_SET_STATUS64* ioctls to do the same.
+Since version 2.37 *losetup* uses *LOOP_CONFIGURE* ioctl to set up a new loop device by one ioctl call. The old versions use *LOOP_SET_FD* and *LOOP_SET_STATUS64* ioctls to do the same.
 
 == ENVIRONMENT
 
