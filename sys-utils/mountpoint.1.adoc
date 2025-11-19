@@ -18,7 +18,7 @@ mountpoint - see if a directory or file is a mountpoint
 
 == DESCRIPTION
 
-*mountpoint* checks whether the given _directory_ or _file_ is mentioned in the _/proc/self/mountinfo_ file.
+*mountpoint* checks whether the given _directory_ or _file_ is a mountpoint. On kernels that support the *statmount*(2) system call (Linux 6.8 and newer), it uses that interface. On older kernels, it falls back to reading _/proc/self/mountinfo_.
 
 == OPTIONS
 
