@@ -40,6 +40,7 @@ struct mountpoint_control {
 	char *mnt_target;
 	dev_t dev;
 	struct stat st;
+	struct libmnt_cache *cache;
 	bool	dev_devno,
 		fs_devno,
 		nofollow,
@@ -62,7 +63,7 @@ static int dir_to_device_statmount(struct mountpoint_control *ctl)
 	uint64_t id = 0;
 	int rc;
 
-	cn = mnt_resolve_path(ctl->path, NULL);
+	cn = mnt_resolve_path(ctl->path, ctl->cache);
 
 	rc = mnt_id_from_path(cn ? cn : ctl->path, &id, NULL);
 	if (rc)
@@ -96,7 +97,6 @@ static int dir_to_device_statmount(struct mountpoint_control *ctl)
 		rc = 0;	/* is a mountpoint */
 	}
 done:
-	free(cn);
 	mnt_unref_fs(fs);
 	return rc;
 }
@@ -112,7 +112,6 @@ static int dir_to_device(struct mountpoint_control *ctl)
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
-	struct libmnt_cache *cache;
 	int rc;
 
 #ifdef HAVE_STATMOUNT_API
@@ -133,13 +132,13 @@ static int dir_to_device(struct mountpoint_control *ctl)
 		 * is independent on /proc, but not able to detect bind mounts.
 		 */
 		struct stat pst;
-		char buf[PATH_MAX], *cn;
+		char buf[PATH_MAX];
+		const char *cn;
 		int len;
 
-		cn = mnt_resolve_path(ctl->path, NULL);	/* canonicalize */
+		cn = mnt_resolve_path(ctl->path, ctl->cache);	/* canonicalize */
 
 		len = snprintf(buf, sizeof(buf), "%s/..", cn ? cn : ctl->path);
-		free(cn);
 
 		if (len < 0 || (size_t) len >= sizeof(buf))
 			return -EINVAL;
@@ -157,9 +156,7 @@ static int dir_to_device(struct mountpoint_control *ctl)
 	}
 
 	/* to canonicalize all necessary paths */
-	cache = mnt_new_cache();
-	mnt_table_set_cache(tb, cache);
-	mnt_unref_cache(cache);
+	mnt_table_set_cache(tb, ctl->cache);
 
 	fs = mnt_table_find_target(tb, ctl->path, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs)) {
@@ -287,25 +284,31 @@ int main(int argc, char **argv)
 		return MOUNTPOINT_EXIT_NOMNT;
 	}
 
+	ctl.cache = mnt_new_cache();
+	if (!ctl.cache)
+		err(EXIT_FAILURE, _("failed to initialize libmount cache"));
+
 	rc = dir_to_device(&ctl);
 	if (rc < 0) {
 		if (!ctl.quiet) {
 			errno = -rc;
 			warn("%s", ctl.path);
 		}
-		return EXIT_FAILURE;
+		rc = EXIT_FAILURE;
+		goto done;
 	}
 
 	if (ctl.show) {
 		printf("%s\n", ctl.mnt_target);
-		free(ctl.mnt_target);
-		return EXIT_SUCCESS;
+		rc = EXIT_SUCCESS;
+		goto done;
 	}
 
 	if (rc == 1) {
 		if (!ctl.quiet)
 			printf(_("%s is not a mountpoint\n"), ctl.path);
-		return MOUNTPOINT_EXIT_NOMNT;
+		rc = MOUNTPOINT_EXIT_NOMNT;
+		goto done;
 	}
 
 	if (ctl.fs_devno)
@@ -313,5 +316,10 @@ int main(int argc, char **argv)
 	else if (!ctl.quiet)
 		printf(_("%s is a mountpoint\n"), ctl.path);
 
-	return EXIT_SUCCESS;
+	rc = EXIT_SUCCESS;
+
+done:
+	free(ctl.mnt_target);
+	mnt_unref_cache(ctl.cache);
+	return rc;
 }
