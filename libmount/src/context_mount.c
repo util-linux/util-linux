@@ -1584,7 +1584,7 @@ int mnt_context_get_mount_excode(
 			return MNT_EX_USAGE;
 		case -MNT_ERR_LOOPDEV:
 			if (buf)
-				snprintf(buf, bufsz, _("failed to setup loop device for %s"), src);
+				snprintf(buf, bufsz, _("failed to set up loop device for %s"), src);
 			return MNT_EX_FAIL;
 		case -MNT_ERR_LOOPOVERLAP:
 			if (buf)

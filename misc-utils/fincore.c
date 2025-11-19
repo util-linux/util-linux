@@ -333,10 +333,10 @@ static int mincore_fd (struct fincore_control *ctl,
 		}
 
 		rc = do_mincore(ctl, window, len, st);
+		munmap (window, len);
 		if (rc)
 			break;
 
-		munmap (window, len);
 	}
 
 	return rc;

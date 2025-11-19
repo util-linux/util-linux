@@ -138,7 +138,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!backing_file)
 		return -EINVAL;
 
-	DBG(LOOP, ul_debugobj(cxt, "trying to setup device for %s", backing_file));
+	DBG(LOOP, ul_debugobj(cxt, "trying to set up device for %s", backing_file));
 
 	if (mnt_optlist_is_rdonly(ol)) {
 		DBG(LOOP, ul_debugobj(cxt, "enabling READ-ONLY flag"));
@@ -332,7 +332,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			break;		/* success */
 
 		if (loopdev || rc != -EBUSY) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to setup device"));
+			DBG(LOOP, ul_debugobj(cxt, "failed to set up device"));
 			rc = -MNT_ERR_LOOPDEV;
 			goto done;
 		}
