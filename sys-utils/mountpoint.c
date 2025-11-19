@@ -37,12 +37,14 @@
 
 struct mountpoint_control {
 	char *path;
+	char *mnt_target;
 	dev_t dev;
 	struct stat st;
 	bool	dev_devno,
 		fs_devno,
 		nofollow,
-		quiet;
+		quiet,
+		show;
 };
 
 #ifdef HAVE_STATMOUNT_API
@@ -84,6 +86,9 @@ static int dir_to_device_statmount(struct mountpoint_control *ctl)
 		goto done;
 	}
 
+	if (ctl->show)
+		ctl->mnt_target = xstrdup(mnt_target);
+
 	if (strcmp(mnt_target, cn ? cn : ctl->path) != 0)
 		rc = 1;	/* not a mountpoint */
 	else {
@@ -118,6 +123,9 @@ static int dir_to_device(struct mountpoint_control *ctl)
 	/*
 	 * Fallback for older kernels without statmount() support
 	 */
+	if (ctl->show)
+		errx(EXIT_FAILURE, _("--show is not supported on this system"));
+
 	tb = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!tb) {
 		/*
@@ -190,7 +198,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
 		"     --nofollow     do not follow symlink\n"
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"
-		" -x, --devno        print maj:min device number of the block device\n"), out);
+		" -x, --devno        print maj:min device number of the block device\n"
+		"     --show         print mountpoint for given path\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(20));
 	fprintf(out, USAGE_MAN_TAIL("mountpoint(1)"));
@@ -204,7 +213,8 @@ int main(int argc, char **argv)
 	struct mountpoint_control ctl = { NULL };
 
 	enum {
-		OPT_NOFOLLOW = CHAR_MAX + 1
+		OPT_NOFOLLOW = CHAR_MAX + 1,
+		OPT_SHOW
 	};
 
 	static const struct option longopts[] = {
@@ -212,6 +222,7 @@ int main(int argc, char **argv)
 		{ "nofollow", no_argument, NULL, OPT_NOFOLLOW },
 		{ "fs-devno", no_argument, NULL, 'd' },
 		{ "devno",    no_argument, NULL, 'x' },
+		{ "show",     no_argument, NULL, OPT_SHOW },
 		{ "help",     no_argument, NULL, 'h' },
 		{ "version",  no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -238,6 +249,9 @@ int main(int argc, char **argv)
 			break;
 		case 'x':
 			ctl.dev_devno = 1;
+			break;
+		case OPT_SHOW:
+			ctl.show = 1;
 			break;
 
 		case 'h':
@@ -281,6 +295,13 @@ int main(int argc, char **argv)
 		}
 		return EXIT_FAILURE;
 	}
+
+	if (ctl.show) {
+		printf("%s\n", ctl.mnt_target);
+		free(ctl.mnt_target);
+		return EXIT_SUCCESS;
+	}
+
 	if (rc == 1) {
 		if (!ctl.quiet)
 			printf(_("%s is not a mountpoint\n"), ctl.path);
