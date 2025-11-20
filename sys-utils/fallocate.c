@@ -93,6 +93,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --keep-size      maintain the apparent size of the file\n"), out);
 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+	fputs(_(" -r, --report-holes   report file holes and data holes info\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
@@ -277,12 +278,165 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 	}
 }
 
+static char *human_readable(uintmax_t bytes) {
+    static char buf[64];
+    const char *units[] = {"B", "K", "M", "G", "T"};
+    int unit_idx = 0;
+    double size = bytes;
+
+    while (size >= 1024 && unit_idx < 4) {
+        size /= 1024;
+        unit_idx++;
+    }
+
+    if (size < 10) {
+        snprintf(buf, sizeof(buf), "%.1f%s", size, units[unit_idx]);
+    } else {
+        snprintf(buf, sizeof(buf), "%.0f%s", size, units[unit_idx]);
+    }
+    return buf;
+}
+
+static void report_holes(int fd) {
+	struct stat st;
+	if (fstat(fd, &st) != 0)
+		err(EXIT_FAILURE, _("stat of %s failed"), filename);
+	size_t bufsz = st.st_blksize;
+	off_t file_size = st.st_size;
+	if (file_size == 0) {
+		printf("\nSummary: \n\n");
+		printf("file is empty (0 bytes), no holes.\n");
+		return;
+	}
+    off_t current_off = 0;
+	char *buf = xmalloc(bufsz + sizeof(uintptr_t));
+	if (!buf)
+        err(EXIT_FAILURE, _("xmalloc memory size: %zu failed"), bufsz + sizeof(uintptr_t));
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
+	off_t cache_start = 0;
+	/*
+	 * We don't want to call POSIX_FADV_DONTNEED to discard cached
+	 * data in PAGE_SIZE steps. IMHO it's overkill (too many syscalls).
+	 *
+	 * Let's assume that 1MiB (on system with 4K page size) is just
+	 * a good compromise.
+	 *					    -- kzak Feb-2014
+	 */
+	const size_t cachesz = getpagesize() * 256;
+#endif
+    uintmax_t total_file_hole_sz = 0;
+    uintmax_t total_data_hole_sz = 0;
+	while (current_off < file_size) {
+		/* Lookup file hole */
+		off_t data_start = lseek(fd, current_off, SEEK_DATA);
+		if (data_start == -1) {
+			if (errno == ENXIO) {
+				off_t hole_size = file_size - current_off;
+				total_file_hole_sz += hole_size;
+				if (verbose) {
+					printf("file hole: offset %" PRId64 " - %" PRId64 ": (%" PRId64 " bytes)\n",
+							(int64_t)current_off, (int64_t)(file_size - 1),
+							(int64_t)hole_size);
+				}
+				break;
+			} else {
+				err(EXIT_FAILURE, _("lseek SEEK_DATA failed at offset %" PRId64), (int64_t)current_off);
+		    }
+		}
+		/* Record file hole */
+		if (data_start > current_off) {
+			off_t hole_size = data_start - current_off;
+			total_file_hole_sz += hole_size;
+			if (verbose) {
+				printf("file hole: offset %" PRId64 " - %" PRId64 ": (%" PRId64 " bytes)\n",
+						(int64_t)current_off, (int64_t)(data_start - 1),
+						(int64_t)hole_size);
+			}
+		}
+		/* Lookup data hole */
+		off_t data_end = lseek(fd, data_start, SEEK_HOLE);
+		if (data_end == -1 || data_end > file_size) {
+			data_end = file_size;
+		}
+
+		off_t off = data_start;
+		off_t null_start = -1;
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
+		(void) posix_fadvise(fd, off, data_end, POSIX_FADV_SEQUENTIAL);
+#endif
+		while (off < data_end) {
+			ssize_t rsz = pread(fd, buf, bufsz, off);
+			if (rsz <= 0) {
+				if (rsz < 0 && errno)
+					err(EXIT_FAILURE, _("%s: read failed"), filename);
+				break;
+			}
+
+			if (is_nul(buf, rsz)) {
+				if (null_start == -1)
+				{
+					null_start = off;
+				}
+			}
+			else {
+				if (null_start != -1) {
+					off_t null_size = off - null_start;
+					total_data_hole_sz += null_size;
+					if (verbose) {
+						printf("data hole: offset %" PRId64 " - %" PRId64 ": (%" PRId64 " bytes)\n",
+								(int64_t)null_start, (int64_t)(off - 1),
+								(int64_t)null_size);
+					}
+					null_start = -1;
+				}
+			}
+#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
+			/* discard cached data */
+			if (off - cache_start > (off_t) cachesz) {
+				size_t clen = off - cache_start;
+
+				clen = (clen / cachesz) * cachesz;
+				(void) posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
+				cache_start = cache_start + clen;
+			}
+#endif
+			off += rsz;
+		}
+
+		/* Handle remain data hole */
+		if (null_start != -1) {
+			off_t actual_end = data_end > file_size ? file_size : data_end;
+			if (null_start < actual_end) {
+				off_t null_size = actual_end - null_start;
+				total_data_hole_sz += null_size;
+				if (verbose) {
+					printf("data hole: offset %" PRId64 " - %" PRId64 ": (%" PRId64 " bytes)\n",
+							(int64_t)null_start, (int64_t)(actual_end - 1),
+							(int64_t)null_size);
+				}
+			}
+		}
+		current_off = data_end;
+	}
+    printf("\nSummary: \n\n");
+    /* file holes summary*/
+    double file_pct = (file_size == 0) ? 0 : (total_file_hole_sz * 100.0 / file_size);
+    printf("file holes: %s (%" PRIuMAX " bytes), %.2f%% of the file\n",
+           human_readable(total_file_hole_sz), total_file_hole_sz, file_pct);
+    /* data holes summary*/
+    double data_pct = (file_size == 0) ? 0 : (total_data_hole_sz * 100.0 / file_size);
+    printf("data holes: %s (%" PRIuMAX " bytes), %.2f%% of the file\n",
+           human_readable(total_data_hole_sz), total_data_hole_sz, data_pct);
+	free(buf);
+}
+
 int main(int argc, char **argv)
 {
 	int	c;
 	int	fd;
 	int	mode = 0;
 	int	dig = 0;
+	int	report = 0;
 	int	posix = 0;
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
@@ -294,6 +448,7 @@ int main(int argc, char **argv)
 	    { "punch-hole",     no_argument,       NULL, 'p' },
 	    { "collapse-range", no_argument,       NULL, 'c' },
 	    { "dig-holes",      no_argument,       NULL, 'd' },
+	    { "report-holes",   no_argument,       NULL, 'r' },
 	    { "insert-range",   no_argument,       NULL, 'i' },
 	    { "zero-range",     no_argument,       NULL, 'z' },
 	    { "write-zeroes",   no_argument,       NULL, 'w' },
@@ -316,7 +471,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
+	while ((c = getopt_long(argc, argv, "hvVncpdrizwxl:o:", longopts, NULL))
 			!= -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -342,6 +497,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			mode |= FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+			break;
+		case 'r':
+			report = 1;
 			break;
 		case 'z':
 			mode |= FALLOC_FL_ZERO_RANGE;
@@ -379,7 +537,7 @@ int main(int argc, char **argv)
 			length = 0;
 		if (length < 0)
 			errx(EXIT_FAILURE, _("invalid length"));
-	} else {
+	} else if (!report) {
 		/* it's safer to require the range specification (--length --offset) */
 		if (length == -2LL)
 			errx(EXIT_FAILURE, _("no length argument specified"));
@@ -398,6 +556,8 @@ int main(int argc, char **argv)
 
 	if (dig)
 		dig_holes(fd, offset, length);
+	else if (report)
+		report_holes(fd);
 	else {
 		if (posix)
 			xposix_fallocate(fd, offset, length);
