@@ -557,6 +557,9 @@ static int kill_with_timeout(const struct kill_control *ctl)
 				err(EXIT_FAILURE, _("pidfd_send_signal() failed"));
 		}
 	}
+
+	close(pfd);
+
 	return 0;
 }
 #endif
