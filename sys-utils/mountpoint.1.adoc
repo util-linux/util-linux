@@ -18,7 +18,7 @@ mountpoint - see if a directory or file is a mountpoint
 
 == DESCRIPTION
 
-*mountpoint* checks whether the given _directory_ or _file_ is mentioned in the _/proc/self/mountinfo_ file.
+*mountpoint* checks whether the given _directory_ or _file_ is a mountpoint. On kernels that support the *statmount*(2) system call (Linux 6.8 and newer), it uses that interface. On older kernels, it falls back to reading _/proc/self/mountinfo_.
 
 == OPTIONS
 
@@ -33,6 +33,9 @@ Do not follow symbolic link if it the last element of the _directory_ path.
 
 *-x*, *--devno*::
 Show the major/minor numbers of the given blockdevice on standard output.
+
+*--show*::
+Print the mountpoint path for the given path. This resolves the given directory or file to its actual mountpoint, which is useful with bind mounts, symlinks, or paths within filesystems. This option requires kernel support for the *statmount*(2) system call (Linux 6.8 and newer). On older kernels, this option will fail with an error message.
 
 include::man-common/help-version.adoc[]
 

@@ -31,63 +31,139 @@
 #include "c.h"
 #include "closestream.h"
 #include "pathnames.h"
+#include "mount-api-utils.h"
 
 #define MOUNTPOINT_EXIT_NOMNT	32
 
 struct mountpoint_control {
 	char *path;
+	char *mnt_target;
 	dev_t dev;
 	struct stat st;
+	struct libmnt_cache *cache;
 	bool	dev_devno,
 		fs_devno,
 		nofollow,
-		quiet;
+		quiet,
+		show;
 };
 
+#ifdef HAVE_STATMOUNT_API
+/*
+ * dir_to_device_statmount - check if path is a mountpoint using statmount()
+ * @ctl: mountpoint control structure
+ *
+ * Returns: <0 on error, 0 if mountpoint, 1 if not a mountpoint
+ */
+static int dir_to_device_statmount(struct mountpoint_control *ctl)
+{
+	struct libmnt_fs *fs = NULL;
+	const char *mnt_target;
+	char *cn = NULL;
+	uint64_t id = 0;
+	int rc;
+
+	cn = mnt_resolve_path(ctl->path, ctl->cache);
+
+	rc = mnt_id_from_path(cn ? cn : ctl->path, &id, NULL);
+	if (rc)
+		goto done;
+
+	fs = mnt_new_fs();
+	if (!fs) {
+		rc = -ENOMEM;
+		goto done;
+	}
+
+	mnt_fs_set_uniq_id(fs, id);
+
+	rc = mnt_fs_fetch_statmount(fs, STATMOUNT_MNT_POINT | STATMOUNT_SB_BASIC);
+	if (rc)
+		goto done;
+
+	mnt_target = mnt_fs_get_target(fs);
+	if (!mnt_target) {
+		rc = -EINVAL;
+		goto done;
+	}
+
+	if (ctl->show)
+		ctl->mnt_target = xstrdup(mnt_target);
+
+	if (strcmp(mnt_target, cn ? cn : ctl->path) != 0)
+		rc = 1;	/* not a mountpoint */
+	else {
+		ctl->dev = mnt_fs_get_devno(fs);
+		rc = 0;	/* is a mountpoint */
+	}
+done:
+	mnt_unref_fs(fs);
+	return rc;
+}
+#endif /* STATMOUNT_MNT_POINT */
+
+/*
+ * dir_to_device - check if path is a mountpoint
+ * @ctl: mountpoint control structure
+ *
+ * Returns: <0 on error, 0 if mountpoint, 1 if not a mountpoint
+ */
 static int dir_to_device(struct mountpoint_control *ctl)
 {
-	struct libmnt_table *tb = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
-	struct libmnt_cache *cache;
-	int rc = -1;
+	int rc;
 
+#ifdef HAVE_STATMOUNT_API
+	rc = dir_to_device_statmount(ctl);
+	if (rc >= 0)
+		return rc;
+#endif
+	/*
+	 * Fallback for older kernels without statmount() support
+	 */
+	if (ctl->show)
+		errx(EXIT_FAILURE, _("--show is not supported on this system"));
+
+	tb = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!tb) {
 		/*
 		 * Fallback. Traditional way to detect mountpoints. This way
 		 * is independent on /proc, but not able to detect bind mounts.
 		 */
 		struct stat pst;
-		char buf[PATH_MAX], *cn;
+		char buf[PATH_MAX];
+		const char *cn;
 		int len;
 
-		cn = mnt_resolve_path(ctl->path, NULL);	/* canonicalize */
+		cn = mnt_resolve_path(ctl->path, ctl->cache);	/* canonicalize */
 
 		len = snprintf(buf, sizeof(buf), "%s/..", cn ? cn : ctl->path);
-		free(cn);
 
 		if (len < 0 || (size_t) len >= sizeof(buf))
-			return -1;
-		if (stat(buf, &pst) !=0)
-			return -1;
+			return -EINVAL;
+
+		rc = stat(buf, &pst);
+		if (rc)
+			return -errno;
 
 		if (ctl->st.st_dev != pst.st_dev || ctl->st.st_ino == pst.st_ino) {
 			ctl->dev = ctl->st.st_dev;
-			return 0;
+			return 0;	/* is a mountpoint */
 		}
 
-		return -1;
+		return 1;	/* not a mountpoint */
 	}
 
 	/* to canonicalize all necessary paths */
-	cache = mnt_new_cache();
-	mnt_table_set_cache(tb, cache);
-	mnt_unref_cache(cache);
+	mnt_table_set_cache(tb, ctl->cache);
 
 	fs = mnt_table_find_target(tb, ctl->path, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs)) {
 		ctl->dev = mnt_fs_get_devno(fs);
-		rc = 0;
-	}
+		rc = 0;	/* is a mountpoint */
+	} else
+		rc = 1;	/* not a mountpoint */
 
 	mnt_unref_table(tb);
 	return rc;
@@ -119,7 +195,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
 		"     --nofollow     do not follow symlink\n"
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"
-		" -x, --devno        print maj:min device number of the block device\n"), out);
+		" -x, --devno        print maj:min device number of the block device\n"
+		"     --show         print mountpoint for given path\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(20));
 	fprintf(out, USAGE_MAN_TAIL("mountpoint(1)"));
@@ -129,11 +206,12 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	int c;
+	int c, rc;
 	struct mountpoint_control ctl = { NULL };
 
 	enum {
-		OPT_NOFOLLOW = CHAR_MAX + 1
+		OPT_NOFOLLOW = CHAR_MAX + 1,
+		OPT_SHOW
 	};
 
 	static const struct option longopts[] = {
@@ -141,6 +219,7 @@ int main(int argc, char **argv)
 		{ "nofollow", no_argument, NULL, OPT_NOFOLLOW },
 		{ "fs-devno", no_argument, NULL, 'd' },
 		{ "devno",    no_argument, NULL, 'x' },
+		{ "show",     no_argument, NULL, OPT_SHOW },
 		{ "help",     no_argument, NULL, 'h' },
 		{ "version",  no_argument, NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -167,6 +246,9 @@ int main(int argc, char **argv)
 			break;
 		case 'x':
 			ctl.dev_devno = 1;
+			break;
+		case OPT_SHOW:
+			ctl.show = 1;
 			break;
 
 		case 'h':
@@ -196,15 +278,48 @@ int main(int argc, char **argv)
 	if (ctl.dev_devno)
 		return print_devno(&ctl) ? MOUNTPOINT_EXIT_NOMNT : EXIT_SUCCESS;
 
-	if ((ctl.nofollow && S_ISLNK(ctl.st.st_mode)) || dir_to_device(&ctl)) {
+	if (ctl.nofollow && S_ISLNK(ctl.st.st_mode)) {
 		if (!ctl.quiet)
 			printf(_("%s is not a mountpoint\n"), ctl.path);
 		return MOUNTPOINT_EXIT_NOMNT;
 	}
+
+	ctl.cache = mnt_new_cache();
+	if (!ctl.cache)
+		err(EXIT_FAILURE, _("failed to initialize libmount cache"));
+
+	rc = dir_to_device(&ctl);
+	if (rc < 0) {
+		if (!ctl.quiet) {
+			errno = -rc;
+			warn("%s", ctl.path);
+		}
+		rc = EXIT_FAILURE;
+		goto done;
+	}
+
+	if (ctl.show) {
+		printf("%s\n", ctl.mnt_target);
+		rc = EXIT_SUCCESS;
+		goto done;
+	}
+
+	if (rc == 1) {
+		if (!ctl.quiet)
+			printf(_("%s is not a mountpoint\n"), ctl.path);
+		rc = MOUNTPOINT_EXIT_NOMNT;
+		goto done;
+	}
+
 	if (ctl.fs_devno)
 		printf("%u:%u\n", major(ctl.dev), minor(ctl.dev));
 	else if (!ctl.quiet)
 		printf(_("%s is a mountpoint\n"), ctl.path);
 
-	return EXIT_SUCCESS;
+	rc = EXIT_SUCCESS;
+
+done:
+	free(ctl.mnt_target);
+	mnt_unref_cache(ctl.cache);
+	return rc;
 }
