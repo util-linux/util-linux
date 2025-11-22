@@ -431,6 +431,7 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 			*str = xstrdup(tundata->iff);
 			return true;
 		}
+		break;
 	}
 	return false;
 }
