@@ -1836,7 +1836,7 @@ static void mark_poll_fds_as_multiplexed(char *buf,
 		struct file *file = list_entry(f, struct file, files);
 		if (is_opened_file(file) && !file->multiplexed) {
 			int fd = file->association;
-			if (bsearch(&(struct pollfd){.fd = fd,}, local.iov_base,
+			if (bsearch((&(struct pollfd){.fd = fd,}), local.iov_base,
 				    nfds, sizeof(struct pollfd), pollfdcmp))
 				file->multiplexed = 1;
 		}
