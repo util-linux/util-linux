@@ -369,6 +369,10 @@ static struct cdev_ops cdev_misc_ops = {
 /*
  * tun device driver
  */
+struct tundata {
+	const char *iff;
+};
+
 static bool cdev_tun_probe(struct cdev *cdev)
 {
 	const char *miscdev;
@@ -377,25 +381,32 @@ static bool cdev_tun_probe(struct cdev *cdev)
 		return false;
 
 	miscdev = get_miscdev(minor(cdev->file.stat.st_rdev));
-	if (miscdev && strcmp(miscdev, "tun") == 0)
+	if (miscdev && strcmp(miscdev, "tun") == 0) {
+		struct tundata *tundata = xcalloc(1, sizeof *tundata);
+		cdev->cdev_data = tundata;
 		return true;
+	}
 	return false;
 }
 
 static void cdev_tun_free(const struct cdev *cdev)
 {
-	if (cdev->cdev_data)
-		free(cdev->cdev_data);
+	if (cdev->cdev_data) {
+		struct tundata *tundata = cdev->cdev_data;
+		free((void *)tundata->iff);
+		free(tundata);
+	}
 }
 
 static char * cdev_tun_get_name(struct cdev *cdev)
 {
 	char *str = NULL;
+	struct tundata *tundata = cdev->cdev_data;
 
-	if (cdev->cdev_data == NULL)
+	if (tundata == NULL || tundata->iff == NULL)
 		return NULL;
 
-	xasprintf(&str, "iface=%s", (const char *)cdev->cdev_data);
+	xasprintf(&str, "iface=%s", tundata->iff);
 	return str;
 }
 
@@ -406,6 +417,8 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 				 size_t column_index __attribute__((__unused__)),
 				 char **str)
 {
+	struct tundata *tundata = cdev->cdev_data;
+
 	switch(column_id) {
 	case COL_MISCDEV:
 		*str = xstrdup("tun");
@@ -414,8 +427,8 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 		*str = xstrdup("misc:tun");
 		return true;
 	case COL_TUN_IFACE:
-		if (cdev->cdev_data) {
-			*str = xstrdup(cdev->cdev_data);
+		if (tundata && tundata->iff) {
+			*str = xstrdup(tundata->iff);
 			return true;
 		}
 	}
@@ -424,8 +437,10 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 
 static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char *val)
 {
-	if (strcmp(key, "iff") == 0 && cdev->cdev_data == NULL) {
-		cdev->cdev_data = xstrdup(val);
+	struct tundata *tundata = cdev->cdev_data;
+
+	if (strcmp(key, "iff") == 0 && tundata->iff == NULL) {
+		tundata->iff = xstrdup(val);
 		return 1;
 	}
 	return false;
