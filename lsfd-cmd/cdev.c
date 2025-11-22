@@ -443,7 +443,7 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 		tundata->iff = xstrdup(val);
 		return 1;
 	}
-	return false;
+	return 0;
 }
 
 static struct cdev_ops cdev_tun_ops = {
