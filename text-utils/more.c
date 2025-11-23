@@ -89,6 +89,7 @@
 #include "widechar.h"
 #include "closestream.h"
 #include "env.h"
+#include "shells.h"
 
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1
@@ -174,7 +175,7 @@ struct more_control {
 	int next_jump;			/* number of lines to skip ahead */
 	char **file_names;		/* The list of file names */
 	int num_files;			/* Number of files left to process */
-	char *shell;			/* name of the shell to use */
+	const char *shell;		/* name of the shell to use */
 	int sigfd;			/* signalfd() file descriptor */
 	sigset_t sigset;		/* signal operations */
 	char *line_buf;			/* line buffer */
@@ -2110,8 +2111,7 @@ static void initterm(struct more_control *ctl)
 	if ((ctl->backspace_ch = tigetstr(TERM_BACKSPACE)) == NULL)
 		ctl->backspace_ch = BACKSPACE;
 
-	if ((ctl->shell = getenv("SHELL")) == NULL)
-		ctl->shell = _PATH_BSHELL;
+	ctl->shell = ul_default_shell(0, NULL);
 }
 
 int main(int argc, char **argv)
