@@ -1,6 +1,11 @@
 /*
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
+#include <sys/types.h>
+#include <pwd.h>
+#include <stdlib.h>
+#include <paths.h>
+#include <unistd.h>
 #include <sys/syslog.h>
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 #include <libeconf.h>
@@ -115,4 +120,25 @@ extern int is_known_shell(const char *shell_name)
 	endusershell();
 #endif
 	return ret;
+}
+
+const char *ul_default_shell(int flags, const struct passwd *pw)
+{
+	const char *shell = NULL;
+
+	if (!(flags & UL_SHELL_NOENV)) {
+		shell = getenv("SHELL");
+		if (shell && *shell)
+			return shell;
+	}
+	if (!(flags & UL_SHELL_NOPWD)) {
+		if (!pw)
+			pw = getpwuid(getuid());
+		if (pw)
+			shell = pw->pw_shell;
+		if (shell && *shell)
+			return shell;
+	}
+
+	return _PATH_BSHELL;
 }
