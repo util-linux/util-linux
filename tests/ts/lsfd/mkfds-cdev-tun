@@ -32,34 +32,47 @@ PID=
 FD=3
 IFNAME=
 
+cdev_tun_test()
 {
-    coproc MKFDS { "$TS_HELPER_MKFDS" cdev-tun $FD ; }
-    if read -u ${MKFDS[0]} PID IFNAME; then
-	EXPR='(FD == '"$FD"')'
-	${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
-	echo 'ASSOC,MODE,TYPE,SOURCE': $?
+    local tname=domestic
 
-	output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o NAME -Q "${EXPR}")
-	if [[ "$output" == "iface=$IFNAME" ]]; then
-	    echo 'NAME': $?
-	else
-	    echo 'NAME': $?
-	    echo "expected NAME: iface=$IFNAME"
-	    echo "output NAME: $output"
+    ts_init_subtest "$tname"
+    {
+	coproc MKFDS { "$TS_HELPER_MKFDS" cdev-tun $FD ; }
+
+	if read -u ${MKFDS[0]} PID IFNAME; then
+	    EXPR='(FD == '"$FD"')'
+	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
+	    echo 'ASSOC,MODE,TYPE,SOURCE': $?
+
+	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o NAME -Q "${EXPR}")
+	    if [[ "$output" == "iface=$IFNAME" ]]; then
+		echo 'NAME': $?
+	    else
+		echo 'NAME': $?
+		echo "expected NAME: iface=$IFNAME"
+		echo "output NAME: $output"
+	    fi
+
+	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o TUN.IFACE -Q "${EXPR}")
+	    if [[ "$output" == "$IFNAME" ]]; then
+		echo 'TUN.IFACE': $?
+	    else
+		echo 'TUN.IFAEC': $?
+		echo "expected TUN.IFACE: $IFNAME"
+		echo "output TUN.IFACE: $output"
+	    fi
 	fi
+    } > $TS_OUTPUT 2>&1
+    ts_finalize_subtest
 
-	output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o TUN.IFACE -Q "${EXPR}")
-	if [[ "$output" == "$IFNAME" ]]; then
-	    echo 'TUN.IFACE': $?
-	else
-	    echo 'TUN.IFAEC': $?
-	    echo "expected TUN.IFACE: $IFNAME"
-	    echo "output TUN.IFACE: $output"
-	fi
-
+    if [[ -n "$PID" ]]; then
 	echo DONE >&"${MKFDS[1]}"
     fi
+
     wait ${MKFDS_PID}
-} > $TS_OUTPUT 2>&1
+}
+
+cdev_tun_test
 
 ts_finalize
