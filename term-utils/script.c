@@ -70,6 +70,7 @@
 #include "signames.h"
 #include "pty-session.h"
 #include "debug.h"
+#include "shells.h"
 
 static UL_DEBUG_DEFINE_MASK(script);
 UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
@@ -966,9 +967,7 @@ int main(int argc, char **argv)
 			log_associate(&ctl, &ctl.in, timingfile, format);
 	}
 
-	shell = getenv("SHELL");
-	if (!shell)
-		shell = _PATH_BSHELL;
+	shell = ul_default_shell(0, NULL);
 
 	ctl.pty = ul_new_pty(ctl.isterm);
 	if (!ctl.pty)
