@@ -105,9 +105,6 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
-/* The shell to run if none is given in the user's passwd entry.  */
-#define DEFAULT_SHELL "/bin/sh"
-
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
 
@@ -1167,7 +1164,7 @@ int su_main(int argc, char **argv, int mode)
 	su->old_user = xgetlogin();
 
 	if (!su->pwd->pw_shell || !*su->pwd->pw_shell)
-		su->pwd->pw_shell = DEFAULT_SHELL;
+		su->pwd->pw_shell = _PATH_BSHELL;
 
 	if (use_supp && !use_gid)
 		su->pwd->pw_gid = groups[0];

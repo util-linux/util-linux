@@ -34,6 +34,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <pwd.h>
+#include <paths.h>
 #include <shadow.h>
 #include <termios.h>
 #include <errno.h>
@@ -892,7 +893,7 @@ static void sushell(struct passwd *pwd, struct console *con)
 		if (pwd->pw_shell[0])
 			su_shell = pwd->pw_shell;
 		else
-			su_shell = "/bin/sh";
+			su_shell = _PATH_BSHELL;
 	}
 	if ((p = strrchr(su_shell, '/')) == NULL)
 		p = su_shell;
@@ -941,9 +942,9 @@ static void sushell(struct passwd *pwd, struct console *con)
 	execl(su_shell, shell, (char *)NULL);
 	warn(_("failed to execute %s"), su_shell);
 
-	xsetenv("SHELL", "/bin/sh", 1);
-	execl("/bin/sh", profile ? "-sh" : "sh", (char *)NULL);
-	warn(_("failed to execute %s"), "/bin/sh");
+	xsetenv("SHELL", _PATH_BSHELL, 1);
+	execl(_PATH_BSHELL, profile ? "-sh" : "sh", (char *)NULL);
+	warn(_("failed to execute %s"), _PATH_BSHELL);
 }
 
 #ifdef HAVE_LIBSELINUX
