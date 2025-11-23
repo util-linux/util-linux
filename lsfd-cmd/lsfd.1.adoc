@@ -307,7 +307,7 @@ inotify:::
 inodes=_INOTIFY.INODES_
 +
 misc:tun:::
-iface=_TUN.IFACE_
+iface=_TUN.IFACE_[ devnetns=_TUN.DEVNETNS_]
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
@@ -524,6 +524,9 @@ Remaining time.
 
 PTMX.TTY-INDEX <``number``>::
 TTY index of the counterpart.
+
+TUN.DEVNETNS <``number``>::
+Inode identifying network namespace where the device belongs.
 
 TUN.IFACE <``string``>::
 Network interface behind the tun device.

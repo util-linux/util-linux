@@ -20,6 +20,10 @@
  */
 
 #include "lsfd.h"
+#include "pidfd-utils.h"
+
+#include <sys/ioctl.h>		/* ioctl */
+#include <linux/if_tun.h>	/* TUNGETDEVNETNS */
 
 static struct list_head miscdevs;
 static struct list_head ttydrvs;
@@ -371,6 +375,7 @@ static struct cdev_ops cdev_misc_ops = {
  */
 struct tundata {
 	const char *iff;
+	ino_t devnetns;		/* 0 implies no value given. */
 };
 
 static bool cdev_tun_probe(struct cdev *cdev)
@@ -406,7 +411,12 @@ static char * cdev_tun_get_name(struct cdev *cdev)
 	if (tundata == NULL || tundata->iff == NULL)
 		return NULL;
 
-	xasprintf(&str, "iface=%s", tundata->iff);
+	if (tundata->devnetns)
+		xasprintf(&str, "iface=%s devnetns=%llu",
+			  tundata->iff, (unsigned long long)tundata->devnetns);
+	else
+		xasprintf(&str, "iface=%s", tundata->iff);
+
 	return str;
 }
 
@@ -426,6 +436,12 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 	case COL_SOURCE:
 		*str = xstrdup("misc:tun");
 		return true;
+	case COL_TUN_DEVNETNS:
+		if (tundata && tundata->devnetns) {
+			xasprintf(str, "%llu", (unsigned long long)tundata->devnetns);
+			return true;
+		}
+		break;
 	case COL_TUN_IFACE:
 		if (tundata && tundata->iff) {
 			*str = xstrdup(tundata->iff);
@@ -447,6 +463,64 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 	return 0;
 }
 
+#ifdef TUNGETDEVNETNS
+static int call_with_foreign_fd(pid_t target_pid, int target_fd,
+				int (*fn)(int, void*), void *data)
+{
+	int pidfd, tfd, r;
+
+	pidfd = pidfd_open(target_pid, 0);
+	if (pidfd < 0)
+		return pidfd;
+
+	tfd = pidfd_getfd(pidfd, target_fd, 0);
+	if (tfd < 0) {
+		close(pidfd);
+		return tfd;
+	}
+
+	r = fn(tfd, data);
+
+	close(tfd);
+	close(pidfd);
+	return r;
+}
+
+static int cdev_tun_get_devnetns(int tfd, void *data)
+{
+
+	struct tundata *tundata = data;
+	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
+	struct stat sb;
+
+	if (nsfd < 0)
+		return -1;
+
+	if (fstat(nsfd, &sb) == 0)
+		tundata->devnetns = sb.st_ino;
+
+	close(nsfd);
+
+	return 0;
+}
+#endif
+
+static void cdev_tun_attach_xinfo(struct cdev *cdev)
+{
+	struct tundata *tundata = cdev->cdev_data;
+
+	if (tundata->iff == NULL)
+		return;
+
+#ifdef TUNGETDEVNETNS
+	{
+		struct file *file = &cdev->file;
+		call_with_foreign_fd(file->proc->pid, file->association,
+				     cdev_tun_get_devnetns, tundata);
+	}
+#endif
+}
+
 static struct cdev_ops cdev_tun_ops = {
 	.parent = &cdev_misc_ops,
 	.probe = cdev_tun_probe,
@@ -454,6 +528,7 @@ static struct cdev_ops cdev_tun_ops = {
 	.get_name = cdev_tun_get_name,
 	.fill_column = cdev_tun_fill_column,
 	.handle_fdinfo = cdev_tun_handle_fdinfo,
+	.attach_xinfo = cdev_tun_attach_xinfo,
 };
 
 /*
