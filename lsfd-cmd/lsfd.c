@@ -363,7 +363,7 @@ static const struct colinfo infos[] = {
 				   N_("listening socket") },
 	[COL_SOCK_NETNS]       = { "SOCK.NETNS",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
-				   N_("inode identifying network namespace where the socket belongs to") },
+				   N_("inode identifying network namespace where the socket belongs") },
 	[COL_SOCK_PROTONAME]   = { "SOCK.PROTONAME",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("protocol name") },
