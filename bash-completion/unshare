@@ -45,6 +45,7 @@ _unshare_module()
 				--map-groups
 				--map-user
 				--map-users
+				--map-subids
 				--mount-binfmt
 				--monotonic
 				--boottime
