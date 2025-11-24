@@ -6,8 +6,10 @@
 # 2. All bash-completion files are registered in bash-completion/Makemodule.am
 # 3. All bash-completion files are registered in meson.build
 # 4. All bash-completion files correspond to actual programs
+# 5. All bash-completion files handle all available long options in each program
 #
 # Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
 #
 
 set -e
@@ -43,7 +45,11 @@ exclude_programs="nologin|agetty|login|sulogin|switch_root|vipw|line|kill"
 # These are handled via install-data-hook-bashcomp-* rules
 # - runuser: symlinked to su completion
 # - lastb: symlinked to last completion
-special_handling="runuser|lastb"
+special_handling="runuser|lastb" 
+
+# Certain completions have an unusual algorithm that is distinct from the pattern used
+# in the majority of completion files, we skip these for now.
+unusual_completions="pipesz"
 
 top_srcdir=${1:-.}
 [ -d "${top_srcdir}" ] || die "directory '${top_srcdir}' not found"
@@ -102,25 +108,34 @@ extract_meson_registered() {
 check_completion_file_integrity() {
 	local prog="$1"
 
-	if "./$prog" --version &>/dev/null; then
-		prog_long_opts="$( "./$prog" --help \
-			| grep -o -P '[[:space:]]*--(?![^[:alpha:]])[A-Za-z-]*' \
-			| sed -e 's/^ *//' \
-			-e 's/ *$//' \
+	prog_long_opts="$( TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" \
+			| sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+
+	if [[ "$?" != "0" || -z "$prog_long_opts" ]]; then
+		echo "Failed to get long options for $prog"
+		return 1
+	fi
+
+	# tools/get-options.sh prints 'ENOTSUP' when it receives the name of an
+	# unsupported program. See comments for the 'unsupported_programs' variable
+	# in tools/get-options.sh for more details.
+	#
+	# We do not treat this case as an error, thereby we simply return 0 to the
+	# caller and skip the comparison.
+	if [ "$prog_long_opts" == "ENOTSUP" ]; then
+		return 0
+	fi
+
+	comp_opts="$( cat "${completion_dir}/${prog}" \
+			| grep -o -P '[[:space:]]*--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
+			| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
 			| sort \
 			| uniq )"
 
-		comp_opts="$( cat "${completion_dir}/${prog}" \
-				| grep -o -P '[[:space:]]*--(?![^[:alpha:]])[A-Za-z-]*' \
-				| sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
-				| sort \
-				| uniq )"
-
-		res="$( comm -23 <(echo "${prog_long_opts}") <(echo "${comp_opts}") )"
-		if [ -n "$res" ]; then
-			printf "%s\n%s\n" "${prog}:" "$res"
-			return 1
-		fi
+	res="$( comm -23 <(echo "${prog_long_opts}") <(echo "${comp_opts}") )"
+	if [ -n "$res" ]; then
+		printf "%s\n%s\n" "${prog}:" "$res"
+		return 1
 	fi
 
 	return 0
@@ -177,11 +192,10 @@ if [ -n "$meson_unregistered" ]; then
 	errors=$((errors + 1))
 fi
 
-if [ $errors -eq 0 ]; then
-	for f in $files; do
-		check_completion_file_integrity "$f" || errors=$((errors + 1))
-	done
-fi
+for f in $files; do
+	[[ "$f" =~ $unusual_completions ]] && continue
+	check_completion_file_integrity "$f" || errors=$((errors + 1))
+done
 
 if [ $errors -eq 0 ]; then
 	echo "All bash-completion files are consistent."
