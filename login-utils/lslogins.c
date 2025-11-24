@@ -1582,9 +1582,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
-	fputs(_("     --lastlog <path>     set an alternate path for lastlog\n"), out);
+	fputs(_("     --lastlog-file <path>\n"
+		"                          set an alternate path for lastlog\n"), out);
 #ifdef HAVE_LIBLASTLOG2
-	fputs(_("     --lastlog2 <path>    set an alternate path for lastlog2\n"), out);
+	fputs(_("     --lastlog2-file <path>\n"
+		"                          set an alternate path for lastlog2\n"), out);
 #endif
 	fputs(USAGE_SEPARATOR, out);
 	/* FIXME: Replace with USAGE_LIST_COLUMNS_OPTION() macro from include/c.h */
