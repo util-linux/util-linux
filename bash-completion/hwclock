@@ -59,6 +59,7 @@ _hwclock_module()
 				--vl-read
 				--vl-clear
 				--update-drift
+				--ul-debug
 				--noadjfile
 				--adjfile
 				--test
