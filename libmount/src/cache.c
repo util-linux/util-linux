@@ -460,43 +460,34 @@ char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
-/**
- * mnt_get_fstype:
- * @devname: device name
- * @ambi: returns TRUE if probing result is ambivalent (optional argument)
- * @cache: cache for results or NULL
- *
- * Returns: filesystem type or NULL in case of error. The result has to be
- * deallocated by free() if @cache is NULL.
- */
-char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
+static char *fstype_from_cache(const char *devname, int *ambi,
+			struct libmnt_cache *cache)
+{
+	int rc;
+	char *val = NULL;
+
+	assert(cache);
+
+	if (ambi)
+		*ambi = FALSE;
+
+	rc = __mnt_cache_find_tag_value(cache, devname, "MOUNTTYPE", &val);
+	if (rc == -2) {
+		if (ambi)
+			*ambi = TRUE;
+	} else if (rc != 0)
+		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
+
+	return rc ? NULL : val;
+}
+
+static char *fstype_from_blkid(const char *devname, int *ambi)
 {
 	blkid_probe pr;
 	const char *data;
 	char *type = NULL;
 	int rc;
 
-	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
-
-	if (ambi)
-		*ambi = FALSE;
-
-	if (cache) {
-		char *val = NULL;
-
-		rc = __mnt_cache_find_tag_value(cache, devname, "MOUNTTYPE", &val);
-		if (rc == -2) {
-			if (ambi)
-				*ambi = TRUE;
-		} else if (rc != 0)
-			rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
-
-		return rc ? NULL : val;
-	}
-
-	/*
-	 * no cache, probe directly
-	 */
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
 		return NULL;
@@ -505,8 +496,6 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
 
 	rc = blkid_do_safeprobe(pr);
-
-	DBG(CACHE, ul_debugobj(cache, "libblkid rc=%d", rc));
 
 	if (!rc && !blkid_probe_lookup_value(pr, "MOUNTTYPE", &data, NULL))
 		type = strdup(data);
@@ -518,6 +507,25 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	blkid_free_probe(pr);
 	return type;
+}
+
+/**
+ * mnt_get_fstype:
+ * @devname: device name
+ * @ambi: returns TRUE if probing result is ambivalent (optional argument)
+ * @cache: cache for results or NULL
+ *
+ * Returns: filesystem type or NULL in case of error. The result has to be
+ * deallocated by free() if @cache is NULL.
+ */
+char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
+{
+	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
+
+	if (cache)
+		return fstype_from_cache(devname, ambi, cache);
+
+	return fstype_from_blkid(devname, ambi);
 }
 
 static char *canonicalize_path_and_cache(const char *path,
