@@ -364,6 +364,7 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 	const struct libmnt_cachetag *t;
 	size_t ntags = 0;
 	int rc;
+	char *cacheval = NULL;
 
 	assert(cache);
 	assert(devname);
@@ -384,37 +385,31 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 
 	rc = blkid_do_safeprobe(pr);
 	if (rc)
-		goto error;
+		goto done;
 
 	for (t = mnttags; t && t->mnt_name; t++) {
 		const char *data;
-		char *dev;
 
-		if (cache_find_tag_value(cache, devname, t->mnt_name)) {
-			DBG(CACHE, ul_debugobj(cache,
-					"\ntag %s already cached", t->mnt_name));
+		if (cache_find_tag_value(cache, devname, t->mnt_name))
 			continue;
-		}
 		if (blkid_probe_lookup_value(pr, t->blk_name, &data, NULL))
 			continue;
-		dev = strdup(devname);
-		if (!dev)
-			goto error;
-		if (cache_add_tag(cache, t->mnt_name, data, dev,
-					MNT_CACHE_TAGREAD)) {
-			free(dev);
-			goto error;
-		}
+
+		cacheval = strdup(devname);
+		rc = !cacheval ? -ENOMEM :
+			cache_add_tag(cache, t->mnt_name, data, cacheval, MNT_CACHE_TAGREAD);
+		if (rc)
+			break;
 		ntags++;
+		cacheval = NULL;	/* stored into cache */
 	}
 
-	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags", ntags));
+done:
+	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
 	blkid_free_probe(pr);
-	return ntags ? 0 : 1;
-error:
-	blkid_free_probe(pr);
-	return rc < 0 ? rc : -1;
+	free(cacheval);
 
+	return rc ? rc : ntags ? 0 : 1;
 }
 
 /**
