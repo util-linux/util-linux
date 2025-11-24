@@ -446,7 +446,7 @@ static int __mnt_cache_find_tag_value(struct libmnt_cache *cache,
  * mnt_cache_find_tag_value:
  * @cache: cache for results
  * @devname: device name
- * @token: tag name ("LABEL" or "UUID")
+ * @token: tag name ("LABEL", "UUID", ...)
  *
  * Returns: LABEL or UUID for the @devname or NULL in case of error.
  */
@@ -460,6 +460,42 @@ char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
+static char *fstype_from_cache(const char *devname, struct libmnt_cache *cache)
+{
+	char *val = NULL;
+
+	assert(cache);
+
+	if (__mnt_cache_find_tag_value(cache, devname, "TYPE", &val) != 0)
+		return NULL;
+	return val;
+}
+
+static char *fstype_from_blkid(const char *devname, int *ambi)
+{
+	blkid_probe pr;
+	const char *data;
+	char *type = NULL;
+	int rc;
+
+	pr =  blkid_new_probe_from_filename(devname);
+	if (!pr)
+		return NULL;
+
+	blkid_probe_enable_superblocks(pr, 1);
+	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
+
+	rc = blkid_do_safeprobe(pr);
+
+	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+		type = strdup(data);
+	if (ambi)
+		*ambi = rc == -2 ? TRUE : FALSE;
+
+	blkid_free_probe(pr);
+	return type;
+}
+
 /**
  * mnt_get_fstype:
  * @devname: device name
@@ -471,43 +507,12 @@ char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
  */
 char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 {
-	blkid_probe pr;
-	const char *data;
-	char *type = NULL;
-	int rc;
-
 	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
 
-	if (cache) {
-		char *val = NULL;
-		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
-		if (ambi)
-			*ambi = rc == -2 ? TRUE : FALSE;
-		return rc ? NULL : val;
-	}
+	if (cache)
+		return fstype_from_cache(devname, cache);
 
-	/*
-	 * no cache, probe directly
-	 */
-	pr =  blkid_new_probe_from_filename(devname);
-	if (!pr)
-		return NULL;
-
-	blkid_probe_enable_superblocks(pr, 1);
-	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
-
-	rc = blkid_do_safeprobe(pr);
-
-	DBG(CACHE, ul_debugobj(cache, "libblkid rc=%d", rc));
-
-	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
-		type = strdup(data);
-
-	if (ambi)
-		*ambi = rc == -2 ? TRUE : FALSE;
-
-	blkid_free_probe(pr);
-	return type;
+	return fstype_from_blkid(devname, ambi);
 }
 
 static char *canonicalize_path_and_cache(const char *path,
