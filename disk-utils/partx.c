@@ -813,7 +813,7 @@ int main(int argc, char **argv)
 		{ "bytes",	no_argument,       NULL, 'b' },
 		{ "noheadings",	no_argument,       NULL, 'g' },
 		{ "raw",	no_argument,       NULL, 'r' },
-		{ "list",	no_argument,	   NULL, 'l' },
+		{ "list",	no_argument,	   NULL, 'l' }, /* deprecated */
 		{ "show",	no_argument,       NULL, 's' },
 		{ "add",	no_argument,       NULL, 'a' },
 		{ "delete",	no_argument,	   NULL, 'd' },
