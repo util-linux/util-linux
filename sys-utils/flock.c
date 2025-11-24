@@ -75,7 +75,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -s, --shared             get a shared lock\n"), stdout);
 	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stdout);
 	fputs(_(  " -u, --unlock             remove a lock\n"), stdout);
-	fputs(_(  " -n, --nonblock           fail rather than wait\n"), stdout);
+	fputs(_(  " -n, --nb, --nonblocking  fail rather than wait\n"), stdout);
 	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), stdout);
 	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stdout);
 	fputs(_(  " -o, --close              close file descriptor before running command\n"), stdout);
