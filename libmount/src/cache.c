@@ -72,6 +72,24 @@ struct libmnt_cache {
 	struct libmnt_table	*mountinfo;
 };
 
+
+struct libmnt_cachetag {
+	const char *mnt_name;	/* tag name used by libmount */
+	const char *blk_name;	/* tag name used by libblkid */
+};
+
+static const struct libmnt_cachetag mnttags[] =
+{
+	/* mount	blkid */
+	{ "LABEL",	"LABEL" },
+	{ "UUID",	"UUID" },
+	{ "TYPE",	"TYPE" },
+	{ "PARTUUID",	"PART_ENTRY_UUID" },
+	{ "PARTLABEL",	"PART_ENTRY_NAME" },
+
+	{ NULL, NULL }
+};
+
 /**
  * mnt_new_cache:
  *
@@ -324,38 +342,33 @@ static char *cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
-/**
- * mnt_cache_read_tags
- * @cache: pointer to struct libmnt_cache instance
- * @devname: path device
- *
- * Reads @devname LABEL and UUID to the @cache.
- *
- * Returns: 0 if at least one tag was added, 1 if no tag was added or
- *          negative number in case of error.
- */
-int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
+static bool is_device_cached(struct libmnt_cache *cache, const char *devname)
 {
-	blkid_probe pr;
-	size_t i, ntags = 0;
-	int rc;
-	const char *tags[] = { "LABEL", "UUID", "TYPE", "PARTUUID", "PARTLABEL" };
-	const char *blktags[] = { "LABEL", "UUID", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
+	size_t i;
 
-	if (!cache || !devname)
-		return -EINVAL;
-
-	DBG(CACHE, ul_debugobj(cache, "tags for %s requested", devname));
-
-	/* check if device is already cached */
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_TAGREAD))
 			continue;
 		if (strcmp(e->value, devname) == 0)
-			/* tags have already been read */
-			return 0;
+			return 1; /* already in cache */
 	}
+
+	return 0;
+}
+
+/* read data from libblkid into local cache */
+static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
+{
+	blkid_probe pr;
+	const struct libmnt_cachetag *t;
+	size_t ntags = 0;
+	int rc;
+
+	assert(cache);
+	assert(devname);
+
+	DBG(CACHE, ul_debugobj(cache, "%s: reading from blkid", devname));
 
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
@@ -373,23 +386,21 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	if (rc)
 		goto error;
 
-	DBG(CACHE, ul_debugobj(cache, "reading tags for: %s", devname));
-
-	for (i = 0; i < ARRAY_SIZE(tags); i++) {
+	for (t = mnttags; t && t->mnt_name; t++) {
 		const char *data;
 		char *dev;
 
-		if (cache_find_tag_value(cache, devname, tags[i])) {
+		if (cache_find_tag_value(cache, devname, t->mnt_name)) {
 			DBG(CACHE, ul_debugobj(cache,
-					"\ntag %s already cached", tags[i]));
+					"\ntag %s already cached", t->mnt_name));
 			continue;
 		}
-		if (blkid_probe_lookup_value(pr, blktags[i], &data, NULL))
+		if (blkid_probe_lookup_value(pr, t->blk_name, &data, NULL))
 			continue;
 		dev = strdup(devname);
 		if (!dev)
 			goto error;
-		if (cache_add_tag(cache, tags[i], data, dev,
+		if (cache_add_tag(cache, t->mnt_name, data, dev,
 					MNT_CACHE_TAGREAD)) {
 			free(dev);
 			goto error;
@@ -403,6 +414,30 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 error:
 	blkid_free_probe(pr);
 	return rc < 0 ? rc : -1;
+
+}
+
+/**
+ * mnt_cache_read_tags
+ * @cache: pointer to struct libmnt_cache instance
+ * @devname: path device
+ *
+ * Reads @devname LABEL and UUID to the @cache.
+ *
+ * Returns: 0 if at least one tag was added, 1 if no tag was added or
+ *          negative number in case of error.
+ */
+int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
+{
+	if (!cache || !devname)
+		return -EINVAL;
+
+	DBG(CACHE, ul_debugobj(cache, "tags for %s requested", devname));
+
+	if (is_device_cached(cache, devname))
+		return 0;
+
+	return read_from_blkid(cache, devname);
 }
 
 /**
