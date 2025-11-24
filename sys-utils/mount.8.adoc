@@ -437,7 +437,7 @@ Use options from _fstab_/_mtab_ even if both _device_ and _dir_ are specified.
 *-R*, *--rbind*::
 Remount a subtree and all possible submounts somewhere else (so that its contents are available in both places). See above, the subsection *Bind mount operation*.
 
-*-r*, *--read-only*::
+*-r*, *--ro*, *--read-only*::
 Mount the filesystem read-only. A synonym is *-o ro*.
 +
 Note that, depending on the filesystem type, state and kernel behavior, the system may still write to the device. For example, ext3 and ext4 will replay the journal if the filesystem is dirty. To prevent this kind of write access, you may want to mount an ext3 or ext4 filesystem with the *ro,noload* mount options or set the block device itself to read-only mode, see the *blockdev*(8) command.
