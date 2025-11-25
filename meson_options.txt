@@ -303,6 +303,11 @@ option('fs-search-path',
 option('fs-search-path-extra',
        type : 'string',
        description : 'additional search path for fs helpers')
+
+option('build-libmount-udev-support',
+       type : 'feature',
+       description : 'support reading from udev in libmount')
+
 option('vendordir',
        type: 'string',
        description : 'directory for distribution provided econf files')

@@ -30,10 +30,16 @@
 #include <fcntl.h>
 #include <blkid.h>
 
+/* sd-device is a replacement for libudev */
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+# include <systemd/sd-device.h>
+#endif
+
 #include "canonicalize.h"
 #include "mountP.h"
 #include "loopdev.h"
 #include "strutils.h"
+#include "mangle.h"
 
 /*
  * Canonicalized (resolved) paths & tags cache
@@ -76,16 +82,17 @@ struct libmnt_cache {
 struct libmnt_cachetag {
 	const char *mnt_name;	/* tag name used by libmount */
 	const char *blk_name;	/* tag name used by libblkid */
+	const char *udev_name;	/* tag name used by udev db */
 };
 
 static const struct libmnt_cachetag mnttags[] =
 {
-	/* mount	blkid */
-	{ "LABEL",	"LABEL" },
-	{ "UUID",	"UUID" },
-	{ "TYPE",	"TYPE" },
-	{ "PARTUUID",	"PART_ENTRY_UUID" },
-	{ "PARTLABEL",	"PART_ENTRY_NAME" },
+	/* mount	blkid			udev */
+	{ "LABEL",	"LABEL",		"ID_FS_LABEL_ENC" },
+	{ "UUID",	"UUID",			"ID_FS_UUID_ENC" },
+	{ "TYPE",	"TYPE",			"ID_FS_TYPE" },
+	{ "PARTUUID",	"PART_ENTRY_UUID",	"ID_PART_ENTRY_UUID" },
+	{ "PARTLABEL",	"PART_ENTRY_NAME",	"ID_PART_ENTRY_NAME" },
 
 	{ NULL, NULL }
 };
@@ -357,7 +364,10 @@ static bool is_device_cached(struct libmnt_cache *cache, const char *devname)
 	return 0;
 }
 
-/* read data from libblkid into local cache */
+/*
+ * read data from libblkid into local cache
+ * returns: <0 on error; 0 success; 1 nothing
+*/
 static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 {
 	blkid_probe pr;
@@ -373,7 +383,7 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
-		return -1;
+		return -EINVAL;
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr,
@@ -412,12 +422,68 @@ done:
 	return rc ? rc : ntags ? 0 : 1;
 }
 
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+/*
+ * read data from udev into local cache
+ * returns: <0 on error; 0 success; 1 nothing
+ */
+static int read_from_udev(struct libmnt_cache *cache, const char *devname)
+{
+	sd_device *sd = NULL;
+	const struct libmnt_cachetag *t;
+	size_t ntags = 0;
+	char *tagval = NULL, *cacheval = NULL;
+	int rc;
+
+	assert(cache);
+	assert(devname);
+
+	rc = sd_device_new_from_devname(&sd, devname);
+	if (rc < 0)
+		return rc;
+
+	DBG(CACHE, ul_debugobj(cache, "%s: reading from udev", devname));
+
+	for (t = mnttags; t && t->mnt_name; t++) {
+		const char *data;
+
+		if (cache_find_tag_value(cache, devname, t->mnt_name))
+			continue;
+		if (sd_device_get_property_value(sd, t->udev_name, &data) < 0)
+			continue;
+
+		tagval = strdup(data); /* temporary for unhexmangle() */
+		cacheval = strdup(devname);
+
+		if (tagval && cacheval) {
+			unhexmangle_string(tagval);
+			rc = cache_add_tag(cache, t->mnt_name,
+					tagval, cacheval, MNT_CACHE_TAGREAD);
+		} else
+			rc = -ENOMEM;
+		if (rc)
+			break;
+		ntags++;
+		cacheval = NULL; /* stored into cache */
+		free(tagval), tagval = NULL;
+	}
+
+	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
+	sd_device_unref(sd);
+	free(cacheval);
+	free(tagval);
+
+	return rc ? rc : ntags ? 0 : 1;
+}
+#endif /* USE_LIBMOUNT_UDEV_SUPPORT */
+
+
 /**
  * mnt_cache_read_tags
  * @cache: pointer to struct libmnt_cache instance
  * @devname: path device
  *
- * Reads @devname LABEL and UUID to the @cache.
+ * Reads @devname information into the @cache.
  *
  * Returns: 0 if at least one tag was added, 1 if no tag was added or
  *          negative number in case of error.
@@ -432,6 +498,10 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	if (is_device_cached(cache, devname))
 		return 0;
 
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+	if (read_from_udev(cache, devname) == 0)
+		return 0;
+#endif
 	return read_from_blkid(cache, devname);
 }
 
@@ -531,6 +601,9 @@ static char *fstype_from_blkid(const char *devname, int *ambi)
  * @devname: device name
  * @ambi: returns TRUE if probing result is ambivalent (optional argument)
  * @cache: cache for results or NULL
+ *
+ * Note: If the cache is not specified, it reads the file system type from the
+ * device, and in this case, there is no optimization like udev db, etc. *
  *
  * Returns: filesystem type or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
