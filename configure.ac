@@ -1390,6 +1390,10 @@ AC_ARG_ENABLE([libmount-mountfd-support],
   AS_HELP_STRING([--disable-libmount-mountfd-support], [do not use new mount API based on FDs]),
   [], [enable_libmount_mountfd_support=check]
 )
+AC_ARG_ENABLE([libmount-udev-support],
+  AS_HELP_STRING([--disable-libmount-udev-support], [do not read from udev in libmount]),
+  [], [enable_libmount_udev_support=check]
+)
 UL_BUILD_INIT([libmount_mountfd_support])
 UL_REQUIRES_BUILD([libmount_mountfd_support], [libmount])
 UL_REQUIRES_LINUX([libmount_mountfd_support])
@@ -2701,6 +2705,20 @@ AS_IF([test "x$with_systemd" != xno], [
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
 
+libmount_udev_support=no
+AS_IF([test "x$enable_libmount_udev_support" != xno && test "x$build_libmount" = xyes], [
+  AS_CASE([$enable_libmount_udev_support:$have_systemd],
+    [yes:no],
+      [AC_MSG_ERROR([libmount udev support expected but libsystemd not found])],
+    [*:yes], [
+      AC_CHECK_DECLS([sd_device_new_from_devname], [
+        AC_DEFINE([USE_LIBMOUNT_UDEV_SUPPORT], [1], [Define if use udev support in libmount])
+        libmount_udev_support=yes],
+        [], [#include <systemd/sd-device.h>])
+      ]
+   )
+])
+AM_CONDITIONAL([USE_LIBMOUNT_UDEV_SUPPORT], [test "x$libmount_udev_support" = xyes])
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd unit files (requires systemd support)]),

@@ -52,6 +52,9 @@ static const char *lib_features[] = {
 #ifdef HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER
 	"fanotify",
 #endif
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+	"udev",
+#endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */
 #endif
