@@ -396,6 +396,14 @@ have = cc.has_function(
   dependencies : lib_systemd)
 conf.set('HAVE_DECL_SD_SESSION_GET_USERNAME', have ? 1 : false)
 
+build_libmount_udev_support = get_option('build-libmount-udev-support')
+have = cc.has_function(
+  'sd_device_new_from_devname',
+  dependencies : lib_systemd,
+  required: build_libmount_udev_support.enabled())
+build_libmount_udev_support = (not build_libmount_udev_support.disabled() and have)
+conf.set('USE_LIBMOUNT_UDEV_SUPPORT', build_libmount_udev_support ? 1 : false)
+
 lib_udev = dependency(
   'libudev',
   required : get_option('systemd'))
