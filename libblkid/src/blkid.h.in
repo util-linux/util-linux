@@ -340,7 +340,7 @@ extern uint64_t blkid_topology_get_diskseq(blkid_topology tp)
  * partitions probing
  */
 extern int blkid_known_pttype(const char *pttype);
-extern int blkid_partitions_get_name(const size_t idx, const char **name);
+extern int blkid_partitions_get_name(size_t idx, const char **name);
 
 extern int blkid_probe_enable_partitions(blkid_probe pr, int enable)
 			__ul_attribute__((nonnull));
