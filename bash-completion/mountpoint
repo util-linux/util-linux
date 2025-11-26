@@ -11,7 +11,7 @@ _mountpoint_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--quiet --nofollow --fs-devno --devno --help --version"
+			OPTS="--quiet --nofollow --fs-devno --devno --show --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

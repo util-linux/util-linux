@@ -72,6 +72,7 @@ _mount_module()
 				--options-source-force
 				--test-opts
 				--read-only
+				--ro
 				--types
 				--source
 				--target

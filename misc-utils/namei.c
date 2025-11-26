@@ -387,7 +387,7 @@ static const struct option longopts[] =
 	{ "modes",	 no_argument, NULL, 'm' },
 	{ "owners",	 no_argument, NULL, 'o' },
 	{ "long",        no_argument, NULL, 'l' },
-	{ "nolinks",	 no_argument, NULL, 'n' },
+	{ "nosymlinks",	 no_argument, NULL, 'n' },
 	{ "vertical",    no_argument, NULL, 'v' },
 #ifdef HAVE_LIBSELINUX
 	{ "context",	 no_argument, NULL, 'Z' },

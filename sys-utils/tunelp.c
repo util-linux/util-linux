@@ -133,7 +133,6 @@ int main(int argc, char **argv)
 		{"check-status", required_argument, NULL, 'o'},
 		{"careful", required_argument, NULL, 'C'},
 		{"status", no_argument, NULL, 's'},
-		{"trust-irq", required_argument, NULL, 'T'},
 		{"reset", no_argument, NULL, 'r'},
 		{"print-irq", required_argument, NULL, 'q'},
 		{"version", no_argument, NULL, 'V'},
