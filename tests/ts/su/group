@@ -73,6 +73,16 @@ grep -q 'Authentication failure' "$TS_ERRLOG"
 [ "$?" -eq 0 ] && ts_skip_subtest "authentication failure"
 ts_finalize_subtest
 
+ts_init_subtest "group-id"
+
+grp_id="$(cat /etc/group | grep -E "^$grp_name" | cut -d: -f 3)"
+"$TS_CMD_SU" --group "$grp_id" "$username" \
+                        -c "$TS_CMD_ID --groups --name" 2>> "$TS_ERRLOG" \
+                        | grep -o "$grp_name" \
+                        | uniq >> "$TS_OUTPUT"
+
+ts_finalize_subtest
+
 groupdel "$grp_name"
 
 ts_finalize
