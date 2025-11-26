@@ -133,6 +133,10 @@ C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
   #define __has_feature(x) 0
 #endif
 
+#ifndef __has_extension
+  #define __has_extension __has_feature
+#endif
+
 /*
  * Function attributes
  */
@@ -172,6 +176,15 @@ C23   : https://en.cppreference.com/w/c/language/attributes/fallthrough
  */
 #define UL_BUILD_BUG_ON_ZERO(e) __extension__ (sizeof(struct { int:-!!(e); }))
 #define BUILD_BUG_ON_NULL(e) ((void *)sizeof(struct { int:-!!(e); }))
+
+#if __has_include(<stdcountof.h>)
+#include <stdcountof.h>
+#define ARRAY_SIZE(arr) countof(arr)
+#endif
+
+#if !defined(ARRAY_SIZE) && __has_extension(c_countof)
+#define ARRAY_SIZE(arr) _Countof(arr)
+#endif
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]) + __must_be_array(arr))
