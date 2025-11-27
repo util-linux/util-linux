@@ -100,7 +100,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 	if (sz < 1)
 		err(EXIT_FAILURE, _("failed to read symlink: %s"), path);
 	if (*sym != '/') {
-		char *p = strrchr(path, '/');
+		const char *p = strrchr(path, '/');
 
 		if (p) {
 			isrel = 1;
