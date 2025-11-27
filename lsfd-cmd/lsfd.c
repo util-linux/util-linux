@@ -2278,7 +2278,7 @@ static struct libscols_filter *new_filter(const char *expr, bool debug, struct l
 	return f;
 }
 
-static struct counter_spec *new_counter_spec(const char *spec_str)
+static struct counter_spec *new_counter_spec(char *spec_str)
 {
 	char *sep;
 	struct counter_spec *spec;
