@@ -105,7 +105,7 @@ static struct blocked_number *parse_block(const char *s, int ret, const struct s
 	struct blocked_number *blocked;
 	const char *name, *error_name;
 	long blocked_number;
-	char *colon;
+	const char *colon;
 	bool found;
 	size_t i;
 
