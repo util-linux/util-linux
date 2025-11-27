@@ -807,7 +807,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		const struct libmnt_optmap *ent;
 		struct ul_buffer buf = UL_INIT_BUFFER;
 		size_t sz;
-		char *p;
+		const char *p;
 
 		ul_buffer_refer_string(&buf, *optstr);
 
