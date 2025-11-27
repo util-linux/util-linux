@@ -844,8 +844,7 @@ static const char *parse_callerid(const char *p_str, const char *end,
 	const char *p_after;
 	const char *p_next;
 	size_t cid_size;
-	char *p_scn;
-	char *p_cid;
+	const char *p_scn, *p_cid;
 
 	/* Check for PRINTK_CALLER prefix, must be before msg text */
 	p_cid = strstr(p_str, DMESG_CALLER_PREFIX);
