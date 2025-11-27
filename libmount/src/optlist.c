@@ -601,7 +601,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 
 	for (ent = map; ent && ent->name; ent++) {
 
-		char *p;
+		const char *p;
 		size_t sz;
 		struct libmnt_opt *opt;
 
@@ -621,7 +621,7 @@ static int optlist_add_flags(struct libmnt_optlist *ls, unsigned long flags,
 			sz = p - ent->name;
 			p -= sz;
 		} else {
-			p = (char *) ent->name;
+			p = ent->name;
 			sz = strlen(ent->name); /* alone "name" */
 		}
 
@@ -1162,8 +1162,7 @@ const char *mnt_opt_get_value(struct libmnt_opt *opt)
 /* check if option value is @str or comma separated @str */
 int mnt_opt_value_with(struct libmnt_opt *opt, const char *str)
 {
-	char *p;
-	const char *start = opt->value;
+	const char *p, *start = opt->value;
 	size_t len;
 
 	if (!str || !opt->value || !*opt->value)
