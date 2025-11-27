@@ -492,7 +492,7 @@ static void select_speed(const struct eject_control *ctl)
 static int read_speed(const char *devname)
 {
 	int drive_number = -1;
-	char *name;
+	const char *name;
 	FILE *f;
 
 	f = fopen(_PATH_PROC_CDROMINFO, "r");
