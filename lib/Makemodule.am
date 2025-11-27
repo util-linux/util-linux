@@ -34,6 +34,7 @@ libcommon_la_SOURCES = \
 	lib/netaddrq.c \
 	lib/netlink.c \
 	lib/pidutils.c \
+	lib/pidfd-utils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
 	lib/sha1.c \
