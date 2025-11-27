@@ -186,6 +186,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	int rc = 0;
 	unsigned int maj, min;
 	char *p;
+	const char *sep;
 
 	fs->flags |= MNT_FS_KERNEL;
 
@@ -242,15 +243,15 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, const char *s)
 	}
 
 	/* (7) optional fields, terminated by " - " */
-	p = strstr(s, " - ");
-	if (!p) {
+	sep = strstr(s, " - ");
+	if (!sep) {
 		DBG(TAB, ul_debug("mountinfo parse error: separator not found"));
 		return -EINVAL;
 	}
-	if (p > s + 1)
-		fs->opt_fields = strndup(s + 1, p - s - 1);
+	if (sep > s + 1)
+		fs->opt_fields = strndup(s + 1, sep - s - 1);
 
-	s = skip_separator(p + 3);
+	s = skip_separator(sep + 3);
 
 	/* (8) FS type */
 	p = unmangle(s, &s);
