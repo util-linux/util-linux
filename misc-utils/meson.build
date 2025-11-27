@@ -229,3 +229,8 @@ lsclocks_sources = files(
   'lsclocks.c',
 )
 lsclocks_manadocs = files('lsclocks.1.adoc')
+
+getpidino_sources = files(
+  'getpidino.c',
+)
+getpidino_manadocs = files('getpidino.1.adoc')

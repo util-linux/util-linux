@@ -337,3 +337,12 @@ lsclocks_SOURCES = misc-utils/lsclocks.c
 lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
+
+if BUILD_GETPIDINO
+usrbin_exec_PROGRAMS += getpidino
+MANPAGES += misc-utils/getpidino.1
+dist_noinst_DATA += misc-utils/getpidino.1.adoc
+getpidino_SOURCES = misc-utils/getpidino.c
+getpidino_LDADD = $(LDADD) libcommon.la
+getpidino_CFLAGS = $(AM_CFLAGS)
+endif
