@@ -202,21 +202,23 @@ errout:
  */
 int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 {
-	char *name, *value, *cp;
+	char *name, *value;
+	const char *eq;
 
 	DBG(TAG, ul_debug("trying to parse '%s' as a tag", token));
 
-	if (!token || !(cp = strchr(token, '=')))
+	if (!token || !(eq = strchr(token, '=')))
 		return -1;
 
 	name = strdup(token);
 	if (!name)
 		return -1;
-	value = name + (cp - token);
+	value = name + (eq - token);
 	*value++ = '\0';
 	if (*value == '"' || *value == '\'') {
 		char c = *value++;
-		if (!(cp = strrchr(value, c)))
+		char *cp = strrchr(value, c);
+		if (!cp)
 			goto errout; /* missing closing quote */
 		*cp = '\0';
 	}
