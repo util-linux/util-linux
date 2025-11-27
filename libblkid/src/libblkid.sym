@@ -191,3 +191,8 @@ BLKID_2_39 {
 BLKID_2_40 {
     blkid_wipe_all;
 } BLKID_2_39;
+
+BLKID_2_42 {
+    blkid_fstype_to_mounttype;
+} BLKID_2_40;
+

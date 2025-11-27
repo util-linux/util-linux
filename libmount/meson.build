@@ -98,6 +98,11 @@ lib__mount_deps = [
   cryptsetup_dlopen ? lib_dl : lib_cryptsetup,
   realtime_libs
 ]
+
+if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
+  lib__mount_deps += [lib_systemd]
+endif
+
 lib_mount = library(
   'mount',
   link_whole : lib__mount,

@@ -30,10 +30,16 @@
 #include <fcntl.h>
 #include <blkid.h>
 
+/* sd-device is a replacement for libudev */
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+# include <systemd/sd-device.h>
+#endif
+
 #include "canonicalize.h"
 #include "mountP.h"
 #include "loopdev.h"
 #include "strutils.h"
+#include "mangle.h"
 
 /*
  * Canonicalized (resolved) paths & tags cache
@@ -71,6 +77,23 @@ struct libmnt_cache {
 
 	struct libmnt_table	*mountinfo;
 };
+
+/* Tags names used in libmount */
+static const char *tags[] = {
+	"LABEL", "UUID", "MOUNTTYPE", "TYPE", "PARTUUID", "PARTLABEL"
+};
+
+/* Tags names used in libblkid (keep in tags[] order) */
+static const char *blktags[] = {
+	"LABEL", "UUID", "MOUNTTYPE", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME"
+};
+
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+/* Tags names used in udev DB (keep in tags[] order) */
+static const char *udevtags[] = {
+	"ID_FS_LABEL_ENC", "ID_FS_UUID_ENC", "ID_FS_MOUNTTYPE", "ID_FS_TYPE", "ID_PART_ENTRY_UUID", "ID_PART_ENTRY_NAME"
+};
+#endif
 
 /**
  * mnt_new_cache:
@@ -324,42 +347,40 @@ static char *cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
-/**
- * mnt_cache_read_tags
- * @cache: pointer to struct libmnt_cache instance
- * @devname: path device
- *
- * Reads @devname LABEL and UUID to the @cache.
- *
- * Returns: 0 if at least one tag was added, 1 if no tag was added or
- *          negative number in case of error.
- */
-int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
+static bool is_device_cached(struct libmnt_cache *cache, const char *devname)
 {
-	blkid_probe pr;
-	size_t i, ntags = 0;
-	int rc;
-	const char *tags[] = { "LABEL", "UUID", "TYPE", "PARTUUID", "PARTLABEL" };
-	const char *blktags[] = { "LABEL", "UUID", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
+	size_t i;
 
-	if (!cache || !devname)
-		return -EINVAL;
-
-	DBG(CACHE, ul_debugobj(cache, "tags for %s requested", devname));
-
-	/* check if device is already cached */
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_TAGREAD))
 			continue;
 		if (strcmp(e->value, devname) == 0)
-			/* tags have already been read */
-			return 0;
+			return 1; /* already in cache */
 	}
+
+	return 0;
+}
+
+/*
+ * read data from libblkid into local cache
+ * returns: <0 on error; 0 success; 1 nothing
+*/
+static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
+{
+	blkid_probe pr;
+	size_t i, ntags = 0;
+	int rc;
+	char *cacheval = NULL;
+
+	assert(cache);
+	assert(devname);
+
+	DBG(CACHE, ul_debugobj(cache, "%s: reading from blkid", devname));
 
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
-		return -1;
+		return -EINVAL;
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr,
@@ -371,38 +392,130 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 
 	rc = blkid_do_safeprobe(pr);
 	if (rc)
-		goto error;
-
-	DBG(CACHE, ul_debugobj(cache, "reading tags for: %s", devname));
+		goto done;
 
 	for (i = 0; i < ARRAY_SIZE(tags); i++) {
 		const char *data;
-		char *dev;
 
-		if (cache_find_tag_value(cache, devname, tags[i])) {
-			DBG(CACHE, ul_debugobj(cache,
-					"\ntag %s already cached", tags[i]));
+		if (cache_find_tag_value(cache, devname, tags[i]))
 			continue;
-		}
 		if (blkid_probe_lookup_value(pr, blktags[i], &data, NULL))
 			continue;
-		dev = strdup(devname);
-		if (!dev)
-			goto error;
-		if (cache_add_tag(cache, tags[i], data, dev,
-					MNT_CACHE_TAGREAD)) {
-			free(dev);
-			goto error;
-		}
+
+		cacheval = strdup(devname);
+		rc = !cacheval ? -ENOMEM :
+			cache_add_tag(cache, tags[i], data, cacheval, MNT_CACHE_TAGREAD);
+		if (rc)
+			break;
 		ntags++;
+		cacheval = NULL;	/* stored into cache */
 	}
 
-	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags", ntags));
+done:
+	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
 	blkid_free_probe(pr);
-	return ntags ? 0 : 1;
-error:
-	blkid_free_probe(pr);
-	return rc < 0 ? rc : -1;
+	free(cacheval);
+
+	return rc ? rc : ntags ? 0 : 1;
+}
+
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+/*
+ * read data from udev into local cache
+ * returns: <0 on error; 0 success; 1 nothing
+ */
+static int read_from_udev(struct libmnt_cache *cache, const char *devname)
+{
+	sd_device *sd = NULL;
+	size_t i, ntags = 0;
+	char *tagval = NULL, *cacheval = NULL;
+	int rc;
+
+	assert(cache);
+	assert(devname);
+
+	rc = sd_device_new_from_devname(&sd, devname);
+	if (rc < 0)
+		return rc;
+
+	DBG(CACHE, ul_debugobj(cache, "%s: reading from udev", devname));
+
+	for (i = 0; i < ARRAY_SIZE(tags); i++) {
+		const char *data;
+
+		if (cache_find_tag_value(cache, devname, tags[i]))
+			continue;
+		if (sd_device_get_property_value(sd, udevtags[i], &data) < 0)
+			continue;
+
+		tagval = strdup(data); /* temporary for unhexmangle() */
+		cacheval = strdup(devname);
+
+		if (tagval && cacheval) {
+			unhexmangle_string(tagval);
+			rc = cache_add_tag(cache, tags[i], tagval, cacheval, MNT_CACHE_TAGREAD);
+		} else
+			rc = -ENOMEM;
+		if (rc)
+			break;
+		ntags++;
+		cacheval = NULL; /* stored into cache */
+		free(tagval), tagval = NULL;
+	}
+
+	/* udev may not support mount-type yet. To be sure, verify it by converting
+	 * from fs-type to mount-type using libblkid. Later, if mount-type is supported
+	 * everywhere, we can remove this optimization.  [kzak Nov-2025]
+	 */
+	if (!rc && !cache_find_tag_value(cache, devname, "MOUNTTYPE")) {
+		const char *type = cache_find_tag_value(cache, devname, "TYPE");
+
+		if (type)
+			type = blkid_fstype_to_mounttype(type);
+		if (type) {
+			cacheval = strdup(devname);
+			tagval = strdup(type);
+			rc = cache_add_tag(cache, "MOUNTTYPE", tagval, cacheval, MNT_CACHE_TAGREAD);
+			if (rc == 0)
+				cacheval = NULL; /* stored into cache */
+		}
+	}
+
+	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
+	sd_device_unref(sd);
+	free(cacheval);
+	free(tagval);
+
+	return rc ? rc : ntags ? 0 : 1;
+}
+#endif /* USE_LIBMOUNT_UDEV_SUPPORT */
+
+
+/**
+ * mnt_cache_read_tags
+ * @cache: pointer to struct libmnt_cache instance
+ * @devname: path device
+ *
+ * Reads @devname information into the @cache.
+ *
+ * Returns: 0 if at least one tag was added, 1 if no tag was added or
+ *          negative number in case of error.
+ */
+int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
+{
+	if (!cache || !devname)
+		return -EINVAL;
+
+	DBG(CACHE, ul_debugobj(cache, "tags for %s requested", devname));
+
+	if (is_device_cached(cache, devname))
+		return 0;
+
+#ifdef USE_LIBMOUNT_UDEV_SUPPORT
+	if (read_from_udev(cache, devname) == 0)
+		return 0;
+#endif
+	return read_from_blkid(cache, devname);
 }
 
 /**
@@ -446,7 +559,7 @@ static int __mnt_cache_find_tag_value(struct libmnt_cache *cache,
  * mnt_cache_find_tag_value:
  * @cache: cache for results
  * @devname: device name
- * @token: tag name ("LABEL" or "UUID")
+ * @token: tag name ("LABEL", "UUID", ...)
  *
  * Returns: LABEL or UUID for the @devname or NULL in case of error.
  */
@@ -460,35 +573,34 @@ char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
-/**
- * mnt_get_fstype:
- * @devname: device name
- * @ambi: returns TRUE if probing result is ambivalent (optional argument)
- * @cache: cache for results or NULL
- *
- * Returns: filesystem type or NULL in case of error. The result has to be
- * deallocated by free() if @cache is NULL.
- */
-char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
+static char *fstype_from_cache(const char *devname, int *ambi,
+			struct libmnt_cache *cache)
+{
+	int rc;
+	char *val = NULL;
+
+	assert(cache);
+
+	if (ambi)
+		*ambi = FALSE;
+
+	rc = __mnt_cache_find_tag_value(cache, devname, "MOUNTTYPE", &val);
+	if (rc == -2) {
+		if (ambi)
+			*ambi = TRUE;
+	} else if (rc != 0)
+		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
+
+	return rc ? NULL : val;
+}
+
+static char *fstype_from_blkid(const char *devname, int *ambi)
 {
 	blkid_probe pr;
 	const char *data;
 	char *type = NULL;
 	int rc;
 
-	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
-
-	if (cache) {
-		char *val = NULL;
-		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
-		if (ambi)
-			*ambi = rc == -2 ? TRUE : FALSE;
-		return rc ? NULL : val;
-	}
-
-	/*
-	 * no cache, probe directly
-	 */
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
 		return NULL;
@@ -498,9 +610,9 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	rc = blkid_do_safeprobe(pr);
 
-	DBG(CACHE, ul_debugobj(cache, "libblkid rc=%d", rc));
-
-	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+	if (!rc && !blkid_probe_lookup_value(pr, "MOUNTTYPE", &data, NULL))
+		type = strdup(data);
+	if (!type && !rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
 		type = strdup(data);
 
 	if (ambi)
@@ -508,6 +620,28 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	blkid_free_probe(pr);
 	return type;
+}
+
+/**
+ * mnt_get_fstype:
+ * @devname: device name
+ * @ambi: returns TRUE if probing result is ambivalent (optional argument)
+ * @cache: cache for results or NULL
+ *
+ * Note: If the cache is not specified, it reads the file system type from the
+ * device, and in this case, there is no optimization like udev db, etc. *
+ *
+ * Returns: filesystem type or NULL in case of error. The result has to be
+ * deallocated by free() if @cache is NULL.
+ */
+char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
+{
+	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
+
+	if (cache)
+		return fstype_from_cache(devname, ambi, cache);
+
+	return fstype_from_blkid(devname, ambi);
 }
 
 static char *canonicalize_path_and_cache(const char *path,
