@@ -907,7 +907,7 @@ int blkid_known_pttype(const char *pttype)
  *
  * Returns: -1 if @idx is out of range, or 0 on success.
  */
-int blkid_partitions_get_name(const size_t idx, const char **name)
+int blkid_partitions_get_name(size_t idx, const char **name)
 {
 	if (idx < ARRAY_SIZE(idinfos)) {
 		*name = idinfos[idx]->name;
