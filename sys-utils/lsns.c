@@ -1030,8 +1030,8 @@ static int read_persistent_namespaces(struct lsns *ls)
 	struct libmnt_fs *fs = NULL;
 
 	while (mnt_table_next_fs(ls->tab, itr, &fs) == 0) {
-		const char *root;
-		char *p, *end = NULL;
+		const char *root, *p;
+		char *end = NULL;
 		ino_t ino;
 		int fd;
 
@@ -1126,7 +1126,7 @@ static int is_path_included(const char *path_set, const char *elt,
 {
 	size_t elt_len;
 	size_t path_set_len;
-	char *tmp;
+	const char *tmp;
 
 
 	tmp = strstr(path_set, elt);
