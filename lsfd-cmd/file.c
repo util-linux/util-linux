@@ -387,7 +387,7 @@ void decode_source(char *buf, size_t bufsize,
 			 dev_minor);
 }
 
-static char *strnrstr(const char *haystack, const char *needle, size_t needle_len)
+static char *strnrstr(char *haystack, const char *needle, size_t needle_len)
 {
 	char *last = strstr(haystack, needle);
 	if (last == NULL)
