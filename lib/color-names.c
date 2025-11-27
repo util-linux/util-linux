@@ -54,7 +54,8 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "white",      UL_COLOR_WHITE           },
 		{ "yellow",	UL_COLOR_BOLD_YELLOW     }
 	};
-	struct ul_color_name key = { .name = str }, *res;
+	struct ul_color_name key = { .name = str };
+	const struct ul_color_name *res;
 
 	if (!str)
 		return NULL;
