@@ -219,7 +219,8 @@ err:
 
 static int get_max_partno(const char *disk, dev_t devno)
 {
-	char path[PATH_MAX], *parent, *dirname = NULL;
+	char path[PATH_MAX], *dirname = NULL;
+	const char *parent;
 	struct stat st;
 	DIR *dir;
 	struct dirent *d;
