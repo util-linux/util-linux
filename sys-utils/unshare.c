@@ -322,39 +322,45 @@ static pid_t bind_ns_files_from_child(int *fd)
 	exit(EXIT_SUCCESS);
 }
 
-static uid_t get_user(const char *s, const char *err)
+static uid_t get_user(const char *s, const char *errmesg)
 {
 	struct passwd *pw;
 	char *buf = NULL;
 	uid_t ret;
 
-	pw = xgetpwnam(s, &buf);
-	if (pw) {
-		ret = pw->pw_uid;
-		free(pw);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
+	errno = 0;
+	pw = xgetuserpw(s, &buf);
+	if (!pw) {
+		if (errno == EINVAL)
+			errx(EXIT_FAILURE,
+				_("user %s does not exist"), s);
+		err(EXIT_FAILURE, _("%s %s"), errmesg, s);
 	}
 
+	ret = pw->pw_uid;
+	free(pw);
+	free(buf);
 	return ret;
 }
 
-static gid_t get_group(const char *s, const char *err)
+static gid_t get_group(const char *s, const char *errmesg)
 {
 	struct group *gr;
 	char *buf = NULL;
 	gid_t ret;
 
-	gr = xgetgrnam(s, &buf);
-	if (gr) {
-		ret = gr->gr_gid;
-		free(gr);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
+	errno = 0;
+	gr = xgetgroup(s, &buf);
+	if (!gr) {
+		if (errno == EINVAL)
+			errx(EXIT_FAILURE,
+				_("group %s does not exist"), s);
+		err(EXIT_FAILURE, _("%s %s"), errmesg, s);
 	}
 
+	ret = gr->gr_gid;
+	free(gr);
+	free(buf);
 	return ret;
 }
 
