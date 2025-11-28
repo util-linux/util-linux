@@ -322,40 +322,24 @@ static pid_t bind_ns_files_from_child(int *fd)
 	exit(EXIT_SUCCESS);
 }
 
-static uid_t get_user(const char *s, const char *err)
+static uid_t get_user(const char *s)
 {
 	struct passwd *pw;
-	char *buf = NULL;
-	uid_t ret;
 
-	pw = xgetpwnam(s, &buf);
-	if (pw) {
-		ret = pw->pw_uid;
-		free(pw);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
-	}
-
-	return ret;
+	pw = ul_getuserpw_str(s);
+	if (!pw)
+		errx(EXIT_FAILURE, _("failed to parse uid '%s'"), s);
+	return pw->pw_uid;
 }
 
-static gid_t get_group(const char *s, const char *err)
+static gid_t get_group(const char *s)
 {
 	struct group *gr;
-	char *buf = NULL;
-	gid_t ret;
 
-	gr = xgetgrnam(s, &buf);
-	if (gr) {
-		ret = gr->gr_gid;
-		free(gr);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
-	}
-
-	return ret;
+	gr = ul_getgrp_str(s);
+	if (!gr)
+		errx(EXIT_FAILURE, _("failed to parse gid '%s'"), s);
+	return gr->gr_gid;
 }
 
 /**
@@ -970,11 +954,11 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPUSER:
 			unshare_flags |= CLONE_NEWUSER;
-			mapuser = get_user(optarg, _("failed to parse uid"));
+			mapuser = get_user(optarg);
 			break;
 		case OPT_MAPGROUP:
 			unshare_flags |= CLONE_NEWUSER;
-			mapgroup = get_group(optarg, _("failed to parse gid"));
+			mapgroup = get_group(optarg);
 			break;
 		case 'r':
 			unshare_flags |= CLONE_NEWUSER;
