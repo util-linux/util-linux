@@ -800,7 +800,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	size_t n = 0;
 	time_t time;
 	uid_t uid;
-	errno = 0;
 
 	errno = 0;
 	pwd = username ? getpwnam(username) : getpwent();
@@ -1183,7 +1182,7 @@ static int create_usertree(struct lslogins_control *ctl)
 			int rc = get_user(ctl, &user, ctl->ulist[n]);
 
 			if (ctl->fail_on_unknown && !user) {
-				warnx(_("cannot found '%s'"), ctl->ulist[n]);
+				warnx(_("cannot find '%s'"), ctl->ulist[n]);
 				return -1;
 			}
 			if (rc || !user)
