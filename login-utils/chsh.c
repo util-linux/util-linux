@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
 			     uid);
 	} else {
-		pw = xgetpwnam(info.username, &pwbuf);
+		pw = xgetuserpw(info.username, &pwbuf);
 		if (!pw)
 			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
 			     info.username);
