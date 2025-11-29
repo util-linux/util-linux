@@ -20,7 +20,8 @@ lsfd_SOURCES = \
 	lsfd-cmd/unkn.c \
 	lsfd-cmd/fifo.c \
 	lsfd-cmd/pidfd.h \
-	lsfd-cmd/pidfd.c
+	lsfd-cmd/pidfd.c \
+	lsfd-cmd/util.c
 lsfd_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la libcommon.la
 lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif

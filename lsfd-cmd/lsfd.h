@@ -338,4 +338,10 @@ bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
  */
 bool is_pidfs_dev(dev_t dev);
 
+/*
+ * Utility
+ */
+int call_with_foreign_fd(pid_t target_pid, int target_fd,
+			 int (*fn)(int, void*), void *data);
+
 #endif /* UTIL_LINUX_LSFD_H */

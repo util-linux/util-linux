@@ -231,24 +231,16 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns)
 	}
 }
 
-void load_fdsk_xinfo(struct proc *proc, int fd)
+static int load_fdsk_xinfo_cb(int sk, void *data __attribute__((__unused__)))
 {
-	int pidfd, sk, nsfd;
+	int nsfd;
 	struct netns *nsobj;
 	struct stat sb;
-
-	/* This is additional/extra information, ignoring failures. */
-	pidfd = pidfd_open(proc->pid, 0);
-	if (pidfd < 0)
-		return;
-
-	sk = pidfd_getfd(pidfd, fd, 0);
-	if (sk < 0)
-		goto out_pidfd;
+	int r = -1;
 
 	nsfd = ioctl(sk, SIOCGSKNS);
 	if (nsfd < 0)
-		goto out_sk;
+		return nsfd;
 
 	if (fstat(nsfd, &sb) < 0)
 		goto out_nsfd;
@@ -256,15 +248,20 @@ void load_fdsk_xinfo(struct proc *proc, int fd)
 	if (is_sock_xinfo_loaded(sb.st_ino))
 		goto out_nsfd;
 
+	r = 0;
 	nsobj = mark_sock_xinfo_loaded(sb.st_ino);
 	load_sock_xinfo_with_fd(nsfd, nsobj);
 
 out_nsfd:
 	close(nsfd);
-out_sk:
-	close(sk);
-out_pidfd:
-	close(pidfd);
+	return r;
+}
+
+void load_fdsk_xinfo(struct proc *proc, int fd)
+{
+	call_with_foreign_fd(proc->pid, fd,
+			     load_fdsk_xinfo_cb, NULL);
+
 }
 
 void initialize_sock_xinfos(void)
