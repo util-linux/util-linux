@@ -326,7 +326,6 @@ void add_nodev(unsigned long minor, const char *filesystem);
  */
 void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns);
 bool is_nsfs_dev(dev_t dev);
-void load_fdsk_xinfo(struct proc *proc, int fd);
 
 /*
  * POSIX Mqueue

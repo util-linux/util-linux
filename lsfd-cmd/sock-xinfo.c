@@ -30,7 +30,6 @@
 #include <linux/netlink.h>	/* NETLINK_*, NLMSG_* */
 #include <linux/rtnetlink.h>	/* RTA_*, struct rtattr,  */
 #include <linux/sock_diag.h>	/* SOCK_DIAG_BY_FAMILY */
-#include <linux/sockios.h>	/* SIOCGSKNS */
 #include <linux/un.h>		/* UNIX_PATH_MAX */
 #include <linux/unix_diag.h>	/* UNIX_DIAG_*, UDIAG_SHOW_*,
 				   struct unix_diag_req */
@@ -42,7 +41,6 @@
 #include <search.h>		/* tfind, tsearch */
 #include <stdint.h>
 #include <string.h>
-#include <sys/ioctl.h>
 #include <sys/socket.h>		/* SOCK_* */
 
 #include "sysfs.h"
@@ -231,37 +229,12 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns)
 	}
 }
 
-static int load_fdsk_xinfo_cb(int sk, void *data __attribute__((__unused__)))
+void load_fdsk_xinfo(ino_t netns_ino, int netns_fd)
 {
-	int nsfd;
-	struct netns *nsobj;
-	struct stat sb;
-	int r = -1;
-
-	nsfd = ioctl(sk, SIOCGSKNS);
-	if (nsfd < 0)
-		return nsfd;
-
-	if (fstat(nsfd, &sb) < 0)
-		goto out_nsfd;
-
-	if (is_sock_xinfo_loaded(sb.st_ino))
-		goto out_nsfd;
-
-	r = 0;
-	nsobj = mark_sock_xinfo_loaded(sb.st_ino);
-	load_sock_xinfo_with_fd(nsfd, nsobj);
-
-out_nsfd:
-	close(nsfd);
-	return r;
-}
-
-void load_fdsk_xinfo(struct proc *proc, int fd)
-{
-	call_with_foreign_fd(proc->pid, fd,
-			     load_fdsk_xinfo_cb, NULL);
-
+	if (!is_sock_xinfo_loaded(netns_ino)) {
+		struct netns *nsobj = mark_sock_xinfo_loaded(netns_ino);
+		load_sock_xinfo_with_fd(netns_fd, nsobj);
+	}
 }
 
 void initialize_sock_xinfos(void)

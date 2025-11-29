@@ -1,0 +1,66 @@
+#!/bin/bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="SOCK.NETNS of an unbound tcp socket"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_skip_docker
+
+. "$TS_SELF/lsfd-functions.bash"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+INODE=
+SOCK_NETNS=
+FD=5
+
+"$TS_HELPER_MKFDS" --quiet --dont-pause netns "$FD"
+SIOCGSKNS=$?
+if [[ "$SIOCGSKNS" == "$TS_EXIT_NOTSUPP" ]]; then
+    ts_skip "ioctl(fd, SIOCGSKNS) is not available"
+elif [[ "$SIOCGSKNS" == "$EPERM" ]]; then
+    ts_skip "ioctl(fd, SIOCGSKNS) is not usable"
+else
+    echo "ioctl(fd, SIOCGSKNS): $SIOCGSKNS" > "$TS_OUTPUT"
+fi
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" tcp-bare $FD; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	INODE=$(${TS_CMD_LSFD} -n --raw -o INODE -p "${PID}" -Q "ASSOC == 'net'")
+	echo INODE: $?
+	SOCK_NETNS=$(${TS_CMD_LSFD} -n --raw -o SOCK.NETNS -p "${PID}" -Q "FD == $FD")
+	echo SOCK_NETNS: $?
+	if [[ -z "$SOCK_NETNS" ]]; then
+	    echo "SOCK_NETNS: failed (empty, inode: $INODE)"
+	elif [[ "$SOCK_NETNS" == "$INODE" ]]; then
+	    echo "SOCK_NETNS: OK"
+	else
+	    echo "SOCK_NETNS: failed (inode: $INODE, sock_netns: $SOCK_NETNS)"
+	fi
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} >> "$TS_OUTPUT" 2>&1
+
+ts_finalize

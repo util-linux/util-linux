@@ -1,0 +1,4 @@
+ioctl(fd, SIOCGSKNS): 0
+INODE: 0
+SOCK_NETNS: 0
+SOCK_NETNS: OK
