@@ -21,8 +21,8 @@
 #include "lsfd.h"		/* prototype decl for call_with_foreign_fd */
 #include "pidfd-utils.h"
 
-static int call_with_foreign_fd_via_pidfd(int pidfd, int target_fd,
-					  int (*fn)(int, void*), void *data)
+int call_with_foreign_fd_via_pidfd(int pidfd, int target_fd,
+				   int (*fn)(int, void*), void *data)
 {
 	int tfd, r;
 

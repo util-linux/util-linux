@@ -242,6 +242,12 @@ struct file_class {
 			    int column_id,
 			    size_t column_index);
 	int  (*handle_fdinfo)(struct file *file, const char *key, const char* value);
+
+	/* The lsfd core calls inspect_target_fd only if needs_target_fd()
+	 * returns TRUE. */
+	bool (*needs_target_fd)(struct file *file);
+	void (*inspect_target_fd)(struct file *file, int fd);
+
 	void (*attach_xinfo)(struct file *file);
 	void (*initialize_content)(struct file *file);
 	void (*free_content)(struct file *file);
@@ -343,5 +349,7 @@ bool is_pidfs_dev(dev_t dev);
  */
 int call_with_foreign_fd(pid_t target_pid, int target_fd,
 			 int (*fn)(int, void*), void *data);
+int call_with_foreign_fd_via_pidfd(int pidfd, int target_fd,
+				   int (*fn)(int, void*), void *data);
 
 #endif /* UTIL_LINUX_LSFD_H */

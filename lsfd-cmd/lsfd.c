@@ -882,6 +882,21 @@ static void read_fdinfo(struct file *file, FILE *fdinfo)
 	}
 }
 
+static int call_inspect_target_fd_method(int fd, void *data)
+{
+	struct file *f = data;
+
+	f->class->inspect_target_fd(f, fd);
+	return 0;
+}
+
+static void inspect_target_fd(struct file *f, struct proc *proc)
+{
+	if (proc->pidfd >= 0)
+		call_with_foreign_fd_via_pidfd(proc->pidfd, f->association,
+					       call_inspect_target_fd_method, f);
+}
+
 static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
@@ -940,6 +955,12 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		if (fdinfo) {
 			read_fdinfo(f, fdinfo);
 			fclose(fdinfo);
+		}
+
+		if (f->class->needs_target_fd &&
+		    f->class->needs_target_fd(f)) {
+			assert(f->class->inspect_target_fd);
+			inspect_target_fd(f, proc);
 		}
 	}
 
