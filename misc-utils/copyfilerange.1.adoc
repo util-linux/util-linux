@@ -1,0 +1,78 @@
+//po4a: entry man manual
+= copyfilerange(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: copyfilerange
+
+== NAME
+
+copyfilerange - Copy file ranges from source to destination file.
+
+== SYNOPSIS
+
+*copyfilerange* [options] [<source>] [<destination>] [<command>...]
+
+== DESCRIPTION
+
+*copyfilerange* copy file ranges from source to destination file
+*copyfilerange* is a simple utility to call the copy_file_range() system call.
+
+== OPTIONS
+
+*-s*, *--source*::
+Source filename
+
+*-d*, *--destination*::
+Destination filename
+
+*-c*, *--commands*::
+Commands filename
+
+*source*::
+Source filename
+
+*destination*::
+Destination filename
+
+*source_offset:dest_offset:length*::
+All values are in bytes, if length is set to 0 copy as much as available.
+Multiple commands can be supplied.
+
+When one or more of the offsets are omitted the operation will use the last used location, starting with 0
+
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*copyfilerange* has the following exit status values:
+
+*0*::
+success
+*1*::
+unspecified failure
+*2*::
+(some) range failed
+*3*::
+unspecified failure and (some) range failed
+
+== NOTES
+
+The copy_file_range() system call has some serious caveats, the source and destination files must use the same filesystem type and some virtual filesystems (like procfs) won't work. copy_file_range() will use reflinks when the filesystem supports this. To use reflinks the file range most often needs to align with the filesystem block size on both the source and destination file.
+
+== AUTHORS
+
+mailto:dick@mrns.nl[Dick Marinus]
+
+== SEE ALSO
+
+*copy_file_range*(2)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

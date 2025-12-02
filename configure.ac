@@ -2665,6 +2665,9 @@ UL_REQUIRES_HAVE([write], [utmpx_h], [utmpx.h header])
 UL_REQUIRES_HAVE([write], [gnu_utmpx], [GNU utmpx functions])
 AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
+UL_BUILD_INIT([copyfilerange], [check])
+UL_REQUIRES_LINUX([copyfilerange])
+AM_CONDITIONAL([BUILD_COPYFILERANGE], [test "x$build_copyfilerange" = xyes])
 
 AC_ARG_WITH([btrfs],
   AS_HELP_STRING([--without-btrfs], [do not build with btrfs support]),

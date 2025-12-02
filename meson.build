@@ -3088,6 +3088,20 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
+opt = opt and 'copyfilerange' in static_programs
+exe = executable(
+  'copyfilerange',
+  copyfilerange_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [copyfilerange_dep],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+endif
+
 exe = executable(
   'sample-mkfs',
   'libblkid/samples/mkfs.c',

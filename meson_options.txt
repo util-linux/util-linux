@@ -261,6 +261,8 @@ option('build-findfs', type : 'feature',
        description : 'build findfs')
 option('build-getino', type : 'feature',
        description : 'build getino')
+option('build-copyfilerange', type : 'feature',
+       description : 'build copyfilerange')
 
 # static programs
 
