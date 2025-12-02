@@ -234,3 +234,8 @@ getino_sources = files(
   'getino.c',
 )
 getino_manadocs = files('getino.1.adoc')
+
+copyfilerange_sources = files(
+  'copyfilerange.c',
+)
+copyfilerange_manadocs = files('copyfilerange.1.adoc')
