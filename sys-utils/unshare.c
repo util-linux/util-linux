@@ -1190,14 +1190,14 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-        if (mapuser != (uid_t) -1 && !usermap)
+        if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
 
         /* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
          * has been disabled unless /proc/self/setgroups is written
          * first to permanently disable the ability to call setgroups
          * in that user namespace. */
-	if (mapgroup != (gid_t) -1 && !groupmap) {
+	if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
 			errx(EXIT_FAILURE, _("options --setgroups=allow and "
 					"--map-group are mutually exclusive"));
