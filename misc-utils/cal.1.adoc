@@ -120,6 +120,9 @@ If a _number_ is specified, the requested week in the desired or current year
 will be printed and its number highlighted.
 The _number_ may be ignored if _month_ is also specified.
 +
+If the _number_ is specified but the current day is unspecified on the command
+line, then the current day is not highlighted.
++
 See the *NOTES* section for more details.
 
 *--color*[**=**_when_]::
