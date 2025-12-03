@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 	if (prctl(PR_GET_SECCOMP) == -1 && errno == EINVAL)
 		err(EXIT_NOTSUPP, _("Seccomp non-functional"));
 
-	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
+	if (prctl(PR_SET_NO_NEW_PRIVS, 1L, 0L, 0L, 0L))
 		err_nosys(EXIT_FAILURE, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
 	if (ul_set_seccomp_filter_spec_allow(&prog))
