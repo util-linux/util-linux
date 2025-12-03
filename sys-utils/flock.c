@@ -47,6 +47,7 @@
 #include "closestream.h"
 #include "monotonic.h"
 #include "timer.h"
+#include "shells.h"
 
 #ifndef F_OFD_GETLK
 #define F_OFD_GETLK	36
@@ -207,6 +208,7 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
+
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1,
 		OPT_FCNTL,
@@ -327,9 +329,7 @@ int main(int argc, char *argv[])
 				     _("%s requires exactly one command argument"),
 				     argv[optind + 1]);
 			cmd_argv = sh_c_argv;
-			cmd_argv[0] = getenv("SHELL");
-			if (!cmd_argv[0] || !*cmd_argv[0])
-				cmd_argv[0] = _PATH_BSHELL;
+			cmd_argv[0] = (char *)ul_default_shell(0, NULL);
 			cmd_argv[1] = "-c";
 			cmd_argv[2] = argv[optind + 2];
 			cmd_argv[3] = NULL;

@@ -38,6 +38,7 @@
 #include "pty-session.h"
 #include "script-playutils.h"
 #include "monotonic.h"
+#include "shells.h"
 
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original scriptreplay.pl */
@@ -281,9 +282,7 @@ main(int argc, char *argv[])
 		replay_set_delay_max(ss.setup, &maxdelay);
 	replay_set_delay_min(ss.setup, &mindelay);
 
-	shell = getenv("SHELL");
-	if (shell == NULL)
-		shell = _PATH_BSHELL;
+	shell = ul_default_shell(0, NULL);
 
 	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s.\n"),
 			command ? command : shell);
