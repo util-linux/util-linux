@@ -90,10 +90,10 @@ struct timeouts {
 #endif
 
 struct kill_control {
-	char *arg;
-	pid_t pid;
-	ino_t pidfd_ino;
-	int numsig;
+	char 		*arg;
+	pid_t 		pid;
+	uint64_t 	pidfd_ino;
+	int 		numsig;
 #ifdef HAVE_SIGQUEUE
 	union sigval sigdata;
 #endif
