@@ -1021,7 +1021,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -c, --output-width <width>       width of output in number of characters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
 		"                                    (default is two spaces)\n"), out);
-	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
+	fputs(_(" -s, --input-separator, --separator <string>\n"
+		"                                    possible table delimiters\n"), out);
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 	fputs(_(" -S, --use-spaces <number>        minimal whitespaces between columns (no tabs)\n"), out);
 
@@ -1059,6 +1060,7 @@ int main(int argc, char **argv)
 		{ "color",               optional_argument, NULL, OPT_COLOR },
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
+		{ "input-separator",     required_argument, NULL, 's' }, /* alias for --separator */
 		{ "json",                no_argument,       NULL, 'J' },
 		{ "keep-empty-lines",    no_argument,       NULL, 'L' },
 		{ "output-separator",    required_argument, NULL, 'o' },
