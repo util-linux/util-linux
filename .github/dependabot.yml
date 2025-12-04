@@ -5,3 +5,5 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    exclude-paths:
+      - ".github/workflows/build-compat.yml"
