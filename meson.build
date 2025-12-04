@@ -3358,6 +3358,21 @@ if opt and not is_disabler(exe)
   bashcompletions += ['exch']
 endif
 
+opt = get_option('build-getpidino').require(conf.get('HAVE_PIDFD_OPEN').to_string() == '1').allowed()
+exe = executable(
+  'getpidino',
+  getpidino_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += getpidino_manadocs
+  bashcompletions += ['getpidino']
+endif
+
 ############################################################
 
 opt = not get_option('build-schedutils').disabled()

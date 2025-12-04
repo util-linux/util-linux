@@ -2318,6 +2318,14 @@ UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
+AC_ARG_ENABLE([getpidino],
+  AS_HELP_STRING([--disable-getpidino], [do not build getpidino]),
+  [], [UL_DEFAULT_ENABLE([getpidino], [check])]
+)
+UL_BUILD_INIT([getpidino])
+UL_REQUIRES_LINUX([getpidino])
+UL_REQUIRES_SYSCALL_CHECK([getpidino], [UL_CHECK_SYSCALL([pidfd_open])], [pidfd_open])
+AM_CONDITIONAL([BUILD_GETPIDINO], [test "x$build_getpidino" = xyes])
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--disable-last], [do not build last]),
