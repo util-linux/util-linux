@@ -31,7 +31,8 @@
 # define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
 #endif
 
-#if (defined(HAVE_PIDFD_OPEN) || defined(SYS_pidfd_open)) && defined(HAVE_STATX)
+#if (defined(HAVE_PIDFD_OPEN) || defined(SYS_pidfd_open)) && defined(HAVE_STATX) \
+	&& defined(HAVE_STRUCT_STATX)
 #define USE_PIDFD_INO_SUPPORT 1
 #endif
 
@@ -97,7 +98,8 @@ static inline int pidfd_getfd(int pidfd __attribute__((unused)),
 }
 #endif
 
-int pfd_is_pidfs(int pfd);
-int ul_get_valid_pidfd_or_err(pid_t pid, ino_t pfd_ino);
+int pfd_is_pidfs(int pidfd);
+ino_t pidfd_get_inode(int pidfd);
+int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)));
 
 #endif /* UTIL_LINUX_PIDFD_UTILS */

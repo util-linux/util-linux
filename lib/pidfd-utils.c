@@ -22,17 +22,32 @@
 /*
  * Returns 1, if the pidfd has the pidfs file system type, otherwise 0.
  */
-int pfd_is_pidfs(int pfd)
+int pfd_is_pidfs(int pidfd)
 {
 	struct statfs stfs;
 	int rc;
 
-	rc = fstatfs(pfd, &stfs);
+	rc = fstatfs(pidfd, &stfs);
 	if (rc < 0)
 		return 0;
 
 	return F_TYPE_EQUAL(stfs.f_type, STATFS_PIDFS_MAGIC);
 }
+
+#ifdef USE_PIDFD_INO_SUPPORT
+uint64_t pidfd_get_inode(int pidfd)
+{
+	struct statx stx;
+	int rc;
+
+	rc = statx(pidfd, "", AT_EMPTY_PATH, STATX_INO, &stx);
+	if (rc < 0) {
+		close(pidfd);
+		err(EXIT_FAILURE, N_("failed to statx() pidfd"));
+	}
+	return stx.stx_ino;
+}
+#endif
 
 /*
  * ul_get_valid_pidfd_or_err() - Return a valid file descriptor for a PID
@@ -49,14 +64,13 @@ int pfd_is_pidfs(int pfd)
  *         print an error message and kill the program.
  *
  */
-int ul_get_valid_pidfd_or_err(pid_t pid, ino_t pfd_ino)
+int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)))
 {
-        int pfd, rc;
-        struct statx stx;
+	int pfd;
 
-        pfd = pidfd_open(pid, 0);
-        if (pfd < 0)
-                err(EXIT_FAILURE, N_("pidfd_open() failed"));
+	pfd = pidfd_open(pid, 0);
+	if (pfd < 0)
+		err(EXIT_FAILURE, N_("pidfd_open() failed"));
 
 	/* the file descriptor has to have the pidfs file system type
 	 * otherwise the inode assigned to it will not be useful.
@@ -66,16 +80,16 @@ int ul_get_valid_pidfd_or_err(pid_t pid, ino_t pfd_ino)
 		errx(EXIT_FAILURE, N_("pidfd needs to have the pidfs file system type"));
 	}
 
-        if (pfd_ino) {
-                rc = statx(pfd, NULL, AT_EMPTY_PATH, STATX_INO, &stx);
-                if (rc < 0)
-                        err(EXIT_FAILURE, N_("failed to statx() pidfd"));
-
-                if (stx.stx_ino != pfd_ino) {
-                        close(pfd);
-                        errx(EXIT_FAILURE, N_("pidfd inode %"PRIu64" not found for pid %d"),
-                                pfd_ino, pid);
-                }
-        }
-        return pfd;
+#ifdef USE_PIDFD_INO_SUPPORT
+	uint64_t real_pidfd_ino;
+	if (pidfd_ino) {
+		real_pidfd_ino = pidfd_get_inode(pfd);
+		if (real_pidfd_ino != pidfd_ino) {
+			close(pfd);
+			errx(EXIT_FAILURE, N_("pidfd inode %"PRIu64" not found for pid %d"),
+				pidfd_ino, pid);
+		}
+	}
+#endif
+	return pfd;
 }
