@@ -118,34 +118,23 @@ jobs:
       - name: Make distcheck
         run: .github/workflows/cibuild.sh DISTCHECK
 
-  build-compat:
+  call-build-compat:
+    # We can preserve the version of actions/checkouts in the original
+    # job by placing it in a separate file. Dependabot will try to
+    # update the versions in your source tree. If your actions are in
+    # a separate file, you can add that file to Dependabot's exclude
+    # list.
+    uses: ./.github/workflows/build-compat.yml
+    with:
+      image: ${{ matrix.image }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - image: ubuntu:18.04
-    name: build (compat, ${{ matrix.image }})
-    runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-build-compat-${{ github.ref }}
       cancel-in-progress: true
-    env:
-      COMPILER: none
-    container:
-      image: ${{ matrix.image }}
-    steps:
-      - name: Repository checkout
-        uses: actions/checkout@v1
-      - name: Ubuntu setup
-        run: .github/workflows/cibuild-setup-ubuntu.sh
-      - name: Configure
-        run: .github/workflows/cibuild.sh CONFIGUREFAST
-      - name: Code checks
-        run: .github/workflows/cibuild.sh CODECHECK
-      - name: Configure & Make
-        run: .github/workflows/cibuild.sh MAKE
-      - name: Check
-        run: .github/workflows/cibuild.sh CHECK
 
   build-arch:
     name: build (qemu-user, ${{ matrix.arch }})
