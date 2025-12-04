@@ -480,11 +480,9 @@ static void chown_tty(struct login_context *cxt)
 
 	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 	if (grname && *grname) {
-		struct group *gr = getgrnam(grname);
-		if (gr)	/* group by name */
+		struct group *gr = ul_getgrp_str(grname);
+		if (gr)
 			gid = gr->gr_gid;
-		else	/* group by ID */
-			gid = (gid_t) getlogindefs_num("TTYGROUP", gid);
 	}
 	if (fchown(0, uid, gid))				/* tty */
 		chown_err(cxt->tty_name, uid, gid);
@@ -645,13 +643,13 @@ static void log_audit(struct login_context *cxt, int status)
 	if (audit_fd == -1)
 		return;
 	if (!pwd && cxt->username)
-		pwd = getpwnam(cxt->username);
+		pwd = ul_getuserpw_str(cxt->username);
 
 	ignore_result( audit_log_acct_message(audit_fd,
 					      AUDIT_USER_LOGIN,
 					      NULL,
 					      "login",
-					      cxt->username ? cxt->username : "(unknown)",
+					      pwd ? pwd->pw_name : "(unknown)",
 					      pwd ? pwd->pw_uid : (unsigned int)-1,
 					      cxt->hostname,
 					      NULL,
@@ -1529,7 +1527,7 @@ int main(int argc, char **argv)
 	 */
 	loginpam_acct(&cxt);
 
-	cxt.pwd = xgetpwnam(cxt.username, &cxt.pwdbuf);
+	cxt.pwd = xgetuserpw(cxt.username, &cxt.pwdbuf);
 	if (!cxt.pwd) {
 		warnx(_("\nSession setup problem, abort."));
 		syslog(LOG_ERR, _("Invalid user name \"%s\". Abort."),

@@ -652,6 +652,7 @@ static inline int fputsln(const char *s, FILE *stream) {
 #endif
 
 #define SINT_MAX(t) (((t)1 << (sizeof(t) * 8 - 2)) - (t)1 + ((t)1 << (sizeof(t) * 8 - 2)))
+#define MAX_OF_UINT_TYPE(t) ~((t)0)
 
 #ifndef HAVE_REALLOCARRAY
 static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
