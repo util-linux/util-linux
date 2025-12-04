@@ -9,6 +9,6 @@
 
 #include <sys/types.h>
 
-extern int ul_parse_pid_str(char *pidstr, pid_t *pid_num, ino_t *pfd_ino);
+extern int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino);
 
 #endif /* UTIL_LINUX_PIDUTILS_H */

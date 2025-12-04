@@ -23,7 +23,7 @@
  * Return: On success, 0 is returned.
  *         On failure, a negative errno number will be returned.
  */
-int ul_parse_pid_str(char *pidstr, pid_t *pid_num, ino_t *pfd_ino)
+int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 {
 	int rc;
 	char *end = NULL;
@@ -40,7 +40,7 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, ino_t *pfd_ino)
 	if (*end == ':' && pfd_ino) {
 		rc = ul_strtou64(++end, pfd_ino, 10);
 		if (rc != 0)
-			return -ERANGE;	
+			return -ERANGE;
 		*end = '\0';
 	}
 	if (errno != 0 || ((end && *end != '\0') || pidstr >= end))
