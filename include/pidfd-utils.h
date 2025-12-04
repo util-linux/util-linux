@@ -97,6 +97,7 @@ static inline int pidfd_getfd(int pidfd __attribute__((unused)),
 }
 #endif
 
+int pfd_is_pidfs(int pfd);
 int ul_get_valid_pidfd_or_err(pid_t pid, ino_t pfd_ino);
 
 #endif /* UTIL_LINUX_PIDFD_UTILS */
