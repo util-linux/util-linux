@@ -20,6 +20,7 @@ lib_common_sources = '''
 	netaddrq.c
 	netlink.c
 	pidutils.c
+	pidfd-utils.c
 	procfs.c
 	pwdutils.c
 	randutils.c
