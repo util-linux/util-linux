@@ -510,6 +510,7 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
 	case STATFS_OCFS2_MAGIC:	return "ocfs2";
 	case STATFS_OMFS_MAGIC:		return "omfs";
 	case STATFS_OPENPROMFS_MAGIC:	return "openpromfs";
+	case STATFS_PIDFS_MAGIC:	return "pidfs";
 	case STATFS_PIPEFS_MAGIC:	return "pipefs";
 	case STATFS_PROC_MAGIC:		return "proc";
 	case STATFS_PSTOREFS_MAGIC:	return "pstore";
