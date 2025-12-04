@@ -31,6 +31,9 @@
 # define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
 #endif
 
+#if (defined(HAVE_PIDFD_OPEN) || defined(SYS_pidfd_open)) && defined(HAVE_STATX)
+#define USE_PIDFD_INO_SUPPORT 1
+#endif
 
 #ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
