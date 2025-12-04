@@ -72,7 +72,6 @@
 
 #if defined(HAVE_PIDFD_OPEN) && defined(HAVE_PIDFD_SEND_SIGNAL)
 # define USE_KILL_WITH_TIMEOUT 1
-# define USE_KILL_WITH_PIDFDINO 1
 #endif
 
 enum {
@@ -330,7 +329,7 @@ static void __attribute__((__noreturn__)) print_kill_version(void)
 #ifdef USE_KILL_WITH_TIMEOUT
 		"pidfd",
 #endif
-#ifdef USE_KILL_WITH_PIDFDINO
+#ifdef USE_PIDFD_INO_SUPPORT
 		"pidfdino",
 #endif
 	};
@@ -583,7 +582,7 @@ static int kill_verbose(const struct kill_control *ctl)
 		rc = sigqueue(ctl->pid, ctl->numsig, ctl->sigdata);
 	else
 #endif
-#ifdef USE_KILL_WITH_PIDFDINO
+#ifdef USE_PIDFD_INO_SUPPORT
 		if ((ctl->pidfd_ino > 0)) {
 			int pfd;
 			pfd = ul_get_valid_pidfd_or_err(ctl->pid, ctl->pidfd_ino);
