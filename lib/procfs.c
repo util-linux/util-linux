@@ -414,7 +414,6 @@ int fd_is_procfs(int fd)
 	} while (ret != 0);
 
 	return F_TYPE_EQUAL(st.f_type, STATFS_PROC_MAGIC);
-	return 0;
 }
 #else
 int fd_is_procfs(int fd __attribute__((__unused__)))
