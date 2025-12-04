@@ -4,8 +4,6 @@
  *
  * Authors: Christian Goeschel Ndjomouo <cgoesc2@wgu.edu> [2025]
  */
-#define _GNU_SOURCE 1
-
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/vfs.h>
