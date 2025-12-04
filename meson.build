@@ -396,6 +396,12 @@ have = cc.has_function(
   dependencies : lib_systemd)
 conf.set('HAVE_DECL_SD_SESSION_GET_USERNAME', have ? 1 : false)
 
+have = cc.has_function(
+  'sd_device_new_from_devname',
+  dependencies : lib_systemd)
+conf.set('USE_LIBMOUNT_UDEV_SUPPORT',
+  not get_option('build-libmount-udev-support').disabled() and have ? 1 : false)
+
 lib_udev = dependency(
   'libudev',
   required : get_option('systemd'))
@@ -911,6 +917,11 @@ if fs_search_path_extra != ''
   fs_search_path = ':'.join(fs_search_path, fs_search_path_extra)
 endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
+
+ntfs_mounttype = get_option('ntfs-mounttype')
+if ntfs_mounttype != ''
+  conf.set_quoted('CONFIG_UL_NTFS_MOUNTTYPE', ntfs_mounttype)
+endif
 
 systemdsystemunitdir = ''
 if systemd.found()

@@ -163,6 +163,7 @@ struct blkid_idmag
 struct blkid_idinfo
 {
 	const char	*name;		/* fs, raid or partition table name */
+	const char	*mounttype;	/* filesystem driver name (aka ID_FS_MOUNTTYPE) */
 	int		usage;		/* BLKID_USAGE_* flag */
 	int		flags;		/* BLKID_IDINFO_* flags */
 	int		minsz;		/* minimal device size */

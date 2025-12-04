@@ -686,4 +686,12 @@ static inline void ul_reset_errno(int *saved_errno) {
 # define THREAD_LOCAL static
 #endif
 
+
+/*
+ * Default NTFS mount type (used by libmount and libblkid)
+ */
+#ifndef CONFIG_UL_NTFS_MOUNTTYPE
+# define CONFIG_UL_NTFS_MOUNTTYPE "ntfs3"
+#endif
+
 #endif /* UTIL_LINUX_C_H */

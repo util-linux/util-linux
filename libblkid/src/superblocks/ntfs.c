@@ -248,7 +248,8 @@ int blkid_probe_is_ntfs(blkid_probe pr)
 
 const struct blkid_idinfo ntfs_idinfo =
 {
-	.name		= "ntfs3",
+	.name		= "ntfs",
+	.mounttype      = CONFIG_UL_NTFS_MOUNTTYPE,
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_ntfs,
 	.magics		=

@@ -40,6 +40,8 @@
  *
  * @TYPE: filesystem type
  *
+ * @MOUNTTYPE: optional filesystem driver name
+ *
  * @SEC_TYPE: secondary filesystem type
  *
  * @LABEL: filesystem label
@@ -329,6 +331,31 @@ int blkid_known_fstype(const char *fstype)
 }
 
 /**
+ * blkid_fstype_to_mounttype
+ * @fstype: filesystem name
+ *
+ * The default mount type is an optional property used by libblkid to specify
+ * the default filesystem driver used for mounting. It's designed for
+ * filesystems that can be mounted by multiple drivers. In this case, the
+ * filesystem type is a stable canonical FS name, and the mount type may vary
+ * between libblkid versions, etc.
+ *
+ * Returns: mount type for specified filesystems name or NULL
+ */
+const char *blkid_fstype_to_mounttype(const char *fstype)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
+		const struct blkid_idinfo *id = idinfos[i];
+		if (strcmp(id->name, fstype) == 0)
+			return id->mounttype;
+	}
+	return NULL;
+}
+
+
+/**
  * blkid_superblocks_get_name:
  * @idx: number >= 0
  * @name: returns name of supported filesystem/raid (optional)
@@ -434,10 +461,16 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		}
 
 		/* all checks passed */
-		if (chn->flags & BLKID_SUBLKS_TYPE)
+		if (chn->flags & BLKID_SUBLKS_TYPE) {
 			rc = blkid_probe_set_value(pr, "TYPE",
 				(const unsigned char *) id->name,
 				strlen(id->name) + 1);
+
+			if (!rc && id->mounttype)
+				blkid_probe_set_value(pr, "MOUNTTYPE",
+					(const unsigned char *) id->mounttype,
+					strlen(id->mounttype) + 1);
+		}
 
 		if (!rc)
 			rc = blkid_probe_set_usage(pr, id->usage);

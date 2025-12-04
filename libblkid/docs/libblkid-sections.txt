@@ -129,6 +129,7 @@ blkid_probe_get_partitions
 blkid_probe_enable_superblocks
 <SUBSECTION>
 blkid_known_fstype
+blkid_fstype_to_mounttype
 blkid_superblocks_get_name
 <SUBSECTION>
 blkid_probe_filter_superblocks_type
