@@ -111,6 +111,8 @@ struct login_context {
 	const char	*tty_number;	/* end of the tty_path */
 	mode_t		tty_mode;	/* chmod() mode */
 
+	char		*shell_arg;     /* command line argument defining the login shell */
+
 	const char	*username;	/* points to PAM, pwd or cmd_username */
 	char            *cmd_username;	/* username specified on command line */
 
@@ -1282,17 +1284,18 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s [-p] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
+	printf(_(" %s [-p] [-s <shell>] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Begin a session on the system.\n"), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -p             do not destroy the environment"));
-	puts(_(" -f             skip a login authentication"));
-	puts(_(" -h <host>      hostname to be used for utmp logging"));
-	puts(_(" -H             suppress hostname in the login prompt"));
-	printf("     --help     %s\n", USAGE_OPTSTR_HELP);
-	printf(" -V, --version  %s\n", USAGE_OPTSTR_VERSION);
+	puts(_(" -p                  do not destroy the environment"));
+	puts(_(" -f                  skip a login authentication"));
+	puts(_(" -h <host>           hostname to be used for utmp logging"));
+	puts(_(" -H                  suppress hostname in the login prompt"));
+	puts(_(" -s, --shell <path>  define the shell to log in to"));
+	printf("     --help          %s\n", USAGE_OPTSTR_HELP);
+	printf(" -V, --version       %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("login(1)"));
 	exit(EXIT_SUCCESS);
 }
@@ -1328,6 +1331,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 	/* the only two longopts to satisfy UL standards */
 	enum { HELP_OPTION = CHAR_MAX + 1 };
 	const struct option longopts[] = {
+		{"shell", required_argument, NULL, 's'},
 		{"help", no_argument, NULL, HELP_OPTION},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -1356,7 +1360,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 	load_credentials(cxt);
 
-	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "fHh:ps:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'f':
 			cxt->noauth = 1;
@@ -1377,6 +1381,10 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 		case 'p':
 			cxt->keep_env = 1;
+			break;
+
+		case 's':
+			cxt->shell_arg = optarg;
 			break;
 
 		case 'V':
@@ -1580,8 +1588,11 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if (pwd->pw_shell == NULL || *pwd->pw_shell == '\0')
+	if (cxt.shell_arg && *cxt.shell_arg != '\0') {
+		pwd->pw_shell = cxt.shell_arg;
+	} else if (pwd->pw_shell == NULL || *pwd->pw_shell == '\0') {
 		pwd->pw_shell = _PATH_BSHELL;
+	}
 
 	init_environ(&cxt);		/* init $HOME, $TERM ... */
 
