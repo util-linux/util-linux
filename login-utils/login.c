@@ -1306,8 +1306,8 @@ static void load_credentials(struct login_context *cxt) {
 	struct path_cxt *pc;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
-        if (!env)
-                return;
+	if (!env)
+		return;
 
 	pc = ul_new_path("%s", env);
 	if (!pc) {

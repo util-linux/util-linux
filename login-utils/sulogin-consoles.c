@@ -124,7 +124,7 @@ void emergency_do_mounts(void)
 	if (stat("/dev", &xt) == 0
 	    && rt.st_dev == xt.st_dev
 	    && mount("devtmpfs", "/dev", "devtmpfs",
-		     MS_RELATIME, "mode=0755,nr_inodes=0") == 0) {
+	             MS_RELATIME, "mode=0755,nr_inodes=0") == 0) {
 
 		emergency_flags |= MNT_DEVTMPFS;
 		mknod("/dev/console", S_IFCHR|S_IRUSR|S_IWUSR,
@@ -249,9 +249,9 @@ char* scandev(DIR *dir, const dev_t comparedev)
 			    "/dev/char/%u:%u", major(comparedev), minor(comparedev))) > 0 &&
 	    (size_t)len < sizeof(path)) {
 
-	    name = realpath(path, NULL);
-	    if (name)
-		    goto out;
+		name = realpath(path, NULL);
+		if (name)
+			goto out;
 	}
 
 	fd = dirfd(dir);
@@ -771,7 +771,7 @@ console:
 fallback:
 	if (fallback >= 0) {
 		const char *name;
-	        char *n;
+		char *n;
 		struct console *console;
 
 		if (device && *device != '\0')

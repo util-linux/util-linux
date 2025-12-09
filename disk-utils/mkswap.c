@@ -800,8 +800,7 @@ int main(int argc, char **argv)
 	deinit_signature_page(&ctl);
 
 #ifdef HAVE_LIBSELINUX
-	if ((ctl.file || S_ISREG(ctl.devstat.st_mode)) &&
-            is_selinux_enabled() > 0) {
+	if ((ctl.file || S_ISREG(ctl.devstat.st_mode)) && is_selinux_enabled() > 0) {
 		const char *context_string;
 		char *oldcontext;
 		context_t newcontext;

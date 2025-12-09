@@ -830,7 +830,7 @@ int main(int argc, char **argv)
 		case OPT_SIZELIMIT:			/* --sizelimit */
 			sizelimit = strtosize_or_err(optarg, _("failed to parse size"));
 			flags |= LOOPDEV_FL_SIZELIMIT;
-                        break;
+			break;
 
 		case 'h':
 			usage();

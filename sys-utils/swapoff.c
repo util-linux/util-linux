@@ -96,7 +96,7 @@ static char *resolve_swapfile_tag(const char *name, const char *value)
 
 static int do_swapoff(const char *orig_special, int quiet, int canonic)
 {
-        const char *special = orig_special;
+	 const char *special = orig_special;
 	char *buf = NULL;
 	int rc = SWAPOFF_EX_OK;
 

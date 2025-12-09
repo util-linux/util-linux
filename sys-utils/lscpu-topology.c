@@ -465,7 +465,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		if (ul_path_readf_s32(sys, &level, "cpu%d/cache/index%zu/level", num, i) != 0)
 			continue;
 		if (ul_path_readf_buffer(sys, buf, sizeof(buf),
-                                        "cpu%d/cache/index%zu/type", num, i) <= 0)
+		                         "cpu%d/cache/index%zu/type", num, i) <= 0)
 			continue;
 
 		if (id == -1)

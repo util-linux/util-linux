@@ -281,20 +281,20 @@ int ul_parse_switch(const char *arg, ...)
 #ifndef HAVE_MEMPCPY
 void *mempcpy(void *restrict dest, const void *restrict src, size_t n)
 {
-    return ((char *)memcpy(dest, src, n)) + n;
+	return ((char *)memcpy(dest, src, n)) + n;
 }
 #endif
 
 #ifndef HAVE_STRNLEN
 size_t strnlen(const char *s, size_t maxlen)
 {
-        size_t i;
+	size_t i;
 
-        for (i = 0; i < maxlen; i++) {
-                if (s[i] == '\0')
-                        return i;
-        }
-        return maxlen;
+	for (i = 0; i < maxlen; i++) {
+		if (s[i] == '\0')
+			return i;
+	}
+	return maxlen;
 }
 #endif
 
@@ -980,38 +980,38 @@ int streq_paths(const char *a, const char *b)
 /* concatenate two strings to a new string, the size of the second string is limited by @b */
 char *ul_strnconcat(const char *s, const char *suffix, size_t b)
 {
-        size_t a;
-        char *r;
+	size_t a;
+	char *r;
 
-        if (!s && !suffix)
-                return strdup("");
-        if (!s)
-                return strndup(suffix, b);
-        if (!suffix)
-                return strdup(s);
+	if (!s && !suffix)
+		return strdup("");
+	if (!s)
+		return strndup(suffix, b);
+	if (!suffix)
+		return strdup(s);
 
-        assert(s);
-        assert(suffix);
+	assert(s);
+	assert(suffix);
 
-        a = strlen(s);
-        if (b > ((size_t) -1) - a)
-                return NULL;
+	a = strlen(s);
+	if (b > ((size_t) -1) - a)
+		return NULL;
 
-        r = malloc(a + b + 1);
-        if (!r)
-                return NULL;
+	r = malloc(a + b + 1);
+	if (!r)
+		return NULL;
 
-        memcpy(r, s, a);
-        memcpy(r + a, suffix, b);
-        r[a+b] = 0;
+	memcpy(r, s, a);
+	memcpy(r + a, suffix, b);
+	r[a+b] = 0;
 
-        return r;
+	return r;
 }
 
 /* concatenate two strings to a new string */
 char *ul_strconcat(const char *s, const char *suffix)
 {
-        return ul_strnconcat(s, suffix, suffix ? strlen(suffix) : 0);
+	return ul_strnconcat(s, suffix, suffix ? strlen(suffix) : 0);
 }
 
 /* concatenate @s and string defined by @format to a new string */
@@ -1088,20 +1088,20 @@ extern int ul_strvfappend(char **a, const char *format, va_list ap)
 
 static size_t strcspn_escaped(const char *s, const char *reject)
 {
-        int escaped = 0;
-        int n;
+	int escaped = 0;
+	int n;
 
-        for (n=0; s[n]; n++) {
-                if (escaped)
-                        escaped = 0;
-                else if (s[n] == '\\')
-                        escaped = 1;
-                else if (strchr(reject, s[n]))
-                        break;
-        }
+	for (n=0; s[n]; n++) {
+		if (escaped)
+			escaped = 0;
+		else if (s[n] == '\\')
+			escaped = 1;
+		else if (strchr(reject, s[n]))
+			break;
+	}
 
-        /* if s ends in \, return index of previous char */
-        return n - escaped;
+	/* if s ends in \, return index of previous char */
+	return n - escaped;
 }
 
 /*
@@ -1138,46 +1138,46 @@ char *ul_strchr_escaped(const char *s, int c)
 /* Split a string into words. */
 const char *ul_split(const char **state, size_t *l, const char *separator, int quoted)
 {
-        const char *current;
+	const char *current;
 
-        current = *state;
+	current = *state;
 
-        if (!*current) {
-                assert(**state == '\0');
-                return NULL;
-        }
+	if (!*current) {
+		assert(**state == '\0');
+		return NULL;
+	}
 
-        current += strspn(current, separator);
-        if (!*current) {
-                *state = current;
-                return NULL;
-        }
+	current += strspn(current, separator);
+	if (!*current) {
+		*state = current;
+		return NULL;
+	}
 
-        if (quoted && strchr("\'\"", *current)) {
-                char quotechars[2] = {*current, '\0'};
+	if (quoted && strchr("\'\"", *current)) {
+		char quotechars[2] = {*current, '\0'};
 
-                *l = strcspn_escaped(current + 1, quotechars);
-                if (current[*l + 1] == '\0' || current[*l + 1] != quotechars[0] ||
-                    (current[*l + 2] && !strchr(separator, current[*l + 2]))) {
-                        /* right quote missing or garbage at the end */
-                        *state = current;
-                        return NULL;
-                }
-                *state = current++ + *l + 2;
-        } else if (quoted) {
-                *l = strcspn_escaped(current, separator);
-                if (current[*l] && !strchr(separator, current[*l])) {
-                        /* unfinished escape */
-                        *state = current;
-                        return NULL;
-                }
-                *state = current + *l;
-        } else {
-                *l = strcspn(current, separator);
-                *state = current + *l;
-        }
+		*l = strcspn_escaped(current + 1, quotechars);
+		if (current[*l + 1] == '\0' || current[*l + 1] != quotechars[0] ||
+		    (current[*l + 2] && !strchr(separator, current[*l + 2]))) {
+			/* right quote missing or garbage at the end */
+			*state = current;
+			return NULL;
+		}
+		*state = current++ + *l + 2;
+	} else if (quoted) {
+		*l = strcspn_escaped(current, separator);
+		if (current[*l] && !strchr(separator, current[*l])) {
+			/* unfinished escape */
+			*state = current;
+			return NULL;
+		}
+		*state = current + *l;
+	} else {
+		*l = strcspn(current, separator);
+		*state = current + *l;
+	}
 
-        return current;
+	return current;
 }
 
 /* Rewind file pointer forward to new line.  */

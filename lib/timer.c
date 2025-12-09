@@ -92,7 +92,7 @@ int setup_timer(struct ul_timer *timer,
 void cancel_timer(struct ul_timer *timer)
 {
 	setitimer(ITIMER_REAL, &timer->old_timer, NULL);
-        sigaction(SIGALRM, &timer->old_sa, NULL);
+	sigaction(SIGALRM, &timer->old_sa, NULL);
 
 }
 #endif /* !HAVE_TIMER_CREATE */
