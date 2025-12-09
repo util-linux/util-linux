@@ -751,7 +751,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ab:cdDfhj:JlLno:O:PrvV",
+	while ((c = getopt_long(argc, argv, "ab:cdDfhj:JlLno:O:PrV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
