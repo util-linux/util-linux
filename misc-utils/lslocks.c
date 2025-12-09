@@ -185,9 +185,7 @@ static void rem_lock(struct lock *lock)
 
 static void disable_columns_truncate(void)
 {
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
 		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
@@ -547,11 +545,9 @@ static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), 
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	size_t i;
-
 	assert(name);
 
-	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -598,7 +594,6 @@ static void xstrcoholder(char **str, struct lock *l)
 
 static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks, void *pid_locks)
 {
-	size_t i;
 	struct libscols_line *line;
 	/*
 	 * Whenever cmdname or filename is NULL it is most
@@ -614,7 +609,7 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	if (!line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
-	for (i = 0; i < ncolumns; i++) {
+	for (size_t i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 
 		switch (get_column_id(i)) {
@@ -741,7 +736,6 @@ static int get_json_type_for_column(int column_id, int representing_in_bytes)
 static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
 	int rc = 0;
-	size_t i;
 	struct list_head *p;
 	struct libscols_table *table;
 
@@ -756,7 +750,7 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 	if (json)
 		scols_table_set_name(table, "locks");
 
-	for (i = 0; i < ncolumns; i++) {
+	for (size_t i = 0; i < ncolumns; i++) {
 		struct libscols_column *cl;
 		const struct colinfo *col = get_column_info(i);
 
