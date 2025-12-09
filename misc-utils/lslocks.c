@@ -324,7 +324,7 @@ static void patch_lock(struct lock *l, void *fallback)
 	}
 }
 
-static void add_to_list(void *locks, struct lock *l)
+static void add_to_list(struct list_head *locks, struct lock *l)
 {
 	list_add(&l->locks, locks);
 }
@@ -525,7 +525,7 @@ static void get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 	return;
 }
 
-static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), void *fallback)
+static int get_proc_locks(struct list_head *locks, void (*add_lock)(struct list_head *, struct lock *), void *fallback)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
