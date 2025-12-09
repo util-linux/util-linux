@@ -733,9 +733,8 @@ static int get_json_type_for_column(int column_id, int representing_in_bytes)
 	}
 }
 
-static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
+static struct libscols_table *init_scols_table(void)
 {
-	struct list_head *p;
 	struct libscols_table *table;
 
 	table = scols_new_table();
@@ -772,6 +771,12 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 		}
 
 	}
+	return table;
+}
+
+static int show_locks(struct libscols_table *table, struct list_head *locks, pid_t target_pid, void *pid_locks)
+{
+	struct list_head *p;
 
 	/* prepare data for output */
 	list_for_each(p, locks) {
@@ -784,7 +789,6 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 	}
 
 	scols_print_table(table);
-	scols_unref_table(table);
 	return 0;
 }
 
@@ -848,6 +852,7 @@ int main(int argc, char *argv[])
 	int c, rc = 0, collist = 0;
 	struct list_head proc_locks;
 	void *pid_locks = NULL;
+	struct libscols_table *table;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -952,6 +957,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
+	table = init_scols_table();
 
 	/* get_pids_locks() get locks related information from "lock:" fields
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
@@ -961,10 +967,11 @@ int main(int argc, char *argv[])
 	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
 	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&proc_locks, target_pid, &pid_locks);
+		rc = show_locks(table, &proc_locks, target_pid, &pid_locks);
 
 	tdestroy(pid_locks, rem_tnode);
 	rem_locks(&proc_locks);
+	scols_unref_table(table);
 
 	mnt_unref_table(tab);
 	return rc;
