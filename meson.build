@@ -918,6 +918,11 @@ if fs_search_path_extra != ''
 endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
 
+ntfs_mounttype = get_option('ntfs-mounttype')
+if ntfs_mounttype != ''
+  conf.set_quoted('CONFIG_UL_NTFS_MOUNTTYPE', ntfs_mounttype)
+endif
+
 systemdsystemunitdir = ''
 if systemd.found()
   systemdsystemunitdir = systemd.get_variable(pkgconfig : 'systemdsystemunitdir')

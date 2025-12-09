@@ -308,6 +308,10 @@ option('build-libmount-udev-support',
        type : 'feature',
        description : 'support reading from udev in libmount')
 
+option('ntfs-mounttype',
+       type : 'string',
+       description : 'overwrite default ntfs3 mount type for NTFS')
+
 option('vendordir',
        type: 'string',
        description : 'directory for distribution provided econf files')

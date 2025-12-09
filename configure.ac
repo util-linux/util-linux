@@ -2760,6 +2760,16 @@ AS_IF([test "x$with_sysusersdir" != "xno"], [
   AC_SUBST([sysusersdir], [$with_sysusersdir])
 ])
 
+
+AC_ARG_WITH([ntfs-mounttype],
+  AS_HELP_STRING([--with-ntfs-mounttype=TYPE], [overwrite default ntfs3 mount type for NTFS]),
+  [], [with_ntfs_mounttype=no]
+)
+AS_IF([test "x$with_ntfs_mounttype" != "xno"], [
+  AC_DEFINE_UNQUOTED([CONFIG_UL_NTFS_MOUNTTYPE], ["$with_ntfs_mounttype"], [NTFS mounttype])
+])
+
+
 AC_ARG_WITH([smack],
   AS_HELP_STRING([--with-smack], [build with SMACK support]),
   [], [with_smack=no]

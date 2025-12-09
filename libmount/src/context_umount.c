@@ -298,7 +298,9 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 			close(fd);
 		}
 		if (type) {
-			int rc = mnt_fs_set_fstype(cxt->fs, type);
+			const char *x = mnt_fstype_to_mounttype(type);
+			int rc = mnt_fs_set_fstype(cxt->fs, x ? x : type);
+
 			if (rc)
 				return rc;
 		}
