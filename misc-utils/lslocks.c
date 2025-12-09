@@ -735,7 +735,6 @@ static int get_json_type_for_column(int column_id, int representing_in_bytes)
 
 static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
 {
-	int rc = 0;
 	struct list_head *p;
 	struct libscols_table *table;
 
@@ -786,7 +785,7 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 
 	scols_print_table(table);
 	scols_unref_table(table);
-	return rc;
+	return 0;
 }
 
 
