@@ -72,7 +72,6 @@
 
 #if defined(HAVE_PIDFD_OPEN) && defined(HAVE_PIDFD_SEND_SIGNAL)
 # define USE_KILL_WITH_TIMEOUT 1
-# define USE_KILL_WITH_PIDFDINO 1
 #endif
 
 enum {
@@ -91,10 +90,10 @@ struct timeouts {
 #endif
 
 struct kill_control {
-	char *arg;
-	pid_t pid;
-	ino_t pidfd_ino;
-	int numsig;
+	char 		*arg;
+	pid_t 		pid;
+	uint64_t 	pidfd_ino;
+	int 		numsig;
 #ifdef HAVE_SIGQUEUE
 	union sigval sigdata;
 #endif
@@ -330,7 +329,7 @@ static void __attribute__((__noreturn__)) print_kill_version(void)
 #ifdef USE_KILL_WITH_TIMEOUT
 		"pidfd",
 #endif
-#ifdef USE_KILL_WITH_PIDFDINO
+#ifdef USE_PIDFD_INO_SUPPORT
 		"pidfdino",
 #endif
 	};
@@ -534,8 +533,7 @@ static int kill_with_timeout(const struct kill_control *ctl)
 	info.si_value.sival_int =
 	    ctl->use_sigval != 0 ? ctl->use_sigval : ctl->numsig;
 
-	if ((pfd = pidfd_open(ctl->pid, 0)) < 0)
-		err(EXIT_FAILURE, _("pidfd_open() failed: %d"), ctl->pid);
+	pfd = ul_get_valid_pidfd_or_err(ctl->pid, ctl->pidfd_ino);
 	p.fd = pfd;
 	p.events = POLLIN;
 
@@ -564,22 +562,6 @@ static int kill_with_timeout(const struct kill_control *ctl)
 }
 #endif
 
-#ifdef USE_KILL_WITH_PIDFDINO
-static int validate_pfd_ino(int pfd, ino_t pfd_ino)
-{
-	int rc;
-	struct stat f;
-
-	rc = fstat(pfd, &f);
-	if (rc != 0)
-		return -EINVAL;
-
-	if (f.st_ino != pfd_ino)
-		return -EINVAL;
-	return 0;
-}
-#endif
-
 static int kill_verbose(const struct kill_control *ctl)
 {
 	int rc = 0;
@@ -600,18 +582,10 @@ static int kill_verbose(const struct kill_control *ctl)
 		rc = sigqueue(ctl->pid, ctl->numsig, ctl->sigdata);
 	else
 #endif
-#ifdef USE_KILL_WITH_PIDFDINO
+#ifdef USE_PIDFD_INO_SUPPORT
 		if ((ctl->pidfd_ino > 0)) {
 			int pfd;
-			pfd = pidfd_open(ctl->pid, 0);
-			if (pfd < 0)
-				err(EXIT_FAILURE, _("pidfd_open() failed: %d"), ctl->pid);
-
-			rc = validate_pfd_ino(pfd, ctl->pidfd_ino);
-			if (rc < 0)
-				errx(EXIT_FAILURE, _("pidfd inode %"PRIu64" not found for pid %d: %s"),
-								ctl->pidfd_ino, ctl->pid, strerror(-rc));
-
+			pfd = ul_get_valid_pidfd_or_err(ctl->pid, ctl->pidfd_ino);
 			rc = pidfd_send_signal(pfd, ctl->numsig, 0, 0);
 			if (rc < 0)
 				err(EXIT_FAILURE, _("pidfd_send_signal() failed"));
