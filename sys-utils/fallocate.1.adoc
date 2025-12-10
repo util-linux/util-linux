@@ -16,6 +16,8 @@ fallocate - preallocate or deallocate space to a file
 
 *fallocate* *-d* [*-o* _offset_] [*-l* _length_] _filename_
 
+*fallocate* *-r* [*-o* _offset_] _filename_
+
 *fallocate* *-x* [*-o* _offset_] *-l* _length filename_
 
 == DESCRIPTION
@@ -28,7 +30,7 @@ The exit status returned by *fallocate* is 0 on success and 1 on failure.
 
 The _length_ and _offset_ arguments may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB, and YB.
 
-The options *--collapse-range*, *--dig-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
+The options *--collapse-range*, *--dig-holes*, *--report-holes*, *--punch-hole*, *--zero-range*, *--write-zeroes* and *--posix* are mutually exclusive.
 
 *-c*, *--collapse-range*::
 Removes a byte range from a file, without leaving a hole. The byte range to be collapsed starts at _offset_ and continues for _length_ bytes. At the completion of the operation, the contents of the file starting at the location __offset__+_length_ will be appended at the location _offset_, and the file will be _length_ bytes smaller. The option *--keep-size* may not be specified for the collapse-range operation.
@@ -43,6 +45,19 @@ Detect and dig holes. This makes the file sparse in-place, without using extra d
 You can think of this option as doing a "*cp --sparse*" and then renaming the destination file to the original, without the need for extra disk space.
 +
 See *--punch-hole* for a list of supported filesystems.
+
+*-r*, *--report-holes*::
+Scan the file and report the distribution of holes without modifying it.
+Two kinds of holes are shown:
+file holes – blocks that the filesystem has not allocated (reported by SEEK_HOLE);
+data holes – ranges inside the file which are logically filled with zero bytes but still occupy disk space.
++
+For each hole the offset, end and size in bytes are printed in verbose mode, followed by a summary that gives the total size and percentage of the file that each hole type represents by default.
+If no offset is specified with *--offset*, the whole file is scanned.
++
+This option is read-only and can be used on any file to estimate how much space could be reclaimed by --dig-holes.
++
+See --punch-hole for a list of supported filesystems.
 
 *-i*, *--insert-range*::
 Insert a hole of _length_ bytes from _offset_, shifting existing data.
