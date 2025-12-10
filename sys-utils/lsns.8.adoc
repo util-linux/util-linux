@@ -115,7 +115,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *clone*(2),
 *namespaces*(7),
 *ioctl_ns*(2),
-*ip-netns*(8)
+*ip-netns*(8),
 *scols-filter*(5)
 
 include::man-common/bugreports.adoc[]
