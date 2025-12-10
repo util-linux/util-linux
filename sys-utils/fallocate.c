@@ -93,6 +93,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -n, --keep-size      maintain the apparent size of the file\n"), out);
 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+	fputs(_(" -r, --report-holes   report file holes and data holes info\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 	fputs(_(" -w, --write-zeroes   write zeroes and ensure allocation of a range\n"), out);
 	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
@@ -169,11 +170,14 @@ static int is_nul(void *buf, size_t bufsize)
 	return cbuf + bufsize < cp;
 }
 
-static void dig_holes(int fd, off_t file_off, off_t len)
+static void dig_holes(int fd, off_t file_off, off_t len, bool report)
 {
 	off_t file_end = len ? file_off + len : 0;
 	off_t hole_start = 0, hole_sz = 0;
 	uintmax_t ct = 0;
+	uintmax_t total_file_hole_sz = 0;
+	off_t file_size = 0;
+	off_t last_end = 0;
 	size_t  bufsz;
 	char *buf;
 	struct stat st;
@@ -194,6 +198,7 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
 	bufsz = st.st_blksize;
+	file_size = st.st_size;
 
 	if (lseek(fd, file_off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
@@ -212,6 +217,24 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 			break;
 
 		end = lseek(fd, off, SEEK_HOLE);
+		if (report && end > off && last_end < off) {
+			/* file hole position found from last_end to off */
+			off_t hole_size = off - last_end;
+			total_file_hole_sz += hole_size;
+			if (verbose)
+				printf("file hole: offset %ju - %ju: (%ju bytes)\n",
+						(uintmax_t)last_end, (uintmax_t)off, (uintmax_t)hole_size);
+		} else if (report && off > end) {
+			/* file hole position found from end to off */
+			off_t hole_size = off - end;
+			total_file_hole_sz += hole_size;
+			if (verbose)
+				printf("file hole: offset %ju - %ju: (%ju bytes)\n",
+						(uintmax_t)end, (uintmax_t)off, (uintmax_t)hole_size);
+		}
+		if (report) {
+			last_end = end;
+		}
 		if (file_end && end > file_end)
 			end = file_end;
 
@@ -238,8 +261,13 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 					hole_start = off;
 				hole_sz += rsz;
 			 } else if (hole_sz) {
-				xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-					   hole_start, hole_sz);
+				if (!report)
+					xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+						   hole_start, hole_sz);
+				if (report && verbose)
+					printf("data hole: offset %ju - %ju: (%ju bytes)\n",
+							(uintmax_t)hole_start, (uintmax_t)(hole_start+hole_sz),
+							(uintmax_t)hole_sz);
 				ct += hole_sz;
 				hole_sz = hole_start = 0;
 			}
@@ -257,23 +285,45 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 			off += rsz;
 		}
 		if (hole_sz) {
+			if (report && verbose)
+				printf("data hole: offset %ju - %ju: (%ju bytes)\n",
+						(uintmax_t)hole_start, (uintmax_t)(hole_start+hole_sz),
+						(uintmax_t)hole_sz);
 			off_t alloc_sz = hole_sz;
 			if (off >= end)
 				alloc_sz += st.st_blksize;		/* meet block boundary */
-			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-					hole_start, alloc_sz);
+			if (!report)
+				xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+						hole_start, alloc_sz);
 			ct += hole_sz;
+			if(report)
+				hole_sz = 0;
 		}
 		file_off = off;
 	}
 
 	free(buf);
 
-	if (verbose) {
+	if (!report && verbose) {
 		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ct);
 		fprintf(stdout, _("%s: %s (%ju bytes) converted to sparse holes.\n"),
 				filename, str, ct);
 		free(str);
+	}
+	if (report) {
+		printf("\nSummary:\n");
+		/* file holes summary */
+		double file_pct = (file_size == 0) ? 0.0 : (double)total_file_hole_sz / (double)file_size * 100.0;
+		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, total_file_hole_sz);
+		printf("file holes: %s (%ju bytes) %.2f%% of the file\n",
+			str, total_file_hole_sz, file_pct);
+		free(str);
+		/* data holes summary */
+		char *str1 = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ct);
+		double data_pct = (file_size == 0) ? 0.0 : (double)ct / (double)file_size * 100.0;
+		printf("data holes: %s (%ju bytes) %.2f%% of the file\n",
+			str1, ct, data_pct);
+		free(str1);
 	}
 }
 
@@ -283,6 +333,7 @@ int main(int argc, char **argv)
 	int	fd;
 	int	mode = 0;
 	int	dig = 0;
+	int	report = 0;
 	int	posix = 0;
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
@@ -294,6 +345,7 @@ int main(int argc, char **argv)
 	    { "punch-hole",     no_argument,       NULL, 'p' },
 	    { "collapse-range", no_argument,       NULL, 'c' },
 	    { "dig-holes",      no_argument,       NULL, 'd' },
+	    { "report-holes",   no_argument,       NULL, 'r' },
 	    { "insert-range",   no_argument,       NULL, 'i' },
 	    { "zero-range",     no_argument,       NULL, 'z' },
 	    { "write-zeroes",   no_argument,       NULL, 'w' },
@@ -316,7 +368,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "hvVncpdizwxl:o:", longopts, NULL))
+	while ((c = getopt_long(argc, argv, "hvVncpdrizwxl:o:", longopts, NULL))
 			!= -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -342,6 +394,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			mode |= FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+			break;
+		case 'r':
+			report = 1;
 			break;
 		case 'z':
 			mode |= FALLOC_FL_ZERO_RANGE;
@@ -379,7 +434,7 @@ int main(int argc, char **argv)
 			length = 0;
 		if (length < 0)
 			errx(EXIT_FAILURE, _("invalid length"));
-	} else {
+	} else if (!report) {
 		/* it's safer to require the range specification (--length --offset) */
 		if (length == -2LL)
 			errx(EXIT_FAILURE, _("no length argument specified"));
@@ -397,7 +452,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	if (dig)
-		dig_holes(fd, offset, length);
+		dig_holes(fd, offset, length, false);
+	else if (report)
+		dig_holes(fd, offset, 0, true);
 	else {
 		if (posix)
 			xposix_fallocate(fd, offset, length);
