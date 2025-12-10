@@ -62,7 +62,11 @@ uint64_t pidfd_get_inode(int pidfd)
  *         print an error message and kill the program.
  *
  */
+#ifdef USE_PIDFD_INO_SUPPORT
+int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino)
+#else
 int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)))
+#endif
 {
 	int pfd;
 
