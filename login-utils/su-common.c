@@ -264,7 +264,7 @@ static void chownmod_pty(struct su_context *su)
 	const char *grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 
 	if (grname && *grname) {
-		struct group *gr = getgrnam(grname);
+		struct group *gr = ul_getgrp_str(grname);
 		if (gr)	/* group by name */
 			gid = gr->gr_gid;
 		else	/* group by ID */
@@ -967,7 +967,7 @@ static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 		        "specifying more than %d supplemental groups is not possible",
 			NGROUPS_MAX - 1), NGROUPS_MAX - 1);
 
-	gr = getgrnam(name);
+	gr = ul_getgrp_str(name);
 	if (!gr)
 		errx(EXIT_FAILURE, _("group %s does not exist"), name);
 
@@ -1151,7 +1151,7 @@ int su_main(int argc, char **argv, int mode)
 	logindefs_set_loader(load_config, (void *) su);
 	init_tty(su);
 
-	su->pwd = xgetpwnam(su->new_user, &su->pwdbuf);
+	su->pwd = xgetuserpw(su->new_user, &su->pwdbuf);
 	if (!su->pwd
 	    || !su->pwd->pw_passwd
 	    || !su->pwd->pw_name || !*su->pwd->pw_name

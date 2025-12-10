@@ -233,6 +233,7 @@ test_timeutils_LDADD = $(LDADD) libcommon.la
 
 test_pwdutils_SOURCES = lib/pwdutils.c
 test_pwdutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_pwdutils_LDADD = $(LDADD) libcommon.la
 
 test_remove_env_SOURCES = lib/env.c
 test_remove_env_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_ENV
