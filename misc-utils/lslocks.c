@@ -608,16 +608,105 @@ static void xstrcoholder(char **str, struct lock *l)
 		    l->pid, l->cmdname, l->fd);
 }
 
-static void add_scols_line(struct lslocks *lslocks,
-			   struct libscols_table *table, struct lock *l)
+static char *get_data(struct lslocks *lslocks, struct lock *l, int num)
 {
-	struct libscols_line *line;
+	char *str = NULL;
+
 	/*
 	 * Whenever cmdname or filename is NULL it is most
 	 * likely  because there's no read permissions
 	 * for the specified process.
 	 */
 	const char *notfnd = "";
+
+	switch (get_column_id(num)) {
+	case COL_SRC:
+		xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
+		break;
+	case COL_PID:
+		xasprintf(&str, "%d", l->pid);
+		break;
+	case COL_TYPE:
+		xasprintf(&str, "%s", l->type);
+		break;
+	case COL_INODE:
+		xasprintf(&str, "%ju", (uintmax_t) l->inode);
+		break;
+	case COL_MAJMIN:
+		if (lslocks->json || lslocks->raw)
+			xasprintf(&str, "%u:%u", major(l->dev), minor(l->dev));
+		else
+			xasprintf(&str, "%3u:%-3u", major(l->dev), minor(l->dev));
+		break;
+	case COL_SIZE:
+		if (!l->size)
+			break;
+		if (lslocks->bytes)
+			xasprintf(&str, "%ju", l->size);
+		else
+			str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
+		break;
+	case COL_MODE:
+		xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
+		break;
+	case COL_M:
+		xasprintf(&str, "%d", l->mandatory ? 1 : 0);
+		break;
+	case COL_START:
+		xasprintf(&str, "%jd", l->start);
+		break;
+	case COL_END:
+		xasprintf(&str, "%jd", l->end);
+		break;
+	case COL_PATH:
+		xasprintf(&str, "%s", l->path ? l->path : notfnd);
+		break;
+	case COL_BLOCKER:
+	{
+		pid_t bl = l->blocked && l->id ?
+			get_blocker(l->id, &lslocks->proc_locks) : 0;
+		if (bl)
+			xasprintf(&str, "%d", (int) bl);
+		break;
+	}
+	case COL_HOLDERS:
+	{
+		struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+		struct lock_tnode **head = tfind(&tmp, &lslocks->pid_locks, lock_tnode_compare);
+		struct list_head *p;
+
+		if (!head)
+			break;
+
+		list_for_each(p, &(*head)->chain) {
+			struct lock *m = list_entry(p, struct lock, locks);
+
+			if (!is_holder(l, m))
+				continue;
+
+			if (str)
+				xstrputc(&str, '\n');
+			xstrcoholder(&str, m);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return str;
+}
+
+static void set_line_data(struct libscols_line *line, size_t i, char *data)
+{
+	if (data && scols_line_refer_data(line, i, data))
+		err(EXIT_FAILURE, _("failed to add output data"));
+}
+
+static void add_scols_line(struct lslocks *lslocks,
+			   struct libscols_table *table, struct lock *l)
+{
+	struct libscols_line *line;
 
 	assert(l);
 	assert(table);
@@ -627,85 +716,9 @@ static void add_scols_line(struct lslocks *lslocks,
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (size_t i = 0; i < ncolumns; i++) {
-		char *str = NULL;
-
-		switch (get_column_id(i)) {
-		case COL_SRC:
-			xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
-			break;
-		case COL_PID:
-			xasprintf(&str, "%d", l->pid);
-			break;
-		case COL_TYPE:
-			xasprintf(&str, "%s", l->type);
-			break;
-		case COL_INODE:
-			xasprintf(&str, "%ju", (uintmax_t) l->inode);
-			break;
-		case COL_MAJMIN:
-			if (lslocks->json || lslocks->raw)
-				xasprintf(&str, "%u:%u", major(l->dev), minor(l->dev));
-			else
-				xasprintf(&str, "%3u:%-3u", major(l->dev), minor(l->dev));
-			break;
-		case COL_SIZE:
-			if (!l->size)
-				break;
-			if (lslocks->bytes)
-				xasprintf(&str, "%ju", l->size);
-			else
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
-			break;
-		case COL_MODE:
-			xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
-			break;
-		case COL_M:
-			xasprintf(&str, "%d", l->mandatory ? 1 : 0);
-			break;
-		case COL_START:
-			xasprintf(&str, "%jd", l->start);
-			break;
-		case COL_END:
-			xasprintf(&str, "%jd", l->end);
-			break;
-		case COL_PATH:
-			xasprintf(&str, "%s", l->path ? l->path : notfnd);
-			break;
-		case COL_BLOCKER:
-		{
-			pid_t bl = l->blocked && l->id ?
-						get_blocker(l->id, &lslocks->proc_locks) : 0;
-			if (bl)
-				xasprintf(&str, "%d", (int) bl);
-			break;
-		}
-		case COL_HOLDERS:
-		{
-			struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
-			struct lock_tnode **head = tfind(&tmp, &lslocks->pid_locks, lock_tnode_compare);
-			struct list_head *p;
-
-			if (!head)
-				break;
-
-			list_for_each(p, &(*head)->chain) {
-				struct lock *m = list_entry(p, struct lock, locks);
-
-				if (!is_holder(l, m))
-					continue;
-
-				if (str)
-					xstrputc(&str, '\n');
-				xstrcoholder(&str, m);
-			}
-			break;
-		}
-		default:
-			break;
-		}
-
-		if (str && scols_line_refer_data(line, i, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
+		char *str = get_data(lslocks, l, i);
+		if (str)
+			set_line_data(line, i, str);
 	}
 }
 
