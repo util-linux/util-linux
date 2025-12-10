@@ -61,6 +61,16 @@ Output all available columns.
 *-p*, *--pid* _pid_::
 Display only the locks held by the process with this _pid_.
 
+*-Q*, *--filter* _expr_::
+Print only the locks that meet the conditions specified by the expr.
++
+This feature is EXPERIMENTAL. See also *scols-filter*(5). For example
+exclude POSIX type locks, but print all READ mode ones locks on files
+with .qcow2 as extension:
+____
+ lslocks --filter 'TYPE != "POSIX" and MODE == "READ" and PATH =~ ".*\.qcow2"'
+____
+
 *-r*, *--raw*::
 Use the raw output format.
 
@@ -139,7 +149,8 @@ mailto:cgoesc2@wgu.edu[Christian Goeschel Ndjomouo]
 
 *flock*(1),
 *fcntl*(2),
-*lockf*(3)
+*lockf*(3),
+*scols-filter*(5)
 
 include::man-common/bugreports.adoc[]
 

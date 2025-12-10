@@ -96,6 +96,15 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
+static inline void add_column(int id)
+{
+	if (ncolumns >= ARRAY_SIZE(columns))
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns"),
+				ARRAY_SIZE(columns) - 1);
+	columns[ncolumns++] = id;
+}
+
 struct lock {
 	struct list_head locks;
 
@@ -703,10 +712,32 @@ static void set_line_data(struct libscols_line *line, size_t i, char *data)
 		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
+struct filler_data {
+	struct lslocks *lslocks;
+	struct lock *l;
+};
+
+static int filter_filler_cb(struct libscols_filter *filter __attribute__((__unused__)),
+			    struct libscols_line *line,
+			    size_t column_index,
+			    void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *)userdata;
+	char *data = get_data(fid->lslocks, fid->l, column_index);
+	if (data)
+		set_line_data(line, column_index, data);
+	return 0;
+}
+
 static void add_scols_line(struct lslocks *lslocks,
-			   struct libscols_table *table, struct lock *l)
+			   struct libscols_table *table, struct libscols_filter *filter,
+			   struct lock *l)
 {
 	struct libscols_line *line;
+	struct filler_data fid = {
+		.lslocks = lslocks,
+		.l = l,
+	};
 
 	assert(l);
 	assert(table);
@@ -715,8 +746,27 @@ static void add_scols_line(struct lslocks *lslocks,
 	if (!line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
+	if (filter) {
+		int status = 0;
+		scols_filter_set_filler_cb(filter,
+					   filter_filler_cb, (void *)&fid);
+
+		if (scols_line_apply_filter(line, filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+
+		if (status == 0) {
+			scols_table_remove_line(table, line);
+			return;
+		}
+	}
+
 	for (size_t i = 0; i < ncolumns; i++) {
-		char *str = get_data(lslocks, l, i);
+		char *str;
+
+		if (scols_line_is_filled(line, i))
+			continue;
+
+		str = get_data(lslocks, l,  i);
 		if (str)
 			set_line_data(line, i, str);
 	}
@@ -763,7 +813,8 @@ static int get_json_type_for_column(int column_id, int bytes)
 	}
 }
 
-static struct libscols_table *init_scols_table(int raw, int json, int no_headings, int bytes)
+static struct libscols_table *init_scols_table(int raw, int json, int no_headings, int bytes,
+					       bool use_filter)
 {
 	struct libscols_table *table;
 
@@ -794,7 +845,7 @@ static struct libscols_table *init_scols_table(int raw, int json, int no_heading
 			scols_column_set_safechars(cl, "\n");
 		}
 
-		if (json) {
+		if (json || use_filter) {
 			int id = get_column_id(i);
 			int json_type = get_json_type_for_column(id, bytes);
 			scols_column_set_json_type(cl, json_type);
@@ -804,7 +855,8 @@ static struct libscols_table *init_scols_table(int raw, int json, int no_heading
 	return table;
 }
 
-static int show_locks(struct lslocks *lslocks, struct libscols_table *table)
+static int show_locks(struct lslocks *lslocks, struct libscols_table *table,
+		      struct libscols_filter *filter)
 {
 	struct list_head *p;
 
@@ -815,7 +867,8 @@ static int show_locks(struct lslocks *lslocks, struct libscols_table *table)
 		if (lslocks->target_pid && lslocks->target_pid != l->pid)
 			continue;
 
-		add_scols_line(lslocks, table, l);
+
+		add_scols_line(lslocks, table, filter, l);
 	}
 
 	scols_print_table(table);
@@ -843,6 +896,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>    output columns (see --list-columns)\n"), out);
 	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
+	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 
@@ -877,6 +931,61 @@ static void __attribute__((__noreturn__)) list_columns(struct lslocks *lslocks)
 	exit(EXIT_SUCCESS);
 }
 
+static struct libscols_filter *new_filter(const char *query)
+{
+	struct libscols_filter *f;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (query && scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+		     scols_filter_get_errmsg(f));
+	return f;
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *filter,
+			      int bytes)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
+	int nerrs = 0;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(filter, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci) {
+			nerrs++;
+			continue;   /* report all unknown columns */
+		}
+		if (!col) {
+			int json_type = get_json_type_for_column(id, bytes);
+			add_column(id);
+			col = scols_table_new_column(tb, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE, _("failed to allocate output column"));
+
+			scols_column_set_json_type(col, json_type);
+		}
+
+		scols_filter_assign_column(filter, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+
+	if (!nerrs)
+		return;
+
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
 static void lslocks_init(struct lslocks *lslocks)
 {
 	memset(lslocks, 0, sizeof(*lslocks));
@@ -895,6 +1004,7 @@ int main(int argc, char *argv[])
 	struct lslocks lslocks;
 	int c, rc = 0, collist = 0;
 	struct libscols_table *table;
+	struct libscols_filter *filter = NULL;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -911,6 +1021,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "noinaccessible", no_argument, NULL, 'i' },
+		{ "filter",     required_argument, NULL, 'Q' },
 		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -929,7 +1040,7 @@ int main(int argc, char *argv[])
 	lslocks_init(&lslocks);
 
 	while ((c = getopt_long(argc, argv,
-				"biJp:o:nruhVH", long_opts, NULL)) != -1) {
+				"biJp:o:nruhVHQ:", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -966,6 +1077,9 @@ int main(int argc, char *argv[])
 		case 'H':
 			collist = 1;
 			break;
+		case 'Q':
+			filter = new_filter(optarg);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -998,7 +1112,10 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
-	table = init_scols_table(lslocks.raw, lslocks.json, lslocks.no_headings, lslocks.bytes);
+	table = init_scols_table(lslocks.raw, lslocks.json, lslocks.no_headings, lslocks.bytes,
+				 (bool)filter);
+	if (filter)
+		init_scols_filter(table, filter, lslocks.bytes);
 
 	/* get_pids_locks() get locks related information from "lock:" fields
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
@@ -1010,8 +1127,9 @@ int main(int argc, char *argv[])
 	mnt_unref_table(lslocks.tab);
 
 	if (!rc && !list_empty(&lslocks.proc_locks))
-		rc = show_locks(&lslocks, table);
+		rc = show_locks(&lslocks, table, filter);
 
+	scols_unref_filter(filter);
 	scols_unref_table(table);
 
 	lslocks_free(&lslocks);
