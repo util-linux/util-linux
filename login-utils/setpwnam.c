@@ -168,6 +168,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	/* finally:  success */
 	ulckpwdf();
 	free(linebuf);
+	free(tmpname);
 	return 0;
 
  fail:
