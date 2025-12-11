@@ -310,6 +310,7 @@ int main(int argc, char **argv)
 		{"three", no_argument, NULL, '3'},
 		{"sunday", no_argument, NULL, 's'},
 		{"monday", no_argument, NULL, 'm'},
+		{"saturday", no_argument, NULL, 't'},
 		{"julian", no_argument, NULL, 'j'},
 		{"months", required_argument, NULL, 'n'},
 		{"span", no_argument, NULL, 'S'},
@@ -372,7 +373,7 @@ int main(int argc, char **argv)
 		ctl.weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % DAYS_IN_WEEK;
 	}
 #endif
-	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvc:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "13mjnt:sSywYvc:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -386,6 +387,9 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			ctl.weekstart = SUNDAY;		/* default */
+			break;
+		case 't':
+			ctl.weekstart = SATURDAY;
 			break;
 		case 'm':
 			ctl.weekstart = MONDAY;
@@ -1368,6 +1372,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -S, --span            span the date when displaying multiple months\n"), out);
 	fputs(_(" -s, --sunday          Sunday as first day of week\n"), out);
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
+	fputs(_(" -t, --saturday        Saturday as first day of week\n"), out);
 	fputs(_(" -j, --julian          use day-of-year for all calendars\n"), out);
 	fputs(_("     --reform <val>    Gregorian reform date (1752|gregorian|iso|julian)\n"), out);
 	fputs(_("     --iso             alias for --reform=iso\n"), out);
