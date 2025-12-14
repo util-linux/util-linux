@@ -121,6 +121,9 @@ Run the program only after the current effective user and group IDs have been ma
 *-c*, *--map-current-user*::
 Run the program only after the current effective user and group IDs have been mapped to the same UID and GID in the newly created user namespace. This option implies *--setgroups=deny* and *--user*. This option is equivalent to *--map-user=$(id -ru) --map-group=$(id -rg)*.
 
+*--owner* __uid__**:**__gid__::
+Set the owner user and group when creating a user namespace. These determine which user in the parent namespace has CAP_SYS_ADMIN in the new child namespace and can *setns*(2) into it. This option allows a privileged user to create a namespace on behalf of an unprivileged one, using its privileges to map ids and/or bind mount the namespace into the filesystem. It implies *--user*.
+
 *--propagation* **private**|**shared**|**slave**|**unchanged**::
 Recursively set the mount propagation flag in the new mount namespace. The default is to set the propagation to _private_. It is possible to disable this feature with the argument *unchanged*. The option is silently ignored when the mount namespace (*--mount*) is not requested.
 

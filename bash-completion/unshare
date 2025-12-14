@@ -33,6 +33,7 @@ _unshare_module()
 				--mount-proc
 				--map-current-user
 				--map-root-user
+				--owner
 				--propagation
 				--setgroups
 				--help
