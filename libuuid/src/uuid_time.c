@@ -60,15 +60,22 @@
 /* prototype to make compiler happy */
 time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv);
 
-static uint64_t gregorian_to_unix(uint64_t ts)
+static int64_t gregorian_to_unix(uint64_t ts)
 {
-	return ts - ((((uint64_t) 0x01B21DD2) << 32) + 0x13814000);
+    const uint64_t offset = 0x01B21DD213814000ULL;
+
+    if (ts < offset) {
+        errno = EOVERFLOW;
+        return -1;
+    }
+
+    return ts - offset;
 }
 
 static void uuid_time_v1(const struct uuid *uuid, struct timeval *tv)
 {
 	uint32_t high;
-	uint64_t clock_reg;
+	int64_t clock_reg;
 
 	high = uuid->time_mid | ((uuid->time_hi_and_version & 0xFFF) << 16);
 	clock_reg = uuid->time_low | ((uint64_t) high << 32);
@@ -80,7 +87,7 @@ static void uuid_time_v1(const struct uuid *uuid, struct timeval *tv)
 
 static void uuid_time_v6(const struct uuid *uuid, struct timeval *tv)
 {
-	uint64_t clock_reg;
+	int64_t clock_reg;
 
 	clock_reg = uuid->time_low;
 	clock_reg <<= 16;
