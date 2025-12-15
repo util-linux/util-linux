@@ -721,11 +721,11 @@ static void rem_tnode(void *node)
 	free(node);
 }
 
-static int get_json_type_for_column(int column_id, int representing_in_bytes)
+static int get_json_type_for_column(int column_id)
 {
 	switch (column_id) {
 	case COL_SIZE:
-		if (!representing_in_bytes)
+		if (!bytes)
 			return SCOLS_JSON_STRING;
 		FALLTHROUGH;
 	case COL_PID:
@@ -776,7 +776,7 @@ static struct libscols_table *init_scols_table(void)
 
 		if (json) {
 			int id = get_column_id(i);
-			int json_type = get_json_type_for_column(id, bytes);
+			int json_type = get_json_type_for_column(id);
 			scols_column_set_json_type(cl, json_type);
 		}
 
@@ -841,7 +841,7 @@ static void __attribute__((__noreturn__)) list_columns(void)
 
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
 		if (i != COL_SIZE) {
-			int json_type = get_json_type_for_column(i, bytes);
+			int json_type = get_json_type_for_column(i);
 			xcolumn_list_table_append_line(col_tb, infos[i].name,
 						       json_type, NULL,
 						       _(infos[i].help));
