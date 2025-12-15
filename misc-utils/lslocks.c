@@ -617,7 +617,8 @@ static void xstrcoholder(char **str, struct lock *l)
 		    l->pid, l->cmdname, l->fd);
 }
 
-static char *get_data(struct lslocks *lslocks, struct lock *l, int num)
+static char *get_data(struct lslocks *lslocks, struct lock *l, int num,
+		      uint64_t *rawdata)
 {
 	char *str = NULL;
 
@@ -654,6 +655,8 @@ static char *get_data(struct lslocks *lslocks, struct lock *l, int num)
 			xasprintf(&str, "%ju", l->size);
 		else
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
+		if (rawdata)
+			*rawdata = l->size;
 		break;
 	case COL_MODE:
 		xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
@@ -715,7 +718,23 @@ static void set_line_data(struct libscols_line *line, size_t i, char *data)
 struct filler_data {
 	struct lslocks *lslocks;
 	struct lock *l;
+	struct libscols_table *table;
 };
+
+/* stores data to scols cell userdata (invisible and independent on output)
+ * to make the original values accessible for sort functions
+ */
+static void set_rawdata_u64(struct libscols_line *ln, int col, uint64_t x)
+{
+	struct libscols_cell *ce = scols_line_get_cell(ln, col);
+	uint64_t *data;
+
+	if (!ce)
+		return;
+	data = xmalloc(sizeof(uint64_t));
+	*data = x;
+	scols_cell_set_userdata(ce, data);
+}
 
 static int filter_filler_cb(struct libscols_filter *filter __attribute__((__unused__)),
 			    struct libscols_line *line,
@@ -723,10 +742,35 @@ static int filter_filler_cb(struct libscols_filter *filter __attribute__((__unus
 			    void *userdata)
 {
 	struct filler_data *fid = (struct filler_data *)userdata;
-	char *data = get_data(fid->lslocks, fid->l, column_index);
-	if (data)
+	struct libscols_column *cl = scols_table_get_column(fid->table, column_index);
+	bool needs_rawdata = !!scols_column_has_data_func(cl);
+	uint64_t rawdata = (uint64_t) -1;
+	char *data = get_data(fid->lslocks, fid->l, column_index,
+			      needs_rawdata ? &rawdata : NULL);
+	if (data) {
 		set_line_data(line, column_index, data);
+		if (needs_rawdata && rawdata != (uint64_t) -1)
+			set_rawdata_u64(line, column_index, rawdata);
+	}
 	return 0;
+}
+
+static void unref_line_rawdata(struct libscols_line *ln, struct libscols_table *tb)
+{
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl = scols_table_get_column(tb, i);
+		struct libscols_cell *ce;
+		void *data;
+
+		if (!scols_column_has_data_func(cl))
+			continue;
+
+		ce = scols_line_get_column_cell(ln, cl);
+		data = scols_cell_get_userdata(ce);
+		free(data);
+	}
 }
 
 static void add_scols_line(struct lslocks *lslocks,
@@ -737,6 +781,7 @@ static void add_scols_line(struct lslocks *lslocks,
 	struct filler_data fid = {
 		.lslocks = lslocks,
 		.l = l,
+		.table = table,
 	};
 
 	assert(l);
@@ -755,6 +800,7 @@ static void add_scols_line(struct lslocks *lslocks,
 			err(EXIT_FAILURE, _("failed to apply filter"));
 
 		if (status == 0) {
+			unref_line_rawdata(line, table);
 			scols_table_remove_line(table, line);
 			return;
 		}
@@ -766,7 +812,7 @@ static void add_scols_line(struct lslocks *lslocks,
 		if (scols_line_is_filled(line, i))
 			continue;
 
-		str = get_data(lslocks, l,  i);
+		str = get_data(lslocks, l,  i, NULL);
 		if (str)
 			set_line_data(line, i, str);
 	}
@@ -944,6 +990,13 @@ static struct libscols_filter *new_filter(const char *query)
 	return f;
 }
 
+static void *get_u64_cell(const struct libscols_column *cl __attribute__((__unused__)),
+			  struct libscols_cell *ce,
+			  void *data __attribute__((__unused__)))
+{
+	return scols_cell_get_userdata(ce);
+}
+
 static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *filter,
 			      int bytes)
 {
@@ -975,6 +1028,11 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 			scols_column_set_json_type(col, json_type);
 		}
 
+		if (id == COL_SIZE && !bytes) {
+			scols_column_set_data_type(col, SCOLS_DATA_U64);
+			scols_column_set_data_func(col, get_u64_cell, NULL);
+		}
+
 		scols_filter_assign_column(filter, itr, name, col);
 	}
 
@@ -984,6 +1042,20 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 		return;
 
 	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
+static void unref_table_rawdata(struct libscols_table *tb)
+{
+	struct libscols_iter *itr;
+	struct libscols_line *ln;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		return;
+	while (scols_table_next_line(tb, itr, &ln) == 0)
+		unref_line_rawdata(ln, tb);
+
+	scols_free_iter(itr);
 }
 
 static void lslocks_init(struct lslocks *lslocks)
@@ -1130,6 +1202,7 @@ int main(int argc, char *argv[])
 		rc = show_locks(&lslocks, table, filter);
 
 	scols_unref_filter(filter);
+	unref_table_rawdata(table);
 	scols_unref_table(table);
 
 	lslocks_free(&lslocks);
