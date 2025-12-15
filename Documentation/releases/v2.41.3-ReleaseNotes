@@ -1,0 +1,83 @@
+util-linux 2.41.3 Release Notes
+===============================
+
+bash-completion:
+    - (mount) add missing options (by Christian Goeschel Ndjomouo)
+    - add lsfd (by Karel Zak)
+    - add blkpr (by Karel Zak)
+    - add bits to dist tarball (by Karel Zak)
+
+dmesg:
+    - fix const qualifier warnings in parse_callerid (by Karel Zak)
+
+eject:
+    - fix const qualifier warning in read_speed (by Karel Zak)
+
+enosys:
+    - fix const qualifier warning in parse_block (by Karel Zak)
+
+libblkid:
+    - fix const qualifier warning in blkid_parse_tag_string (by Karel Zak)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+
+libfdisk:
+    - (dos) fix off-by-one in maximum last sector calculation (by Karel Zak)
+
+liblastlog2:
+    - fix operator precedence in conditional assignments (by Karel Zak)
+
+lib, lscpu:
+    - fix const qualifier discarded warnings in bsearch (by Karel Zak)
+
+libmount:
+    - fix const qualifier warning in mnt_parse_mountinfo_line (by Karel Zak)
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+logger:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+login-utils:
+    - fix setpwnam() buffer use [CVE-2025-14104] (by Karel Zak)
+
+losetup:
+    - sort 'O' correctly for the mutual-exclusive check to work (by Benno Schulenberg)
+
+lscpu:
+    - use maximum CPU speed from DMI, avoid duplicate version string (by Karel Zak)
+    - Add a few missing Arm CPU identifiers (by Jonathan Thackray)
+
+lsfd:
+    - fix memory leak related to stat_error_class (by Masatake YAMATO)
+    - (bugfix) use PRIu32 for prining lport of netlink socket (by Masatake YAMATO)
+    - fix const qualifier warning in strnrstr (by Karel Zak)
+    - fix const qualifier warning in new_counter_spec (by Karel Zak)
+    - fix bsearch macro usage with glibc C23 (by Cristian Rodríguez)
+
+lsns:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+namei:
+    - fix const qualifier warning in readlink_to_namei (by Karel Zak)
+
+partx:
+    - fix const qualifier warning in get_max_partno (by Karel Zak)
+
+po:
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+
+umount:
+    - consider helper return status for success message (by Christian Goeschel Ndjomouo)
+
+wdctl:
+    - remove -d option leftover (by Munehisa Kamata)
+
+whereis:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+Misc:
+    - Fix memory leak in setpwnam() (by yao zhang)
+
