@@ -1075,7 +1075,7 @@ int main(int argc, char *argv[])
 	/* clear any inherited settings */
 	signal(SIGCHLD, SIG_DFL);
 
-	if (npersists && (unshare_flags & CLONE_NEWNS))
+	if (npersists && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 		pid_bind = bind_ns_files_from_child(&fd_bind);
 
 	if (usermap || groupmap)
@@ -1130,7 +1130,7 @@ int main(int argc, char *argv[])
 
 	if (npersists && (pid || !forkit)) {
 		/* run in parent */
-		if (pid_bind && (unshare_flags & CLONE_NEWNS))
+		if (pid_bind && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 			sync_with_child(pid_bind, fd_bind);
 		else
 			/* simple way, just bind */
