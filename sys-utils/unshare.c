@@ -660,8 +660,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
  *
  * Return: The pid of the child.
  */
-static pid_t map_ids_from_child(int *fd, uid_t mapuser,
-				struct map_range *usermap, gid_t mapgroup,
+static pid_t map_ids_from_child(int *fd, struct map_range *usermap,
 				struct map_range *groupmap)
 {
 	pid_t child, pid = 0;
@@ -670,11 +669,6 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	child = fork_and_wait(fd);
 	if (child)
 		return child;
-
-	if (usermap)
-		add_single_map_range(&usermap, geteuid(), mapuser);
-	if (groupmap)
-		add_single_map_range(&groupmap, getegid(), mapgroup);
 
 	if (geteuid() == 0) {
 		if (usermap)
@@ -769,6 +763,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
 	fputs(_(" --map-groups <innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
+	fputs(_(" --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
@@ -804,6 +799,7 @@ int main(int argc, char *argv[])
 		OPT_MAPGROUPS,
 		OPT_MAPAUTO,
 		OPT_MAPSUBIDS,
+		OPT_OWNER,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -830,6 +826,7 @@ int main(int argc, char *argv[])
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
 		{ "map-subids",    no_argument,       NULL, OPT_MAPSUBIDS   },
+		{ "owner",         required_argument, NULL, OPT_OWNER       },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
 		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
@@ -846,8 +843,8 @@ int main(int argc, char *argv[])
 	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
 	int c, forkit = 0;
-	uid_t mapuser = -1;
-	gid_t mapgroup = -1;
+	uid_t mapuser = -1, owneruser = -1;
+	gid_t mapgroup = -1, ownergroup = -1;
 	struct map_range *usermap = NULL;
 	struct map_range *groupmap = NULL;
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
@@ -991,6 +988,12 @@ int main(int argc, char *argv[])
 			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 1));
 			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 1));
 			break;
+		case OPT_OWNER:
+			unshare_flags |= CLONE_NEWUSER;
+			if (sscanf(optarg, "%u:%u%n", &owneruser, &ownergroup,
+					&c) < 2 || optarg[c])
+				errx(EXIT_FAILURE, _("failed to parse owner"));
+			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
 			break;
@@ -1062,9 +1065,25 @@ int main(int argc, char *argv[])
 	if (npersists && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 		pid_bind = bind_ns_files_from_child(&fd_bind);
 
+	if (usermap || (mapuser != (uid_t) -1 && owneruser != (uid_t) -1)) {
+		add_single_map_range(&usermap, real_euid, mapuser);
+		mapuser = -1;
+	}
+
+	if (groupmap || (mapgroup != (uid_t) -1 && ownergroup != (uid_t) -1)) {
+		add_single_map_range(&groupmap, real_egid, mapgroup);
+		mapgroup = -1;
+	}
+
 	if (usermap || groupmap)
-		pid_idmap = map_ids_from_child(&fd_idmap, mapuser, usermap,
-					       mapgroup, groupmap);
+		pid_idmap = map_ids_from_child(&fd_idmap, usermap, groupmap);
+
+	if (ownergroup != (gid_t) -1 && setgroups(0, NULL) != 0)
+		err(EXIT_FAILURE, _("setgroups failed"));
+	if (ownergroup != (gid_t) -1 && setgid(ownergroup) != 0)
+		err(EXIT_FAILURE, _("setgid() failed"));
+	if (owneruser != (uid_t) -1 && setuid(owneruser) != 0)
+		err(EXIT_FAILURE, _("setuid() failed"));
 
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
@@ -1175,14 +1194,14 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-        if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
+        if (mapuser != MAX_OF_UINT_TYPE(uid_t))
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
 
         /* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
          * has been disabled unless /proc/self/setgroups is written
          * first to permanently disable the ability to call setgroups
          * in that user namespace. */
-	if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
+	if (mapgroup != MAX_OF_UINT_TYPE(gid_t)) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
 			errx(EXIT_FAILURE, _("options --setgroups=allow and "
 					"--map-group are mutually exclusive"));
