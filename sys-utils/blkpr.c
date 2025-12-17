@@ -103,6 +103,12 @@ static const struct type_string pr_command[] = {
 	{IOC_PR_CLEAR,         "clear",
 	"  * clear: This command unregisters both key and any other reservation\n"
 	"    key registered with the device and drops any existing reservation.\n"},
+
+#ifdef IOC_PR_READ_KEYS
+	{IOC_PR_READ_KEYS,     "read-keys",
+	"  * read-keys: This command lists reservation keys currently registered\n"
+	"    with the device.\n"},
+#endif
 };
 
 static const struct type_string pr_flag[] = {
@@ -151,6 +157,41 @@ PARSE(pr_type)
 PARSE(pr_command)
 PARSE(pr_flag)
 
+#ifdef IOC_PR_READ_KEYS
+static int do_pr_read_keys(int fd)
+{
+	struct pr_read_keys pr_rk;
+	uint32_t num_keys = 8;
+	uint64_t *keys = NULL;
+	int ret;
+
+	/* Loop to grow keys[] until it is large enough */
+	do {
+		num_keys *= 2;
+		keys = xreallocarray(keys, num_keys, sizeof(keys[0]));
+
+		pr_rk.keys_ptr = (uintptr_t)keys;
+		pr_rk.num_keys = num_keys;
+
+		ret = ioctl(fd, IOC_PR_READ_KEYS, &pr_rk);
+		if (ret)
+			goto out;
+	} while (pr_rk.num_keys > num_keys);
+
+	if (pr_rk.num_keys) {
+		for (uint32_t i = 0; i < pr_rk.num_keys; i++) {
+			printf(_("%#" PRIx64 "\n"), (uint64_t)keys[i]);
+		}
+	} else {
+		printf(_("No registered keys\n"));
+	}
+
+out:
+	free(keys);
+	return ret;
+}
+#endif /* IOC_PR_READ_KEYS */
+
 static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
 {
 	struct pr_registration pr_reg;
@@ -190,6 +231,11 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 		pr_clr.flags = flag;
 		ret = ioctl(fd, op, &pr_clr);
 		break;
+#ifdef IOC_PR_READ_KEYS
+	case IOC_PR_READ_KEYS:
+		ret = do_pr_read_keys(fd);
+		break;
+#endif
 	default:
 		errno = EINVAL;
 		err(EXIT_FAILURE, _("unknown command"));
