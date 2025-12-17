@@ -325,10 +325,10 @@ static int chmem_config_size(struct chmem_desc *desc, int configure)
 	if (!desc->have_memconfig) {
 		if (configure)
 			fprintf(stdout,
-				_("Skip configuration. Use chmem -e instead.\n"));
+				_("Cannot configure. Use -e instead.\n"));
 		else
 			fprintf(stdout,
-				_("Skip deconfiguration. Use chmem -d instead\n"));
+				_("Cannot deconfigure. Use -d instead.\n"));
 		return -1;
 	}
 	size = desc->size;
@@ -363,10 +363,10 @@ static int chmem_config_range(struct chmem_desc *desc, int configure)
 	if (!desc->have_memconfig) {
 		if (configure)
 			fprintf(stdout,
-				_("Skip configuration. Use chmem -e instead.\n"));
+				_("Cannot configure. Use -e instead.\n"));
 		else
 			fprintf(stdout,
-				_("Skip deconfiguration. Use chmem -d instead\n"));
+				_("Cannot deconfigure. Use -d instead.\n"));
 		return -1;
 	}
 	todo = desc->end - desc->start + 1;

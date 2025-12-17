@@ -246,7 +246,7 @@ int main(int argc, char **argv)
 	/* Need to open O_NONBLOCK in case ABORTOPEN is already set
 	 * and printer is off or off-line or in an error condition.
 	 * Otherwise we would abort...
-         */
+	 */
 	if (fd < 0)
 		err(EXIT_FAILURE, "%s", filename);
 
@@ -264,7 +264,7 @@ int main(int argc, char **argv)
 	 */
 	if (LPGETIRQ >= 0x0600 && ioctl(fd, LPGETIRQ, &irq) < 0
 	    && errno == EINVAL)
-	        /* We don't understand the new ioctls */
+		/* We don't understand the new ioctls */
 		offset = 0x0600;
 
 	cmds = cmdst;

@@ -116,7 +116,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			colormode = UL_COLORMODE_AUTO;
 			if (optarg)
 				colormode = colormode_or_err(optarg);
-                        break;
+			break;
 		case 'n':
 			hex->length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;

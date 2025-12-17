@@ -1760,7 +1760,7 @@ static int ui_refresh(struct cfdisk *cf)
 {
 	struct fdisk_label *lb;
 	char *id = NULL;
-        uint64_t bytes = fdisk_get_nsectors(cf->cxt) * fdisk_get_sector_size(cf->cxt);
+	uint64_t bytes = fdisk_get_nsectors(cf->cxt) * fdisk_get_sector_size(cf->cxt);
 	char *strsz;
 
 	if (!ui_enabled)
@@ -2783,9 +2783,9 @@ int main(int argc, char *argv[])
 			if (optarg)
 				colormode = colormode_or_err(optarg);
 			break;
-                case 'r':
-                        read_only = 1;
-                        break;
+		case 'r':
+			read_only = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'z':

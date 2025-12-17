@@ -183,7 +183,7 @@ char *sysfs_blkdev_get_name(struct path_cxt *pc, char *buf, size_t bufsiz)
 	char *name;
 	ssize_t	sz;
 
-        /* read /sys/dev/block/<maj:min> link */
+	/* read /sys/dev/block/<maj:min> link */
 	sz = ul_path_readlink(pc, link, sizeof(link), NULL);
 	if (sz < 0)
 		return NULL;
@@ -522,29 +522,29 @@ int sysfs_blkdev_is_removable(struct path_cxt *pc)
 }
 
 static int get_dm_wholedisk(struct path_cxt *pc, char *diskname,
-                size_t len, dev_t *diskdevno)
+                            size_t len, dev_t *diskdevno)
 {
-    int rc = 0;
-    char *name;
+	int rc = 0;
+	char *name;
 
-    /* Note, sysfs_blkdev_get_slave() returns the first slave only,
-     * if there is more slaves, then return NULL
-     */
-    name = sysfs_blkdev_get_slave(pc);
-    if (!name)
-        return -1;
+	/* Note: sysfs_blkdev_get_slave() returns the first slave only;
+	 * if there are more slaves, it returns NULL.
+	 */
+	name = sysfs_blkdev_get_slave(pc);
+	if (!name)
+		return -1;
 
-    if (diskname && len)
-        xstrncpy(diskname, name, len);
+	if (diskname && len)
+		xstrncpy(diskname, name, len);
 
-    if (diskdevno) {
-        *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
-        if (!*diskdevno)
-            rc = -1;
-    }
+	if (diskdevno) {
+		*diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
+		if (!*diskdevno)
+			rc = -1;
+	}
 
-    free(name);
-    return rc;
+	free(name);
+	return rc;
 }
 
 /*
@@ -556,85 +556,84 @@ int sysfs_blkdev_get_wholedisk(	struct path_cxt *pc,
 				size_t len,
 				dev_t *diskdevno)
 {
-    int is_part = 0;
+	int is_part = 0;
 
-    if (!pc)
-        return -1;
+	if (!pc)
+		return -1;
 
-    is_part = ul_path_access(pc, F_OK, "partition") == 0;
-    if (!is_part) {
-        /*
-         * Extra case for partitions mapped by device-mapper.
-         *
-         * All regular partitions (added by BLKPG ioctl or kernel PT
-         * parser) have the /sys/.../partition file. The partitions
-         * mapped by DM don't have such file, but they have "part"
-         * prefix in DM UUID.
-         */
-        char *uuid = NULL, *tmp, *prefix;
+	is_part = ul_path_access(pc, F_OK, "partition") == 0;
+	if (!is_part) {
+		/*
+		 * Extra case for partitions mapped by device-mapper.
+		 *
+		 * All regular partitions (added by BLKPG ioctl or kernel PT
+		 * parser) have the /sys/.../partition file. The partitions
+		 * mapped by DM don't have such file, but they have "part"
+		 * prefix in DM UUID.
+		 */
+		char *uuid = NULL, *tmp, *prefix;
 
-	ul_path_read_string(pc, &uuid, "dm/uuid");
-	tmp = uuid;
-	prefix = uuid ? strsep(&tmp, "-") : NULL;
+		ul_path_read_string(pc, &uuid, "dm/uuid");
+		tmp = uuid;
+		prefix = uuid ? strsep(&tmp, "-") : NULL;
 
-        if (prefix && c_strncasecmp(prefix, "part", 4) == 0)
-            is_part = 1;
-        free(uuid);
+		if (prefix && c_strncasecmp(prefix, "part", 4) == 0)
+			is_part = 1;
+		free(uuid);
 
-        if (is_part &&
-            get_dm_wholedisk(pc, diskname, len, diskdevno) == 0)
-            /*
-             * partitioned device, mapped by DM
-             */
-            goto done;
+		if (is_part &&
+			get_dm_wholedisk(pc, diskname, len, diskdevno) == 0)
+			/*
+			 * partitioned device, mapped by DM
+			 */
+			goto done;
 
-        is_part = 0;
-    }
+		is_part = 0;
+	}
 
-    if (!is_part) {
-        /*
-         * unpartitioned device
-         */
-        if (diskname && !sysfs_blkdev_get_name(pc, diskname, len))
-            goto err;
-        if (diskdevno)
-            *diskdevno = sysfs_blkdev_get_devno(pc);
+	if (!is_part) {
+		/*
+		 * unpartitioned device
+		 */
+		if (diskname && !sysfs_blkdev_get_name(pc, diskname, len))
+			goto err;
+		if (diskdevno)
+			*diskdevno = sysfs_blkdev_get_devno(pc);
+	} else {
+		/*
+		 * partitioned device
+		 *  - readlink /sys/dev/block/8:1   = ../../block/sda/sda1
+		 *  - dirname  ../../block/sda/sda1 = ../../block/sda
+		 *  - basename ../../block/sda	  = sda
+		 */
+		char linkpath[PATH_MAX];
+		char *name;
+		ssize_t	linklen;
 
-    } else {
-        /*
-         * partitioned device
-         *  - readlink /sys/dev/block/8:1   = ../../block/sda/sda1
-         *  - dirname  ../../block/sda/sda1 = ../../block/sda
-         *  - basename ../../block/sda      = sda
-         */
-        char linkpath[PATH_MAX];
-        char *name;
-	ssize_t	linklen;
+		linklen = ul_path_readlink(pc, linkpath, sizeof(linkpath), NULL);
+		if (linklen < 0)
+			goto err;
 
-	linklen = ul_path_readlink(pc, linkpath, sizeof(linkpath), NULL);
-        if (linklen < 0)
-            goto err;
+		stripoff_last_component(linkpath);	  /* dirname */
+		name = stripoff_last_component(linkpath);   /* basename */
+		if (!name)
+			goto err;
 
-        stripoff_last_component(linkpath);      /* dirname */
-        name = stripoff_last_component(linkpath);   /* basename */
-        if (!name)
-            goto err;
+		sysfs_devname_sys_to_dev(name);
+		if (diskname && len)
+			xstrncpy(diskname, name, len);
 
-	sysfs_devname_sys_to_dev(name);
-        if (diskname && len)
-            xstrncpy(diskname, name, len);
-
-        if (diskdevno) {
-            *diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
-            if (!*diskdevno)
-                goto err;
-        }
-    }
+		if (diskdevno) {
+			*diskdevno = __sysfs_devname_to_devno(ul_path_get_prefix(pc), name, NULL);
+			if (!*diskdevno)
+				goto err;
+		}
+	}
 
 done:
-    return 0;
+	return 0;
 err:
-    return -1;
+	return -1;
 }
 
 int sysfs_devno_to_wholedisk(dev_t devno, char *diskname,
@@ -790,7 +789,7 @@ char *sysfs_blkdev_scsi_host_strdup_attribute(struct path_cxt *pc,
 		return NULL;
 
 	if (!(f = fopen(buf, "r" UL_CLOEXECSTR)))
-                return NULL;
+		return NULL;
 
 	rc = fscanf(f, "%1023[^\n]", buf);
 	fclose(f);
@@ -1093,7 +1092,7 @@ char *sysfs_chrdev_devno_to_devname(dev_t devno, char *buf, size_t bufsiz)
 	if (!pc)
 		return NULL;
 
-        /* read /sys/dev/char/<maj:min> link */
+	/* read /sys/dev/char/<maj:min> link */
 	sz = ul_path_readlink(pc, link, sizeof(link), NULL);
 	ul_unref_path(pc);
 

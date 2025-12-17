@@ -140,7 +140,7 @@ static const struct bdc bdcms[] =
 		.argname = "<bytes>",
 		.argtype = ARG_INT,
 		.flags = FL_NORESULT,
-	        .help = N_("set blocksize on file descriptor opening the block device")
+		.help = N_("set blocksize on file descriptor opening the block device")
 	},{
 		IOCTL_ENTRY(BLKGETSIZE),
 		.name = "--getsize",
@@ -210,23 +210,23 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_HEADER, stdout);
 	fprintf(stdout, _(
-	         " %1$s [-v|-q] commands devices\n"
-	         " %1$s --report [devices]\n"
-	         " %1$s -h|-V\n"
-		), program_invocation_short_name);
+	          " %1$s [-v|-q] commands devices\n"
+	          " %1$s --report [devices]\n"
+	          " %1$s -h|-V\n"
+	       ), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(  _("Call block device ioctls from the command line."), stdout);
+	fputsln(_("Call block device ioctls from the command line."), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fputsln(  _(" -q             quiet mode"), stdout);
-	fputsln(  _(" -v             verbose mode"), stdout);
-	fputsln(  _("     --report   print report for specified (or all) devices"), stdout);
+	fputsln(_(" -q             quiet mode"), stdout);
+	fputsln(_(" -v             verbose mode"), stdout);
+	fputsln(_("     --report   print report for specified (or all) devices"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(16));
 
 	fputs(USAGE_SEPARATOR, stdout);
-	fputsln(  _("Available commands:"), stdout);
+	fputsln(_("Available commands:"), stdout);
 	fprintf(stdout, _(" %-25s get size in 512-byte sectors\n"), "--getsz");
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)

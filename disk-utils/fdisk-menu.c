@@ -499,9 +499,9 @@ static int script_read(struct fdisk_context *cxt)
 		fdisk_warnx(cxt, _("Failed to apply script %s"), filename);
 		fdisk_warnx(cxt, _("Resetting fdisk!"));
 		rc = fdisk_reassign_device(cxt);
-                if (rc == 0 && !fdisk_has_label(cxt)) {
-                        fdisk_info(cxt, _("Device does not contain a recognized partition table."));
-                        rc = fdisk_create_disklabel(cxt, NULL);
+		if (rc == 0 && !fdisk_has_label(cxt)) {
+			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
+			rc = fdisk_create_disklabel(cxt, NULL);
 		}
 	} else
 		fdisk_info(cxt, _("Script successfully applied."));
@@ -751,8 +751,8 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 		case 'i':
 			return fdisk_set_disklabel_id(cxt);
 		case 'l':
-	                rc =  fdisk_ask_number(cxt, 1, fdisk_get_npartitions(cxt),
-	                                ~(uint32_t)0, _("New maximum entries"), &length);
+			rc =  fdisk_ask_number(cxt, 1, fdisk_get_npartitions(cxt),
+			                       ~(uint32_t)0, _("New maximum entries"), &length);
 			if (rc)
 				return rc;
 			return fdisk_gpt_set_npartitions(cxt, (uint32_t) length);

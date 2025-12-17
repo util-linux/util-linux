@@ -44,34 +44,34 @@ static econf_file *open_etc_shells(void)
 extern void print_shells(FILE *out, const char *format)
 {
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
-        size_t size = 0;
-        econf_err error;
-        char **keys = NULL;
-        econf_file *key_file = open_etc_shells();
+	size_t size = 0;
+	econf_err error;
+	char **keys = NULL;
+	econf_file *key_file = open_etc_shells();
 
 	if (!key_file)
 	  return;
 
-        error = econf_getKeys(key_file, NULL, &size, &keys);
-        if (error) {
-                econf_free(key_file);
-                errx(EXIT_FAILURE,
-                  _("Cannot evaluate entries in shells files: %s"),
-                  econf_errString(error));
-        }
+	error = econf_getKeys(key_file, NULL, &size, &keys);
+	if (error) {
+		econf_free(key_file);
+		errx(EXIT_FAILURE,
+		  _("Cannot evaluate entries in shells files: %s"),
+		  econf_errString(error));
+	}
 
-        for (size_t i = 0; i < size; i++) {
-	        fprintf(out, format, keys[i]);
-        }
-        econf_free(keys);
-        econf_free(key_file);
+	for (size_t i = 0; i < size; i++) {
+		fprintf(out, format, keys[i]);
+	}
+	econf_free(keys);
+	econf_free(key_file);
 #else
-        char *s;
+	char *s;
 
 	setusershell();
-        while ((s = getusershell()))
-	        fprintf(out, format, s);
-        endusershell();
+	while ((s = getusershell()))
+		fprintf(out, format, s);
+	endusershell();
 #endif
 }
 
@@ -91,19 +91,19 @@ extern int is_known_shell(const char *shell_name)
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 	char *val = NULL;
 	econf_err error;
-        econf_file *key_file = open_etc_shells();
+	econf_file *key_file = open_etc_shells();
 
 	if (!key_file)
-	  return 0;
+		return 0;
 
 	error = econf_getStringValue (key_file, NULL, shell_name, &val);
 	if (error) {
-	        if (error != ECONF_NOKEY)
-		       syslog(LOG_ALERT,
-		               _("Cannot evaluate entries in shells files: %s"),
-			      econf_errString(error));
+		if (error != ECONF_NOKEY)
+			syslog(LOG_ALERT,
+			       _("Cannot evaluate entries in shells files: %s"),
+			       econf_errString(error));
 	} else
-	        ret = 1;
+		ret = 1;
 
 	free(val);
 	econf_free(key_file);
