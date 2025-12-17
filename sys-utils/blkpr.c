@@ -73,7 +73,7 @@ static const struct type_string pr_type[] = {
 };
 
 static const struct type_string pr_command[] = {
-	{IOC_PR_REGISTER,      "register",
+	{IOC_PR_REGISTER,         "register",
 	"  * register: This command registers a new reservation if the key argument\n"
 	"    is non-null. If no existing reservation exists oldkey must be zero, if\n"
 	"    an existing reservation should be replaced oldkey must contain the old\n"
@@ -81,33 +81,38 @@ static const struct type_string pr_command[] = {
 	"    reservation passed in oldkey.\n"
 	},
 
-	{IOC_PR_RESERVE,       "reserve",
+	{IOC_PR_RESERVE,          "reserve",
 	"  * reserve: This command reserves the device and thus restricts access for\n"
 	"    other devices based on the type argument.  The key argument must be\n"
 	"    the existing reservation key for the device as acquired by the register,\n"
 	"    preempt, preempt-abort commands.\n"},
 
-	{IOC_PR_RELEASE,       "release",
+	{IOC_PR_RELEASE,          "release",
 	"  * release: This command releases the reservation specified by key and flags\n"
 	"    and thus removes any access restriction implied by it.\n"},
 
-	{IOC_PR_PREEMPT,       "preempt",
+	{IOC_PR_PREEMPT,          "preempt",
 	"  * preempt: This command releases the existing reservation referred to by\n"
 	"    old_key and replaces it with a new reservation of type for the\n"
 	"    reservation key key.\n"},
 
-	{IOC_PR_PREEMPT_ABORT, "preempt-abort",
+	{IOC_PR_PREEMPT_ABORT,    "preempt-abort",
 	"  * preempt-abort: This command works like preempt except that it also aborts\n"
 	"    any outstanding command sent over a connection identified by oldkey.\n"},
 
-	{IOC_PR_CLEAR,         "clear",
+	{IOC_PR_CLEAR,            "clear",
 	"  * clear: This command unregisters both key and any other reservation\n"
 	"    key registered with the device and drops any existing reservation.\n"},
 
 #ifdef IOC_PR_READ_KEYS
-	{IOC_PR_READ_KEYS,     "read-keys",
+	{IOC_PR_READ_KEYS,        "read-keys",
 	"  * read-keys: This command lists reservation keys currently registered\n"
 	"    with the device.\n"},
+#endif
+
+#ifdef IOC_PR_READ_RESERVATION
+	{IOC_PR_READ_RESERVATION, "read-reservation",
+	"  * read-reservation: This command shows the current reservation.\n"},
 #endif
 };
 
@@ -138,6 +143,18 @@ static int parse_type_by_str(const struct type_string *ts, int nmem, char *patte
 	}
 
 	return -1;
+}
+
+static inline const char *type_to_str(const struct type_string *ts, int nmem,
+                                      int type)
+{
+	int i;
+
+	for (i = 0; i < nmem; i++) {
+		if (ts[i].type == type)
+			return ts[i].str;
+	}
+	return "unknown type";
 }
 
 
@@ -192,6 +209,30 @@ out:
 }
 #endif /* IOC_PR_READ_KEYS */
 
+#ifdef IOC_PR_READ_RESERVATION
+static int do_pr_read_reservation(int fd)
+{
+	struct pr_read_reservation pr_rr;
+	const char *type_str;
+	int ret;
+
+	ret = ioctl(fd, IOC_PR_READ_RESERVATION, &pr_rr);
+	if (ret)
+		return ret;
+
+	type_str = type_to_str(pr_type, ARRAY_SIZE(pr_type), pr_rr.type);
+
+	if (pr_rr.key) {
+		printf(_("Key: %#" PRIx64 "\n"), (uint64_t)pr_rr.key);
+		printf(_("Generation: %#x\n"), pr_rr.generation);
+		printf(_("Type: %s\n"), type_str);
+	} else {
+		printf(_("No reservation\n"));
+	}
+	return 0;
+}
+#endif /* IOC_PR_READ_RESERVATION */
+
 static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
 {
 	struct pr_registration pr_reg;
@@ -234,6 +275,11 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 #ifdef IOC_PR_READ_KEYS
 	case IOC_PR_READ_KEYS:
 		ret = do_pr_read_keys(fd);
+		break;
+#endif
+#ifdef IOC_PR_READ_RESERVATION
+	case IOC_PR_READ_RESERVATION:
+		ret = do_pr_read_reservation(fd);
 		break;
 #endif
 	default:

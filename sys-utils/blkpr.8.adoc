@@ -25,8 +25,8 @@ The _device_ argument is the pathname of the block device.
 
 *-c*, *--command* _command_::
 The command for managing persistent reservations. Supported commands are:
-*register*, *reserve*, *release*, *preempt*, *preempt-abort*, *clear*, and
-*read-keys*.
+*register*, *reserve*, *release*, *preempt*, *preempt-abort*, *clear*,
+*read-keys*, and *read-reservation*.
 
 *-k*, *--key* _key_::
 The key the command should operate on.
