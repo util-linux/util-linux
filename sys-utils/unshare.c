@@ -199,18 +199,6 @@ static int bind_ns_files(pid_t pid)
 	return 0;
 }
 
-static ino_t get_mnt_ino(pid_t pid)
-{
-	struct stat st;
-	char path[PATH_MAX];
-
-	snprintf(path, sizeof(path), "/proc/%u/ns/mnt", (unsigned) pid);
-
-	if (stat(path, &st) != 0)
-		err(EXIT_FAILURE, _("stat of %s failed"), path);
-	return st.st_ino;
-}
-
 static void settime(int64_t offset, clockid_t clk_id)
 {
 	char buf[sizeof(stringify_value(ULONG_MAX)) * 3];
@@ -310,14 +298,11 @@ static pid_t fork_and_wait(int *fd)
 static pid_t bind_ns_files_from_child(int *fd)
 {
 	pid_t child, ppid = getpid();
-	ino_t ino = get_mnt_ino(ppid);
 
 	child = fork_and_wait(fd);
 	if (child)
 		return child;
 
-	if (get_mnt_ino(ppid) == ino)
-		exit(EXIT_FAILURE);
 	bind_ns_files(ppid);
 	exit(EXIT_SUCCESS);
 }
@@ -1074,7 +1059,7 @@ int main(int argc, char *argv[])
 	/* clear any inherited settings */
 	signal(SIGCHLD, SIG_DFL);
 
-	if (npersists && (unshare_flags & CLONE_NEWNS))
+	if (npersists && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 		pid_bind = bind_ns_files_from_child(&fd_bind);
 
 	if (usermap || groupmap)
@@ -1129,7 +1114,7 @@ int main(int argc, char *argv[])
 
 	if (npersists && (pid || !forkit)) {
 		/* run in parent */
-		if (pid_bind && (unshare_flags & CLONE_NEWNS))
+		if (pid_bind && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 			sync_with_child(pid_bind, fd_bind);
 		else
 			/* simple way, just bind */
