@@ -1,77 +1,15 @@
 /*
- * No copyright is claimed.  This code is in the public domain; do with
+ * No copyright is claimed. This code is in the public domain; do with
  * it what you wish.
  */
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h>
 
 #include "c.h"
 #include "pwdutils.h"
 #include "xalloc.h"
-
-/* Returns allocated passwd and allocated pwdbuf to store passwd strings
- * fields. In case of error returns NULL and set errno, for unknown user set
- * errno to EINVAL
- */
-struct passwd *xgetpwnam(const char *username, char **pwdbuf)
-{
-	struct passwd *pwd = NULL, *res = NULL;
-	int rc;
-
-	assert(pwdbuf);
-	assert(username);
-
-	*pwdbuf = xmalloc(UL_GETPW_BUFSIZ);
-	pwd = xcalloc(1, sizeof(struct passwd));
-
-	errno = 0;
-	rc = getpwnam_r(username, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
-	if (rc != 0) {
-		errno = rc;
-		goto failed;
-	}
-	if (!res) {
-		errno = EINVAL;
-		goto failed;
-	}
-	return pwd;
-failed:
-	free(pwd);
-	free(*pwdbuf);
-	return NULL;
-}
-
-/* Returns allocated group and allocated grpbuf to store group strings
- * fields. In case of error returns NULL and set errno, for unknown group set
- * errno to EINVAL
- */
-struct group *xgetgrnam(const char *groupname, char **grpbuf)
-{
-	struct group *grp = NULL, *res = NULL;
-	int rc;
-
-	assert(grpbuf);
-	assert(groupname);
-
-	*grpbuf = xmalloc(UL_GETPW_BUFSIZ);
-	grp = xcalloc(1, sizeof(struct group));
-
-	errno = 0;
-	rc = getgrnam_r(groupname, grp, *grpbuf, UL_GETPW_BUFSIZ, &res);
-	if (rc != 0) {
-		errno = rc;
-		goto failed;
-	}
-	if (!res) {
-		errno = EINVAL;
-		goto failed;
-	}
-	return grp;
-failed:
-	free(grp);
-	free(*grpbuf);
-	return NULL;
-}
+#include "strutils.h"
 
 struct passwd *xgetpwuid(uid_t uid, char **pwdbuf)
 {
@@ -97,6 +35,102 @@ struct passwd *xgetpwuid(uid_t uid, char **pwdbuf)
 failed:
 	free(pwd);
 	free(*pwdbuf);
+	return NULL;
+}
+
+/* Returns allocated passwd and allocated pwdbuf for the username or UID passed
+ * as @str. In case of error returns NULL and set errno, for unknown user it
+ * sets errno to EINVAL.
+ */
+struct passwd *xgetuserpw(const char *str ,char **pwdbuf)
+{
+	struct passwd *pwd = NULL, *res = NULL;
+	int rc;
+	uint64_t uid;
+
+	assert(pwdbuf);
+	assert(str);
+
+	*pwdbuf = xmalloc(UL_GETPW_BUFSIZ);
+	pwd = xcalloc(1, sizeof(struct passwd));
+
+	/* is @str a UID ? */
+	rc = ul_strtou64(str, &uid, 10);
+	if (rc == -ERANGE) {
+		errno = ERANGE;
+		goto failed;
+	}
+	/* @str is an invalid number, let's assume it is the username */
+	if (rc == -EINVAL) {
+		rc = getpwnam_r(str, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
+	} else {
+		if (uid > MAX_OF_UINT_TYPE(uid_t)) {
+			errno = ERANGE;
+			goto failed;
+		}
+		rc = getpwuid_r((uid_t)uid, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
+	}
+
+	if (rc != 0) {
+		errno = rc;
+		goto failed;
+	}
+	if (!res) {
+		errno = EINVAL;
+		goto failed;
+	}
+	return pwd;
+failed:
+	free(pwd);
+	free(*pwdbuf);
+	return NULL;
+}
+
+/* Returns allocated group and allocated grpbuf for the group name or GID passed
+ * as @str. In case of error returns NULL and set errno, for unknown group it
+ * sets errno to EINVAL.
+ */
+struct group *xgetgroup(const char *str, char **grpbuf)
+{
+	struct group *grp = NULL, *res = NULL;
+	int rc;
+	uint64_t gid;
+
+	assert(grpbuf);
+	assert(str);
+
+	*grpbuf = xmalloc(UL_GETPW_BUFSIZ);
+	grp = xcalloc(1, sizeof(struct group));
+
+	/* is @str a GID ? */
+	rc = ul_strtou64(str, &gid, 10);
+	if (rc == -ERANGE) {
+		errno = ERANGE;
+		goto failed;
+	}
+	/* @str is an invalid number, let's assume it is the group name */
+	if (rc == -EINVAL) {
+		rc = getgrnam_r(str, grp, *grpbuf, UL_GETPW_BUFSIZ, &res);
+	} else {
+		if (gid > MAX_OF_UINT_TYPE(gid_t)) {
+			errno = ERANGE;
+			goto failed;
+		}
+		rc = getgrgid_r((gid_t)gid, grp, *grpbuf, UL_GETPW_BUFSIZ, &res);
+	}
+
+	if (rc != 0) {
+		errno = rc;
+		goto failed;
+	}
+	if (!res) {
+		errno = EINVAL;
+		goto failed;
+	}
+	return grp;
+failed:
+	free(grp);
+	free(*grpbuf);
 	return NULL;
 }
 
@@ -127,6 +161,44 @@ char *xgetlogin(void)
 	return NULL;
 }
 
+/*
+ * Return a pointer to a `struct group` for a matching group name or GID.
+ */
+struct group *ul_getgrp_str(const char *str)
+{
+        int rc;
+        uint64_t gid;
+
+        rc = ul_strtou64(str, &gid, 10);
+        if (rc == -ERANGE)
+                return NULL;
+        if (rc == -EINVAL)
+                return getgrnam(str);
+        if (gid > MAX_OF_UINT_TYPE(gid_t))
+                return NULL;
+
+        return getgrgid((gid_t)gid);
+}
+
+/*
+ * Return a pointer to a `struct passwd` for a matching username or UID.
+ */
+struct passwd *ul_getuserpw_str(const char *str)
+{
+        int rc;
+        uint64_t uid;
+
+        rc = ul_strtou64(str, &uid, 10);
+        if (rc == -ERANGE)
+                return NULL;
+        if (rc == -EINVAL)
+                return getpwnam(str);
+        if (uid > MAX_OF_UINT_TYPE(uid_t))
+                return NULL;
+
+        return getpwuid((uid_t)uid);
+}
+
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
@@ -138,7 +210,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	pwd = xgetpwnam(argv[1], &buf);
+	pwd = xgetuserpw(argv[1], &buf);
 	if (!pwd)
 		err(EXIT_FAILURE, "failed to get %s pwd entry", argv[1]);
 
