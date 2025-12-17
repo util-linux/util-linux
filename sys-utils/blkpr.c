@@ -276,7 +276,7 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			command = parse_pr_command(optarg);
-			if (command < 0)
+			if (command == -1)
 				err(EXIT_FAILURE, _("unknown command"));
 			break;
 		case 't':
