@@ -34,6 +34,8 @@ Set up a zram device: ::
 
 If no option is given, all non-zero size zram devices are shown.
 
+Use *--help* to get an overview of the supported output columns and their descriptions.
+
 Note that _zramdev_ node specified on command line has to already exist. The command *zramctl* creates a new _/dev/zram<N>_ nodes only when *--find* option specified. It's possible (and common) that after system boot _/dev/zram<N>_ nodes are not created yet.
 
 == OPTIONS
