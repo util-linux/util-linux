@@ -963,7 +963,7 @@ int main(int argc, char *argv[])
 	/* get_pids_locks() get locks related information from "lock:" fields
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
-	 * doesn't provides enough information or provides staled information. */
+	 * doesn't provide enough information or provides stale information. */
 	get_pids_locks(&pid_locks, add_to_tree);
 	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
 
