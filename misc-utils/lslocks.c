@@ -420,21 +420,27 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 			l->cmdname = xstrdup(_("(undefined)"));
 	}
 	l->path = get_filename_sz(l->inode, l->pid, &sz);
-
-	/* no permissions -- ignore */
-	if (!l->path && no_inaccessible) {
-		rem_lock(l);
-		return NULL;
-	}
-
-	if (!l->path) {
-		/* probably no permission to peek into l->pid's path */
-		l->path = get_fallback_filename(l->dev);
-		l->size = 0;
-	} else
+	if (l->path)
 		l->size = sz;
 
 	return l;
+}
+
+static struct lock *refine_lock(struct lock *lock)
+{
+	/* no permissions -- ignore */
+	if (!lock->path && no_inaccessible) {
+		rem_lock(lock);
+		return NULL;
+	}
+
+	if (!lock->path) {
+		/* probably no permission to peek into l->pid's path */
+		lock->path = get_fallback_filename(lock->dev);
+		lock->size = 0;
+	}
+
+	return lock;
 }
 
 static int get_pid_lock(void *locks, FILE *fp,
@@ -451,6 +457,8 @@ static int get_pid_lock(void *locks, FILE *fp,
 		if (strncmp(buf, "lock:\t", 6))
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
+		if (l)
+			l = refine_lock(l);
 		if (l) {
 			add_to_tree(locks, l);
 			l->fd = fd;
@@ -535,6 +543,8 @@ static int get_proc_locks(struct list_head *locks, void *fallback)
 
 	while (fgets(buf, sizeof(buf), fp)) {
 		struct lock *l = get_lock(buf, NULL, fallback);
+		if (l)
+			l = refine_lock(l);
 		if (l)
 			add_to_list(locks, l);
 	}
