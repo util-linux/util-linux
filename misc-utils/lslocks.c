@@ -132,6 +132,7 @@ struct lslocks {
 
 	pid_t target_pid;
 
+	void *pid_locks;
 	struct libmnt_table *tab;		/* /proc/self/mountinfo */
 };
 
@@ -444,7 +445,7 @@ static struct lock *refine_lock(struct lock *lock,
 	return lock;
 }
 
-static int get_pid_lock(struct lslocks *lslocks, void *locks, FILE *fp,
+static int get_pid_lock(struct lslocks *lslocks, FILE *fp,
 			pid_t pid, const char *cmdname, int fd)
 {
 	char buf[PATH_MAX];
@@ -462,7 +463,7 @@ static int get_pid_lock(struct lslocks *lslocks, void *locks, FILE *fp,
 			l = refine_lock(l, lslocks->no_inaccessible,
 					lslocks->tab);
 		if (l) {
-			add_to_tree(locks, l);
+			add_to_tree(&lslocks->pid_locks, l);
 			l->fd = fd;
 		}
 		/* no break here.
@@ -473,7 +474,7 @@ static int get_pid_lock(struct lslocks *lslocks, void *locks, FILE *fp,
 }
 
 static int get_pid_locks(struct lslocks *lslocks,
-			 void *locks, struct path_cxt *pc,
+			 struct path_cxt *pc,
 			 pid_t pid, const char *cmdname)
 {
 	DIR *sub = NULL;
@@ -491,14 +492,14 @@ static int get_pid_locks(struct lslocks *lslocks,
 		if (fdinfo == NULL)
 			continue;
 
-		get_pid_lock(lslocks, locks, fdinfo, pid, cmdname, (int)num);
+		get_pid_lock(lslocks, fdinfo, pid, cmdname, (int)num);
 		fclose(fdinfo);
 	}
 
 	return rc;
 }
 
-static void get_pids_locks(struct lslocks *lslocks, void *locks)
+static void get_pids_locks(struct lslocks *lslocks)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -527,7 +528,7 @@ static void get_pids_locks(struct lslocks *lslocks, void *locks)
 			continue;
 		cmdname = buf;
 
-		get_pid_locks(lslocks, locks, pc, pid, cmdname);
+		get_pid_locks(lslocks, pc, pid, cmdname);
 	}
 
 	closedir(dir);
@@ -536,7 +537,7 @@ static void get_pids_locks(struct lslocks *lslocks, void *locks)
 	return;
 }
 
-static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks, void *fallback)
+static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -545,7 +546,7 @@ static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks, void
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-		struct lock *l = get_lock(buf, NULL, fallback);
+		struct lock *l = get_lock(buf, NULL, &lslocks->pid_locks);
 		if (l)
 			l = refine_lock(l, lslocks->no_inaccessible,
 					lslocks->tab);
@@ -607,7 +608,7 @@ static void xstrcoholder(char **str, struct lock *l)
 }
 
 static void add_scols_line(struct lslocks *lslocks,
-			   struct libscols_table *table, struct lock *l, struct list_head *locks, void *pid_locks)
+			   struct libscols_table *table, struct lock *l, struct list_head *locks)
 {
 	struct libscols_line *line;
 	/*
@@ -680,7 +681,7 @@ static void add_scols_line(struct lslocks *lslocks,
 		case COL_HOLDERS:
 		{
 			struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
-			struct lock_tnode **head = tfind(&tmp, pid_locks, lock_tnode_compare);
+			struct lock_tnode **head = tfind(&tmp, &lslocks->pid_locks, lock_tnode_compare);
 			struct list_head *p;
 
 			if (!head)
@@ -790,7 +791,7 @@ static struct libscols_table *init_scols_table(int raw, int json, int no_heading
 }
 
 static int show_locks(struct lslocks *lslocks,
-		      struct libscols_table *table, struct list_head *locks, void *pid_locks)
+		      struct libscols_table *table, struct list_head *locks)
 {
 	struct list_head *p;
 
@@ -801,7 +802,7 @@ static int show_locks(struct lslocks *lslocks,
 		if (lslocks->target_pid && lslocks->target_pid != l->pid)
 			continue;
 
-		add_scols_line(lslocks, table, l, locks, pid_locks);
+		add_scols_line(lslocks, table, l, locks);
 	}
 
 	scols_print_table(table);
@@ -868,9 +869,9 @@ static void lslocks_init(struct lslocks *lslocks)
 	memset(lslocks, 0, sizeof(*lslocks));
 }
 
-static void lslocks_free(struct lslocks *lslocks __attribute__((__unused__)))
+static void lslocks_free(struct lslocks *lslocks)
 {
-	/* STUB */
+	tdestroy(lslocks->pid_locks, rem_tnode);
 }
 
 int main(int argc, char *argv[])
@@ -878,7 +879,6 @@ int main(int argc, char *argv[])
 	struct lslocks lslocks;
 	int c, rc = 0, collist = 0;
 	struct list_head proc_locks;
-	void *pid_locks = NULL;
 	struct libscols_table *table;
 	char *outarg = NULL;
 	enum {
@@ -992,14 +992,13 @@ int main(int argc, char *argv[])
 	 * get_proc_locks() used the fallback information if /proc/locks
 	 * doesn't provide enough information or provides stale information. */
 	lslocks.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
-	get_pids_locks(&lslocks, &pid_locks);
-	rc = get_proc_locks(&lslocks, &proc_locks, &pid_locks);
+	get_pids_locks(&lslocks);
+	rc = get_proc_locks(&lslocks, &proc_locks);
 	mnt_unref_table(lslocks.tab);
 
 	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&lslocks, table, &proc_locks, &pid_locks);
+		rc = show_locks(&lslocks, table, &proc_locks);
 
-	tdestroy(pid_locks, rem_tnode);
 	rem_locks(&proc_locks);
 	scols_unref_table(table);
 
