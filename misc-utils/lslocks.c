@@ -96,8 +96,6 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-static struct libmnt_table *tab;		/* /proc/self/mountinfo */
-
 struct lock {
 	struct list_head locks;
 
@@ -133,6 +131,8 @@ struct lslocks {
 	int bytes;
 
 	pid_t target_pid;
+
+	struct libmnt_table *tab;		/* /proc/self/mountinfo */
 };
 
 static int lock_tnode_compare(const void *a, const void *b)
@@ -196,16 +196,10 @@ static void disable_columns_truncate(void)
 /*
  * Associate the device's mountpoint for a filename
  */
-static char *get_fallback_filename(dev_t dev)
+static char *get_fallback_filename(struct libmnt_table *tab, dev_t dev)
 {
 	struct libmnt_fs *fs;
 	char *res = NULL;
-
-	if (!tab) {
-		tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
-		if (!tab)
-			return NULL;
-	}
 
 	fs = mnt_table_find_devno(tab, dev, MNT_ITER_BACKWARD);
 	if (!fs)
@@ -430,7 +424,8 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 	return l;
 }
 
-static struct lock *refine_lock(struct lock *lock, int no_inaccessible)
+static struct lock *refine_lock(struct lock *lock,
+				int no_inaccessible, struct libmnt_table *tab)
 {
 	/* no permissions -- ignore */
 	if (!lock->path && no_inaccessible) {
@@ -440,7 +435,9 @@ static struct lock *refine_lock(struct lock *lock, int no_inaccessible)
 
 	if (!lock->path) {
 		/* probably no permission to peek into l->pid's path */
-		lock->path = get_fallback_filename(lock->dev);
+		lock->path = tab
+			? get_fallback_filename(tab, lock->dev)
+			: NULL;
 		lock->size = 0;
 	}
 
@@ -462,7 +459,8 @@ static int get_pid_lock(struct lslocks *lslocks, void *locks, FILE *fp,
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
 		if (l)
-			l = refine_lock(l, lslocks->no_inaccessible);
+			l = refine_lock(l, lslocks->no_inaccessible,
+					lslocks->tab);
 		if (l) {
 			add_to_tree(locks, l);
 			l->fd = fd;
@@ -549,7 +547,8 @@ static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks, void
 	while (fgets(buf, sizeof(buf), fp)) {
 		struct lock *l = get_lock(buf, NULL, fallback);
 		if (l)
-			l = refine_lock(l, lslocks->no_inaccessible);
+			l = refine_lock(l, lslocks->no_inaccessible,
+					lslocks->tab);
 		if (l)
 			add_to_list(locks, l);
 	}
@@ -866,7 +865,7 @@ static void __attribute__((__noreturn__)) list_columns(struct lslocks *lslocks)
 
 static void lslocks_init(struct lslocks *lslocks)
 {
-   memset(lslocks, 0, sizeof(*lslocks));
+	memset(lslocks, 0, sizeof(*lslocks));
 }
 
 static void lslocks_free(struct lslocks *lslocks __attribute__((__unused__)))
@@ -992,8 +991,10 @@ int main(int argc, char *argv[])
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
 	 * doesn't provide enough information or provides stale information. */
+	lslocks.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	get_pids_locks(&lslocks, &pid_locks);
 	rc = get_proc_locks(&lslocks, &proc_locks, &pid_locks);
+	mnt_unref_table(lslocks.tab);
 
 	if (!rc && !list_empty(&proc_locks))
 		rc = show_locks(&lslocks, table, &proc_locks, &pid_locks);
@@ -1002,7 +1003,6 @@ int main(int argc, char *argv[])
 	rem_locks(&proc_locks);
 	scols_unref_table(table);
 
-	mnt_unref_table(tab);
 	lslocks_free(&lslocks);
 	return rc;
 }
