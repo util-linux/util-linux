@@ -132,6 +132,7 @@ struct lslocks {
 
 	pid_t target_pid;
 
+	struct list_head proc_locks;
 	void *pid_locks;
 	struct libmnt_table *tab;		/* /proc/self/mountinfo */
 };
@@ -537,7 +538,7 @@ static void get_pids_locks(struct lslocks *lslocks)
 	return;
 }
 
-static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks)
+static int get_proc_locks(struct lslocks *lslocks)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -551,7 +552,7 @@ static int get_proc_locks(struct lslocks *lslocks, struct list_head *locks)
 			l = refine_lock(l, lslocks->no_inaccessible,
 					lslocks->tab);
 		if (l)
-			add_to_list(locks, l);
+			add_to_list(&lslocks->proc_locks, l);
 	}
 
 	fclose(fp);
@@ -608,7 +609,7 @@ static void xstrcoholder(char **str, struct lock *l)
 }
 
 static void add_scols_line(struct lslocks *lslocks,
-			   struct libscols_table *table, struct lock *l, struct list_head *locks)
+			   struct libscols_table *table, struct lock *l)
 {
 	struct libscols_line *line;
 	/*
@@ -673,7 +674,7 @@ static void add_scols_line(struct lslocks *lslocks,
 		case COL_BLOCKER:
 		{
 			pid_t bl = l->blocked && l->id ?
-						get_blocker(l->id, locks) : 0;
+						get_blocker(l->id, &lslocks->proc_locks) : 0;
 			if (bl)
 				xasprintf(&str, "%d", (int) bl);
 			break;
@@ -790,19 +791,18 @@ static struct libscols_table *init_scols_table(int raw, int json, int no_heading
 	return table;
 }
 
-static int show_locks(struct lslocks *lslocks,
-		      struct libscols_table *table, struct list_head *locks)
+static int show_locks(struct lslocks *lslocks, struct libscols_table *table)
 {
 	struct list_head *p;
 
 	/* prepare data for output */
-	list_for_each(p, locks) {
+	list_for_each(p, &lslocks->proc_locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
 
 		if (lslocks->target_pid && lslocks->target_pid != l->pid)
 			continue;
 
-		add_scols_line(lslocks, table, l, locks);
+		add_scols_line(lslocks, table, l);
 	}
 
 	scols_print_table(table);
@@ -867,10 +867,13 @@ static void __attribute__((__noreturn__)) list_columns(struct lslocks *lslocks)
 static void lslocks_init(struct lslocks *lslocks)
 {
 	memset(lslocks, 0, sizeof(*lslocks));
+
+	INIT_LIST_HEAD(&lslocks->proc_locks);
 }
 
 static void lslocks_free(struct lslocks *lslocks)
 {
+	rem_locks(&lslocks->proc_locks);
 	tdestroy(lslocks->pid_locks, rem_tnode);
 }
 
@@ -878,7 +881,6 @@ int main(int argc, char *argv[])
 {
 	struct lslocks lslocks;
 	int c, rc = 0, collist = 0;
-	struct list_head proc_locks;
 	struct libscols_table *table;
 	char *outarg = NULL;
 	enum {
@@ -963,8 +965,6 @@ int main(int argc, char *argv[])
 	if (collist)
 		list_columns(&lslocks);	/* print end exit */
 
-	INIT_LIST_HEAD(&proc_locks);
-
 	if (!ncolumns) {
 		/* default columns */
 		columns[ncolumns++] = COL_SRC;
@@ -993,13 +993,12 @@ int main(int argc, char *argv[])
 	 * doesn't provide enough information or provides stale information. */
 	lslocks.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	get_pids_locks(&lslocks);
-	rc = get_proc_locks(&lslocks, &proc_locks);
+	rc = get_proc_locks(&lslocks);
 	mnt_unref_table(lslocks.tab);
 
-	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&lslocks, table, &proc_locks);
+	if (!rc && !list_empty(&lslocks.proc_locks))
+		rc = show_locks(&lslocks, table);
 
-	rem_locks(&proc_locks);
 	scols_unref_table(table);
 
 	lslocks_free(&lslocks);
