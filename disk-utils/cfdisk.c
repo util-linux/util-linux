@@ -1442,7 +1442,7 @@ static int ui_draw_extra(struct cfdisk *cf)
 	int wline = 1;
 	struct cfdisk_line *ln = &cf->lines[cf->lines_idx];
 	char *tbstr = NULL, *end;
-	int win_ex_start_line, win_height, tblen;
+	int win_ex_start_line, win_height, tblen, content_width;
 	int ndatalines;
 
 	if (!cf->show_extra)
@@ -1482,7 +1482,16 @@ static int ui_draw_extra(struct cfdisk *cf)
 
 	win_ex = subwin(stdscr, win_height, ui_cols - 2, win_ex_start_line, 1);
 
-	scols_table_reduce_termwidth(ln->extra, 4);
+	if (!win_ex)
+		return 1;
+
+	content_width = getmaxx(win_ex) - 4;
+	if (content_width <= 0) {
+		delwin(win_ex);
+		return 1;
+	}
+
+	scols_table_set_termwidth(ln->extra, content_width);
 	scols_print_table_to_string(ln->extra, &tbstr);
 
 	end = tbstr;
