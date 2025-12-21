@@ -374,5 +374,8 @@ endif
 if BUILD_LSCLOCKS
 dist_bashcompletion_DATA += bash-completion/lsclocks
 endif
+if BUILD_GETINO
+dist_bashcompletion_DATA += bash-completion/getino
+endif
 
 endif # BUILD_BASH_COMPLETION
