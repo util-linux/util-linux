@@ -41,6 +41,7 @@ _lslocks_module()
 		--raw
 		--notruncate
 		--list-columns
+		--filter
 		--help
 		--version
 	"

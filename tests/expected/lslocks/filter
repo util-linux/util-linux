@@ -1,0 +1,69 @@
+#### flock  (common) ####
+# -Q PID == ...
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PATH =~ .*/...
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PATH =~ .*/...x
+# -Q PID == ... SIZE == 4096
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... SIZE < 4096
+# -Q PID == ... SIZE > 4096
+# -Q PID == ... SIZE == 4K
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... SIZE < 4K
+# -Q PID == ... SIZE > 4K
+# -Q PID == ... TYPE == FLOCK
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... TYPE != FLOCK
+# -Q PID == ... TYPE == POSIX
+# -Q PID == ... TYPE != POSIX
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... TYPE == OFDLCK
+# -Q PID == ... TYPE != OFDLCK
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... MODE == READ
+# -Q PID == ... MODE != READ
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... MODE == WRITE
+test_mkfds FLOCK WRITE 4K 0 0 0
+# -Q PID == ... MODE != WRITE
+
+#### fcntl --bytes (common) ####
+# -Q PID == ...
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PATH =~ .*/...
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PATH =~ .*/...x
+# -Q PID == ... SIZE == 4096
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... SIZE < 4096
+# -Q PID == ... SIZE > 4096
+# -Q PID == ... SIZE == 4K
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... SIZE < 4K
+# -Q PID == ... SIZE > 4K
+# -Q PID == ... TYPE == FLOCK
+# -Q PID == ... TYPE != FLOCK
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... TYPE == POSIX
+# -Q PID == ... TYPE != POSIX
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... TYPE == OFDLCK
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... TYPE != OFDLCK
+# -Q PID == ... MODE == READ
+test_mkfds OFDLCK READ 4096 0 1024 2023
+# -Q PID == ... MODE != READ
+# -Q PID == ... MODE == WRITE
+# -Q PID == ... MODE != WRITE
+test_mkfds OFDLCK READ 4096 0 1024 2023
+
+#### fcntl (fcntl specific) ####
+# -Q PID == ... START == $START
+test_mkfds OFDLCK READ 4K 0 1024 2023
+# -Q PID == ... START < $START
+# -Q PID == ... START > $START
+# -Q PID == ... END == $END
+test_mkfds OFDLCK READ 4K 0 1024 2023
+# -Q PID == ... END < $END
+# -Q PID == ... END > $END
