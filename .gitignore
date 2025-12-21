@@ -120,6 +120,7 @@ ylwrap
 /fsfreeze
 /fstrim
 /getopt
+/getino
 /hardlink
 /hexdump
 /hwclock
