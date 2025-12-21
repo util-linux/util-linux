@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="getino"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+# make sure we do not use shell built-in command
+if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
+	TS_CMD_KILL="$(which kill)"
+fi
+
+# The pidfs was only introduced in kernel version 6.9,
+# which means we cannot get a valid pidfd from earlier versions,
+# so we can confidently anticipate the test failure.
+if ts_kernel_ver_lt 6 9; then
+	TS_KNOWN_FAIL="yes"
+fi
+
+ts_check_test_command "$TS_CMD_GETINO"
+
+ts_init_subtest "single-pid"
+if "$TS_CMD_GETINO" 1 &>/dev/null; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "multiple-pids"
+if "$TS_CMD_GETINO" 1 1 1 1 1 &>/dev/null; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "invalid-pid"
+if ! "$TS_CMD_GETINO" "invalid-pid" &>/dev/null; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "print-pid-option" 
+res=$("$TS_CMD_GETINO" --print-pid 1 2>/dev/null | grep -Eo '^[[:digit:]]*:[[:digit:]]*$'); 
+if [ -n "$res" ]; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_finalize
