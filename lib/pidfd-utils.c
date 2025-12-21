@@ -55,7 +55,7 @@ uint64_t pidfd_get_inode(int pidfd)
  * @pfd_ino: A pidfd inode number that is expected to be the
  *           same as for the new file descriptor.
  *
- * Pass @pfd_ino as NULL, if the pidfd should not be validated.
+ * Pass @pfd_ino as 0, if the pidfd should not be validated.
  *
  * Return: On success, a file descriptor is returned.
  *         On failure, err() or errx() is called to
