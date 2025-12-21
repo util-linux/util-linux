@@ -11,6 +11,13 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
+top_srcdir=${1:-.}
+if [ -d "${top_srcdir}" ]; then
+	shift 1
+else
+	echo "directory '${top_srcdir}' not found" >&2
+	exit 1
+fi
 builddir="."
 cmds=$(echo $@ | tr ' ' '\n' | sort)
 
@@ -142,6 +149,39 @@ function check_unknownopt {
 	fi
 }
 
+function check_usage_long_options_completeness {
+	local prog="$1"
+
+	prog_long_opts="$( TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" \
+			| sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+	
+	if [[ "$?" != "0" || -z "$prog_long_opts" ]]; then
+		echo "Failed to get long options for $prog"
+		return 1
+	fi
+
+	if [ "$prog_long_opts" == "ENOTSUP" ]; then
+		return 0
+	fi
+
+	usage_long_opts="$( "${builddir}"/"$prog" --help \
+			| grep -o -P '^.*[[:space:]]*--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
+			| grep -o -P '[[:space:]]*--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
+			| sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' \
+			| sort \
+			| uniq \
+			)"
+
+	res="$( comm -23 <(echo "${prog_long_opts}") <(echo "${usage_long_opts}") )"
+	if [ -n "$res" ]; then
+		printf "%s\n%s\n" "${prog} (missing/extraneous option(s) in usage):" "$res"
+		return 1
+	fi
+
+	return 0
+}
+
+rc=0
 for cb in $cmds; do
 	c="$builddir/$cb"
 	if ! type "$c" &>/dev/null; then
@@ -155,5 +195,8 @@ for cb in $cmds; do
 	fi
 	check_version "$cb" "$c"
 	check_unknownopt "$cb" "$c" "$nohelp"
+
+	check_usage_long_options_completeness "$cb" || ((rc++))
 done
 
+exit $rc
