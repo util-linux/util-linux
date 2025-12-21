@@ -259,6 +259,8 @@ option('build-hexdump', type : 'feature',
        description : 'build hexdump')
 option('build-findfs', type : 'feature',
        description : 'build findfs')
+option('build-getino', type : 'feature',
+       description : 'build getino')
 
 # static programs
 

@@ -29,6 +29,7 @@ AUTHORS (merged projects & commands):
                        Theodore Ts'o <tytso@mit.edu>
       fstrim:          Lukas Czerner <lczerner@redhat.com>
       fsfreeze:        Hajime Taira <htaira@redhat.com>
+      getino:          Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       hardlink:        Jakub Jelinek <jakub@redhat.com>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
