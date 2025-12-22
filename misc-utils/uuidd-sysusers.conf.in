@@ -1,1 +1,1 @@
-u uuidd - "UUID generator helper daemon" @localstatedir@/lib/libuuid
+u! uuidd - "UUID generator helper daemon" @localstatedir@/lib/libuuid
