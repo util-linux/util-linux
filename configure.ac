@@ -353,6 +353,7 @@ AC_CHECK_HEADERS([ \
 	linux/securebits.h \
 	linux/tiocl.h \
 	linux/version.h \
+	linux/vm_sockets_diag.h \
 	linux/watchdog.h \
 	linux/if_alg.h \
 	locale.h \

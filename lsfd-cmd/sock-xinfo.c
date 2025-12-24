@@ -35,7 +35,9 @@
 #include <linux/unix_diag.h>	/* UNIX_DIAG_*, UDIAG_SHOW_*,
 				   struct unix_diag_req */
 #include <linux/vm_sockets.h>	/* VMADDR_CID* */
-#include <linux/vm_sockets_diag.h> /* vsock_diag_req/vsock_diag_msg */
+#if HAVE_LINUX_VM_SOCKETS_DIAG_H
+# include <linux/vm_sockets_diag.h> /* vsock_diag_req/vsock_diag_msg */
+#endif
 #include <sched.h>		/* for setns(2) */
 #include <search.h>		/* tfind, tsearch */
 #include <stdint.h>
@@ -2629,6 +2631,7 @@ static void load_xinfo_from_proc_packet(ino_t netns_inode)
 /*
  * VSOCK
  */
+#if HAVE_LINUX_VM_SOCKETS_DIAG_H
 struct vsock_addr {
 	uint32_t cid;
 	uint32_t port;
@@ -2837,3 +2840,9 @@ static void load_xinfo_from_diag_vsock(int diagsd, ino_t netns)
 
 	send_diag_request(diagsd, &vdr, sizeof(vdr), handle_diag_vsock, netns);
 }
+#else
+static void load_xinfo_from_diag_vsock(int diagsd __attribute__((__unused__)),
+				       ino_t netns __attribute__((__unused__)))
+{
+}
+#endif	/* HAVE_LINUX_VM_SOCKETS_DIAG_H */
