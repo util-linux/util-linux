@@ -547,7 +547,7 @@ void Table_unref(struct libmnt_table *tab)
 
 static void Table_destructor(TableObject *self)
 {
-#if PY_VERSION_HEX < 0x03090000
+#if PY_VERSION_HEX < 0x03120000
 	DBG(TAB, pymnt_debug_h(self->tab, "destructor py-obj: %p, py-refcnt=%d",
 				self, (int) ((PyObject *) self)->ob_refcnt));
 #else
@@ -687,7 +687,7 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 	result = mnt_table_get_userdata(tab);
 	if (result) {
 		Py_INCREF(result);
-#if PY_VERSION_HEX < 0x03090000
+#if PY_VERSION_HEX < 0x03120000
 		DBG(TAB, pymnt_debug_h(tab, "result py-obj %p: already exists, py-refcnt=%d",
 				result, (int) ((PyObject *) result)->ob_refcnt));
 #else
@@ -710,7 +710,7 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 	Py_INCREF(result);
 	mnt_ref_table(tab);
 
-#if PY_VERSION_HEX < 0x03090000
+#if PY_VERSION_HEX < 0x03120000
 	DBG(TAB, pymnt_debug_h(tab, "result py-obj %p new, py-refcnt=%d",
 				result, (int) ((PyObject *) result)->ob_refcnt));
 #else
