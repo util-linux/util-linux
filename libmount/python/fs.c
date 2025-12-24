@@ -639,8 +639,13 @@ static PyMethodDef Fs_methods[] = {
 
 static void Fs_destructor(FsObject *self)
 {
+#if PY_VERSION_HEX < 0x03090000
 	DBG(FS, pymnt_debug_h(self->fs, "destructor py-obj: %p, py-refcnt=%d",
 				self, (int) ((PyObject *) self)->ob_refcnt));
+#else
+	DBG(FS, pymnt_debug_h(self->fs, "destructor py-obj: %p, py-refcnt=%d",
+				self, (int) Py_REFCNT((PyObject *) self)));
+#endif
 	mnt_unref_fs(self->fs);
 	PyFree(self);
 }
@@ -773,8 +778,13 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	result = mnt_fs_get_userdata(fs);
 	if (result) {
 		Py_INCREF(result);
+#if PY_VERSION_HEX < 0x03090000
 		DBG(FS, pymnt_debug_h(fs, "result py-obj %p: already exists, py-refcnt=%d",
 				result, (int) ((PyObject *) result)->ob_refcnt));
+#else
+		DBG(FS, pymnt_debug_h(fs, "result py-obj %p: already exists, py-refcnt=%d",
+				result, (int) Py_REFCNT((PyObject *) result)));
+#endif
 		return (PyObject *) result;
 	}
 
@@ -791,8 +801,13 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	Py_INCREF(result);
 	mnt_ref_fs(fs);
 
+#if PY_VERSION_HEX < 0x03090000
 	DBG(FS, pymnt_debug_h(fs, "result py-obj %p new, py-refcnt=%d",
 				result, (int) ((PyObject *) result)->ob_refcnt));
+#else
+	DBG(FS, pymnt_debug_h(fs, "result py-obj %p new, py-refcnt=%d",
+				result, (int) Py_REFCNT((PyObject *) result)));
+#endif
 	result->fs = fs;
 	mnt_fs_set_userdata(fs, result);
 	return (PyObject *) result;
