@@ -80,6 +80,9 @@ Display _number_ of months, starting from the month containing the date.
 *-S, --span*::
 Display months spanning the date.
 
+*-t*, *--saturday*::
+Display Saturday as the first day of the week.
+
 *-s*, *--sunday*::
 Display Sunday as the first day of the week.
 

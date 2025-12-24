@@ -11,6 +11,7 @@ _cal_module()
 				--reform
 				--three
 				--months
+				--saturday
 				--sunday
 				--span
 				--monday
