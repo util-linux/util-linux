@@ -618,6 +618,8 @@ static void print_caches_readable(struct lscpu_cxt *cxt, int cols[], size_t ncol
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 		if (cxt->json)
 			scols_column_set_json_type(cl, cd->json_type);
+		if (cxt->annotate_col_headers && cd->help)
+			scols_column_refer_annotation(cl, cd->help);
 	}
 
 	/* standard caches */
@@ -776,6 +778,8 @@ static void print_cpus_readable(struct lscpu_cxt *cxt, int cols[], size_t ncols)
 			err(EXIT_FAILURE, _("failed to allocate output column"));
 		if (cxt->json)
 			scols_column_set_json_type(cl, cd->json_type);
+		if (cxt->annotate_col_headers && cd->help)
+			scols_column_refer_annotation(cl, cd->help);
 	}
 
 	for (i = 0; i < cxt->npossibles; i++) {
@@ -1208,6 +1212,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw               use raw output format (for -e, -p and -C)\n"), out);
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
+	fputs(_("     --annotate[=<when>] annotate columns with a tooltip (always|never|auto)\n"), out);
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
@@ -1252,9 +1257,12 @@ int main(int argc, char *argv[])
 	int cpu_modifier_specified = 0;
 	char *outarg = NULL;
 	size_t i, ncolumns = 0;
+	char *annotate_opt_arg = NULL;
+
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
 		OPT_HIERARCHIC,
+		OPT_ANNOTATE,
 	};
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
@@ -1270,6 +1278,7 @@ int main(int argc, char *argv[])
 		{ "sysroot",	required_argument, NULL, 's' },
 		{ "physical",	no_argument,	   NULL, 'y' },
 		{ "hex",	no_argument,	   NULL, 'x' },
+		{ "annotate",	optional_argument, NULL, OPT_ANNOTATE },
 		{ "version",	no_argument,	   NULL, 'V' },
 		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
 		{ "hierarchic", optional_argument, NULL, OPT_HIERARCHIC },
@@ -1347,6 +1356,9 @@ int main(int argc, char *argv[])
 		case OPT_OUTPUT_ALL:
 			all = 1;
 			break;
+		case OPT_ANNOTATE:
+			annotate_opt_arg = optarg;
+			break;
 		case OPT_HIERARCHIC:
 			if (optarg) {
 				if (strcmp(optarg, "auto") == 0)
@@ -1371,6 +1383,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (annotationwanted(annotate_opt_arg))
+		cxt->annotate_col_headers = true;
 
 	if (collist)
 		list_columns(cxt);
