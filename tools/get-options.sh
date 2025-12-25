@@ -13,6 +13,10 @@
 # GNU General Public License for more details.
 #
 # Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+#
+# This script extracts all long options from each program's source file
+# and prints them in an alphabetically sorted list.
+
 TOP_SRCDIR=${TOP_SRCDIR:-../}
 
 # Directories that contain relevant source files for util-linux programs.
@@ -60,7 +64,7 @@ function extract_long_opts() {
 
         awk -F ',' 'BEGIN { x = 0 }; \
                 /struct[[:space:]]*option[[:space:]]*.*[[:space:]]*\[\][[:space:]]*=[[:space:]]*(\{)?/ { x = 1 } \
-                x && ! /.*\/\*.*(deprecated|COMPLETION:no).*\*\/.*/ {  print $1 } \
+                x && ! /.*\/\*.*(deprecated|IGNORECHECK=yes).*\*\/.*/ {  print $1 } \
                 /\};/ { x = 0 }' "${src_path}"  \
                 | grep -Eo '".*"'               \
                 | tr -d '"'                     \
