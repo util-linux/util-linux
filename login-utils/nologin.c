@@ -51,16 +51,15 @@ int main(int argc, char *argv[])
 	};
 	static const struct option longopts[] = {
 		{ "command",     required_argument, NULL, 'c'           },
-		{ "init-file",   required_argument, NULL, OPT_INIT_FILE },
-		{ "interactive", no_argument,       NULL, 'i'           },
-		{ "login",       no_argument,       NULL, 'l'           },
-		{ "noprofile",   no_argument,       NULL, OPT_NOPROFILE },
-		{ "norc",        no_argument,       NULL, OPT_NORC      },
-		{ "posix",       no_argument,       NULL, OPT_POSIX     },
-		{ "rcfile",      required_argument, NULL, OPT_RCFILE    },
-		{ "restricted",  no_argument,       NULL, 'r'           },
+		{ "init-file",   required_argument, NULL, OPT_INIT_FILE },	/* IGNORECHECK=yes */
+		{ "interactive", no_argument,       NULL, 'i'           },	/* IGNORECHECK=yes */
+		{ "login",       no_argument,       NULL, 'l'           },	/* IGNORECHECK=yes */
+		{ "noprofile",   no_argument,       NULL, OPT_NOPROFILE },	/* IGNORECHECK=yes */
+		{ "norc",        no_argument,       NULL, OPT_NORC      },	/* IGNORECHECK=yes */
+		{ "posix",       no_argument,       NULL, OPT_POSIX     },	/* IGNORECHECK=yes */
+		{ "rcfile",      required_argument, NULL, OPT_RCFILE    },	/* IGNORECHECK=yes */
+		{ "restricted",  no_argument,       NULL, 'r'           },	/* IGNORECHECK=yes */
 		{ "help",        no_argument,       NULL, 'h'           },
-		{ "version",     no_argument,       NULL, 'V'           },
 		{ NULL, 0, NULL, 0 }
 	};
 
