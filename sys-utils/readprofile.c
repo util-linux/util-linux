@@ -91,6 +91,7 @@ static char *boot_uname_r_str(void)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+	char *mapfile = boot_uname_r_str();
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
@@ -100,7 +101,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out,
 	      _(" -m, --mapfile <mapfile>   (defaults: \"%s\" and\n"
-	        "                                      \"%s\")\n"), defaultmap, boot_uname_r_str());
+	        "                                      \"%s\")\n"), defaultmap, mapfile);
 	fprintf(out,
 	      _(" -p, --profile <pro-file>  (default:  \"%s\")\n"), defaultpro);
 	fputs(_(" -M, --multiplier <mult>   set the profiling multiplier to <mult>\n"), out);
@@ -114,6 +115,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
 	fprintf(out, USAGE_MAN_TAIL("readprofile(8)"));
+	free(mapfile);
 	exit(EXIT_SUCCESS);
 }
 
