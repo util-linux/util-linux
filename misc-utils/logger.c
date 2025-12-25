@@ -1175,7 +1175,7 @@ int main(int argc, char **argv)
 		{ "sd-id",         required_argument, 0, OPT_STRUCTURED_DATA_ID          },
 		{ "sd-param",      required_argument, 0, OPT_STRUCTURED_DATA_PARAM       },
 #ifdef HAVE_LIBSYSTEMD
-		{ "journald",	   optional_argument, 0, OPT_JOURNALD	   },
+		{ "journald",	   optional_argument, 0, OPT_JOURNALD	   },	/* IGNORECHECK=yes */
 #endif
 		{ NULL,		   0,		      0, 0		   }
 	};

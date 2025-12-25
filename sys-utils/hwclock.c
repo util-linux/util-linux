@@ -1321,14 +1321,14 @@ int main(int argc, char **argv)
 		{ "utc",          no_argument,       NULL, 'u'            },
 		{ "version",      no_argument,       NULL, 'V'            },
 		{ "systohc",      no_argument,       NULL, 'w'            },
-		{ "debug",        no_argument,       NULL, 'D'            },
-		{ "ul-debug",     required_argument, NULL, 'd'            },
+		{ "debug",        no_argument,       NULL, 'D'            },	/* IGNORECHECK=yes */
+		{ "ul-debug",     required_argument, NULL, 'd'            },	/* IGNORECHECK=yes */
 		{ "verbose",      no_argument,       NULL, 'v'            },
 		{ "set",          no_argument,       NULL, OPT_SET        },
 #if defined(__linux__) && defined(__alpha__)
-		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },
-		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
-		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
+		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },	/* IGNORECHECK=yes */
+		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },	/* IGNORECHECK=yes */
+		{ "epoch",        required_argument, NULL, OPT_EPOCH      },	/* IGNORECHECK=yes */
 #endif
 #ifdef __linux__
 		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
