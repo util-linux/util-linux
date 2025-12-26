@@ -262,7 +262,8 @@ struct lscpu_cxt {
 		 hex,
 		 json,
 		 raw,
-		 bytes;
+		 bytes,
+		 annotate_col_headers;
 
 	int is_cluster; /* For aarch64 if the machine doesn't have ACPI PPTT */
 };

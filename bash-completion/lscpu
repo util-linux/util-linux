@@ -29,6 +29,7 @@ _lscpu_module()
 	case $cur in
 		-*)
 			OPTS_ALL="--all
+				--annotate
 				--online
 				--bytes
 				--caches
