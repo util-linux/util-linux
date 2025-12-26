@@ -740,7 +740,7 @@ int main(int argc, char **argv)
 		 * For backward compatibility we use old output format if
 		 * "list" explicitly specified and --output not defined.
 		 */
-		if (!outarg && act == ACT_LIST)
+		if (!outarg && !ctrl.json && act == ACT_LIST)
 			act = ACT_LIST_OLD;
 	}
 
