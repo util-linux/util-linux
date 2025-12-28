@@ -1,6 +1,8 @@
-check_PROGRAMS += libsmartcols-termreduce-loop
-libsmartcols_termreduce_loop_SOURCES = tests/helpers/libsmartcols-termreduce-loop.c
-libsmartcols_termreduce_loop_LDADD = $(LDADD) libsmartcols.la
+if !OSS_FUZZ
+check_PROGRAMS += test_libsmartcols_termreduce_loop
+test_libsmartcols_termreduce_loop_SOURCES = tests/helpers/test_libsmartcols_termreduce_loop.c
+test_libsmartcols_termreduce_loop_LDADD = $(LDADD) libsmartcols.la
+endif
 
 check_PROGRAMS += test_mbsencode
 test_mbsencode_SOURCES = tests/helpers/test_mbsencode.c
