@@ -63,7 +63,7 @@ time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv);
 static void gregorian_to_unix(uint64_t ts, struct timeval *tv)
 {
 	const uint64_t offset = 0x01B21DD213814000ULL;
-	uint64_t clock_reg = ts - offset;
+	int64_t clock_reg = (int64_t)(ts - offset);
 	tv->tv_sec = clock_reg / 10000000;
 	tv->tv_usec = (clock_reg % 10000000) / 10;
 }
