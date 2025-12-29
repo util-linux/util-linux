@@ -33,7 +33,7 @@ _lsfd_module()
 			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
 			return 0
 			;;
-		'--name')
+		'--inode'|'--name')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
@@ -63,6 +63,7 @@ _lsfd_module()
 				--dump-counters
 				--list-columns
 				--hyperlink
+				--inode
 				--name
 			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
