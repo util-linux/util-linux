@@ -1201,6 +1201,21 @@ static int find_first_free_sector_in_range(
 				p_start -= cxt->first_lba;
 			if (first < p_start)
 				continue;
+
+			/* if we're placing a logical partition start, ensure
+			there's room for the *next* EBR (stored at start - first_lba).
+			therefore enforce:
+			start(Lnew) >= end(Lprev) + first_lba + 1 */
+			if (logical && first > p_end && (first - p_end) <= cxt->first_lba) {
+				first = p_end + 1 + cxt->first_lba;
+				first_moved = 1;
+
+				if (first > end)
+					return -ENOSPC;
+
+				continue;
+			}
+
 			if (first <= p_end) {
 				first = p_end + 1 + (logical ? cxt->first_lba : 0);
 				first_moved = 1;
