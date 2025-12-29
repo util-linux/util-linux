@@ -18,7 +18,7 @@ static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 
 		cl->seqnum, cl->header.data, cl->width,
 		cl->width_hint >= 1.0 ? (int) cl->width_hint :
-				     (int) (cl->width_hint * tb->termwidth),
+				     (int) (cl->width_hint * tb->outwidth),
 		st->width_max,
 		st->width_min,
 		cl->flags,
@@ -166,7 +166,7 @@ static int count_column_width(struct libscols_table *tb,
 
 	/* set minimal width according to width_hint */
 	if (cl->width_hint < 1 && scols_table_is_maxout(tb) && tb->is_term) {
-		st->width_min = (size_t) (cl->width_hint * tb->termwidth);
+		st->width_min = (size_t) (cl->width_hint * tb->outwidth);
 		if (st->width_min && !is_last_column(cl))
 			st->width_min--;
 	}
@@ -308,7 +308,7 @@ static int reduce_column(struct libscols_table *tb,
 
 	if (stage > 6)
 		return -1;
-	if (tb->termwidth >= *width)
+	if (tb->outwidth >= *width)
 		return 1;
 	/* ignore hidden columns */
 	if (scols_column_is_hidden(cl))
@@ -324,7 +324,7 @@ static int reduce_column(struct libscols_table *tb,
 		return 0;
 
 	org_width = cl->width;
-	wanted = *width - tb->termwidth;
+	wanted = *width - tb->outwidth;
 
 	is_trunc = scols_column_is_trunc(cl)
 			|| (scols_column_is_wrap(cl) && !scols_column_is_customwrap(cl));
@@ -363,7 +363,7 @@ static int reduce_column(struct libscols_table *tb,
 			break;
 		if (cl->width_hint <= 0 || cl->width_hint >= 1)
 			break;
-		if (cl->width < (size_t) (cl->width_hint * tb->termwidth))
+		if (cl->width < (size_t) (cl->width_hint * tb->outwidth))
 			break;
 		reduce_to_68(cl, wanted);
 		break;
@@ -420,7 +420,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 	size_t colsepsz;
 	int sorted = 0;
 
-	DBG(TAB, ul_debugobj(tb, "-----calculate-(termwidth=%zu)-----", tb->termwidth));
+	DBG(TAB, ul_debugobj(tb, "-----calculate-(termwidth=%zu, outwidth=%zu)-----", tb->termwidth, tb->outwidth));
 	tb->is_dummy_print = 1;
 	colsepsz = scols_table_is_noencoding(tb) ?
 			mbs_width(colsep(tb)) :
@@ -465,10 +465,11 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 	}
 
 	/* be paranoid */
-	if (width_min > tb->termwidth && scols_table_is_maxout(tb)) {
-		DBG(TAB, ul_debugobj(tb, " min width larger than terminal! [width=%zu, term=%zu]", width_min, tb->termwidth));
+	if (width_min > tb->outwidth && scols_table_is_maxout(tb)) {
+		DBG(TAB, ul_debugobj(tb, " min width larger than terminal! [width=%zu, term=%zu, avail=%zu]",
+					width_min, tb->termwidth, tb->outwidth));
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-		while (width_min > tb->termwidth
+		while (width_min > tb->outwidth
 		       && scols_table_next_column(tb, &itr, &cl) == 0) {
 
 			if (scols_column_is_hidden(cl))
@@ -493,7 +494,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 	last_cl = list_entry(tb->tb_columns.prev, struct libscols_column, cl_columns);
 
 	/* reduce columns width */
-	while (width > tb->termwidth) {
+	while (width > tb->outwidth) {
 		size_t org_width = width;
 		int xrc = 0, n = 0;
 
@@ -504,12 +505,12 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 			sorted = 1;
 		}
 
-		DBG(TAB, ul_debugobj(tb, "#%d reduce stage (width=%zu, term=%zu)",
-			stage, width, tb->termwidth));
+		DBG(TAB, ul_debugobj(tb, "#%d reduce stage (width=%zu, avail=%zu)",
+			stage, width, tb->outwidth));
 
 		scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
 
-		while (width > tb->termwidth
+		while (width > tb->outwidth
 		       && xrc == 0
 		       && scols_table_next_column(tb, &itr, &cl) == 0) {
 			xrc = reduce_column(tb, cl, &width, stage, n++);
@@ -522,9 +523,9 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 	}
 
 	/* enlarge */
-	if (width < tb->termwidth) {
+	if (width < tb->outwidth) {
 		DBG(TAB, ul_debugobj(tb, " enlarge (extreme, available %zu)",
-					tb->termwidth - width));
+					tb->outwidth - width));
 		if (ignore_extremes) {
 			if (!sorted) {
 				sort_columns(tb, cmp_deviation);
@@ -542,7 +543,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 				if (cl->width >= cl->wstat.width_max)
 					continue;
 
-				add = tb->termwidth - width;
+				add = tb->outwidth - width;
 				if (add && cl->wstat.width_max
 				    && cl->width + add > cl->wstat.width_max)
 					add = cl->wstat.width_max - cl->width;
@@ -554,17 +555,17 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 				cl->width += add;
 				width += add;
 
-				if (width == tb->termwidth)
+				if (width == tb->outwidth)
 					break;
 			}
 		}
 
-		if (width < tb->termwidth && scols_table_is_maxout(tb)) {
+		if (width < tb->outwidth && scols_table_is_maxout(tb)) {
 			DBG(TAB, ul_debugobj(tb, " enlarge (max-out, available %zu)",
-						tb->termwidth - width));
+						tb->outwidth - width));
 
 			/* try enlarging all columns */
-			while (width < tb->termwidth) {
+			while (width < tb->outwidth) {
 				scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
 				while (scols_table_next_column(tb, &itr, &cl) == 0) {
 					if (scols_column_is_hidden(cl))
@@ -573,21 +574,21 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 								cl->header.data));
 					cl->width++;
 					width++;
-					if (width == tb->termwidth)
+					if (width == tb->outwidth)
 						break;
 				}
 			}
-		} else if (width < tb->termwidth) {
+		} else if (width < tb->outwidth) {
 			/* enlarge the last column */
 			DBG(TAB, ul_debugobj(tb, " enlarge (last column, available %zu)",
-						tb->termwidth - width));
+						tb->outwidth - width));
 
 			if (!scols_column_is_right(last_cl)) {
 				DBG(COL, ul_debugobj(last_cl, "  add +%zu (%s)",
-							tb->termwidth - width,
+							tb->outwidth - width,
 							last_cl->header.data));
-				last_cl->width += tb->termwidth - width;
-				width = tb->termwidth;
+				last_cl->width += tb->outwidth - width;
+				width = tb->outwidth;
 			}
 		}
 	}
@@ -600,16 +601,16 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 
 	/* ignore last column(s) or force last column to be truncated if
 	 * nowrap mode enabled */
-	if (tb->no_wrap && width > tb->termwidth) {
+	if (tb->no_wrap && width > tb->outwidth) {
 		scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 
 			if (scols_column_is_hidden(cl))
 				continue;
-			if (width <= tb->termwidth)
+			if (width <= tb->outwidth)
 				break;
-			if (width - cl->width < tb->termwidth) {
-				size_t r =  width - tb->termwidth;
+			if (width - cl->width < tb->outwidth) {
+				size_t r =  width - tb->outwidth;
 
 				cl->flags |= SCOLS_FL_TRUNC;
 				cl->width -= r;

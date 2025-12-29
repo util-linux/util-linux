@@ -235,6 +235,7 @@ struct libscols_table {
 	size_t	termwidth;	/* terminal width (number of columns) */
 	size_t  termheight;	/* terminal height  (number of lines) */
 	size_t  termreduce;	/* extra blank space */
+	size_t	outwidth;	/* effective output width (calculated internally) */
 	int	termforce;	/* SCOLS_TERMFORCE_* */
 	FILE	*out;		/* output stream */
 
