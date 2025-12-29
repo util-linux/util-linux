@@ -29,14 +29,21 @@
 enum cl_filter_type {
 	clf_pid,
 	clf_name,
+	clf_devino,
 };
 
 struct cl_filters {
 	struct list_head filters;
 	unsigned int n_pid_filters;
 	unsigned int n_name_filters;
+	unsigned int n_devino_filters;
 
 	pid_t *pids;
+};
+
+struct devino {
+	dev_t dev;
+	ino_t ino;
 };
 
 struct cl_filter {
@@ -47,6 +54,7 @@ struct cl_filter {
 			const char *name;
 			size_t name_len;
 		};
+		struct devino file;
 	};
 	struct list_head filters;
 };
@@ -57,6 +65,7 @@ struct cl_filters *new_cl_filters(void)
 	INIT_LIST_HEAD(&cl_filters->filters);
 	cl_filters->n_pid_filters = 0;
 	cl_filters->n_name_filters = 0;
+	cl_filters->n_devino_filters = 0;
 	cl_filters->pids = NULL;
 	return cl_filters;
 }
@@ -209,4 +218,50 @@ bool cl_filters_apply_name(struct cl_filters *cl_filters, const char *name)
 		return true;
 
 	return cl_filters_apply(cl_filters, name_equal, name);
+}
+
+static struct cl_filter *new_cl_filter_devino(dev_t dev, ino_t ino)
+{
+	struct cl_filter *clf = xmalloc(sizeof(*clf));
+	clf->type = clf_devino;
+	INIT_LIST_HEAD(&clf->filters);
+	clf->file.dev = dev;
+	clf->file.ino = ino;
+	return clf;
+}
+
+void cl_filters_add_devino(struct cl_filters *cl_filters, dev_t dev, ino_t ino)
+{
+	struct cl_filter *clf = new_cl_filter_devino(dev, ino);
+	list_add_tail(&clf->filters, &cl_filters->filters);
+	cl_filters->n_devino_filters++;
+}
+
+bool cl_filters_has_devino(struct cl_filters *cl_filters)
+{
+	return cl_filters->n_devino_filters > 0;
+}
+
+static bool devino_equal(struct cl_filter *cl_filter, const void *data)
+{
+	const struct devino *devino = data;
+
+	if (cl_filter->type != clf_devino)
+		return false;
+
+	return (devino->dev == cl_filter->file.dev
+		&& devino->ino == cl_filter->file.ino);
+}
+
+bool cl_filters_apply_devino(struct cl_filters *cl_filters, dev_t dev, ino_t ino)
+{
+	struct devino devino;
+
+	if (!cl_filters_has_devino(cl_filters))
+		return true;
+
+	devino.dev = dev;
+	devino.ino = ino;
+
+	return cl_filters_apply(cl_filters, devino_equal, &devino);
 }

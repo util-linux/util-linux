@@ -895,7 +895,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	struct file *f, *prev;
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0) {
-		if (cl_filters_has_name(cl_filters))
+		if (cl_filters_has_name(cl_filters)
+		    || cl_filters_has_devino(cl_filters))
 			return NULL;
 		f = new_readlink_error_file(proc, errno, assoc);
 	} else if (!cl_filters_apply_name(cl_filters, sym))
@@ -908,9 +909,14 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		 && (!prev->is_error)
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-		sb = prev->stat;
-	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat; /* ??? */
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0) {
+		if (cl_filters_has_devino(cl_filters))
+			return NULL;
 		f = new_stat_error_file(proc, sym, errno, assoc);
+	} else if (!cl_filters_apply_devino(cl_filters,
+					    sb.st_dev, sb.st_ino))
+		return NULL;
 	else {
 		const struct file_class *class = stat2class(&sb);
 
@@ -1036,6 +1042,9 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
 			 * Maybe the file is bind-mount'ed after mapped.
 			 */
 			goto try_map_files;
+		if (!cl_filters_apply_devino(cl_filters,
+					     sb.st_dev, sb.st_ino))
+			return;
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
@@ -1044,17 +1053,22 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
 	try_map_files:
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
 				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
-			if (cl_filters_has_name(cl_filters))
+			if (cl_filters_has_name(cl_filters)
+			    || cl_filters_has_devino(cl_filters))
 				return;
 			f = new_readlink_error_file(proc, errno, -assoc);
 		} else if (!cl_filters_apply_name(cl_filters, sym))
 			return;
 		else if (ul_path_statf(pc, &sb, 0,
 					 "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
-			if (cl_filters_has_name(cl_filters))
+			if (cl_filters_has_name(cl_filters)
+			    || cl_filters_has_devino(cl_filters))
 				return;
 			f = new_stat_error_file(proc, sym, errno, -assoc);
-		} else
+		} else if (!cl_filters_apply_devino(cl_filters,
+						    sb.st_dev, sb.st_ino))
+			return;
+		else
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
 
@@ -2176,6 +2190,15 @@ static void add_pids_to_cl_filters(const char *str, struct cl_filters *cl_filter
 		add_pids_to_cl_filters(next, cl_filters);
 }
 
+static void add_devino_to_cl_filters(const char *fpath,
+				     struct cl_filters *cl_filters)
+{
+	struct stat sb;
+	if (stat(fpath, &sb) != 0)
+		err(EXIT_FAILURE, _("status error on %s"), fpath);
+	cl_filters_add_devino(cl_filters, sb.st_dev, sb.st_ino);
+}
+
 static void collect_processes(struct lsfd_control *ctl)
 {
 	DIR *dir;
@@ -2254,6 +2277,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
 	fputs(_("     --hyperlink[=<when>]     print paths as hyperlinks (always|never|auto)\n"), out);
+	fputs(_("     --inode=<file>           collect only files associating with the inode of <file>\n"), out);
 	fputs(_("     --name=<file>            collect only files named <file>\n"), out);
 	fputs(_("     --summary[=<mode>]       print summary information (append|only|never)\n"), out);
 	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
@@ -2599,6 +2623,7 @@ int main(int argc, char *argv[])
 		OPT_DUMP_COUNTERS,
 		OPT_DROP_PRIVILEGE,
 		OPT_HYPERLINK,
+		OPT_CLF_INODE,
 		OPT_CLF_NAME,
 	};
 	static const struct option longopts[] = {
@@ -2620,6 +2645,7 @@ int main(int argc, char *argv[])
 		{ "list-columns",no_argument, NULL, 'H' },
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
+		{ "inode",      required_argument, NULL, OPT_CLF_INODE },
 		{ "name",       required_argument, NULL, OPT_CLF_NAME },
 		{ NULL, 0, NULL, 0 },
 	};
@@ -2708,6 +2734,9 @@ int main(int argc, char *argv[])
 		case OPT_HYPERLINK:
 			if (hyperlinkwanted(optarg))
 				ctl.uri = xgethosturi(NULL);
+			break;
+		case OPT_CLF_INODE:
+			add_devino_to_cl_filters(optarg, ctl.cl_filters);
 			break;
 		case OPT_CLF_NAME:
 			cl_filters_add_name(ctl.cl_filters, optarg);
