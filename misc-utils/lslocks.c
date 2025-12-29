@@ -635,6 +635,8 @@ static char *get_data(struct lslocks *lslocks, struct lock *l, int num,
 		break;
 	case COL_PID:
 		xasprintf(&str, "%d", l->pid);
+		if (l->pid >= 0)
+			*rawdata = (uint64_t)l->pid;
 		break;
 	case COL_TYPE:
 		xasprintf(&str, "%s", l->type);
@@ -1028,7 +1030,7 @@ static void init_scols_filter(struct libscols_table *tb, struct libscols_filter 
 			scols_column_set_json_type(col, json_type);
 		}
 
-		if (id == COL_SIZE && !bytes) {
+		if ((id == COL_SIZE && !bytes) || id == COL_PID) {
 			scols_column_set_data_type(col, SCOLS_DATA_U64);
 			scols_column_set_data_func(col, get_u64_cell, NULL);
 		}

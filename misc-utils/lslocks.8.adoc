@@ -140,6 +140,10 @@ the holder process of a lease (or a lock) is not uniquely determined.
 
 The default output is subject to change. So whenever possible, you should avoid using default output in your scripts.
 
+For OFD locks, the PID column may show -1. Such lines cannot be
+selected by the filter, because the current filter engine does not
+support negative numbers.
+
 == AUTHORS
 
 mailto:dave@gnu.org[Davidlohr Bueso]
