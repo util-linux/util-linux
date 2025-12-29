@@ -62,7 +62,8 @@ time_t __uuid_time(const uuid_t uu, struct timeval *ret_tv);
 
 static uint64_t gregorian_to_unix(uint64_t ts)
 {
-	return ts - ((((uint64_t) 0x01B21DD2) << 32) + 0x13814000);
+	const uint64_t offset = 0x01B21DD213814000ULL;
+	return ts - offset;
 }
 
 static void uuid_time_v1(const struct uuid *uuid, struct timeval *tv)
