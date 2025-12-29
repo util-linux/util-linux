@@ -365,6 +365,12 @@ static void reserve_fd(int fd)
 		     "faild to reserve fd with dup2(%d, %d)", 0, fd);
 }
 
+static void *nop(const struct factory *factory _U_, struct fdesc fdescs[] _U_,
+		 int argc _U_, char ** argv _U_)
+{
+	return NULL;
+}
+
 static void *open_ro_regular_file(const struct factory *factory, struct fdesc fdescs[],
 				  int argc, char ** argv)
 {
@@ -3380,6 +3386,17 @@ static void free_foreign_sockets(const struct factory * factory _U_, void *data)
 
 #define PARAM_END { .name = NULL, }
 static const struct factory factories[] = {
+	{
+		.name = "nop",
+		.desc = "just print pid and wait input",
+		.priv = false,
+		.N    = 0,
+		.EX_N = 0,
+		.make = nop,
+		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
 	{
 		.name = "ro-regular-file",
 		.desc = "read-only regular file",
