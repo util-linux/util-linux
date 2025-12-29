@@ -29,14 +29,21 @@
 enum early_filter_type {
 	ef_pid,
 	ef_file_path,
+	ef_file_devino,
 };
 
 struct early_filters {
 	struct list_head filters;
 	unsigned int n_pid_filters;
 	unsigned int n_file_path_filters;
+	unsigned int n_file_devino_filters;
 
 	pid_t *pids;
+};
+
+struct devino {
+	dev_t dev;
+	ino_t ino;
 };
 
 struct early_filter {
@@ -47,6 +54,7 @@ struct early_filter {
 			const char *file_path;
 			size_t file_path_len;
 		};
+		struct devino file;
 	};
 	struct list_head filters;
 };
@@ -57,6 +65,7 @@ struct early_filters *new_early_filters(void)
 	INIT_LIST_HEAD(&early_filters->filters);
 	early_filters->n_pid_filters = 0;
 	early_filters->n_file_path_filters = 0;
+	early_filters->n_file_devino_filters = 0;
 	early_filters->pids = NULL;
 	return early_filters;
 }
@@ -209,4 +218,51 @@ bool early_filters_apply_file_path(struct early_filters *early_filters, const ch
 		return true;
 
 	return early_filters_apply(early_filters, file_path_equal, file_path);
+}
+
+static struct early_filter *new_early_filter_file_devino(dev_t dev, ino_t ino)
+{
+	struct early_filter *ef = xmalloc(sizeof(*ef));
+	ef->type = ef_file_devino;
+	INIT_LIST_HEAD(&ef->filters);
+	ef->file.dev = dev;
+	ef->file.ino = ino;
+	return ef;
+}
+
+void early_filters_add_file_devino(struct early_filters *early_filters, dev_t dev, ino_t ino)
+{
+	struct early_filter *ef = new_early_filter_file_devino(dev, ino);
+	list_add_tail(&ef->filters, &early_filters->filters);
+	early_filters->n_file_devino_filters++;
+}
+
+bool early_filters_has_file_devino(struct early_filters *early_filters)
+{
+	return early_filters->n_file_devino_filters > 0;
+}
+
+
+static bool file_devino_equal(struct early_filter *early_filter, const void *data)
+{
+	const struct devino *devino = data;
+
+	if (early_filter->type != ef_file_devino)
+		return false;
+
+	return (devino->dev == early_filter->file.dev
+		&& devino->ino == early_filter->file.ino);
+}
+
+bool early_filters_apply_file_devino(struct early_filters *early_filters, dev_t dev, ino_t ino)
+{
+	struct devino devino;
+
+	if (!early_filters_has_file_devino(early_filters))
+		return true;
+
+	devino.dev = dev;
+	devino.ino = ino;
+
+	return early_filters_apply(early_filters, file_devino_equal, &devino);
 }

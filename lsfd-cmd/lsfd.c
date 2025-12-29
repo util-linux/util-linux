@@ -895,7 +895,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	struct file *f, *prev;
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0) {
-		if (early_filters_has_file_path(early_filters))
+		if (early_filters_has_file_path(early_filters)
+		    || early_filters_has_file_devino(early_filters))
 			return NULL;
 		f = new_readlink_error_file(proc, errno, assoc);
 	} else if (!early_filters_apply_file_path(early_filters, sym))
@@ -908,9 +909,13 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		 && (!prev->is_error)
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-		sb = prev->stat;
-	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat; /* ??? */
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0) {
+		if (early_filters_has_file_devino(early_filters))
+			return NULL;
 		f = new_stat_error_file(proc, sym, errno, assoc);
+	} else if (!early_filters_apply_file_devino(early_filters, sb.st_dev, sb.st_ino))
+		return NULL;
 	else {
 		const struct file_class *class = stat2class(&sb);
 
@@ -1036,6 +1041,9 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
 			 * Maybe the file is bind-mount'ed after mapped.
 			 */
 			goto try_map_files;
+		if (!early_filters_apply_file_devino(early_filters,
+						     sb.st_dev, sb.st_ino))
+			return;
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
@@ -1044,17 +1052,22 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
 	try_map_files:
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
 				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
-			if (early_filters_has_file_path(early_filters))
+			if (early_filters_has_file_path(early_filters)
+			    || early_filters_has_file_devino(early_filters))
 				return;
 			f = new_readlink_error_file(proc, errno, -assoc);
 		} else if (!early_filters_apply_file_path(early_filters, sym))
 			return;
 		else if (ul_path_statf(pc, &sb, 0,
 					 "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
-			if (early_filters_has_file_path(early_filters))
+			if (early_filters_has_file_path(early_filters)
+			    || early_filters_has_file_devino(early_filters))
 				return;
 			f = new_stat_error_file(proc, sym, errno, -assoc);
-		} else
+		} else if (!early_filters_apply_file_devino(early_filters,
+							    sb.st_dev, sb.st_ino))
+			return;
+		else
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
 
@@ -2217,7 +2230,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [[-] files...]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [[-|--] files...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --threads                list in threads level\n"), out);
@@ -2563,6 +2576,7 @@ int main(int argc, char *argv[])
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
 	bool dump_counters = false;
+	bool use_ino_for_early_filter = false;
 	struct list_head counter_specs;
 
 	struct lsfd_control ctl = {
@@ -2697,11 +2711,19 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (optind > 0 && strcmp(argv[optind - 1], "--") == 0)
-		errx(EXIT_FAILURE, _("unknown long option: --"));
+	if (optind > 0 && (strcmp(argv[optind - 1], "--") == 0))
+		use_ino_for_early_filter = true;
 
-	for (int n = optind; n < argc; n++)
-		early_filters_add_file_path(ctl.early_filters, argv[n]);
+	for (int n = optind; n < argc; n++) {
+		const char *fpath = argv[n];
+		if (use_ino_for_early_filter) {
+			struct stat sb;
+			if (stat(fpath, &sb) != 0)
+				err(EXIT_FAILURE, _("status error on %s"), fpath);
+			early_filters_add_file_devino(ctl.early_filters, sb.st_dev, sb.st_ino);
+		} else
+			early_filters_add_file_path(ctl.early_filters, fpath);
+	}
 
 	if (collist)
 		list_columns("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
