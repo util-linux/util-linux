@@ -338,6 +338,9 @@ checkdecl:
 checkcompletion:
 	@ $(top_srcdir)/tools/checkcompletion.sh $(top_srcdir)
 
+checkmanpage:
+	@ $(top_srcdir)/tools/checkmanpage.sh $(top_srcdir)
+
 checkusage:
 	@ $(top_srcdir)/tools/checkusage.sh $(top_srcdir) \
 		$(bin_PROGRAMS) $(sbin_PROGRAMS) \
