@@ -208,6 +208,9 @@ ____
 *--move-use-fsync*::
 Use the *fsync*(2) system call after each write when moving data to a new location by *--move-data*.
 
+*--no-device-names*::
+Omit device names in dump output (show only partition numbers).
+
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns.
 +

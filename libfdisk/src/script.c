@@ -68,7 +68,41 @@ struct fdisk_script {
 
 	unsigned int		json : 1,		/* JSON output */
 				force_label : 1;	/* label: <name> specified */
+	unsigned int		no_device_names : 1;	/* 1=suppress device name, 0=display device name (default) */
 };
+
+/**
+ * fdisk_script_set_no_device_names - Set whether to display device names in script output
+ * @dp: script context
+ * @no: 1=suppress device name, 0=display device name
+ * After setting this flag, the script output will use partition numbers (such as "1:") 
+ * instead of device names (such as "/dev/sda1:"); 
+ * This makes the script more concise, easy to read, and suitable for cross-device use.
+ * 
+ * Return: 0 for success, negative error code
+**/
+int fdisk_script_set_no_device_names(struct fdisk_script *dp, int no)
+{
+    if (!dp)
+        return -EINVAL;
+
+    dp->no_device_names = no ? 1 : 0;
+    return 0;
+}
+
+/**
+ * fdisk_script_get_no_device_names - Get current settings
+ * @dp: script context
+ *
+ * Return: 1=suppress device name, 0=display device name
+**/
+int fdisk_script_get_no_device_names(struct fdisk_script *dp)
+{
+    if (!dp)
+        return 0;
+
+    return dp->no_device_names;
+}
 
 static void fdisk_script_free_header(struct fdisk_scriptheader *fi)
 {
@@ -556,6 +590,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	struct fdisk_iter itr;
 	const char *devname = NULL;
 	struct ul_jsonwrt json;
+	char partnum[32];
 
 	assert(dp);
 	assert(f);
@@ -590,7 +625,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		else
 			ul_jsonwrt_value_s(&json, name, fi->data);
 
-		if (strcmp(name, "device") == 0)
+		if (!fdisk_script_get_no_device_names(dp) && strcmp(name, "device") == 0)
 			devname = fi->data;
 	}
 
@@ -609,13 +644,24 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		char *p = NULL;
 
 		ul_jsonwrt_object_open(&json, NULL);
-		if (devname)
+		if (!fdisk_script_get_no_device_names(dp) && devname) {
 			p = fdisk_partname(devname, pa->partno + 1);
-		if (p) {
-			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
-			ul_jsonwrt_value_s(&json, "node", p);
-			free(p);
+			if (p) {
+				node = p;
+				DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
+			}
 		}
+		if (!node) {
+			snprintf(partnum, sizeof(partnum), "%zu", pa->partno + 1);
+			node = partnum;
+			DBG(SCRIPT, ul_debugobj(dp, "write partition %zu%s", pa->partno + 1,
+				fdisk_script_get_no_device_names(dp) ? " (no device name)" : ""));
+		}
+
+		ul_jsonwrt_value_s(&json, "node", node);
+
+		if (p)
+			free(p);
 
 		if (fdisk_partition_has_start(pa))
 			ul_jsonwrt_value_u64(&json, "start", (uintmax_t)pa->start);
@@ -675,7 +721,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 	list_for_each(h, &dp->headers) {
 		struct fdisk_scriptheader *fi = list_entry(h, struct fdisk_scriptheader, headers);
 		fprintf(f, "%s: %s\n", fi->name, fi->data);
-		if (strcmp(fi->name, "device") == 0)
+		if (!fdisk_script_get_no_device_names(dp) && strcmp(fi->name, "device") == 0)
 			devname = fi->data;
 	}
 
@@ -693,14 +739,18 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 		char *p = NULL;
 		int sep = 0;
 
-		if (devname)
+		if (devname) {
 			p = fdisk_partname(devname, pa->partno + 1);
-		if (p) {
-			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
-			fprintf(f, "%s : ", p);
-			free(p);
-		} else
+			if (p) {
+				DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
+				fprintf(f, "%s : ", p);
+				free(p);
+			} else
+				fprintf(f, "%zu : ", pa->partno + 1);
+		} else {
 			fprintf(f, "%zu : ", pa->partno + 1);
+			DBG(SCRIPT, ul_debugobj(dp, "write partition %zu (no device name)", pa->partno + 1));
+		}
 
 		if (fdisk_partition_has_start(pa))
 			sep = fprintf(f, "start=%12ju", (uintmax_t)pa->start);
