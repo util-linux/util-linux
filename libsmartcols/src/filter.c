@@ -486,7 +486,7 @@ unsigned long long scols_counter_get_result(struct libscols_counter *ct)
  */
 const char *scols_counter_get_name(struct libscols_counter *ct)
 {
-	return ct ? ct->name : NULL;;
+	return ct ? ct->name : NULL;
 }
 
 /**

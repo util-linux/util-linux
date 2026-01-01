@@ -126,7 +126,7 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 
 			free(tb->lsmnt);
 		}
-		tb->lsmnt = ls;;
+		tb->lsmnt = ls;
 	}
 
 	DBG(TAB, ul_debugobj(tb, "listmount: init [step=%zu]", ls->stepsiz));

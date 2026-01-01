@@ -897,7 +897,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user_wtmp) {
 				mem2strcpy(user->last_tty, user_wtmp->ut_line,
 						sizeof(user_wtmp->ut_line),
-						sizeof(user_wtmp->ut_line) + 1);;
+						sizeof(user_wtmp->ut_line) + 1);
 			}  else
 				get_lastlog(ctl, user->uid, user->login, user->last_tty, LASTLOG_LINE);
 			break;
@@ -908,7 +908,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user_wtmp) {
 				mem2strcpy(user->last_hostname, user_wtmp->ut_host,
 						sizeof(user_wtmp->ut_host),
-						sizeof(user_wtmp->ut_host) + 1);;
+						sizeof(user_wtmp->ut_host) + 1);
 			}  else
 				get_lastlog(ctl, user->uid, user->login, user->last_hostname, LASTLOG_HOST);
 			break;
@@ -923,7 +923,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				user->failed_tty = xmalloc(sizeof(user_btmp->ut_line) + 1);
 				mem2strcpy(user->failed_tty, user_btmp->ut_line,
 						sizeof(user_btmp->ut_line),
-						sizeof(user_btmp->ut_line) + 1);;
+						sizeof(user_btmp->ut_line) + 1);
 			}
 			break;
 		case COL_HUSH_STATUS:

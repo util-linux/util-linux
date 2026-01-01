@@ -144,7 +144,7 @@ static int mainloop_cb(void *data)
 
 	/* emit previous waiting step */
 	if (ss->step && !replay_step_is_empty(ss->step)) {
-		int fd = ul_pty_get_childfd(ss->pty);;
+		int fd = ul_pty_get_childfd(ss->pty);
 
 		rc = replay_emit_step_data(ss->setup, ss->step, fd);
 		fdatasync(fd);

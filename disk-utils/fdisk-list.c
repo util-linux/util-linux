@@ -327,7 +327,7 @@ int list_freespace_get_table(struct fdisk_context *cxt,
 		}
 
 		if (fdisk_partition_has_size(pa)) {
-			uintmax_t sz = fdisk_partition_get_size(pa);;
+			uintmax_t sz = fdisk_partition_get_size(pa);
 
 			sumsize += sz;
 

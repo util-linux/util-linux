@@ -459,7 +459,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt;
 	const char *type = mnt_fs_get_fstype(cxt->fs);
-	const char *val = NULL;;
+	const char *val = NULL;
 	uid_t uid, entry_uid;
 
 	*errsv = 0;

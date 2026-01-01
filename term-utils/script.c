@@ -561,7 +561,7 @@ static ssize_t __attribute__ ((__format__ (__printf__, 3, 4)))
 		rc = vsnprintf(msg, sizeof(msg), msgfmt, ap);
 		va_end(ap);
 		if (rc < 0)
-			*msg = '\0';;
+			*msg = '\0';
 	}
 
 	if (*msg)
@@ -599,7 +599,7 @@ static ssize_t log_info(struct script_control *ctl, const char *name, const char
 		rc = vsnprintf(msg, sizeof(msg), msgfmt, ap);
 		va_end(ap);
 		if (rc < 0)
-			*msg = '\0';;
+			*msg = '\0';
 	}
 
 	if (*msg)

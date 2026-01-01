@@ -745,7 +745,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 			"cannot convert '%s' username to UID", username));
 		if (errno == 0)
 			errno = EINVAL;
-		rc = -errno;;
+		rc = -errno;
 	}
 
 	free(buf);
@@ -774,7 +774,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 			"cannot convert '%s' groupname to GID", groupname));
 		if (errno == 0)
 			errno = EINVAL;
-		rc = -errno;;
+		rc = -errno;
 	}
 
 	free(buf);
