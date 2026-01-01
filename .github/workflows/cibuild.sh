@@ -196,6 +196,8 @@ for phase in "${PHASES[@]}"; do
             done
         fi
 
+        make checkusage
+
         ./tests/run.sh --show-diff
 
         if [[ "$COVERAGE" == "yes" ]]; then
