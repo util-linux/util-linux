@@ -150,6 +150,7 @@ for phase in "${PHASES[@]}"; do
         make checklibdoc
         make checkxalloc
         make checkcompletion
+        make checkmanpage
         ;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
