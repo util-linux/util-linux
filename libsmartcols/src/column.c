@@ -1141,7 +1141,7 @@ int scols_column_greatest_wrap(
 			char **data)
 {
 	size_t maxsz = 0;
-	char *res = NULL;;
+	char *res = NULL;
 
 	if (!scols_column_is_customwrap(cl))
 		return scols_column_next_wrap(cl, ce, data);

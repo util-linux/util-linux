@@ -627,7 +627,7 @@ const char *mnt_fs_get_target(struct libmnt_fs *fs)
 #ifdef HAVE_STATMOUNT_API
 	mnt_fs_try_statmount(fs, target, STATMOUNT_MNT_POINT);
 #endif
-	return fs->target;;
+	return fs->target;
 }
 
 /**
