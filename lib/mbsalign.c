@@ -162,10 +162,14 @@ size_t mbs_safe_width(const char *s)
  * \x?? hex sequence. The @width returns number of cells. The @safechars
  * are not encoded.
  *
+ * Each character in @unsafechars found in @s is escaped with a backslash
+ * character '\'.
+ *
  * The @buf has to be big enough to store mbs_safe_encode_size(strlen(s)))
  * bytes.
  */
-char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz, const char *safechars)
+char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz,
+				const char *safechars, const char *unsafechars)
 {
 	const char *p = s;
 	char *r;
@@ -189,6 +193,16 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t 
 				break;
 			*r++ = *p++;
 			rsz--;
+			continue;
+		}
+
+		if (unsafechars && strchr(unsafechars, *p)) {
+			if (rsz < 3)
+				break;
+			*r++ = '\\';
+			*r++ = *p++;
+			rsz -= 2;
+			*width += 2;
 			continue;
 		}
 
@@ -387,7 +401,7 @@ char *mbs_safe_encode(const char *s, size_t *width)
 	bufsz = mbs_safe_encode_size(sz);
 	buf = malloc(bufsz);
 	if (buf)
-		ret = mbs_safe_encode_to_buffer(s, width, buf, bufsz, NULL);
+		ret = mbs_safe_encode_to_buffer(s, width, buf, bufsz, NULL, NULL);
 	if (!ret)
 		free(buf);
 	return ret;
