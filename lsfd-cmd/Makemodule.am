@@ -8,6 +8,7 @@ dist_noinst_DATA += lsfd-cmd/lsfd.1.adoc
 lsfd_SOURCES = \
 	lsfd-cmd/lsfd.c \
 	lsfd-cmd/lsfd.h \
+	lsfd-cmd/early-filter.c \
 	lsfd-cmd/decode-file-flags.c \
 	lsfd-cmd/decode-file-flags.h \
 	lsfd-cmd/file.c \
