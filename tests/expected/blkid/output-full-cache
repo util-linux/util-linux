@@ -1,1 +1,1 @@
-blkid-output.img: LABEL="tM-CM-)s\"'^J t" TYPE="cramfs"
+blkid-output.img: LABEL="t\xc3\xa9s\"'\x0a t" TYPE="cramfs"

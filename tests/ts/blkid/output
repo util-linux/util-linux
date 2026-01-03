@@ -30,17 +30,27 @@ outimg="$TS_OUTDIR"/blkid-output.img
 xz -dc "$TS_SELF"/blkid-output.img.xz > $outimg
 
 _blkid() {
-	"$TS_CMD_BLKID" --cache-file "$TS_OUTDIR"/blkid.cache "$@" "$outimg" | sed -e "s#$TS_OUTDIR/##"
+        "$TS_CMD_BLKID" --cache-file "$TS_OUTDIR"/blkid.cache "$@" "$outimg" | sed -e "s#$TS_OUTDIR/##"
 }
 
 for format in value udev export full device json; do
-	ts_init_subtest "$format-probe"
-	_blkid --probe --output "$format" >> "$TS_OUTPUT"
-	ts_finalize_subtest
+        ts_init_subtest "$format-probe"
+        _blkid --probe --output "$format" >> "$TS_OUTPUT"
+        ts_finalize_subtest
 
-	ts_init_subtest "$format-cache"
-	_blkid --output "$format" >> "$TS_OUTPUT"
-	ts_finalize_subtest
+        ts_init_subtest "$format-cache"
+        _blkid --output "$format" >> "$TS_OUTPUT"
+        ts_finalize_subtest
+
+        if [[ "$format" =~ export|full ]]; then
+                ts_init_subtest "$format-cache-ascii"
+                _blkid --ascii --output "$format" >> "$TS_OUTPUT"
+                ts_finalize_subtest
+
+                ts_init_subtest "$format-probe-ascii"
+                _blkid --ascii --probe --output "$format" >> "$TS_OUTPUT"
+                ts_finalize_subtest
+        fi
 done
 
 ts_finalize
