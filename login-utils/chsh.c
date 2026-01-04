@@ -67,7 +67,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *fp = stdout;
 	fputs(USAGE_HEADER, fp);
-	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
+	fprintf(fp, _(" %s [options] [<username>|<UID>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(_("Change your login shell.\n"), fp);
