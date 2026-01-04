@@ -141,6 +141,10 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 		/* Nothing in particular happened, copy input to output */
 		fputs(linebuf, fp);
 	}
+	if (!feof(pwf))
+		goto fail;
+	fclose(pwf);	/* I don't think I want to know if this failed */
+	pwf = NULL;
 
 	/* xfmkstemp is too restrictive by default for passwd file */
 	if (fchmod(fileno(fp), 0644) < 0)
@@ -149,9 +153,6 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	fp = NULL;
 	if (rc != 0)
 		goto fail;
-
-	fclose(pwf);	/* I don't think I want to know if this failed */
-	pwf = NULL;
 
 	if (!found) {
 		errno = ENOENT;	/* give me something better */
