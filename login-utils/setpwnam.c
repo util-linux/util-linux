@@ -77,8 +77,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	int save_errno, rc;
 	uint8_t found = 0, locked = 0;
 	size_t namelen;
-	size_t contlen;
-	size_t buflen = 256;
+	size_t buflen = 0;
 	char *linebuf = NULL;
 	char *tmpname = NULL;
 
@@ -100,33 +99,11 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 		goto fail;
 
 	namelen = strlen(pwd->pw_name);
-	if (namelen > buflen)
-		buflen += namelen;
-	linebuf = malloc(buflen);
-	if (!linebuf)
-		goto fail;
 
 	/* parse the passwd file */
 	/* Do you wonder why I don't use getpwent? Read comments at top of
 	 * file */
-	while (fgets(linebuf, buflen, pwf) != NULL) {
-		contlen = strlen(linebuf);
-		while (linebuf[contlen - 1] != '\n' && !feof(pwf)) {
-			char *tmp;
-			/* Extend input buffer if it failed getting the whole line,
-			 * so now we double the buffer size */
-			buflen *= 2;
-			tmp = realloc(linebuf, buflen);
-			if (tmp == NULL)
-				goto fail;
-			linebuf = tmp;
-			/* And fill the rest of the buffer */
-			if (fgets(&linebuf[contlen], buflen / 2, pwf) == NULL)
-				break;
-			contlen = strlen(linebuf);
-			/* That was a lot of work for nothing. Gimme perl! */
-		}
-
+	while (getline(&linebuf, &buflen, pwf) != -1) {
 		/* Is this the username we were sent to change? */
 		if (!found &&
 		    strncmp(linebuf, pwd->pw_name, namelen) == 0 &&
