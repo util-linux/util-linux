@@ -1282,7 +1282,7 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s [-p] [-s <shell>] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
+	printf(_(" %s [-p] [-s <shell>] [-h <host>] [-H] [[-f] <username|UID>]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Begin a session on the system.\n"), stdout);
 
