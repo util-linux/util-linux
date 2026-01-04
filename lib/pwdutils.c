@@ -39,7 +39,7 @@ failed:
 }
 
 /* Returns allocated passwd and allocated pwdbuf for the username or UID passed
- * as @str. In case of error returns NULL and set errno, for unknown user it
+ * as @str. In case of error returns NULL and sets errno, for unknown user it
  * sets errno to EINVAL.
  */
 struct passwd *xgetuserpw(const char *str ,char **pwdbuf)
@@ -87,7 +87,7 @@ failed:
 }
 
 /* Returns allocated group and allocated grpbuf for the group name or GID passed
- * as @str. In case of error returns NULL and set errno, for unknown group it
+ * as @str. In case of error returns NULL and sets errno, for unknown group it
  * sets errno to EINVAL.
  */
 struct group *xgetgroup(const char *str, char **grpbuf)
