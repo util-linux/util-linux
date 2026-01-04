@@ -84,8 +84,15 @@ struct bcachefs_sb_member {
 	uint64_t	flags[2];
 } __attribute__((packed));
 
-struct bcachefs_sb_field_members {
+struct bcachefs_sb_field_members_v1 {
 	struct bcachefs_sb_field	field;
+	struct bcachefs_sb_member	members[];
+}  __attribute__((packed));
+
+struct bcachefs_sb_field_members_v2 {
+	struct bcachefs_sb_field	field;
+	uint16_t			member_bytes;
+	uint8_t				pad[6];
 	struct bcachefs_sb_member	members[];
 }  __attribute__((packed));
 
@@ -166,8 +173,12 @@ struct bcachefs_super_block {
 #define BCACHEFS_SB_MAX_SIZE_SHIFT   0x10U
 /* fields offset within super block */
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
-/* tag value for members field */
-#define BCACHEFS_SB_FIELD_TYPE_MEMBERS 1
+/* tag value for v1 members field */
+#define BCACHEFS_SB_FIELD_TYPE_MEMBERS_V1 1
+/* v1 members field size in bytes */
+#define BCACHEFS_SB_FIELD_MEMBERS_V1_BYTES 56
+/* tag value for v2 members field */
+#define BCACHEFS_SB_FIELD_TYPE_MEMBERS_V2 11
 /* tag value for disk_groups field */
 #define BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS 5
 /* version splitting helpers */
@@ -226,23 +237,42 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	return BLKID_PROBE_OK;
 }
 
+#define FIELD_END(s, field)	offsetof(s, field) + sizeof_member(s, field)
+
+/* Fields must be dynamically checked for existence before accessing (using FIELD_END) */
+static const struct bcachefs_sb_member *bcachefs_sb_member_get_unsafe(
+	const struct bcachefs_sb_member *members,
+	uint16_t member_bytes, size_t i)
+{
+	return (const void*)((const char *) members + i * member_bytes);
+}
+
 static void probe_bcachefs_sb_members(blkid_probe pr,
 				     const struct bcachefs_super_block *bcs,
 				     const struct bcachefs_sb_field *field,
-				     uint8_t dev_idx)
+				     const struct bcachefs_sb_member *members,
+				     uint16_t member_bytes, size_t member_array_offset)
 {
-	struct bcachefs_sb_field_members *members =
-			(struct bcachefs_sb_field_members *) field;
 	uint64_t sectors = 0;
 	uint8_t i;
+	const struct bcachefs_sb_member *current;
 
-	if (BYTES(field) != offsetof(__typeof__(*members), members[bcs->nr_devices]))
+	if (BYTES(field) != member_array_offset + bcs->nr_devices * member_bytes)
 		return;
 
-	blkid_probe_set_uuid_as(pr, members->members[dev_idx].uuid, "UUID_SUB");
+	current = bcachefs_sb_member_get_unsafe(members, member_bytes, bcs->dev_idx);
+
+	if (member_bytes < FIELD_END(struct bcachefs_sb_member, uuid))
+		return;
+
+	blkid_probe_set_uuid_as(pr, current->uuid, "UUID_SUB");
+
+	if (member_bytes < FIELD_END(struct bcachefs_sb_member, nbuckets) ||
+	    member_bytes < FIELD_END(struct bcachefs_sb_member, bucket_size))
+		return;
 
 	for (i = 0; i < bcs->nr_devices; i++) {
-		struct bcachefs_sb_member *member = &members->members[i];
+		const struct bcachefs_sb_member *member = bcachefs_sb_member_get_unsafe(members, member_bytes, i);
 		sectors += le64_to_cpu(member->nbuckets) * le16_to_cpu(member->bucket_size);
 	}
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
@@ -300,8 +330,17 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 		if (!type)
 			break;
 
-		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS)
-			probe_bcachefs_sb_members(pr, bcs, field, bcs->dev_idx);
+		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS_V1) {
+			struct bcachefs_sb_field_members_v1 *members = (struct bcachefs_sb_field_members_v1 *) field;
+			probe_bcachefs_sb_members(pr, bcs, field, members->members,
+				BCACHEFS_SB_FIELD_MEMBERS_V1_BYTES, offsetof(__typeof__(*members), members));
+		}
+
+		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS_V2) {
+			struct bcachefs_sb_field_members_v2 *members = (struct bcachefs_sb_field_members_v2 *) field;
+			probe_bcachefs_sb_members(pr, bcs, field, members->members,
+				le16_to_cpu(members->member_bytes), offsetof(__typeof__(*members), members));
+		}
 
 		if (type == BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS)
 			probe_bcachefs_sb_disk_groups(pr, bcs, field, bcs->dev_idx);
