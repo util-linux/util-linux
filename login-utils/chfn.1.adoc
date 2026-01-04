@@ -22,7 +22,7 @@ chfn - change your finger information
 
 == SYNOPSIS
 
-*chfn* [*-f* _full-name_] [*-o* _office_] [*-p* _office-phone_] [*-h* _home-phone_] [*-u*] [*-V*] [_username_]
+*chfn* [*-f* _full-name_] [*-o* _office_] [*-p* _office-phone_] [*-h* _home-phone_] [*-u*] [*-V*] [_username_|_UID_]
 
 == DESCRIPTION
 

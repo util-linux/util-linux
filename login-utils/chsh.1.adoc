@@ -22,7 +22,7 @@ chsh - change your login shell
 
 == SYNOPSIS
 
-*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-V*] [_username_]
+*chsh* [*-s* _shell_] [*-l*] [*-h*] [*-V*] [_username_|_UID_]
 
 == DESCRIPTION
 
