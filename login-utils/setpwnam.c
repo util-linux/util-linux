@@ -75,7 +75,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 {
 	FILE *fp = NULL, *pwf = NULL;
 	int save_errno, rc;
-	uint8_t found = 0;
+	uint8_t found = 0, locked = 0;
 	size_t namelen;
 	size_t contlen;
 	size_t buflen = 256;
@@ -94,6 +94,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	/* acquire exclusive lock */
 	if (lckpwdf() < 0)
 		goto fail;
+	locked = 1;
 	pwf = fopen(PASSWD_FILE, "r");
 	if (!pwf)
 		goto fail;
@@ -174,7 +175,8 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 
  fail:
 	save_errno = errno;
-	ulckpwdf();
+	if (locked)
+		ulckpwdf();
 	if (fp != NULL)
 		fclose(fp);
 	if (tmpname != NULL)
