@@ -224,6 +224,10 @@ cfdisk_LDADD += -lslang
 else
 cfdisk_CFLAGS += $(NCURSES_CFLAGS)
 cfdisk_LDADD += $(NCURSES_LIBS)
+if HAVE_TINFO
+cfdisk_CFLAGS += $(TINFO_CFLAGS)
+cfdisk_LDADD += $(TINFO_LIBS)
+endif
 endif
 endif # BUILD_CFDISK
 

@@ -74,6 +74,10 @@ irqtop_LDADD += -lslang
 else
 irqtop_CFLAGS += $(NCURSES_CFLAGS)
 irqtop_LDADD += $(NCURSES_LIBS)
+if HAVE_TINFO
+irqtop_CFLAGS += $(TINFO_CFLAGS)
+irqtop_LDADD += $(TINFO_LIBS)
+endif
 endif
 endif
 
