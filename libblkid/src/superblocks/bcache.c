@@ -79,9 +79,23 @@ struct bcachefs_sb_member {
 	uint64_t	nbuckets;
 	uint16_t	first_bucket;
 	uint16_t	bucket_size;
-	uint32_t	pad;
+	uint8_t		btree_bitmap_shift;
+	uint8_t		pad[3];
 	uint64_t	last_mount;
-	uint64_t	flags[2];
+	uint64_t	flags;
+	/* fields below were added after members_v1 */
+	uint32_t	iops[4];
+	uint64_t	errors[3];
+	uint64_t	errors_at_reset[3];
+	uint64_t	errors_reset_time;
+	uint64_t	seq;
+	uint64_t	btree_allocated_bitmap;
+	uint32_t	last_journal_bucket;
+	uint32_t	last_journal_bucket_offset;
+
+	/* device name/model info from the last FS mount */
+	uint8_t		device_name[16];
+	uint8_t		device_model[64];
 } __attribute__((packed));
 
 struct bcachefs_sb_field_members_v1 {
