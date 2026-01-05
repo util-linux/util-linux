@@ -300,7 +300,7 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 	if (!dev->size)
 		goto done;
 	if (getuid() != 0)
-		goto done;;				/* no permissions to read from the device */
+		goto done;				/* no permissions to read from the device */
 
 	DBG(DEV, ul_debugobj(dev, " properties by blkid"));
 

@@ -2846,7 +2846,7 @@ int mnt_context_read_mesgs(struct libmnt_context *cxt, int fd)
 			continue;
 
 		mnt_context_append_mesg(cxt, (char *) buf);
-		count++;;
+		count++;
 	}
 
 	errno = errsv;
