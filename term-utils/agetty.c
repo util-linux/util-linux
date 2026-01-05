@@ -1706,8 +1706,8 @@ static int issuefile_read_stream(struct issue *ie, FILE *f, struct options *op, 
 static int issuedir_read(struct issue *ie, const char *dirname,
 			 struct options *op, struct termios *tp)
 {
-        int dd, nfiles, i;
-        struct dirent **namelist = NULL;
+	int dd, nfiles, i;
+	struct dirent **namelist = NULL;
 
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
 	if (dd < 0)
@@ -1943,9 +1943,9 @@ skip:
 	struct list_head *current = NULL;
 	char *name = NULL;
 
-        /* Reading all issue files and concatinating all contents to one content.
-         * The ordering rules are defineded in:
-         * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
+	/* Reading all issue files and concatinating all contents to one content.
+	 * The ordering rules are defineded in:
+	 * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
 	 *
 	 * Note that _PATH_RUNSTATEDIR (/run) is always read by ul_configs_file_list().
 	 */
@@ -3120,8 +3120,8 @@ static void load_credentials(struct options *op) {
 	struct path_cxt *pc;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
-        if (!env)
-                return;
+	if (!env)
+		return;
 
 	pc = ul_new_path("%s", env);
 	if (!pc) {

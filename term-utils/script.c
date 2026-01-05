@@ -1078,7 +1078,7 @@ int main(int argc, char **argv)
 			log_info(&ctl, "INPUT_LOG", "%s", infile);
 	}
 
-        /* this is the main loop */
+	/* this is the main loop */
 	rc = ul_pty_proxy_master(ctl.pty);
 
 	/* all done; cleanup and kill */

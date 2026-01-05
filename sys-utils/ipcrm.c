@@ -78,7 +78,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static int remove_id(int type, int iskey, int id)
 {
-        int ret;
+	int ret;
 	char *errmsg;
 	/* needed to delete semaphores */
 	union semun arg;

@@ -476,7 +476,7 @@ static int test_tasks(int argc, char *argv[], const char *prefix)
 		printf(" %d", tid);
 
 	printf("\n");
-        ul_unref_path(pc);
+	ul_unref_path(pc);
 	return EXIT_SUCCESS;
 }
 
@@ -501,7 +501,7 @@ static int test_fds(int argc, char *argv[], const char *prefix)
 		printf(" %d", fd);
 
 	fputc('\n', stdout);
-        ul_unref_path(pc);
+	ul_unref_path(pc);
 	return EXIT_SUCCESS;
 }
 

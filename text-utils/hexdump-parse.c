@@ -52,22 +52,22 @@ static struct list_head *color_fmt(char *cfmt, int bcnt);
 
 static void __attribute__ ((__noreturn__)) badcnt(const char *s)
 {
-        errx(EXIT_FAILURE, _("bad byte count for conversion character %s"), s);
+	errx(EXIT_FAILURE, _("bad byte count for conversion character %s"), s);
 }
 
 static void __attribute__ ((__noreturn__)) badsfmt(void)
 {
-        errx(EXIT_FAILURE, _("%%s requires a precision or a byte count"));
+	errx(EXIT_FAILURE, _("%%s requires a precision or a byte count"));
 }
 
 static void __attribute__ ((__noreturn__)) badfmt(const char *fmt)
 {
-        errx(EXIT_FAILURE, _("bad format {%s}"), fmt);
+	errx(EXIT_FAILURE, _("bad format {%s}"), fmt);
 }
 
 static void __attribute__ ((__noreturn__)) badconv(const char *ch)
 {
-        errx(EXIT_FAILURE, _("bad conversion character %%%s"), ch);
+	errx(EXIT_FAILURE, _("bad conversion character %%%s"), ch);
 }
 
 #define first_letter(s,f) strchr(f, *(s))
@@ -81,7 +81,7 @@ void addfile(char *name, struct hexdump *hex)
 	size_t n = 0;
 
 	if ((fp = fopen(name, "r")) == NULL)
-	        err(EXIT_FAILURE, _("can't read %s"), name);
+		err(EXIT_FAILURE, _("can't read %s"), name);
 
 	while (getline(&buf, &n, fp) != -1) {
 		fmt = buf;

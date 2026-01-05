@@ -764,9 +764,9 @@ int main(int argc, char **argv)
 			fslen_ub += (image_length + 3); /* 3 is for padding */
 			break;
 		case 'l':
-                        lockmode = "1";
+			lockmode = "1";
 			if (optarg) {
-                                if (*optarg == '=')
+				if (*optarg == '=')
 					optarg++;
 				lockmode = optarg;
 			}
@@ -810,7 +810,7 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(MKFS_EX_USAGE, _("cannot open %s"), outfile);
 
-        if (blkdev_lock(fd, outfile, lockmode) != 0)
+	if (blkdev_lock(fd, outfile, lockmode) != 0)
 		exit(MKFS_EX_ERROR);
 
 	root_entry = xcalloc(1, sizeof(struct entry));

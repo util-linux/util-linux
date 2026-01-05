@@ -59,7 +59,6 @@ _losetup_module()
 				--read-only
 				--remove
 				--show
-				--verbose
 				--direct-io
 				--loop-ref
 				--sector-size

@@ -478,7 +478,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
 		printf(_("  start sector: (from/to) %ju / %ju\n"), (uintmax_t) from, (uintmax_t) to);
 		printf(_("  sectors: %ju\n"), (uintmax_t) nsectors);
-	        printf(_("  step size: %zu bytes\n"), step_bytes);
+		printf(_("  step size: %zu bytes\n"), step_bytes);
 		putchar('\n');
 		fflush(stdout);
 
@@ -602,7 +602,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 					i + 1, nsectors,
 					100.0 / ((double) nsectors/(i+1)));
 			fflush(stdout);
-                        fputc('\r', stdout);
+			fputc('\r', stdout);
 
 		}
 next:

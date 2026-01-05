@@ -68,10 +68,9 @@ static int print_entry(const char *user, int64_t ll_time,
 	/* Print only if newer than t days */
 	if (tflg && ((time (NULL) - ll_time) > t_days))
 		return 0;
-        /* this is necessary if you compile this on architectures with
-           a 32bit time_t type. */
-        time_t t_time = ll_time;
-        tm = localtime_r(&t_time, &tm_buf);
+	/* This is needed on architectures with a 32bit time_t type. */
+	time_t t_time = ll_time;
+	tm = localtime_r(&t_time, &tm_buf);
 	if (tm == NULL)
 		datep = "(unknown)";
 	else {

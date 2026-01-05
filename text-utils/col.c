@@ -601,45 +601,44 @@ static void free_line_allocations(struct col_alloc *root)
 
 static void process_char(struct col_ctl *ctl, struct col_lines *lns)
 {
-                /* Deal printable characters */
-                if (!iswgraph(lns->ch) && handle_not_graphic(ctl, lns))
-                        return;
+	/* Deal with non-printable characters. */
+	if (!iswgraph(lns->ch) && handle_not_graphic(ctl, lns))
+		return;
 
-                /* Must stuff ch in a line - are we at the right one? */
-                if ((size_t)lns->cur_line != lns->this_line - lns->adjust)
-                        update_cur_line(ctl, lns);
+	/* Must stuff ch in a line - are we at the right one? */
+	if ((size_t)lns->cur_line != lns->this_line - lns->adjust)
+		update_cur_line(ctl, lns);
 
-                /* Does line buffer need to grow? */
-                if (ctl->l->l_lsize <= ctl->l->l_line_len + 1) {
-                        size_t need;
+	/* Does line buffer need to grow? */
+	if (ctl->l->l_lsize <= ctl->l->l_line_len + 1) {
+		size_t need;
 
-                        need = ctl->l->l_lsize ? ctl->l->l_lsize * 2 : NALLOC;
-                        ctl->l->l_line = xrealloc(ctl->l->l_line, need * sizeof(struct col_char));
-                        ctl->l->l_lsize = need;
-                }
+		need = ctl->l->l_lsize ? ctl->l->l_lsize * 2 : NALLOC;
+		ctl->l->l_line = xrealloc(ctl->l->l_line, need * sizeof(struct col_char));
+		ctl->l->l_lsize = need;
+	}
 
-                /* Store character */
-                lns->c = &ctl->l->l_line[ctl->l->l_line_len++];
-                lns->c->c_char = lns->ch;
-                lns->c->c_set = lns->cur_set;
+	/* Store character */
+	lns->c = &ctl->l->l_line[ctl->l->l_line_len++];
+	lns->c->c_char = lns->ch;
+	lns->c->c_set = lns->cur_set;
 
-                if (0 < lns->cur_col)
-                        lns->c->c_column = lns->cur_col;
-                else
-                        lns->c->c_column = 0;
-                lns->c->c_width = wcwidth(lns->ch);
+	if (0 < lns->cur_col)
+		lns->c->c_column = lns->cur_col;
+	else
+		lns->c->c_column = 0;
+	lns->c->c_width = wcwidth(lns->ch);
 
-                /*
-                 * If things are put in out of order, they will need sorting
-                 * when it is flushed.
-                 */
-                if (lns->cur_col < ctl->l->l_max_col)
-                        ctl->l->l_needs_sort = 1;
-                else
-                        ctl->l->l_max_col = lns->cur_col;
-                if (0 < lns->c->c_width)
-                        lns->cur_col += lns->c->c_width;
-
+	/*
+	 * If things are put in out of order, they will need sorting
+	 * when it is flushed.
+	 */
+	if (lns->cur_col < ctl->l->l_max_col)
+		ctl->l->l_needs_sort = 1;
+	else
+		ctl->l->l_max_col = lns->cur_col;
+	if (0 < lns->c->c_width)
+		lns->cur_col += lns->c->c_width;
 }
 
 int main(int argc, char **argv)

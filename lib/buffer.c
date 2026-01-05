@@ -303,6 +303,6 @@ int main(void)
 
 	ul_buffer_free_data(&buf);
 
-        return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM_BUFFER */

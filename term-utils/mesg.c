@@ -173,8 +173,8 @@ int main(int argc, char *argv[])
 	case RPMATCH_INVALID:
 		warnx(_("invalid argument: %s"), argv[0]);
 		errtryhelp(EXIT_FAILURE);
-        default:
-                abort();
+	default:
+		abort();
 	}
 	close(fd);
 	return ret;

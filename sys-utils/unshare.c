@@ -1010,7 +1010,7 @@ int main(int argc, char *argv[])
 				kill_child_signo = SIGKILL;
 			}
 			break;
-                case OPT_KEEPCAPS:
+		case OPT_KEEPCAPS:
 			keepcaps = 1;
 			cap_last_cap(); /* Force last cap to be cached before we fork. */
 			break;
@@ -1028,11 +1028,11 @@ int main(int argc, char *argv[])
 		case 'w':
 			newdir = optarg;
 			break;
-                case OPT_MONOTONIC:
+		case OPT_MONOTONIC:
 			monotonic = strtos64_or_err(optarg, _("failed to parse monotonic offset"));
 			force_monotonic = 1;
 			break;
-                case OPT_BOOTTIME:
+		case OPT_BOOTTIME:
 			boottime = strtos64_or_err(optarg, _("failed to parse boottime offset"));
 			force_boottime = 1;
 			break;
@@ -1194,14 +1194,14 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-        if (mapuser != MAX_OF_UINT_TYPE(uid_t))
+	if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
 
-        /* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
-         * has been disabled unless /proc/self/setgroups is written
-         * first to permanently disable the ability to call setgroups
-         * in that user namespace. */
-	if (mapgroup != MAX_OF_UINT_TYPE(gid_t)) {
+	/* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
+	 * has been disabled unless /proc/self/setgroups is written
+	 * first to permanently disable the ability to call setgroups
+	 * in that user namespace. */
+	if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
 			errx(EXIT_FAILURE, _("options --setgroups=allow and "
 					"--map-group are mutually exclusive"));

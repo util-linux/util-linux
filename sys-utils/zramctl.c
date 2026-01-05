@@ -224,7 +224,7 @@ static int zram_wait_initialized(struct zram *z)
 	/* Wait up to 3 seconds. */
 	r = sd_event_add_time_relative(event, NULL, CLOCK_BOOTTIME, 3 * 1000 * 1000, 0, NULL, (void*) (intptr_t) (-ETIMEDOUT));
 	if (r < 0)
-	        return r;
+		return r;
 
 	/* Check if the device is already initialized. */
 #if HAVE_DECL_SD_DEVICE_OPEN
@@ -277,7 +277,7 @@ static int zram_lock(struct zram *z, int operation)
 #if HAVE_DECL_SD_DEVICE_OPEN
 	if (z->device) {
 		fd = sd_device_open(z->device, O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
-	        if (fd < 0)
+		if (fd < 0)
 			return fd;
 	} else {
 #endif
@@ -909,7 +909,7 @@ int main(int argc, char **argv)
 		if (outarg && string_add_to_idarray(outarg,
 					columns, ARRAY_SIZE(columns),
 					&ncolumns, column_name_to_id) < 0)
-	                return EXIT_FAILURE;
+			return EXIT_FAILURE;
 
 		if (optind < argc) {
 			zram = new_zram(argv[optind++]);

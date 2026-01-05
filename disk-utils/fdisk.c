@@ -494,11 +494,11 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 	*canceled = 0;
 
 	if (fdisk_label_has_parttypes_shortcuts(lb))
-		 q = fdisk_label_has_code_parttypes(lb) ?
+		q = fdisk_label_has_code_parttypes(lb) ?
 			_("Hex code or alias (type L to list all): ") :
 			_("Partition type or alias (type L to list all): ");
 	else
-	        q = fdisk_label_has_code_parttypes(lb) ?
+		q = fdisk_label_has_code_parttypes(lb) ?
 			_("Hex code (type L to list all codes): ") :
 			_("Partition type (type L to list all types): ");
 	do {
@@ -523,7 +523,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 				fdisk_info(cxt, _("Failed to parse '%s' partition type."), buf);
 			return t;
 		}
-        } while (1);
+	} while (1);
 
 	return NULL;
 }

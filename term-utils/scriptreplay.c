@@ -175,8 +175,8 @@ main(int argc, char *argv[])
 	char streams[6] = {0};		/* IOSI - in, out, signal,info */
 	const char *log_out = NULL,
 	           *log_in = NULL,
-		   *log_io = NULL,
-		   *log_tm = NULL;
+	           *log_io = NULL,
+	           *log_tm = NULL;
 	double divi = 1;
 	int diviopt = FALSE, idx;
 	int ch, rc = 0, crmode = REPLAY_CRMODE_AUTO, summary = 0;

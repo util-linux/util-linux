@@ -27,28 +27,28 @@ extern char **environ;
 #endif
 
 static char * const forbid[] = {
-        "BASH_ENV=",    /* GNU creeping featurism strikes again... */
-        "ENV=",
-        "HOME=",
-        "IFS=",
-        "KRB_CONF=",
-        "LD_",          /* anything with the LD_ prefix */
-        "LIBPATH=",
-        "MAIL=",
-        "NLSPATH=",
-        "PATH=",
-        "SHELL=",
-        "SHLIB_PATH=",
-        (char *) 0
+	"BASH_ENV=",    /* GNU creeping featurism strikes again... */
+	"ENV=",
+	"HOME=",
+	"IFS=",
+	"KRB_CONF=",
+	"LD_",	  /* anything with the LD_ prefix */
+	"LIBPATH=",
+	"MAIL=",
+	"NLSPATH=",
+	"PATH=",
+	"SHELL=",
+	"SHLIB_PATH=",
+	(char *) 0
 };
 
 /* these are allowed, but with no slashes inside
    (to work around security problems in GNU gettext) */
 static char * const noslash[] = {
-        "LANG=",
-        "LANGUAGE=",
-        "LC_",          /* anything with the LC_ prefix */
-        (char *) 0
+	"LANG=",
+	"LANGUAGE=",
+	"LC_",	  /* anything with the LC_ prefix */
+	(char *) 0
 };
 
 
@@ -218,39 +218,39 @@ void env_list_free(struct ul_env_list *ls)
  */
 void __sanitize_env(struct ul_env_list **org)
 {
-        char **envp = environ;
-        char * const *bad;
-        char **cur;
-        int last = 0;
+	char **envp = environ;
+	char * const *bad;
+	char **cur;
+	int last = 0;
 
-        for (cur = envp; *cur; cur++)
-                last++;
+	for (cur = envp; *cur; cur++)
+		last++;
 
-        for (cur = envp; *cur; cur++) {
-                for (bad = forbid; *bad; bad++) {
-                        if (strncmp(*cur, *bad, strlen(*bad)) == 0) {
+	for (cur = envp; *cur; cur++) {
+		for (bad = forbid; *bad; bad++) {
+			if (strncmp(*cur, *bad, strlen(*bad)) == 0) {
 				if (org)
 					*org = env_list_add_from_string(*org, *cur);
-                                last = ul_remove_entry(envp, cur - envp, last);
-                                cur--;
-                                break;
-                        }
-                }
-        }
+				last = ul_remove_entry(envp, cur - envp, last);
+				cur--;
+				break;
+			}
+		}
+	}
 
-        for (cur = envp; *cur; cur++) {
-                for (bad = noslash; *bad; bad++) {
-                        if (strncmp(*cur, *bad, strlen(*bad)) != 0)
-                                continue;
-                        if (!strchr(*cur, '/'))
-                                continue;  /* OK */
+	for (cur = envp; *cur; cur++) {
+		for (bad = noslash; *bad; bad++) {
+			if (strncmp(*cur, *bad, strlen(*bad)) != 0)
+				continue;
+			if (!strchr(*cur, '/'))
+				continue;  /* OK */
 			if (org)
 				*org = env_list_add_from_string(*org, *cur);
-                        last = ul_remove_entry(envp, cur - envp, last);
-                        cur--;
-                        break;
-                }
-        }
+			last = ul_remove_entry(envp, cur - envp, last);
+			cur--;
+			break;
+		}
+	}
 }
 
 void sanitize_env(void)
