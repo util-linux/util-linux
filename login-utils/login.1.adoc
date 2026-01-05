@@ -18,7 +18,7 @@ login - begin session on the system
 
 == SYNOPSIS
 
-*login* [*-p*] [*-s* _shell_] [*-h* _host_] [*-H*] [*-f* _username_|_username_]
+*login* [*-p*] [*-s* _shell_] [*-h* _host_] [*-H*] [[*-f*] _username_|_UID_]
 
 == DESCRIPTION
 

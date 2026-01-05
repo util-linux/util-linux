@@ -13,7 +13,7 @@ su - run a command with substitute user and group ID
 
 == SYNOPSIS
 
-*su* [options] [*-*] [_user_ [_argument_...]]
+*su* [options] [*-*] [_user_|_UID_ [_argument_...]]
 
 == DESCRIPTION
 
