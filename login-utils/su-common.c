@@ -1011,7 +1011,7 @@ int su_main(int argc, char **argv, int mode)
 		{"shell", required_argument, NULL, 's'},
 		{"group", required_argument, NULL, 'g'},
 		{"supp-group", required_argument, NULL, 'G'},
-		{"user", required_argument, NULL, 'u'},	/* runuser only */
+		{"user", required_argument, NULL, 'u'},	/* runuser only  IGNORECHECK=yes */
 		{"whitelist-environment", required_argument, NULL, 'w'},
 		{"help", no_argument, 0, 'h'},
 		{"version", no_argument, 0, 'V'},

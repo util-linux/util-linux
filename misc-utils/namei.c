@@ -390,7 +390,7 @@ static const struct option longopts[] =
 	{ "nosymlinks",	 no_argument, NULL, 'n' },
 	{ "vertical",    no_argument, NULL, 'v' },
 #ifdef HAVE_LIBSELINUX
-	{ "context",	 no_argument, NULL, 'Z' },
+	{ "context",	 no_argument, NULL, 'Z' },	/* IGNORECHECK=yes */
 #endif
 	{ NULL, 0, NULL, 0 },
 };

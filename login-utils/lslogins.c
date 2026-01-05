@@ -1669,10 +1669,10 @@ int main(int argc, char *argv[])
 		{ "btmp-file",      required_argument,	0, OPT_BTMP },
 		{ "lastlog-file",   required_argument,	0, OPT_LASTLOG },
 #ifdef HAVE_LIBLASTLOG2
-		{ "lastlog2-file",  required_argument,	0, OPT_LASTLOG2 },
+		{ "lastlog2-file",  required_argument,	0, OPT_LASTLOG2 },	/* IGNORECHECK=yes */
 #endif
 #ifdef HAVE_LIBSELINUX
-		{ "context",        no_argument,	0, 'Z' },
+		{ "context",        no_argument,	0, 'Z' },	/* IGNORECHECK=yes */
 #endif
 		{ NULL,             0, 			0,  0  }
 	};

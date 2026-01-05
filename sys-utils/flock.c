@@ -82,6 +82,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -o, --close              close file descriptor before running command\n"), stdout);
 	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stdout);
 	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
+	fputs(_(  "     --wait               same as --timeout\n"), stdout);
 	fputs(_(  "     --fcntl              use fcntl(F_OFD_SETLK) rather than flock()\n"), stdout);
 	fputs(_(  "     --start <offset>     starting offset for lock (implies --fcntl)\n"), stdout);
 	fputs(_(  "     --length <number>    number of bytes to lock (implies --fcntl)\n"), stdout);

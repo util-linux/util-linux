@@ -228,6 +228,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --no-discover-rtc          do not try to discover RTCs"), out);
 	fputs(_(" -d, --dynamic-clock <path> also display specified dynamic clock\n"), out);
 	fputs(_(" -c, --cpu-clock <pid>      also display CPU clock of specified process\n"), out);
+	fputs(_(" -x, --rtc <path>           also display specified RTC\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(29));

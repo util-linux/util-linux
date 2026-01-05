@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 		{ "keep-caps", no_argument, NULL, OPT_KEEPCAPS },
 		{ "user-parent", no_argument, NULL, OPT_USER_PARENT},
 #ifdef HAVE_LIBSELINUX
-		{ "follow-context", no_argument, NULL, 'Z' },
+		{ "follow-context", no_argument, NULL, 'Z' },	/* IGNORECHECK=yes */
 #endif
 		{ NULL, 0, NULL, 0 }
 	};
