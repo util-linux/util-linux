@@ -18,6 +18,7 @@ _fallocate_module()
 			OPTS="
 				--collapse-range
 				--dig-holes
+				--report-holes
 				--insert-range
 				--length
 				--keep-size
