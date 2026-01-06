@@ -138,9 +138,9 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	}
 
 	/* we don't care if we can't remove the backup file */
-	unlink(PASSWD_FILE ".OLD");
+	unlink(PASSWD_FILE "-");
 	/* we don't care if we can't create the backup file */
-	ignore_result(link(PASSWD_FILE, PASSWD_FILE ".OLD"));
+	ignore_result(link(PASSWD_FILE, PASSWD_FILE "-"));
 	/* we DO care if we can't rename to the passwd file */
 	if (rename(tmpname, PASSWD_FILE) < 0)
 		goto fail;
