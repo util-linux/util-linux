@@ -78,6 +78,9 @@ Specify which output columns to print. Use *--help* to get a list of all support
 The default list of columns may be extended if _list_ is specified in the format _{plus}list_ (e.g., *-o {plus}UUID*).
 //TRANSLATORS: Keep {plus} untranslated.
 
+*--bytes**::
+Print SIZE in bytes rather than in human readable format.
+
 *-s*, *--getsz*::
 Print the size in 512-byte sectors of each given block device. This option is DEPRECATED in favour of *blockdev*(8).
 
