@@ -1145,7 +1145,7 @@ This option is obsolete and may fail or being ignored.
 If the high byte of the file length contains other garbage, set this mount option to ignore the high order bits of the file length. This implies that a file cannot be larger than 16 MB.
 
 **session=**__x__::
-Select number of session on a multisession CD.
+Select number of session on a multisession CD, starting with 0.
 
 **sbsector=**__xxx__::
 Session begins from sector xxx.
