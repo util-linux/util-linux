@@ -67,7 +67,7 @@ Do not fork before executing _command_. Upon execution the flock process is repl
 *-e*, *-x*, *--exclusive*::
 Obtain an exclusive lock, sometimes called a write lock. This is the default.
 
-*-n*, *--nb*, *--nonblock*::
+*-n*, *--nb*, *--nonblocking*::
 Fail rather than wait if the lock cannot be immediately acquired. See the *-E* option for the exit status used.
 
 *-o*, *--close*::
