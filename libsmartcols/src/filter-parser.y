@@ -1,5 +1,10 @@
 %{
-#ifdef __clang__
+#if defined(__GNUC__) && !defined(__clang__)
+/* gcc detects yynerrs as unused.
+ * Will be fixed in future versions of bison.
+ */
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#elif defined(__clang__)
 /* clang detects yynerrs as unused.
  * Will be fixed in future versions of bison.
  */
