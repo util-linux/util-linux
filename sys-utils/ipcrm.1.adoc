@@ -69,6 +69,9 @@ Remove the semaphore identified by _semid_.
 *--posix-semaphore* _name_::
 Remove the POSIX named semaphore created with _name_.
 
+*-v*, *--verbose*::
+Enable verbose messaging.
+
 include::man-common/help-version.adoc[]
 
 == NOTES
