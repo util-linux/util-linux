@@ -45,6 +45,9 @@ Set the compression algorithm to be used for compressing data in the zram device
 +
 The *list of supported algorithms could be inaccurate* as it depends on the current kernel configuration. A basic overview can be obtained by using the command "cat /sys/block/zram0/comp_algorithm"; however, please note that this list might also be incomplete. This is due to the fact that ZRAM utilizes the Crypto API, and if certain algorithms were built as modules, it becomes impossible to enumerate all of them.
 
+*-b*, *--bytes*::
+Print sizes in bytes, not in human-readable format.
+
 *-f*, *--find*::
 Find the first unused zram device. If a *--size* argument is present, then initialize the device.
 
