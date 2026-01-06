@@ -34,11 +34,14 @@
  * TZ strings in dates.
  */
 
-#ifdef __clang__
-/* clang 15 detects yynerrs as unused.
- * Will be fixed in future versions of bison.
+/*
+ * Compilers detect yynerrs as unused. Let's hope it will be fixed in future
+ * versions of Bison.
  */
-#pragma clang diagnostic ignored "-Wunused-but-set-variable"
+#if defined(__GNUC__) && !defined(__clang__)
+# pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#elif defined(__clang__)
+# pragma clang diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
 /**
