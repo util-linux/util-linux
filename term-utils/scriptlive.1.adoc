@@ -32,6 +32,9 @@ The timing information is what *script*(1) outputs to the file specified by
 
 == OPTIONS
 
+*-c*, *--command* _command_::
+Execute _command_ instead of an interactive shell. The _command_ is passed as argument to the *-c* option of the execution shell. The used shell is either $SHELL, the shell defined in the user's passwd(5) database or *_PATH_BSHELL*, selected in respective order.
+
 *-I*, *--log-in* _file_::
 File containing *script*'s terminal input.
 
