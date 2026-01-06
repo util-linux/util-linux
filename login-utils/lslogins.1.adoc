@@ -105,7 +105,7 @@ include::man-common/help-version.adoc[]
 *--wtmp-file* _path_::
 Alternate path for wtmp.
 
-*--lastlog* _path_::
+*--lastlog-file* _path_::
 Alternate path for *lastlog*(8).
 
 *-y*, *--shell*::
