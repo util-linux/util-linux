@@ -54,6 +54,9 @@ This epoch value is used whenever *hwclock* reads or sets the Hardware Clock on 
 Read and set the RTC's parameter. This is useful, for example, to retrieve the RTC's feature or set the RTC's Backup Switchover Mode.
 +
 _parameter_ is either a numeric RTC parameter value (see the Kernel's _include/uapi/linux/rtc.h_) or an alias. See *--help* for a list of valid aliases. _parameter_ and _value_, if prefixed with 0x, are interpreted as hexadecimal, otherwise decimal values.
+**--param-index** __number__::
+
+Select an instance of the same RTC parameter with it's index __number__. The default value for __number__ is 0.
 
 *--predict*::
 Predict what the Hardware Clock will read in the future based upon the time given by the *--date* option and the information in _{ADJTIME_PATH}_. This is useful, for example, to account for drift when setting a Hardware Clock wakeup (aka alarm). See *rtcwake*(8).
