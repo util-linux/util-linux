@@ -859,7 +859,7 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 	}
 
 	if (d->d_npartitions > BSD_MAXPARTITIONS)
-		fdisk_warnx(cxt, ("Too many partitions (%d, maximum is %d)."),
+		fdisk_warnx(cxt, _("Too many partitions (%d, maximum is %d)."),
 				d->d_npartitions, BSD_MAXPARTITIONS);
 
 	/* let's follow in-PT geometry */
