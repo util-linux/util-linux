@@ -62,6 +62,7 @@
 #define _PATH_GROUP		"/etc/group"
 #define _PATH_SHADOW_PASSWD	"/etc/shadow"
 #define _PATH_SHELLS		"/etc/shells"
+#define _PATH_PASSWDBAK_SUFFIX  "-"
 
 #ifndef _PATH_TMP
 # define _PATH_TMP		"/tmp/"

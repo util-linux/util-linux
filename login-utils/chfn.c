@@ -38,6 +38,7 @@
 #include "closestream.h"
 #include "islocal.h"
 #include "nls.h"
+#include "pathnames.h"
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
