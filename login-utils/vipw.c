@@ -172,7 +172,7 @@ static void pw_write(void)
 	if (rename(tmp_file, orig_file) == -1) {
 		int errsv = errno;
 		errx(EXIT_FAILURE,
-		     ("cannot write %s: %s (your changes are still in %s)"),
+		     _("cannot write %s: %s (your changes are still in %s)"),
 		     orig_file, strerror(errsv), tmp_file);
 	}
 	unlink(tmp_file);
