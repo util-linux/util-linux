@@ -562,7 +562,7 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
     [[#include <sys/stat.h>]])
 
-AC_CHECK_TYPES([struct statx], [], [], [[#include <sys/stat.h>]])
+AC_CHECK_TYPES([struct statx], [have_struct_statx=yes], [have_struct_statx=no], [[#include <sys/stat.h>]])
 AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
     [[#include <sys/stat.h>]])
 
@@ -669,7 +669,6 @@ AC_CHECK_FUNCS([ \
 	setresuid \
 	sigqueue \
 	srandom \
-	statx \
 	strnchr \
 	strndup \
 	strnlen \
@@ -696,6 +695,7 @@ AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=
 AC_CHECK_FUNCS([posix_fallocate], [have_posix_fallocate=yes], [have_posix_fallocate=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
+AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 AM_CONDITIONAL([HAVE_LINUX_LANDLOCK_H], [test "x$ac_cv_header_linux_landlock_h" = xyes])
@@ -2323,6 +2323,16 @@ UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
+AC_ARG_ENABLE([getino],
+  AS_HELP_STRING([--disable-getino], [do not build getino]),
+  [], [UL_DEFAULT_ENABLE([getino], [check])]
+)
+UL_BUILD_INIT([getino])
+UL_REQUIRES_LINUX([getino])
+UL_REQUIRES_SYSCALL_CHECK([getino], [UL_CHECK_SYSCALL([pidfd_open])], [pidfd_open])
+UL_REQUIRES_HAVE([getino], [statx], [statx function])
+UL_REQUIRES_HAVE([getino], [struct_statx], [statx struct])
+AM_CONDITIONAL([BUILD_GETINO], [test "x$build_getino" = xyes])
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--disable-last], [do not build last]),
