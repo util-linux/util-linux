@@ -919,8 +919,10 @@ int print_partition_info(struct fdisk_context *cxt)
 		return rc;
 	}
 
-	if ((rc = fdisk_label_get_fields_ids_all(lb, cxt, &fields, &nfields)))
-		goto clean_data;
+	if ((rc = fdisk_label_get_fields_ids_all(lb, cxt, &fields, &nfields))) {
+    	fdisk_unref_partition(pa);	
+		return rc;
+	}
 
 	for (i = 0; i < nfields; ++i) {
 		int id = fields[i];

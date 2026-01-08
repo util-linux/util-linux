@@ -331,4 +331,6 @@ FDISK_2_41 {
 
 FDISK_2_42 {
 	fdisk_is_collision_area;
+	fdisk_script_set_no_device_names;
+	fdisk_script_get_no_device_names;
 } FDISK_2_41;
