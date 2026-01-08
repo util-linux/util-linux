@@ -2608,7 +2608,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "version",    no_argument, NULL, 'V' },
-		{ "help",	no_argument, NULL, 'h' },
+		{ "help",       no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "threads",    no_argument, NULL, 'l' },
