@@ -66,6 +66,7 @@ TS_HELPER_BLKID_FUZZ="${ts_helpersdir}test_blkid_fuzz"
 TS_HELPER_PROCFS="${ts_helpersdir}test_procfs"
 TS_HELPER_TIMEUTILS="${ts_helpersdir}test_timeutils"
 TS_HELPER_KILL_PIDFDINO="${ts_helpersdir}test_kill_pidfdino"
+TS_HELPER_SCOLS_TERMREDUCE="${ts_helpersdir}test_scols_termreduce"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
