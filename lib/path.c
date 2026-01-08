@@ -388,6 +388,60 @@ int ul_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *p
 
 	return rc;
 }
+#ifdef HAVE_STATX
+int ul_path_statx(struct path_cxt *pc, struct statx *stx, int flags, unsigned int mask,
+		  const char *path)
+{
+	int rc;
+
+	if (!pc)
+		rc = path ? statx(AT_FDCWD, path, flags, mask, stx) : - EINVAL;
+	else {
+		int dir = ul_path_get_dirfd(pc);
+		if (dir < 0)
+			return dir;
+		if (path) {
+			if (*path == '/')
+				path++;
+		}
+
+		rc = statx(dir, path, flags, mask, stx);
+	}
+
+	return rc;
+}
+#else
+int ul_path_statx(struct path_cxt *pc __attribute__((__unused__)),
+		  struct statx *stx __attribute__((__unused__)),
+		  int flags __attribute__((__unused__)),
+		  unsigned int mask __attribute__((__unused__)),
+		  const char *path __attribute__((__unused__)))
+{
+	errno = ENOSYS;
+	return -1;
+}
+#endif /* HAVE_STATX */
+
+int ul_path_vstatxf(struct path_cxt *pc, struct statx *stx, int flags, unsigned int mask,
+		    const char *path, va_list ap)
+{
+	const char *p = ul_path_mkpath(pc, path, ap);
+
+	return !p ? -errno : ul_path_statx(pc, stx, flags, mask, p);
+}
+
+int ul_path_statxf(struct path_cxt *pc, struct statx *stx, int flags, unsigned int mask,
+		   const char *path, ...)
+{
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = ul_path_vstatxf(pc, stx, flags, mask, path, ap);
+	va_end(ap);
+
+	return rc;
+}
 
 int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 {
