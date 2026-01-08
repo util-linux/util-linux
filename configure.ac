@@ -2850,6 +2850,9 @@ AC_ARG_WITH([python],
   [], [with_python=check withval=check]
 )
 
+# Minimum required Python version defined by use of Py_REFCNT
+m4_define([MIN_PYTHON_VER], [2.6])
+
 have_python=no
 have_libpython=no
 AS_IF([test "x$with_python" != xno], [
@@ -2870,6 +2873,9 @@ AS_IF([test "x$with_python" != xno], [
     [*:yes],
        # check for python development stuff
        [
+         AX_COMPARE_VERSION([$PYTHON_VERSION], [lt], [MIN_PYTHON_VER],
+           [AC_MSG_ERROR([python version $PYTHON_VERSION is too old])])
+
          PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION], [have_libpython=yes], [have_libpython=no])
 
          # https://github.com/util-linux/util-linux/issues/2366
