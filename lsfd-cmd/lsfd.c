@@ -1053,6 +1053,17 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	f->map_end = end;
 	f->pos = offset;
 
+	f->mnt_id = 0;
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+	{
+		struct statx stx;
+		if (ul_path_statxf(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
+				   STATX_MNT_ID,
+				   "map_files/%"PRIx64"-%"PRIx64, start, end) == 0)
+			f->mnt_id = stx.stx_mnt_id;
+	}
+#endif	/* defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
+
 	file_init_content(f);
 }
 
