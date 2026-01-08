@@ -1,0 +1,48 @@
+# includes
+ptysessionincdir = $(includedir)/libptysession
+ptysessioninc_HEADERS = libptysession/src/pty-session.h
+
+usrlib_exec_LTLIBRARIES += libptysession.la
+
+libptysession_la_SOURCES = \
+	libptysession/src/pty-session.c \
+	lib/monotonic.c
+
+EXTRA_libptysession_la_DEPENDENCIES = \
+	libptysession/src/libptysession.sym
+
+libptysession_la_LIBADD = $(UTIL_LIBS) $(REALTIME_LIBS)
+
+libptysession_la_CFLAGS = \
+	$(AM_CFLAGS) \
+	$(SOLIB_CFLAGS) \
+	-I$(ul_libptysession_incdir) \
+	-I$(top_srcdir)/libptysession/src
+
+libptysession_la_LDFLAGS = $(SOLIB_LDFLAGS)
+if HAVE_VSCRIPT
+libptysession_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libptysession/src/libptysession.sym
+endif
+libptysession_la_LDFLAGS += -version-info $(LIBPTYSESSION_VERSION_INFO)
+
+EXTRA_DIST += libptysession/src/libptysession.sym
+
+
+# move lib from $(usrlib_execdir) to $(libdir) if needed
+install-exec-hook-libptysession:
+	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libptysession.so"; then \
+		$(MKDIR_P) $(DESTDIR)$(libdir); \
+		mv $(DESTDIR)$(usrlib_execdir)/libptysession.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libptysession.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
+			rm -f libptysession.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libptysession.so); \
+	fi
+
+uninstall-hook-libptysession:
+	rm -f $(DESTDIR)$(libdir)/libptysession.so*
+
+INSTALL_EXEC_HOOKS += install-exec-hook-libptysession
+UNINSTALL_HOOKS += uninstall-hook-libptysession
+
