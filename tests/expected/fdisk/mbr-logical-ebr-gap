@@ -1,0 +1,15 @@
+
+---layout----------
+Disk <removed>: 1 GiB, 1073741824 bytes, 2097152 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: dos
+Disk identifier: <removed>
+
+Device     Boot   Start     End Sectors Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1         2048 2097151 2095104  5 Extended     0/32/33 130/138/8 
+<removed>5         6145  788479  782335 83 Linux        0/97/35  49/20/35 
+<removed>6      2097151 2097151       1 83 Linux      130/138/8 130/138/8 
+-------------------
+
