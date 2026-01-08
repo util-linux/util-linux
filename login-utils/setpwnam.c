@@ -61,6 +61,7 @@
 #include "c.h"
 #include "fileutils.h"
 #include "closestream.h"
+#include "pathnames.h"
 #include "setpwnam.h"
 
 static void pw_init(void);
@@ -94,7 +95,7 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	if (lckpwdf() < 0)
 		goto fail;
 	locked = 1;
-	pwf = fopen(PASSWD_FILE, "r");
+	pwf = fopen(_PATH_PASSWD, "r");
 	if (!pwf)
 		goto fail;
 
@@ -138,11 +139,11 @@ int setpwnam(struct passwd *pwd, const char *prefix)
 	}
 
 	/* we don't care if we can't remove the backup file */
-	unlink(PASSWD_FILE ".OLD");
+	unlink(_PATH_PASSWD _PATH_PASSWDBAK_SUFFIX);
 	/* we don't care if we can't create the backup file */
-	ignore_result(link(PASSWD_FILE, PASSWD_FILE ".OLD"));
+	ignore_result(link(_PATH_PASSWD, _PATH_PASSWD _PATH_PASSWDBAK_SUFFIX));
 	/* we DO care if we can't rename to the passwd file */
-	if (rename(tmpname, PASSWD_FILE) < 0)
+	if (rename(tmpname, _PATH_PASSWD) < 0)
 		goto fail;
 	/* finally:  success */
 	ulckpwdf();
