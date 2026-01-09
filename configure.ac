@@ -2693,7 +2693,14 @@ AC_ARG_WITH([systemd],
 have_systemd=no
 AS_IF([test "x$with_systemd" != xno], [
   # new version -- all libsystemd-* libs merged into libsystemd
-  PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
+  # if 257 or newer, use locked system user accounts
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 257], [
+      have_systemd=yes
+      SYSTEMD_USER_LOCK="!"
+    ], [
+      SYSTEMD_USER_LOCK=
+      PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
+  ])
   # old versions
   AS_IF([test "x$have_systemd" != "xyes"], [
     PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon],
@@ -2712,6 +2719,7 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_CHECK_DECLS([sd_session_get_username], [], [], [#include <systemd/sd-login.h>])
        AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
        AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
+       AC_SUBST([SYSTEMD_USER_LOCK])
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])

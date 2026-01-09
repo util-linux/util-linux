@@ -373,6 +373,11 @@ systemd = dependency(
   'systemd',
   required : get_option('systemd'))
 
+# Since systemd-257, which provides locked system user accounts.
+if systemd.version().version_compare('>=257')
+  conf.set('SYSTEMD_USER_LOCK', '!')
+endif
+
 lib_systemd = dependency(
   'libsystemd',
   required : get_option('systemd'))
