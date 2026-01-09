@@ -3066,17 +3066,21 @@ static void *make_mmap(const struct factory *factory, struct fdesc fdescs[] _U_,
 {
 	struct arg file = decode_arg("file", factory->params, argc, argv);
 	const char *sfile = ARG_STRING(file);
+	struct arg shared = decode_arg("shared", factory->params, argc, argv);
+	bool bshared = ARG_BOOLEAN(shared);
 
 	int fd = open(sfile, O_RDONLY);
 	if (fd < 0)
 		err(EXIT_FAILURE, "failed in opening %s", sfile);
+	free_arg(&shared);
 	free_arg(&file);
 
 	struct stat sb;
 	if (fstat(fd, &sb) < 0) {
 		err(EXIT_FAILURE, "failed in fstat()");
 	}
-	char *addr = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+	char *addr = mmap(NULL, sb.st_size, PROT_READ,
+			  bshared ? MAP_SHARED : MAP_PRIVATE, fd, 0);
 	if (addr == MAP_FAILED) {
 		err(EXIT_FAILURE, "failed in mmap()");
 	}
@@ -4307,6 +4311,12 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "file to be opened",
 				.defv.string = "/etc/passwd",
+			},
+			{
+				.name = "shared",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use MAP_SHARED",
+				.defv.boolean = FALSE,
 			},
 			PARAM_END
 		},
