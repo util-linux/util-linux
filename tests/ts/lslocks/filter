@@ -1,0 +1,154 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="filter"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_LSLOCKS"
+ts_check_test_command "$TS_CMD_FLOCK"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_prog "dd"
+
+ts_cd "$TS_OUTDIR"
+
+readonly FILE0=util-linux-lslocks-target-file
+readonly FILE=${FILE0}--$$
+readonly SIZE=4096
+readonly HSIZE=4K
+readonly START=1024
+readonly LENGTH=1000
+readonly END=$(( START + LENGTH - 1 ))
+readonly COLS=COMMAND,TYPE,MODE,SIZE,M,START,END
+
+cleanup()
+{
+    rm -f "$FILE"
+}
+
+cleanup
+trap "cleanup" EXIT
+
+
+if ! dd if=/dev/zero of="$FILE" bs=$SIZE count=1 status=none; then
+    ts_skip "failed to create a temporary file"
+fi
+
+do_lslocks_common()
+{
+    local pid=$1
+    local type=$2
+    local bopt=$3
+
+    echo "#### $type $bopt (common) ####"
+
+    echo '# -Q PID == ...'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid" -o $COLS
+
+    echo '# -Q PATH =~ .*/...'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PATH =~ '.*/$FILE'" -o $COLS
+    echo '# -Q PATH =~ .*/...x'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PATH =~ '.*/${FILE}x'" -o $COLS
+
+    echo '# -Q PID == ... SIZE == '"$SIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE == $SIZE" -o $COLS
+    echo '# -Q PID == ... SIZE < '"$SIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE < $SIZE" -o $COLS
+    echo '# -Q PID == ... SIZE > '"$SIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE > $SIZE" -o $COLS
+
+
+    echo '# -Q PID == ... SIZE == '"$HSIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE == $HSIZE" -o $COLS
+    echo '# -Q PID == ... SIZE < '"$HSIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE < $HSIZE" -o $COLS
+    echo '# -Q PID == ... SIZE > '"$HSIZE"
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE > $HSIZE" -o $COLS
+
+    echo '# -Q PID == ... TYPE == FLOCK'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'FLOCK'" -o $COLS
+    echo '# -Q PID == ... TYPE != FLOCK'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'FLOCK'" -o $COLS
+    echo '# -Q PID == ... TYPE == POSIX'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'POSIX'" -o $COLS
+    echo '# -Q PID == ... TYPE != POSIX'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'POSIX'" -o $COLS
+    echo '# -Q PID == ... TYPE == OFDLCK'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'OFDLCK'" -o $COLS
+    echo '# -Q PID == ... TYPE != OFDLCK'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'OFDLCK'" -o $COLS
+
+    echo '# -Q PID == ... MODE == READ'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE == 'READ'" -o $COLS
+    echo '# -Q PID == ... MODE != READ'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE != 'READ'" -o $COLS
+    echo '# -Q PID == ... MODE == WRITE'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE == 'WRITE'" -o $COLS
+    echo '# -Q PID == ... MODE != WRITE'
+    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE != 'WRITE'" -o $COLS
+    echo
+}
+
+do_lslocks_fcntl()
+{
+    local type=fcntl
+    local pid=$1
+
+    echo "#### $type (fcntl specific) ####"
+
+    echo '# -Q PID == ... START == $START'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START == $START" -o $COLS
+    echo '# -Q PID == ... START < $START'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START < $START" -o $COLS
+    echo '# -Q PID == ... START > $START'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START > $START" -o $COLS
+
+    echo '# -Q PID == ... END == $END'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END == $END" -o $COLS
+    echo '# -Q PID == ... END < $END'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END < $END" -o $COLS
+    echo '# -Q PID == ... END > $END'
+    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END > $END" -o $COLS
+}
+
+{
+    coproc MKFDS { "$TS_CMD_FLOCK" \
+		       --no-fork \
+		       "$FILE" \
+		       "$TS_HELPER_MKFDS" nop; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	do_lslocks_common $PID flock
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+
+    coproc MKFDS { "$TS_CMD_FLOCK" \
+		       --no-fork \
+		       --fcntl --start "$START" --length "$LENGTH" --shared \
+		       "$FILE" \
+		       "$TS_HELPER_MKFDS" nop; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	do_lslocks_common $PID fcntl --bytes
+	do_lslocks_fcntl $PID
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+
+} > "$TS_OUTPUT" 2>&1
+
+ts_finalize
