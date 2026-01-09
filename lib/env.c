@@ -97,7 +97,7 @@ static struct ul_env_list *env_list_add_from_string(struct ul_env_list *ls,
 
 	val = strchr(str, '=');
 	if (!val)
-		return NULL;
+		return ls;
 	namesz = val - str;
 
 	val++;
