@@ -948,7 +948,8 @@ static void sushell(struct passwd *pwd, struct console *con)
 }
 
 #ifdef HAVE_LIBSELINUX
-static void tcreset_selinux(struct list_head *consoles) {
+static void tcreset_selinux(struct list_head *consoles)
+{
 	struct list_head *ptr;
 	struct console *con;
 

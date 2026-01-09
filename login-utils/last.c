@@ -936,7 +936,8 @@ static void process_wtmp_file(const struct last_control *ctl,
 #ifdef FUZZ_TARGET
 # include "all-io.h"
 
-int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
 	struct last_control ctl = {
 		.showhost = TRUE,
 		.name_len = LAST_LOGIN_LEN,
