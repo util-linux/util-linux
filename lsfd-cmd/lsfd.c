@@ -1091,9 +1091,19 @@ static void collect_outofbox_files(struct path_cxt *pc,
 {
 	size_t i;
 
-	for (i = 0; i < count; i++)
-		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
-				     sockets_only);
+	for (i = 0; i < count; i++) {
+		struct file *f __attribute__((unused))
+			= collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
+					       sockets_only);
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+		if (f && has_mnt_id(f)) {
+			struct statx stx;
+			if (ul_path_statx(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
+					  STATX_MNT_ID, names[assocs[i]]) == 0)
+				f->mnt_id = stx.stx_mnt_id;
+		}
+#endif	/* #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
+	}
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
