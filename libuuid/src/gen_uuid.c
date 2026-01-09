@@ -620,7 +620,8 @@ static void reset_uuidd_cache(void)
 }
 #endif /* HAVE_LIBPTHREAD */
 
-static int uuid_generate_time_generic(uuid_t out) {
+static int uuid_generate_time_generic(uuid_t out)
+{
 #ifdef HAVE_LIBPTHREAD
 	static volatile sig_atomic_t atfork_registered;
 	time_t	now;

@@ -17,7 +17,7 @@
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -308,7 +308,8 @@ const uint64_t crc_tab64[256] = {
  * indicating the length.
  */
 
-uint64_t ul_crc64_ecma( const unsigned char *input_str, size_t num_bytes ) {
+uint64_t ul_crc64_ecma( const unsigned char *input_str, size_t num_bytes )
+{
 
 	uint64_t crc;
 	const unsigned char *ptr;
@@ -334,7 +335,8 @@ uint64_t ul_crc64_ecma( const unsigned char *input_str, size_t num_bytes ) {
  * parameter indicating the length.
  */
 
-uint64_t ul_crc64_we( const unsigned char *input_str, size_t num_bytes ) {
+uint64_t ul_crc64_we( const unsigned char *input_str, size_t num_bytes )
+{
 
 	uint64_t crc;
 	const unsigned char *ptr;
@@ -359,7 +361,8 @@ uint64_t ul_crc64_we( const unsigned char *input_str, size_t num_bytes ) {
  * previous value of the CRC and the next byte of the data to be checked.
  */
 
-uint64_t ul_update_crc64( uint64_t crc, unsigned char c ) {
+uint64_t ul_update_crc64( uint64_t crc, unsigned char c )
+{
 
 	return (crc << 8) ^ crc_tab64[ ((crc >> 56) ^ (uint64_t) c) & 0x00000000000000FFull ];
 

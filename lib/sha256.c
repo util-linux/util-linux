@@ -158,7 +158,8 @@ static void sha256_update(struct sha256 *s, const void *m, unsigned long len)
 	memcpy(s->buf, p, len);
 }
 
-void ul_SHA256(unsigned char hash_out[UL_SHA256LENGTH], const unsigned char *str, size_t len) {
+void ul_SHA256(unsigned char hash_out[UL_SHA256LENGTH], const unsigned char *str, size_t len)
+{
 	struct sha256 state = {};
 	sha256_init(&state);
 	sha256_update(&state, str, len);

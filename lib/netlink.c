@@ -59,12 +59,14 @@ static void netlink_init_debug(void)
 				UL_DEBUG_MASKNAMES(netlink)));
 }
 
-void ul_nl_init(struct ul_nl_data *nl) {
+void ul_nl_init(struct ul_nl_data *nl)
+{
 	netlink_init_debug();
 	memset(nl, 0, sizeof(struct ul_nl_data));
 }
 
-int ul_nl_request_dump(struct ul_nl_data *nl, uint16_t nlmsg_type) {
+int ul_nl_request_dump(struct ul_nl_data *nl, uint16_t nlmsg_type)
+{
 	struct {
 		struct nlmsghdr nh;
 		struct rtgenmsg g;
@@ -326,12 +328,14 @@ int ul_nl_open(struct ul_nl_data *nl, uint32_t nl_groups)
 	}
 }
 
-int ul_nl_close(struct ul_nl_data *nl) {
+int ul_nl_close(struct ul_nl_data *nl)
+{
 	DBG(NLMSG, ul_debugobj(nl, "closing socket"));
 	return close(nl->fd);
 }
 
-struct ul_nl_addr *ul_nl_addr_dup(struct ul_nl_addr *addr) {
+struct ul_nl_addr *ul_nl_addr_dup(struct ul_nl_addr *addr)
+{
 	struct ul_nl_addr *newaddr;
 	newaddr = calloc(1, sizeof(struct ul_nl_addr));
 	if (!newaddr)
@@ -363,7 +367,8 @@ error:
 	return NULL;
 }
 
-void ul_nl_addr_free(struct ul_nl_addr *addr) {
+void ul_nl_addr_free(struct ul_nl_addr *addr)
+{
 	if (addr) {
 		free(addr->ifa_address);
 		free(addr->ifa_local);
@@ -401,7 +406,8 @@ const char *ul_nl_addr_ntop(const struct ul_nl_addr *addr, int addrid) {
 #ifdef TEST_PROGRAM_NETLINK
 #include <stdio.h>
 
-static int callback_addr(struct ul_nl_data *nl) {
+static int callback_addr(struct ul_nl_data *nl)
+{
 	char *str;
 
 	printf("%s address:\n", ((nl->rtm_event ? "Add" : "Delete")));

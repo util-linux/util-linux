@@ -1298,7 +1298,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void load_credentials(struct login_context *cxt) {
+static void load_credentials(struct login_context *cxt)
+{
 	char str[32] = { 0 };
 	char *env;
 	struct path_cxt *pc;

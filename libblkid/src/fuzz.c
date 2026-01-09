@@ -19,7 +19,8 @@ static int process_file(const char *name)
     return rc;
 }
 
-int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
+{
     int fd;
     char name[] = "/tmp/test-script-fuzz.XXXXXX";
 

@@ -3113,7 +3113,8 @@ static void reload_agettys(void)
 #endif
 }
 
-static void load_credentials(struct options *op) {
+static void load_credentials(struct options *op)
+{
 	char *env;
 	DIR *dir;
 	struct dirent *d;

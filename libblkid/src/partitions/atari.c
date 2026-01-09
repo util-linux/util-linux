@@ -66,7 +66,8 @@ static const unsigned char _linux_isalnum[] = {
 1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1
 };
 
-static int linux_isalnum(unsigned char c) {
+static int linux_isalnum(unsigned char c)
+{
 	return _linux_isalnum[c];
 }
 

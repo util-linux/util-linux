@@ -24,7 +24,8 @@
 #include "strutils.h"
 #include "strv.h"
 
-static void ul_strv_clear(char **l) {
+static void ul_strv_clear(char **l)
+{
         char **k;
 
         if (!l)
@@ -36,13 +37,15 @@ static void ul_strv_clear(char **l) {
         *l = NULL;
 }
 
-char **ul_strv_free(char **l) {
+char **ul_strv_free(char **l)
+{
         ul_strv_clear(l);
         free(l);
         return NULL;
 }
 
-char **ul_strv_copy(char * const *l) {
+char **ul_strv_copy(char * const *l)
+{
         char **r, **k;
 
         k = r = malloc(sizeof(char *) * (ul_strv_length(l) + 1));
@@ -74,7 +77,8 @@ unsigned ul_strv_length(char * const *l) {
         return n;
 }
 
-static char **ul_strv_new_ap(const char *x, va_list ap) {
+static char **ul_strv_new_ap(const char *x, va_list ap)
+{
         const char *s;
         char **a;
         unsigned n = 0, i = 0;
@@ -133,7 +137,8 @@ fail:
         return NULL;
 }
 
-char **ul_strv_new(const char *x, ...) {
+char **ul_strv_new(const char *x, ...)
+{
         char **r;
         va_list ap;
 
@@ -144,7 +149,8 @@ char **ul_strv_new(const char *x, ...) {
         return r;
 }
 
-int ul_strv_extend_strv(char ***a, char **b) {
+int ul_strv_extend_strv(char ***a, char **b)
+{
         int r;
         char **s;
 
@@ -157,7 +163,8 @@ int ul_strv_extend_strv(char ***a, char **b) {
         return 0;
 }
 
-int ul_strv_extend_strv_concat(char ***a, char **b, const char *suffix) {
+int ul_strv_extend_strv_concat(char ***a, char **b, const char *suffix)
+{
         int r;
         char **s;
 
@@ -186,7 +193,8 @@ int ul_strv_extend_strv_concat(char ***a, char **b, const char *suffix) {
         _FOREACH_WORD(word, length, s, separator, false, state)
 
 
-char **ul_strv_split(const char *s, const char *separator) {
+char **ul_strv_split(const char *s, const char *separator)
+{
         const char *word, *state;
         size_t l;
         unsigned n, i;
@@ -217,7 +225,8 @@ char **ul_strv_split(const char *s, const char *separator) {
         return r;
 }
 
-char *ul_strv_join(char **l, const char *separator) {
+char *ul_strv_join(char **l, const char *separator)
+{
         char *r, *e;
         char **s;
         size_t n, k;
@@ -251,7 +260,8 @@ char *ul_strv_join(char **l, const char *separator) {
         return r;
 }
 
-int ul_strv_push(char ***l, char *value) {
+int ul_strv_push(char ***l, char *value)
+{
         char **c;
         unsigned n, m;
 
@@ -276,7 +286,8 @@ int ul_strv_push(char ***l, char *value) {
         return 0;
 }
 
-int ul_strv_push_prepend(char ***l, char *value) {
+int ul_strv_push_prepend(char ***l, char *value)
+{
         char **c;
         unsigned n, m, i;
 
@@ -306,7 +317,8 @@ int ul_strv_push_prepend(char ***l, char *value) {
         return 0;
 }
 
-int ul_strv_consume(char ***l, char *value) {
+int ul_strv_consume(char ***l, char *value)
+{
         int r;
 
         r = ul_strv_push(l, value);
@@ -316,7 +328,8 @@ int ul_strv_consume(char ***l, char *value) {
         return r;
 }
 
-int ul_strv_consume_prepend(char ***l, char *value) {
+int ul_strv_consume_prepend(char ***l, char *value)
+{
         int r;
 
         r = ul_strv_push_prepend(l, value);
@@ -326,7 +339,8 @@ int ul_strv_consume_prepend(char ***l, char *value) {
         return r;
 }
 
-int ul_strv_extend(char ***l, const char *value) {
+int ul_strv_extend(char ***l, const char *value)
+{
         char *v;
 
         if (!value)
@@ -339,7 +353,8 @@ int ul_strv_extend(char ***l, const char *value) {
         return ul_strv_consume(l, v);
 }
 
-char **ul_strv_remove(char **l, const char *s) {
+char **ul_strv_remove(char **l, const char *s)
+{
         char **f, **t;
 
         if (!l)
@@ -360,7 +375,8 @@ char **ul_strv_remove(char **l, const char *s) {
         return l;
 }
 
-int ul_strv_extendf(char ***l, const char *format, ...) {
+int ul_strv_extendf(char ***l, const char *format, ...)
+{
         va_list ap;
         char *x;
         int r;
@@ -375,7 +391,8 @@ int ul_strv_extendf(char ***l, const char *format, ...) {
         return ul_strv_consume(l, x);
 }
 
-int ul_strv_extendv(char ***l, const char *format, va_list ap) {
+int ul_strv_extendv(char ***l, const char *format, va_list ap)
+{
         char *x;
         int r;
 
@@ -386,7 +403,8 @@ int ul_strv_extendv(char ***l, const char *format, va_list ap) {
         return ul_strv_consume(l, x);
 }
 
-char **ul_strv_reverse(char **l) {
+char **ul_strv_reverse(char **l)
+{
         unsigned n, i;
 
         n = ul_strv_length(l);

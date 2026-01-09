@@ -270,7 +270,8 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 		   find_identical_file(orig->next, new, fslen_ub);
 }
 
-static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub) {
+static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub)
+{
 	if (orig) {
 		if (orig->size && orig->path)
 			find_identical_file(root,orig, fslen_ub);

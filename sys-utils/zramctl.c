@@ -298,7 +298,8 @@ static int zram_lock(struct zram *z, int operation)
 	return 0;
 }
 
-static void zram_unlock(struct zram *z) {
+static void zram_unlock(struct zram *z)
+{
 	if (z && z->lock_fd >= 0) {
 		close(z->lock_fd);
 		z->lock_fd = -EBADF;
