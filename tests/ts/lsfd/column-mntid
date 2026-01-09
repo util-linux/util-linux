@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="MNTID column"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+ts_skip_docker
+ts_skip_config HAVE_STRUCT_STATX_STX_MNT_ID "cannot get mnt_id via statx(2)"
+
+. "$TS_SELF/lsfd-functions.bash"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_test_command "$TS_CMD_FINDMNT"
+
+ts_cd "$TS_OUTDIR"
+
+FILE=/etc/passwd
+ID=$("$TS_CMD_FINDMNT" -n -o ID --target "$FILE" 2>> "$TS_OUTPUT" )
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" mmap file=${FILE}; }
+
+    if read -u ${MKFDS[0]} PID; then
+	MNTID=$("$TS_CMD_LSFD" -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "mem"' -p "$PID")
+	if [[ "$MNTID" == "$ID" ]]; then
+	    echo mem:OK
+	else
+	    echo mem:ERROR: "MNTID:$MNTID" != "ID:$ID"
+	fi
+    fi
+} >> "$TS_OUTPUT" 2>&1
+
+echo DONE >&"${MKFDS[1]}"
+wait "${MKFDS_PID}"
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" mmap file=${FILE} shared=true; }
+
+    if read -u ${MKFDS[0]} PID; then
+	MNTID=$("$TS_CMD_LSFD" -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "shm"' -p "$PID")
+	if [[ "$MNTID" == "$ID" ]]; then
+	    echo shm:OK
+	else
+	    echo shm:ERROR: "MNTID:$MNTID" != "ID:$ID"
+	fi
+    fi
+} >> "$TS_OUTPUT" 2>&1
+
+echo DONE >&"${MKFDS[1]}"
+wait "${MKFDS_PID}"
+
+ts_finalize
