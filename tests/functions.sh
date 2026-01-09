@@ -1164,15 +1164,6 @@ function ts_init_socket_to_file {
 	fi
 }
 
-function ts_has_ncurses_support {
-	grep -q '#define HAVE_LIBNCURSES' ${top_builddir}/config.h
-	if [ $? == 0 ]; then
-		echo "yes"
-	else
-		echo "no"
-	fi
-}
-
 # Get path to the ASan runtime DSO the given binary was compiled with
 function ts_get_asan_rt_path {
 	local binary="${1?}"
@@ -1232,6 +1223,15 @@ function ts_check_ipv6 {
        fi
 }
 
+# ts_skip_config CONFIG SKIP_DESC
+function ts_skip_config {
+	grep -q "#define $1" ${top_builddir}/config.h || ts_skip "$2"
+}
+
+function ts_skip_ncurses {
+	ts_skip_config HAVE_LIBNCURSES "without-ncurses"
+}
+
 function ts_skip_netns {
-	grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
+	ts_skip_config HAVE_LINUX_NET_NAMESPACE_H "no netns support"
 }
