@@ -478,7 +478,7 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 		xasprintf(&str, "%d", file->stat.st_nlink == 0);
 		break;
 	case COL_MNT_ID:
-		xasprintf(&str, "%d", is_opened_file(file)? file->mnt_id: 0);
+		xasprintf(&str, "%d", has_mnt_id(file)? file->mnt_id: 0);
 		break;
 	case COL_MODE:
 		if (does_file_has_fdinfo_alike(file))
