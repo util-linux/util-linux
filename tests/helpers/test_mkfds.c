@@ -4718,23 +4718,52 @@ static void list_parameters(const char *factory_name)
 	free(name);
 }
 
+enum {
+	COL_OVAL_NTH,
+	COL_OVAL_DESCRIPTION,
+	OVAL_N_COLS
+};
+
+static const struct colinfo output_value_infos[] = {
+	[COL_OVAL_NTH]         = { "NTH", 0, SCOLS_FL_RIGHT,
+				   "the order in the output list" },
+	[COL_OVAL_DESCRIPTION] = { "DESCRIPTION", 0, 0,
+				   "the description about this output item" },
+};
+
+static int output_values_fill_column(struct libscols_line *ln, int nth_item, const void *data,
+				     int nth_column)
+{
+	switch (nth_column) {
+	case COL_OVAL_NTH:
+		scols_line_sprintf(ln, nth_column, "%d", nth_item);
+		break;
+	case COL_OVAL_DESCRIPTION:
+		const char *o = nth_item == 0
+			? "the pid owning the file descriptor(s)"
+			: ((const char *const * const)data)[nth_item - 1];
+		scols_line_sprintf(ln, nth_column, "%s", o);
+		break;
+	}
+	return 0;
+}
+
 static void list_output_values(const char *factory_name)
 {
+	char *name = NULL;
+	size_t n_ovals = 1;
 	const struct factory *factory = find_factory(factory_name);
-	const char *fmt = "%3d %s\n";
-	const char **o;
-
 	if (!factory)
 		errx(EXIT_FAILURE, "no such factory: %s", factory_name);
 
-	printf("%-3s %s\n", "NTH", "DESCRIPTION");
-	printf(fmt, 0, "the pid owning the file descriptor(s)");
+	xasprintf(&name, "output values of %s", factory_name);
 
-	o  = factory->o_descs;
-	if (!o)
-		return;
-	for (int i = 0; i < factory->EX_O; i++)
-		printf(fmt, i + 1, o[i]);
+	n_ovals += factory->EX_O;
+
+	list_items(name, output_value_infos, OVAL_N_COLS,
+		   factory->o_descs, n_ovals,
+		   output_values_fill_column, NULL);
+	free(name);
 }
 
 static void rename_self(const char *comm)
