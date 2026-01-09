@@ -81,7 +81,13 @@ static void fdiskprog_init_debug(void)
 
 static void reply_sighandler(int sig __attribute__((unused)))
 {
-	DBG(ASK, ul_debug("got signal"));
+	/* nothing to do here */
+}
+
+static void reply_debug_sighandler(int sig __attribute__((unused)))
+{
+	/* signal-safe version of DBG(ASK, ul_debug("got signal")) */
+	ul_sig_printf("%d: %s: %8s: %s\n", getpid(), "fdisk", "ASK", "got signal");
 }
 
 static int reply_running;
@@ -111,6 +117,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	DBG(ASK, ul_debug("asking for user reply %s", is_interactive ? "[interactive]" : ""));
 
 	sigemptyset(&act.sa_mask);
+	ON_DBG(ASK, act.sa_handler = reply_debug_sighandler);
 	sigaction(SIGINT, &act, &oldact);
 
 #ifdef HAVE_LIBREADLINE
