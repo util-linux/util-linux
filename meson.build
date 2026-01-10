@@ -3100,6 +3100,7 @@ exe = executable(
   build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
+  bashcompletions += ['copyfilerange']
 endif
 
 exe = executable(
