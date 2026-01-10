@@ -74,17 +74,20 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 	token = strchr(start, ':');
 	if (!token) goto fail;
 	*token = 0;
-	if (*start) *src_off = atoll(start);
+	if (*start) *src_off = strtoll(start, NULL, 10);
+	if (errno) goto fail;
 
 	start = token + 1;
 	token = strchr(start, ':');
 	if (!token) goto fail;
 	*token = 0;
-	if (*start) *dst_off = atoll(start);
+	if (*start) *dst_off = strtoll(start, NULL, 10);
+	if (errno) goto fail;
 
 	start = token + 1;
-	if (*start) *len = atoll(start);
+	if (*start) *len = strtoll(start, NULL, 10);
 	else *len = 0;
+	if (errno) goto fail;
 
 	free(copy);
 	return 0;
