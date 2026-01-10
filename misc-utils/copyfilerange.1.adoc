@@ -27,7 +27,10 @@ Source filename
 *destination*::
 Destination filename
 
-*source_offset:dest_offset:length*::
+*command*::
+
+Consists of a range specified as *source_offset:dest_offset:length*
+
 All values are in bytes, if length is set to 0 copy as much as available.
 Multiple commands can be supplied.
 
