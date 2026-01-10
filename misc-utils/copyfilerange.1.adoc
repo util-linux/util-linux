@@ -17,7 +17,7 @@ copyfilerange - Copy file ranges from source to destination file.
 == DESCRIPTION
 
 *copyfilerange* copy file ranges from source to destination file
-*copyfilerange* is a simple utility to call the copy_file_range() system call.
+*copyfilerange* is a simple utility to call the *copy_file_range*(2) system call.
 
 == OPTIONS
 
@@ -59,7 +59,7 @@ unspecified failure and (some) range failed
 
 == NOTES
 
-The copy_file_range() system call has some serious caveats, the source and destination files must use the same filesystem type and some virtual filesystems (like procfs) won't work. copy_file_range() will use reflinks when the filesystem supports this. To use reflinks the file range most often needs to align with the filesystem block size on both the source and destination file.
+The *copy_file_range*(2) system call has some serious caveats, the source and destination files must use the same filesystem type and some virtual filesystems (like procfs) won't work. *copy_file_range*(2) will use reflinks when the filesystem supports this. To use reflinks the file range most often needs to align with the filesystem block size on both the source and destination file.
 
 == AUTHORS
 
