@@ -114,7 +114,7 @@ static int handle_range(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off, 
 		size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		ssize_t copied = copy_file_range(fd_src, src_off, fd_dst, dst_off, chunk, 0);
 		if (copied < 0) {
-			fprintf(stderr, _("failed copy file range %s at source offset %ld: %m\n"), range, *src_off);
+			fprintf(stderr, _("failed copy file range %s at source offset %"PRId64": %m\n"), range, *src_off);
 			rc |= 2;
 			break;
 		}
