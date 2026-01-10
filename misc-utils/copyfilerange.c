@@ -153,9 +153,9 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	int c;
-	while ((c = getopt_long (argc, argv, "c:s:d:Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "r:s:d:Vh", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'c':
+		case 'r':
 			if (!range_files)
 				range_files = xmalloc(sizeof(char *) * argc);
 			range_files[nrange_files++] = xstrdup(optarg);
