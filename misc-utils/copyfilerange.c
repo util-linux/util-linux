@@ -62,7 +62,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, size_t *len)
 {
-	char *copy = strdup(range_str);
+	char *copy = xstrdup(range_str);
 	if (!copy) return -1;
 
 	char *start;
