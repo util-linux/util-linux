@@ -37,7 +37,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %1$s [options] [<source>] [<destination>] [<command>...]\n"),
+		_(" %1$s [options] [<source>] [<destination>] [<range>...]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -46,10 +46,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputsln(_(" --source, -s filename       source filename"), out);
 	fputsln(_(" --destination, -d filename  destination filename"), out);
-	fputsln(_(" --commands, -c filename     read command(s) seperated by newlines from filename"), out);
+	fputsln(_(" --range, -c filename        read range(s) seperated by newlines from filename"), out);
 	fputsln(_(" source                      source filename"), out);
 	fputsln(_(" destination                 destination filename"), out);
-	fputsln(_(" command                     source_offset:dest_offset:length, all values are in bytes"), out);
+	fputsln(_(" range                       source_offset:dest_offset:length, all values are in bytes"), out);
 	fputsln(_("                             if length is set to 0 as much as available will be copied"), out);
 	fputsln(_("                             when the offset is omitted the last file position is used"), out);
 
@@ -93,12 +93,12 @@ fail:
 
 }
 
-static int handle_command(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off, char* command)
+static int handle_range(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off, char* range)
 {
 	size_t len;
 	int rc = 0;
-	if (parse_range(command, src_off, dst_off, &len) != 0) {
-		fprintf(stderr, _("invalid range format: %s\n"), command);
+	if (parse_range(range, src_off, dst_off, &len) != 0) {
+		fprintf(stderr, _("invalid range format: %s\n"), range);
 		return 1;
 	}
 
@@ -114,7 +114,7 @@ static int handle_command(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off
 		size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		ssize_t copied = copy_file_range(fd_src, src_off, fd_dst, dst_off, chunk, 0);
 		if (copied < 0) {
-			fprintf(stderr, _("failed copy file range %s at source offset %ld: %m\n"), command, *src_off);
+			fprintf(stderr, _("failed copy file range %s at source offset %ld: %m\n"), range, *src_off);
 			rc |= 2;
 			break;
 		}
@@ -126,15 +126,15 @@ static int handle_command(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off
 
 int main(int argc, char **argv)
 {
-	char **command_files = NULL;
-	size_t ncommand_files = 0;
+	char **range_files = NULL;
+	size_t nrange_files = 0;
 	char *source_filename = NULL;
 	char *destination_filename = NULL;
 	int fd_src, fd_dst;
 	int rc = 0;
 
 	static const struct option longopts[] = {
-		{ "commands",    required_argument, NULL, 'c' },
+		{ "ranges",      required_argument, NULL, 'c' },
 		{ "source",      required_argument, NULL, 's' },
 		{ "destination", required_argument, NULL, 'd' },
 		{ "version",     no_argument,       NULL, 'V' },
@@ -151,9 +151,9 @@ int main(int argc, char **argv)
 	while ((c = getopt_long (argc, argv, "c:s:d:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
-			if (!command_files)
-				command_files = xmalloc(sizeof(char *) * argc);
-			command_files[ncommand_files++] = xstrdup(optarg);
+			if (!range_files)
+				range_files = xmalloc(sizeof(char *) * argc);
+			range_files[nrange_files++] = xstrdup(optarg);
 			break;
 		case 's':
 			if (source_filename)
@@ -197,27 +197,27 @@ int main(int argc, char **argv)
 
 	off_t src_off, dst_off;
 
-	for (size_t i = 0; i < ncommand_files; i++) {
+	for (size_t i = 0; i < nrange_files; i++) {
 		FILE *f = NULL;
 
-		if (!(f = fopen(command_files[i], "r")))
-			err(EXIT_FAILURE, _("cannot open command file %s"), command_files[i]);
-		free(command_files[i]);
+		if (!(f = fopen(range_files[i], "r")))
+			err(EXIT_FAILURE, _("cannot open range file %s"), range_files[i]);
+		free(range_files[i]);
 
 		char *line = NULL;
 		size_t len = 0;
 
 		while (getline(&line, &len, f) != -1) {
-			rc |= handle_command(fd_src, fd_dst, &src_off, &dst_off, line);
+			rc |= handle_range(fd_src, fd_dst, &src_off, &dst_off, line);
 		}
 
 		free(line);
 		fclose(f);
 	}
-	free(command_files);
+	free(range_files);
 
 	for (; rem_optind < argc; rem_optind++) {
-		rc |= handle_command(fd_src, fd_dst, &src_off, &dst_off, argv[rem_optind]);
+		rc |= handle_range(fd_src, fd_dst, &src_off, &dst_off, argv[rem_optind]);
 	}
 
 	close(fd_src);

@@ -4,7 +4,7 @@
 :man manual: User Commands
 :man source: util-linux {release-version}
 :page-layout: base
-:command: copyfilerange
+:range: copyfilerange
 
 == NAME
 
@@ -12,7 +12,7 @@ copyfilerange - Copy file ranges from source to destination file.
 
 == SYNOPSIS
 
-*copyfilerange* [options] [<source>] [<destination>] [<command>...]
+*copyfilerange* [options] [<source>] [<destination>] [<range>...]
 
 == DESCRIPTION
 
@@ -27,12 +27,12 @@ Source filename
 *destination*::
 Destination filename
 
-*command*::
+*range*::
 
 Consists of a range specified as *source_offset:dest_offset:length*
 
 All values are in bytes, if length is set to 0 copy as much as available.
-Multiple commands can be supplied.
+Multiple range can be supplied.
 
 When one or more of the offsets are omitted the operation will use the last used location, starting with 0
 
@@ -44,8 +44,8 @@ Source filename
 *-d*, *--destination*::
 Destination filename
 
-*-c*, *--commands*::
-Commands filename
+*-c*, *--ranges*::
+Ranges filename
 
 include::man-common/help-version.adoc[]
 
