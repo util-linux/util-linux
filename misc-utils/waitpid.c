@@ -35,54 +35,78 @@
 #include "exitcodes.h"
 #include "timeutils.h"
 #include "optutils.h"
+#include "pidutils.h"
 
 #define EXIT_TIMEOUT_EXPIRED 3
 
 #define TIMEOUT_SOCKET_IDX UINT64_MAX
 
-static bool verbose = false;
-static struct timespec timeout;
-static bool allow_exited = false;
-static size_t count;
+struct process_info {
+	pid_t		pid;
+	int		pidfd;
+#ifdef USE_PIDFD_INO_SUPPORT
+	uint64_t	pidfd_ino;
+#endif
+};
 
-static pid_t *parse_pids(size_t n_strings, char * const *strings)
+/* list of processes specified by PIDs on the command line */
+static struct process_info *proc_infos;
+struct waitpid_control {
+	size_t 	count;
+
+	bool	allow_exited,
+		verbose;
+
+	struct timespec timeout;
+};
+
+static void parse_pids_or_err(struct process_info *pinfos, size_t n_strings, char * const *strings)
 {
-	pid_t *pids = xcalloc(n_strings, sizeof(*pids));
+	for (size_t i = 0; i < n_strings; i++) {
+		struct process_info *pi = &pinfos[i];
+		int rc;
 
-	for (size_t i = 0; i < n_strings; i++)
-		pids[i] = strtopid_or_err(strings[i], _("invalid PID argument"));
-
-	return pids;
+#ifdef USE_PIDFD_INO_SUPPORT
+		rc = ul_parse_pid_str(strings[i], &pi->pid, &pi->pidfd_ino);
+#else
+		rc = ul_parse_pid_str(strings[i], &pi->pid, NULL);
+#endif
+		if(rc)
+			err(EXIT_FAILURE, _("invalid PID argument '%s'"), strings[i]);
+	}
 }
 
-static int *open_pidfds(size_t n_pids, pid_t *pids)
+static void open_pidfds_or_err(struct waitpid_control *ctl, struct process_info *pinfos, size_t n_pids)
 {
-	int *pidfds = xcalloc(n_pids, sizeof(*pidfds));
-
 	for (size_t i = 0; i < n_pids; i++) {
-		pidfds[i] = pidfd_open(pids[i], 0);
-		if (pidfds[i] == -1) {
-			if (allow_exited && errno == ESRCH) {
-				if (verbose)
-					warnx(_("PID %d has exited, skipping"), pids[i]);
+		struct process_info *pi = &pinfos[i];
+
+		errno = 0;
+#ifdef USE_PIDFD_INO_SUPPORT
+		pi->pidfd = ul_get_valid_pidfd(pi->pid, pi->pidfd_ino);
+#else
+		pi->pidfd = pidfd_open(pi->pid, 0);
+#endif
+		if (pi->pidfd < 0) {
+			if (ctl->allow_exited && errno == ESRCH) {
+				if (ctl->verbose)
+					warnx(_("PID %d has exited, skipping"), pi->pid);
 				continue;
 			}
-			err_nosys(EXIT_FAILURE, _("could not open pid %u"), pids[i]);
+			err_nosys(EXIT_FAILURE, _("could not open pid %u"), pi->pid);
 		}
 	}
-
-	return pidfds;
 }
 
-static int open_timeoutfd(void)
+static int open_timeoutfd(struct waitpid_control *ctl)
 {
 	int fd;
 	struct itimerspec timer = {};
 
-	if (!timeout.tv_sec && !timeout.tv_nsec)
+	if (!ctl->timeout.tv_sec && !ctl->timeout.tv_nsec)
 		return -1;
 
-	timer.it_value = timeout;
+	timer.it_value = ctl->timeout;
 
 	fd = timerfd_create(CLOCK_MONOTONIC, TFD_CLOEXEC);
 	if (fd == -1)
@@ -95,7 +119,8 @@ static int open_timeoutfd(void)
 
 }
 
-static size_t add_listeners(int epll, size_t n_pids, int * const pidfds, int timeoutfd)
+static size_t add_listeners(int epll, size_t n_pids,
+			struct process_info *pinfos, int timeoutfd)
 {
 	size_t skipped = 0;
 	struct epoll_event evt = {
@@ -109,20 +134,21 @@ static size_t add_listeners(int epll, size_t n_pids, int * const pidfds, int tim
 	}
 
 	for (size_t i = 0; i < n_pids; i++) {
-		if (pidfds[i] == -1) {
+		struct process_info *pi = &pinfos[i];
+		if (pi->pidfd == -1) {
 			skipped++;
 			continue;
 		}
 		evt.data.u64 = i;
-		if (epoll_ctl(epll, EPOLL_CTL_ADD, pidfds[i], &evt))
+		if (epoll_ctl(epll, EPOLL_CTL_ADD, pi->pidfd, &evt))
 			err_nosys(EXIT_FAILURE, _("could not add listener"));
 	}
 
 	return n_pids - skipped;
 }
 
-static void wait_for_exits(int epll, size_t active_pids, pid_t * const pids,
-			   int * const pidfds)
+static void wait_for_exits(struct waitpid_control *ctl, int epll,
+				size_t active_pids, struct process_info *pinfos)
 {
 	while (active_pids) {
 		struct epoll_event evt;
@@ -135,15 +161,19 @@ static void wait_for_exits(int epll, size_t active_pids, pid_t * const pids,
 			else
 				err_nosys(EXIT_FAILURE, _("failure during wait"));
 		}
+
 		if (evt.data.u64 == TIMEOUT_SOCKET_IDX) {
-			if (verbose)
+			if (ctl->verbose)
 				printf(_("Timeout expired\n"));
 			exit(EXIT_TIMEOUT_EXPIRED);
 		}
-		if (verbose)
-			printf(_("PID %d finished\n"), pids[evt.data.u64]);
+
+		struct process_info *pi = &pinfos[evt.data.u64];
+
+		if (ctl->verbose)
+			printf(_("PID %d finished\n"), pi->pid);
 		assert((size_t) ret <= active_pids);
-		fd = pidfds[evt.data.u64];
+		fd = pi->pidfd;
 		epoll_ctl(epll, EPOLL_CTL_DEL, fd, NULL);
 		active_pids -= ret;
 	}
@@ -152,9 +182,15 @@ static void wait_for_exits(int epll, size_t active_pids, pid_t * const pids,
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+	char *cmd_arg = NULL;
+#ifdef USE_PIDFD_INO_SUPPORT
+	cmd_arg = "PID[:inode]";
+#else
+	cmd_arg = "PID";
+#endif
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] pid...\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] %s...\n"), program_invocation_short_name, cmd_arg);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose           be more verbose\n"), out);
@@ -170,7 +206,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static int parse_options(int argc, char **argv)
+static int parse_options(struct waitpid_control *ctl, int argc, char **argv)
 {
 	int c;
 	static const struct option longopts[] = {
@@ -194,16 +230,16 @@ static int parse_options(int argc, char **argv)
 
 		switch (c) {
 		case 'v':
-			verbose = true;
+			ctl->verbose = true;
 			break;
 		case 't':
-			strtotimespec_or_err(optarg, &timeout,  _("invalid timeout"));
+			strtotimespec_or_err(optarg, &ctl->timeout,  _("invalid timeout"));
 			break;
 		case 'e':
-			allow_exited = true;
+			ctl->allow_exited = true;
 			break;
 		case 'c':
-			count = str2num_or_err(optarg, 10, _("invalid count"),
+			ctl->count = str2num_or_err(optarg, 10, _("invalid count"),
 					       1, INT64_MAX);
 			break;
 		case 'V':
@@ -220,32 +256,38 @@ static int parse_options(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	int pid_idx, epoll, timeoutfd, *pidfds;
+	int pid_idx, epoll, timeoutfd;
 	size_t n_pids, active_pids;
+	struct waitpid_control ctl = {
+		.allow_exited = false,
+		.verbose = false,
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	pid_idx = parse_options(argc, argv);
+	pid_idx = parse_options(&ctl, argc, argv);
 	n_pids = argc - pid_idx;
 	if (!n_pids)
 		errx(EXIT_FAILURE, _("no PIDs specified"));
 
-	if (count && count > n_pids)
+	if (ctl.count && ctl.count > n_pids)
 		errx(EXIT_FAILURE,
-		     _("can't wait for %zu of %zu PIDs"), count, n_pids);
+		     _("can't wait for %zu of %zu PIDs"), ctl.count, n_pids);
 
-	pid_t *pids = parse_pids(argc - pid_idx, argv + pid_idx);
+	proc_infos = (struct process_info *)xcalloc(n_pids, sizeof(struct process_info));
 
-	pidfds = open_pidfds(n_pids, pids);
-	timeoutfd = open_timeoutfd();
+	parse_pids_or_err(proc_infos, argc - pid_idx, argv + pid_idx);
+	open_pidfds_or_err(&ctl, proc_infos, n_pids);
+
+	timeoutfd = open_timeoutfd(&ctl);
 	epoll = epoll_create(n_pids);
 	if (epoll == -1)
 		err_nosys(EXIT_FAILURE, _("could not create epoll"));
 
-	active_pids = add_listeners(epoll, n_pids, pidfds, timeoutfd);
-	if (count)
-		active_pids = min(active_pids, count);
-	wait_for_exits(epoll, active_pids, pids, pidfds);
+	active_pids = add_listeners(epoll, n_pids, proc_infos, timeoutfd);
+	if (ctl.count)
+		active_pids = min(active_pids, ctl.count);
+	wait_for_exits(&ctl, epoll, active_pids, proc_infos);
 }
