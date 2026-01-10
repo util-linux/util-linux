@@ -19,16 +19,7 @@ copyfilerange - Copy file ranges from source to destination file.
 *copyfilerange* copy file ranges from source to destination file
 *copyfilerange* is a simple utility to call the *copy_file_range*(2) system call.
 
-== OPTIONS
-
-*-s*, *--source*::
-Source filename
-
-*-d*, *--destination*::
-Destination filename
-
-*-c*, *--commands*::
-Commands filename
+== ARGUMENTS
 
 *source*::
 Source filename
@@ -41,6 +32,17 @@ All values are in bytes, if length is set to 0 copy as much as available.
 Multiple commands can be supplied.
 
 When one or more of the offsets are omitted the operation will use the last used location, starting with 0
+
+== OPTIONS
+
+*-s*, *--source*::
+Source filename
+
+*-d*, *--destination*::
+Destination filename
+
+*-c*, *--commands*::
+Commands filename
 
 include::man-common/help-version.adoc[]
 
