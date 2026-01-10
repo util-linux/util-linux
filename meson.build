@@ -3088,7 +3088,7 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
-opt = opt and 'copyfilerange' in static_programs
+opt = get_option('build-copyfilerange').require(LINUX and conf.get('HAVE_COPY_FILE_RANGE').to_string() == '1').allowed()
 exe = executable(
   'copyfilerange',
   copyfilerange_sources,
