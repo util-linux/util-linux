@@ -35,6 +35,16 @@ ts_cd "$TS_OUTDIR"
 
 	cat a # float
 	cat b # aloof, tribe to Donald Knuth five letter words
+
+	echo 3::1 > ranges
+	echo 1::2 >> ranges
+	echo 2::1 >> ranges
+	echo 0::1 >> ranges
+	echo 5::1 >> ranges
+
+	"$TS_CMD_COPYFILERANGE" a c --ranges ranges
+
+	cat c # aloof
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
