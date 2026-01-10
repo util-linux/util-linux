@@ -25,16 +25,16 @@ ts_check_test_command "$TS_CMD_COPYFILERANGE"
 ts_cd "$TS_OUTDIR"
 
 {
-    echo float >  a
-    echo > b
+	echo float >  a
+	echo > b
 
-    cat a # float
-    cat b # empty
+	cat a # float
+	cat b # empty
 
-    "$TS_CMD_COPYFILERANGE" a b 3::1 1::2 2::1 0::1 5::1
+	"$TS_CMD_COPYFILERANGE" a b 3::1 1::2 2::1 0::1 5::1
 
-    cat a # float
-    cat b # aloof, tribe to Donald Knuth five letter words
+	cat a # float
+	cat b # aloof, tribe to Donald Knuth five letter words
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
