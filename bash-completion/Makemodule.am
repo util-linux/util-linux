@@ -21,6 +21,9 @@ endif
 if BUILD_COLUMN
 dist_bashcompletion_DATA += bash-completion/column
 endif
+if BUILD_COPYFILERANGE
+dist_bashcompletion_DATA += bash-completion/copyfilerange
+endif
 if BUILD_CORESCHED
 dist_bashcompletion_DATA += bash-completion/coresched
 endif

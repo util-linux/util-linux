@@ -3088,6 +3088,21 @@ if opt and not is_disabler(exe)
   exes += exe
 endif
 
+opt = get_option('build-copyfilerange').require(LINUX and conf.get('HAVE_COPY_FILE_RANGE').to_string() == '1').allowed()
+exe = executable(
+  'copyfilerange',
+  copyfilerange_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  dependencies : [copyfilerange_dep],
+  install_dir : sbindir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  bashcompletions += ['copyfilerange']
+endif
+
 exe = executable(
   'sample-mkfs',
   'libblkid/samples/mkfs.c',
