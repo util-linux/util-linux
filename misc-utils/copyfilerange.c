@@ -53,7 +53,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputsln(_(" --source, -s filename       source filename"), out);
 	fputsln(_(" --destination, -d filename  destination filename"), out);
-	fputsln(_(" --range, -c filename        read range(s) seperated by newlines from filename"), out);
+	fputsln(_(" --ranges, -r filename       read range(s) seperated by newlines from filename"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(16));
@@ -139,9 +139,9 @@ int main(int argc, char **argv)
 	int rc = 0;
 
 	static const struct option longopts[] = {
-		{ "ranges",      required_argument, NULL, 'c' },
 		{ "source",      required_argument, NULL, 's' },
 		{ "destination", required_argument, NULL, 'd' },
+		{ "ranges",      required_argument, NULL, 'r' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
