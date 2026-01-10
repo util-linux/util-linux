@@ -100,6 +100,13 @@ static inline int pidfd_getfd(int pidfd __attribute__((unused)),
 
 int pfd_is_pidfs(int pidfd);
 ino_t pidfd_get_inode(int pidfd);
+
+#ifdef USE_PIDFD_INO_SUPPORT
+int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino);
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino);
+#else
 int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)));
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)));
+#endif
 
 #endif /* UTIL_LINUX_PIDFD_UTILS */

@@ -58,8 +58,8 @@ uint64_t pidfd_get_inode(int pidfd)
  * Pass @pfd_ino as 0, if the pidfd should not be validated.
  *
  * Return: On success, a file descriptor is returned.
- *         On failure, err() or errx() is called to
- *         print an error message and kill the program.
+ *         On failure, err() is called with an error message
+ *         and the processes is terminated.
  *
  */
 #ifdef USE_PIDFD_INO_SUPPORT
@@ -70,16 +70,45 @@ int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unu
 {
 	int pfd;
 
+	pfd = ul_get_valid_pidfd(pid, pidfd_ino);
+	if (pfd < 0)
+		err(EXIT_FAILURE, N_("failed to obtain a valid file descriptor for PID %d"), pid);
+
+	return pfd;
+}
+
+/*
+ * ul_get_valid_pidfd() - Return a valid file descriptor for a PID
+ *
+ * @pid:     PID number for which to get a file descriptor
+ * @pfd_ino: A pidfd inode number that is expected to be the
+ *           same as for the new file descriptor.
+ *
+ * Pass @pfd_ino as 0, if the pidfd should not be validated.
+ *
+ * Return: On success, a file descriptor is returned.
+ *         On failure, a negative errno is returned and errno
+ *         is set accordingly.
+ *
+ */
+#ifdef USE_PIDFD_INO_SUPPORT
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino)
+#else
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)))
+#endif
+{
+	int pfd;
+
 	pfd = pidfd_open(pid, 0);
 	if (pfd < 0)
-		err(EXIT_FAILURE, N_("pidfd_open() failed"));
+		return -errno;
 
 	/* the file descriptor has to have the pidfs file system type
 	 * otherwise the inode assigned to it will not be useful.
 	 */
 	if (!pfd_is_pidfs(pfd)) {
 		close(pfd);
-		errx(EXIT_FAILURE, N_("pidfd needs to have the pidfs file system type"));
+		return -(errno = ENOTSUP);
 	}
 
 #ifdef USE_PIDFD_INO_SUPPORT
@@ -88,8 +117,7 @@ int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unu
 		real_pidfd_ino = pidfd_get_inode(pfd);
 		if (real_pidfd_ino != pidfd_ino) {
 			close(pfd);
-			errx(EXIT_FAILURE, N_("pidfd inode %"PRIu64" not found for pid %d"),
-				pidfd_ino, pid);
+			return -(errno = ESRCH);
 		}
 	}
 #endif
