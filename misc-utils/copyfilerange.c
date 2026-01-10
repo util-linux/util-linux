@@ -187,11 +187,13 @@ int main(int argc, char **argv)
 	if (!destination_filename)
 		errx(EXIT_FAILURE, _("destination file is required"));
 
-	if ((fd_src = open(source_filename, O_RDONLY)) < 0)
+	fd_src = open(source_filename, O_RDONLY);
+	if (fd_src < 0)
 		err(EXIT_FAILURE, _("cannot open source %s"), argv[1]);
 	free(source_filename);
 
-	if ((fd_dst = open(destination_filename, O_WRONLY | O_CREAT, 0666)) < 0)
+	fd_dst = open(destination_filename, O_WRONLY | O_CREAT, 0666);
+	if (fd_dst < 0)
 		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
 	free(destination_filename);
 
