@@ -43,15 +43,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputsln(_("Copy file ranges from source to destination file."), out);
 
-	fputs(USAGE_OPTIONS, out);
-	fputsln(_(" --source, -s filename       source filename"), out);
-	fputsln(_(" --destination, -d filename  destination filename"), out);
-	fputsln(_(" --range, -c filename        read range(s) seperated by newlines from filename"), out);
+	fputs(USAGE_SEPARATOR, out);
 	fputsln(_(" source                      source filename"), out);
 	fputsln(_(" destination                 destination filename"), out);
 	fputsln(_(" range                       source_offset:dest_offset:length, all values are in bytes"), out);
 	fputsln(_("                             if length is set to 0 as much as available will be copied"), out);
 	fputsln(_("                             when the offset is omitted the last file position is used"), out);
+
+	fputs(USAGE_OPTIONS, out);
+	fputsln(_(" --source, -s filename       source filename"), out);
+	fputsln(_(" --destination, -d filename  destination filename"), out);
+	fputsln(_(" --range, -c filename        read range(s) seperated by newlines from filename"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(16));
