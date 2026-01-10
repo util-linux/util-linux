@@ -95,3 +95,52 @@ int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unu
 #endif
 	return pfd;
 }
+
+/*
+ * ul_get_valid_pidfd() - Return a valid file descriptor for a PID
+ *
+ * @pid:     PID number for which to get a file descriptor
+ * @pfd_ino: A pidfd inode number that is expected to be the
+ *           same as for the new file descriptor.
+ *
+ * Pass @pfd_ino as 0, if the pidfd should not be validated.
+ *
+ * Return: On success, a file descriptor is returned.
+ *         On failure, -1 is returned and errno is set to a
+ *         value that describes the error.
+ *
+ */
+#ifdef USE_PIDFD_INO_SUPPORT
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino)
+#else
+int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)))
+#endif
+{
+	int pfd;
+
+	pfd = pidfd_open(pid, 0);
+	if (pfd < 0)
+		return -1;
+
+	/* the file descriptor has to have the pidfs file system type
+	 * otherwise the inode assigned to it will not be useful.
+	 */
+	if (!pfd_is_pidfs(pfd)) {
+		close(pfd);
+		errno = ENOTSUP;
+		return -1;
+	}
+
+#ifdef USE_PIDFD_INO_SUPPORT
+	uint64_t real_pidfd_ino;
+	if (pidfd_ino) {
+		real_pidfd_ino = pidfd_get_inode(pfd);
+		if (real_pidfd_ino != pidfd_ino) {
+			close(pfd);
+			errno = ESRCH;
+			return -1;
+		}
+	}
+#endif
+	return pfd;
+}
