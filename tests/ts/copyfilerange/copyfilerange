@@ -24,27 +24,35 @@ ts_check_test_command "$TS_CMD_COPYFILERANGE"
 
 ts_cd "$TS_OUTDIR"
 
-{
-	echo float >  a
-	echo > b
 
-	cat a # float
-	cat b # empty
+echo float >  a
+touch b c ranges
 
-	"$TS_CMD_COPYFILERANGE" a b 3::1 1::2 2::1 0::1 5::1
+ts_init_subtest "normal"
+"$TS_CMD_COPYFILERANGE" a b 3::1 1:3:2 2::1 0:2:1 5::1  &>"$TS_OUTPUT"
+cat b >"$TS_OUTPUT"
+ts_finalize_subtest
 
-	cat a # float
-	cat b # aloof, tribe to Donald Knuth five letter words
+ts_init_subtest "invalid-input"
+"$TS_CMD_COPYFILERANGE" a b 3:bogus:1 bogus::2 :::: bogus svhhs:%%:8  &>/dev/null
+if [[ "$?" != "0" ]]; then
+	echo "ok" >"$TS_OUTPUT"
+fi
+ts_finalize_subtest
 
-	echo 3::1 > ranges
-	echo 1::2 >> ranges
-	echo 2::1 >> ranges
-	echo 0::1 >> ranges
-	echo 5::1 >> ranges
+ts_init_subtest "ranges-option"
+cat <<EOF > ranges
+3::1
+1::2
+2::1
+0::1
+5::1
+EOF
 
-	"$TS_CMD_COPYFILERANGE" a c --ranges ranges
+"$TS_CMD_COPYFILERANGE" a c --ranges ranges
+cat c >"$TS_OUTPUT"
+ts_finalize_subtest
 
-	cat c # aloof
-} > "$TS_OUTPUT" 2>&1
+rm -f a b c ranges
 
 ts_finalize
