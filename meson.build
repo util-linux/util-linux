@@ -604,6 +604,7 @@ funcs = '''
         cachestat
         clearenv
         close_range
+        copy_file_range
         __fpurge
         fpurge
         __fpending
