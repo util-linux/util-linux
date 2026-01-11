@@ -241,6 +241,12 @@ int main(int argc, char **argv)
 		size_t len = 0;
 
 		while (getline(&line, &len, f) != -1) {
+			ltrim_whitespace((unsigned char *) line);
+			len = rtrim_whitespace((unsigned char *) line);
+			if (len == 0) {
+				rc++;
+				continue;
+			}
 			rc |= handle_range(fd_src, fd_dst, &src_off, &dst_off, line);
 		}
 
