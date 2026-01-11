@@ -62,32 +62,58 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+static inline int conv_str_to_imax(char **str, intmax_t **value)
+{
+	char *end = NULL;
+	intmax_t tmp;
+	errno = 0;
+
+	tmp = strtoimax(*str, &end, 10);
+	if (errno == 0 && ((tmp && tmp < 0) ||
+			(tmp && tmp > SINT_MAX(off_t)))) {
+		return -ERANGE;
+	} else if (end && *end != '\0') {
+		return -EINVAL;
+	}
+	**value = tmp;
+
+	return 0;
+}
+
 static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, size_t *len)
 {
-	char *copy = xstrdup(range_str);
+	char *copy = NULL, *start = NULL, *token = NULL, rc = 0;
+	copy = xstrdup(range_str);
 	if (!copy) return -1;
 
-	char *start;
-
 	start = copy;
-	char *token;
 	token = strchr(start, ':');
 	if (!token) goto fail;
-	*token = 0;
-	if (*start) *src_off = strtoll(start, NULL, 10);
-	if (errno) goto fail;
+	*token = '\0';
+	if (*start) {
+		rc = conv_str_to_imax(&start, &src_off);
+		if (rc) goto fail;
+	}
 
 	start = token + 1;
 	token = strchr(start, ':');
 	if (!token) goto fail;
-	*token = 0;
-	if (*start) *dst_off = strtoll(start, NULL, 10);
-	if (errno) goto fail;
+	*token = '\0';
+	if (*start) {
+		rc = conv_str_to_imax(&start, &dst_off);
+		if (rc) goto fail;
+	}
 
 	start = token + 1;
-	if (*start) *len = strtoll(start, NULL, 10);
-	else *len = 0;
-	if (errno) goto fail;
+	if (*start) {
+		uintmax_t tmp;
+		char *end = NULL;
+		tmp = strtoumax(start, &end, 10);
+		if (tmp > SIZE_MAX
+						|| errno != 0 || (end && *end != '\0'))
+				goto fail;
+		*len = (size_t) tmp;
+	} else *len = 0;
 
 	free(copy);
 	return 0;
