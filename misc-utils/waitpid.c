@@ -176,6 +176,7 @@ static void wait_for_exits(const struct waitpid_control *ctl, int epll,
 		assert((size_t) ret <= active_pids);
 		fd = pi->pidfd;
 		epoll_ctl(epll, EPOLL_CTL_DEL, fd, NULL);
+		close(fd);
 		active_pids -= ret;
 	}
 }
