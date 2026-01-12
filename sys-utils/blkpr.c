@@ -42,93 +42,116 @@ struct type_string {
 
 /* This array should keep align with enum pr_type of linux/types.h */
 static const struct type_string pr_type[] = {
-	{PR_WRITE_EXCLUSIVE,           "write-exclusive",
-	"  * write-exclusive: Only the initiator that owns the reservation can\n"
-	"    write to the device. Any initiator can read from the device.\n"},
-
-	{PR_EXCLUSIVE_ACCESS,          "exclusive-access",
-	"  * exclusive-access: Only the initiator that owns the reservation can\n"
-	"    access the device.\n"},
-
-	{PR_WRITE_EXCLUSIVE_REG_ONLY,  "write-exclusive-reg-only",
-	"  * write-exclusive-reg-only: Only initiators with a registered key can\n"
-	"    write to the device, any initiator can read from the device.\n"},
-
-	{PR_EXCLUSIVE_ACCESS_REG_ONLY, "exclusive-access-reg-only",
-	"  * exclusive-access-reg-only: Only initiators with a registered key can\n"
-	"    access the device.\n"},
-
-	{PR_WRITE_EXCLUSIVE_ALL_REGS,  "write-exclusive-all-regs",
-	"  * write-exclusive-all-regs: Only initiators with a registered key can\n"
-	"    write to the device.  Any initiator can read from the device.  All\n"
-	"    initiators with a registered key are considered reservation holders.\n"
-	"    Please reference the SPC spec on the meaning of a reservation holder\n"
-	"    if you want to use this type.\n"},
-
-	{PR_EXCLUSIVE_ACCESS_ALL_REGS, "exclusive-access-all-regs",
-	"  * exclusive-access-all-regs: Only initiators with a registered key can\n"
-	"    access the device.  All initiators with a registered key are considered\n"
-	"    reservation holders. Please reference the SPC spec on the meaning of\n"
-	"    a reservation holder if you want to use this type.\n"}
+	{
+		PR_WRITE_EXCLUSIVE, "write-exclusive", N_(
+"    Only the initiator that owns the reservation can write to the device. Any\n"
+"    initiator can read from the device."
+		)
+	}, {
+		PR_EXCLUSIVE_ACCESS, "exclusive-access", N_(
+"    Only the initiator that owns the reservation can access the device."
+		)
+	}, {
+		PR_WRITE_EXCLUSIVE_REG_ONLY, "write-exclusive-reg-only", N_(
+"    Only initiators with a registered key can write to the device, any initiator\n"
+"    can read from the device.")
+	}, {
+		PR_EXCLUSIVE_ACCESS_REG_ONLY, "exclusive-access-reg-only", N_(
+"    Only initiators with a registered key can access the device."
+		)
+	}, {
+		PR_WRITE_EXCLUSIVE_ALL_REGS, "write-exclusive-all-regs", N_(
+"    Only initiators with a registered key can write to the device. Any\n"
+"    initiator can read from the device.  All initiators with a registered\n"
+"    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+"    on the meaning of a reservation holder if you want to use this type."
+		)
+	}, {
+		PR_EXCLUSIVE_ACCESS_ALL_REGS, "exclusive-access-all-regs", N_(
+"    Only initiators with a registered key can access the device. All initiators\n"
+"    with a registered key are considered reservation holders. Please reference\n"
+"    the SPC spec on the meaning of a reservation holder if you want to use this\n"
+"    type."
+		)
+	}
 };
 
 static const struct type_string pr_command[] = {
-	{IOC_PR_REGISTER,         "register",
-	"  * register: This command registers a new reservation if the key argument\n"
-	"    is non-null. If no existing reservation exists oldkey must be zero, if\n"
-	"    an existing reservation should be replaced oldkey must contain the old\n"
-	"    reservation key. If the key argument is 0 it unregisters the existing\n"
-	"    reservation passed in oldkey.\n"
+	{
+		IOC_PR_REGISTER, "register", N_(
+"    This command registers a new reservation if the key argument\n"
+"    is non-null. If no existing reservation exists oldkey must be zero, if\n"
+"    an existing reservation should be replaced oldkey must contain the old\n"
+"    reservation key. If the key argument is 0 it unregisters the existing\n"
+"    reservation passed in oldkey."
+		)
+	}, {
+		IOC_PR_RESERVE, "reserve", N_(
+"    This command reserves the device and thus restricts access for other devices\n"
+"    based on the type argument.  The key argument must be the existing\n"
+"    reservation key for the device as acquired by the register, preempt,\n"
+"    preempt-abort commands."
+)
+	}, {
+		IOC_PR_RELEASE, "release", N_(
+"    This command releases the reservation specified by key and flags and thus\n"
+"    removes any access restriction implied by it."
+		)
+	}, {
+		IOC_PR_PREEMPT, "preempt", N_(
+"    This command releases the existing reservation referred to by old_key and\n"
+"    replaces it with a new reservation of type for the reservation key key."
+		)
+	}, {
+		IOC_PR_PREEMPT_ABORT, "preempt-abort", N_(
+"    This command works like preempt except that it also aborts any outstanding\n"
+"    command sent over a connection identified by oldkey."
+		)
+	}, {
+		IOC_PR_CLEAR, "clear", N_(
+"    This command unregisters both key and any other reservation key registered\n"
+"    with the device and drops any existing reservation."
+		)
 	},
 
-	{IOC_PR_RESERVE,          "reserve",
-	"  * reserve: This command reserves the device and thus restricts access for\n"
-	"    other devices based on the type argument.  The key argument must be\n"
-	"    the existing reservation key for the device as acquired by the register,\n"
-	"    preempt, preempt-abort commands.\n"},
-
-	{IOC_PR_RELEASE,          "release",
-	"  * release: This command releases the reservation specified by key and flags\n"
-	"    and thus removes any access restriction implied by it.\n"},
-
-	{IOC_PR_PREEMPT,          "preempt",
-	"  * preempt: This command releases the existing reservation referred to by\n"
-	"    old_key and replaces it with a new reservation of type for the\n"
-	"    reservation key key.\n"},
-
-	{IOC_PR_PREEMPT_ABORT,    "preempt-abort",
-	"  * preempt-abort: This command works like preempt except that it also aborts\n"
-	"    any outstanding command sent over a connection identified by oldkey.\n"},
-
-	{IOC_PR_CLEAR,            "clear",
-	"  * clear: This command unregisters both key and any other reservation\n"
-	"    key registered with the device and drops any existing reservation.\n"},
-
 #ifdef IOC_PR_READ_KEYS
-	{IOC_PR_READ_KEYS,        "read-keys",
-	"  * read-keys: This command lists reservation keys currently registered\n"
-	"    with the device.\n"},
+	{
+		IOC_PR_READ_KEYS, "read-keys", N_(
+"    This command lists reservation keys currently registered with the device."
+		)
+	},
 #endif
 
 #ifdef IOC_PR_READ_RESERVATION
-	{IOC_PR_READ_RESERVATION, "read-reservation",
-	"  * read-reservation: This command shows the current reservation.\n"},
+	{
+		IOC_PR_READ_RESERVATION, "read-reservation", N_(
+"    This command shows the current reservation."
+		)
+	},
 #endif
 };
 
 static const struct type_string pr_flag[] = {
-	{PR_FL_IGNORE_KEY, "ignore-key",
-	"  * ignore-key: Ignore the existing reservation key.  This is commonly\n"
-	"    supported for register command, and some implementation may support\n"
-	"    the flag for reserve command.\n"}
+	{
+		PR_FL_IGNORE_KEY, "ignore-key", N_(
+"    Ignore the existing reservation key.  This is commonly supported for\n"
+"    register command, and some implementation may support the flag for reserve\n"
+"    command."
+		)
+	}
 };
 
 static void print_type(FILE *out, const struct type_string *ts, size_t nmem)
 {
 	size_t i;
 
+
 	for (i = 0; i < nmem; i++) {
-		fprintf(out, "%s\n", ts[i].desc);
+		if (i)
+			fputs(USAGE_SEPARATOR, out);
+
+		fprintf(out, "  * %s:\n", ts[i].str);
+		fprintf(out, "%s\n", _(ts[i].desc));
 	}
 }
 
@@ -319,12 +342,15 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_ARGUMENTS, out);
 
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <cmd> is a command; available commands are:\n"), out);
 	print_pr_command(out);
 
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <flag> is a command flag; available flags are:\n"), out);
 	print_pr_flag(out);
 
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <type> is a command type; available types are:\n"), out);
 	print_pr_type(out);
 
