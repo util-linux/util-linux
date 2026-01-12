@@ -76,7 +76,7 @@ static inline int conv_str_to_offset(char **str, intmax_t **value)
 	} else if (end && *end != '\0') {
 		return -EINVAL;
 	}
-	**value = tmp;
+	**value = (off_t) tmp;
 
 	return 0;
 }
