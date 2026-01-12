@@ -1091,7 +1091,6 @@ static void fork_session(struct login_context *cxt)
 {
 	struct sigaction sa, oldsa_hup, oldsa_term;
 
-	signal(SIGALRM, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGTSTP, SIG_IGN);
 
@@ -1571,6 +1570,7 @@ int main(int argc, char **argv)
 
 	/* committed to login -- turn off timeout */
 	alarm((unsigned int)0);
+	signal(SIGALRM, SIG_DFL);
 	free(timeout_msg);
 	timeout_msg = NULL;
 
