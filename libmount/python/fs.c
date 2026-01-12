@@ -640,7 +640,7 @@ static PyMethodDef Fs_methods[] = {
 static void Fs_destructor(FsObject *self)
 {
 	DBG(FS, pymnt_debug_h(self->fs, "destructor py-obj: %p, py-refcnt=%d",
-				self, (int) ((PyObject *) self)->ob_refcnt));
+				self, (int) Py_REFCNT((PyObject *) self)));
 	mnt_unref_fs(self->fs);
 	PyFree(self);
 }
@@ -774,7 +774,7 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	if (result) {
 		Py_INCREF(result);
 		DBG(FS, pymnt_debug_h(fs, "result py-obj %p: already exists, py-refcnt=%d",
-				result, (int) ((PyObject *) result)->ob_refcnt));
+				result, (int) Py_REFCNT((PyObject *) result)));
 		return (PyObject *) result;
 	}
 
@@ -792,7 +792,7 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	mnt_ref_fs(fs);
 
 	DBG(FS, pymnt_debug_h(fs, "result py-obj %p new, py-refcnt=%d",
-				result, (int) ((PyObject *) result)->ob_refcnt));
+				result, (int) Py_REFCNT((PyObject *) result)));
 	result->fs = fs;
 	mnt_fs_set_userdata(fs, result);
 	return (PyObject *) result;
