@@ -296,6 +296,7 @@ static const char *get_thishost(struct login_context *cxt, const char **domain)
 #ifdef MOTDDIR_SUPPORT
 static int motddir_filter(const struct dirent *d)
 {
+	struct stat st;
 	size_t namesz;
 
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -309,6 +310,11 @@ static int motddir_filter(const struct dirent *d)
 	namesz = strlen(d->d_name);
 	if (!namesz || namesz < MOTDDIR_EXTSIZ + 1 ||
 	    strcmp(d->d_name + (namesz - MOTDDIR_EXTSIZ), MOTDDIR_EXT) != 0)
+		return 0;
+
+	if (stat(d->d_name, &st) < 0)
+		return 0;
+	if (!S_ISREG(st.st_mode) || st.st_size == 0)
 		return 0;
 
 	return 1; /* accept */
