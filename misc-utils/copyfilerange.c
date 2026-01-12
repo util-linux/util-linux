@@ -63,7 +63,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static inline int conv_str_to_imax(char **str, intmax_t **value)
+static inline int conv_str_to_offset(char **str, intmax_t **value)
 {
 	char *end = NULL;
 	intmax_t tmp;
@@ -92,7 +92,7 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 	if (!token) goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_imax(&start, &src_off);
+		rc = conv_str_to_offset(&start, &src_off);
 		if (rc) goto fail;
 	}
 
@@ -101,7 +101,7 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 	if (!token) goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_imax(&start, &dst_off);
+		rc = conv_str_to_offset(&start, &dst_off);
 		if (rc) goto fail;
 	}
 
