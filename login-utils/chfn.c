@@ -70,7 +70,7 @@ struct finfo {
 struct chfn_control {
 	struct passwd *pw;
 	char *username;
-	/*  "oldf"  Contains the users original finger information.
+	/*  "oldf"  Contains the user's original finger information.
 	 *  "newf"  Contains the changed finger information, and contains
 	 *          NULL in fields that haven't been changed.
 	 *  In the end, "newf" is folded into "oldf".  */
