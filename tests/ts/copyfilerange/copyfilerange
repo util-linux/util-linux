@@ -29,7 +29,7 @@ echo float >  a
 touch b c ranges
 
 ts_init_subtest "normal"
-"$TS_CMD_COPYFILERANGE" a b 3::1 1:3:2 2::1 0:2:1 5::1  &>"$TS_OUTPUT"
+"$TS_CMD_COPYFILERANGE" a b 3::1 1::2 2::1 0::1 5::1 &>"$TS_OUTPUT"
 cat b >"$TS_OUTPUT"
 ts_finalize_subtest
 
