@@ -59,7 +59,7 @@ by namespace-specific options (e.g., **--all --mount=**_path_).
 +
 The user namespace will be ignored if the same as the caller's current user namespace. It prevents a caller that has dropped capabilities from regaining those capabilities via a call to *setns*(2). See the man page for more details.
 
-*-t*, *--target* _PID_::
+*-t*, *--target* _PID[:inode]_::
 Specify a target process to get contexts from. The paths to the contexts specified by _pid_ are:
 
 _/proc/pid/ns/mnt_;;
@@ -82,6 +82,10 @@ _/proc/pid/root_;;
 the root directory
 _/proc/pid/cwd_;;
 the working directory respectively
+
+Optionally, a process can be addressed with the format _PID:inode_. The _inode_
+identifies the unique process's file descriptor. To retrieve a process's inode
+number you can use the *getino*(1) utility.
 
 *-m*, *--mount*[**=**_file_]::
 Enter the mount namespace. If no file is specified, enter the mount namespace of the target process. If _file_ is specified, enter the mount namespace specified by _file_.
@@ -169,6 +173,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *clone*(2),
 *setns*(2),
 *namespaces*(7)
+*getino*(1)
 
 include::man-common/bugreports.adoc[]
 
