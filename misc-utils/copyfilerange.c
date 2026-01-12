@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 #include "c.h"
 #include "nls.h"
@@ -134,10 +135,10 @@ static int handle_range(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off, 
 	}
 
 	if (len == 0) {
-		off_t src_size = lseek(fd_src, 0, SEEK_END);
-		if (src_size == -1)
+		struct stat sb;
+		if (fstat(fd_src, &sb) == -1)
 			err(EXIT_FAILURE, _("cannot determine size of source file"));
-		len = src_size - *src_off;
+		len = sb.st_size - *src_off;
 	}
 
 	size_t remaining = len;
