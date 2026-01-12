@@ -189,6 +189,7 @@ edit_cmd = sed \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
+	 -e 's|@SYSTEMD_USER_LOCK[@]|$(SYSTEMD_USER_LOCK)|g' \
 	 -e 's|@SOCKET_LIBS[@]|$(SOCKET_LIBS)|g' \
 	 -e 's|@VERSION[@]|$(VERSION)|g' \
 	 -e 's|@ADJTIME_PATH[@]|$(ADJTIME_PATH)|g' \
