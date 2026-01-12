@@ -290,7 +290,8 @@ static const struct ttydrv *get_ttydrv(unsigned long major,
 /*
  * generic (fallback implementation)
  */
-static bool cdev_generic_probe(struct cdev *cdev __attribute__((__unused__))) {
+static bool cdev_generic_probe(struct cdev *cdev __attribute__((__unused__)))
+{
 	return true;
 }
 
@@ -329,7 +330,8 @@ static struct cdev_ops cdev_generic_ops = {
 /*
  * misc device driver
  */
-static bool cdev_misc_probe(struct cdev *cdev) {
+static bool cdev_misc_probe(struct cdev *cdev)
+{
 	return cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0;
 }
 
@@ -542,7 +544,8 @@ struct ttydata {
 	struct ipc_endpoint endpoint;
 };
 
-static bool cdev_tty_probe(struct cdev *cdev) {
+static bool cdev_tty_probe(struct cdev *cdev)
+{
 	const struct ttydrv *ttydrv = get_ttydrv(major(cdev->file.stat.st_rdev),
 						 minor(cdev->file.stat.st_rdev));
 	struct ttydata *data;

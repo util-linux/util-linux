@@ -23,7 +23,8 @@
 
 static int STRTOXX_EXIT_CODE = EXIT_FAILURE;
 
-void strutils_set_exitcode(int ex) {
+void strutils_set_exitcode(int ex)
+{
 	STRTOXX_EXIT_CODE = ex;
 }
 

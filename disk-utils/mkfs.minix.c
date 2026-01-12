@@ -184,7 +184,8 @@ static void super_set_state(void)
 	}
 }
 
-static void write_tables(const struct fs_control *ctl) {
+static void write_tables(const struct fs_control *ctl)
+{
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 	size_t buffsz = get_inode_buffer_size();
@@ -213,7 +214,8 @@ static void write_tables(const struct fs_control *ctl) {
 		err(MKFS_EX_ERROR, _("%s: unable to write inodes"), ctl->device_name);
 }
 
-static void write_block(const struct fs_control *ctl, int blk, char * buffer) {
+static void write_block(const struct fs_control *ctl, int blk, char * buffer)
+{
 	if (blk * MINIX_BLOCK_SIZE != lseek(ctl->device_fd, blk * MINIX_BLOCK_SIZE, SEEK_SET))
 		errx(MKFS_EX_ERROR, _("%s: seek failed in write_block"), ctl->device_name);
 
@@ -221,7 +223,8 @@ static void write_block(const struct fs_control *ctl, int blk, char * buffer) {
 		errx(MKFS_EX_ERROR, _("%s: write failed in write_block"), ctl->device_name);
 }
 
-static int get_free_block(struct fs_control *ctl) {
+static int get_free_block(struct fs_control *ctl)
+{
 	unsigned int blk;
 	unsigned int zones = get_nzones();
 	unsigned int first_zone = get_first_zone();
@@ -241,14 +244,16 @@ static int get_free_block(struct fs_control *ctl) {
 	return blk;
 }
 
-static void mark_good_blocks(const struct fs_control *ctl) {
+static void mark_good_blocks(const struct fs_control *ctl)
+{
 	int blk;
 
 	for (blk=0 ; blk < ctl->fs_used_blocks ; blk++)
 		mark_zone(good_blocks_table[blk]);
 }
 
-static inline int next(unsigned long zone) {
+static inline int next(unsigned long zone)
+{
 	unsigned long zones = get_nzones();
 	unsigned long first_zone = get_first_zone();
 
@@ -368,7 +373,8 @@ static void make_bad_inode(struct fs_control *ctl)
 	make_bad_inode_v2_v3(ctl);
 }
 
-static void make_root_inode_v1(struct fs_control *ctl) {
+static void make_root_inode_v1(struct fs_control *ctl)
+{
 	struct minix_inode * inode = &Inode[MINIX_ROOT_INO];
 
 	mark_inode(MINIX_ROOT_INO);
@@ -388,7 +394,8 @@ static void make_root_inode_v1(struct fs_control *ctl) {
 	write_block(ctl, inode->i_zone[0],root_block);
 }
 
-static void make_root_inode_v2_v3 (struct fs_control *ctl) {
+static void make_root_inode_v2_v3 (struct fs_control *ctl)
+{
 	struct minix2_inode *inode = &Inode2[MINIX_ROOT_INO];
 
 	mark_inode (MINIX_ROOT_INO);
@@ -500,7 +507,8 @@ static void super_set_magic(const struct fs_control *ctl)
 	}
 }
 
-static void setup_tables(const struct fs_control *ctl) {
+static void setup_tables(const struct fs_control *ctl)
+{
 	unsigned long inodes, zmaps, imaps, zones, i;
 
 	super_block_buffer = xcalloc(1, MINIX_BLOCK_SIZE);
@@ -582,7 +590,8 @@ static void setup_tables(const struct fs_control *ctl) {
  * Perform a test of a block; return the number of
  * blocks readable/writable.
  */
-static size_t do_check(const struct fs_control *ctl, char * buffer, int try, unsigned int current_block) {
+static size_t do_check(const struct fs_control *ctl, char * buffer, int try, unsigned int current_block)
+{
 	ssize_t got;
 
 	/* Seek to the correct loc. */
@@ -603,7 +612,8 @@ static size_t do_check(const struct fs_control *ctl, char * buffer, int try, uns
 
 static unsigned int currently_testing = 0;
 
-static void alarm_intr(int alnum __attribute__ ((__unused__))) {
+static void alarm_intr(int alnum __attribute__ ((__unused__)))
+{
 	unsigned long zones = get_nzones();
 
 	if (currently_testing >= zones)
@@ -616,7 +626,8 @@ static void alarm_intr(int alnum __attribute__ ((__unused__))) {
 	fflush(stdout);
 }
 
-static void check_blocks(struct fs_control *ctl) {
+static void check_blocks(struct fs_control *ctl)
+{
 	size_t try, got;
 	static char buffer[MINIX_BLOCK_SIZE * TEST_BUFFER_BLOCKS];
 	unsigned long zones = get_nzones();
@@ -648,7 +659,8 @@ static void check_blocks(struct fs_control *ctl) {
 		printf(P_("%d bad block\n", "%d bad blocks\n", ctl->fs_bad_blocks), ctl->fs_bad_blocks);
 }
 
-static void get_list_blocks(struct fs_control *ctl, char *filename) {
+static void get_list_blocks(struct fs_control *ctl, char *filename)
+{
 	FILE *listfile;
 	unsigned long blockno;
 

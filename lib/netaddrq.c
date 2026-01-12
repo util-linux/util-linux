@@ -108,7 +108,8 @@ static char *ip_rating_as_string(enum ul_netaddrq_ip_rating q)
 
 /* Netlink callback evaluating the address quality and building the list of
  * interface lists */
-static int callback_addrq(struct ul_nl_data *nl) {
+static int callback_addrq(struct ul_nl_data *nl)
+{
 	struct ul_netaddrq_data *addrq = UL_NETADDRQ_DATA(nl);
 	struct list_head *li, *ipq_list;
 	struct ul_netaddrq_iface *ifaceq = NULL;
@@ -566,7 +567,8 @@ static void dump_iface_all(struct ul_nl_data *nl,
 		fputs("\n", netout);
 }
 
-static void dump_addrq(struct ul_nl_data *nl, enum addrq_print_mode c) {
+static void dump_addrq(struct ul_nl_data *nl, enum addrq_print_mode c)
+{
 	struct list_head *li;
 	struct ul_netaddrq_iface *ifaceq;
 	enum ul_netaddrq_ip_rating threshold;
