@@ -2,8 +2,8 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  */
-#ifndef UTIL_LINUX_MOUNT_API_UTILS
-#define UTIL_LINUX_MOUNT_API_UTILS
+#ifndef UTIL_LINUX_MOUNTUTILS_H
+#define UTIL_LINUX_MOUNTUTILS_H
 
 #ifdef HAVE_LINUX_MOUNT_H
 #include <linux/mount.h>
@@ -486,4 +486,4 @@ static inline int has_listmount(void)
 
 #endif /* HAVE_LINUX_MOUNT_H */
 
-#endif /* UTIL_LINUX_MOUNT_API_UTILS */
+#endif /* UTIL_LINUX_MOUNTUTILS_H */

@@ -44,7 +44,6 @@
 #include <stdarg.h>
 #include <sys/wait.h>
 
-#include "mount-api-utils.h"
 #include "strv.h"
 
 /**

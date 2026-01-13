@@ -46,7 +46,7 @@ dist_noinst_HEADERS += \
 	include/md5.h \
 	include/minix.h \
 	include/monotonic.h \
-	include/mount-api-utils.h \
+	include/mountutils.h \
 	include/namespace.h \
 	include/netaddrq.h \
 	include/netlink.h \
