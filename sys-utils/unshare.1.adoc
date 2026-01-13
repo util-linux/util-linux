@@ -266,7 +266,7 @@ up 21 hours, 30 minutes
 up 9 years, 28 weeks, 1 day, 2 hours, 50 minutes
 ....
 
-The following example execute a chroot into the directory _/chroot/powerpc/jessie_ and install the interpreter _/bin/qemu-ppc-static_ to execute the powerpc binaries.
+The following example executes a chroot into the directory _/chroot/powerpc/jessie_ and installs the interpreter _/bin/qemu-ppc-static_ to execute the powerpc binaries.
 
 ....
 $  unshare --map-root-user --fork --pid --load-interp=":qemu-ppc:M::\\x7fELF\x01\\x02\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x14:\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff:/bin/qemu-ppc-static:OCF" --root=/chroot/powerpc/jessie /bin/bash -l
