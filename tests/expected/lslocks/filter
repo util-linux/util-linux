@@ -1,3 +1,5 @@
+#### crash when printing PID column ####
+PID: 0
 #### flock  (common) ####
 # -Q PID == ...
 test_mkfds FLOCK WRITE 4K 0 0 0

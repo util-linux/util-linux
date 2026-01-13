@@ -49,6 +49,18 @@ if ! dd if=/dev/zero of="$FILE" bs=$SIZE count=1 status=none; then
     ts_skip "failed to create a temporary file"
 fi
 
+do_lslocks_flock_crash()
+{
+    local pid=$1
+
+    echo "#### crash when printing PID column ####"
+    [[ "$pid" == $("$TS_CMD_LSLOCKS" \
+		       -r -n -p "$PID" \
+		       -Q 'PATH =~ '"'.*/$FILE'"" and TYPE == 'FLOCK'" \
+		       -o PID) ]]
+    echo "PID: $?"
+}
+
 do_lslocks_common()
 {
     local pid=$1
@@ -132,6 +144,7 @@ do_lslocks_fcntl()
 		       "$FILE" \
 		       "$TS_HELPER_MKFDS" nop; }
     if read -r -u "${MKFDS[0]}" PID; then
+	do_lslocks_flock_crash $PID
 	do_lslocks_common $PID flock
 	echo DONE >&"${MKFDS[1]}"
     fi
