@@ -17,6 +17,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "match.h"
+#include "mountutils.h"
 
 #include "findmnt.h"
 
@@ -461,16 +462,28 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 	}
 
 	if (realtype) {
+		const char *mounttype;
+
 		isswap = strcmp(realtype, "swap") == 0;
 		vfy->no_fsck = strcmp(realtype, "xfs") == 0
 				|| strcmp(realtype, "btrfs") == 0;
+
+		/* libblkid always reports "ntfs"; remap possible different
+		 * names from fstab to "ntfs" as well */
+		if (type && strcmp(type, "ntfs3") == 0)
+			type = "ntfs";
 
 		if (type && !isauto && strcmp(type, realtype) != 0) {
 			verify_warn(vfy, _("%s does not match with on-disk %s"), type, realtype);
 			goto done;
 		}
-		if (!isswap && !is_supported_filesystem(vfy, realtype)) {
-			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
+
+		mounttype = ul_fstype_to_mounttype(realtype) ? : realtype;
+
+		if (!isswap
+		    && (!type || isauto)
+		    && !is_supported_filesystem(vfy, mounttype)) {
+			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), mounttype);
 			goto done;
 		}
 
