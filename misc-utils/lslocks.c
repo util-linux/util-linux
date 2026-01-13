@@ -635,7 +635,7 @@ static char *get_data(struct lslocks *lslocks, struct lock *l, int num,
 		break;
 	case COL_PID:
 		xasprintf(&str, "%d", l->pid);
-		if (l->pid >= 0)
+		if (l->pid >= 0 && rawdata)
 			*rawdata = (uint64_t)l->pid;
 		break;
 	case COL_TYPE:
