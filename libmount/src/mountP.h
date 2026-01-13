@@ -109,7 +109,6 @@ struct libmnt_listmnt;
 extern int mnt_valid_tagname(const char *tagname);
 
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
-extern const char *mnt_fstype_to_mounttype(const char *fstype);
 extern int is_file_empty(const char *name);
 
 extern int mnt_is_readonly(const char *path)

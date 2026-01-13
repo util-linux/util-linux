@@ -2090,7 +2090,7 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 	}
 
 	if (rc == 0 && *type) {
-		const char *x = mnt_fstype_to_mounttype(*type);
+		const char *x = ul_fstype_to_mounttype(*type);
 
 		if (x) {
 			free(*type);
