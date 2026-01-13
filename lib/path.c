@@ -313,7 +313,7 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
-		if (*path == '/')
+		if (path && *path == '/')
 			path++;
 
 		rc = faccessat(dir, path, mode, 0);
@@ -400,10 +400,8 @@ int ul_path_statx(struct path_cxt *pc, struct statx *stx, int flags, unsigned in
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
-		if (path) {
-			if (*path == '/')
-				path++;
-		}
+		if (path && *path == '/')
+			path++;
 
 		rc = statx(dir, path, flags, mask, stx);
 	}
