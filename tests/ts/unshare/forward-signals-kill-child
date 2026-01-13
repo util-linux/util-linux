@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 util-linux contributors
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="forward signals with kill-child"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_UNSHARE"
+ts_check_test_command "$TS_HELPER_SIGRECEIVE"
+
+ts_skip_nonroot
+
+# Start unshare with both --forward-signals and --kill-child
+# The child should receive SIGTERM from forwarding first
+"$TS_CMD_UNSHARE" --user --map-root-user \
+	--pid --mount-proc \
+	--fork --forward-signals --kill-child \
+	"$TS_HELPER_SIGRECEIVE" < /dev/null >> $TS_OUTPUT 2>> $TS_ERRLOG &
+
+UNSHARE_PID=$!
+
+# Give child time to set up signal handlers
+sleep 2
+
+# Send SIGTERM to parent unshare process
+kill -TERM $UNSHARE_PID
+
+# Wait for completion
+wait $UNSHARE_PID
+EXIT_CODE=$?
+
+# test_sigreceive exits with the signal number it receives (15 = SIGTERM)
+# With --kill-child, it should still receive SIGTERM first via forwarding
+if [ $EXIT_CODE -eq 15 ]; then
+	echo "SIGTERM forwarded successfully with kill-child" >> $TS_OUTPUT
+else
+	echo "UNEXPECTED EXIT CODE: $EXIT_CODE" >> $TS_OUTPUT
+fi
+
+ts_finalize
