@@ -81,6 +81,19 @@ Create a new time namespace. If _file_ is specified, then the namespace is made 
 *-f*, *--fork*::
 Fork the specified _program_ as a child process of *unshare* rather than running it directly. This is useful when creating a new PID namespace. Note that when *unshare* is waiting for the child process, then it ignores *SIGINT* and *SIGTERM* and does not forward any signals to the child. It is necessary to send signals to the child process.
 
+*--forward-signals*::
+Forward *SIGTERM* and *SIGINT* signals received by the parent *unshare* process to the child process.
+When this option is not specified, *unshare* ignores these signals while waiting for the child process
+to exit (the default behavior since util-linux 2.36). This allows the parent to remain alive while
+the child process handles the signals.
++
+This option is useful when the parent *unshare* process will receive *SIGTERM* or *SIGINT* signals
+(for example, during system reboot or from a process manager), and you want the child process to
+be notified of graceful shutdown requests so it can perform cleanup operations. If your child
+process has signal handlers (such as shell trap handlers), enabling this option allows them to execute.
++
+This option implies *--fork*.
+
 *--keep-caps*::
 When the *--user* option is given, ensure that capabilities granted in the user namespace are preserved in the child process.
 
