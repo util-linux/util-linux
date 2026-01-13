@@ -168,17 +168,6 @@ static int parse_type_by_str(const struct type_string *ts, int nmem, char *patte
 	return -1;
 }
 
-static inline const char *type_to_str(const struct type_string *ts, int nmem,
-                                      int type)
-{
-	int i;
-
-	for (i = 0; i < nmem; i++) {
-		if (ts[i].type == type)
-			return ts[i].str;
-	}
-	return "unknown type";
-}
 
 
 #define PRINT_SUPPORTED(XX) \
@@ -233,6 +222,18 @@ out:
 #endif /* IOC_PR_READ_KEYS */
 
 #ifdef IOC_PR_READ_RESERVATION
+static inline const char *type_to_str(const struct type_string *ts, int nmem,
+                                      int type)
+{
+	int i;
+
+	for (i = 0; i < nmem; i++) {
+		if (ts[i].type == type)
+			return ts[i].str;
+	}
+	return "unknown type";
+}
+
 static int do_pr_read_reservation(int fd)
 {
 	struct pr_read_reservation pr_rr;
