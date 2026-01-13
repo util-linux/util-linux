@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 
+#include "nls.h"
 #include "strutils.h"
 #include "pidutils.h"
 
@@ -61,4 +62,23 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 		return -1;
 	}
 	return 0;
+}
+
+/*
+ * ul_parse_pid_str_or_err() - Parse a string and store the found pid
+ *                             and pidfd inode, or exit on error.
+ *
+ * @pidstr:  string in format `pid[:pidfd_inode]` that is to be parsed
+ * @pid_num: stores pid number
+ * @pfd_ino: stores pidfd inode number
+ *
+ * If @pfd_ino is not destined to be set, pass it as NULL.
+ *
+ * On failure, err() is called with an error message to indicate the issue.
+ */
+void ul_parse_pid_str_or_err(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
+{
+	if (ul_parse_pid_str(pidstr, pid_num, pfd_ino) < 0) {
+		err(EXIT_FAILURE, N_("failed to parse PID argument '%s'"), pidstr);
+	}
 }
