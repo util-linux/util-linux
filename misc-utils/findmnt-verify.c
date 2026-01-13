@@ -465,6 +465,11 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 		vfy->no_fsck = strcmp(realtype, "xfs") == 0
 				|| strcmp(realtype, "btrfs") == 0;
 
+		if (strcmp(type, "ntfs3") == 0) {
+			type = "ntfs";
+			add_filesystem(vfy, type);
+		}
+
 		if (type && !isauto && strcmp(type, realtype) != 0) {
 			verify_warn(vfy, _("%s does not match with on-disk %s"), type, realtype);
 			goto done;
