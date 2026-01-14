@@ -52,6 +52,7 @@
 #include "pathnames.h"
 #include "pidfd-utils.h"
 #include "linux_version.h"
+#include "pidutils.h"
 
 static struct namespace_file {
 	int nstype;
@@ -90,34 +91,34 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Run a program with namespaces of other processes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all              enter all namespaces\n"), out);
-	fputs(_(" -t, --target <pid>     target process to get namespaces from\n"), out);
-	fputs(_(" -m, --mount[=<file>]   enter mount namespace\n"), out);
-	fputs(_(" -u, --uts[=<file>]     enter UTS namespace (hostname etc)\n"), out);
-	fputs(_(" -i, --ipc[=<file>]     enter System V IPC namespace\n"), out);
-	fputs(_(" -n, --net[=<file>]     enter network namespace\n"), out);
-	fputs(_(" -N, --net-socket <fd>  enter socket's network namespace (use with --target)\n"), out);
-	fputs(_(" -p, --pid[=<file>]     enter pid namespace\n"), out);
-	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
-	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
-	fputs(_("     --user-parent      enter parent user namespace\n"), out);
-	fputs(_(" -T, --time[=<file>]    enter time namespace\n"), out);
-	fputs(_(" -S, --setuid[=<uid>]   set uid in entered namespace\n"), out);
-	fputs(_(" -G, --setgid[=<gid>]   set gid in entered namespace\n"), out);
-	fputs(_("     --preserve-credentials do not touch uids or gids\n"), out);
-	fputs(_("     --keep-caps        retain capabilities granted in user namespaces\n"), out);
-	fputs(_(" -r, --root[=<dir>]     set the root directory\n"), out);
-	fputs(_(" -w, --wd[=<dir>]       set the working directory\n"), out);
-	fputs(_(" -W, --wdns <dir>       set the working directory in namespace\n"), out);
-	fputs(_(" -e, --env              inherit environment variables from target process\n"), out);
-	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
-	fputs(_(" -c, --join-cgroup      join the cgroup of the target process\n"), out);
+	fputs(_(" -a, --all                    enter all namespaces\n"), out);
+	fputs(_(" -t, --target <PID>           target process to get namespaces from\n"), out);
+	fputs(_(" -m, --mount[=<file>]         enter mount namespace\n"), out);
+	fputs(_(" -u, --uts[=<file>]           enter UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc[=<file>]           enter System V IPC namespace\n"), out);
+	fputs(_(" -n, --net[=<file>]           enter network namespace\n"), out);
+	fputs(_(" -N, --net-socket <fd>        enter socket's network namespace (use with --target)\n"), out);
+	fputs(_(" -p, --pid[=<file>]           enter pid namespace\n"), out);
+	fputs(_(" -C, --cgroup[=<file>]        enter cgroup namespace\n"), out);
+	fputs(_(" -U, --user[=<file>]          enter user namespace\n"), out);
+	fputs(_("     --user-parent            enter parent user namespace\n"), out);
+	fputs(_(" -T, --time[=<file>]          enter time namespace\n"), out);
+	fputs(_(" -S, --setuid[=<uid>]         set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid[=<gid>]         set gid in entered namespace\n"), out);
+	fputs(_("     --preserve-credentials   do not touch uids or gids\n"), out);
+	fputs(_("     --keep-caps              retain capabilities granted in user namespaces\n"), out);
+	fputs(_(" -r, --root[=<dir>]           set the root directory\n"), out);
+	fputs(_(" -w, --wd[=<dir>]             set the working directory\n"), out);
+	fputs(_(" -W, --wdns <dir>             set the working directory in namespace\n"), out);
+	fputs(_(" -e, --env                    inherit environment variables from target process\n"), out);
+	fputs(_(" -F, --no-fork                do not fork before exec'ing <program>\n"), out);
+	fputs(_(" -c, --join-cgroup            join the cgroup of the target process\n"), out);
 #ifdef HAVE_LIBSELINUX
 	fputs(_(" -Z, --follow-context   set SELinux context according to --target PID\n"), out);
 #endif
 
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_HELP_OPTIONS(24));
+	fprintf(out, USAGE_HELP_OPTIONS(30));
 	fprintf(out, USAGE_MAN_TAIL("nsenter(1)"));
 
 	exit(EXIT_SUCCESS);
@@ -490,6 +491,19 @@ static void continue_as_child(void)
 	exit(EXIT_FAILURE);
 }
 
+static int parse_pid_str(char *pidstr, pid_t *ns_target_pid)
+{
+	int rc, pfd;
+	uint64_t pidfd_ino = 0;
+
+	rc = ul_parse_pid_str(pidstr, ns_target_pid, &pidfd_ino);
+	if (pidfd_ino) {
+		pfd = ul_get_valid_pidfd_or_err(*ns_target_pid, pidfd_ino);
+		close(pfd);
+	}
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	enum {
@@ -533,7 +547,7 @@ int main(int argc, char *argv[])
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, rc, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
 	     do_join_cgroup = false, do_user_parent = false;
@@ -547,6 +561,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
 #endif
+
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -564,8 +579,9 @@ int main(int argc, char *argv[])
 			do_all = true;
 			break;
 		case 't':
-			namespace_target_pid =
-			    strtoul_or_err(optarg, _("failed to parse pid"));
+			rc = parse_pid_str(optarg, &namespace_target_pid);
+			if (rc)
+				errx(EXIT_FAILURE, _("invalid PID argument"));
 			break;
 		case 'm':
 			enable_namespace(CLONE_NEWNS, optarg);
