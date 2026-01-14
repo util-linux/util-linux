@@ -374,7 +374,7 @@ static int save_new_data(struct chfn_control *ctl)
 	if (!ctl->newf.other || !*ctl->newf.other) {
 		while (len > 0 && gecos[len - 1] == ',')
 			len--;
-		gecos[len] = 0;
+		gecos[len] = '\0';
 	}
 
 #ifdef HAVE_LIBUSER
