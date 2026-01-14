@@ -417,12 +417,12 @@ int main(int argc, char **argv)
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
 		if (!ctl.pw)
-			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
+			errx(EXIT_FAILURE, _("your user %d does not exist"),
 			     uid);
 	} else {
 		ctl.pw = ul_getuserpw_str(ctl.username);
 		if (!ctl.pw)
-			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
+			errx(EXIT_FAILURE, _("user \"%s\" does not exist"),
 			     ctl.username);
 	}
 	ctl.username = ctl.pw->pw_name;
@@ -456,8 +456,8 @@ int main(int argc, char **argv)
 	if (uid != 0 && uid != ctl.pw->pw_uid) {
 #endif
 		errno = EACCES;
-		err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
-		      "altering, change denied"));
+		err(EXIT_FAILURE, _("running UID doesn't match UID of the user you are "
+		      "attempting to alter, change denied"));
 	}
 
 	printf(_("Changing finger information for %s.\n"), ctl.username);
