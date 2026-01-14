@@ -248,7 +248,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 			free(buf);
 			return xstrdup(def_val);
 		}
-		if (!c_strcasecmp(buf, "none")) {
+		if (c_strcasecmp(buf, "none") == 0) {
 			free(buf);
 			ctl->changed = 1;
 			return xstrdup("");
@@ -276,11 +276,11 @@ static void get_login_defs(struct chfn_control *ctl)
 		return;
 	}
 	s = getlogindefs_str("CHFN_RESTRICT", "");
-	if (!strcmp(s, "yes")) {
+	if (strcmp(s, "yes") == 0) {
 		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
 		return;
 	}
-	if (!strcmp(s, "no")) {
+	if (strcmp(s, "no") == 0) {
 		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
 		return;
 	}
