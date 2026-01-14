@@ -388,6 +388,7 @@ static int save_new_data(struct chfn_control *ctl)
 #endif
 		printf(_
 		       ("Finger information *NOT* changed.  Try again later.\n"));
+		free(gecos);
 		return -1;
 	}
 	free(gecos);
