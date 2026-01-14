@@ -35,6 +35,7 @@
 #include "exitcodes.h"
 #include "timeutils.h"
 #include "optutils.h"
+#include "pidutils.h"
 
 #define EXIT_TIMEOUT_EXPIRED 3
 
@@ -43,6 +44,7 @@
 struct process_info {
 	pid_t		pid;
 	int		pidfd;
+	uint64_t	pidfd_ino;
 };
 
 /* list of processes specified by PIDs on the command line */
@@ -57,19 +59,35 @@ struct waitpid_control {
 	struct timespec timeout;
 };
 
-static void parse_pids(struct process_info *pinfos, size_t n_strings, char * const *strings)
+static void parse_pids_or_err(struct process_info *pinfos, size_t n_strings, char * const *strings)
 {
 	for (size_t i = 0; i < n_strings; i++) {
-		pinfos[i].pid = strtopid_or_err(strings[i], _("invalid PID argument"));
+		struct process_info *pi = &pinfos[i];
+		ul_parse_pid_str_or_err(strings[i], &pi->pid, &pi->pidfd_ino);
 	}
 }
 
-static void open_pidfds(const struct waitpid_control *ctl, struct process_info *pinfos, size_t n_pids)
+static inline int get_pidfd(const struct waitpid_control *ctl, struct process_info *pi)
+{
+	int fd;
+
+	if (pi->pidfd_ino) {
+		fd = ul_get_valid_pidfd(pi->pid, pi->pidfd_ino);
+		if (fd < 0 && ctl->verbose)
+			warnx(_("pidfd inode %"PRIu64" not found for pid %d"),
+					pi->pidfd_ino, pi->pid);
+	} else {
+		fd = pidfd_open(pi->pid, 0);
+	}
+	return fd;
+}
+
+static void open_pidfds_or_err(const struct waitpid_control *ctl, struct process_info *pinfos, size_t n_pids)
 {
 	for (size_t i = 0; i < n_pids; i++) {
 		struct process_info *pi = &pinfos[i];
 
-		pi->pidfd = pidfd_open(pi->pid, 0);
+		pi->pidfd = get_pidfd(ctl, pi);
 		if (pi->pidfd < 0) {
 			if (ctl->allow_exited && errno == ESRCH) {
 				if (ctl->verbose)
@@ -165,9 +183,14 @@ static void wait_for_exits(const struct waitpid_control *ctl, int epll,
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
-
+	char *pid_arg = NULL;
+#ifdef USE_PIDFD_INO_SUPPORT
+	pid_arg = "PID[:inode]";
+#else
+	pid_arg = "PID";
+#endif
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] pid...\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] %s...\n"), program_invocation_short_name, pid_arg);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose           be more verbose\n"), out);
@@ -255,8 +278,8 @@ int main(int argc, char **argv)
 
 	proc_infos = xcalloc(n_pids, sizeof(*proc_infos));
 
-	parse_pids(proc_infos, argc - pid_idx, argv + pid_idx);
-	open_pidfds(&ctl, proc_infos, n_pids);
+	parse_pids_or_err(proc_infos, argc - pid_idx, argv + pid_idx);
+	open_pidfds_or_err(&ctl, proc_infos, n_pids);
 
 	timeoutfd = open_timeoutfd(&ctl);
 	epoll = epoll_create(n_pids);
