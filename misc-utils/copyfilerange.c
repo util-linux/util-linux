@@ -33,6 +33,23 @@
 #include "closestream.h"
 #include "xalloc.h"
 
+static int verbose;
+
+struct rangeitem {
+	char *in_filename;
+	char *out_filename;
+
+	off_t in_st_size;
+
+	int in_fd;
+	int out_fd;
+
+	off_t in_offset;
+	off_t out_offset;
+
+	uintmax_t length;
+};
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -63,7 +80,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static inline int conv_str_to_offset(char **str, intmax_t **value)
+static inline int conv_str_to_offset(char **str, off_t *value)
 {
 	char *end = NULL;
 	intmax_t tmp;
@@ -76,15 +93,15 @@ static inline int conv_str_to_offset(char **str, intmax_t **value)
 	} else if (end && *end != '\0') {
 		return -EINVAL;
 	}
-	**value = (off_t) tmp;
+	*value = tmp;
 
 	return 0;
 }
 
-static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, size_t *len)
+static int parse_range(const char *str, struct rangeitem *range)
 {
 	char *copy = NULL, *start = NULL, *token = NULL, rc = 0;
-	copy = xstrdup(range_str);
+	copy = xstrdup(str);
 	if (!copy) return -1;
 
 	start = copy;
@@ -92,7 +109,7 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 	if (!token) goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_offset(&start, &src_off);
+		rc = conv_str_to_offset(&start, &(range->in_offset));
 		if (rc) goto fail;
 	}
 
@@ -101,7 +118,7 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 	if (!token) goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_offset(&start, &dst_off);
+		rc = conv_str_to_offset(&start, &range->out_offset);
 		if (rc) goto fail;
 	}
 
@@ -113,8 +130,8 @@ static int parse_range(const char *range_str, off_t *src_off, off_t *dst_off, si
 		if (tmp > SIZE_MAX
 						|| errno != 0 || (end && *end != '\0'))
 				goto fail;
-		*len = (size_t) tmp;
-	} else *len = 0;
+		range->length = (size_t) tmp;
+	} else range->length = 0;
 
 	free(copy);
 	return 0;
@@ -125,49 +142,59 @@ fail:
 
 }
 
-static int handle_range(int fd_src, int fd_dst, off_t* src_off, off_t* dst_off, char* range)
-{
-	size_t len;
+static int copy_range(struct rangeitem *range, uintmax_t len) {
 	int rc = 0;
-	if (parse_range(range, src_off, dst_off, &len) != 0) {
-		fprintf(stderr, _("invalid range format: %s\n"), range);
-		return 1;
-	}
-
-	if (len == 0) {
-		struct stat sb;
-		if (fstat(fd_src, &sb) == -1)
-			err(EXIT_FAILURE, _("cannot determine size of source file"));
-		len = sb.st_size - *src_off;
-	}
 
 	size_t remaining = len;
 	while (remaining > 0) {
-		ssize_t copied = copy_file_range(fd_src, src_off, fd_dst, dst_off, remaining, 0);
+		size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
+        if (verbose) {
+            fprintf(stderr, "copy_file_range %s to %s %"PRId64":%"PRId64":%li\n", range->in_filename, range->out_filename, range->in_offset, range->out_offset, chunk);
+        }
+		ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd, &range->out_offset, chunk, 0);
 		if (copied < 0) {
-			fprintf(stderr, _("failed copy file range %s at source offset %"PRId64": %m\n"), range, *src_off);
+			fprintf(stderr, _("failed copy file range %"PRId64":%"PRId64":%li from %s to %s with remaining %li: %m\n"), range->in_offset, range->out_offset, len, range->in_filename, range->out_filename, remaining);
 			rc |= 2;
 			break;
 		}
-		if (copied == 0) break;
+
+		if (copied == 0)
+			break;
+
 		remaining -= copied;
 	}
 	return rc;
+}
+
+static int handle_range(char* str, struct rangeitem *range)
+{
+	size_t len;
+	if (parse_range(str, range) != 0) {
+		fprintf(stderr, _("invalid range format: %s\n"), str);
+		return 1;
+	}
+	len = range->length;
+
+	if (len == 0) {
+		len = range->in_st_size - range->in_offset;
+	}
+
+	return copy_range(range, len);
 }
 
 int main(int argc, char **argv)
 {
 	char **range_files = NULL;
 	size_t nrange_files = 0;
-	char *source_filename = NULL;
-	char *destination_filename = NULL;
-	int fd_src, fd_dst;
+	struct stat sb;
+	struct rangeitem range = {0};
 	int rc = 0;
 
 	static const struct option longopts[] = {
 		{ "source",      required_argument, NULL, 's' },
 		{ "destination", required_argument, NULL, 'd' },
 		{ "ranges",      required_argument, NULL, 'r' },
+		{ "verbose",     required_argument, NULL, 'v' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
@@ -179,7 +206,7 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	int c;
-	while ((c = getopt_long (argc, argv, "r:s:d:Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "r:s:d:vVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'r':
 			if (!range_files)
@@ -187,15 +214,18 @@ int main(int argc, char **argv)
 			range_files[nrange_files++] = xstrdup(optarg);
 			break;
 		case 's':
-			if (source_filename)
-				errx(EXIT_FAILURE, _("only one source file is allowed (%s already supplied)"), source_filename);
-			source_filename = xstrdup(optarg);
+			if (range.in_filename)
+				errx(EXIT_FAILURE, _("only one source file is allowed (%s already supplied)"), range.in_filename);
+			range.in_filename = xstrdup(optarg);
 			break;
 		case 'd':
-			if (destination_filename)
-				errx(EXIT_FAILURE, _("only one destination file is allowed (%s already supplied)"), destination_filename);
-			destination_filename = xstrdup(optarg);
+			if (range.out_filename)
+				errx(EXIT_FAILURE, _("only one destination file is allowed (%s already supplied)"), range.out_filename);
+			range.out_filename = xstrdup(optarg);
 			break;
+        case 'v':
+            verbose = 1;
+            break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -205,30 +235,31 @@ int main(int argc, char **argv)
 
 	int rem_optind;
 	for (rem_optind = optind; rem_optind < argc; rem_optind++) {
-		if (source_filename && destination_filename) break;
-		if (!source_filename)
-			source_filename = xstrdup(argv[rem_optind]);
-		else if (!destination_filename)
-			destination_filename = xstrdup(argv[rem_optind]);
+		if (range.in_filename && range.out_filename) break;
+		if (!range.in_filename)
+			range.in_filename = xstrdup(argv[rem_optind]);
+		else if (!range.out_filename)
+			range.out_filename = xstrdup(argv[rem_optind]);
 	}
 
-	if (!source_filename)
+	if (!range.in_filename)
 		errx(EXIT_FAILURE, _("source file is required"));
 
-	if (!destination_filename)
+	if (!range.out_filename)
 		errx(EXIT_FAILURE, _("destination file is required"));
 
-	fd_src = open(source_filename, O_RDONLY);
-	if (fd_src < 0)
-		err(EXIT_FAILURE, _("cannot open source %s"), argv[1]);
-	free(source_filename);
+	range.in_fd = open(range.in_filename, O_RDONLY);
+	if (range.in_fd < 0)
+		err(EXIT_FAILURE, _("cannot open source %s"), range.in_filename);
 
-	fd_dst = open(destination_filename, O_WRONLY | O_CREAT, 0666);
-	if (fd_dst < 0)
+
+	if (fstat(range.in_fd, &sb) == -1)
+		err(EXIT_FAILURE, _("cannot determine size of source file %s"), range.in_filename);
+	range.in_st_size = sb.st_size;
+
+	range.out_fd = open(range.out_filename, O_WRONLY | O_CREAT, 0666);
+	if (range.out_fd < 0)
 		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
-	free(destination_filename);
-
-	off_t src_off, dst_off;
 
 	for (size_t i = 0; i < nrange_files; i++) {
 		FILE *f = NULL;
@@ -247,7 +278,7 @@ int main(int argc, char **argv)
 				rc++;
 				continue;
 			}
-			rc |= handle_range(fd_src, fd_dst, &src_off, &dst_off, line);
+			rc |= handle_range(line, &range);
 		}
 
 		free(line);
@@ -256,10 +287,13 @@ int main(int argc, char **argv)
 	free(range_files);
 
 	for (; rem_optind < argc; rem_optind++) {
-		rc |= handle_range(fd_src, fd_dst, &src_off, &dst_off, argv[rem_optind]);
+		rc |= handle_range(argv[rem_optind], &range);
 	}
 
-	close(fd_src);
-	close(fd_dst);
+	free(range.in_filename);
+	free(range.out_filename);
+
+	close(range.in_fd);
+	close(range.out_fd);
 	return rc;
 }
