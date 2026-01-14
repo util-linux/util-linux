@@ -31,7 +31,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "pathnames.h"
-#include "mount-api-utils.h"
+#include "mountutils.h"
 
 #define MOUNTPOINT_EXIT_NOMNT	32
 

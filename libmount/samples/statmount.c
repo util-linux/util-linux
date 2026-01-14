@@ -10,7 +10,7 @@
 #include "strutils.h"
 #include "libmount.h"
 
-#include "mount-api-utils.h"	/* fallback for old linux/mount.h */
+#include "mountutils.h"	/* fallback for old linux/mount.h */
 
 int main(int argc, char *argv[])
 {

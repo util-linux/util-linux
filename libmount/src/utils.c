@@ -542,31 +542,6 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
 	return NULL;
 }
 
-/*
- * Default NTFS mount type (used by libmount and libblkid)
- */
-#ifndef CONFIG_UL_NTFS_MOUNTTYPE
-# define CONFIG_UL_NTFS_MOUNTTYPE "ntfs3"
-#endif
-
-/*
- * Convert FS-type (as provided by libblkid or udev) to the preferred
- * kernel FS driver (type used to mount the FS).
- *
- * This is a temporary solution; the final solution should be
- * based on config files like /etc/mount/fs.d/<name> (from lib/configs.c).
- */
-const char *mnt_fstype_to_mounttype(const char *fstype)
-{
-	if (!fstype)
-		return NULL;
-
-	if (strcmp(fstype, "ntfs") == 0)
-		return CONFIG_UL_NTFS_MOUNTTYPE;
-
-	return NULL;
-}
-
 /**
  * mnt_match_fstype:
  * @type: filesystem type

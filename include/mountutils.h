@@ -2,8 +2,8 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  */
-#ifndef UTIL_LINUX_MOUNT_API_UTILS
-#define UTIL_LINUX_MOUNT_API_UTILS
+#ifndef UTIL_LINUX_MOUNTUTILS_H
+#define UTIL_LINUX_MOUNTUTILS_H
 
 #ifdef HAVE_LINUX_MOUNT_H
 #include <linux/mount.h>
@@ -483,7 +483,31 @@ static inline int has_listmount(void)
 #endif
 
 #endif /* HAVE_STATMOUNT_API */
-
 #endif /* HAVE_LINUX_MOUNT_H */
 
-#endif /* UTIL_LINUX_MOUNT_API_UTILS */
+/*
+ * Default NTFS mount type (used by libmount and libblkid)
+ */
+#ifndef CONFIG_UL_NTFS_MOUNTTYPE
+# define CONFIG_UL_NTFS_MOUNTTYPE "ntfs3"
+#endif
+
+/*
+ * Convert FS-type (as provided by libblkid or udev) to the preferred
+ * kernel FS driver (type used to mount the FS).
+ *
+ * This is a temporary solution; the final solution should be based on config
+ * files like /etc/mount/fs.d/<name> (from lib/configs.c) and managed by
+ * libmount.
+ */
+static inline const char *ul_fstype_to_mounttype(const char *fstype)
+{
+	if (!fstype)
+		return NULL;
+
+	if (strcmp(fstype, "ntfs") == 0)
+		return CONFIG_UL_NTFS_MOUNTTYPE;
+
+	return NULL;
+}
+#endif /* UTIL_LINUX_MOUNTUTILS_H */

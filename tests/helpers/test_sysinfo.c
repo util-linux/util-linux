@@ -32,7 +32,7 @@
 
 #ifdef __linux__
 # include <sys/mount.h>
-# include "mount-api-utils.h"
+# include "mountutils.h"
 #endif
 
 #ifdef HAVE_LINUX_NSFS_H
