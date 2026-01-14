@@ -12,7 +12,7 @@ waitpid - utility to wait for arbitrary processes
 
 == SYNOPSIS
 
-*waitpid* [-v] [*--timeout*|*-t* _seconds_] pid...
+*waitpid* [-v] [*--timeout*|*-t* _seconds_] PID[:inode]...
 
 == DESCRIPTION
 
@@ -20,6 +20,10 @@ waitpid - utility to wait for arbitrary processes
 
 It exits after all processes whose PIDs have been passed as arguments have
 exited.
+
+Optionally, a process can be addressed with the format _PID:inode_. The _inode_
+identifies the unique process's file descriptor. To retrieve a process's inode
+number you can use the *getino*(1) utility.
 
 == OPTIONS
 
@@ -56,7 +60,7 @@ mailto:thomas@t-8ch.de[Thomas Weißschuh]
 
 == SEE ALSO
 
-*waitpid*(2) *wait*(1P)
+*waitpid*(2) *wait*(1P) *getino*(1)
 
 include::man-common/bugreports.adoc[]
 
