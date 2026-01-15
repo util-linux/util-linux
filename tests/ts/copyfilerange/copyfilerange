@@ -53,6 +53,11 @@ EOF
 cat c >"$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "previous-offset-preserved"
+"$TS_CMD_COPYFILERANGE" a d ::3 ::
+cat d >"$TS_OUTPUT"
+ts_finalize_subtest
+
 rm -f a b c ranges
 
 ts_finalize
