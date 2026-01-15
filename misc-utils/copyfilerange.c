@@ -142,7 +142,7 @@ static int copy_range(struct rangeitem *range, const uintmax_t len) {
 		if (verbose)
 			fprintf(
 				stderr,
-				"copy_file_range %s to %s %"PRId64":%"PRId64":%li\n",
+				"copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n",
 				range->in_filename,
 				range->out_filename,
 				range->in_offset,
