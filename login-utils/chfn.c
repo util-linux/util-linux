@@ -270,7 +270,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 static void get_login_defs(struct chfn_control *ctl)
 {
 	const char *s;
-	int broken = 0;
+	int invalid = 0;
 
 	/* real root does not have restrictions */
 	if (ctl->privileged) {
@@ -312,10 +312,10 @@ static void get_login_defs(struct chfn_control *ctl)
 			gecos_fields[GECOS_HOME_PHONE].allowed = true;
 			break;
 		default:
-			broken = 1;
+			invalid = 1;
 		}
 	}
-	if (broken)
+	if (invalid)
 		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
 
 	if (!gecos_fields[GECOS_FULL_NAME].allowed
