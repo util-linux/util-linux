@@ -83,8 +83,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static int parse_range(const char *str, struct rangeitem *range)
 {
-	const char *start = NULL;
-	char *copy = NULL, *token = NULL, rc = 0;
+	char *copy = NULL,  *start = NULL, *token = NULL, rc = 0;
 	uintmax_t tmp;
 
 	copy = xstrdup(str);
