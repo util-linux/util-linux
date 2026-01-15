@@ -8,7 +8,7 @@
 
 == NAME
 
-fadvise - utility to use the posix_fadvise system call
+fadvise - utility to use the *posix_fadvise*(2) system call
 
 == SYNOPSIS
 

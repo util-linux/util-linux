@@ -91,7 +91,7 @@ The optional argument _method_ is supported only for the long variant (*--kernel
 +
 * *mountinfo* - this is the default method and it reads data from the _/proc/self/mountinfo_ file.
 +
-* *listmount* - This is an EXPERIMENTAL method that uses the listmount() and statmount() syscalls to generate the mount table. The output may not contain all details about mount nodes (for example, SOURCE is currently missing).
+* *listmount* - This is an EXPERIMENTAL method that uses the *listmount*(2) and *statmount*(2) syscalls to generate the mount table. The output may not contain all details about mount nodes (for example, SOURCE is currently missing).
 
 *-l*, *--list*::
 Use the list output format. This output format is automatically enabled if the output is restricted by the *-t*, *-O*, *-S* or *-T* option and the option *--submounts* is not used or if more that one source file (the option *-F*) is specified.

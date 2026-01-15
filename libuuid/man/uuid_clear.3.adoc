@@ -52,7 +52,7 @@ uuid_clear - reset value of UUID variable to the NULL value
 
 == DESCRIPTION
 
-The *uuid_clear*() function sets the value of the supplied uuid variable _uu_ to the NULL value.
+The *uuid_clear*(3) function sets the value of the supplied uuid variable _uu_ to the NULL value.
 
 == AUTHORS
 

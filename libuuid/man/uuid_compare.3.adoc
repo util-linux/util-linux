@@ -52,7 +52,7 @@ uuid_compare - compare whether two UUIDs are the same
 
 == DESCRIPTION
 
-The *uuid_compare*() function compares the two supplied uuid variables _uu1_ and _uu2_ to each other.
+The *uuid_compare*(3) function compares the two supplied uuid variables _uu1_ and _uu2_ to each other.
 
 == RETURN VALUE
 

@@ -26,7 +26,7 @@ When called without arguments, *runuser* defaults to running an interactive shel
 
 For backward compatibility, *runuser* defaults to not changing the current directory and to setting only the environment variables *HOME* and *SHELL* (plus *USER* and *LOGNAME* if the target _user_ is not root). This version of *runuser* uses PAM for session management.
 
-Note that *runuser* in all cases use PAM (pam_getenvlist()) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
+Note that *runuser* in all cases use PAM (*pam_getenvlist*(3)) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
 
 Since version 2.38 *runuser* resets process resource limits RLIMIT_NICE, RLIMIT_RTPRIO, RLIMIT_FSIZE, RLIMIT_AS and RLIMIT_NOFILE.
 
