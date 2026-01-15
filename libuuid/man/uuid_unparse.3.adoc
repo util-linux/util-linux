@@ -54,9 +54,9 @@ uuid_unparse - convert a UUID from binary representation to a string
 
 == DESCRIPTION
 
-The *uuid_unparse*() function converts the supplied UUID _uu_ from the binary representation into a 36-byte string (plus trailing '\0') of the form 1b4e28ba-2fa1-11d2-883f-0016d3cca427 and stores this value in the character string pointed to by _out_. The case of the hex digits returned by *uuid_unparse*() may be upper or lower case, and is dependent on the system-dependent local default.
+The *uuid_unparse*(3) function converts the supplied UUID _uu_ from the binary representation into a 36-byte string (plus trailing '\0') of the form 1b4e28ba-2fa1-11d2-883f-0016d3cca427 and stores this value in the character string pointed to by _out_. The case of the hex digits returned by *uuid_unparse*(3) may be upper or lower case, and is dependent on the system-dependent local default.
 
-If the case of the hex digits is important then the functions *uuid_unparse_upper*() and *uuid_unparse_lower*() may be used.
+If the case of the hex digits is important then the functions *uuid_unparse_upper*(3) and *uuid_unparse_lower*(3) may be used.
 
 == CONFORMING TO
 

@@ -52,7 +52,7 @@ uuid_copy - copy a UUID value
 
 == DESCRIPTION
 
-The *uuid_copy*() function copies the UUID variable _src_ to _dst_.
+The *uuid_copy*(3) function copies the UUID variable _src_ to _dst_.
 
 == RETURN VALUE
 
