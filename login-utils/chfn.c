@@ -180,8 +180,8 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
-		ctl->changed = 1;
-		ctl->interactive = 0;
+		ctl->changed = true;
+		ctl->interactive = false;
 	}
 	if (status != 0)
 		exit(EXIT_FAILURE);
@@ -250,13 +250,13 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		}
 		if (c_strcasecmp(buf, "none") == 0) {
 			free(buf);
-			ctl->changed = 1;
+			ctl->changed = true;
 			return xstrdup("");
 		}
 		if (check_gecos_string(question, buf) >= 0)
 			break;
 	}
-	ctl->changed = 1;
+	ctl->changed = true;
 	return buf;
 }
 
@@ -400,7 +400,7 @@ int main(int argc, char **argv)
 {
 	uid_t uid;
 	struct chfn_control ctl = {
-		.interactive = 1
+		.interactive = true
 	};
 
 	sanitize_env();
