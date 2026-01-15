@@ -72,6 +72,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_(" --source, -s filename       source filename"), out);
 	fputsln(_(" --destination, -d filename  destination filename"), out);
 	fputsln(_(" --ranges, -r filename       read range(s) separated by newlines from filename"), out);
+	fputsln(_(" --verbose, -v               verbose mode"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(16));

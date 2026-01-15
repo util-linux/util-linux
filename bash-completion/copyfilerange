@@ -15,6 +15,7 @@ _copyfilerange_module()
 			--source
 			--destination
 			--ranges
+			--verbose
 			--version
 			--help
 		"

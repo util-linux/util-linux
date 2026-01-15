@@ -38,6 +38,9 @@ When one or more of the offsets are omitted the operation will use the last used
 
 == OPTIONS
 
+*-v*, *--verbose*::
+Verbose output of copied file ranges
+
 *-s*, *--source*::
 Source filename
 
