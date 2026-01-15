@@ -241,7 +241,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		if (getline(&buf, &dummy, stdin) < 0)
 			errx(EXIT_FAILURE, _("Aborted."));
 
-		/* remove white spaces from string end */
+		/* remove whitespace from string start and end */
 		ltrim_whitespace((unsigned char *) buf);
 		len = rtrim_whitespace((unsigned char *) buf);
 		if (len == 0) {
