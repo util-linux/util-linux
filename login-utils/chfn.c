@@ -268,7 +268,7 @@ static void get_login_defs(struct chfn_control *ctl)
 {
 	const char *s;
 	size_t i;
-	int broken = 0;
+	int invalid = 0;
 
 	/* real root does not have restrictions */
 	if (!is_privileged_execution() && getuid() == 0) {
@@ -299,10 +299,10 @@ static void get_login_defs(struct chfn_control *ctl)
 			ctl->allow_home = 1;
 			break;
 		default:
-			broken = 1;
+			invalid = 1;
 		}
 	}
-	if (broken)
+	if (invalid)
 		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
 	if (!ctl->allow_fullname && !ctl->allow_room && !ctl->allow_work && !ctl->allow_home)
 		errx(EXIT_FAILURE, _("%s: CHFN_RESTRICT does not allow any changes"), _PATH_LOGINDEFS);
