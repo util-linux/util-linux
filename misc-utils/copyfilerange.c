@@ -160,7 +160,7 @@ static int copy_range(struct rangeitem *range, const uintmax_t len) {
 		if (copied < 0) {
 			fprintf(
 				stderr,
-				_("failed copy file range %"PRId64":%"PRId64":%li from %s to %s with remaining %ju: %m\n"),
+				_("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju: %m\n"),
 				range->in_offset,
 				range->out_offset,
 				len,
