@@ -3095,7 +3095,6 @@ exe = executable(
   copyfilerange_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [copyfilerange_dep],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)

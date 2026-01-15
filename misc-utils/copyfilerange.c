@@ -71,7 +71,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputsln(_(" --source, -s filename       source filename"), out);
 	fputsln(_(" --destination, -d filename  destination filename"), out);
-	fputsln(_(" --ranges, -r filename       read range(s) seperated by newlines from filename"), out);
+	fputsln(_(" --ranges, -r filename       read range(s) separated by newlines from filename"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(16));
@@ -80,58 +80,48 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static inline int conv_str_to_offset(char **str, off_t *value)
-{
-	char *end = NULL;
-	intmax_t tmp;
-	errno = 0;
-
-	tmp = strtoimax(*str, &end, 10);
-	if (errno == 0 && ((tmp && tmp < 0) ||
-			(tmp && tmp > SINT_MAX(off_t)))) {
-		return -ERANGE;
-	} else if (end && *end != '\0') {
-		return -EINVAL;
-	}
-	*value = tmp;
-
-	return 0;
-}
-
 static int parse_range(const char *str, struct rangeitem *range)
 {
-	char *copy = NULL, *start = NULL, *token = NULL, rc = 0;
+	const char *start = NULL;
+	char *copy = NULL, *token = NULL, rc = 0;
+	uintmax_t tmp;
+
 	copy = xstrdup(str);
-	if (!copy) return -1;
+	if (!copy)
+		return -1;
 
 	start = copy;
 	token = strchr(start, ':');
-	if (!token) goto fail;
+	if (!token)
+		goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_offset(&start, &(range->in_offset));
-		if (rc) goto fail;
+		rc = strtosize(start, &tmp);
+		if (rc && tmp <= SIZE_MAX)
+			goto fail;
+		range->in_offset = tmp;
 	}
 
 	start = token + 1;
 	token = strchr(start, ':');
-	if (!token) goto fail;
+	if (!token)
+		goto fail;
 	*token = '\0';
 	if (*start) {
-		rc = conv_str_to_offset(&start, &range->out_offset);
-		if (rc) goto fail;
+		rc = strtosize(start, &tmp);
+		if (rc && tmp <= SIZE_MAX)
+			goto fail;
+		range->out_offset = tmp;
 	}
 
 	start = token + 1;
 	if (*start) {
-		uintmax_t tmp;
-		char *end = NULL;
-		tmp = strtoumax(start, &end, 10);
-		if (tmp > SIZE_MAX
-						|| errno != 0 || (end && *end != '\0'))
-				goto fail;
-		range->length = (size_t) tmp;
-	} else range->length = 0;
+		rc = strtosize(start, &tmp);
+		if (rc && tmp <= SIZE_MAX)
+			goto fail;
+		range->length = tmp;
+	} else
+		range->length = 0;
 
 	free(copy);
 	return 0;
@@ -142,18 +132,42 @@ fail:
 
 }
 
-static int copy_range(struct rangeitem *range, uintmax_t len) {
+static int copy_range(struct rangeitem *range, const uintmax_t len) {
 	int rc = 0;
 
 	size_t remaining = len;
 	while (remaining > 0) {
-		size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
-        if (verbose) {
-            fprintf(stderr, "copy_file_range %s to %s %"PRId64":%"PRId64":%li\n", range->in_filename, range->out_filename, range->in_offset, range->out_offset, chunk);
-        }
-		ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd, &range->out_offset, chunk, 0);
+		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
+		if (verbose)
+			fprintf(
+				stderr,
+				"copy_file_range %s to %s %"PRId64":%"PRId64":%li\n",
+				range->in_filename,
+				range->out_filename,
+				range->in_offset,
+				range->out_offset,
+				chunk
+			);
+
+		const ssize_t copied = copy_file_range(
+			range->in_fd,
+			&range->in_offset,
+			range->out_fd,
+			&range->out_offset,
+			chunk,
+			0
+		);
 		if (copied < 0) {
-			fprintf(stderr, _("failed copy file range %"PRId64":%"PRId64":%li from %s to %s with remaining %li: %m\n"), range->in_offset, range->out_offset, len, range->in_filename, range->out_filename, remaining);
+			fprintf(
+				stderr,
+				_("failed copy file range %"PRId64":%"PRId64":%li from %s to %s with remaining %li: %m\n"),
+				range->in_offset,
+				range->out_offset,
+				len,
+				range->in_filename,
+				range->out_filename,
+				remaining
+			);
 			rc |= 2;
 			break;
 		}
@@ -168,21 +182,15 @@ static int copy_range(struct rangeitem *range, uintmax_t len) {
 
 static int handle_range(char* str, struct rangeitem *range)
 {
-	size_t len;
 	if (parse_range(str, range) != 0) {
 		fprintf(stderr, _("invalid range format: %s\n"), str);
 		return 1;
 	}
-	len = range->length;
 
-	if (len == 0) {
-		len = range->in_st_size - range->in_offset;
-	}
-
-	return copy_range(range, len);
+	return copy_range(range, range->length ? range->length : (uintmax_t)range->in_st_size - range->in_offset);
 }
 
-int main(int argc, char **argv)
+int main(const int argc, char **argv)
 {
 	char **range_files = NULL;
 	size_t nrange_files = 0;
@@ -223,9 +231,9 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("only one destination file is allowed (%s already supplied)"), range.out_filename);
 			range.out_filename = xstrdup(optarg);
 			break;
-        case 'v':
-            verbose = 1;
-            break;
+		case 'v':
+			verbose = 1;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -262,9 +270,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
 
 	for (size_t i = 0; i < nrange_files; i++) {
-		FILE *f = NULL;
+		FILE *f = fopen(range_files[i], "r");
 
-		if (!(f = fopen(range_files[i], "r")))
+		if (!f)
 			err(EXIT_FAILURE, _("cannot open range file %s"), range_files[i]);
 		free(range_files[i]);
 
