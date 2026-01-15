@@ -202,7 +202,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
  *  parse_passwd () --
  *	take a struct password and fill in the fields of the struct finfo.
  */
-static void parse_passwd(struct chfn_control *ctl)
+static void parse_passwd(const struct chfn_control *ctl)
 {
 	char *gecos;
 
@@ -267,7 +267,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
  *  get_login_defs()
  *	find /etc/login.defs CHFN_RESTRICT and save restrictions to run time
  */
-static void get_login_defs(struct chfn_control *ctl)
+static void get_login_defs(const struct chfn_control *ctl)
 {
 	const char *s;
 	int invalid = 0;
