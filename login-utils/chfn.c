@@ -363,7 +363,7 @@ static void ask_info(struct chfn_control *ctl)
 
 /*
  *  find_field () --
- *	find field value in uninteractive mode; can be new, old, or blank
+ *	find field value in non-interactive mode; can be new, old, or blank
  */
 static char *find_field(char *nf, char *of)
 {
@@ -376,7 +376,7 @@ static char *find_field(char *nf, char *of)
 
 /*
  *  add_missing () --
- *	add not supplied field values when in uninteractive mode
+ *	add not supplied field values when in non-interactive mode
  */
 static void add_missing(void)
 {
