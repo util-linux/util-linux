@@ -133,10 +133,10 @@ fail:
 
 }
 
-static int copy_range(struct rangeitem *range, const uintmax_t len) {
+static int copy_range(struct rangeitem *range) {
 	int rc = 0;
 
-	uintmax_t remaining = len;
+	uintmax_t remaining = range->length;
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		if (verbose)
@@ -163,7 +163,7 @@ static int copy_range(struct rangeitem *range, const uintmax_t len) {
 				_("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju: %m\n"),
 				range->in_offset,
 				range->out_offset,
-				len,
+				range->length,
 				range->in_filename,
 				range->out_filename,
 				remaining
@@ -187,7 +187,10 @@ static int handle_range(char* str, struct rangeitem *range)
 		return -1;
 	}
 
-	return copy_range(range, range->length ? range->length : (uintmax_t)range->in_st_size - range->in_offset);
+	if (!range->length)
+		range->length = range->in_st_size - range->in_offset;
+
+	return copy_range(range);
 }
 
 int main(const int argc, char **argv)
