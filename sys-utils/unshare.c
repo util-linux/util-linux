@@ -769,6 +769,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 		"                             defaults to SIGKILL\n"), out);
+	fputs(_(" --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
@@ -801,6 +802,7 @@ int main(int argc, char *argv[])
 		OPT_MAPAUTO,
 		OPT_MAPSUBIDS,
 		OPT_OWNER,
+		OPT_FORWARD_SIGNALS,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -817,6 +819,7 @@ int main(int argc, char *argv[])
 
 		{ "fork",          no_argument,       NULL, 'f'             },
 		{ "kill-child",    optional_argument, NULL, OPT_KILLCHILD   },
+		{ "forward-signals", no_argument,     NULL, OPT_FORWARD_SIGNALS },
 		{ "mount-proc",    optional_argument, NULL, OPT_MOUNTPROC   },
 		{ "mount-binfmt",  optional_argument, NULL, OPT_MOUNTBINFMT },
 		{ "map-user",      required_argument, NULL, OPT_MAPUSER     },
@@ -843,7 +846,7 @@ int main(int argc, char *argv[])
 
 	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
-	int c, forkit = 0;
+	int c, forkit = 0, forward_signals = 0;
 	uid_t mapuser = -1, owneruser = -1;
 	gid_t mapgroup = -1, ownergroup = -1;
 	struct map_range *usermap = NULL;
@@ -1014,6 +1017,10 @@ int main(int argc, char *argv[])
 		case OPT_KEEPCAPS:
 			keepcaps = 1;
 			cap_last_cap(); /* Force last cap to be cached before we fork. */
+			break;
+		case OPT_FORWARD_SIGNALS:
+			forkit = 1;
+			forward_signals = 1;
 			break;
 		case 'S':
 			uid = strtoul_or_err(optarg, _("failed to parse uid"));
