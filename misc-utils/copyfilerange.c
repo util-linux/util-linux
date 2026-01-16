@@ -36,8 +36,8 @@
 static int verbose;
 
 struct rangeitem {
-	char *in_filename;
-	char *out_filename;
+	const char *in_filename;
+	const char *out_filename;
 
 	off_t in_st_size;
 
@@ -225,12 +225,12 @@ int main(const int argc, char **argv)
 		case 's':
 			if (range.in_filename)
 				errx(EXIT_FAILURE, _("only one source file is allowed (%s already supplied)"), range.in_filename);
-			range.in_filename = xstrdup(optarg);
+			range.in_filename = optarg;
 			break;
 		case 'd':
 			if (range.out_filename)
 				errx(EXIT_FAILURE, _("only one destination file is allowed (%s already supplied)"), range.out_filename);
-			range.out_filename = xstrdup(optarg);
+			range.out_filename = optarg;
 			break;
 		case 'v':
 			verbose = 1;
@@ -246,9 +246,9 @@ int main(const int argc, char **argv)
 	for (rem_optind = optind; rem_optind < argc; rem_optind++) {
 		if (range.in_filename && range.out_filename) break;
 		if (!range.in_filename)
-			range.in_filename = xstrdup(argv[rem_optind]);
+			range.in_filename = argv[rem_optind];
 		else if (!range.out_filename)
-			range.out_filename = xstrdup(argv[rem_optind]);
+			range.out_filename = argv[rem_optind];
 	}
 
 	if (!range.in_filename)
@@ -298,9 +298,6 @@ int main(const int argc, char **argv)
 	for (; rem_optind < argc; rem_optind++) {
 		rc |= handle_range(argv[rem_optind], &range);
 	}
-
-	free(range.in_filename);
-	free(range.out_filename);
 
 	close(range.in_fd);
 	close(range.out_fd);
