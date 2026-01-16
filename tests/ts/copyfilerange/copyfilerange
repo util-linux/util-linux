@@ -30,7 +30,7 @@ touch b c ranges
 
 ts_init_subtest "normal"
 "$TS_CMD_COPYFILERANGE" a b 3::1 1::2 2::1 0::1 5::1 &>"$TS_OUTPUT"
-cat b >"$TS_OUTPUT"
+cat b >>"$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "invalid-input"
@@ -59,6 +59,11 @@ ts_finalize_subtest
 ts_init_subtest "previous-offset-preserved"
 "$TS_CMD_COPYFILERANGE" a d ::3 ::
 cat d >"$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "verbose"
+"$TS_CMD_COPYFILERANGE" --verbose a e 3::1 1::2 2::1 0::1 5::1 &>"$TS_OUTPUT"
+cat e >>"$TS_OUTPUT"
 ts_finalize_subtest
 
 rm -f a b c ranges
