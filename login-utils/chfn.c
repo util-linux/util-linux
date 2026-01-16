@@ -377,6 +377,27 @@ static void add_missing(void)
 }
 
 /*
+ *  free_gecos_new_fields () --
+ *	free the memory allocated for new GECOS fields
+ */
+static inline void free_gecos_new_fields(const struct chfn_control *ctl)
+{
+	/* When ran in interactive mode, we use getline(3)
+	 * to obtain the new GECOS fields. The memory used
+	 * to save the string is dynamically allocated, so
+	 * let us free it now where we don't need it.
+	 */
+	if (!ctl->interactive)
+		return;
+
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		free(gf->new);
+	}
+}
+
+/*
  *  save_new_data () --
  *	save the given finger info in /etc/passwd.
  *	return zero on success.
@@ -400,6 +421,7 @@ static int save_new_data(struct chfn_control *ctl)
 			len--;
 		gecos[len] = '\0';
 	}
+	free_gecos_new_fields(ctl);
 
 #ifdef HAVE_LIBUSER
 	if (set_value_libuser("chfn", ctl->username, ctl->pw->pw_uid,
