@@ -205,7 +205,7 @@ int main(const int argc, char **argv)
 		{ "source",      required_argument, NULL, 's' },
 		{ "destination", required_argument, NULL, 'd' },
 		{ "ranges",      required_argument, NULL, 'r' },
-		{ "verbose",     required_argument, NULL, 'v' },
+		{ "verbose",     no_argument,       NULL, 'v' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
