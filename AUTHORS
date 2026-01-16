@@ -1,0 +1,94 @@
+
+                            util-linux
+
+MAINTAINER:
+
+      Karel Zak <kzak@redhat.com>
+
+
+PAST MAINTAINERS:
+
+      Adrian Bunk <bunk@stusta.de>
+      Andries E. Brouwer <aeb@cwi.nl>
+
+
+AUTHORS (merged projects & commands):
+
+      blkdiscard:      Lukas Czerner <lczerner@redhat.com>
+      blkpr:           zhenwei pi <zhenwei.pi@linux.dev>
+      blkzone:         Shaun Tancheff <shaun@tancheff.com>
+                       Damien Le Moal <damien.lemoal@wdc.com>
+      enosys:          Thomas Weißschuh <thomas@t-8ch.de>
+      fallocate:       Eric Sandeen <sandeen@redhat.com>
+                       Karel Zak <kzak@redhat.com>
+                       Matěj Cepl <mcepl@redhat.com>
+      fincore:         Masatake YAMATO <yamato@redhat.com>
+      findmnt:         Karel Zak <kzak@redhat.com>
+      flock:           H. Peter Anvin <hpa@zytor.com>
+      fsck:            [merged from e2fsprogs]
+                       Theodore Ts'o <tytso@mit.edu>
+      fstrim:          Lukas Czerner <lczerner@redhat.com>
+      fsfreeze:        Hajime Taira <htaira@redhat.com>
+      getopt:          Frodo Looijaard <frodol@dds.nl>
+      hardlink:        Jakub Jelinek <jakub@redhat.com>
+      hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
+      ipcmk:           Hayden James <hayden.james@gmail.com>
+      irqtop/lsirq:    Zhenwei Pi <zhenwei.pi@linux.dev>
+                       Sami Kerola <kerolasa@iki.fi>
+      last/lastb:      [merged from sysvinit]
+                       Miquel van Smoorenburg <miquels@cistron.nl>
+      ldattach:        Tilman Schmidt <tilman@imap.cc>
+      libblkid:        [merged from e2fsprogs]
+                       Theodore Ts'o <tytso@mit.edu>
+      libmount:        Karel Zak <kzak@redhat.com>
+      libuuid:         Theodore Ts'o <tytso@mit.edu>
+      liblastlog2:     Thorsten Kukuk <kukuk@suse.com>
+      lscpu:           Cai Qian <qcai@redhat.com>
+      lsclocks:        Thomas Weißschuh <thomas@t-8ch.de>
+      lsblk:           Milan Broz <gmazyland@gmail.com>
+                       Karel Zak <kzak@redhat.com>
+      lsfd:            Masatake YAMATO <yamato@redhat.com>
+      lsipc:           Ondrej Oprala <ooprala@redhat.com>
+                       Karel Zak <kzak@redhat.com>
+      lslocks:         Davidlohr Bueso <dave@gnu.org>
+      lslogins:        Ondrej Oprala <ooprala@redhat.com>
+      lsmem/chmem:     Heiko Carstens <heiko.carstens@de.ibm.com>
+      mountpoint:      Karel Zak <kzak@redhat.com>
+      nsenter:         Eric W. Biederman <ebiederm@xmission.com>
+      prlimit:         Davidlohr Bueso <dave@gnu.org>
+      runuser:         [derived from coreutils su(1)]
+                       Karel Zak <kzak@redhat.com>
+      resizepart:      Vivek Goyal <vgoyal@redhat.com>
+      rfkill:          Johannes Berg <johannes@sipsolutions.net>
+                       Marcel Holtmann <marcel@holtmann.org>
+                       Tim Gardner <tim.gardner@canonical.com>
+      rtcwake:         David Brownell <david-b@pacbell.net>
+                       Bernhard Walle <bwalle@suse.de>
+      schedutils:      Robert Love <rlove@rlove.org>
+      setarch:         Elliot Lee <sopwith@redhat.com>
+                       Jindrich Novy <jnovy@redhat.com>
+      setpriv:         Andy Lutomirski <luto@amacapital.net>
+      simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
+      su:              [merged from coreutils]
+                       Free Software Foundation, Inc.
+                       SUSE Linux Products GmbH
+      sulogin:         [merged from sysvinit]
+                       Miquel van Smoorenburg
+      switch_root:     Peter Jones <pjones@redhat.com>
+                       Jeremy Katz <katzj@redhat.com>
+      uclampse:        Qais Yousef <qyousef@layalina.io>
+      unshare:         Mikhail Gusarov <dottedmag@dottedmag.net>
+      utmpdump:        [merged from sysvinit]
+                       Danek Duvall <duvall@alumni.princeton.edu>
+                       Miquel van Smoorenburg <miquels@cistron.nl>
+      waitpid:         Thomas Weißschuh <thomas@t-8ch.de>
+      wipefs:          Karel Zak <kzak@redhat.com>
+      swaplabel:       Jason Borden <jborden@bluehost.com>
+                       Karel Zak <kzak@redhat.com>
+      zramctl:         Timofey Titovets <nefelim4ag@gmail.com>
+                       Karel Zak <kzak@redhat.com>
+
+
+CONTRIBUTORS:
+
+      See output from: git log --format="%an <%ae>" | sort -u

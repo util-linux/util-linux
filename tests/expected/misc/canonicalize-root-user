@@ -1,0 +1,3 @@
+orig:            /aaa/bbb/ccc-sym/ddd
+real:            /ccc/ddd
+real-restricted: /ccc/ddd

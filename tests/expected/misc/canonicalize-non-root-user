@@ -1,0 +1,3 @@
+orig:            /root-sym/foo
+real:            /root/foo
+real-restricted: (null)

@@ -1,0 +1,25 @@
+# TYPE: STREAM
+3 SOCK state=listen type=stream laddr=local:12345                             listen stream 1
+4 SOCK state=established type=stream laddr=local:23456 raddr=local:12345 established stream 0
+5 SOCK state=established type=stream laddr=local:12345 raddr=local:23456 established stream 0
+ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING: 0
+local:12345 1 12345         *:* 4294967295 4294967295
+local:23456 1 23456 local:12345          1      12345
+local:12345 1 12345 local:23456          1      23456
+VSOCK.LADDR,VSOCK.LCID,VSOCK.LPORT,VSOCK.RADDR,VSOCK.RCID,VSOCK.RPORT: 0
+# TYPE: DGRAM
+3 SOCK state=established type=dgram laddr=local:12345 raddr=local:23456 established dgram 0
+4 SOCK state=established type=dgram laddr=local:23456 raddr=local:12345 established dgram 0
+ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING: 0
+local:12345 1 12345 local:23456 1 23456
+local:23456 1 23456 local:12345 1 12345
+VSOCK.LADDR,VSOCK.LCID,VSOCK.LPORT,VSOCK.RADDR,VSOCK.RCID,VSOCK.RPORT: 0
+# TYPE: SEQPACKET
+3 SOCK state=listen type=seqpacket laddr=local:12345                             listen seqpacket 1
+4 SOCK state=established type=seqpacket laddr=local:23456 raddr=local:12345 established seqpacket 0
+5 SOCK state=established type=seqpacket laddr=local:12345 raddr=local:23456 established seqpacket 0
+ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING: 0
+local:12345 1 12345         *:* 4294967295 4294967295
+local:23456 1 23456 local:12345          1      12345
+local:12345 1 12345 local:23456          1      23456
+VSOCK.LADDR,VSOCK.LCID,VSOCK.LPORT,VSOCK.RADDR,VSOCK.RCID,VSOCK.RPORT: 0

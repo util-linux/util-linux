@@ -1,0 +1,80 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2024 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="X-mount.nocanonicalize"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_FINDMNT"
+
+ts_skip_nonroot
+
+[ "$("$TS_HELPER_SYSINFO" fsopen-ok)" == "1" ] || ts_skip "no fs-API"
+
+[ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT
+
+SYMLINK_A="$TS_OUTDIR/${TS_TESTNAME}-symlink-A"
+SYMLINK_B="$TS_OUTDIR/${TS_TESTNAME}-symlink-B"
+
+FILE_A="$TS_OUTDIR/${TS_TESTNAME}-file-A"
+FILE_B="$TS_OUTDIR/${TS_TESTNAME}-file-B"
+
+rm -f $FILE_A $FILE_B $SYMLINK_A $SYMLINK_B
+
+echo "A-data" > $FILE_A
+echo "B-data" > $FILE_B
+
+ln -s $FILE_A $SYMLINK_A
+ln -s $FILE_B $SYMLINK_B
+
+
+# Symlink converted to file
+#
+ts_init_subtest "file-over-symlink"
+$TS_CMD_MOUNT -o X-mount.nocanonicalize --bind $FILE_A $SYMLINK_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+udevadm settle
+cat $SYMLINK_B >> $TS_OUTPUT
+stat -c '%F' $SYMLINK_B >> $TS_OUTPUT
+$TS_CMD_UMOUNT $SYMLINK_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+# File converted to symlink
+#
+ts_init_subtest "symlink-over-file"
+$TS_CMD_MOUNT -o X-mount.nocanonicalize --bind $SYMLINK_A $FILE_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+udevadm settle
+cat $FILE_B >> $TS_OUTPUT
+stat -c '%F' $FILE_B >> $TS_OUTPUT
+$TS_CMD_UMOUNT $FILE_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+# Symlink converted to another symlink
+#
+ts_init_subtest "symlink-over-symlink"
+$TS_CMD_MOUNT -o X-mount.nocanonicalize --bind $SYMLINK_A $SYMLINK_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+udevadm settle
+cat $SYMLINK_B >> $TS_OUTPUT
+stat -c '%F' $SYMLINK_B >> $TS_OUTPUT
+$TS_CMD_UMOUNT $SYMLINK_B >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+
+ts_finalize

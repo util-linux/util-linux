@@ -1,0 +1,56 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="range-lock"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FLOCK"
+ts_check_test_command "$TS_CMD_LSLOCKS"
+
+START=1
+LENGTH=2
+END=$((START + LENGTH - 1))
+PID=
+
+ts_cd "$TS_OUTDIR"
+
+{
+    coproc FLOCK { "$TS_CMD_FLOCK" \
+		       --shared --fcntl --start "${START}" --length "${LENGTH}" --no-fork \
+		       . \
+		       -c cat & echo $!; wait; }
+    if read -r -u "${FLOCK[0]}" PID; then
+	start=$("$TS_CMD_LSLOCKS" --noheadings --raw --pid "${PID}" -o START)
+	echo start: $START == "$start"
+	end=$("$TS_CMD_LSLOCKS" --noheadings --raw --pid "${PID}" -o END)
+	echo end: $END == "$end"
+	if [[ $START != "$start" || $END != "$end" ]]; then
+	   # For debugging
+	   echo pid: $PID
+	   "$TS_CMD_LSLOCKS"
+	fi
+    else
+	echo failed in read 1>&2
+    fi
+    # Closing the connection to the coproc makes the cat process exit.
+    exec {FLOCK[1]}>&-
+} >> $TS_OUTPUT 2>> $TS_ERRLOG
+wait "${FLOCK_PID}"
+
+ts_finalize

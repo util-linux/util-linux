@@ -1,0 +1,57 @@
+//po4a: entry man manual
+= ll2_unref_context(3)
+:doctype: manpage
+:man manual: Programmer's Manual
+:man source: util-linux {release-version}
+:page-layout: base
+:lib: liblastlog2
+:firstversion: 2.40
+
+== NAME
+
+ll2_unref_context - Frees lastlog2 context.
+
+== SYNOPSIS
+
+*#include <lastlog2.h>*
+
+*context * ll2_unref_context(ll2_context *context);
+
+== DESCRIPTION
+
+Frees lastlog2 context, which has been allocated by
+_ll2_new_context_.
+
+--------------------------------------
+
+const   char *db_path = "/var/lib/lastlog/lastlog2.db";
+ll2_context *context = ll2_new_context(db_path);
+
+/* other lastlog2 calls..... */
+
+ll2_unref_context(context);
+
+--------------------------------------
+
+== AUTHORS
+
+mailto:kukuk@suse.de[Thorsten Kukuk]
+
+== SEE ALSO
+
+*lastlog2*(3),
+*ll2_new_context*(3),
+*ll2_read_all*(3),
+*ll2_write_entry*(3),
+*ll2_read_entry*(3),
+*ll2_remove_entry*(3),
+*ll2_update_login_time*(3),
+*ll2_import_lastlog*(3)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer-lib.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

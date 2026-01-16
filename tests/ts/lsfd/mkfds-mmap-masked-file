@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mmap its backing file is masked by bind mount"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_MOUNTPOINT"
+ts_check_test_command "$TS_CMD_FALLOCATE"
+
+ts_check_prog "rm"
+ts_check_prog "stat"
+
+ts_cd "$TS_OUTDIR"
+
+FILE_MASKED=masked-$$
+FILE_MASKED_INO=
+FILE_MASKING=masking-$$
+FILE_MASKING_INO=
+
+cleanup()
+{
+    "$TS_CMD_UMOUNT" -q ${FILE_MASKED}
+    rm -f ${FILE_MASKED}
+    rm -f ${FILE_MASKING}
+}
+
+trap cleanup EXIT
+
+if ! "$TS_CMD_FALLOCATE" -l 4096 ${FILE_MASKED}; then
+    ts_skip "failed to make a file to be masked"
+fi
+FILE_MASKED_INO=$(stat -c '%i' ${FILE_MASKED})
+
+if ! "$TS_CMD_FALLOCATE" -l 4096 ${FILE_MASKING}; then
+    ts_skip "failed to make a file for masking"
+fi
+FILE_MASKING_INO=$(stat -c '%i' ${FILE_MASKING})
+
+PID=
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" mmap file=${FILE_MASKED}; }
+} >> "$TS_OUTPUT" 2>&1
+
+if read -u ${MKFDS[0]} PID; then
+    {
+	INO_BEFORE=$(${TS_CMD_LSFD} -p "$PID" -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
+	echo "INODE:" $?
+	[[ "${FILE_MASKED_INO}" == "${INO_BEFORE}" ]]
+	echo "BEFORE:" $?
+    } >> "$TS_OUTPUT" 2>&1
+
+    if ! "$TS_CMD_MOUNT" --bind ${FILE_MASKING} ${FILE_MASKED}; then
+	ts_skip "failed to mask ${FILE_MASKED}"
+    fi
+
+    {
+	INO_AFTER=$(${TS_CMD_LSFD} -p "$PID" -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
+	echo "INODE:" $?
+	[[ "${FILE_MASKED_INO}" == "${INO_AFTER}" ]]
+	echo "AFTER:" $?
+    } >> "$TS_OUTPUT" 2>&1
+fi
+
+echo DONE >&"${MKFDS[1]}"
+wait "${MKFDS_PID}"
+ts_finalize

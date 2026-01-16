@@ -1,0 +1,60 @@
+---
+# vi:ts=2 sw=2 et:
+#
+# Docs: https://packit.dev/docs/
+
+specfile_path: .packit_rpm/util-linux.spec
+files_to_sync:
+  - .packit.yaml
+  - src: .packit_rpm/util-linux.spec
+    dest: util-linux.spec
+upstream_package_name: util-linux
+downstream_package_name: util-linux
+# `git describe` returns in util-linux's case 'v2.37.2-xxx' which breaks RPM version
+# # detection (that expects 2.37.2-xxx'). Let's tweak the version string accordingly
+upstream_tag_template: "v{version}"
+srpm_build_deps: []
+
+actions:
+  post-upstream-clone:
+    # Use a spec file from Fedora Rawhide
+    - "git clone https://src.fedoraproject.org/rpms/util-linux.git .packit_rpm --depth=1"
+    # Drop the "sources" file so rebase-helper doesn't think we're a dist-git
+    - "rm -fv .packit_rpm/sources"
+    # Drop all patches, since they're already included in the tarball
+    - "sed -ri '/^Patch[0-9]+:/d' .packit_rpm/util-linux.spec"
+    # Install additional dependencies we need for the build/tests
+    - "sed -i '/^### Dependencies/aBuildRequires: autoconf automake bc bison flex iproute libtool procps-ng socat sqlite3 sqlite-devel' .packit_rpm/util-linux.spec"
+    # We need to call autogen, since we use a custom tarball
+    - "sed -i '/^unset LINGUAS/a./autogen.sh' .packit_rpm/util-linux.spec"
+    # Enable tests after build
+    - "sed -i '/^### Macros/a%define _with_check 1' .packit_rpm/util-linux.spec"
+    # Ignore unpackaged files
+    - "sed -i '1 i%define _unpackaged_files_terminate_build 0' .packit_rpm/util-linux.spec"
+    # Enable -Werror
+    - "sed -i 's/^%configure /%configure --enable-werror /' .packit_rpm/util-linux.spec"
+  create-archive:
+    # We need to override the default create-archive action, since we need to tweak
+    # the resulting tarball and add a .tarball-version file to it, otherwise
+    # util-linux fails to detect its version during build
+    - "bash -c 'echo $PACKIT_PROJECT_VERSION >.tarball-version'"
+    - "bash -c 'git archive --prefix ${PACKIT_PROJECT_NAME_VERSION}/ --add-file .tarball-version --output .packit_rpm/${PACKIT_PROJECT_NAME_VERSION}.tar.gz HEAD'"
+    - "bash -c 'echo .packit_rpm/${PACKIT_PROJECT_NAME_VERSION}.tar.gz'"
+
+# Available targets can be listed via `copr-cli list-chroots`
+jobs:
+  # Build test
+  - &copr
+    job: copr_build
+    trigger: pull_request
+    targets:
+      - fedora-rawhide-aarch64
+      - fedora-rawhide-i386
+      - fedora-rawhide-ppc64le
+      - fedora-rawhide-s390x
+      - fedora-rawhide-x86_64
+  - <<: *copr
+    trigger: commit
+    branch: master
+  - <<: *copr
+    trigger: release

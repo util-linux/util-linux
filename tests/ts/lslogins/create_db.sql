@@ -1,0 +1,9 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE Lastlog2(Name TEXT PRIMARY KEY, Time INTEGER, TTY TEXT, RemoteHost TEXT, Service TEXT);
+INSERT INTO Lastlog2 VALUES('user1',1706543115,'test-tty','localhost','test');
+INSERT INTO Lastlog2 VALUES('user2',0,NULL,NULL,NULL);
+INSERT INTO Lastlog2 VALUES('user3',1706543115,NULL,NULL,NULL);
+INSERT INTO Lastlog2 VALUES('root',1706543115,'test-tty','test-host',NULL);
+INSERT INTO Lastlog2 VALUES('user5',1706543115,NULL,'localhost',NULL);
+COMMIT;

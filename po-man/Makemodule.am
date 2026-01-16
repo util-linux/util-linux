@@ -1,0 +1,67 @@
+
+POMAN_PO_FILES = $(wildcard po-man/*.po)
+EXTRA_DIST += po-man/README.md \
+	      po-man/po4a.cfg \
+	      po-man/util-linux-man.pot \
+	      $(POMAN_PO_FILES)
+
+DISTCLEANFILES += po-man/util-linux-man.pot $(POMAN_PO_FILES)
+
+if ENABLE_ASCIIDOC
+if ENABLE_POMAN
+
+PO_STAMPS = po4a-gen.stamp
+
+CLEANFILES += $(PO_STAMPS)
+
+asciidoc_poman_translate_cmd = $(abs_srcdir)/tools/poman-translate.sh \
+	--progress \
+	--srcdir '$(abs_srcdir)/po-man' \
+	--destdir '$(abs_builddir)/po-man/translations' \
+	--asciidoctor-load-path '$(abs_srcdir)/tools' \
+	--docdir '$(docdir)' \
+	--po4acfg '$(abs_srcdir)/po-man/po4a.cfg' \
+	--util-linux-version '$(VERSION)'
+
+asciidoc_poman_install_cmd = $(abs_srcdir)/tools/poman-install.sh \
+	--mandir '$(DESTDIR)$(mandir)' \
+	--mansrcdir '$(abs_builddir)/po-man/translations/man'
+
+ADOCFILES = $(MANPAGES:=.adoc)
+
+po4a-gen.stamp: $(POMAN_PO_FILES) $(ADOCFILES_COMMON) $(ADOCFILES)
+	@$(asciidoc_poman_translate_cmd) $(ADOCFILES)
+	@touch po4a-gen.stamp
+
+gen-poman-dist:
+	@echo "Updating po-man PO and POT files"
+	@$(PO4A) --no-translations --force \
+		 --srcdir '$(abs_srcdir)/po-man' \
+		 --destdir '$(abs_builddir)/po-man' \
+		 '$(abs_srcdir)/po-man/po4a.cfg'
+
+gen-poman: $(PO_STAMPS)
+
+install-data-hook-poman:
+	@$(asciidoc_poman_install_cmd) --install
+INSTALL_DATA_HOOKS += install-data-hook-poman
+
+
+uninstall-hook-poman:
+	@$(asciidoc_poman_install_cmd) --uninstall
+UNINSTALL_HOOKS += uninstall-hook-poman
+
+
+clean-local-hook-poman:
+	@rm -rf $(top_builddir)/po-man/translations
+CLEAN_LOCALS += clean-local-hook-poman
+
+
+# !ENABLE_POMAN
+else
+gen-poman:
+gen-poman-dist:
+endif
+
+# ENABLE_ASCIIDOC
+endif

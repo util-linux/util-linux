@@ -1,0 +1,5 @@
+Print sizes in bytes rather than in human-readable form.
++
+By default, sizes are shown in units that are powers of 1024 bytes.
+The formal abbreviations for these units (KiB, MiB, GiB, ...) are
+further shortened to just their first letter: K, M, G, ....

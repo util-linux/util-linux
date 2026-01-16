@@ -1,0 +1,105 @@
+#!/bin/bash
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# git-grouped-log - generates a grouped list of commits based on subsystems
+#                   prefix in commit messages.
+#
+# Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+# Ensure we're in a Git repository
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    echo "Error: Not inside a Git repository." >&2
+    exit 1
+}
+
+# Display help message
+if [[ "$1" == "--help" ]]; then
+    echo "Usage: $(basename $0) [--start <commit_id>] [--end <commit_id>]"
+    echo
+    echo "Generates a grouped list of commits based on subsystems."
+    exit 0
+fi
+
+declare -A commits
+declare -A subsystems
+
+start_commit="HEAD"
+end_commit=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --start)
+            start_commit="$2"
+            shift 2
+            ;;
+        --end)
+            end_commit="$2"
+            shift 2
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            exit 1
+            ;;
+    esac
+done
+
+# Verify end and start
+if ! git rev-parse --verify "$start_commit" >/dev/null 2>&1; then
+    echo "Error: Start commit '$start_commit' not found." >&2
+    exit 1
+fi
+if [[ -n "$end_commit" ]] && ! git rev-parse --verify "$end_commit" >/dev/null 2>&1; then
+    echo "Error: End commit '$end_commit' not found." >&2
+    exit 1
+fi
+
+# Construct git log range
+if [[ -n "$end_commit" ]]; then
+    range="$end_commit..$start_commit"
+else
+    range="$start_commit"
+fi
+
+while IFS='|' read -r subj author; do
+    # Handle "Revert" commits separately
+    if [[ "$subj" =~ ^Revert\ \"([^:]+):.* ]]; then
+        subsys="${BASH_REMATCH[1]}"
+        desc="(reverted) "$(echo "$subj" | sed -E 's/^Revert \"[^:]+: //;s/\"$//')
+    else
+        # Extract subsystem name (everything before the first colon)
+        subsys=$(echo "$subj" | awk -F': ' '{print $1}')
+        desc=$(echo "$subj" | awk -F': ' '{$1=""; sub(/^ /, ""); print}')
+    fi
+    
+    # If no subsystem is detected, categorize under "Misc"
+    if [[ -z "$desc" ]]; then
+        subsys="Misc"
+        desc="$subj"
+    fi
+    
+    key=$(echo "$subsys" | sed 's|[^a-zA-Z0-9_]|_|g')
+    
+    subsystems["$key"]="$subsys"
+    commits["$key"]+="    - $desc (by $author)
+"
+done < <(git log --no-merges --pretty=format:'%s|%an' "$range" --)
+
+misc=""
+for key in $(printf "%s\n" "${!commits[@]}" | sort); do
+    if [[ "${subsystems[$key]}" == "Misc" ]]; then
+        misc="${subsystems[$key]}:\n${commits[$key]}"
+    else
+        echo "${subsystems[$key]}:"
+        echo -e "${commits[$key]}"
+    fi
+done
+
+if [[ -n "$misc" ]]; then
+    echo -e "$misc"
+fi

@@ -1,0 +1,116 @@
+//po4a: entry man manual
+= setarch(8)
+:doctype: manpage
+:man manual: System Administration
+:man source: util-linux {release-version}
+:page-layout: base
+:command: setarch
+
+== NAME
+
+setarch - change reported architecture in new program environment and/or set personality flags
+
+== SYNOPSIS
+
+*setarch* [_arch_] [options] [_program_ [_argument_...]]
+
+_arch_ [options] [_program_ [_argument_...]]
+
+== DESCRIPTION
+
+*setarch* modifies the execution domain and process personality flags.
+
+The execution domain currently only affects the output of *uname -m*.
+For example, on an AMD64 system, running *setarch i386* _program_ will
+cause _program_ to see *i686* instead of *x86_64* as the machine type.
+The default _program_ is */bin/sh*.
+
+Since version 2.33, the _arch_ command-line argument is optional
+and *setarch* may be used to change personality flags (ADDR_LIMIT_3GB,
+SHORT_INODE, etc) without modification of the execution domain.
+
+== OPTIONS
+
+*--list*::
+List the architectures that *setarch* knows about. Whether *setarch* can actually set each of these architectures depends on the running kernel.
+
+*--show*[**=**_personality_]::
+Show the currently active personality and flags.
+If the _personality_ argument is provided, that personality is shown instead of the current one.
+_personality_ is a hexadecimal number whose possible values are described in *sys/personality.h*.
+
+*-p*, **--pid=**_pid_::
+When used with *--show*, show the personality and flags of the specified process.
+
+*--uname-2.6*::
+Causes the specified _program_ to see a kernel version number beginning with 2.6. Turns on *UNAME26*.
+
+*-v*, *--verbose*::
+Be verbose.
+
+*-3*, *--3gb*::
+The specified _program_ should use a maximum of 3GB of address space. Supported on x86. Turns on *ADDR_LIMIT_3GB*.
+
+*--4gb*::
+This option has no effect. It is retained for backward compatibility only, and may be removed in future releases.
+
+*-B*, *--32bit*::
+Limit the address space to 32 bits to emulate hardware. Supported on ARM and Alpha. Turns on *ADDR_LIMIT_32BIT*.
+
+*-F*, *--fdpic-funcptrs*::
+Treat user-space function pointers to signal handlers as pointers to address descriptors. This option has no effect on architectures that do not support *FDPIC* ELF binaries. In kernel v4.14 support is limited to ARM, Blackfin, Fujitsu FR-V, and SuperH CPU architectures.
+
+*-I*, *--short-inode*::
+Obsolete bug emulation flag. Turns on *SHORT_INODE*.
+
+*-L*, *--addr-compat-layout*::
+Provide legacy virtual address space layout. Use when the _program_ binary does not have *PT_GNU_STACK* ELF header. Turns on *ADDR_COMPAT_LAYOUT*.
+
+*-R*, *--addr-no-randomize*::
+Disables randomization of the virtual address space. Turns on *ADDR_NO_RANDOMIZE*.
+
+*-S*, *--whole-seconds*::
+Obsolete bug emulation flag. Turns on *WHOLE_SECONDS*.
+
+*-T*, *--sticky-timeouts*::
+This makes *select*(2), *pselect*(2), and *ppoll*(2) system calls preserve the timeout value instead of modifying it to reflect the amount of time not slept when interrupted by a signal handler. Use when _program_ depends on this behavior. For more details see the timeout description in *select*(2) manual page. Turns on *STICKY_TIMEOUTS*.
+
+*-X*, *--read-implies-exec*::
+If this is set then *mmap*(2) *PROT_READ* will also add the *PROT_EXEC* bit - as expected by legacy x86 binaries. Notice that the ELF loader will automatically set this bit when it encounters a legacy binary. Turns on *READ_IMPLIES_EXEC*.
+
+*-Z*, *--mmap-page-zero*::
+SVr4 bug emulation that will set *mmap*(2) page zero as read-only. Use when _program_ depends on this behavior, and the source code is not available to be fixed. Turns on *MMAP_PAGE_ZERO*.
+
+include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+....
+setarch --addr-no-randomize mytestprog
+setarch ppc32 rpmbuild --target=ppc --rebuild foo.src.rpm
+setarch ppc32 -vL3 rpmbuild --target=ppc --rebuild bar.src.rpm
+setarch ppc32 --32bit rpmbuild --target=ppc --rebuild foo.src.rpm
+setarch --show
+setarch --show=$(cat /proc/9284/personality)
+setarch --show --pid 9284
+....
+
+== AUTHORS
+
+mailto:sopwith@redhat.com[Elliot Lee],
+mailto:jnovy@redhat.com[Jindrich Novy],
+mailto:kzak@redhat.com[Karel Zak]
+
+== SEE ALSO
+
+*personality*(2),
+*select*(2)
+*proc_pid_personality(5)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

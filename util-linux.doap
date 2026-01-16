@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xml:lang="en"
+         xmlns="http://usefulinc.com/ns/doap#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <Project rdf:about="https://www.kernel.org/pub/linux/utils/util-linux/">
+    <name>util-linux</name>
+    <homepage rdf:resource="https://www.kernel.org/pub/linux/utils/util-linux/" />
+    <shortdesc>
+      util-linux is a random collection of Linux utilities
+    </shortdesc>
+    <description>
+      util-linux is a random collection of Linux utilities.
+      Note that in years 2006-2010 this project used the name "util-linux-ng".
+    </description>
+    <bug-database rdf:resource="https://github.com/util-linux/util-linux/issues" />
+    <mailing-list rdf:resource="http://vger.kernel.org/vger-lists.html#util-linux" />
+    <download-page rdf:resource="https://www.kernel.org/pub/linux/utils/util-linux/" />
+    <programming-language>C</programming-language>
+    <repository>
+      <GitRepository>
+        <location rdf:resource="git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git"/>
+        <browse rdf:resource="https://git.kernel.org/cgit/utils/util-linux/util-linux.git"/>
+      </GitRepository>
+    </repository>
+    <maintainer>
+      <foaf:Person>
+        <foaf:name>Karel Zak</foaf:name>
+        <foaf:mbox rdf:resource="mailto:kzak@redhat.com" />
+      </foaf:Person>
+    </maintainer>
+  </Project>
+</rdf:RDF>

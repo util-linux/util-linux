@@ -1,0 +1,80 @@
+#!/bin/bash
+
+# Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="canonicalize"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_prog "getent"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_SETPRIV"
+ts_check_test_command "$TS_HELPER_CANONICALIZE"
+
+grep -q 'nodev[[:space:]]*tmpfs' /proc/filesystems || \
+	ts_skip_subtest "tmpfs unsupported"
+
+mkdir -p $TS_MOUNTPOINT &>  /dev/null
+$TS_CMD_MOUNT -t tmpfs tmpfs $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+[ $? -eq 0 ] || ts_skip "tmpfs mount failed"
+
+# reuse the same TS_MOUNTPOINT in all subtests
+BASE=$TS_MOUNTPOINT
+
+# setup suid binary
+TESTPROG=${BASE}/$(basename $TS_HELPER_CANONICALIZE)
+cp $TS_HELPER_CANONICALIZE $TESTPROG
+chown root:root $TESTPROG
+chmod +x,u+s $TESTPROG
+
+if [ ! -u "$TESTPROG" ] || [ ! -x "$TESTPROG" ]; then
+	$TS_CMD_UMOUNT $BASE
+	ts_skip "cannot setup suid test"
+fi
+
+
+ts_init_subtest root-user
+mkdir -p ${BASE}/aaa/bbb
+mkdir -p ${BASE}/ccc/ddd
+ln -s ${BASE}/ccc ${BASE}/aaa/bbb/ccc-sym
+$TESTPROG ${BASE}/aaa/bbb/ccc-sym/ddd | sed "s:${BASE}::g" >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+
+ts_init_subtest non-root-user
+uid="nobody"
+if id $uid &>/dev/null; then
+	mkdir -p ${BASE}/root/foo
+	chown -R root:root ${BASE}/root
+	chmod -R o-rwx ${BASE}/root
+	ln -s ${BASE}/root ${BASE}/root-sym
+
+	gid=$(getent passwd "$uid" | cut -d: -f4)
+
+	$TS_CMD_SETPRIV --reuid="$uid" --regid="$gid" --clear-groups \
+			--inh-caps=-all --reset-env \
+			-- $TESTPROG ${BASE}/root-sym/foo \
+		| sed "s:${BASE}::g" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+	ts_finalize_subtest
+else
+	ts_skip_subtest "nobody user is missing"
+fi
+
+
+# cleanup
+$TS_CMD_UMOUNT $BASE &> /dev/null
+
+ts_finalize

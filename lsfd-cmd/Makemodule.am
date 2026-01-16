@@ -1,0 +1,25 @@
+if BUILD_LSFD
+
+lsfd-cmd/file.c: errnos.h
+
+bin_PROGRAMS += lsfd
+MANPAGES += lsfd-cmd/lsfd.1
+dist_noinst_DATA += lsfd-cmd/lsfd.1.adoc
+lsfd_SOURCES = \
+	lsfd-cmd/lsfd.c \
+	lsfd-cmd/lsfd.h \
+	lsfd-cmd/decode-file-flags.c \
+	lsfd-cmd/decode-file-flags.h \
+	lsfd-cmd/file.c \
+	lsfd-cmd/cdev.c \
+	lsfd-cmd/bdev.c \
+	lsfd-cmd/sock.c \
+	lsfd-cmd/sock.h \
+	lsfd-cmd/sock-xinfo.c \
+	lsfd-cmd/unkn.c \
+	lsfd-cmd/fifo.c \
+	lsfd-cmd/pidfd.h \
+	lsfd-cmd/pidfd.c
+lsfd_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la libcommon.la
+lsfd_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif

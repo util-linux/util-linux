@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="VSOCK stream sockets"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+. "$TS_SELF/lsfd-functions.bash"
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+lsfd_check_mkfds_factory vsock
+
+ts_check_prog "modprobe"
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+FDS=3
+FDC=4
+FDA=5
+SPORT=12345
+CPORT=23456
+EXPR='(TYPE == "AF_VSOCK") and (FD >= 3) and (FD <= 5)'
+
+# AF_VSOCK+SOCK_DGRAM requires this.
+modprobe --quiet vmw_vsock_vmci_transport ||:
+modprobe --quiet vmw_vsock_virtio_transport ||:
+modprobe --quiet hv_vsock ||:
+
+# VMADDR_CID_LOCAL requires this.
+modprobe --quiet vsock_loopback	||:
+
+modprobe --quiet vsock_diag || :
+
+lsfd_check_vsock
+lsfd_check_sockdiag vsock raw
+
+{
+
+    for t in STREAM DGRAM SEQPACKET; do
+	coproc MKFDS { "$TS_HELPER_MKFDS" vsock $FDS $FDC $FDA \
+					  server-port=$SPORT client-port=$CPORT \
+					  socktype=$t ; }
+	if read -r -u "${MKFDS[0]}" PID; then
+	    echo "# TYPE: $t"
+	    ${TS_CMD_LSFD} -n \
+			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING \
+			   -p "${PID}" -Q "${EXPR}"
+	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING': ${PIPESTATUS[0]}
+	    ${TS_CMD_LSFD} -n \
+			   -o VSOCK.LADDR,VSOCK.LCID,VSOCK.LPORT,VSOCK.RADDR,VSOCK.RCID,VSOCK.RPORT \
+			   -p "${PID}" -Q "${EXPR}"
+	    echo 'VSOCK.LADDR,VSOCK.LCID,VSOCK.LPORT,VSOCK.RADDR,VSOCK.RCID,VSOCK.RPORT': ${PIPESTATUS[0]}
+	    echo DONE >&"${MKFDS[1]}"
+	fi
+	wait "${MKFDS_PID}"
+    done
+} > "$TS_OUTPUT" 2>&1
+
+ts_finalize

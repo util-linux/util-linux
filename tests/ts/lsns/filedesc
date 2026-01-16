@@ -1,0 +1,81 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+# This test case is based on the issue (#1884) submitted by @hesch
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="list the namespace pointed by a file descriptor"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_LSNS"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
+ts_check_prog "ip"
+
+ts_skip_nonroot
+
+if [ "$($TS_HELPER_SYSINFO ns-gettype-ok)" == "0" ]; then
+    ts_skip "NS_GET_NSTYPE ioctl cmd not available"
+fi
+
+if [ "$($TS_HELPER_SYSINFO ns-getuserns-ok)" == "0" ]; then
+    ts_skip "NS_GET_USERNS ioctl cmd not available"
+fi
+
+FD=4
+NS=LSNS-TEST-FILEDESC-NS
+FILE=/run/netns/$NS
+PID=
+
+cleanup()
+{
+    ip netns delete $NS 2> /dev/null || :
+}
+
+cleanup
+
+if ! ip netns add $NS; then
+   ts_skip "failed to make a namespace"
+fi
+trap "cleanup" EXIT
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD file=$FILE; }
+    if read -u ${MKFDS[0]} PID; then
+	# Make the namespace invisible from the file system tree.
+	cleanup
+	lsfd_expr="PID == ${PID} and FD == $FD"
+	lsfd_inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${lsfd_expr}")
+	lsns_expr="NS == $lsfd_inode"
+	lsns_output=$(${TS_CMD_LSNS}    -n --raw -o TYPE,NPROCS,USER -Q "${lsns_expr}")
+	if ! [ "${lsns_output}" == "net 0 root" ]; then
+	    echo lsfd_inode: $lsfd_inode
+	    echo lsns_output: $lsns_output
+	    echo LSFD:
+	    ${TS_CMD_LSFD} -Q "PID == $PID"
+	    echo LSNS:
+	    LSNS_DEBUG=all ${TS_CMD_LSNS}
+	    echo lsns_status: $?
+	fi
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > $TS_OUTPUT 2>&1
+ts_finalize

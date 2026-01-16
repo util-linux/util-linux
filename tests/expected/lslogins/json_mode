@@ -1,0 +1,10 @@
+{
+   "logins": [
+      {
+         "user": "root",
+         "last-login": "2024-01-29T15:45:15+00:00",
+         "last-tty": "test-tty",
+         "last-hostname": "test-host"
+      }
+   ]
+}

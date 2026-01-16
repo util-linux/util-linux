@@ -1,0 +1,6 @@
+test_enosys: fallocate r=-1 errno=Bad file descriptor
+test_enosys: fallocate r=-1 errno=Function not implemented
+test_enosys: fallocate r=-1 errno=Function not implemented
+test_enosys: fallocate r=-1 errno=Function not implemented
+test_enosys: fallocate r=-1 errno=Cannot allocate memory
+test_enosys: fallocate r=-1 errno=Cannot allocate memory

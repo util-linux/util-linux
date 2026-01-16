@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="shell"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot
+
+username="$(whoami)"
+
+ts_init_subtest "command-option"
+"$TS_CMD_SU" --shell "/bin/bash" --command "echo \$SHELL" "$username" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "additional-args"
+"$TS_CMD_SU" --shell "/bin/bash" "$username" -c "echo \$SHELL" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_finalize

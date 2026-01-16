@@ -1,0 +1,97 @@
+//po4a: entry man manual
+////
+Copyright 2023 Thorsten Kukuk (kukuk@suse.de)
+This file may be copied under the terms of the GNU General Public License.
+////
+ifdef::neverdefined[---]
+
+= lastlog2(8)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: lastlog2
+
+== NAME
+
+lastlog2 - displays date of last login for all users or a specific one
+
+== SYNOPSIS
+
+*lastlog2* [options]
+
+== DESCRIPTION
+
+*lastlog2* displays the content of the last-login database. The _login-name_,
+_last-login-time_, _tty_ and _remote-host_ will be printed.
+By default (no flags) all last-login entries are printed,
+in the order they were first written into the database.
+
+If a user has never logged in, the message *+++**+++Never logged in+++**+++*
+is displayed in the last-login-time column.
+
+Only the entries for the current users of the system are displayed.
+Other entries may exist for users that have meanwhile been deleted.
+
+Compared to *lastlog*(8), this command is Y2038-safe, and uses SQLite3
+instead of a sparse file to store the information.
+
+== OPTIONS
+
+*-a*, *--active*::
+Do not print entries for users who have never logged in.
+
+*-b*, *--before* _days_::
+Print only the last-login records older than _days_.
+
+*-C*, *--clear*::
+Clear the last-login record of a user.
+This option can only be used together with *-u* (*--user*).
+
+*-d*, *--database* _file_::
+Use _file_ as *lastlog2* database.
+
+*-i*, *--import* _file_::
+Import data from an old lastlog file named _file_.
+Existing entries in the lastlog2 database will be overwritten.
+
+*-r*, *--rename* _newname_::
+Rename the user given with *-u* to this _newname_.
+This option can only be used together with *-u* (*--user*).
+
+*-s*, *--service*::
+Display the PAM service used to login in the last column.
+
+*-S*, *--set*::
+Set the last-login record of a user to the current time.
+This option can only be used together with *-u* (*--user*).
+
+*-t*, *--time* _days_::
+Print only last-login records more recent than _days_.
+
+*-u*, *--user* _login_::
+Print (or modify) the last-login record of the user _login_.
+
+include::man-common/help-version.adoc[]
+
+== FILES
+
+*/var/lib/lastlog/lastlog2.db*::
+Lastlog2 logging database file
+
+
+== AUTHORS
+
+lastlog2 was written by Thorsten Kukuk for *liblastlog2*(3).
+
+== SEE ALSO
+
+*liblastlog2*(3)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

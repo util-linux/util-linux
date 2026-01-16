@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="-Q, --filter option"
+
+. "$TS_TOPDIR"/functions.sh
+# for $EPERM
+. "$TS_TOPDIR"/ts/lsfd/lsfd-functions.bash
+
+ts_init "$*"
+
+# https://github.com/util-linux/util-linux/pull/3205
+TS_KNOWN_FAIL="yes"
+
+ts_check_test_command "$TS_CMD_LSNS"
+ts_check_test_command "$TS_CMD_LSFD"
+
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+# unshare(2) used in userns factory of test_mkfds reports "Invalid argument".
+ts_skip_qemu_user
+
+lsfd_check_userns
+
+ts_cd "$TS_OUTDIR"
+PID=
+FD=4
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC userns $FD; }
+    if read -u ${MKFDS[0]} PID; then
+	lsfd_expr="PID == ${PID} and ASSOC == \"user\""
+	inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${lsfd_expr}")
+	for opt in -Q --filter; do
+	    lsns_expr="NS == $inode && NPROCS == 1"
+	    pid=$(${TS_CMD_LSNS} -n --raw -o PID "$opt" "${lsns_expr}")
+	    if [[ "$pid" = "$PID" ]]; then
+		echo  "$opt: pid == PID"
+	    else
+		echo "$opt: pid != PID"
+		echo lsfd_expr: "${lsfd_expr}"
+		echo lsns_expr: "${lsns_expr}"
+		echo pid: "${pid}"
+		echo PID: "${PID}"
+		echo inode: "${inode}"
+		echo lsfd:
+		${TS_CMD_LSFD} -n --raw $opt "${lsfd_expr}"
+		echo lsns:"${lsns_expr}"
+		${TS_CMD_LSNS} -n --raw $opt "${lsns_expr}"
+		echo lsns:inode:
+		${TS_CMD_LSNS} -n --raw $opt "NS == $inode"
+		echo lsns:NPROCS:
+		${TS_CMD_LSNS} -n --raw $opt "NPROCS == 1"
+		echo lsns
+		${TS_CMD_LSNS} -n --raw
+	    fi
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > $TS_OUTPUT 2>&1
+if [ "$?" == "$EPERM" ]; then
+    ts_skip "unshare(2) is not permitted on this platform"
+fi
+ts_finalize

@@ -1,0 +1,90 @@
+//po4a: entry man manual
+= irqtop(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: irqtop
+
+== NAME
+
+irqtop - display kernel interrupt information
+
+== SYNOPSIS
+
+*irqtop* [options]
+
+== DESCRIPTION
+
+Display interrupt-counter information from the kernel in the style of *top*(1).
+
+The default output is subject to change. So whenever possible, you should avoid using default outputs in your scripts. Always explicitly define expected columns by using *--output*.
+
+== OPTIONS
+
+*-o*, *--output* _list_::
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
+
+*-b*, *--batch*::
+Send the produced tables to stdout instead of to a static screen.
+This can be used for sending the output to other programs or to a file.
+
+*-c*, *--cpu-stat* _when_::
+Whether to show the per-CPU statistics. Possible arguments are: *auto*, *never*, *always*.
+The default is *auto*: the per-CPU statistics are shown when the window is wide enough
+for the full list of CPUs.
+
+*-C*, *--cpu-list* _list_::
+Specify cpus in list format to show.
+
+*-d*, *--delay* _seconds_::
+Update the tables every this number of seconds.
+
+*-J*, *--json*::
+Use JSON output format. Implies *--batch*.
+
+*-n*, *--iter* _number_::
+Specifies the maximum iterations before quitting.
+
+*-s*, *--sort* _column_::
+Specify sort criteria by column name. See *--help* output to get column names. The sort criteria may be changes in interactive mode.
+
+*-S*, *--softirq*::
+Show softirqs information.
+
+*-t*, *--threshold* _min_::
+Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
+
+include::man-common/help-version.adoc[]
+
+== INTERACTIVE MODE KEY COMMANDS
+
+*i*::
+sort by short irq name or number field
+
+*t*::
+sort by total count of interrupts (the default)
+
+*d*::
+sort by delta count of interrupts
+
+*n*::
+sort by long descriptive name field
+
+*q Q*::
+stop updates and exit program
+
+== AUTHORS
+
+mailto:pizhenwei@bytedance.com[Zhenwei Pi],
+mailto:kerolasa@iki.fi[Sami Kerola],
+mailto:kzak@redhat.com[Karel Zak]
+mailto:robin@jarry.cc[Robin Jarry]
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

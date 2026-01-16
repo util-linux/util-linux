@@ -1,0 +1,208 @@
+#!/bin/bash
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# git-tp-sync - downloads the latest PO files from translationproject.org
+#               and commits changes to your GIT repository.
+#
+# Copyright (C) 2007-2025 Karel Zak <kzak@redhat.com>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+declare -A TP_PROJECTS
+
+# Define local directories and project names on TP.org
+#
+#  TP_PROJECTS[<dirname>]=<project>
+#
+TP_PROJECTS["po"]="util-linux"
+TP_PROJECTS["po-man"]="util-linux-man"
+
+URL="rsync://translationproject.org/tp/latest"
+
+DRYRUN="false"
+LANGS=()
+DIRS=()
+
+while [[ $# -gt 0 ]]; do
+	case $1 in
+	--dry-run)
+		DRYRUN="true"
+		shift
+		;;
+	--dir)
+		DIRS+=("$2")
+		shift
+		shift
+		;;
+	--usage | --help)
+		echo "$(basename "$0") [--dir <dir>] [--dry-run] [<lang> ...]"
+		exit 0
+		;;
+	*)
+		LANGS+=("$1")
+		shift;
+		;;
+	esac
+done
+
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+	echo "Error: Not inside a Git repository." >&2
+	exit 1
+}
+
+# default to all dirs defined by TP_PROJECTS
+if [ ${#DIRS[@]} -eq 0 ]; then
+	DIRS=( ${!TP_PROJECTS[@]} )
+fi
+
+function get_author {
+	echo $(gawk 'BEGIN { FS=": " } /Last-Translator/ { sub("\\\\n\"", ""); print $2 }' "$1")
+}
+
+function get_revision {
+	echo $(gawk 'BEGIN { FS=": " } /PO-Revision-Date/ { sub("\\\\n\"", ""); print $2 }' "$1" \
+		| date '+%s' -f -)
+}
+
+function get_revision_orig {
+	echo $(git show HEAD:"$1" \
+		| gawk 'BEGIN { FS=": " } /PO-Revision-Date/ { sub("\\\\n\"", ""); print $2 }' \
+		| date '+%s' -f -)
+}
+
+function git_commit {
+	local POFILE="$1"
+	local MSG="$2"
+	local AUTHOR=$(get_author "$POFILE")
+
+	git commit --author "$AUTHOR" -m "$MSG" "$POFILE"
+}
+
+function save_modified_files {
+	local POFILENAME="$1"
+	local PODIR="$2"
+	local POFILE="${PODIR}/${POFILENAME}"
+
+	printf " %s : %10s : " $PODIR $POFILENAME
+
+	new_rev=$(get_revision "$POFILE")
+	old_rev=$(get_revision_orig "$POFILE")
+
+	if [ $new_rev -gt $old_rev ]; then
+		if [ "$DRYRUN" = "true" ]; then
+			echo " updated (ingore, dry-run)"
+		else
+			echo " updated"
+			git_commit $POFILE "$PODIR: update $POFILENAME (from translationproject.org)"
+		fi
+	else
+		echo " ok"
+	fi
+}
+
+function git_files {
+	local MODE="$1"
+	local PODIR="$2"
+
+	echo $(git ls-files $MODE "${PODIR}/*.po" \
+		| gawk '/[[:alpha:]_\-]*\.po/ { sub(".*/", ""); print $0; }' \
+		| sort)
+}
+
+function download_files {
+	local PROJECT="$1"
+	local PODIR="$2"
+
+	echo -n " Dowloding from ${URL}/${PROJECT} ..."
+
+	if [ ${#LANGS[@]} -eq 0 ]; then
+		rsync  -Lrtz  "$URL"/"$PROJECT"/ "$PODIR"
+	else
+		for l in "${LANGS[@]}"; do
+			rsync  -Lrtz  "$URL"/"$PROJECT"/"$l".po "$PODIR"
+		done
+	fi
+	echo " done"
+}
+
+function update_project {
+	local PROJECT="$1"
+	local PODIR="$2"
+
+	echo
+	echo "== Syncing $PROJECT to $PODIR/ ==="
+
+	download_files $PROJECT $PODIR
+
+	PO_NEW=$(git_files -o $PODIR)
+	PO_MOD=$(git_files -m $PODIR)
+
+	for f in $PO_MOD; do
+		save_modified_files $f $PODIR
+	done
+
+	for f in $PO_NEW; do
+		git add "$PODIR/$f"
+		git_commit "$PODIR/$f" "$PODIR: add $f (from translationproject.org)"
+	done
+
+	if [ -f "${PODIR}/LINGUAS" ]; then
+		LINGUAS=$(find $PODIR"/" -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort)
+		echo "$LINGUAS" > "${PODIR}/LINGUAS"
+
+		if [ "$(git ls-files -m "${PODIR}/LINGUAS")" = "${PODIR}/LINGUAS" ]; then
+			if [ "$DRYRUN" = "true" ]; then
+				echo ""${PODIR}/LINGUAS" needs update"
+			else
+				git commit -m "$PODIR: update LINGUAS list" "${PODIR}/LINGUAS"
+			fi
+		fi
+	fi
+
+	# cleanup
+	git checkout -f "$PODIR"/ &> /dev/null
+}
+
+function regenerate_po_files {
+	local PODIR="$1"
+
+	if [ "$PODIR" = "po" ]; then
+		if [  "${PODIR}/Makefile" ]; then
+			return;
+		else
+			echo "== Updating $PODIR (be patient) =="
+			make -C $PODIR update-po &> /dev/null
+		fi
+	elif [ "$PODIR" = "po-man" ]; then
+		echo "== Updating $PODIR (be patient) =="
+		make gen-poman-dist
+	else
+		echo "Unsupported $PODIR directory (skip update)"
+		return;
+	fi
+
+	# ignore files where is only modified one line ("POT-Creation-Date")
+	PO_IGNORE=$(git diff --numstat  $PODIR/*.po | gawk -v ORS=" " '/1[[:blank:]]1[[:blank:]]/ { print $3 }')
+	if [ -n "$PO_IGNORE" ]; then
+		git checkout -f $PO_IGNORE &> /dev/null
+	fi
+
+	if [ $(git ls-files -m "$PODIR" | wc -l) -gt 0 ]; then
+		if [ "$DRYRUN" = "true" ]; then
+			echo "${PODIR}: needs merge changes"
+		else
+			git commit -m "$PODIR: merge changes" $PODIR
+		fi
+	fi
+
+	git checkout -f "$PODIR" &> /dev/null
+}
+
+for d in "${DIRS[@]}"; do
+	update_project "${TP_PROJECTS[$d]}" "$d"
+	regenerate_po_files "$d"
+done

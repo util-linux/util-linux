@@ -1,0 +1,4 @@
+@TESTDIR@/etc/proj/example.conf.d/10-config.conf
+@TESTDIR@/usr/proj/example.conf.d/10-config.conf
+Found 1 configuration file(s):
+  @TESTDIR@/etc/proj/example.conf.d/10-config.conf

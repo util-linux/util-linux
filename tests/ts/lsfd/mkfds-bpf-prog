@@ -1,0 +1,65 @@
+#!/bin/bash
+#
+# Copyright (C) 2023 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="bpf-prog files"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+ts_skip_docker
+
+. "$TS_SELF/lsfd-functions.bash"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+ID=
+TAG=
+FD=3
+NAME=mkdfs_prog
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" bpf-prog "$FD" prog-type-id=2 name="$NAME"; }
+    if read -r -u "${MKFDS[0]}" PID ID TAG; then
+	"${TS_CMD_LSFD}" -r -n -oBPF-PROG.TYPE,BPF-PROG.TYPE.RAW,BPF.NAME -p "${PID}" -Q "(FD == $FD)"
+	echo "BPF-PROG.TYPE,BPF-PROG.TYPE.RAW,BPF.NAME": $?
+
+	ID_0=$("${TS_CMD_LSFD}" -r -n -oBPF-PROG.ID -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${ID_0}" == "${ID}" ]]; then
+	    echo "comparing  ids": OK
+	else
+	    echo "comparing  ids": FAILED "ID_0:${ID_0} == ID:${ID}"
+	fi
+
+	TAG_0=$("${TS_CMD_LSFD}" -r -n -oBPF-PROG.TAG -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${TAG_0}" == "${TAG}" ]]; then
+	    echo "comparing  tags": OK
+	else
+	    echo "comparing  tags": FAILED "TAG_0:${TAG_0} == TAG:${TAG}"
+	fi
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > "$TS_OUTPUT" 2>&1
+
+if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
+    ts_skip "bpf(2) is not available"
+fi
+
+ts_finalize

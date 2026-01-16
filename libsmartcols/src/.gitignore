@@ -1,0 +1,5 @@
+libsmartcols.h
+filter-parser.c
+filter-scanner.c
+filter-scanner.h
+filter-parser.h

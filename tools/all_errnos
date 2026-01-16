@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Derived from all_syscalls.
+
+set -e
+set -o pipefail
+
+SED="$1"
+shift
+OUTPUT="$1"
+shift
+ERRNO_INCLUDES="
+#include <sys/errno.h>
+"
+
+trap 'rm -f $OUTPUT $OUTPUT.deps' ERR
+
+"$@" -MD -MF "$OUTPUT.deps" <<< "$ERRNO_INCLUDES" -dM -E - \
+	| "$SED" -n -e 's/^[ \t]*#define[ \t]*E\([^ ]*\).*$/UL_ERRNO("E\1", E\1)/p' \
+	| sort \
+	> "$OUTPUT"

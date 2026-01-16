@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="find an isolated net namespace via socket"
+
+. "$TS_TOPDIR"/functions.sh
+# for $EPERM
+. "$TS_TOPDIR"/ts/lsfd/lsfd-functions.bash
+
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_LSNS"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
+ts_skip_nonroot
+
+if [ "$($TS_HELPER_SYSINFO ns-gettype-ok)" == "0" ]; then
+    ts_skip "NS_GET_NSTYPE ioctl cmd not available"
+fi
+if [ "$($TS_HELPER_SYSINFO ns-getuserns-ok)" == "0" ]; then
+    ts_skip "NS_GET_USERNS ioctl cmd not available"
+fi
+
+ts_cd "$TS_OUTDIR"
+
+declare -A tcase
+tcase[NS]=
+tcase[TYPE]=net
+tcase[NPROCS]=0
+tcase[PID]=
+tcase[USER]=root
+tcase[COMMAND]=
+
+PID_UNUSED=
+NETNS=
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" foreign-sockets 3 4; }
+    if read -r -u "${MKFDS[0]}" PID_UNUSED NETNS; then
+	tcase[NS]=${NETNS}
+
+	for t in $(for t0 in "${!tcase[@]}"; do echo "$t0"; done | sort); do
+	    column=$t
+	    expected=${tcase[$t]}
+	    output=$(${TS_CMD_LSNS} -n --raw -o $column -Q "NS == $NETNS")
+	    echo "$column \$? $?"
+
+	    if [[ "${output}" == "$expected" ]]; then
+		echo "$column == 0"
+	    else
+		echo "$column == 1"
+		echo expected: "$expected"
+		echo actual: "$output"
+	    fi
+	done
+	echo DONE >&"${MKFDS[1]}"
+    fi
+
+    wait "${MKFDS_PID}"
+} > $TS_OUTPUT 2>&1
+if [[ "$?" == "$EPERM" ]]; then
+    ts_skip "unshare(2) is not permitted on this platform"
+fi
+ts_finalize

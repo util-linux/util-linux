@@ -1,0 +1,37 @@
+encode-decode round-trip "INT ILL ABRT FPE SEGV TERM":
+INT
+ILL
+ABRT
+FPE
+SEGV
+TERM
+encode-decode round-trip "HUP QUIT TRAP PIPE ALRM":
+HUP
+QUIT
+TRAP
+PIPE
+ALRM
+encode-decode round-trip "USR1":
+USR1
+Pending (thread):
+ILL
+INT
+Pending (process):
+USR1
+Blocked:
+ABRT
+FPE
+ILL
+INT
+SEGV
+TERM
+USR1
+Ignored:
+ALRM
+HUP
+PIPE
+QUIT
+TRAP
+Caught:
+ILL
+USR1

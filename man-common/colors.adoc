@@ -1,0 +1,20 @@
+== COLORS
+
+The output colorization is implemented by *terminal-colors.d*(5) functionality.
+Implicit coloring can be disabled by an empty file
+____
+_/etc/terminal-colors.d/{command}.disable_
+____
+for the *{command}* command or for all tools by
+____
+_/etc/terminal-colors.d/disable_
+____
+Since version 2.41, the $NO_COLOR environment variable is also supported to
+disable output colorization unless explicitly enabled by a command-line option.
+
+The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_
+or _$HOME/.config/terminal-colors.d_ overrides the global setting. 
+
+Note that the output colorization may be enabled by default, and in this case
+_terminal-colors.d_ directories do not have to exist yet.
+

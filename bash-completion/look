@@ -1,0 +1,45 @@
+_look_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-t'|'--terminate')
+			COMPREPLY=( $(compgen -W "char" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="--alternative --alphanum --ignore-case --terminate --version --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	case $COMP_CWORD in
+		1)
+			[ -f /usr/share/dict/words ] || return 0
+			if [ "$cur" ]; then
+				COMPREPLY=( $(compgen -W "$(command look "$cur")" -- $cur) )
+			else
+				COMPREPLY=( $(compgen -W \
+					      "0 1 2 3 4 5 6 7 8 9 \
+					       a b c d e f g h i j k l m n o p \
+					       q r s t u v w x y z \
+					       A B C D E F G H I J K L M N O P \
+					       Q R S T U V W X Y Z") )
+			fi
+			;;
+		2)
+			local IFS=$'\n'
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			;;
+	esac
+	return 0
+}
+complete -F _look_module look

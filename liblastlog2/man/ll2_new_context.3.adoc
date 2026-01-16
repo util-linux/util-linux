@@ -1,0 +1,61 @@
+//po4a: entry man manual
+= ll2_new_context(3)
+:doctype: manpage
+:man manual: Programmer's Manual
+:man source: util-linux {release-version}
+:page-layout: base
+:lib: liblastlog2
+:firstversion: 2.40
+
+== NAME
+
+ll2_new_context - Allocates context which defines the lastlog2 environment.
+
+== SYNOPSIS
+
+*#include <lastlog2.h>*
+
+*ll2_context * ll2_new_context(const char *__db_path__);
+
+== DESCRIPTION
+
+Defines lastlog2 context e.g. database file, which will be used for
+any other lastlog2 call. If _db_path_ is NULL, the default path defined
+in _LL2_DEFAULT_DATABASE_ will be taken.
+
+--------------------------------------
+
+const   char *db_path = "/var/lib/lastlog/lastlog2.db";
+ll2_context *context = ll2_new_context(db_path);
+
+--------------------------------------
+
+== RETURN VALUE
+
+Returns context which will be used for all other lastlog2 library calls.
+This context should be released with _ll2_unref_context_ when it is not
+needed anymore.
+Returns NULL on an error.
+
+== AUTHORS
+
+mailto:kukuk@suse.de[Thorsten Kukuk]
+
+== SEE ALSO
+
+*lastlog2*(3),
+*ll2_unref_context*(3),
+*ll2_read_all*(3),
+*ll2_write_entry*(3),
+*ll2_read_entry*(3),
+*ll2_remove_entry*(3),
+*ll2_update_login_time*(3),
+*ll2_import_lastlog*(3)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer-lib.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

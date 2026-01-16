@@ -1,0 +1,29 @@
+_choom_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-n'|'--adjust')
+			COMPREPLY=( $(compgen -W "{-1000..1000}" -- $cur) )
+			return 0
+			;;
+		'-p'|'--pid')
+			local PIDS
+			PIDS=$(builtin cd /proc && echo [0-9]*)
+			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	OPTS="--adjust
+		--pid
+		--help
+		--version"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _choom_module choom

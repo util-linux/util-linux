@@ -1,0 +1,32 @@
+#!/bin/bash
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="read logins"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_check_prog sqlite3
+ts_check_test_command "$TS_CMD_LSLOGINS"
+
+$TS_CMD_LSLOGINS --version|grep "lastlog2" >/dev/null
+if [ $? -ne 0 ]; then
+    ts_skip "lastlog2 not supported"
+fi
+
+DB_FILE="$TS_OUTDIR/${TS_TESTNAME}.db"
+
+export TZ="GMT"
+sqlite3 "$DB_FILE" < $TS_SELF/create_db.sql
+
+# tests for lastlog2 environment
+$TS_CMD_LSLOGINS --lastlog-file=/dev/null \
+	--lastlog2-file="$DB_FILE" \
+	--wtmp-file=/dev/null \
+	--btmp-file=/dev/null \
+	--output USER,LAST-LOGIN,LAST-TTY,LAST-HOSTNAME \
+	--time-format iso \
+	--logins=root > "$TS_OUTPUT"
+
+rm $DB_FILE
+ts_finalize
+

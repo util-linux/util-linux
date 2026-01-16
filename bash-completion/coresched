@@ -1,0 +1,51 @@
+_coresched_module()
+{
+  compopt -o nosort
+
+  COMPREPLY=()
+
+  # If the previous argument equals the program name
+  if [[ "$1" == "$3" ]]; then
+      COMPREPLY=( $(compgen -W "get new copy --help --version" -- "$2") )
+      return 0
+  fi
+
+  case $3 in
+    "-s"|"--source"|"-d"|"--dest")
+      local pids sorted_pids
+      pids=$(builtin cd /proc && echo [0-9]*)
+      sorted_pids=$(echo "${pids[@]}" | command tr ' ' '\n' | command sort -nr | command tr '\n' ' ')
+      COMPREPLY=( $(compgen -W "$sorted_pids" -- "$2") )
+      return 0
+      ;;
+    "-t"|"--dest-type")
+      COMPREPLY=( $(compgen -W "pid tgid pgid" -- "$2") )
+      return 0
+      ;;
+    "--")
+      COMPREPLY=( $(compgen -c "$2") )
+      return 0
+      ;;
+  esac
+
+  local function="${COMP_WORDS[1]}"
+  case $function in
+    'get')
+      COMPREPLY=( $(compgen -W "--source" -- "$2") )
+      return 0
+      ;;
+    'new')
+      COMPREPLY=( $(compgen -W "--dest -- --dest-type --verbose" -- "$2") )
+      return 0
+      ;;
+    'copy')
+      COMPREPLY=( $(compgen -W "--source --dest -- --dest-type --verbose" -- "$2") )
+      return 0
+      ;;
+    '-h'|'--help'|'-V'|'--version')
+      return 0
+      ;;
+  esac
+  return 0
+}
+complete -F _coresched_module coresched

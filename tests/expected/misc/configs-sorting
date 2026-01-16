@@ -1,0 +1,12 @@
+@TESTDIR@/etc/proj/example.conf
+@TESTDIR@/etc/proj/example.conf.d/bbb.conf
+@TESTDIR@/etc/proj/example.conf.d/mmm.conf
+@TESTDIR@/usr/proj/example.conf.d/aaa.conf
+@TESTDIR@/usr/proj/example.conf.d/mmm.conf
+@TESTDIR@/usr/proj/example.conf.d/zzz.conf
+Found 5 configuration file(s):
+  @TESTDIR@/etc/proj/example.conf
+  @TESTDIR@/usr/proj/example.conf.d/aaa.conf
+  @TESTDIR@/etc/proj/example.conf.d/bbb.conf
+  @TESTDIR@/etc/proj/example.conf.d/mmm.conf
+  @TESTDIR@/usr/proj/example.conf.d/zzz.conf

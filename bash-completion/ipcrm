@@ -1,0 +1,80 @@
+_ipcrm_module()
+{
+	local cur prev OPTS KEYIDS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-m'|'--shmem-id')
+			KEYIDS="$(command lsipc -m --noheadings -o ID)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-M'|'--shmem-key')
+			KEYIDS="$(command lsipc -m --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-shmem')
+			KEYIDS="$(command lsipc -M --noheadings -o NAME)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-q'|'--queue-id')
+			KEYIDS="$(command lsipc -q --noheadings -o ID)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-Q'|'--queue-key')
+			KEYIDS="$(command lsipc -q --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-mqueue')
+			KEYIDS="$(command lsipc -Q --noheadings -o NAME)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-s'|'--semaphore-id')
+			KEYIDS="$(command lsipc -s --noheadings -o ID)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-S'|'--semaphore-key')
+			KEYIDS="$(command lsipc -s --noheadings -o KEY)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'--posix-semaphore')
+			KEYIDS="$(command lsipc -S --noheadings -o NAME)"
+			COMPREPLY=( $(compgen -W "$KEYIDS" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		'=')
+			cur=${cur#=}
+			COMPREPLY=( $(compgen -W "shm pshm msg pmsg sem psem" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="	--shmem-id
+		--shmem-key
+		--posix-shmem
+		--queue-id
+		--queue-key
+		--posix-mqueue
+		--semaphore-id
+		--semaphore-key
+		--posix-semaphore
+		--all=
+		--verbose
+		--help
+		--version"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _ipcrm_module ipcrm

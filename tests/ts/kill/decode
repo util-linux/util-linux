@@ -1,0 +1,130 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="decode functions"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+# make sure we do not use shell built-in command
+if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
+	TS_CMD_KILL="$(which kill)"
+fi
+
+ts_skip_qemu_user
+
+ts_check_test_command "$TS_CMD_KILL"
+ts_check_test_command "$TS_HELPER_SIGSTATE"
+
+ts_check_prog "sed"
+ts_check_prog "sort"
+ts_check_prog "tr"
+
+. "$TS_SELF/kill_functions.sh"
+
+decode()
+{
+    "$TS_CMD_KILL" -l "$1"
+}
+
+signame2num()
+{
+    local name=$1
+    local n s
+
+    "$TS_CMD_KILL" -L | while read n s; do
+	if [[ "$s" == "$name" ]]; then
+	    echo "$n"
+	    return 0
+	fi
+    done
+
+    return 1
+}
+
+encode()
+{
+    local s
+    local n
+    local -i bits=0
+
+    for s in "$@"; do
+	n=$(signame2num "$s")
+	if [[ -z "$n" ]]; then
+	    ts_log_both "failed to encode the signal name: $s"
+	    # The test may fail.
+	    continue
+	fi
+
+	(( bits |= 1 << (n - 1) ))
+    done
+
+    printf "0x%0.16x\n" "$bits"
+}
+
+sort_signals_by_name()
+{
+    local field
+    local siglist
+
+    while IFS=: read field siglist; do
+	echo "${field}:"
+	echo $siglist | tr ' ' '\n' | sort
+    done
+}
+
+PID=
+ACK=
+{
+    for siglist in "INT ILL ABRT FPE SEGV TERM" \
+		       "HUP QUIT TRAP PIPE ALRM" \
+		       "USR1"; do
+	printf 'encode-decode round-trip "%s":\n' "${siglist}"
+	d=$(encode ${siglist})
+	decode "$d"
+    done
+
+    coproc SIGSTATE { "$TS_HELPER_SIGSTATE" ; }
+    if read -u ${SIGSTATE[0]} PID; then
+	"$TS_CMD_KILL" -USR1 "$PID"
+	if read -u ${SIGSTATE[0]} ACK; then
+	    # The taget process is in its signal handler for USR1.
+	    # Sending one more USR1 is for making the signal pending state.
+	    "$TS_CMD_KILL" -USR1 "$PID"
+	    "$TS_CMD_KILL" -d "$PID" | {
+		SIGRTMIN=$("$TS_CMD_KILL" -L | grep -o '[0-9]\+ RTMIN' | cut -d " " -f 1)
+		if [[ $("$TS_CMD_KILL" --list=$SIGRTMIN) == RT0 ]]; then
+		    # See man signal(7).
+		    #   The  Linux  kernel  supports a range of 33 different real-time signals,
+		    #   numbered 32 to 64.  However, the glibc POSIX threads implementation in‐
+		    #   ternally uses two (for NPTL) or three (for LinuxThreads) real-time sig‐
+		    #   nals (see pthreads(7)), and adjusts the value of SIGRTMIN suitably  (to
+		    #   34 or 35).
+		    sed_cmd="sed"
+		    for ((i=32; i<=SIGRTMIN; i++)); do
+			sed_cmd+=" -e s/' $i'//"
+		    done
+		    eval $sed_cmd
+		else
+		    cat
+		fi
+	    } | sort_signals_by_name
+	fi
+	echo DONE >&"${SIGSTATE[1]}"
+    fi
+    wait ${SIGSTATE_PID}
+} > "$TS_OUTPUT" 2>&1
+
+ts_finalize

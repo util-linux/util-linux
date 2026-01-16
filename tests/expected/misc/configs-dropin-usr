@@ -1,0 +1,5 @@
+@TESTDIR@/usr/proj/example.conf.d/10-first.conf
+@TESTDIR@/usr/proj/example.conf.d/20-second.conf
+Found 2 configuration file(s):
+  @TESTDIR@/usr/proj/example.conf.d/10-first.conf
+  @TESTDIR@/usr/proj/example.conf.d/20-second.conf

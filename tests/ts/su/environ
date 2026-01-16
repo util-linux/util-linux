@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+# Copyright (C) 2024 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="environ"
+ 
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot 
+ts_check_test_command "$TS_CMD_SU"
+
+export ZUU=zuux
+export FOO=abc
+export BAR=baar
+
+# All should be available
+$TS_CMD_SU --command 'echo foo:$FOO bar:$BAR zuu:$ZUU' >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# All should be removed
+$TS_CMD_SU --login --command 'echo foo:$FOO bar:$BAR zuu:$ZUU' >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# Only specified options should be available
+$TS_CMD_SU --whitelist-environment FOO --login --command 'echo foo:$FOO bar:$BAR zuu:$ZUU' >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# Only specified options should be available
+$TS_CMD_SU --whitelist-environment FOO,BAR --login --command 'echo foo:$FOO bar:$BAR zuu:$ZUU' >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# We do not have control over PAM setup, and the goal of this test is to check
+# the environment, not the overall functionality of su(1). Therefore, if su(1)
+# fails due to authentication, the test should be skipped.
+#
+grep -q 'Authentication failure' $TS_ERRLOG
+[ $? -eq 0 ] && ts_skip "authentication failure"
+
+ts_finalize

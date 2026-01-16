@@ -1,0 +1,3 @@
+@TESTDIR@/etc/test.conf
+Found 1 configuration file(s):
+  @TESTDIR@/etc//test.conf

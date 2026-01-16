@@ -1,0 +1,12 @@
+COMMAND $? 0
+COMMAND == 0
+NPROCS $? 0
+NPROCS == 0
+NS $? 0
+NS == 0
+PID $? 0
+PID == 0
+TYPE $? 0
+TYPE == 0
+USER $? 0
+USER == 0
