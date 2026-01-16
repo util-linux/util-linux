@@ -41,15 +41,18 @@ fi
 ts_finalize_subtest
 
 ts_init_subtest "ranges-option"
-cat <<EOF > ranges
+cat <<EOF > ranges1
 3::1
 1::2
 2::1
+EOF
+
+cat <<EOF > ranges2
 0::1
 5::1
 EOF
 
-"$TS_CMD_COPYFILERANGE" a c --ranges ranges
+"$TS_CMD_COPYFILERANGE" a c --ranges ranges1 --ranges ranges2
 cat c >"$TS_OUTPUT"
 ts_finalize_subtest
 
