@@ -140,8 +140,7 @@ static int copy_range(struct rangeitem *range, const uintmax_t len) {
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		if (verbose)
-			fprintf(
-				stderr,
+			printf(
 				"copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n",
 				range->in_filename,
 				range->out_filename,
