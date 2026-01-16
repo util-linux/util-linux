@@ -100,7 +100,7 @@ static int parse_range(const char *str, struct rangeitem *range)
 		rc = strtosize(start, &tmp);
 		if (rc && tmp <= SIZE_MAX)
 			goto fail;
-		range->in_offset = tmp;
+		range->in_offset = (off_t)tmp;
 	}
 
 	start = token + 1;
@@ -112,7 +112,7 @@ static int parse_range(const char *str, struct rangeitem *range)
 		rc = strtosize(start, &tmp);
 		if (rc && tmp <= SIZE_MAX)
 			goto fail;
-		range->out_offset = tmp;
+		range->out_offset = (off_t)tmp;
 	}
 
 	start = token + 1;
@@ -120,7 +120,7 @@ static int parse_range(const char *str, struct rangeitem *range)
 		rc = strtosize(start, &tmp);
 		if (rc && tmp <= SIZE_MAX)
 			goto fail;
-		range->length = tmp;
+		range->length = (off_t)tmp;
 	} else
 		range->length = 0;
 
