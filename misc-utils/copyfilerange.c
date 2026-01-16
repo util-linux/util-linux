@@ -184,7 +184,7 @@ static int handle_range(char* str, struct rangeitem *range)
 {
 	if (parse_range(str, range) != 0) {
 		fprintf(stderr, _("invalid range format: %s\n"), str);
-		return 1;
+		return -1;
 	}
 
 	return copy_range(range, range->length ? range->length : (uintmax_t)range->in_st_size - range->in_offset);
@@ -287,7 +287,7 @@ int main(const int argc, char **argv)
 				rc++;
 				continue;
 			}
-			rc |= handle_range(line, &range);
+			rc |= handle_range(line, &range) < 0 ? 1 : 0;
 		}
 
 		free(line);
@@ -296,7 +296,7 @@ int main(const int argc, char **argv)
 	free(range_files);
 
 	for (; rem_optind < argc; rem_optind++) {
-		rc |= handle_range(argv[rem_optind], &range);
+		rc |= handle_range(argv[rem_optind], &range) < 0 ? 1: 0;
 	}
 
 	close(range.in_fd);
