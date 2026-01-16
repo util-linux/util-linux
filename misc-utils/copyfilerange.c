@@ -244,7 +244,8 @@ int main(const int argc, char **argv)
 
 	int rem_optind;
 	for (rem_optind = optind; rem_optind < argc; rem_optind++) {
-		if (range.in_filename && range.out_filename) break;
+		if (range.in_filename && range.out_filename)
+			break;
 		if (!range.in_filename)
 			range.in_filename = argv[rem_optind];
 		else if (!range.out_filename)
