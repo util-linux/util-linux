@@ -81,11 +81,11 @@ struct gecos_field {
 
 /* global structure to store GECOS fields with metadata */
 static struct gecos_field gecos_fields[NUM_GECOS_FIELDS] = {
-	[GECOS_FULL_NAME] = { .title = N_("Name"), .current = NULL, .new = NULL, .allowed = false },
-	[GECOS_OFFICE] = { .title = N_("Office"), .current = NULL, .new = NULL, .allowed = false },
-	[GECOS_OFFICE_PHONE] = { .title = N_("Office Phone"), .current = NULL, .new = NULL, .allowed = false },
-	[GECOS_HOME_PHONE] = { .title = N_("Home Phone"), .current = NULL, .new = NULL, .allowed = false },
-	[GECOS_OTHER] = { .title = N_("Other"), .current = NULL, .new = NULL, .allowed = false },
+	[GECOS_FULL_NAME] = { N_("Name"), NULL, NULL, false },
+	[GECOS_OFFICE] = { N_("Office"), NULL, NULL, false },
+	[GECOS_OFFICE_PHONE] = { N_("Office Phone"), NULL, NULL, false },
+	[GECOS_HOME_PHONE] = { N_("Home Phone"), NULL, NULL, false },
+	[GECOS_OTHER] = { N_("Other"), NULL, NULL, false },
 };
 
 struct chfn_control {
