@@ -74,6 +74,9 @@ static struct namespace_file {
 
 static int npersists;	/* number of persistent namespaces */
 
+/* Global PID of child process for signal forwarding */
+static volatile pid_t child_pid = 0;
+
 enum {
 	SETGROUPS_NONE = -1,
 	SETGROUPS_DENY = 0,
@@ -133,6 +136,19 @@ static void map_id(const char *file, uint32_t from, uint32_t to)
 		err(EXIT_FAILURE, _("write failed %s"), file);
 	free(buf);
 	close(fd);
+}
+
+/**
+ * forward_signal() - Forward signal to child process
+ * @sig: Signal number to forward
+ *
+ * Signal handler that forwards SIGTERM/SIGINT from parent to child.
+ * Only used when --forward-signals flag is enabled.
+ */
+static void forward_signal(int sig)
+{
+	if (child_pid > 0)
+		kill(child_pid, sig);
 }
 
 static unsigned long parse_propagation(const char *str)
@@ -1107,11 +1123,32 @@ int main(int argc, char *argv[])
 		settime(monotonic, CLOCK_MONOTONIC);
 
 	if (forkit) {
+		if (forward_signals) {
+			/* Install signal handlers to forward signals to child */
+			struct sigaction sa;
+
+			memset(&sa, 0, sizeof(sa));
+			sa.sa_handler = forward_signal;
+			sigemptyset(&sa.sa_mask);
+			sa.sa_flags = SA_RESTART;
+
+			if (sigaction(SIGTERM, &sa, NULL) == -1)
+				err(EXIT_FAILURE, _("sigaction SIGTERM failed"));
+			if (sigaction(SIGINT, &sa, NULL) == -1)
+				err(EXIT_FAILURE, _("sigaction SIGINT failed"));
+
+		/* Save old mask for child to restore */
 		if (sigemptyset(&sigset) != 0 ||
-			sigaddset(&sigset, SIGINT) != 0 ||
-			sigaddset(&sigset, SIGTERM) != 0 ||
-			sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
+		    sigprocmask(SIG_SETMASK, NULL, &oldsigset) != 0)
+			err(EXIT_FAILURE, _("sigprocmask failed"));
+	} else {
+		/* Block signals to prevent "impatient parent" problem */
+		if (sigemptyset(&sigset) != 0 ||
+		    sigaddset(&sigset, SIGINT) != 0 ||
+		    sigaddset(&sigset, SIGTERM) != 0 ||
+		    sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
 			err(EXIT_FAILURE, _("sigprocmask block failed"));
+	}
 #ifdef HAVE_PIDFD_OPEN
 		if (kill_child_signo != 0) {
 			/* make a connection to the original process (parent) */
@@ -1128,6 +1165,7 @@ int main(int argc, char *argv[])
 		case -1:
 			err(EXIT_FAILURE, _("fork failed"));
 		case 0:	/* child */
+			child_pid = 0; /* Clear in child process */
 			if (sigprocmask(SIG_SETMASK, &oldsigset, NULL))
 				err(EXIT_FAILURE,
 					_("sigprocmask restore failed"));
@@ -1135,6 +1173,8 @@ int main(int argc, char *argv[])
 				close(fd_bind);
 			break;
 		default: /* parent */
+			if (forward_signals)
+				child_pid = pid; /* Store for signal handler */
 			break;
 		}
 	}
@@ -1149,7 +1189,14 @@ int main(int argc, char *argv[])
 	}
 
 	if (pid) {
-		if (waitpid(pid, &status, 0) == -1)
+		int rc;
+
+		/* Wait for child, handling EINTR from signal forwarding */
+		do {
+			rc = waitpid(pid, &status, 0);
+		} while (rc == -1 && errno == EINTR);
+
+		if (rc == -1)
 			err(EXIT_FAILURE, _("waitpid failed"));
 
 		if (WIFEXITED(status))
