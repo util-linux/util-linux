@@ -65,9 +65,21 @@ older versions used the now-deprecated *-v*).
 
 Indicate which fields are changeable by *chfn*.
 +
-The boolean setting *"yes"* means that only the Office, Office Phone and Home Phone fields are changeable, and boolean setting *"no"* means that also the Full Name is changeable.
+The boolean setting *"yes"* means that only the _Office_, _Office Phone_ and _Home Phone_ fields are changeable, and boolean setting *"no"* means that also the _Full Name_ is changeable.
 +
-Another way to specify changeable fields is by abbreviations: f = Full Name, r = Office (room), w = Office (work) Phone, h = Home Phone. For example, *CHFN_RESTRICT "wh"* allows changing work and home phone numbers.
+Another way to specify changeable fields is by abbreviations:
++
+--
+*f*::: Full Name
+
+*r*::: Office (room)
+
+*w*::: Office (work) Phone
+
+*h*::: Home Phone
+--
++
+For example, *CHFN_RESTRICT "wh"* allows changing work and home phone numbers.
 +
 If *CHFN_RESTRICT* is undefined, then all finger information is read-only. This is the default.
 
@@ -77,7 +89,8 @@ Returns 0 if operation was successful, 1 if operation failed or command syntax w
 
 == AUTHORS
 
-mailto:svalente@mit.edu[Salvatore Valente]
+mailto:svalente@mit.edu[Salvatore Valente],
+mailto:cgoesc2@wgu.edu[Christian Goeschel Ndjomouo]
 
 == SEE ALSO
 
