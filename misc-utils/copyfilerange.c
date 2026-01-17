@@ -173,13 +173,43 @@ static int handle_range(char* str, struct rangeitem *range)
 	return copy_range(range);
 }
 
+static int handle_range_files(struct rangeitem *range, size_t nrange_files, char **range_files)
+{
+	int rc = 0;
+	for (size_t i = 0; i < nrange_files; i++) {
+		FILE *f = fopen(range_files[i], "r");
+
+		if (!f)
+			err(EXIT_FAILURE, _("cannot open range file %s"), range_files[i]);
+		free(range_files[i]);
+
+		char *line = NULL;
+		size_t len = 0;
+
+		while (getline(&line, &len, f) != -1) {
+			ltrim_whitespace((unsigned char *) line);
+			len = rtrim_whitespace((unsigned char *) line);
+			if (len == 0) {
+				rc++;
+				continue;
+			}
+			rc |= handle_range(line, range) < 0 ? 1 : 0;
+		}
+
+		free(line);
+		fclose(f);
+	}
+	free(range_files);
+	return rc;
+}
+
 int main(const int argc, char **argv)
 {
 	char **range_files = NULL;
 	size_t nrange_files = 0;
 	struct stat sb;
 	struct rangeitem range = {0};
-	int rc = 0;
+	int rc;
 
 	static const struct option longopts[] = {
 		{ "source",      required_argument, NULL, 's' },
@@ -253,30 +283,7 @@ int main(const int argc, char **argv)
 	if (range.out_fd < 0)
 		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
 
-	for (size_t i = 0; i < nrange_files; i++) {
-		FILE *f = fopen(range_files[i], "r");
-
-		if (!f)
-			err(EXIT_FAILURE, _("cannot open range file %s"), range_files[i]);
-		free(range_files[i]);
-
-		char *line = NULL;
-		size_t len = 0;
-
-		while (getline(&line, &len, f) != -1) {
-			ltrim_whitespace((unsigned char *) line);
-			len = rtrim_whitespace((unsigned char *) line);
-			if (len == 0) {
-				rc++;
-				continue;
-			}
-			rc |= handle_range(line, &range) < 0 ? 1 : 0;
-		}
-
-		free(line);
-		fclose(f);
-	}
-	free(range_files);
+	rc = handle_range_files(&range, nrange_files, range_files);
 
 	for (; rem_optind < argc; rem_optind++) {
 		rc |= handle_range(argv[rem_optind], &range) < 0 ? 1: 0;
