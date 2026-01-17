@@ -73,7 +73,12 @@ ts_finalize_subtest
 
 ts_init_subtest "mix-arguments-and-options"
 "$TS_CMD_COPYFILERANGE" a --verbose g :: &>"$TS_OUTPUT"
-cat f >>"$TS_OUTPUT"
+cat g >>"$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "copy-from-beyond-file-size"
+"$TS_CMD_COPYFILERANGE" a h 7:: &>"$TS_OUTPUT"
+cat h >>"$TS_OUTPUT"
 ts_finalize_subtest
 
 rm -f a b c d e f g ranges

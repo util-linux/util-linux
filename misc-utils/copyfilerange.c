@@ -133,6 +133,10 @@ fail:
 
 static void copy_range(struct rangeitem *range) {
 	uintmax_t remaining = range->length;
+
+	if (range->in_offset > range->in_st_size)
+		errx(EXIT_FAILURE, _("%s offset %"PRId64" beyond file size of %zu"), range->in_filename, range->in_offset, range->in_st_size);
+
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		if (verbose)
