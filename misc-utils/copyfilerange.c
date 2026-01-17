@@ -131,9 +131,7 @@ fail:
 
 }
 
-static int copy_range(struct rangeitem *range) {
-	int rc = 0;
-
+static void copy_range(struct rangeitem *range) {
 	uintmax_t remaining = range->length;
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
@@ -143,37 +141,29 @@ static int copy_range(struct rangeitem *range) {
 
 		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd,
 																										&range->out_offset, chunk, 0);
-		if (copied < 0) {
-			fprintf(stderr, _("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju:%m\n"),
+		if (copied < 0)
+			errx(EXIT_FAILURE, _("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju:%m\n"),
 							range->in_offset, range->out_offset, range->length, range->in_filename, range->out_filename, remaining);
-			rc |= 2;
-			break;
-		}
-
 		if (copied == 0)
 			break;
 
 		remaining -= copied;
 	}
-	return rc;
 }
 
-static int handle_range(char* str, struct rangeitem *range)
+static void handle_range(char* str, struct rangeitem *range)
 {
-	if (parse_range(str, range) != 0) {
-		fprintf(stderr, _("invalid range format: %s\n"), str);
-		return -1;
-	}
+	if (parse_range(str, range) != 0)
+		errx(EXIT_FAILURE, _("invalid range format: %s\n"), str);
 
 	if (!range->length)
 		range->length = range->in_st_size - range->in_offset;
 
-	return copy_range(range);
+	copy_range(range);
 }
 
-static int handle_range_files(struct rangeitem *range, size_t nrange_files, char **range_files)
+static void handle_range_files(struct rangeitem *range, size_t nrange_files, char **range_files)
 {
-	int rc = 0;
 	for (size_t i = 0; i < nrange_files; i++) {
 		FILE *f = fopen(range_files[i], "r");
 
@@ -187,18 +177,15 @@ static int handle_range_files(struct rangeitem *range, size_t nrange_files, char
 		while (getline(&line, &len, f) != -1) {
 			ltrim_whitespace((unsigned char *) line);
 			len = rtrim_whitespace((unsigned char *) line);
-			if (len == 0) {
-				rc++;
-				continue;
-			}
-			rc |= handle_range(line, range) < 0 ? 1 : 0;
+			if (len == 0)
+				errx(EXIT_FAILURE, _("Empty line in range file %s is not allowed"), range_files[i]);
+			handle_range(line, range);
 		}
 
 		free(line);
 		fclose(f);
 	}
 	free(range_files);
-	return rc;
 }
 
 int main(const int argc, char **argv)
@@ -207,7 +194,6 @@ int main(const int argc, char **argv)
 	size_t nrange_files = 0;
 	struct stat sb;
 	struct rangeitem range = {0};
-	int rc;
 
 	static const struct option longopts[] = {
 		{ "ranges",      required_argument, NULL, 'r' },
@@ -269,13 +255,13 @@ int main(const int argc, char **argv)
 	if (range.out_fd < 0)
 		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
 
-	rc = handle_range_files(&range, nrange_files, range_files);
+	handle_range_files(&range, nrange_files, range_files);
 
 	for (; rem_optind < argc; rem_optind++) {
-		rc |= handle_range(argv[rem_optind], &range) < 0 ? 1: 0;
+		handle_range(argv[rem_optind], &range);
 	}
 
 	close(range.in_fd);
 	close(range.out_fd);
-	return rc;
+	return 0;
 }
