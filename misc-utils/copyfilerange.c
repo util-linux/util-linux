@@ -143,14 +143,8 @@ static int copy_range(struct rangeitem *range) {
 			printf("copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n", range->in_filename,
 							range->out_filename, range->in_offset, range->out_offset, chunk);
 
-		const ssize_t copied = copy_file_range(
-			range->in_fd,
-			&range->in_offset,
-			range->out_fd,
-			&range->out_offset,
-			chunk,
-			0
-		);
+		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd,
+																										&range->out_offset, chunk, 0);
 		if (copied < 0) {
 			fprintf(stderr, _("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju:%m\n"),
 							range->in_offset, range->out_offset, range->length, range->in_filename, range->out_filename, remaining);
