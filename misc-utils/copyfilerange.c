@@ -169,7 +169,6 @@ static void handle_range_files(struct rangeitem *range, size_t nrange_files, cha
 
 		if (!f)
 			err(EXIT_FAILURE, _("cannot open range file %s"), range_files[i]);
-		free(range_files[i]);
 
 		char *line = NULL;
 		size_t len = 0;
@@ -182,6 +181,7 @@ static void handle_range_files(struct rangeitem *range, size_t nrange_files, cha
 			handle_range(line, range);
 		}
 
+		free(range_files[i]);
 		free(line);
 		fclose(f);
 	}
