@@ -12,8 +12,6 @@ _copyfilerange_module()
 	case $cur in
 		-*)
 		OPTS="
-			--source
-			--destination
 			--ranges
 			--verbose
 			--version

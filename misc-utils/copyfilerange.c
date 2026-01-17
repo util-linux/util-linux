@@ -69,8 +69,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_("                             when the offset is omitted the last file position is used"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputsln(_(" --source, -s filename       source filename"), out);
-	fputsln(_(" --destination, -d filename  destination filename"), out);
 	fputsln(_(" --ranges, -r filename       read range(s) separated by newlines from filename"), out);
 	fputsln(_(" --verbose, -v               verbose mode"), out);
 
@@ -212,8 +210,6 @@ int main(const int argc, char **argv)
 	int rc;
 
 	static const struct option longopts[] = {
-		{ "source",      required_argument, NULL, 's' },
-		{ "destination", required_argument, NULL, 'd' },
 		{ "ranges",      required_argument, NULL, 'r' },
 		{ "verbose",     no_argument,       NULL, 'v' },
 		{ "version",     no_argument,       NULL, 'V' },
@@ -227,22 +223,12 @@ int main(const int argc, char **argv)
 	close_stdout_atexit();
 
 	int c;
-	while ((c = getopt_long (argc, argv, "r:s:d:vVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "r:vVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'r':
 			if (!range_files)
 				range_files = xmalloc(sizeof(char *) * argc);
 			range_files[nrange_files++] = xstrdup(optarg);
-			break;
-		case 's':
-			if (range.in_filename)
-				errx(EXIT_FAILURE, _("only one source file is allowed (%s already supplied)"), range.in_filename);
-			range.in_filename = optarg;
-			break;
-		case 'd':
-			if (range.out_filename)
-				errx(EXIT_FAILURE, _("only one destination file is allowed (%s already supplied)"), range.out_filename);
-			range.out_filename = optarg;
 			break;
 		case 'v':
 			verbose = 1;

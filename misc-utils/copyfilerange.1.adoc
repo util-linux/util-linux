@@ -41,13 +41,7 @@ When one or more of the offsets are omitted the operation will use the last used
 *-v*, *--verbose*::
 Verbose output of copied file ranges
 
-*-s*, *--source*::
-Source filename
-
-*-d*, *--destination*::
-Destination filename
-
-*-c*, *--ranges*::
+*-r*, *--ranges*::
 Ranges filename
 
 include::man-common/help-version.adoc[]
