@@ -118,7 +118,7 @@ static int parse_range(const char *str, struct rangeitem *range)
 	start = token + 1;
 	if (*start) {
 		rc = strtosize(start, &tmp);
-		if (rc && tmp <= SIZE_MAX)
+		if (rc)
 			goto fail;
 		range->length = (off_t)tmp;
 	} else
