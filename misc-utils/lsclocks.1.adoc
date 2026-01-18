@@ -22,7 +22,7 @@ It allows to display information like current time and resolution of clocks.
 Different kinds of clocks are supported.
 
 * POSIX clocks: *CLOCK_MONOTONIC*, *CLOCK_REALTIME*, *CLOCK_BOOTTIME*, etc.
-* CPU clocks: *clock_getcpuclockid()*.
+* CPU clocks: *clock_getcpuclockid*(3).
 * PTP clocks: */dev/ptp0*.
 * RTC clocks: */dev/rtc0*.
 * Auxiliary clocks: *CLOCK_AUX0*, *CLOCK_AUX1*, etc.
@@ -90,7 +90,7 @@ NAME <``string``>::
 Shorter, easier to read name.
 
 TIME <``number``>::
-Current clock timestamp as returned by *clock_gettime()*.
+Current clock timestamp as returned by *clock_gettime*(2).
 
 ISO_TIME <``string``>::
 ISO8601 formatted version of *TIME*.

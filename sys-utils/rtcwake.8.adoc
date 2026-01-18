@@ -91,7 +91,7 @@ Don't suspend, but read the RTC device until an alarm time appears. This mode is
 Disable a previously set alarm.
 
 *show*;;
-Print alarm information in format: "alarm: off|on <time>". The time is in ctime() output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
+Print alarm information in format: "alarm: off|on <time>". The time is in *ctime*(3) output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
 
 *-n*, *--dry-run*::
 This option does everything apart from actually setting up the alarm, suspending the system, or waiting for the alarm.

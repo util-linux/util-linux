@@ -55,7 +55,7 @@ uuid_parse - convert an input UUID string into binary representation
 
 The *uuid_parse*() function converts the UUID string given by _in_ into the binary representation. The input UUID is a string of the form 1b4e28ba-2fa1-11d2-883f-b9a761bde3fb (in *printf*(3) format "%08x-%04x-%04x-%04x-%012x", 36 bytes plus the trailing '\0').
 
-The *uuid_parse_range*() function works like *uuid_parse*() but parses only range in string specified by _in_start_ and _in_end_ pointers.
+The *uuid_parse_range*(3) function works like *uuid_parse*() but parses only range in string specified by _in_start_ and _in_end_ pointers.
 
 == RETURN VALUE
 

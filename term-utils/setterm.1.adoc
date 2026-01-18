@@ -113,7 +113,7 @@ Makes the terminal continue on a new line when a line is full.
 Enables or disables the sending of kernel *printk*() messages to the console. Virtual consoles only.
 
 *--msglevel* **0**-**8**::
-Sets the console logging level for kernel *printk()* messages. All messages strictly more important than this will be printed, so a logging level of *0* has the same effect as *--msg on* and a logging level of *8* will print all kernel messages. *klogd*(8) may be a more convenient interface to the logging of kernel messages.
+Sets the console logging level for kernel *printk*(9) messages. All messages strictly more important than this will be printed, so a logging level of *0* has the same effect as *--msg on* and a logging level of *8* will print all kernel messages. *klogd*(8) may be a more convenient interface to the logging of kernel messages.
 +
 Virtual consoles only.
 
