@@ -16,6 +16,7 @@
 # GNU General Public License for more details.
 #
 
+TOP_SRCDIR="${0%/*}/../../.."
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="mbsencode"
 
@@ -45,7 +46,7 @@ STRINGS=(
 	$'\xe8\xe1\xf9\xa7'
 )
 
-if grep -q '^#define HAVE_WIDECHAR' ${top_builddir}/config.h ;then
+if grep -q '^#define HAVE_WIDECHAR' "${TOP_SRCDIR}"/config.h ;then
 	HAVE_WIDECHAR=true
 else
 	HAVE_WIDECHAR=false
