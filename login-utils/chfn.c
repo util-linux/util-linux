@@ -59,22 +59,36 @@
 # include "auth.h"
 #endif
 
-struct finfo {
-	char *full_name;
-	char *office;
-	char *office_phone;
-	char *home_phone;
-	char *other;
+/* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
+#define MAX_FIELD_SIZE		256
+
+enum {
+	GECOS_FULL_NAME,
+	GECOS_OFFICE,
+	GECOS_OFFICE_PHONE,
+	GECOS_HOME_PHONE,
+	GECOS_OTHER		/* GECOS field "Other" is currently not supported */
+};
+
+struct gecos_field {
+	char *name;	/* GECOS field name */
+	char *current;	/* currently defined GECOS field data */
+	char *new;	/* new GECOS field data */
+};
+
+/* global structure to store GECOS fields (current,new) with metadata */
+static struct gecos_field gecos_fields[] = {
+	[GECOS_FULL_NAME] = { N_("Name"), NULL, NULL },
+	[GECOS_OFFICE] = { N_("Office"), NULL, NULL },
+	[GECOS_OFFICE_PHONE] = { N_("Office Phone"), NULL, NULL },
+	[GECOS_HOME_PHONE] = { N_("Home Phone"), NULL, NULL },
+	[GECOS_OTHER] = { N_("Other"), NULL, NULL },
 };
 
 struct chfn_control {
 	struct passwd *pw;
 	char *username;
-	/*  "oldf"  Contains the user's original finger information.
-	 *  "newf"  Contains the changed finger information, and contains
-	 *          NULL in fields that haven't been changed.
-	 *  In the end, "newf" is folded into "oldf".  */
-	struct finfo oldf, newf;
+
 	bool 	allow_fullname,	/* The login.defs restriction */
 		allow_room,	/* see: man login.defs(5) */
 		allow_work,	/* and look for CHFN_RESTRICT */
@@ -82,9 +96,6 @@ struct chfn_control {
 		changed,	/* is change requested */
 		interactive;	/* whether to prompt for fields or not */
 };
-
-/* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
-#define MAX_FIELD_SIZE		256
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -117,7 +128,7 @@ static int check_gecos_string(const char *msg, char *gecos)
 	const size_t len = strlen(gecos);
 
 	if (MAX_FIELD_SIZE < len) {
-		warnx(_("field %s is too long"), msg);
+		warnx(_("field '%s' is too long"), _(msg));
 		return -1;
 	}
 	if (illegal_passwd_chars(gecos)) {
@@ -150,27 +161,31 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		switch (c) {
 		case 'f':
 			if (!ctl->allow_fullname)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Name"));
-			ctl->newf.full_name = optarg;
-			status += check_gecos_string(_("Name"), optarg);
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
+							_(gecos_fields[GECOS_FULL_NAME].name));
+			status += check_gecos_string(gecos_fields[GECOS_FULL_NAME].name, optarg);
+			gecos_fields[GECOS_FULL_NAME].new = optarg;
 			break;
 		case 'o':
 			if (!ctl->allow_room)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office"));
-			ctl->newf.office = optarg;
-			status += check_gecos_string(_("Office"), optarg);
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
+							_(gecos_fields[GECOS_OFFICE].name));
+			status += check_gecos_string(gecos_fields[GECOS_OFFICE].name, optarg);
+			gecos_fields[GECOS_OFFICE].new = optarg;
 			break;
 		case 'p':
 			if (!ctl->allow_work)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office Phone"));
-			ctl->newf.office_phone = optarg;
-			status += check_gecos_string(_("Office Phone"), optarg);
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
+							_(gecos_fields[GECOS_OFFICE_PHONE].name));
+			status += check_gecos_string(gecos_fields[GECOS_OFFICE_PHONE].name, optarg);
+			gecos_fields[GECOS_OFFICE_PHONE].new = optarg;
 			break;
 		case 'h':
 			if (!ctl->allow_home)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Home Phone"));
-			ctl->newf.home_phone = optarg;
-			status += check_gecos_string(_("Home Phone"), optarg);
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
+							_(gecos_fields[GECOS_HOME_PHONE].name));
+			status += check_gecos_string(gecos_fields[GECOS_HOME_PHONE].name, optarg);
+			gecos_fields[GECOS_HOME_PHONE].new = optarg;
 			break;
 		case 'v': /* deprecated */
 		case 'V':
@@ -208,13 +223,13 @@ static void parse_passwd(struct chfn_control *ctl)
 	/* use pw_gecos - we take a copy since PAM destroys the original */
 	gecos = xstrdup(ctl->pw->pw_gecos);
 	/* extract known fields */
-	ctl->oldf.full_name = strsep(&gecos, ",");
-	ctl->oldf.office = strsep(&gecos, ",");
-	ctl->oldf.office_phone = strsep(&gecos, ",");
-	ctl->oldf.home_phone = strsep(&gecos, ",");
+	gecos_fields[GECOS_FULL_NAME].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_OFFICE].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_OFFICE_PHONE].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_HOME_PHONE].current = strsep(&gecos, ",");
 	/*  extra fields contain site-specific information, and can
 	 *  not be changed by this version of chfn.  */
-	ctl->oldf.other = strsep(&gecos, ",");
+	gecos_fields[GECOS_OTHER].current = strsep(&gecos, ",");
 }
 
 /*
@@ -315,13 +330,21 @@ static void get_login_defs(struct chfn_control *ctl)
 static void ask_info(struct chfn_control *ctl)
 {
 	if (ctl->allow_fullname)
-		ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
+		gecos_fields[GECOS_FULL_NAME].new = ask_new_field(ctl,
+					gecos_fields[GECOS_FULL_NAME].name,
+					gecos_fields[GECOS_FULL_NAME].current);
 	if (ctl->allow_room)
-		ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
+		gecos_fields[GECOS_OFFICE].new = ask_new_field(ctl,
+					gecos_fields[GECOS_OFFICE].name,
+					gecos_fields[GECOS_OFFICE].current);
 	if (ctl->allow_work)
-		ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
+		gecos_fields[GECOS_OFFICE_PHONE].new = ask_new_field(ctl,
+					gecos_fields[GECOS_OFFICE_PHONE].name,
+					gecos_fields[GECOS_OFFICE_PHONE].current);
 	if (ctl->allow_home)
-		ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
+		gecos_fields[GECOS_HOME_PHONE].new = ask_new_field(ctl,
+					gecos_fields[GECOS_HOME_PHONE].name,
+					gecos_fields[GECOS_HOME_PHONE].current);
 	putchar('\n');
 }
 
@@ -342,13 +365,12 @@ static char *find_field(char *nf, char *of)
  *  add_missing () --
  *	add not supplied field values when in non-interactive mode
  */
-static void add_missing(struct chfn_control *ctl)
+static void add_missing(void)
 {
-	ctl->newf.full_name = find_field(ctl->newf.full_name, ctl->oldf.full_name);
-	ctl->newf.office = find_field(ctl->newf.office, ctl->oldf.office);
-	ctl->newf.office_phone = find_field(ctl->newf.office_phone, ctl->oldf.office_phone);
-	ctl->newf.home_phone = find_field(ctl->newf.home_phone, ctl->oldf.home_phone);
-	ctl->newf.other = find_field(ctl->newf.other, ctl->oldf.other);
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+		gf->new = find_field(gf->new, gf->current);
+	}
 	printf("\n");
 }
 
@@ -364,14 +386,14 @@ static int save_new_data(struct chfn_control *ctl)
 
 	/* create the new gecos string */
 	len = xasprintf(&gecos, "%s,%s,%s,%s,%s",
-			ctl->newf.full_name,
-			ctl->newf.office,
-			ctl->newf.office_phone,
-			ctl->newf.home_phone,
-			ctl->newf.other);
+			gecos_fields[GECOS_FULL_NAME].new,
+			gecos_fields[GECOS_OFFICE].new,
+			gecos_fields[GECOS_OFFICE_PHONE].new,
+			gecos_fields[GECOS_HOME_PHONE].new,
+			gecos_fields[GECOS_OTHER].new );
 
 	/* remove trailing empty fields (but not subfields of ctl->newf.other) */
-	if (!ctl->newf.other || !*ctl->newf.other) {
+	if (!gecos_fields[GECOS_OTHER].new || !*gecos_fields[GECOS_OTHER].new) {
 		while (len > 0 && gecos[len - 1] == ',')
 			len--;
 		gecos[len] = '\0';
@@ -472,7 +494,7 @@ int main(int argc, char **argv)
 	if (ctl.interactive)
 		ask_info(&ctl);
 
-	add_missing(&ctl);
+	add_missing();
 
 	if (!ctl.changed) {
 		printf(_("Finger information not changed.\n"));
