@@ -97,41 +97,20 @@ static int start_command(struct child_process *cmd)
 
 static void wait_for_pager(void)
 {
-	pid_t pid = pager_process.pid;
+	pid_t waiting;
 
-	if (!pid)
+	if (!pager_process.pid)
 		return;
 
 	/* signal EOF to pager */
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	for (;;) {
-		int status, code;
-		pid_t waiting = waitpid(pid, &status, 0);
-
-		if (waiting < 0) {
-			if (errno == EINTR)
-				continue;
+	do {
+		waiting = waitpid(pager_process.pid, NULL, 0);
+		if (waiting == -1 && errno != EINTR)
 			ul_sig_err(EXIT_FAILURE, "waitpid failed");
-		}
-		if (waiting != pid)
-			return;
-		if (WIFSIGNALED(status))
-			return;
-
-		if (!WIFEXITED(status))
-			return;
-		code = WEXITSTATUS(status);
-		switch (code) {
-		case 127:
-			return;
-		case 0:
-			return;
-		default:
-			return;
-		}
-	}
+	} while (waiting == -1);
 }
 
 static void wait_for_pager_signal(int signo)
