@@ -40,8 +40,6 @@ struct child_process {
 	struct sigaction orig_sigterm;
 	struct sigaction orig_sigquit;
 	struct sigaction orig_sigpipe;
-
-	bool no_stdin;
 };
 static struct child_process pager_process;
 
@@ -78,7 +76,7 @@ static int start_command(struct child_process *cmd)
 	 * In case of errors we must keep the promise to close FD
 	 * that has been passed in via ->in.
 	 */
-	need_in = !cmd->no_stdin && cmd->in < 0;
+	need_in = cmd->in < 0;
 	if (need_in) {
 		if (pipe(fdin) < 0)
 			return -1;
