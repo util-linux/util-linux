@@ -158,30 +158,18 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
-			if (!gecos_fields[GECOS_FULL_NAME].allowed)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
-							_(gecos_fields[GECOS_FULL_NAME].name));
 			status += check_gecos_string(gecos_fields[GECOS_FULL_NAME].name, optarg);
 			gecos_fields[GECOS_FULL_NAME].new = optarg;
 			break;
 		case 'o':
-			if (!gecos_fields[GECOS_OFFICE].allowed)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
-							_(gecos_fields[GECOS_OFFICE].name));
 			status += check_gecos_string(gecos_fields[GECOS_OFFICE].name, optarg);
 			gecos_fields[GECOS_OFFICE].new = optarg;
 			break;
 		case 'p':
-			if (!gecos_fields[GECOS_OFFICE_PHONE].allowed)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
-							_(gecos_fields[GECOS_OFFICE_PHONE].name));
 			status += check_gecos_string(gecos_fields[GECOS_OFFICE_PHONE].name, optarg);
 			gecos_fields[GECOS_OFFICE_PHONE].new = optarg;
 			break;
 		case 'h':
-			if (!gecos_fields[GECOS_HOME_PHONE].allowed)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
-							_(gecos_fields[GECOS_HOME_PHONE].name));
 			status += check_gecos_string(gecos_fields[GECOS_HOME_PHONE].name, optarg);
 			gecos_fields[GECOS_HOME_PHONE].new = optarg;
 			break;
@@ -334,6 +322,26 @@ static void get_login_defs(struct chfn_control *ctl)
 }
 
 /*
+ *  validate_field_access () --
+ *	validate access to the fields that were passed on the command line
+ */
+static void validate_field_access(void)
+{
+	int status = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		if (!gf->allowed && gf->new) {
+			warnx(_("%s: CHFN_RESTRICT forbids setting \"%s\""), _PATH_LOGINDEFS, gf->name);
+			status++;
+		}
+	}
+	if (status)
+		exit(EXIT_FAILURE);
+}
+
+/*
  *  ask_info () --
  *	prompt the user for the finger information and store it.
  */
@@ -461,10 +469,10 @@ int main(int argc, char **argv)
 	if (!is_privileged_execution() && uid == 0)
 		ctl.restricted = false;
 
+	parse_argv(&ctl, argc, argv);
 	/* check /etc/login.defs CHFN_RESTRICT */
 	get_login_defs(&ctl);
 
-	parse_argv(&ctl, argc, argv);
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
 		if (!ctl.pw)
@@ -510,6 +518,10 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("running UID doesn't match UID of the user you are "
 		      "attempting to alter, change denied"));
 	}
+
+	/* this validates access to the provided fields on the command line */
+	if (!ctl.interactive && ctl.restricted)
+		validate_field_access();
 
 	printf(_("Changing finger information for %s.\n"), ctl.username);
 
