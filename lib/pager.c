@@ -34,7 +34,6 @@ struct child_process {
 	const char **argv;
 	pid_t pid;
 	int in;
-	int out;
 	int err;
 
 	int org_err;
@@ -62,16 +61,13 @@ static int start_command(struct child_process *cmd)
 	int fdin[2];
 
 	/*
-	 * In case of errors we must keep the promise to close FDs
-	 * that have been passed in via ->in and ->out.
+	 * In case of errors we must keep the promise to close FD
+	 * that has been passed in via ->in.
 	 */
 	need_in = !cmd->no_stdin && cmd->in < 0;
 	if (need_in) {
-		if (pipe(fdin) < 0) {
-			if (cmd->out > 0)
-				close(cmd->out);
+		if (pipe(fdin) < 0)
 			return -1;
-		}
 		cmd->in = fdin[1];
 	}
 
