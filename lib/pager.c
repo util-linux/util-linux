@@ -69,30 +69,17 @@ static void pager_preexec(void)
 
 static int start_command(struct child_process *cmd)
 {
-	int need_in;
 	int fdin[2];
 
-	/*
-	 * In case of errors we must keep the promise to close FD
-	 * that has been passed in via ->in.
-	 */
-	need_in = cmd->in < 0;
-	if (need_in) {
-		if (pipe(fdin) < 0)
-			return -1;
-		cmd->in = fdin[1];
-	}
+	if (pipe(fdin) < 0)
+		return -1;
+	cmd->in = fdin[1];
 
 	fflush(NULL);
 	cmd->pid = fork();
 	if (!cmd->pid) {
-		if (need_in) {
-			dup2(fdin[0], STDIN_FILENO);
-			close_pair(fdin);
-		} else if (cmd->in > 0) {
-			dup2(cmd->in, STDIN_FILENO);
-			close(cmd->in);
-		}
+		dup2(fdin[0], STDIN_FILENO);
+		close_pair(fdin);
 
 		pager_preexec();
 		execvp(cmd->argv[0], (char *const*) cmd->argv);
@@ -100,17 +87,11 @@ static int start_command(struct child_process *cmd)
 	}
 
 	if (cmd->pid < 0) {
-		if (need_in)
-			close_pair(fdin);
-		else if (0 <= cmd->in)
-			close(cmd->in);
+		close_pair(fdin);
 		return -1;
 	}
 
-	if (need_in)
-		close(fdin[0]);
-	else if (0 <= cmd->in)
-		close(cmd->in);
+	close(fdin[0]);
 	return 0;
 }
 
