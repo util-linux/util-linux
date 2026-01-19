@@ -26,8 +26,6 @@
 #include "ttyutils.h"
 #include "pager.h"
 
-#define NULL_DEVICE	"/dev/null"
-
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
 
 struct child_process {
