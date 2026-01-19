@@ -95,8 +95,17 @@ static int start_command(struct child_process *cmd)
 	return 0;
 }
 
-static int wait_or_whine(pid_t pid)
+static void wait_for_pager(void)
 {
+	pid_t pid = pager_process.pid;
+
+	if (!pid)
+		return;
+
+	/* signal EOF to pager */
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+
 	for (;;) {
 		int status, code;
 		pid_t waiting = waitpid(pid, &status, 0);
@@ -107,38 +116,22 @@ static int wait_or_whine(pid_t pid)
 			ul_sig_err(EXIT_FAILURE, "waitpid failed");
 		}
 		if (waiting != pid)
-			return -1;
+			return;
 		if (WIFSIGNALED(status))
-			return -1;
+			return;
 
 		if (!WIFEXITED(status))
-			return -1;
+			return;
 		code = WEXITSTATUS(status);
 		switch (code) {
 		case 127:
-			return -1;
+			return;
 		case 0:
-			return 0;
+			return;
 		default:
-			return -1;
+			return;
 		}
 	}
-}
-
-static int finish_command(struct child_process *cmd)
-{
-	return wait_or_whine(cmd->pid);
-}
-
-static void wait_for_pager(void)
-{
-	if (pager_process.pid == 0)
-		return;
-
-	/* signal EOF to pager */
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
-	finish_command(&pager_process);
 }
 
 static void wait_for_pager_signal(int signo)
