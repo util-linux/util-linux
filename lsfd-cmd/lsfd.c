@@ -2280,7 +2280,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [[--] file...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --threads                list in threads level\n"), out);
@@ -2777,6 +2777,9 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	for (int n = optind; n < argc; n++)
+		add_devino_to_cl_filters(argv[n], ctl.cl_filters);
 
 	if (collist)
 		list_columns("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
