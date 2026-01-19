@@ -20,7 +20,7 @@ nodist_EXTRA_test_last_fuzz_SOURCES = dummy.cxx
 
 test_last_fuzz_SOURCES = login-utils/last.c
 test_last_fuzz_CFLAGS = $(AM_CFLAGS) -DFUZZ_TARGET
-test_last_fuzz_LDFLAGS = -lpthread
+test_last_fuzz_LDFLAGS = $(PTHREAD_LIBS)
 test_last_fuzz_LDADD = $(LDADD) libcommon.la $(LIB_FUZZING_ENGINE)
 endif
 

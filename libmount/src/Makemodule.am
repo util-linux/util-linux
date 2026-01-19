@@ -204,7 +204,7 @@ test_mount_fuzz_SOURCES = libmount/src/fuzz.c
 nodist_EXTRA_test_mount_fuzz_SOURCES = dummy.cxx
 
 test_mount_fuzz_CFLAGS = $(libmount_tests_cflags)
-test_mount_fuzz_LDFLAGS = $(libmount_tests_ldflags) -lpthread
+test_mount_fuzz_LDFLAGS = $(libmount_tests_ldflags) $(PTHREAD_LIBS)
 test_mount_fuzz_LDADD = $(libmount_tests_ldadd) $(LIB_FUZZING_ENGINE)
 endif
 
