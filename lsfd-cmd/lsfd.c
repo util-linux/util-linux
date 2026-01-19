@@ -895,7 +895,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 * path is the same to save stat() call.
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
-		 && (!prev->is_error)
+		 && (!is_error_object(prev))
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
 		sb = prev->stat;
@@ -917,7 +917,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	file_init_content(f);
 
-	if (f->is_error)
+	if (is_error_object(f))
 		return f;
 
 	if (is_association(f, NS_MNT)) {
@@ -1007,7 +1007,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && (!prev->is_error)
+	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {

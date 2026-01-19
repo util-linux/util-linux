@@ -298,11 +298,6 @@ static const struct file_class error_class = {
 	.fill_column = error_fill_column,
 };
 
-static void init_error_content(struct file *file)
-{
-	file->is_error = 1;
-}
-
 static bool readlink_error_fill_column(struct proc *proc __attribute__((__unused__)),
 				       struct file *file __attribute__((__unused__)),
 				       struct libscols_line *ln __attribute__((__unused__)),
@@ -321,15 +316,29 @@ static bool readlink_error_fill_column(struct proc *proc __attribute__((__unused
 const struct file_class readlink_error_class = {
 	.super = &error_class,
 	.size = sizeof(struct file),
-	.initialize_content = init_error_content,
 	.fill_column = readlink_error_fill_column,
 };
 
 const struct file_class stat_error_class = {
 	.super = &error_class,
 	.size = sizeof(struct file),
-	.initialize_content = init_error_content,
 };
+
+bool is_error_object(struct file *f)
+{
+	const struct file_class *c;
+
+	assert(f);
+	c = f->class;
+
+	while (c) {
+		if (c == &error_class)
+			return true;
+		c = c->super;
+	}
+
+	return false;
+}
 
 /*
  * Concrete file class
