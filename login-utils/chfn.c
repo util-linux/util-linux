@@ -94,7 +94,8 @@ struct chfn_control {
 		allow_work,	/* and look for CHFN_RESTRICT */
 		allow_home,	/* keyword for these four. */
 		changed,	/* is change requested */
-		interactive;	/* whether to prompt for fields or not */
+		interactive,	/* whether to prompt for fields or not */
+		restricted;	/* the program is running as a non-root user with setuid */
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -285,11 +286,11 @@ static void get_login_defs(struct chfn_control *ctl)
 	size_t i;
 	int invalid = 0;
 
-	/* real root does not have restrictions */
-	if (!is_privileged_execution() && getuid() == 0) {
+	if (!ctl->restricted) {
 		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
 		return;
 	}
+
 	s = getlogindefs_str("CHFN_RESTRICT", "");
 	if (strcmp(s, "yes") == 0) {
 		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
@@ -422,7 +423,8 @@ int main(int argc, char **argv)
 {
 	uid_t uid;
 	struct chfn_control ctl = {
-		.interactive = true
+		.interactive = true,
+		.restricted = true
 	};
 
 	sanitize_env();
@@ -432,6 +434,9 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	uid = getuid();
+
+	if (!is_privileged_execution() && uid == 0)
+		ctl.restricted = false;
 
 	/* check /etc/login.defs CHFN_RESTRICT */
 	get_login_defs(&ctl);
