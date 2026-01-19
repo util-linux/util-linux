@@ -34,7 +34,6 @@ struct child_process {
 	const char **argv;
 	pid_t pid;
 	int in;
-	int err;
 
 	int org_err;
 	int org_out;
