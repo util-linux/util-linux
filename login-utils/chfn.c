@@ -71,29 +71,26 @@ enum {
 };
 
 struct gecos_field {
-	char *name;	/* GECOS field name */
-	char *current;	/* currently defined GECOS field data */
-	char *new;	/* new GECOS field data */
+	char 	*name;		/* GECOS field name */
+	char 	*current;	/* currently defined GECOS field data */
+	char 	*new;		/* new GECOS field data */
+	bool 	allowed;	/* change allowed according to /etc/login.defs (CHFN_RESTRICT) */
 };
 
 /* global structure to store GECOS fields (current,new) with metadata */
 static struct gecos_field gecos_fields[] = {
-	[GECOS_FULL_NAME] = { N_("Name"), NULL, NULL },
-	[GECOS_OFFICE] = { N_("Office"), NULL, NULL },
-	[GECOS_OFFICE_PHONE] = { N_("Office Phone"), NULL, NULL },
-	[GECOS_HOME_PHONE] = { N_("Home Phone"), NULL, NULL },
-	[GECOS_OTHER] = { N_("Other"), NULL, NULL },
+	[GECOS_FULL_NAME] = { N_("Name"), NULL, NULL, false },
+	[GECOS_OFFICE] = { N_("Office"), NULL, NULL, false },
+	[GECOS_OFFICE_PHONE] = { N_("Office Phone"), NULL, NULL, false },
+	[GECOS_HOME_PHONE] = { N_("Home Phone"), NULL, NULL, false },
+	[GECOS_OTHER] = { N_("Other"), NULL, NULL, false },
 };
 
 struct chfn_control {
 	struct passwd *pw;
 	char *username;
 
-	bool 	allow_fullname,	/* The login.defs restriction */
-		allow_room,	/* see: man login.defs(5) */
-		allow_work,	/* and look for CHFN_RESTRICT */
-		allow_home,	/* keyword for these four. */
-		changed,	/* is change requested */
+	bool 	changed,	/* is change requested */
 		interactive,	/* whether to prompt for fields or not */
 		restricted;	/* the program is running as a non-root user with setuid */
 };
@@ -161,28 +158,28 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
-			if (!ctl->allow_fullname)
+			if (!gecos_fields[GECOS_FULL_NAME].allowed)
 				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
 							_(gecos_fields[GECOS_FULL_NAME].name));
 			status += check_gecos_string(gecos_fields[GECOS_FULL_NAME].name, optarg);
 			gecos_fields[GECOS_FULL_NAME].new = optarg;
 			break;
 		case 'o':
-			if (!ctl->allow_room)
+			if (!gecos_fields[GECOS_OFFICE].allowed)
 				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
 							_(gecos_fields[GECOS_OFFICE].name));
 			status += check_gecos_string(gecos_fields[GECOS_OFFICE].name, optarg);
 			gecos_fields[GECOS_OFFICE].new = optarg;
 			break;
 		case 'p':
-			if (!ctl->allow_work)
+			if (!gecos_fields[GECOS_OFFICE_PHONE].allowed)
 				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
 							_(gecos_fields[GECOS_OFFICE_PHONE].name));
 			status += check_gecos_string(gecos_fields[GECOS_OFFICE_PHONE].name, optarg);
 			gecos_fields[GECOS_OFFICE_PHONE].new = optarg;
 			break;
 		case 'h':
-			if (!ctl->allow_home)
+			if (!gecos_fields[GECOS_HOME_PHONE].allowed)
 				errx(EXIT_FAILURE, _("login.defs forbids setting %s"),
 							_(gecos_fields[GECOS_HOME_PHONE].name));
 			status += check_gecos_string(gecos_fields[GECOS_HOME_PHONE].name, optarg);
@@ -283,36 +280,44 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 static void get_login_defs(struct chfn_control *ctl)
 {
 	const char *s;
-	size_t i;
 	int invalid = 0;
 
 	if (!ctl->restricted) {
-		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+			/* allow the change of all fields */
+			gecos_fields[i].allowed = true;
+		}
 		return;
 	}
 
 	s = getlogindefs_str("CHFN_RESTRICT", "");
 	if (strcmp(s, "yes") == 0) {
-		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		gecos_fields[GECOS_OFFICE].allowed = true;
+		gecos_fields[GECOS_OFFICE_PHONE].allowed = true;
+		gecos_fields[GECOS_HOME_PHONE].allowed = true;
 		return;
 	}
+
 	if (strcmp(s, "no") == 0) {
-		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
-		return;
+		for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+			/* disallow the change of all fields */
+			gecos_fields[i].allowed = false;
+		}
 	}
-	for (i = 0; s[i]; i++) {
+
+	for (size_t i = 0; s[i]; i++) {
 		switch (s[i]) {
 		case 'f':
-			ctl->allow_fullname = 1;
+			gecos_fields[GECOS_FULL_NAME].allowed = true;
 			break;
 		case 'r':
-			ctl->allow_room = 1;
+			gecos_fields[GECOS_OFFICE].allowed = true;
 			break;
 		case 'w':
-			ctl->allow_work = 1;
+			gecos_fields[GECOS_OFFICE_PHONE].allowed = true;
 			break;
 		case 'h':
-			ctl->allow_home = 1;
+			gecos_fields[GECOS_HOME_PHONE].allowed = true;
 			break;
 		default:
 			invalid = 1;
@@ -320,7 +325,11 @@ static void get_login_defs(struct chfn_control *ctl)
 	}
 	if (invalid)
 		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
-	if (!ctl->allow_fullname && !ctl->allow_room && !ctl->allow_work && !ctl->allow_home)
+
+	if (!gecos_fields[GECOS_FULL_NAME].allowed
+			&& !gecos_fields[GECOS_OFFICE].allowed
+			&& !gecos_fields[GECOS_OFFICE_PHONE].allowed
+			&& !gecos_fields[GECOS_HOME_PHONE].allowed)
 		errx(EXIT_FAILURE, _("%s: CHFN_RESTRICT does not allow any changes"), _PATH_LOGINDEFS);
 }
 
@@ -330,22 +339,14 @@ static void get_login_defs(struct chfn_control *ctl)
  */
 static void ask_info(struct chfn_control *ctl)
 {
-	if (ctl->allow_fullname)
-		gecos_fields[GECOS_FULL_NAME].new = ask_new_field(ctl,
-					gecos_fields[GECOS_FULL_NAME].name,
-					gecos_fields[GECOS_FULL_NAME].current);
-	if (ctl->allow_room)
-		gecos_fields[GECOS_OFFICE].new = ask_new_field(ctl,
-					gecos_fields[GECOS_OFFICE].name,
-					gecos_fields[GECOS_OFFICE].current);
-	if (ctl->allow_work)
-		gecos_fields[GECOS_OFFICE_PHONE].new = ask_new_field(ctl,
-					gecos_fields[GECOS_OFFICE_PHONE].name,
-					gecos_fields[GECOS_OFFICE_PHONE].current);
-	if (ctl->allow_home)
-		gecos_fields[GECOS_HOME_PHONE].new = ask_new_field(ctl,
-					gecos_fields[GECOS_HOME_PHONE].name,
-					gecos_fields[GECOS_HOME_PHONE].current);
+	/* GECOS_OTHER is currently not supported */
+	for (size_t i = 0; i < GECOS_OTHER; i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		if (gf->allowed) {
+			gf->new = ask_new_field(ctl, gf->name, gf->current);
+		}
+	}
 	putchar('\n');
 }
 
