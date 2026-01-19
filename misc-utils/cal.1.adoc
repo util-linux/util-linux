@@ -83,6 +83,9 @@ Display months spanning the date.
 *-s*, *--sunday*::
 Display Sunday as the first day of the week.
 
+*-t*, *--saturday*::
+Display saturday as the first day of the week.
+
 *-m*, *--monday*::
 Display Monday as the first day of the week.
 
