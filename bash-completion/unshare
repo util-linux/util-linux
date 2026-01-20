@@ -28,6 +28,7 @@ _unshare_module()
 				--cgroup
 				--time
 				--fork
+				--forward-signals
 				--kill-child
 				--keep-caps
 				--mount-proc
