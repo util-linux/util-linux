@@ -3,6 +3,7 @@ lsfd_sources = files (
   'lsfd.h',
   'decode-file-flags.c',
   'file.c',
+  'error.c',
   'cdev.c',
   'bdev.c',
   'sock.c',

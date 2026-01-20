@@ -219,8 +219,7 @@ struct file {
 
 	bool	locked_read,
 		locked_write,
-		multiplexed,
-		is_error;
+		multiplexed;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)
@@ -249,6 +248,8 @@ struct file_class {
 extern const struct file_class abst_class, readlink_error_class, stat_error_class,
 	file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
 	nsfs_file_class, mqueue_file_class, pidfs_file_class;
+
+bool is_error_object(struct file *f);
 
 /*
  * IPC

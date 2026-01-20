@@ -227,10 +227,10 @@ static const struct colinfo infos[] = {
 	[COL_ENDPOINTS]        = { "ENDPOINTS",
 				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("IPC endpoints information communicated with the fd") },
-	[COL_EVENTFD_ID]       = {"EVENTFD.ID",
+	[COL_EVENTFD_ID]       = { "EVENTFD.ID",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("eventfd ID") },
-	[COL_EVENTPOLL_TFDS]   = {"EVENTPOLL.TFDS",
+	[COL_EVENTPOLL_TFDS]   = { "EVENTPOLL.TFDS",
 				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_NUMBER,
 				   N_("file descriptors targeted by the eventpoll file") },
 	[COL_FD]               = { "FD",
@@ -757,43 +757,40 @@ static struct file *new_file(struct proc *proc, const struct file_class *class,
 	return file;
 }
 
-static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+static struct file *new_error_file_common(const struct file_class *error_class, const char *syscall,
+					  struct proc *proc, int error_no, int association,
+					  const char *name)
 {
 	struct file *file;
 
-	file = xcalloc(1, readlink_error_class.size);
-	file->class = &readlink_error_class;
+	file = xcalloc(1, error_class->size);
+	file->class = error_class;
 
 	file->proc = proc;
 
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 
-	file->error.syscall = "readlink";
+	file->error.syscall = syscall;
 	file->error.number = error_no;
 	file->association = association;
-	file->name = NULL;
+	file->name = name ? xstrdup(name) : NULL;
 
 	return file;
 }
 
+static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+{
+	return new_error_file_common(&readlink_error_class, "readlink",
+				     proc, error_no, association,
+				     NULL);
+}
+
 static struct file *new_stat_error_file(struct proc *proc, const char *name, int error_no, int association)
 {
-	struct file *file;
-
-	file = xcalloc(1, stat_error_class.size);
-	file->class = &stat_error_class;
-
-	file->proc = proc;
-
-	INIT_LIST_HEAD(&file->files);
-	list_add_tail(&file->files, &proc->files);
-
-	file->error.syscall = "stat";
-	file->error.number = error_no;
-	file->association = association;
-	file->name = xstrdup(name);
-
+	struct file *file = new_error_file_common(&stat_error_class, "stat",
+						  proc, error_no, association,
+						  name);
 	return file;
 }
 
@@ -898,7 +895,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 * path is the same to save stat() call.
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
-		 && (!prev->is_error)
+		 && (!is_error_object(prev))
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
 		sb = prev->stat;
@@ -920,7 +917,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	file_init_content(f);
 
-	if (f->is_error)
+	if (is_error_object(f))
 		return f;
 
 	if (is_association(f, NS_MNT)) {
@@ -1010,7 +1007,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && (!prev->is_error)
+	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
