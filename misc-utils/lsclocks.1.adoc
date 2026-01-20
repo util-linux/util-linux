@@ -12,7 +12,7 @@ lsclocks - display system clocks
 
 == SYNOPSIS
 
-*lsclocks* [option]
+*lsclocks* [options]
 
 == DESCRIPTION
 
