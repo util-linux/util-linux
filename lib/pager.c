@@ -209,7 +209,7 @@ static void __setup_pager(void)
 	sigaction(SIGPIPE, &sa, &pager_process.orig_sigpipe);
 }
 
-/* Setup pager and redirects output to the $PAGER. The pager is closed at exit.
+/* Setup pager and redirect output to the $PAGER. The pager is closed at exit.
  */
 void pager_redirect(void)
 {
@@ -250,7 +250,7 @@ void pager_close(void)
 	close(pager_process.org_out);
 	close(pager_process.org_err);
 
-	/* restore original segnals setting */
+	/* restore original signal settings */
 	sigaction(SIGINT,  &pager_process.orig_sigint, NULL);
 	sigaction(SIGHUP,  &pager_process.orig_sighup, NULL);
 	sigaction(SIGTERM, &pager_process.orig_sigterm, NULL);
