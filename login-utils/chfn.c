@@ -2,6 +2,7 @@
  *   chfn.c -- change your finger information
  *   (c) 1994 by salvatore valente <svalente@athena.mit.edu>
  *   (c) 2012 by Cody Maloney <cmaloney@theoreticalchaos.com>
+ *   (c) 2025 by Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
  *
  *   this program is free software.  you can redistribute it and
  *   modify it under the terms of the gnu general public license.
@@ -71,10 +72,10 @@ enum {
 };
 
 struct gecos_field {
-	char 	*name;		/* GECOS field name */
-	char 	*current;	/* currently defined GECOS field data */
-	char 	*new;		/* new GECOS field data */
-	bool 	allowed;	/* change allowed according to /etc/login.defs (CHFN_RESTRICT) */
+	const char 	*name;		/* GECOS field name */
+	char 		*current;	/* currently defined GECOS field data */
+	char 		*new;		/* new GECOS field data */
+	bool 		allowed;	/* change allowed according to /etc/login.defs (CHFN_RESTRICT) */
 };
 
 /* global structure to store GECOS fields (current,new) with metadata */
@@ -184,7 +185,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		ctl->changed = true;
 		ctl->interactive = false;
 	}
-	if (status != 0)
+	if (status)
 		exit(EXIT_FAILURE);
 	/* done parsing arguments.  check for a username. */
 	if (optind < argc) {
@@ -200,7 +201,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
  *  parse_passwd () --
  *	take a struct password and fill in the fields of the struct finfo.
  */
-static void parse_passwd(struct chfn_control *ctl)
+static void parse_passwd(const struct chfn_control *ctl)
 {
 	char *gecos;
 
@@ -265,7 +266,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
  *  get_login_defs()
  *	find /etc/login.defs CHFN_RESTRICT and save restrictions to run time
  */
-static void get_login_defs(struct chfn_control *ctl)
+static void get_login_defs(const struct chfn_control *ctl)
 {
 	const char *s;
 	int invalid = 0;
