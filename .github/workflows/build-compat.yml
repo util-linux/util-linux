@@ -1,0 +1,31 @@
+name: build-compat
+on:
+  workflow_call:
+    inputs:
+      image:
+        type: string
+        required: true
+        description: image name
+jobs:
+  build-compat:
+    name: ${{ inputs.image }}
+    runs-on: ubuntu-latest
+    env:
+      COMPILER: none
+    container:
+      image: ${{ inputs.image }}
+    steps:
+      - name: Repository checkout
+        # dependabot doesn't care this dependency.
+        # See .github/dependabot.yml.
+        uses: actions/checkout@v1
+      - name: Ubuntu setup
+        run: .github/workflows/cibuild-setup-ubuntu.sh
+      - name: Configure
+        run: .github/workflows/cibuild.sh CONFIGUREFAST
+      - name: Code checks
+        run: .github/workflows/cibuild.sh CODECHECK
+      - name: Configure & Make
+        run: .github/workflows/cibuild.sh MAKE
+      - name: Check
+        run: .github/workflows/cibuild.sh CHECK
