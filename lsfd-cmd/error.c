@@ -46,6 +46,9 @@ static const struct errno_s errnos[] = {
 
 static const char *get_errno_name(int ern)
 {
+	if (!ARRAY_SIZE(errnos))
+		return NULL;
+
 	for (size_t i = 0; i < ARRAY_SIZE(errnos); i ++) {
 		if (errnos[i].number == ern)
 			return errnos[i].name;
