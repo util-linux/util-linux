@@ -212,7 +212,10 @@ enum {
 	LSCPU_OUTPUT_SUMMARY = 0,	/* default */
 	LSCPU_OUTPUT_CACHES,
 	LSCPU_OUTPUT_PARSABLE,
-	LSCPU_OUTPUT_READABLE
+	LSCPU_OUTPUT_READABLE,
+	LSCPU_OUTPUT_ARM_IMPLEMENTERS,
+	LSCPU_OUTPUT_ARM_MODELS,
+	LSCPU_OUTPUT_ARM_SINGLE_MODEL,
 };
 
 struct lscpu_cxt {
@@ -324,6 +327,9 @@ struct lscpu_cpu *lscpu_cpus_loopup_by_type(struct lscpu_cxt *cxt, struct lscpu_
 
 void lscpu_decode_arm(struct lscpu_cxt *cxt);
 void lscpu_format_isa_riscv(struct lscpu_cputype *ct);
+void lscpu_print_arm_implementers(struct lscpu_cxt *cxt);
+void lscpu_print_arm_models(struct lscpu_cxt *cxt, int implementer);
+void lscpu_print_arm_model(struct lscpu_cxt *cxt, int implementer, int model);
 
 int lookup(char *line, char *pattern, char **value);
 
