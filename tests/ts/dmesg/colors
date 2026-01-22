@@ -24,6 +24,6 @@ ts_inhibit_custom_colorscheme
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
-$TS_HELPER_DMESG --color=always -F $TS_SELF/input -x >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --color=always --file $TS_SELF/input -x >> $TS_OUTPUT 2>/dev/null
 
 ts_finalize
