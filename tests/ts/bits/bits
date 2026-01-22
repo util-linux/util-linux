@@ -40,43 +40,43 @@ $TS_CMD_BITS --binary 11,22,33,44 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "truncate"
-$TS_CMD_BITS -l 1,10000 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 1,10000 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "width"
-$TS_CMD_BITS -w 16384 -l 10000  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --width 16384 -l 10000  >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "width-truncate"
-$TS_CMD_BITS -w 32 -l 11,22,33,44 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --width 32 --list 11,22,33,44 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "parse-mask"
-$TS_CMD_BITS -l 0x0badcaca >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 0x0badcaca >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "parse-range"
-$TS_CMD_BITS -g 50-100 75-150 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --grouped-mask 50-100 75-150 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "parse-grouped-mask"
-$TS_CMD_BITS -l ,9000000,00000000,0c000000,00000000 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list ,9000000,00000000,0c000000,00000000 >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "or"
-$TS_CMD_BITS -l 50-100 '|75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 50-100 '|75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "and"
-$TS_CMD_BITS -l 50-100 '&75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 50-100 '&75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "xor"
-$TS_CMD_BITS -l 50-100 '^75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 50-100 '^75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "not"
-$TS_CMD_BITS -l 50-100 '~75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BITS --list 50-100 '~75-150' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "stdin"
