@@ -37,7 +37,7 @@ FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\n" # delete middle, head, tail, last
 FDISK_CMD_DELETE_PRIMARY="d\n1\n" # delete first primary
 FDISK_CMD_DELETE_EXTENDED="d\n2\n" # delete second primary
 
-FDISK_OPTIONS="-C 1024 -c=dos -u=cylinders"
+FDISK_OPTIONS="--cylinders 1024 --compatibility=dos --units=cylinders"
 
 function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
