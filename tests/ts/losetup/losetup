@@ -47,7 +47,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP --detach $LODEV
 ts_finalize_subtest
 
 ts_init_subtest "file-offset"
@@ -56,7 +56,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP --detach $LODEV
 ts_finalize_subtest
 
 
