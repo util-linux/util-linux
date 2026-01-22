@@ -1,6 +1,6 @@
 if BUILD_LSFD
 
-lsfd-cmd/file.c: errnos.h
+lsfd-cmd/error.c: errnos.h
 
 bin_PROGRAMS += lsfd
 MANPAGES += lsfd-cmd/lsfd.1
