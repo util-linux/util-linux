@@ -1,0 +1,35 @@
+#!/bin/bash
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="MBR: default start for logical must reserve EBR gap"
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_check_test_command "$TS_CMD_FDISK"
+
+# 1GiB image => 2097152 sectors @ 512B
+TEST_IMAGE_NAME=$(ts_image_init 1024)
+
+# key assertion is in the resulting layout: L2 must not start at 788480,
+# but at 790528 (= 788480 + 2048), leaving room for the EBR.
+echo -e \
+"o
+n
+e
+1
+2048
+2097151
+n
+6145
+788479
+n
+788480
+2097151
+w
+q
+" | $TS_CMD_FDISK --noauto-pt "$TEST_IMAGE_NAME" &> /dev/null
+
+echo -ne "\n---layout----------\n" >> "$TS_OUTPUT"
+$TS_CMD_FDISK -x "$TEST_IMAGE_NAME" >> "$TS_OUTPUT"
+echo -ne "-------------------\n\n" >> "$TS_OUTPUT"
+ts_fdisk_clean "$TEST_IMAGE_NAME"
+
+ts_finalize
