@@ -31,7 +31,7 @@ NO_DISCOVER="--no-discover-dynamic --no-discover-rtc"
 
 ts_init_subtest basic
 
-"$TS_CMD_LSCLOCKS" $NO_DISCOVER -o TYPE,ID,CLOCK,NAME | grep -v CLOCK_AUX \
+"$TS_CMD_LSCLOCKS" $NO_DISCOVER --output TYPE,ID,CLOCK,NAME | grep -v CLOCK_AUX \
 	> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 ts_finalize_subtest
