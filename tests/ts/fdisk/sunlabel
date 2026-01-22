@@ -33,7 +33,7 @@ FDISK_CMD_TOGGLE_MOUNTABLE="c\n1\n" # sets first partition as mountable
 FDISK_CMD_CHANGE_SYSID="t\n4\n" # changes sysid to 4 (SunOS usr)
 FDISK_CMD_CREATE_SECONDARY="n\n2\n128\n\n" # create secondary partition to the end of disk
 
-FDISK_OPTIONS="-H 1 -S 63 -u=cylinders"
+FDISK_OPTIONS="--heads 1 --sectors 63 --units=cylinders"
 
 function print_layout {
     $TS_CMD_FDISK ${FDISK_OPTIONS} -x ${TEST_IMAGE_NAME} >> $TS_OUTPUT
