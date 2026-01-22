@@ -29,13 +29,13 @@ rm -f $TS_OUTDIR/id-msg
 $TS_CMD_IPCMK -Q 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-msg
 $TS_CMD_IPCS -q -i "$(cat $TS_OUTDIR/id-msg)" |\
 	grep -c "^Message Queue msqid=$(cat $TS_OUTDIR/id-msg)$" >>$TS_OUTPUT
-$TS_CMD_IPCRM -q $(cat $TS_OUTDIR/id-msg) >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCRM -q "$(cat $TS_OUTDIR/id-msg)" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 rm -f $TS_OUTDIR/id-msg
 $TS_CMD_IPCMK -Q 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-msg
 $TS_CMD_IPCRM -Q "$(
 	$TS_CMD_IPCS -q |
-	awk -v id=$(cat $TS_OUTDIR/id-msg) '{if ($2 == id){print $1}}' |
+	awk -v id="$(cat $TS_OUTDIR/id-msg)" '{if ($2 == id){print $1}}' |
 	uniq
 )" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
