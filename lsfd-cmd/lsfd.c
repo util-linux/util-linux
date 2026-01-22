@@ -602,6 +602,8 @@ struct lsfd_control {
 
 	struct libscols_filter *filter;		/* filter */
 	struct libscols_filter **ct_filters;	/* counters (NULL terminated array) */
+
+	struct cl_filters *cl_filters;
 };
 
 static void *proc_tree;			/* for tsearch/tfind */
@@ -882,14 +884,21 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
 					 int assoc,
-					 bool sockets_only)
+					 bool sockets_only,
+					 struct cl_filters *cl_filters)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
 	struct file *f, *prev;
 
-	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
+	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0) {
+		if (cl_filters_has_name(cl_filters)
+		    || cl_filters_has_devino(cl_filters)
+		    || cl_filters_has_bdev(cl_filters))
+			return NULL;
 		f = new_readlink_error_file(proc, errno, assoc);
+	} else if (!cl_filters_apply_name(cl_filters, sym))
+		return NULL;
 	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
 	 * more than once. Let's try to reuse the previous file if the real
 	 * path is the same to save stat() call.
@@ -898,9 +907,17 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		 && (!is_error_object(prev))
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
-		sb = prev->stat;
-	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
+		sb = prev->stat; /* ??? */
+	} else if (ul_path_stat(pc, &sb, 0, name) < 0) {
+		if (cl_filters_has_devino(cl_filters)
+		    || cl_filters_has_bdev(cl_filters))
+			return NULL;
 		f = new_stat_error_file(proc, sym, errno, assoc);
+	} else if (!cl_filters_apply_devino(cl_filters,
+					    sb.st_dev, sb.st_ino))
+		return NULL;
+	else if (!cl_filters_apply_bdev(cl_filters, sb.st_dev))
+		return NULL;
 	else {
 		const struct file_class *class = stat2class(&sb);
 
@@ -954,7 +971,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 /* read symlinks from /proc/#/fd
  */
 static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     bool sockets_only, struct cl_filters *cl_filters)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -967,11 +984,12 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		collect_file_symlink(pc, proc, path, num, sockets_only);
+		collect_file_symlink(pc, proc, path, num, sockets_only, cl_filters);
 	}
 }
 
-static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
+static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
+			    struct cl_filters *cl_filters)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
@@ -1012,6 +1030,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
+		if (!cl_filters_apply_name(cl_filters, path))
+			return;
 		if (stat(path, &sb) < 0)
 			/* If a file is mapped but deleted from the file system,
 			 * "stat by the file name" may not work. In that case,
@@ -1023,6 +1043,11 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 			 * Maybe the file is bind-mount'ed after mapped.
 			 */
 			goto try_map_files;
+		if (!cl_filters_apply_devino(cl_filters,
+					     sb.st_dev, sb.st_ino))
+			return;
+		if (!cl_filters_apply_bdev(cl_filters, sb.st_dev))
+			return;
 		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
 	} else {
 		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
@@ -1030,11 +1055,26 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 
 	try_map_files:
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
-				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
+				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
+			if (cl_filters_has_name(cl_filters)
+			    || cl_filters_has_devino(cl_filters)
+			    || cl_filters_has_bdev(cl_filters))
+				return;
 			f = new_readlink_error_file(proc, errno, -assoc);
+		} else if (!cl_filters_apply_name(cl_filters, sym))
+			return;
 		else if (ul_path_statf(pc, &sb, 0,
-				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
+					 "map_files/%"PRIx64"-%"PRIx64, start, end) < 0) {
+			if (cl_filters_has_name(cl_filters)
+			    || cl_filters_has_devino(cl_filters)
+			    || cl_filters_has_bdev(cl_filters))
+				return;
 			f = new_stat_error_file(proc, sym, errno, -assoc);
+		} else if (!cl_filters_apply_devino(cl_filters,
+						    sb.st_dev, sb.st_ino))
+			return;
+		else if (!cl_filters_apply_bdev(cl_filters, sb.st_dev))
+			return;
 		else
 			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
 	}
@@ -1064,7 +1104,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	file_init_content(f);
 }
 
-static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
+static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
+			      struct cl_filters *cl_filters)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1074,7 +1115,7 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(pc, buf, proc);
+		parse_maps_line(pc, buf, proc, cl_filters);
 
 	fclose(fp);
 }
@@ -1084,14 +1125,15 @@ static void collect_outofbox_files(struct path_cxt *pc,
 				   enum association assocs[],
 				   const char *names[],
 				   size_t count,
-				   bool sockets_only)
+				   bool sockets_only,
+				   struct cl_filters *cl_filters)
 {
 	size_t i;
 
 	for (i = 0; i < count; i++) {
 		struct file *f __attribute__((unused))
 			= collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
-					       sockets_only);
+					       sockets_only, cl_filters);
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 		if (f && has_mnt_id(f)) {
 			struct statx stx;
@@ -1104,18 +1146,18 @@ static void collect_outofbox_files(struct path_cxt *pc,
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
-				bool sockets_only)
+				bool sockets_only, struct cl_filters *cl_filters)
 {
 	enum association assocs[] = { ASSOC_EXE };
 	const char *names[] = {
 		[ASSOC_EXE]  = "exe",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+			       sockets_only, cl_filters);
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     bool sockets_only, struct cl_filters *cl_filters)
 {
 	enum association assocs[] = { ASSOC_CWD, ASSOC_ROOT };
 	const char *names[] = {
@@ -1123,10 +1165,11 @@ static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 		[ASSOC_ROOT] = "root",
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+			       sockets_only, cl_filters);
 }
 
-static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc,
+					    struct cl_filters *cl_filters)
 {
 	enum association assocs[] = {
 		ASSOC_NS_CGROUP,
@@ -1140,10 +1183,12 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
 			       /* Namespace information is always needed. */
-			       false);
+			       false,
+			       cl_filters);
 }
 
-static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc,
+					       struct cl_filters *cl_filters)
 {
 	enum association assocs[] = {
 		ASSOC_NS_NET,
@@ -1165,7 +1210,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 	};
 	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
 			       /* Namespace information is always needed. */
-			       false);
+			       false, cl_filters);
 }
 
 static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
@@ -2041,11 +2086,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		goto out;
 	}
 
-	collect_execve_file(pc, proc, ctl->sockets_only);
+	collect_execve_file(pc, proc, ctl->sockets_only, ctl->cl_filters);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_fs_files(pc, proc, ctl->sockets_only);
+		collect_fs_files(pc, proc, ctl->sockets_only, ctl->cl_filters);
 
 	/* Reading /proc/$pid/mountinfo is expensive.
 	 * mnt_namespaces is a table for avoiding reading mountinfo files
@@ -2066,7 +2111,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
 	if (proc->mnt_ns == NULL)
-		collect_namespace_files_tophalf(pc, proc);
+		collect_namespace_files_tophalf(pc, proc, ctl->cl_filters);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
@@ -2090,7 +2135,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * When reading the information about the net namespace,
 	 * backing device for "nsfs" must be solved.
 	 */
-	collect_namespace_files_bottomhalf(pc, proc);
+	collect_namespace_files_bottomhalf(pc, proc, ctl->cl_filters);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
@@ -2100,11 +2145,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if ((!ctl->sockets_only)
 	    && (proc->pid == proc->leader->pid
 		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
-		collect_mem_files(pc, proc);
+		collect_mem_files(pc, proc, ctl->cl_filters);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(pc, proc, ctl->sockets_only);
+		collect_fd_files(pc, proc, ctl->sockets_only, ctl->cl_filters);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
@@ -2126,7 +2171,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	ul_path_close_dirfd(pc);
 }
 
-static void parse_pids(const char *str, pid_t **pids, int *count)
+static void add_pids_to_cl_filters(const char *str, struct cl_filters *cl_filters)
 {
 	long v;
 	char *next = NULL;
@@ -2143,41 +2188,34 @@ static void parse_pids(const char *str, pid_t **pids, int *count)
 	if (v < 0)
 		errx(EXIT_FAILURE, _("out of range value for pid specification: %ld"), v);
 
-	(*count)++;
-	*pids = xreallocarray(*pids, *count, sizeof(**pids));
-	(*pids)[*count - 1] = (pid_t)v;
+	cl_filters_add_pid(cl_filters, v);
 
 	while (next && *next != '\0'
 	       && (isspace((unsigned char)*next) || *next == ','))
 		next++;
 	if (*next != '\0')
-		parse_pids(next, pids, count);
+		add_pids_to_cl_filters(next, cl_filters);
 }
 
-static int pidcmp(const void *a, const void *b)
+static void add_bdev_to_cl_filters(const char *fpath,
+				   struct cl_filters *cl_filters)
 {
-	pid_t pa = *(pid_t *)a;
-	pid_t pb = *(pid_t *)b;
-
-	if (pa < pb)
-		return -1;
-	else if (pa == pb)
-		return 0;
-	else
-		return 1;
+	struct stat sb;
+	if (stat(fpath, &sb) != 0)
+		err(EXIT_FAILURE, _("status error on %s"), fpath);
+	cl_filters_add_bdev(cl_filters, sb.st_dev);
 }
 
-static void sort_pids(pid_t pids[], const int count)
+static void add_devino_to_cl_filters(const char *fpath,
+				     struct cl_filters *cl_filters)
 {
-	qsort(pids, count, sizeof(pid_t), pidcmp);
+	struct stat sb;
+	if (stat(fpath, &sb) != 0)
+		err(EXIT_FAILURE, _("status error on %s"), fpath);
+	cl_filters_add_devino(cl_filters, sb.st_dev, sb.st_ino);
 }
 
-static bool member_pids(const pid_t pid, const pid_t pids[], const int count)
-{
-	return bsearch(&pid, pids, count, sizeof(pid_t), pidcmp)? true: false;
-}
-
-static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int n_pids)
+static void collect_processes(struct lsfd_control *ctl)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -2196,7 +2234,8 @@ static void collect_processes(struct lsfd_control *ctl, const pid_t pids[], int 
 
 		if (procfs_dirent_get_pid(d, &pid) != 0)
 			continue;
-		if (n_pids == 0 || member_pids(pid, pids, n_pids))
+		if (cl_filters_has_pid_filter(ctl->cl_filters) == false
+		    || cl_filters_apply_pid(ctl->cl_filters, pid))
 			read_process(ctl, pc, pid, 0);
 	}
 
@@ -2238,7 +2277,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [[--] file...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -l, --threads                list in threads level\n"), out);
@@ -2254,6 +2293,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
 	fputs(_("     --dump-counters          dump counter definitions\n"), out);
 	fputs(_("     --hyperlink[=<when>]     print paths as hyperlinks (always|never|auto)\n"), out);
+	fputs(_("     --device=<file>          collect only files on the same block device where <file> exists\n"), out);
+	fputs(_("     --inode=<file>           collect only files associating with the inode of <file>\n"), out);
+	fputs(_("     --name=<file>            collect only files named <file>\n"), out);
 	fputs(_("     --summary[=<mode>]       print summary information (append|only|never)\n"), out);
 	fputs(_("     --_drop-privilege        (testing purpose) do setuid(1) just after starting\n"), out);
 
@@ -2584,14 +2626,12 @@ int main(int argc, char *argv[])
 	char  *filter_expr = NULL;
 	bool debug_filter = false;
 	bool dump_counters = false;
-	pid_t *pids = NULL;
-	int n_pids = 0;
 	struct list_head counter_specs;
 
 	struct lsfd_control ctl = {
 		.show_main = 1
 	};
-
+	ctl.cl_filters = new_cl_filters();
 	INIT_LIST_HEAD(&counter_specs);
 
 	enum {
@@ -2599,13 +2639,16 @@ int main(int argc, char *argv[])
 		OPT_SUMMARY,
 		OPT_DUMP_COUNTERS,
 		OPT_DROP_PRIVILEGE,
-		OPT_HYPERLINK
+		OPT_HYPERLINK,
+		OPT_CLF_DEVICE,
+		OPT_CLF_INODE,
+		OPT_CLF_NAME,
 	};
 	static const struct option longopts[] = {
 		{ "noheadings", no_argument, NULL, 'n' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "version",    no_argument, NULL, 'V' },
-		{ "help",	no_argument, NULL, 'h' },
+		{ "help",       no_argument, NULL, 'h' },
 		{ "json",       no_argument, NULL, 'J' },
 		{ "raw",        no_argument, NULL, 'r' },
 		{ "threads",    no_argument, NULL, 'l' },
@@ -2620,6 +2663,9 @@ int main(int argc, char *argv[])
 		{ "list-columns",no_argument, NULL, 'H' },
 		{ "_drop-privilege",no_argument,NULL,OPT_DROP_PRIVILEGE },
 		{ "hyperlink",  optional_argument, NULL, OPT_HYPERLINK },
+		{ "device",     required_argument, NULL, OPT_CLF_DEVICE },
+		{ "inode",      required_argument, NULL, OPT_CLF_INODE },
+		{ "name",       required_argument, NULL, OPT_CLF_NAME },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2651,7 +2697,7 @@ int main(int argc, char *argv[])
 			ctl.notrunc = 1;
 			break;
 		case 'p':
-			parse_pids(optarg, &pids, &n_pids);
+			add_pids_to_cl_filters(optarg, ctl.cl_filters);
 			break;
 		case 'i': {
 			const char *subexpr = NULL;
@@ -2708,6 +2754,15 @@ int main(int argc, char *argv[])
 			if (hyperlinkwanted(optarg))
 				ctl.uri = xgethosturi(NULL);
 			break;
+		case OPT_CLF_DEVICE:
+			add_bdev_to_cl_filters(optarg, ctl.cl_filters);
+			break;
+		case OPT_CLF_INODE:
+			add_devino_to_cl_filters(optarg, ctl.cl_filters);
+			break;
+		case OPT_CLF_NAME:
+			cl_filters_add_name(ctl.cl_filters, optarg);
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -2720,11 +2775,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	for (int n = optind; n < argc; n++)
+		add_devino_to_cl_filters(argv[n], ctl.cl_filters);
+
 	if (collist)
 		list_columns("lsfd-columns", stdout, ctl.raw, ctl.json); /* print and exit */
-
-	if (argv[optind])
-		errtryhelp(EXIT_FAILURE);
 
 #define INITIALIZE_COLUMNS(COLUMN_SPEC)				\
 	for (i = 0; i < ARRAY_SIZE(COLUMN_SPEC); i++)	\
@@ -2794,8 +2849,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (n_pids > 0)
-		sort_pids(pids, n_pids);
+	cl_filters_optimize(ctl.cl_filters);
 
 	if (scols_table_get_column_by_name(ctl.tb, "XMODE"))
 		ctl.show_xmode = 1;
@@ -2816,8 +2870,7 @@ int main(int argc, char *argv[])
 	initialize_classes();
 	initialize_devdrvs();
 
-	collect_processes(&ctl, pids, n_pids);
-	free(pids);
+	collect_processes(&ctl);
 
 	attach_xinfos(&ctl.procs);
 	if (ctl.show_xmode)
@@ -2840,6 +2893,8 @@ int main(int argc, char *argv[])
 	finalize_classes();
 	finalize_ipc_table();
 	finalize_nodevs();
+
+	free_cl_filters(ctl.cl_filters);
 
 	return 0;
 }

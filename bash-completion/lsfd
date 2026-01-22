@@ -33,6 +33,12 @@ _lsfd_module()
 			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
 			return 0
 			;;
+		'--device'|'--inode'|'--name')
+			local IFS=$'\n'
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version'|'-H'|'--list-columns')
 			return 0
 			;;
@@ -57,6 +63,9 @@ _lsfd_module()
 				--dump-counters
 				--list-columns
 				--hyperlink
+				--device
+				--inode
+				--name
 			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
