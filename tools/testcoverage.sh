@@ -26,8 +26,8 @@
 
 top_srcdir="${0%/*}/../"
 if [ ! -d "${top_srcdir}" ]; then
-        echo "directory '${top_srcdir}' not found" >&2
-        exit 1
+	echo "directory '${top_srcdir}' not found" >&2
+	exit 1
 fi
 
 if ! type mktemp >/dev/null 2>&1; then
@@ -54,7 +54,7 @@ unsupported_programs='^blockdev$|^fsck$|^kill$|^mkfs\.cramfs$|^pg$|^renice$|^run
 program_test_subdirs="$(ls -1 ${top_testdir} | tr '\n' ' ')"
 
 function usage() {
-cat <<EOF
+	cat <<EOF
 Usage:
  getopt [options] <program>...
 
@@ -70,14 +70,14 @@ EOF
 # Extract all user-facing programs from Makemodule.am files
 # We look for: bin_PROGRAMS, sbin_PROGRAMS, usrbin_exec_PROGRAMS, usrsbin_exec_PROGRAMS
 function extract_programs() {
-        find "$top_srcdir" -name "Makemodule.am" -type f -exec grep -h \
-                -E "^(bin|sbin|usrbin_exec|usrsbin_exec)_PROGRAMS \+=" {} \; 2>/dev/null \
-                | sed 's/.*+= *//' \
-                | tr ' ' '\n' \
-                | sed 's/\\//' \
-                | grep -v '^$' \
-                | grep -v '\.static$' \
-                | sort -u
+	find "$top_srcdir" -name "Makemodule.am" -type f -exec grep -h \
+		-E "^(bin|sbin|usrbin_exec|usrsbin_exec)_PROGRAMS \+=" {} \; 2>/dev/null |
+		sed 's/.*+= *//' |
+		tr ' ' '\n' |
+		sed 's/\\//' |
+		grep -v '^$' |
+		grep -v '\.static$' |
+		sort -u
 }
 
 function get_share() {
@@ -90,47 +90,47 @@ function get_share() {
 }
 
 function get_test_scripts_long_opts() {
-        local prog test_scripts regex opts
+	local prog test_scripts regex opts
 	prog="$1"
-        test_scripts="$2"
+	test_scripts="$2"
 	# shellcheck disable=SC2016
 	regex="[[:space:]]*--(?![^[:alnum:]])[A-Za-z-.0-9_]*"
 
 	for ts in $test_scripts; do
-		found="$(grep -P -o "$regex" "${ts}" \
-			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
-			| uniq )"
+		found="$(grep -P -o "$regex" "${ts}" |
+			grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' |
+			uniq)"
 
 		if [ -n "$found" ]; then
 			opts+="$(printf -- '\n%s' "$found")"
 		fi
 	done
 
-        echo "$opts" | uniq | sort
+	echo "$opts" | uniq | sort
 }
 
 function find_real_test_longopts_per_prog() {
-        prog="$1"
+	prog="$1"
 	ts_long_opts="$2"
 
-        prog_long_opts="$( TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" \
-                        | sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' )"
+	prog_long_opts="$(TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" |
+		sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
 
-        if [[ "$?" != "0" || -z "$prog_long_opts" ]]; then
-                echo "Failed to get long options for $prog"
-                return 1
-        fi
+	if [[ "$?" != "0" || -z "$prog_long_opts" ]]; then
+		echo "Failed to get long options for $prog"
+		return 1
+	fi
 
-        # tools/get-options.sh prints 'ENOTSUP' when it receives the name of an
-        # unsupported program. See comments for the 'unsupported_programs' variable
-        # in tools/get-options.sh for more details.
-        #
-        # We do not treat this case as an error, thereby we simply return 0 to the
-        # caller and skip the comparison.
-        if [ "$prog_long_opts" == "ENOTSUP" ]; then
-                echo "$p,100.00% (0/0),not supported by tools/get-options.sh"
+	# tools/get-options.sh prints 'ENOTSUP' when it receives the name of an
+	# unsupported program. See comments for the 'unsupported_programs' variable
+	# in tools/get-options.sh for more details.
+	#
+	# We do not treat this case as an error, thereby we simply return 0 to the
+	# caller and skip the comparison.
+	if [ "$prog_long_opts" == "ENOTSUP" ]; then
+		echo "$p,100.00% (0/0),not supported by tools/get-options.sh"
 		return 0
-        fi
+	fi
 
 	# Filter out --help and --version as these don't need testing
 	prog_long_opts="$(echo "$prog_long_opts" | grep --invert-match -E -- '--help|--version')"
@@ -146,19 +146,19 @@ function find_real_test_longopts_per_prog() {
 	# reason for this is to avoid running a for loop for each option.
 	# shellcheck disable=SC2059
 	long_opts_regex="$(printf -- "$ts_long_opts" | awk -v RS="" \
-							'{gsub (/\n/,"$|")} {printf "%s$|", $1}')"
+		'{gsub (/\n/,"$|")} {printf "%s$|", $1}')"
 
 	# found valid long options
-	valid_ts_lng_opts="$( echo "${prog_long_opts}" | grep -o -E -- "${long_opts_regex}" )"
+	valid_ts_lng_opts="$(echo "${prog_long_opts}" | grep -o -E -- "${long_opts_regex}")"
 
 	# Amount of found real long options in the test scripts
-	ts_lng_opts_cnt="$( echo "${valid_ts_lng_opts}" | wc -l)"
+	ts_lng_opts_cnt="$(echo "${valid_ts_lng_opts}" | wc -l)"
 	percentage="$(get_share "$prog_lng_opts_cnt" "$ts_lng_opts_cnt")%"
 
 	echo "$prog,$percentage ($ts_lng_opts_cnt/$prog_lng_opts_cnt)"
 
 	if [[ "${OPT_SHOW_MISSING}" == 1 ]]; then
-		missing_lng_opts="$( comm -23 <(echo "${prog_long_opts}") <( echo "${valid_ts_lng_opts}") | tr '\n' ' ')"
+		missing_lng_opts="$(comm -23 <(echo "${prog_long_opts}") <(echo "${valid_ts_lng_opts}") | tr '\n' ' ')"
 		echo ",,$missing_lng_opts"
 	fi
 }
@@ -171,15 +171,15 @@ function calculate_test_coverage() {
 	num_tested_progs="$(echo "$tested_progs" | wc -w)"
 	share_ts_progs="$(get_share "$num_total_progs" "$num_tested_progs")"
 
-	printf "%-45s%.2f%% (%d/%d)\n" "Total share of tested programs:"\
-				"$share_ts_progs" "$num_tested_progs" "$num_total_progs"
+	printf "%-45s%.2f%% (%d/%d)\n" "Total share of tested programs:" \
+		"$share_ts_progs" "$num_tested_progs" "$num_total_progs"
 
-	percentages="$(cat "${TMP_COVERAGE_REPORT_FILE}" \
-			| cut -d ',' -f 2 \
-			| grep -E -o '[0-9]*\.[0-9]*')"
+	percentages="$(cat "${TMP_COVERAGE_REPORT_FILE}" |
+		cut -d ',' -f 2 |
+		grep -E -o '[0-9]*\.[0-9]*')"
 
-	avg_ts_coverage="$( echo "${percentages}" | awk -v progs="$num_total_progs" \
-				'{ sum += $1 } END { print sum / progs }' )"
+	avg_ts_coverage="$(echo "${percentages}" | awk -v progs="$num_total_progs" \
+		'{ sum += $1 } END { print sum / progs }')"
 
 	printf "%-45s%.2f%%\n" "Overall test coverage:" "$avg_ts_coverage"
 }
@@ -196,45 +196,45 @@ function generate_report() {
 	echo "             is testing out of it's provided set of options.             "
 	echo ""
 
-        errors=0
-        for p in $all_programs; do
-                [[ -n "$ignore_programs" && "$p" =~ $ignore_programs ]] && continue
+	errors=0
+	for p in $all_programs; do
+		[[ -n "$ignore_programs" && "$p" =~ $ignore_programs ]] && continue
 
 		if ! echo "$program_test_subdirs" | grep -E " $p " &>/dev/null; then
-			echo "$p,0.00% (0/0),missing test subdirectory" >> "${TMP_COVERAGE_REPORT_FILE}"
+			echo "$p,0.00% (0/0),missing test subdirectory" >>"${TMP_COVERAGE_REPORT_FILE}"
 			((errors++))
 			continue
 		fi
 
-		test_scripts="$( find "${top_testdir}/${p}" -maxdepth 1 -type f -executable \
-				-exec grep -l 'ts_init' {} \; 2>/dev/null \
-				| tr '\n' ' ')"
+		test_scripts="$(find "${top_testdir}/${p}" -maxdepth 1 -type f -executable \
+			-exec grep -l 'ts_init' {} \; 2>/dev/null |
+			tr '\n' ' ')"
 
 		if [[ -z "$test_scripts" ]]; then
-			echo "$p,0.00% (0/0),no test scripts found" >> "${TMP_COVERAGE_REPORT_FILE}"
+			echo "$p,0.00% (0/0),no test scripts found" >>"${TMP_COVERAGE_REPORT_FILE}"
 			((errors++))
 			continue
 		fi
 
 		if [[ "$p" =~ $unsupported_programs ]]; then
-                	echo "$p,100.00% (0/0),not supported by tools/get-options.sh" \
-								>> "${TMP_COVERAGE_REPORT_FILE}"
-                	tested_programs+=" $p"
+			echo "$p,100.00% (0/0),not supported by tools/get-options.sh" \
+				>>"${TMP_COVERAGE_REPORT_FILE}"
+			tested_programs+=" $p"
 			continue
-        	fi
+		fi
 
 		ts_long_opts="$(get_test_scripts_long_opts "$p" "$test_scripts")"
 		if [[ -z "${ts_long_opts}" ]]; then
 			echo "$p,0.00% (0/0),no long options found in test script" \
-								>> "${TMP_COVERAGE_REPORT_FILE}"
+				>>"${TMP_COVERAGE_REPORT_FILE}"
 			tested_programs+=" $p"
 			continue
 		fi
 
 		tested_programs+=" $p"
 
-		find_real_test_longopts_per_prog "$p" "$ts_long_opts" >> "${TMP_COVERAGE_REPORT_FILE}"
-        done
+		find_real_test_longopts_per_prog "$p" "$ts_long_opts" >>"${TMP_COVERAGE_REPORT_FILE}"
+	done
 
 	column --output-width 70 --table-column name=UTILITY,left \
 		--table-column name="TEST COVERAGE",right \
@@ -249,35 +249,38 @@ function generate_report() {
 }
 
 function main() {
-        all_programs="$(extract_programs)"
+	all_programs="$(extract_programs)"
 	shortopts="hm"
 	longopts="help,show-missing"
 
 	OPTS="$(getopt -l "${longopts}" -o "${shortopts}" -- "$@")"
 
 	# shellcheck disable=SC2181
-	[[ "$?" != 0 ]] && { echo "getopt(1) error"; exit 1; }
+	[[ "$?" != 0 ]] && {
+		echo "getopt(1) error"
+		exit 1
+	}
 
 	eval set -- "$OPTS"
 
 	while true; do
 		case "$1" in
-			'-h'|'--help')
-				usage
-				exit 0
+		'-h' | '--help')
+			usage
+			exit 0
 			;;
-			'-m'|'--show-missing')
-				OPT_SHOW_MISSING=1
-				shift
-				continue
+		'-m' | '--show-missing')
+			OPT_SHOW_MISSING=1
+			shift
+			continue
 			;;
-			'--')
-				shift
-				break
+		'--')
+			shift
+			break
 			;;
-			*)
-				echo "invalid option" >&2
-				exit 1
+		*)
+			echo "invalid option" >&2
+			exit 1
 			;;
 		esac
 	done
@@ -289,7 +292,7 @@ function main() {
 		generate_report "${all_programs}"
 	fi
 
-        exit $?
+	exit $?
 }
 
 main "${@}"
