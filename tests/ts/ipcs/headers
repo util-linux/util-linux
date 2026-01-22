@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2007 Karel Zak <kzak@redhat.com>
 #
-# This file is part of util-linux.
+# This file is part of util--limitsinux.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -24,37 +24,37 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_IPCS"
 
 ts_init_subtest "shm-headers"
-$TS_CMD_IPCS -m -t | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -m -p | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -m -c | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -m -l | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -m -u | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --shmems --time | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --shmems --pid | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --shmems --creator | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --shmems --limits | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --shmems --summary | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "mesg-headers"
-$TS_CMD_IPCS -q -t | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -q -p | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -q -c | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -q -l | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -q -u | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --queues --time | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --queues --pid | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --queues --creator | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --queues --limits | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --queues --summary | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "sem-headers"
-$TS_CMD_IPCS -s -t | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -s -p | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -s -c | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -s -l | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -s -u | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --semaphores --time | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --semaphores --pid | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --semaphores --creator | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --semaphores --limits | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --semaphores --summary | grep  "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_init_subtest "all-headers"
-$TS_CMD_IPCS -a | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_CMD_IPCS -a -t | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -a -p | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -a -c | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -a -l | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IPCS -a -u | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all --time | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all --pid | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all --creator | grep -A1 "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all --limits | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCS --all --summary | grep "^---"  >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 ts_finalize
