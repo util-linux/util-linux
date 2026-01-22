@@ -33,7 +33,7 @@ function gnu_getopt_clean() {
 }
 
 ts_init_subtest alternative_option_clash
-$TS_CMD_GETOPT -a -o abcde -l abcde -- -a -ab -abc -ac >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_GETOPT -a --options abcde --longoptions abcde -- -a -ab -abc -ac >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit value: $?" >> $TS_OUTPUT
 gnu_getopt_clean
 ts_finalize_subtest
