@@ -21,57 +21,57 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_init_subtest "types"
-$TS_CMD_FINDMNT -Q 'FSTYPE == "ext3"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'FSTYPE == "ext3"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "types-multi"
-$TS_CMD_FINDMNT -Q 'FSTYPE =~ "ext[34]"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'FSTYPE =~ "ext[34]"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "types-neg"
-$TS_CMD_FINDMNT -Q 'FSTYPE !~ "ext[34]"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'FSTYPE !~ "ext[34]"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<relatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<relatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-name"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<fd\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<fd\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-nameval"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<fd=22\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<fd=22\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-nameval-neg"
-$TS_CMD_FINDMNT -Q 'OPTIONS !~ "\<fd=22\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS !~ "\<fd=22\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-nameval-multi"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<ptmxmode=000\>" && OPTIONS =~ "\<mode=620\>" && OPTIONS =~ "\<gid=5\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<ptmxmode=000\>" && OPTIONS =~ "\<mode=620\>" && OPTIONS =~ "\<gid=5\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-neg"
-$TS_CMD_FINDMNT -Q 'OPTIONS !~ "\<relatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS !~ "\<relatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-no"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<noatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<noatime\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "options-no-multi"
-$TS_CMD_FINDMNT -Q 'OPTIONS =~ "\<nosuid\>" && OPTIONS =~ "\<nodev\>" && OPTIONS =~ "\<blkio\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<nosuid\>" && OPTIONS =~ "\<nodev\>" && OPTIONS =~ "\<blkio\>"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 
 ts_finalize
