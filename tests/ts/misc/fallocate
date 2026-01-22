@@ -29,7 +29,7 @@ IMAGE=${TS_OUTDIR}/${TS_TESTNAME}.file
 ts_init_subtest "alloc"
 rm -f $IMAGE
 
-if $TS_CMD_FALLOCATE -o 128 -l 256 $IMAGE >> $TS_OUTPUT 2>> $TS_ERRLOG; then
+if $TS_CMD_FALLOCATE --offset 128 --length 256 $IMAGE >> $TS_OUTPUT 2>> $TS_ERRLOG; then
 	stat -c "%s" $IMAGE >> $TS_OUTPUT 2>> $TS_ERRLOG
 else
 	# fs type of $TS_OUTDIR, could be used to skip this test early
@@ -63,7 +63,7 @@ ts_finalize_subtest
 # Dig holes with verbose
 #
 ts_init_subtest "dig-holes"
-$TS_CMD_FALLOCATE --dig-holes -v $IMAGE 2>> $TS_ERRLOG | sed "s|$IMAGE|<testfile>|g" >> $TS_OUTPUT
+$TS_CMD_FALLOCATE --dig-holes --verbose $IMAGE 2>> $TS_ERRLOG | sed "s|$IMAGE|<testfile>|g" >> $TS_OUTPUT
 ts_finalize_subtest
 
 #
