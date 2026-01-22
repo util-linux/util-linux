@@ -348,6 +348,9 @@ checkusage:
 		$(bin_PROGRAMS) $(sbin_PROGRAMS) \
 		$(usrbin_exec_PROGRAMS) $(usrsbin_exec_PROGRAMS)
 
+testcoverage:
+	@ $(top_srcdir)/tools/testcoverage.sh
+
 checklibdoc:
 	@ $(top_srcdir)/tools/checklibdocs.sh \
 		$(top_srcdir)/libmount/src/libmount.sym \
