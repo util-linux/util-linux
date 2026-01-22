@@ -41,7 +41,7 @@ if [ "$TRAVIS" == "true" ] && [ ! -b "$DEVICE" ]; then
 fi
 
 ts_log "Probe device"
-$TS_CMD_BLKID -p -o udev $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_BLKID --probe --output udev $DEVICE >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "Return code: $?" >> $TS_OUTPUT
 
 udevadm settle
