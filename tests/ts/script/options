@@ -25,25 +25,25 @@ ts_check_test_command "$TS_HELPER_SCRIPT"
 
 ts_init_subtest "append"
 $TS_HELPER_SCRIPT --command "echo append1" $TS_OUTPUT </dev/null >/dev/null 2>&1
-$TS_HELPER_SCRIPT --append -c "echo append2" $TS_OUTPUT </dev/null >/dev/null 2>&1
+$TS_HELPER_SCRIPT --append --command "echo append2" $TS_OUTPUT </dev/null >/dev/null 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "force"
 ln -s $TS_OUTPUT typescript
 $TS_HELPER_SCRIPT --command "echo no force" </dev/null >/dev/null 2>> $TS_OUTPUT
 echo $? >> $TS_OUTPUT
-$TS_HELPER_SCRIPT -a --force --command "echo with force" </dev/null >/dev/null
+$TS_HELPER_SCRIPT --append --force --command "echo with force" </dev/null >/dev/null
 echo $? >> $TS_OUTPUT
 rm -f typescript
 ln -s $TS_OUTPUT tpircsepyt
-$TS_HELPER_SCRIPT -a --command "echo not typescript" tpircsepyt </dev/null >/dev/null
+$TS_HELPER_SCRIPT --append --command "echo not typescript" tpircsepyt </dev/null >/dev/null
 echo $? >> $TS_OUTPUT
 rm -f tpircsepyt
 ts_finalize_subtest
 
 ts_init_subtest "quiet"
 $TS_HELPER_SCRIPT --quiet --command "echo quiet1" $TS_OUTPUT </dev/null >/dev/null 2>&1
-$TS_HELPER_SCRIPT -a -q --command "echo quiet2" $TS_OUTPUT </dev/null >/dev/null 2>&1
+$TS_HELPER_SCRIPT --append --quiet --command "echo quiet2" $TS_OUTPUT </dev/null >/dev/null 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "return"
@@ -51,7 +51,7 @@ $TS_HELPER_SCRIPT --command "exit 1" $TS_OUTPUT </dev/null >/dev/null 2>&1
 echo $? >> $TS_OUTPUT
 $TS_HELPER_SCRIPT -a --command "exit 0" $TS_OUTPUT </dev/null >/dev/null 2>&1
 echo $? >> $TS_OUTPUT
-$TS_HELPER_SCRIPT -e --append -c "exit 42" $TS_OUTPUT </dev/null >/dev/null 2>&1
+$TS_HELPER_SCRIPT --return --append -c "exit 42" $TS_OUTPUT </dev/null >/dev/null 2>&1
 echo $? >> $TS_OUTPUT
 $TS_HELPER_SCRIPT --return --append -c "exit 127" $TS_OUTPUT </dev/null >/dev/null 2>&1
 echo $? >> $TS_OUTPUT
@@ -59,7 +59,7 @@ ts_finalize_subtest
 
 ts_init_subtest "size"
 $TS_HELPER_SCRIPT --output-limit 9 --command "echo 1:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
-$TS_HELPER_SCRIPT -a -o 9 --command "echo 2:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
+$TS_HELPER_SCRIPT -a --output-limit 9 --command "echo 2:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
 echo $? >> $TS_OUTPUT
 ts_finalize_subtest
 
