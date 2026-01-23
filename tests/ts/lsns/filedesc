@@ -64,7 +64,7 @@ trap "cleanup" EXIT
 	lsfd_expr="PID == ${PID} and FD == $FD"
 	lsfd_inode=$(${TS_CMD_LSFD} -n --raw -o INODE -Q "${lsfd_expr}")
 	lsns_expr="NS == $lsfd_inode"
-	lsns_output=$(${TS_CMD_LSNS}    -n --raw -o TYPE,NPROCS,USER -Q "${lsns_expr}")
+	lsns_output=$(${TS_CMD_LSNS} --noheadings --raw --output TYPE,NPROCS,USER -Q "${lsns_expr}")
 	if ! [ "${lsns_output}" == "net 0 root" ]; then
 	    echo lsfd_inode: $lsfd_inode
 	    echo lsns_output: $lsns_output
