@@ -28,7 +28,7 @@ for i in rename_slink.{1..3}; do
 	ln -s old $i
 done
 
-$TS_CMD_RENAME -s -v old new rename_slink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --symlink --verbose old new rename_slink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 for i in rename_slink.{1..3}; do
 	where="$(readlink $i)"
@@ -40,7 +40,7 @@ done
 
 touch target
 ln -s target rename_slink.1
-$TS_CMD_RENAME -v slink symlink rename_slink.1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose slink symlink rename_slink.1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 readlink rename_symlink.1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_slink.1 rename_symlink.1
 
@@ -50,7 +50,7 @@ $TS_CMD_RENAME -v slink symlink rename_slink.2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 readlink rename_symlink.2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_slink.2 rename_symlink.2
 
-$TS_CMD_RENAME -v slink symlink rename_slink.3 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose slink symlink rename_slink.3 >> $TS_OUTPUT 2>> $TS_ERRLOG
 # The error may differ on Mac OS X due to faccessat()/lstat(); normalize it.
 sed -i -e 's/\(rename_slink.3\): not accessible/\1/' -e 's/stat of \(rename_slink.3\) failed/\1/' $TS_ERRLOG
 
