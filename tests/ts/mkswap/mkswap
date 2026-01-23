@@ -52,8 +52,8 @@ for PAGESIZE in 4096 8192; do
 		rm -f "$outimg"
 		truncate -s $(( PAGESIZE * 10 )) "$outimg" >> $TS_ERRLOG 2>&1
 
-		"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -e "$ENDIANNESS" -p "$PAGESIZE" "$outimg" \
-			>> "$TS_OUTPUT" 2>/dev/null \
+		"$TS_CMD_MKSWAP" --quiet --label label --uuid "$UUID" --endianness="$ENDIANNESS" \
+                        --pagesize "$PAGESIZE" "$outimg" >> "$TS_OUTPUT" 2>/dev/null \
 			|| ts_log "mkswap failed"
 		xz -dc "$TS_SELF/${BYTE_ORDER}-${PAGESIZE}.img.xz" > "$origimg"
 
@@ -65,7 +65,8 @@ for PAGESIZE in 4096 8192; do
 
 		rm -f "$outimg"
 
-		"$TS_CMD_MKSWAP" -q -L label -U "$UUID" -e "$ENDIANNESS" -p "$PAGESIZE" -F -s $(( PAGESIZE * 10 )) "$outimg" \
+		"$TS_CMD_MKSWAP" --quiet --label label --uuid "$UUID" --endianness "$ENDIANNESS" \
+                                --pagesize "$PAGESIZE" --file --size $(( PAGESIZE * 10 )) "$outimg" \
 			>> "$TS_OUTPUT" 2>/dev/null \
 			|| ts_log "mkswap failed"
 		xz -dc "$TS_SELF/${BYTE_ORDER}-${PAGESIZE}.img.xz" > "$origimg"
@@ -87,11 +88,11 @@ truncate -s $(( 4096 * 10 )) "$outimg" > $TS_ERRLOG 2>&1
 rm -f "$outimg.offset"
 truncate -s $(( 4096 * 10 + $offset )) "$outimg.offset" > $TS_ERRLOG 2>&1
 
-"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 "$outimg" \
+"$TS_CMD_MKSWAP" --quiet --uuid "$UUID" --pagesize 4096 "$outimg" \
 	>> "$TS_OUTPUT" 2>/dev/null \
 	|| ts_log "mkswap failed"
 
-"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 -o "$offset" "$outimg.offset" \
+"$TS_CMD_MKSWAP" --quiet --uuid "$UUID" --pagesize 4096 --offset "$offset" "$outimg.offset" \
 	>> "$TS_OUTPUT" 2>/dev/null \
 	|| ts_log "mkswap -o failed"
 
