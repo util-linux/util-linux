@@ -36,7 +36,7 @@ function mount_and_check {
 	$TS_CMD_MOUNT "$@" &> /dev/null \
 		|| ts_die "error: mount $*"
 
-	$TS_CMD_MOUNTPOINT -q "$mountpoint" \
+	$TS_CMD_MOUNTPOINT --quiet "$mountpoint" \
 		|| ts_die "error: mountpoint $mountpoint"
 }
 
