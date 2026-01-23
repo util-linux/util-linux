@@ -28,7 +28,7 @@ for I in {0..512}; do printf "%s " {a..z}; done | \
 
 printf "abc\n123" | $TS_CMD_REV >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo >> $TS_OUTPUT
-printf "abc\000123" | $TS_CMD_REV -0 | tr '\0' '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+printf "abc\000123" | $TS_CMD_REV --zero | tr '\0' '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo >> $TS_OUTPUT
 
 ts_finalize
