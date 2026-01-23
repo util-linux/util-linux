@@ -25,16 +25,16 @@ ARCH=$(uname -m)
 
 ts_init_subtest options
 ts_log_both "###### unknown arch"
-$TS_CMD_SETARCH qubit -v echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SETARCH qubit --verbose echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit: $?" >>$TS_OUTPUT
 
 ts_log_both "###### unknown command"
-$TS_CMD_SETARCH $ARCH -v /das/gibs/nicht >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SETARCH $ARCH --verbose /das/gibs/nicht >> $TS_OUTPUT 2>> $TS_ERRLOG
 echo "exit: $?" >>$TS_OUTPUT
 
 echo "###### noop uname -a" >>$TS_OUTPUT
 uname_a=$(uname -srm)
-$TS_CMD_SETARCH $ARCH -v uname -srm >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_SETARCH $ARCH --verbose uname -srm >> $TS_OUTPUT 2>> $TS_ERRLOG
 sed -i "$ s@${uname_a}@uname -a unchanged@" $TS_OUTPUT
 
 echo "###### almost all options" >>$TS_OUTPUT
@@ -46,7 +46,7 @@ ts_init_subtest uname26
 finmsg="" # for debugging 2.6 issues
 
 echo "###### --uname-2.6 echo" >>$TS_OUTPUT
-$TS_CMD_SETARCH $ARCH -v --uname-2.6 echo "2.6 worked" >> $TS_OUTPUT 2>&1
+$TS_CMD_SETARCH $ARCH --verbose --uname-2.6 echo "2.6 worked" >> $TS_OUTPUT 2>&1
 if [ $? -eq 0 ]; then
 	expected='^2.6 worked$'
 else
