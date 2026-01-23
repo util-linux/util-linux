@@ -73,7 +73,7 @@ init
     read child_pidns  < $FIFO_DATA
 
     expected="$child_userns $my_userns $my_userns"
-    actual=$("$TS_CMD_LSNS" -t user -n -o NS,PNS,ONS "$child_userns" | uniq)
+    actual=$("$TS_CMD_LSNS" --type user --noheadings --output NS,PNS,ONS "$child_userns" | uniq)
     test "$expected" = "$actual"
     RESULT=$?
     if [ $RESULT -ne 0 ]; then
