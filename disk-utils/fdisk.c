@@ -883,7 +883,7 @@ void discard_sectors(struct fdisk_context *cxt)
 
 	if (fdisk_ask_menu(cxt, _("Type of area to be discarded"),
 			&c, 'p', _("partition sectors"), 'p',
-				 _("free space sectros"), 'f', NULL) != 0)
+				 _("free space sectors"), 'f', NULL) != 0)
 		return;
 
 	switch (c) {
