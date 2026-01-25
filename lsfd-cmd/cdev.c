@@ -490,7 +490,6 @@ static int call_with_foreign_fd(pid_t target_pid, int target_fd,
 
 static int cdev_tun_get_devnetns(int tfd, void *data)
 {
-
 	struct tundata *tundata = data;
 	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
 	struct stat sb;
