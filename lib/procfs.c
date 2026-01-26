@@ -414,7 +414,6 @@ int fd_is_procfs(int fd)
 	} while (ret != 0);
 
 	return F_TYPE_EQUAL(st.f_type, STATFS_PROC_MAGIC);
-	return 0;
 }
 #else
 int fd_is_procfs(int fd __attribute__((__unused__)))
@@ -477,7 +476,7 @@ static int test_tasks(int argc, char *argv[], const char *prefix)
 		printf(" %d", tid);
 
 	printf("\n");
-        ul_unref_path(pc);
+	ul_unref_path(pc);
 	return EXIT_SUCCESS;
 }
 
@@ -502,7 +501,7 @@ static int test_fds(int argc, char *argv[], const char *prefix)
 		printf(" %d", fd);
 
 	fputc('\n', stdout);
-        ul_unref_path(pc);
+	ul_unref_path(pc);
 	return EXIT_SUCCESS;
 }
 

@@ -1,1 +1,1 @@
-u uuidd - "UUID generator helper daemon" @localstatedir@/lib/libuuid
+u@SYSTEMD_USER_LOCK@ uuidd - "UUID generator helper daemon" @localstatedir@/lib/libuuid

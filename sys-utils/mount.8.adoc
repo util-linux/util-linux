@@ -437,7 +437,7 @@ Use options from _fstab_/_mtab_ even if both _device_ and _dir_ are specified.
 *-R*, *--rbind*::
 Remount a subtree and all possible submounts somewhere else (so that its contents are available in both places). See above, the subsection *Bind mount operation*.
 
-*-r*, *--read-only*::
+*-r*, *--ro*, *--read-only*::
 Mount the filesystem read-only. A synonym is *-o ro*.
 +
 Note that, depending on the filesystem type, state and kernel behavior, the system may still write to the device. For example, ext3 and ext4 will replay the journal if the filesystem is dirty. To prevent this kind of write access, you may want to mount an ext3 or ext4 filesystem with the *ro,noload* mount options or set the block device itself to read-only mode, see the *blockdev*(8) command.
@@ -792,7 +792,7 @@ Allow to make a target directory (mountpoint) if it does not exist yet. The opti
 *X-mount.nocanonicalize*[**=**_type_]::
 Allows disabling of canonicalization for mount source and target paths. By default, the `mount` command resolves all paths to their absolute paths without symlinks. However, this behavior may not be desired in certain situations, such as when binding a mount over a symlink, or a symlink over a directory or another symlink. The optional argument _type_ can be either "source" or "target" (mountpoint). If no _type_ is specified, then canonicalization is disabled for both types. This mount option does not affect the conversion of source tags (e.g. *LABEL=* or *UUID=*) and _fstab_ processing.
 +
-The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify open_tree syscall flags and does not allow the bind-mount over a symlink use case.
+The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify *open_tree*(2) syscall flags and does not allow the bind-mount over a symlink use case.
 +
 Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by non-root users, regardless of the X-mount.nocanonicalize setting.
 
@@ -853,6 +853,7 @@ This section lists options that are specific to particular filesystems. Where po
 |===
 |*Filesystem(s)* |*Manual page*
 |btrfs |*btrfs*(5)
+|cephfs |*mount.ceph*(8)
 |cifs |*mount.cifs*(8)
 |ext2, ext3, ext4 |*ext4*(5)
 |fuse |*fuse*(8)
@@ -1145,7 +1146,7 @@ This option is obsolete and may fail or being ignored.
 If the high byte of the file length contains other garbage, set this mount option to ignore the high order bits of the file length. This implies that a file cannot be larger than 16 MB.
 
 **session=**__x__::
-Select number of session on a multisession CD.
+Select number of session on a multisession CD, starting with 0.
 
 **sbsector=**__xxx__::
 Session begins from sector xxx.

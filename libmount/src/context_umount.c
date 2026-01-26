@@ -298,7 +298,9 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 			close(fd);
 		}
 		if (type) {
-			int rc = mnt_fs_set_fstype(cxt->fs, type);
+			const char *x = ul_fstype_to_mounttype(type);
+			int rc = mnt_fs_set_fstype(cxt->fs, x ? x : type);
+
 			if (rc)
 				return rc;
 		}
@@ -457,7 +459,7 @@ static int is_fuse_usermount(struct libmnt_context *cxt, int *errsv)
 	struct libmnt_optlist *ol;
 	struct libmnt_opt *opt;
 	const char *type = mnt_fs_get_fstype(cxt->fs);
-	const char *val = NULL;;
+	const char *val = NULL;
 	uid_t uid, entry_uid;
 
 	*errsv = 0;

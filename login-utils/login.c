@@ -111,6 +111,8 @@ struct login_context {
 	const char	*tty_number;	/* end of the tty_path */
 	mode_t		tty_mode;	/* chmod() mode */
 
+	char		*shell_arg;     /* command line argument defining the login shell */
+
 	const char	*username;	/* points to PAM, pwd or cmd_username */
 	char            *cmd_username;	/* username specified on command line */
 
@@ -294,6 +296,7 @@ static const char *get_thishost(struct login_context *cxt, const char **domain)
 #ifdef MOTDDIR_SUPPORT
 static int motddir_filter(const struct dirent *d)
 {
+	struct stat st;
 	size_t namesz;
 
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -307,6 +310,11 @@ static int motddir_filter(const struct dirent *d)
 	namesz = strlen(d->d_name);
 	if (!namesz || namesz < MOTDDIR_EXTSIZ + 1 ||
 	    strcmp(d->d_name + (namesz - MOTDDIR_EXTSIZ), MOTDDIR_EXT) != 0)
+		return 0;
+
+	if (stat(d->d_name, &st) < 0)
+		return 0;
+	if (!S_ISREG(st.st_mode) || st.st_size == 0)
 		return 0;
 
 	return 1; /* accept */
@@ -478,11 +486,9 @@ static void chown_tty(struct login_context *cxt)
 
 	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 	if (grname && *grname) {
-		struct group *gr = getgrnam(grname);
-		if (gr)	/* group by name */
+		struct group *gr = ul_getgrp_str(grname);
+		if (gr)
 			gid = gr->gr_gid;
-		else	/* group by ID */
-			gid = (gid_t) getlogindefs_num("TTYGROUP", gid);
 	}
 	if (fchown(0, uid, gid))				/* tty */
 		chown_err(cxt->tty_name, uid, gid);
@@ -643,13 +649,13 @@ static void log_audit(struct login_context *cxt, int status)
 	if (audit_fd == -1)
 		return;
 	if (!pwd && cxt->username)
-		pwd = getpwnam(cxt->username);
+		pwd = ul_getuserpw_str(cxt->username);
 
 	ignore_result( audit_log_acct_message(audit_fd,
 					      AUDIT_USER_LOGIN,
 					      NULL,
 					      "login",
-					      cxt->username ? cxt->username : "(unknown)",
+					      pwd ? pwd->pw_name : "(unknown)",
 					      pwd ? pwd->pw_uid : (unsigned int)-1,
 					      cxt->hostname,
 					      NULL,
@@ -1091,7 +1097,6 @@ static void fork_session(struct login_context *cxt)
 {
 	struct sigaction sa, oldsa_hup, oldsa_term;
 
-	signal(SIGALRM, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	signal(SIGTSTP, SIG_IGN);
 
@@ -1282,29 +1287,31 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s [-p] [-h <host>] [-H] [[-f] <username>]\n"), program_invocation_short_name);
+	printf(_(" %s [-p] [-s <shell>] [-h <host>] [-H] [[-f] <username|UID>]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Begin a session on the system.\n"), stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	puts(_(" -p             do not destroy the environment"));
-	puts(_(" -f             skip a login authentication"));
-	puts(_(" -h <host>      hostname to be used for utmp logging"));
-	puts(_(" -H             suppress hostname in the login prompt"));
-	printf("     --help     %s\n", USAGE_OPTSTR_HELP);
-	printf(" -V, --version  %s\n", USAGE_OPTSTR_VERSION);
+	puts(_(" -p                  do not destroy the environment"));
+	puts(_(" -f                  skip a login authentication"));
+	puts(_(" -h <host>           hostname to be used for utmp logging"));
+	puts(_(" -H                  suppress hostname in the login prompt"));
+	puts(_(" -s, --shell <path>  define the shell to log in to"));
+	printf("     --help          %s\n", USAGE_OPTSTR_HELP);
+	printf(" -V, --version       %s\n", USAGE_OPTSTR_VERSION);
 	printf(USAGE_MAN_TAIL("login(1)"));
 	exit(EXIT_SUCCESS);
 }
 
-static void load_credentials(struct login_context *cxt) {
+static void load_credentials(struct login_context *cxt)
+{
 	char str[32] = { 0 };
 	char *env;
 	struct path_cxt *pc;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
-        if (!env)
-                return;
+	if (!env)
+		return;
 
 	pc = ul_new_path("%s", env);
 	if (!pc) {
@@ -1328,6 +1335,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 	/* the only two longopts to satisfy UL standards */
 	enum { HELP_OPTION = CHAR_MAX + 1 };
 	const struct option longopts[] = {
+		{"shell", required_argument, NULL, 's'},
 		{"help", no_argument, NULL, HELP_OPTION},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -1356,7 +1364,7 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 	load_credentials(cxt);
 
-	while ((c = getopt_long(argc, argv, "fHh:pV", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "fHh:ps:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'f':
 			cxt->noauth = 1;
@@ -1377,6 +1385,10 @@ static void initialize(int argc, char **argv, struct login_context *cxt)
 
 		case 'p':
 			cxt->keep_env = 1;
+			break;
+
+		case 's':
+			cxt->shell_arg = xstrdup(optarg);
 			break;
 
 		case 'V':
@@ -1521,7 +1533,7 @@ int main(int argc, char **argv)
 	 */
 	loginpam_acct(&cxt);
 
-	cxt.pwd = xgetpwnam(cxt.username, &cxt.pwdbuf);
+	cxt.pwd = xgetuserpw(cxt.username, &cxt.pwdbuf);
 	if (!cxt.pwd) {
 		warnx(_("\nSession setup problem, abort."));
 		syslog(LOG_ERR, _("Invalid user name \"%s\". Abort."),
@@ -1564,6 +1576,7 @@ int main(int argc, char **argv)
 
 	/* committed to login -- turn off timeout */
 	alarm((unsigned int)0);
+	signal(SIGALRM, SIG_DFL);
 	free(timeout_msg);
 	timeout_msg = NULL;
 
@@ -1580,8 +1593,11 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if (pwd->pw_shell == NULL || *pwd->pw_shell == '\0')
+	if (cxt.shell_arg && *cxt.shell_arg != '\0') {
+		pwd->pw_shell = cxt.shell_arg;
+	} else if (pwd->pw_shell == NULL || *pwd->pw_shell == '\0') {
 		pwd->pw_shell = _PATH_BSHELL;
+	}
 
 	init_environ(&cxt);		/* init $HOME, $TERM ... */
 

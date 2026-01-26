@@ -13,7 +13,7 @@
 
 #include "libmount.h"
 
-#include "mount-api-utils.h"	/* fallback for old linux/mount.h */
+#include "mountutils.h"	/* fallback for old linux/mount.h */
 
 static void __iter_table(	struct libmnt_table *tb,
 			struct libmnt_iter *itr, int output, int reverse)

@@ -800,7 +800,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	size_t n = 0;
 	time_t time;
 	uid_t uid;
-	errno = 0;
 
 	errno = 0;
 	pwd = username ? getpwnam(username) : getpwent();
@@ -898,7 +897,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user_wtmp) {
 				mem2strcpy(user->last_tty, user_wtmp->ut_line,
 						sizeof(user_wtmp->ut_line),
-						sizeof(user_wtmp->ut_line) + 1);;
+						sizeof(user_wtmp->ut_line) + 1);
 			}  else
 				get_lastlog(ctl, user->uid, user->login, user->last_tty, LASTLOG_LINE);
 			break;
@@ -909,7 +908,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user_wtmp) {
 				mem2strcpy(user->last_hostname, user_wtmp->ut_host,
 						sizeof(user_wtmp->ut_host),
-						sizeof(user_wtmp->ut_host) + 1);;
+						sizeof(user_wtmp->ut_host) + 1);
 			}  else
 				get_lastlog(ctl, user->uid, user->login, user->last_hostname, LASTLOG_HOST);
 			break;
@@ -924,7 +923,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				user->failed_tty = xmalloc(sizeof(user_btmp->ut_line) + 1);
 				mem2strcpy(user->failed_tty, user_btmp->ut_line,
 						sizeof(user_btmp->ut_line),
-						sizeof(user_btmp->ut_line) + 1);;
+						sizeof(user_btmp->ut_line) + 1);
 			}
 			break;
 		case COL_HUSH_STATUS:
@@ -1183,7 +1182,7 @@ static int create_usertree(struct lslogins_control *ctl)
 			int rc = get_user(ctl, &user, ctl->ulist[n]);
 
 			if (ctl->fail_on_unknown && !user) {
-				warnx(_("cannot found '%s'"), ctl->ulist[n]);
+				warnx(_("cannot find '%s'"), ctl->ulist[n]);
 				return -1;
 			}
 			if (rc || !user)
@@ -1582,9 +1581,11 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
-	fputs(_("     --lastlog <path>     set an alternate path for lastlog\n"), out);
+	fputs(_("     --lastlog-file <path>\n"
+		"                          set an alternate path for lastlog\n"), out);
 #ifdef HAVE_LIBLASTLOG2
-	fputs(_("     --lastlog2 <path>    set an alternate path for lastlog2\n"), out);
+	fputs(_("     --lastlog2-file <path>\n"
+		"                          set an alternate path for lastlog2\n"), out);
 #endif
 	fputs(USAGE_SEPARATOR, out);
 	/* FIXME: Replace with USAGE_LIST_COLUMNS_OPTION() macro from include/c.h */
@@ -1668,10 +1669,10 @@ int main(int argc, char *argv[])
 		{ "btmp-file",      required_argument,	0, OPT_BTMP },
 		{ "lastlog-file",   required_argument,	0, OPT_LASTLOG },
 #ifdef HAVE_LIBLASTLOG2
-		{ "lastlog2-file",  required_argument,	0, OPT_LASTLOG2 },
+		{ "lastlog2-file",  required_argument,	0, OPT_LASTLOG2 },	/* IGNORECHECK=yes */
 #endif
 #ifdef HAVE_LIBSELINUX
-		{ "context",        no_argument,	0, 'Z' },
+		{ "context",        no_argument,	0, 'Z' },	/* IGNORECHECK=yes */
 #endif
 		{ NULL,             0, 			0,  0  }
 	};

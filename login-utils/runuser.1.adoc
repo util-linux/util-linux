@@ -26,7 +26,7 @@ When called without arguments, *runuser* defaults to running an interactive shel
 
 For backward compatibility, *runuser* defaults to not changing the current directory and to setting only the environment variables *HOME* and *SHELL* (plus *USER* and *LOGNAME* if the target _user_ is not root). This version of *runuser* uses PAM for session management.
 
-Note that *runuser* in all cases use PAM (pam_getenvlist()) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
+Note that *runuser* in all cases use PAM (*pam_getenvlist*(3)) to do the final environment modification. Command-line options such as *--login* and *--preserve-environment* affect the environment before it is modified by PAM.
 
 Since version 2.38 *runuser* resets process resource limits RLIMIT_NICE, RLIMIT_RTPRIO, RLIMIT_FSIZE, RLIMIT_AS and RLIMIT_NOFILE.
 
@@ -34,6 +34,7 @@ Since version 2.38 *runuser* resets process resource limits RLIMIT_NICE, RLIMIT_
 
 *-c*, *--command*=_command_::
 Pass _command_ to the shell with the *-c* option.
+Creates a new session via *setsid*(2). Refer to *--session-command* to keep the same session.
 
 *-f*, *--fast*::
 Pass *-f* to the shell, which may or may not be useful, depending on the shell.
@@ -56,7 +57,10 @@ Start the shell as a login shell with an environment similar to a real login:
 Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. The option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session. This can be used to avoid TIOCSTI ioctl terminal injection and other security attacks against terminal file descriptors. The entire session can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* _command_ *&*). If the pseudo-terminal is enabled, then *runuser* works as a proxy between the sessions (sync stdin and stdout).
+Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session.
+Please note security advice about TIOCSTI vulnerability below.
++
+The entire session can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* _command_ *&*). If the pseudo-terminal is enabled, then *runuser* works as a proxy between the sessions (sync stdin and stdout).
 +
 This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | runuser --pty -u* _user_), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
 
@@ -72,10 +76,11 @@ If the target user has a restricted shell (i.e., not listed in _/etc/shells_), t
 
 **--session-command=**__command__::
 Same as *-c*, but do not create a new session. (Discouraged.)
+Please note security advice about TIOCSTI vulnerability below.
 
 *-T*, *--no-pty*::
 Do not create a pseudo-terminal, opposite of *--pty* and *-P*.
-Note that running without a pseudo-terminal opens the security risk of privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection.
+Please note security advice about TIOCSTI vulnerability below.
 
 *-u*, *--user*=_user_::
 Run _command_ with the effective user ID and group ID of the user name _user_.
@@ -128,6 +133,10 @@ runuser specific logindef config file
 
 _/etc/login.defs_::
 global logindef config file
+
+== SECURITY NOTES
+
+If *runuser* shares a terminal with the original session, it is potentially vulnerable to privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection. There are two built-in ways to prevent this: Either you can use *runuser* with the *-c* option, which starts a new session via *setsid*(2) without a controlling terminal. Or, if your use case requires a controlling terminal, for example an interactive session, you can instruct *runuser* to use a pseudo terminal with the *--pty* or *-P* option.
 
 == HISTORY
 

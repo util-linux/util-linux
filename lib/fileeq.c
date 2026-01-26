@@ -335,7 +335,7 @@ static int get_fd(struct ul_fileeq *eq, struct ul_fileeq_data *data, off_t *off)
 			return data->fd;
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	        ignore_result( posix_fadvise(data->fd, o, 0, POSIX_FADV_SEQUENTIAL) );
+		ignore_result( posix_fadvise(data->fd, o, 0, POSIX_FADV_SEQUENTIAL) );
 #endif
 		if (o) {
 			DBG(DATA, ul_debugobj(data, "lseek off=%ju", (uintmax_t) o));

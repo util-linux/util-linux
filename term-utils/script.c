@@ -70,6 +70,7 @@
 #include "signames.h"
 #include "pty-session.h"
 #include "debug.h"
+#include "shells.h"
 
 static UL_DEBUG_DEFINE_MASK(script);
 UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
@@ -560,7 +561,7 @@ static ssize_t __attribute__ ((__format__ (__printf__, 3, 4)))
 		rc = vsnprintf(msg, sizeof(msg), msgfmt, ap);
 		va_end(ap);
 		if (rc < 0)
-			*msg = '\0';;
+			*msg = '\0';
 	}
 
 	if (*msg)
@@ -598,7 +599,7 @@ static ssize_t log_info(struct script_control *ctl, const char *name, const char
 		rc = vsnprintf(msg, sizeof(msg), msgfmt, ap);
 		va_end(ap);
 		if (rc < 0)
-			*msg = '\0';;
+			*msg = '\0';
 	}
 
 	if (*msg)
@@ -966,9 +967,7 @@ int main(int argc, char **argv)
 			log_associate(&ctl, &ctl.in, timingfile, format);
 	}
 
-	shell = getenv("SHELL");
-	if (!shell)
-		shell = _PATH_BSHELL;
+	shell = ul_default_shell(0, NULL);
 
 	ctl.pty = ul_new_pty(ctl.isterm);
 	if (!ctl.pty)
@@ -1079,7 +1078,7 @@ int main(int argc, char **argv)
 			log_info(&ctl, "INPUT_LOG", "%s", infile);
 	}
 
-        /* this is the main loop */
+	/* this is the main loop */
 	rc = ul_pty_proxy_master(ctl.pty);
 
 	/* all done; cleanup and kill */

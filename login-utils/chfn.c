@@ -38,12 +38,14 @@
 #include "closestream.h"
 #include "islocal.h"
 #include "nls.h"
+#include "pathnames.h"
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "logindefs.h"
 
 #include "ch-common.h"
+#include "pwdutils.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
@@ -68,7 +70,7 @@ struct finfo {
 struct chfn_control {
 	struct passwd *pw;
 	char *username;
-	/*  "oldf"  Contains the users original finger information.
+	/*  "oldf"  Contains the user's original finger information.
 	 *  "newf"  Contains the changed finger information, and contains
 	 *          NULL in fields that haven't been changed.
 	 *  In the end, "newf" is folded into "oldf".  */
@@ -88,7 +90,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *fp = stdout;
 	fputs(USAGE_HEADER, fp);
-	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
+	fprintf(fp, _(" %s [options] [<username>|<UID>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(_("Change your finger information.\n"), fp);
@@ -186,7 +188,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 	/* done parsing arguments.  check for a username. */
 	if (optind < argc) {
 		if (optind + 1 < argc) {
-			warnx(_("cannot handle multiple usernames"));
+			warnx(_("cannot handle multiple usernames or UIDs"));
 			errtryhelp(EXIT_FAILURE);
 		}
 		ctl->username = argv[optind];
@@ -417,13 +419,13 @@ int main(int argc, char **argv)
 		if (!ctl.pw)
 			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
 			     uid);
-		ctl.username = ctl.pw->pw_name;
 	} else {
-		ctl.pw = getpwnam(ctl.username);
+		ctl.pw = ul_getuserpw_str(ctl.username);
 		if (!ctl.pw)
 			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
 			     ctl.username);
 	}
+	ctl.username = ctl.pw->pw_name;
 	parse_passwd(&ctl);
 #ifndef HAVE_LIBUSER
 	if (!(is_local(ctl.username)))

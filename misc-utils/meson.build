@@ -229,3 +229,8 @@ lsclocks_sources = files(
   'lsclocks.c',
 )
 lsclocks_manadocs = files('lsclocks.1.adoc')
+
+getino_sources = files(
+  'getino.c',
+)
+getino_manadocs = files('getino.1.adoc')

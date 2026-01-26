@@ -169,7 +169,7 @@ int ul_pty_setup(struct ul_pty *pty)
 	sigprocmask(0, NULL, &pty->orgsig);
 
 	if (pty->isterm) {
-	        DBG(SETUP, ul_debugobj(pty, "create for terminal"));
+		DBG(SETUP, ul_debugobj(pty, "create for terminal"));
 
 		/* original setting of the current terminal */
 		if (tcgetattr(STDIN_FILENO, &pty->stdin_attrs) != 0) {
@@ -594,9 +594,9 @@ static int handle_signal(struct ul_pty *pty, int fd)
 	case SIGQUIT:
 		DBG(SIG, ul_debugobj(pty, " get signal SIG{TERM,INT,QUIT}"));
 		pty->delivered_signal = info.ssi_signo;
-                /* Child termination is going to generate SIGCHLD (see above) */
+		/* Child termination is going to generate SIGCHLD (see above) */
 		if (pty->child > 0)
-	                kill(pty->child, SIGTERM);
+			kill(pty->child, SIGTERM);
 
 		if (pty->callbacks.log_signal)
 			rc = pty->callbacks.log_signal(pty->callback_data,
@@ -644,7 +644,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 
 		/* note, callback usually updates @next_callback_time */
 		if (timerisset(&pty->next_callback_time)) {
-			struct timeval now = { 0 };;
+			struct timeval now = { 0 };
 
 			DBG(IO, ul_debugobj(pty, " callback requested"));
 			gettime_monotonic(&now);

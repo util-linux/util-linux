@@ -1030,8 +1030,8 @@ static int read_persistent_namespaces(struct lsns *ls)
 	struct libmnt_fs *fs = NULL;
 
 	while (mnt_table_next_fs(ls->tab, itr, &fs) == 0) {
-		const char *root;
-		char *p, *end = NULL;
+		const char *root, *p;
+		char *end = NULL;
 		ino_t ino;
 		int fd;
 
@@ -1126,7 +1126,7 @@ static int is_path_included(const char *path_set, const char *elt,
 {
 	size_t elt_len;
 	size_t path_set_len;
-	char *tmp;
+	const char *tmp;
 
 
 	tmp = strstr(path_set, elt);
@@ -1593,16 +1593,16 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static void __attribute__((__noreturn__)) list_colunms(struct lsns *ls)
 {
-   struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, ls->raw, ls->json);
+	struct libscols_table *col_tb = xcolumn_list_table_new("lsns-columns", stdout, ls->raw, ls->json);
 
-   for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
-           xcolumn_list_table_append_line(col_tb, infos[i].name,
-					  infos[i].json_type, NULL,
-					  _(infos[i].help));
-   scols_print_table(col_tb);
-   scols_unref_table(col_tb);
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
+		xcolumn_list_table_append_line(col_tb, infos[i].name,
+					       infos[i].json_type, NULL,
+					       _(infos[i].help));
+	scols_print_table(col_tb);
+	scols_unref_table(col_tb);
 
-   exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 static int stat_self_ns (const char *ns, struct stat *st)

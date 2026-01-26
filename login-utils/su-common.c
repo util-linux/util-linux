@@ -105,9 +105,6 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
-/* The shell to run if none is given in the user's passwd entry.  */
-#define DEFAULT_SHELL "/bin/sh"
-
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
 
@@ -267,7 +264,7 @@ static void chownmod_pty(struct su_context *su)
 	const char *grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 
 	if (grname && *grname) {
-		struct group *gr = getgrnam(grname);
+		struct group *gr = ul_getgrp_str(grname);
 		if (gr)	/* group by name */
 			gid = gr->gr_gid;
 		else	/* group by ID */
@@ -970,7 +967,7 @@ static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 		        "specifying more than %d supplemental groups is not possible",
 			NGROUPS_MAX - 1), NGROUPS_MAX - 1);
 
-	gr = getgrnam(name);
+	gr = ul_getgrp_str(name);
 	if (!gr)
 		errx(EXIT_FAILURE, _("group %s does not exist"), name);
 
@@ -1014,7 +1011,7 @@ int su_main(int argc, char **argv, int mode)
 		{"shell", required_argument, NULL, 's'},
 		{"group", required_argument, NULL, 'g'},
 		{"supp-group", required_argument, NULL, 'G'},
-		{"user", required_argument, NULL, 'u'},	/* runuser only */
+		{"user", required_argument, NULL, 'u'},	/* runuser only  IGNORECHECK=yes */
 		{"whitelist-environment", required_argument, NULL, 'w'},
 		{"help", no_argument, 0, 'h'},
 		{"version", no_argument, 0, 'V'},
@@ -1154,7 +1151,7 @@ int su_main(int argc, char **argv, int mode)
 	logindefs_set_loader(load_config, (void *) su);
 	init_tty(su);
 
-	su->pwd = xgetpwnam(su->new_user, &su->pwdbuf);
+	su->pwd = xgetuserpw(su->new_user, &su->pwdbuf);
 	if (!su->pwd
 	    || !su->pwd->pw_passwd
 	    || !su->pwd->pw_name || !*su->pwd->pw_name
@@ -1167,7 +1164,7 @@ int su_main(int argc, char **argv, int mode)
 	su->old_user = xgetlogin();
 
 	if (!su->pwd->pw_shell || !*su->pwd->pw_shell)
-		su->pwd->pw_shell = DEFAULT_SHELL;
+		su->pwd->pw_shell = _PATH_BSHELL;
 
 	if (use_supp && !use_gid)
 		su->pwd->pw_gid = groups[0];

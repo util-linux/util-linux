@@ -81,7 +81,13 @@ static void fdiskprog_init_debug(void)
 
 static void reply_sighandler(int sig __attribute__((unused)))
 {
-	DBG(ASK, ul_debug("got signal"));
+	/* nothing to do here */
+}
+
+static void reply_debug_sighandler(int sig __attribute__((unused)))
+{
+	/* signal-safe version of DBG(ASK, ul_debug("got signal")) */
+	ul_sig_printf("%d: %s: %8s: %s\n", getpid(), "fdisk", "ASK", "got signal");
 }
 
 static int reply_running;
@@ -111,6 +117,7 @@ int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	DBG(ASK, ul_debug("asking for user reply %s", is_interactive ? "[interactive]" : ""));
 
 	sigemptyset(&act.sa_mask);
+	ON_DBG(ASK, act.sa_handler = reply_debug_sighandler);
 	sigaction(SIGINT, &act, &oldact);
 
 #ifdef HAVE_LIBREADLINE
@@ -494,11 +501,11 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 	*canceled = 0;
 
 	if (fdisk_label_has_parttypes_shortcuts(lb))
-		 q = fdisk_label_has_code_parttypes(lb) ?
+		q = fdisk_label_has_code_parttypes(lb) ?
 			_("Hex code or alias (type L to list all): ") :
 			_("Partition type or alias (type L to list all): ");
 	else
-	        q = fdisk_label_has_code_parttypes(lb) ?
+		q = fdisk_label_has_code_parttypes(lb) ?
 			_("Hex code (type L to list all codes): ") :
 			_("Partition type (type L to list all types): ");
 	do {
@@ -523,7 +530,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt, int 
 				fdisk_info(cxt, _("Failed to parse '%s' partition type."), buf);
 			return t;
 		}
-        } while (1);
+	} while (1);
 
 	return NULL;
 }

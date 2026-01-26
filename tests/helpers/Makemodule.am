@@ -1,3 +1,9 @@
+if !OSS_FUZZ
+check_PROGRAMS += test_scols_termreduce
+test_scols_termreduce_SOURCES = tests/helpers/test_scols_termreduce.c
+test_scols_termreduce_LDADD = $(LDADD) libsmartcols.la
+endif
+
 check_PROGRAMS += test_mbsencode
 test_mbsencode_SOURCES = tests/helpers/test_mbsencode.c
 test_mbsencode_LDADD = $(LDADD) libcommon.la

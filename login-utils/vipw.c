@@ -67,7 +67,7 @@
 #include "fileutils.h"
 #include "closestream.h"
 #include "nls.h"
-#include "setpwnam.h"
+#include "pathnames.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "rpmatch.h"
@@ -145,7 +145,7 @@ static void pw_write(void)
 {
 	char tmp[FILENAMELEN + 4];
 
-	snprintf(tmp, sizeof(tmp), "%s%s", orig_file, ".OLD");
+	snprintf(tmp, sizeof(tmp), "%s%s", orig_file, _PATH_PASSWDBAK_SUFFIX);
 	unlink(tmp);
 
 	if (link(orig_file, tmp))
@@ -172,7 +172,7 @@ static void pw_write(void)
 	if (rename(tmp_file, orig_file) == -1) {
 		int errsv = errno;
 		errx(EXIT_FAILURE,
-		     ("cannot write %s: %s (your changes are still in %s)"),
+		     _("cannot write %s: %s (your changes are still in %s)"),
 		     orig_file, strerror(errsv), tmp_file);
 	}
 	unlink(tmp_file);
@@ -325,10 +325,10 @@ int main(int argc, char *argv[])
 
 	if (!strcmp(program_invocation_short_name, "vigr")) {
 		program = VIGR;
-		xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));
+		xstrncpy(orig_file, _PATH_GROUP, sizeof(orig_file));
 	} else {
 		program = VIPW;
-		xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
+		xstrncpy(orig_file, _PATH_PASSWD, sizeof(orig_file));
 	}
 
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1) {
@@ -345,9 +345,9 @@ int main(int argc, char *argv[])
 	edit_file(0);
 
 	if (program == VIGR)
-		xstrncpy(orig_file, SGROUP_FILE, sizeof(orig_file));
+		xstrncpy(orig_file, _PATH_GSHADOW, sizeof(orig_file));
 	else
-		xstrncpy(orig_file, SHADOW_FILE, sizeof(orig_file));
+		xstrncpy(orig_file, _PATH_SHADOW, sizeof(orig_file));
 
 	if (access(orig_file, F_OK) == 0) {
 		char response[80];

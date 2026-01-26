@@ -74,6 +74,9 @@ static struct namespace_file {
 
 static int npersists;	/* number of persistent namespaces */
 
+/* Global PID of child process for signal forwarding */
+static volatile pid_t child_pid = 0;
+
 enum {
 	SETGROUPS_NONE = -1,
 	SETGROUPS_DENY = 0,
@@ -133,6 +136,19 @@ static void map_id(const char *file, uint32_t from, uint32_t to)
 		err(EXIT_FAILURE, _("write failed %s"), file);
 	free(buf);
 	close(fd);
+}
+
+/**
+ * forward_signal() - Forward signal to child process
+ * @sig: Signal number to forward
+ *
+ * Signal handler that forwards SIGTERM/SIGINT from parent to child.
+ * Only used when --forward-signals flag is enabled.
+ */
+static void forward_signal(int sig)
+{
+	if (child_pid > 0)
+		kill(child_pid, sig);
 }
 
 static unsigned long parse_propagation(const char *str)
@@ -197,18 +213,6 @@ static int bind_ns_files(pid_t pid)
 	}
 
 	return 0;
-}
-
-static ino_t get_mnt_ino(pid_t pid)
-{
-	struct stat st;
-	char path[PATH_MAX];
-
-	snprintf(path, sizeof(path), "/proc/%u/ns/mnt", (unsigned) pid);
-
-	if (stat(path, &st) != 0)
-		err(EXIT_FAILURE, _("stat of %s failed"), path);
-	return st.st_ino;
 }
 
 static void settime(int64_t offset, clockid_t clk_id)
@@ -310,52 +314,33 @@ static pid_t fork_and_wait(int *fd)
 static pid_t bind_ns_files_from_child(int *fd)
 {
 	pid_t child, ppid = getpid();
-	ino_t ino = get_mnt_ino(ppid);
 
 	child = fork_and_wait(fd);
 	if (child)
 		return child;
 
-	if (get_mnt_ino(ppid) == ino)
-		exit(EXIT_FAILURE);
 	bind_ns_files(ppid);
 	exit(EXIT_SUCCESS);
 }
 
-static uid_t get_user(const char *s, const char *err)
+static uid_t get_user(const char *s)
 {
 	struct passwd *pw;
-	char *buf = NULL;
-	uid_t ret;
 
-	pw = xgetpwnam(s, &buf);
-	if (pw) {
-		ret = pw->pw_uid;
-		free(pw);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
-	}
-
-	return ret;
+	pw = ul_getuserpw_str(s);
+	if (!pw)
+		errx(EXIT_FAILURE, _("failed to parse uid '%s'"), s);
+	return pw->pw_uid;
 }
 
-static gid_t get_group(const char *s, const char *err)
+static gid_t get_group(const char *s)
 {
 	struct group *gr;
-	char *buf = NULL;
-	gid_t ret;
 
-	gr = xgetgrnam(s, &buf);
-	if (gr) {
-		ret = gr->gr_gid;
-		free(gr);
-		free(buf);
-	} else {
-		ret = strtoul_or_err(s, err);
-	}
-
-	return ret;
+	gr = ul_getgrp_str(s);
+	if (!gr)
+		errx(EXIT_FAILURE, _("failed to parse gid '%s'"), s);
+	return gr->gr_gid;
 }
 
 /**
@@ -691,8 +676,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
  *
  * Return: The pid of the child.
  */
-static pid_t map_ids_from_child(int *fd, uid_t mapuser,
-				struct map_range *usermap, gid_t mapgroup,
+static pid_t map_ids_from_child(int *fd, struct map_range *usermap,
 				struct map_range *groupmap)
 {
 	pid_t child, pid = 0;
@@ -701,11 +685,6 @@ static pid_t map_ids_from_child(int *fd, uid_t mapuser,
 	child = fork_and_wait(fd);
 	if (child)
 		return child;
-
-	if (usermap)
-		add_single_map_range(&usermap, geteuid(), mapuser);
-	if (groupmap)
-		add_single_map_range(&groupmap, getegid(), mapgroup);
 
 	if (geteuid() == 0) {
 		if (usermap)
@@ -796,14 +775,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 	fputs(_(" -c, --map-current-user    map current user to itself (implies --user)\n"), out);
 	fputs(_(" --map-auto                map users and groups automatically (implies --user)\n"), out);
+	fputs(_(" --map-subids              map the first block of user IDs owned by euid (implies --user)\n"), out);
 	fputs(_(" --map-users <inneruid>:<outeruid>:<count>\n"
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
 	fputs(_(" --map-groups <innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
+	fputs(_(" --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_(" --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 		"                             defaults to SIGKILL\n"), out);
+	fputs(_(" --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --setgroups allow|deny    control the setgroups syscall in user namespaces\n"), out);
 	fputs(_(" --keep-caps               retain capabilities granted in user namespaces\n"), out);
@@ -835,6 +817,8 @@ int main(int argc, char *argv[])
 		OPT_MAPGROUPS,
 		OPT_MAPAUTO,
 		OPT_MAPSUBIDS,
+		OPT_OWNER,
+		OPT_FORWARD_SIGNALS,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -851,6 +835,7 @@ int main(int argc, char *argv[])
 
 		{ "fork",          no_argument,       NULL, 'f'             },
 		{ "kill-child",    optional_argument, NULL, OPT_KILLCHILD   },
+		{ "forward-signals", no_argument,     NULL, OPT_FORWARD_SIGNALS },
 		{ "mount-proc",    optional_argument, NULL, OPT_MOUNTPROC   },
 		{ "mount-binfmt",  optional_argument, NULL, OPT_MOUNTBINFMT },
 		{ "map-user",      required_argument, NULL, OPT_MAPUSER     },
@@ -861,6 +846,7 @@ int main(int argc, char *argv[])
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
 		{ "map-subids",    no_argument,       NULL, OPT_MAPSUBIDS   },
+		{ "owner",         required_argument, NULL, OPT_OWNER       },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
 		{ "keep-caps",     no_argument,       NULL, OPT_KEEPCAPS    },
@@ -876,9 +862,9 @@ int main(int argc, char *argv[])
 
 	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
-	int c, forkit = 0;
-	uid_t mapuser = -1;
-	gid_t mapgroup = -1;
+	int c, forkit = 0, forward_signals = 0;
+	uid_t mapuser = -1, owneruser = -1;
+	gid_t mapgroup = -1, ownergroup = -1;
 	struct map_range *usermap = NULL;
 	struct map_range *groupmap = NULL;
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
@@ -970,11 +956,11 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_MAPUSER:
 			unshare_flags |= CLONE_NEWUSER;
-			mapuser = get_user(optarg, _("failed to parse uid"));
+			mapuser = get_user(optarg);
 			break;
 		case OPT_MAPGROUP:
 			unshare_flags |= CLONE_NEWUSER;
-			mapgroup = get_group(optarg, _("failed to parse gid"));
+			mapgroup = get_group(optarg);
 			break;
 		case 'r':
 			unshare_flags |= CLONE_NEWUSER;
@@ -1022,6 +1008,12 @@ int main(int argc, char *argv[])
 			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 1));
 			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 1));
 			break;
+		case OPT_OWNER:
+			unshare_flags |= CLONE_NEWUSER;
+			if (sscanf(optarg, "%u:%u%n", &owneruser, &ownergroup,
+					&c) < 2 || optarg[c])
+				errx(EXIT_FAILURE, _("failed to parse owner"));
+			break;
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
 			break;
@@ -1038,9 +1030,13 @@ int main(int argc, char *argv[])
 				kill_child_signo = SIGKILL;
 			}
 			break;
-                case OPT_KEEPCAPS:
+		case OPT_KEEPCAPS:
 			keepcaps = 1;
 			cap_last_cap(); /* Force last cap to be cached before we fork. */
+			break;
+		case OPT_FORWARD_SIGNALS:
+			forkit = 1;
+			forward_signals = 1;
 			break;
 		case 'S':
 			uid = strtoul_or_err(optarg, _("failed to parse uid"));
@@ -1056,11 +1052,11 @@ int main(int argc, char *argv[])
 		case 'w':
 			newdir = optarg;
 			break;
-                case OPT_MONOTONIC:
+		case OPT_MONOTONIC:
 			monotonic = strtos64_or_err(optarg, _("failed to parse monotonic offset"));
 			force_monotonic = 1;
 			break;
-                case OPT_BOOTTIME:
+		case OPT_BOOTTIME:
 			boottime = strtos64_or_err(optarg, _("failed to parse boottime offset"));
 			force_boottime = 1;
 			break;
@@ -1090,12 +1086,28 @@ int main(int argc, char *argv[])
 	/* clear any inherited settings */
 	signal(SIGCHLD, SIG_DFL);
 
-	if (npersists && (unshare_flags & CLONE_NEWNS))
+	if (npersists && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 		pid_bind = bind_ns_files_from_child(&fd_bind);
 
+	if (usermap || (mapuser != (uid_t) -1 && owneruser != (uid_t) -1)) {
+		add_single_map_range(&usermap, real_euid, mapuser);
+		mapuser = -1;
+	}
+
+	if (groupmap || (mapgroup != (uid_t) -1 && ownergroup != (uid_t) -1)) {
+		add_single_map_range(&groupmap, real_egid, mapgroup);
+		mapgroup = -1;
+	}
+
 	if (usermap || groupmap)
-		pid_idmap = map_ids_from_child(&fd_idmap, mapuser, usermap,
-					       mapgroup, groupmap);
+		pid_idmap = map_ids_from_child(&fd_idmap, usermap, groupmap);
+
+	if (ownergroup != (gid_t) -1 && setgroups(0, NULL) != 0)
+		err(EXIT_FAILURE, _("setgroups failed"));
+	if (ownergroup != (gid_t) -1 && setgid(ownergroup) != 0)
+		err(EXIT_FAILURE, _("setgid() failed"));
+	if (owneruser != (uid_t) -1 && setuid(owneruser) != 0)
+		err(EXIT_FAILURE, _("setuid() failed"));
 
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
@@ -1111,11 +1123,32 @@ int main(int argc, char *argv[])
 		settime(monotonic, CLOCK_MONOTONIC);
 
 	if (forkit) {
+		if (forward_signals) {
+			/* Install signal handlers to forward signals to child */
+			struct sigaction sa;
+
+			memset(&sa, 0, sizeof(sa));
+			sa.sa_handler = forward_signal;
+			sigemptyset(&sa.sa_mask);
+			sa.sa_flags = SA_RESTART;
+
+			if (sigaction(SIGTERM, &sa, NULL) == -1)
+				err(EXIT_FAILURE, _("sigaction SIGTERM failed"));
+			if (sigaction(SIGINT, &sa, NULL) == -1)
+				err(EXIT_FAILURE, _("sigaction SIGINT failed"));
+
+		/* Save old mask for child to restore */
 		if (sigemptyset(&sigset) != 0 ||
-			sigaddset(&sigset, SIGINT) != 0 ||
-			sigaddset(&sigset, SIGTERM) != 0 ||
-			sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
+		    sigprocmask(SIG_SETMASK, NULL, &oldsigset) != 0)
+			err(EXIT_FAILURE, _("sigprocmask failed"));
+	} else {
+		/* Block signals to prevent "impatient parent" problem */
+		if (sigemptyset(&sigset) != 0 ||
+		    sigaddset(&sigset, SIGINT) != 0 ||
+		    sigaddset(&sigset, SIGTERM) != 0 ||
+		    sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
 			err(EXIT_FAILURE, _("sigprocmask block failed"));
+	}
 #ifdef HAVE_PIDFD_OPEN
 		if (kill_child_signo != 0) {
 			/* make a connection to the original process (parent) */
@@ -1132,6 +1165,7 @@ int main(int argc, char *argv[])
 		case -1:
 			err(EXIT_FAILURE, _("fork failed"));
 		case 0:	/* child */
+			child_pid = 0; /* Clear in child process */
 			if (sigprocmask(SIG_SETMASK, &oldsigset, NULL))
 				err(EXIT_FAILURE,
 					_("sigprocmask restore failed"));
@@ -1139,13 +1173,15 @@ int main(int argc, char *argv[])
 				close(fd_bind);
 			break;
 		default: /* parent */
+			if (forward_signals)
+				child_pid = pid; /* Store for signal handler */
 			break;
 		}
 	}
 
 	if (npersists && (pid || !forkit)) {
 		/* run in parent */
-		if (pid_bind && (unshare_flags & CLONE_NEWNS))
+		if (pid_bind && (unshare_flags & (CLONE_NEWNS | CLONE_NEWUSER)))
 			sync_with_child(pid_bind, fd_bind);
 		else
 			/* simple way, just bind */
@@ -1153,7 +1189,14 @@ int main(int argc, char *argv[])
 	}
 
 	if (pid) {
-		if (waitpid(pid, &status, 0) == -1)
+		int rc;
+
+		/* Wait for child, handling EINTR from signal forwarding */
+		do {
+			rc = waitpid(pid, &status, 0);
+		} while (rc == -1 && errno == EINTR);
+
+		if (rc == -1)
 			err(EXIT_FAILURE, _("waitpid failed"));
 
 		if (WIFEXITED(status))
@@ -1206,14 +1249,14 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-        if (mapuser != (uid_t) -1 && !usermap)
+	if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
 		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
 
-        /* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
-         * has been disabled unless /proc/self/setgroups is written
-         * first to permanently disable the ability to call setgroups
-         * in that user namespace. */
-	if (mapgroup != (gid_t) -1 && !groupmap) {
+	/* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
+	 * has been disabled unless /proc/self/setgroups is written
+	 * first to permanently disable the ability to call setgroups
+	 * in that user namespace. */
+	if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
 			errx(EXIT_FAILURE, _("options --setgroups=allow and "
 					"--map-group are mutually exclusive"));

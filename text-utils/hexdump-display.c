@@ -448,7 +448,7 @@ doskip(const char *fname, int statok, struct hexdump *hex)
 
 	if (statok) {
 		if (fstat(fileno(stdin), &sbuf))
-		        err(EXIT_FAILURE, "%s", fname);
+			err(EXIT_FAILURE, "%s", fname);
 		if (S_ISREG(sbuf.st_mode) && hex->skip > sbuf.st_size) {
 		  /* If size valid and skip >= size */
 			hex->skip -= sbuf.st_size;
@@ -458,7 +458,7 @@ doskip(const char *fname, int statok, struct hexdump *hex)
 	}
 	/* sbuf may be undefined here - do not test it */
 	if (fseek(stdin, hex->skip, SEEK_SET))
-	        err(EXIT_FAILURE, "%s", fname);
+		err(EXIT_FAILURE, "%s", fname);
 	address += hex->skip;
 	hex->skip = 0;
 }

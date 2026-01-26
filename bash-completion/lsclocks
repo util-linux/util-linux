@@ -54,6 +54,7 @@ _lsclocks_module()
 				--time
 				--dynamic-clock
 				--no-discover-dynamic
+				--no-discover-rtc
 				--rtc
 				--cpu-clock
 				--help

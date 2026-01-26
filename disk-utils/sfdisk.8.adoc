@@ -55,10 +55,10 @@ The *sfdisk* prompt is only a hint for users and a displayed partition number do
 
 The commands are mutually exclusive.
 
-[*-N* _partition-number_] __device__::
+[*-N*, *--partno* _partition-number_] __device__::
 The default *sfdisk* command is to read the specification for the desired partitioning of _device_ from standard input, and then create a partition table according to the specification. See below for the description of the input format. If standard input is a terminal, then *sfdisk* starts an interactive session.
 +
-If the option *-N* is specified, then the changes are applied to the partition addressed by _partition-number_. The unspecified fields of the partition are not modified.
+If the option *-N* or *--partno* is specified, then the changes are applied to the partition addressed by _partition-number_. The unspecified fields of the partition are not modified.
 +
 Note that it's possible to address an unused partition with *-N*. For example, an MBR always contains 4 partitions, but the number of used partitions may be smaller. In this case *sfdisk* follows the default values from the partition table and does not use built-in defaults for the unused partition given with *-N*. See also *--append*.
 
@@ -157,6 +157,9 @@ specific entry in the partition table.
 *-b*, *--backup*::
 Back up the current partition table sectors before starting the partitioning. The default backup file name is _~/sfdisk-<device>-<offset>.bak_; to use another name see option *-O*, *--backup-file*. See section *BACKING UP THE PARTITION TABLE* for more details.
 
+*--bytes*::
+Print SIZE in bytes rather than in human readable format.
+
 *--color*[**=**__when__]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
 
@@ -207,9 +210,6 @@ ____
 
 *--move-use-fsync*::
 Use the *fsync*(2) system call after each write when moving data to a new location by *--move-data*.
-
-*--no-device-names*::
-Omit device names in dump output (show only partition numbers).
 
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns.

@@ -100,7 +100,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 	if (sz < 1)
 		err(EXIT_FAILURE, _("failed to read symlink: %s"), path);
 	if (*sym != '/') {
-		char *p = strrchr(path, '/');
+		const char *p = strrchr(path, '/');
 
 		if (p) {
 			isrel = 1;
@@ -387,10 +387,10 @@ static const struct option longopts[] =
 	{ "modes",	 no_argument, NULL, 'm' },
 	{ "owners",	 no_argument, NULL, 'o' },
 	{ "long",        no_argument, NULL, 'l' },
-	{ "nolinks",	 no_argument, NULL, 'n' },
+	{ "nosymlinks",	 no_argument, NULL, 'n' },
 	{ "vertical",    no_argument, NULL, 'v' },
 #ifdef HAVE_LIBSELINUX
-	{ "context",	 no_argument, NULL, 'Z' },
+	{ "context",	 no_argument, NULL, 'Z' },	/* IGNORECHECK=yes */
 #endif
 	{ NULL, 0, NULL, 0 },
 };

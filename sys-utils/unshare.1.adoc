@@ -81,6 +81,19 @@ Create a new time namespace. If _file_ is specified, then the namespace is made 
 *-f*, *--fork*::
 Fork the specified _program_ as a child process of *unshare* rather than running it directly. This is useful when creating a new PID namespace. Note that when *unshare* is waiting for the child process, then it ignores *SIGINT* and *SIGTERM* and does not forward any signals to the child. It is necessary to send signals to the child process.
 
+*--forward-signals*::
+Forward *SIGTERM* and *SIGINT* signals received by the parent *unshare* process to the child process.
+When this option is not specified, *unshare* ignores these signals while waiting for the child process
+to exit (the default behavior since util-linux 2.36). This allows the parent to remain alive while
+the child process handles the signals.
++
+This option is useful when the parent *unshare* process will receive *SIGTERM* or *SIGINT* signals
+(for example, during system reboot or from a process manager), and you want the child process to
+be notified of graceful shutdown requests so it can perform cleanup operations. If your child
+process has signal handlers (such as shell trap handlers), enabling this option allows them to execute.
++
+This option implies *--fork*.
+
 *--keep-caps*::
 When the *--user* option is given, ensure that capabilities granted in the user namespace are preserved in the child process.
 
@@ -120,6 +133,9 @@ Run the program only after the current effective user and group IDs have been ma
 
 *-c*, *--map-current-user*::
 Run the program only after the current effective user and group IDs have been mapped to the same UID and GID in the newly created user namespace. This option implies *--setgroups=deny* and *--user*. This option is equivalent to *--map-user=$(id -ru) --map-group=$(id -rg)*.
+
+*--owner* __uid__**:**__gid__::
+Set the owner user and group when creating a user namespace. These determine which user in the parent namespace has CAP_SYS_ADMIN in the new child namespace and can *setns*(2) into it. This option allows a privileged user to create a namespace on behalf of an unprivileged one, using its privileges to map ids and/or bind mount the namespace into the filesystem. It implies *--user*.
 
 *--propagation* **private**|**shared**|**slave**|**unchanged**::
 Recursively set the mount propagation flag in the new mount namespace. The default is to set the propagation to _private_. It is possible to disable this feature with the argument *unchanged*. The option is silently ignored when the mount namespace (*--mount*) is not requested.
@@ -263,7 +279,7 @@ up 21 hours, 30 minutes
 up 9 years, 28 weeks, 1 day, 2 hours, 50 minutes
 ....
 
-The following example execute a chroot into the directory _/chroot/powerpc/jessie_ and install the interpreter _/bin/qemu-ppc-static_ to execute the powerpc binaries.
+The following example executes a chroot into the directory _/chroot/powerpc/jessie_ and installs the interpreter _/bin/qemu-ppc-static_ to execute the powerpc binaries.
 
 ....
 $  unshare --map-root-user --fork --pid --load-interp=":qemu-ppc:M::\\x7fELF\x01\\x02\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x02\\x00\\x14:\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\x00\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xff\\xfe\\xff\\xff:/bin/qemu-ppc-static:OCF" --root=/chroot/powerpc/jessie /bin/bash -l

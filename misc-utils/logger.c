@@ -699,10 +699,10 @@ static char *get_structured_data_string(struct logger_ctl *ctl)
 
 static int valid_structured_data_param(const char *str)
 {
-	char *s;
-	char *eq  = strchr(str, '='),
-	     *qm1 = strchr(str, '"'),
-	     *qm2 = qm1 ? ul_strchr_escaped(qm1 + 1, '"') : NULL;
+	const char *s;
+	const char *eq  = strchr(str, '='),
+	           *qm1 = strchr(str, '"'),
+	           *qm2 = qm1 ? ul_strchr_escaped(qm1 + 1, '"') : NULL;
 
 	/* something is missing */
 	if (!eq || !qm1 || !qm2)
@@ -710,7 +710,7 @@ static int valid_structured_data_param(const char *str)
 
 	/* ']' need to be escaped */
 	for (s = qm1 + 1; s && *s; ) {
-		char *p = strchr(s, ']');
+		const char *p = strchr(s, ']');
 		if (!p)
 			break;
 		if (p > qm2 || p == ul_strchr_escaped(s, ']'))
@@ -720,7 +720,7 @@ static int valid_structured_data_param(const char *str)
 
 	/* '\' is allowed only before '[]"\' chars */
 	for (s = qm1 + 1; s && *s; ) {
-		char *p = strchr(s, '\\');
+		const char *p = strchr(s, '\\');
 		if (!p)
 			break;
 		if (!strchr("[]\"\\", *(p + 1)))
@@ -739,7 +739,7 @@ static int valid_structured_data_param(const char *str)
  */
 static int valid_structured_data_id(const char *str)
 {
-	char *at = strchr(str, '@');
+	const char *at = strchr(str, '@');
 	const char *p;
 
 	/* standardized IDs without @<digits> */
@@ -1175,7 +1175,7 @@ int main(int argc, char **argv)
 		{ "sd-id",         required_argument, 0, OPT_STRUCTURED_DATA_ID          },
 		{ "sd-param",      required_argument, 0, OPT_STRUCTURED_DATA_PARAM       },
 #ifdef HAVE_LIBSYSTEMD
-		{ "journald",	   optional_argument, 0, OPT_JOURNALD	   },
+		{ "journald",	   optional_argument, 0, OPT_JOURNALD	   },	/* IGNORECHECK=yes */
 #endif
 		{ NULL,		   0,		      0, 0		   }
 	};

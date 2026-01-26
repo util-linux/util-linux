@@ -164,7 +164,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -f, --from <N>    start at the track N (default 0)\n"), out);
 	fputs(_(" -t, --to <N>      stop at the track N\n"), out);
 	fputs(_(" -r, --repair <N>  try to repair tracks failed during\n"
-                "                     the verification (max N retries)\n"), out);
+		"                     the verification (max N retries)\n"), out);
 	fputs(_(" -n, --no-verify   disable the verification after the format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);

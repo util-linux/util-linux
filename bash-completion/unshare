@@ -28,11 +28,13 @@ _unshare_module()
 				--cgroup
 				--time
 				--fork
+				--forward-signals
 				--kill-child
 				--keep-caps
 				--mount-proc
 				--map-current-user
 				--map-root-user
+				--owner
 				--propagation
 				--setgroups
 				--help
@@ -45,6 +47,7 @@ _unshare_module()
 				--map-groups
 				--map-user
 				--map-users
+				--map-subids
 				--mount-binfmt
 				--monotonic
 				--boottime

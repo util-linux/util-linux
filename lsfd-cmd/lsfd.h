@@ -131,6 +131,7 @@ enum {
 	COL_TIMERFD_CLOCKID,
 	COL_TIMERFD_INTERVAL,
 	COL_TIMERFD_REMAINING,
+	COL_TUN_DEVNETNS,
 	COL_TUN_IFACE,
 	COL_TYPE,
 	COL_UDP_LADDR,
@@ -218,13 +219,14 @@ struct file {
 
 	bool	locked_read,
 		locked_write,
-		multiplexed,
-		is_error;
+		multiplexed;
 };
 
 #define is_opened_file(_f) ((_f)->association >= 0)
 #define is_mapped_file(_f) (is_association((_f), SHM) || is_association((_f), MEM))
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
+#define has_mnt_id(_f) (is_opened_file(_f) || is_mapped_file(_f) \
+			|| is_association(_f, EXE) || is_association(_f, CWD) || is_association(_f, ROOT))
 
 struct file_class {
 	const struct file_class *super;
@@ -246,6 +248,8 @@ struct file_class {
 extern const struct file_class abst_class, readlink_error_class, stat_error_class,
 	file_class, cdev_class, bdev_class, sock_class, unkn_class, fifo_class,
 	nsfs_file_class, mqueue_file_class, pidfs_file_class;
+
+bool is_error_object(struct file *f);
 
 /*
  * IPC

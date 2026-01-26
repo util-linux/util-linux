@@ -233,7 +233,7 @@ static int create_superblock(struct libmnt_context *cxt,
 	hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
 
 	DBG(HOOK, ul_debugobj(hs, " create done [rc=%d]", rc));
-	return rc != 0 && errno ? -errno : rc;;
+	return rc != 0 && errno ? -errno : rc;
 }
 
 static int open_fs_configuration_context(struct libmnt_context *cxt,

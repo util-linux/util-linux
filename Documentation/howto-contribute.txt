@@ -188,6 +188,9 @@ Coding Style
 	  multiple lines. In case the shorthand does not look good on one line
 	  use the normal "if () else" syntax.
 
+	* To avoid whitespace errors, consider installing an EditorConfig plugin
+	  (https://editorconfig.org/) into your favorite editor or IDE.
+
 Options
 
 	* The rule of thumb for options is that once they exist, you may not

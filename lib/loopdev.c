@@ -326,7 +326,7 @@ static int __loopcxt_get_fd(struct loopdev_cxt *lc, mode_t mode)
 		lc->fd = open(lc->device, lc->mode | O_CLOEXEC);
 		DBG(CXT, ul_debugobj(lc, "open %s [%s]: %m", lc->device,
 				mode == O_RDONLY ? "ro" :
-			        mode == O_RDWR ? "rw" : "??"));
+				mode == O_RDWR ? "rw" : "??"));
 
 		if (lc->fd < 0 && old >= 0) {
 			/* restore original on error */
@@ -1661,28 +1661,28 @@ int loopcxt_detach_device(struct loopdev_cxt *lc)
 
 int loopcxt_remove_device(struct loopdev_cxt *lc)
 {
-       int rc = -EINVAL;
-       int ctl, nr = -1;
+	int rc = -EINVAL;
+	int ctl, nr = -1;
 
-       if (!(lc->flags & LOOPDEV_FL_CONTROL)) {
-               rc = -ENOSYS;
-               goto done;
-       }
+	if (!(lc->flags & LOOPDEV_FL_CONTROL)) {
+		rc = -ENOSYS;
+		goto done;
+	}
 
-       rc = loopcxt_get_device_nr(lc, &nr);
-       if (rc)
-               goto done;
+	rc = loopcxt_get_device_nr(lc, &nr);
+	if (rc)
+		goto done;
 
-       ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
-       if (ctl >= 0) {
-               DBG(CXT, ul_debugobj(lc, "remove_device %d", nr));
-               rc = ioctl(ctl, LOOP_CTL_REMOVE, nr);
-               close(ctl);
-       }
-       lc->control_ok = rc >= 0 ? 1 : 0;
+	ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
+	if (ctl >= 0) {
+		DBG(CXT, ul_debugobj(lc, "remove_device %d", nr));
+		rc = ioctl(ctl, LOOP_CTL_REMOVE, nr);
+		close(ctl);
+	}
+	lc->control_ok = rc >= 0 ? 1 : 0;
 done:
-       DBG(CXT, ul_debugobj(lc, "remove_device done [rc=%d]", rc));
-       return rc;
+	DBG(CXT, ul_debugobj(lc, "remove_device done [rc=%d]", rc));
+	return rc;
 }
 
 int loopcxt_add_device(struct loopdev_cxt *lc)

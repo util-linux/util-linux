@@ -389,7 +389,7 @@ static int column_id_to_number(int id)
 /* Checks for DM prefix in the device name */
 static int is_dm(const char *name)
 {
-	return strncmp(name, "dm-", 3) ? 0 : 1;
+	return ul_startswith(name, "dm-") != NULL;
 }
 
 /* Returns full pat to the device node (TODO: what about sysfs_blkdev_get_path()) */
@@ -476,10 +476,10 @@ static char *get_type(struct lsblk_device *dev)
 			/* No UUID or no prefix - just mark it as DM device */
 			res = xstrdup("dm");
 
-	} else if (!strncmp(dev->name, "loop", 4)) {
+	} else if (ul_startswith(dev->name, "loop")) {
 		res = xstrdup("loop");
 
-	} else if (!strncmp(dev->name, "md", 2)) {
+	} else if (ul_startswith(dev->name, "md")) {
 		char *md_level = NULL;
 
 		ul_path_read_string(dev->sysfs, &md_level, "md/level");
@@ -549,17 +549,17 @@ static const char *get_transport(struct lsblk_device *dev)
 		attr = sysfs_blkdev_scsi_host_strdup_attribute(sysfs, "scsi", "proc_name");
 		if (!attr)
 			return NULL;
-		if (!strncmp(attr, "ahci", 4) || !strncmp(attr, "sata", 4))
+		if (ul_startswith(attr, "ahci") || ul_startswith(attr, "sata"))
 			trans = "sata";
 		else if (strstr(attr, "ata"))
 			trans = "ata";
 		free(attr);
 
-	} else if (strncmp(dev->name, "nvme", 4) == 0) {
+	} else if (ul_startswith(dev->name, "nvme")) {
 		trans = "nvme";
-	} else if (strncmp(dev->name, "vd", 2) == 0)
+	} else if (ul_startswith(dev->name, "vd"))
 		trans = "virtio";
-	else if (strncmp(dev->name, "mmcblk", 6) == 0)
+	else if (ul_startswith(dev->name, "mmcblk"))
 		trans = "mmc";
 
 	return trans;
@@ -1821,7 +1821,7 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 	}
 	name = xstrdup(name);
 
-	if (!strncmp(name, "dm-", 3)) {
+	if (is_dm(name)) {
 		/* dm mapping is never a real partition! */
 		real_part = 0;
 	} else {

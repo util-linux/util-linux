@@ -24,7 +24,7 @@ This is normally used like the old *apmsleep* utility, to wake from a suspend st
 
 On some systems, this can also be used like *nvram-wakeup*, waking from states like ACPI S4 (suspend to disk). Not all systems have persistent media that are appropriate for such suspend modes.
 
-Note that alarm functionality depends on hardware; not every RTC is able to setup an alarm up to 24 hours in the future.
+Note that alarm functionality depends on hardware; not every RTC is able to set up an alarm up to 24 hours in the future.
 
 The suspend setup may be interrupted by active hardware; for example wireless USB input devices that continue to send events for some fraction of a second after the return key is pressed. *rtcwake* tries to avoid this problem and it waits to the terminal to settle down before entering a system sleep.
 
@@ -91,7 +91,7 @@ Don't suspend, but read the RTC device until an alarm time appears. This mode is
 Disable a previously set alarm.
 
 *show*;;
-Print alarm information in format: "alarm: off|on <time>". The time is in ctime() output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
+Print alarm information in format: "alarm: off|on <time>". The time is in *ctime*(3) output format, e.g., "alarm: on Tue Nov 16 04:48:45 2010".
 
 *-n*, *--dry-run*::
 This option does everything apart from actually setting up the alarm, suspending the system, or waiting for the alarm.

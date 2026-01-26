@@ -96,14 +96,14 @@ static struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-static struct libmnt_table *tab;		/* /proc/self/mountinfo */
-
-/* basic output flags */
-static int no_headings;
-static int no_inaccessible;
-static int raw;
-static int json;
-static int bytes;
+static inline void add_column(int id)
+{
+	if (ncolumns >= ARRAY_SIZE(columns))
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns"),
+				ARRAY_SIZE(columns) - 1);
+	columns[ncolumns++] = id;
+}
 
 struct lock {
 	struct list_head locks;
@@ -129,6 +129,21 @@ struct lock_tnode {
 	ino_t inode;
 
 	struct list_head chain;
+};
+
+struct lslocks {
+	/* basic output flags */
+	int no_headings;
+	int no_inaccessible;
+	int raw;
+	int json;
+	int bytes;
+
+	pid_t target_pid;
+
+	struct list_head proc_locks;
+	void *pid_locks;
+	struct libmnt_table *tab;		/* /proc/self/mountinfo */
 };
 
 static int lock_tnode_compare(const void *a, const void *b)
@@ -185,25 +200,17 @@ static void rem_lock(struct lock *lock)
 
 static void disable_columns_truncate(void)
 {
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++)
 		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
 /*
  * Associate the device's mountpoint for a filename
  */
-static char *get_fallback_filename(dev_t dev)
+static char *get_fallback_filename(struct libmnt_table *tab, dev_t dev)
 {
 	struct libmnt_fs *fs;
 	char *res = NULL;
-
-	if (!tab) {
-		tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
-		if (!tab)
-			return NULL;
-	}
 
 	fs = mnt_table_find_devno(tab, dev, MNT_ITER_BACKWARD);
 	if (!fs)
@@ -326,7 +333,7 @@ static void patch_lock(struct lock *l, void *fallback)
 	}
 }
 
-static void add_to_list(void *locks, struct lock *l)
+static void add_to_list(struct list_head *locks, struct lock *l)
 {
 	list_add(&l->locks, locks);
 }
@@ -422,24 +429,33 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 			l->cmdname = xstrdup(_("(undefined)"));
 	}
 	l->path = get_filename_sz(l->inode, l->pid, &sz);
-
-	/* no permissions -- ignore */
-	if (!l->path && no_inaccessible) {
-		rem_lock(l);
-		return NULL;
-	}
-
-	if (!l->path) {
-		/* probably no permission to peek into l->pid's path */
-		l->path = get_fallback_filename(l->dev);
-		l->size = 0;
-	} else
+	if (l->path)
 		l->size = sz;
 
 	return l;
 }
 
-static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FILE *fp,
+static struct lock *refine_lock(struct lock *lock,
+				int no_inaccessible, struct libmnt_table *tab)
+{
+	/* no permissions -- ignore */
+	if (!lock->path && no_inaccessible) {
+		rem_lock(lock);
+		return NULL;
+	}
+
+	if (!lock->path) {
+		/* probably no permission to peek into l->pid's path */
+		lock->path = tab
+			? get_fallback_filename(tab, lock->dev)
+			: NULL;
+		lock->size = 0;
+	}
+
+	return lock;
+}
+
+static int get_pid_lock(struct lslocks *lslocks, FILE *fp,
 			pid_t pid, const char *cmdname, int fd)
 {
 	char buf[PATH_MAX];
@@ -453,8 +469,11 @@ static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FI
 		if (strncmp(buf, "lock:\t", 6))
 			continue;
 		l = get_lock(buf + 6, &oinfo, NULL);
+		if (l)
+			l = refine_lock(l, lslocks->no_inaccessible,
+					lslocks->tab);
 		if (l) {
-			add_lock(locks, l);
+			add_to_tree(&lslocks->pid_locks, l);
 			l->fd = fd;
 		}
 		/* no break here.
@@ -464,7 +483,8 @@ static int get_pid_lock(void *locks, void (*add_lock)(void *, struct lock *), FI
 	return 0;
 }
 
-static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), struct path_cxt *pc,
+static int get_pid_locks(struct lslocks *lslocks,
+			 struct path_cxt *pc,
 			 pid_t pid, const char *cmdname)
 {
 	DIR *sub = NULL;
@@ -482,14 +502,14 @@ static int get_pid_locks(void *locks, void (*add_lock)(void *, struct lock *), s
 		if (fdinfo == NULL)
 			continue;
 
-		get_pid_lock(locks, add_lock, fdinfo, pid, cmdname, (int)num);
+		get_pid_lock(lslocks, fdinfo, pid, cmdname, (int)num);
 		fclose(fdinfo);
 	}
 
 	return rc;
 }
 
-static void get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
+static void get_pids_locks(struct lslocks *lslocks)
 {
 	DIR *dir;
 	struct dirent *d;
@@ -518,7 +538,7 @@ static void get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 			continue;
 		cmdname = buf;
 
-		get_pid_locks(locks, add_lock, pc, pid, cmdname);
+		get_pid_locks(lslocks, pc, pid, cmdname);
 	}
 
 	closedir(dir);
@@ -527,7 +547,7 @@ static void get_pids_locks(void *locks, void (*add_lock)(void *, struct lock *))
 	return;
 }
 
-static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), void *fallback)
+static int get_proc_locks(struct lslocks *lslocks)
 {
 	FILE *fp;
 	char buf[PATH_MAX];
@@ -536,9 +556,12 @@ static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), 
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-		struct lock *l = get_lock(buf, NULL, fallback);
+		struct lock *l = get_lock(buf, NULL, &lslocks->pid_locks);
 		if (l)
-			add_lock(locks, l);
+			l = refine_lock(l, lslocks->no_inaccessible,
+					lslocks->tab);
+		if (l)
+			add_to_list(&lslocks->proc_locks, l);
 	}
 
 	fclose(fp);
@@ -547,11 +570,9 @@ static int get_proc_locks(void *locks, void (*add_lock)(void *, struct lock *), 
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	size_t i;
-
 	assert(name);
 
-	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!c_strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -596,16 +617,174 @@ static void xstrcoholder(char **str, struct lock *l)
 		    l->pid, l->cmdname, l->fd);
 }
 
-static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks, void *pid_locks)
+static char *get_data(struct lslocks *lslocks, struct lock *l, int num,
+		      uint64_t *rawdata)
 {
-	size_t i;
-	struct libscols_line *line;
+	char *str = NULL;
+
 	/*
 	 * Whenever cmdname or filename is NULL it is most
 	 * likely  because there's no read permissions
 	 * for the specified process.
 	 */
 	const char *notfnd = "";
+
+	switch (get_column_id(num)) {
+	case COL_SRC:
+		xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
+		break;
+	case COL_PID:
+		xasprintf(&str, "%d", l->pid);
+		if (l->pid >= 0 && rawdata)
+			*rawdata = (uint64_t)l->pid;
+		break;
+	case COL_TYPE:
+		xasprintf(&str, "%s", l->type);
+		break;
+	case COL_INODE:
+		xasprintf(&str, "%ju", (uintmax_t) l->inode);
+		break;
+	case COL_MAJMIN:
+		if (lslocks->json || lslocks->raw)
+			xasprintf(&str, "%u:%u", major(l->dev), minor(l->dev));
+		else
+			xasprintf(&str, "%3u:%-3u", major(l->dev), minor(l->dev));
+		break;
+	case COL_SIZE:
+		if (!l->size)
+			break;
+		if (lslocks->bytes)
+			xasprintf(&str, "%ju", l->size);
+		else
+			str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
+		if (rawdata)
+			*rawdata = l->size;
+		break;
+	case COL_MODE:
+		xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
+		break;
+	case COL_M:
+		xasprintf(&str, "%d", l->mandatory ? 1 : 0);
+		break;
+	case COL_START:
+		xasprintf(&str, "%jd", l->start);
+		break;
+	case COL_END:
+		xasprintf(&str, "%jd", l->end);
+		break;
+	case COL_PATH:
+		xasprintf(&str, "%s", l->path ? l->path : notfnd);
+		break;
+	case COL_BLOCKER:
+	{
+		pid_t bl = l->blocked && l->id ?
+			get_blocker(l->id, &lslocks->proc_locks) : 0;
+		if (bl)
+			xasprintf(&str, "%d", (int) bl);
+		break;
+	}
+	case COL_HOLDERS:
+	{
+		struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
+		struct lock_tnode **head = tfind(&tmp, &lslocks->pid_locks, lock_tnode_compare);
+		struct list_head *p;
+
+		if (!head)
+			break;
+
+		list_for_each(p, &(*head)->chain) {
+			struct lock *m = list_entry(p, struct lock, locks);
+
+			if (!is_holder(l, m))
+				continue;
+
+			if (str)
+				xstrputc(&str, '\n');
+			xstrcoholder(&str, m);
+		}
+		break;
+	}
+	default:
+		break;
+	}
+
+	return str;
+}
+
+static void set_line_data(struct libscols_line *line, size_t i, char *data)
+{
+	if (data && scols_line_refer_data(line, i, data))
+		err(EXIT_FAILURE, _("failed to add output data"));
+}
+
+struct filler_data {
+	struct lslocks *lslocks;
+	struct lock *l;
+	struct libscols_table *table;
+};
+
+/* stores data to scols cell userdata (invisible and independent on output)
+ * to make the original values accessible for sort functions
+ */
+static void set_rawdata_u64(struct libscols_line *ln, int col, uint64_t x)
+{
+	struct libscols_cell *ce = scols_line_get_cell(ln, col);
+	uint64_t *data;
+
+	if (!ce)
+		return;
+	data = xmalloc(sizeof(uint64_t));
+	*data = x;
+	scols_cell_set_userdata(ce, data);
+}
+
+static int filter_filler_cb(struct libscols_filter *filter __attribute__((__unused__)),
+			    struct libscols_line *line,
+			    size_t column_index,
+			    void *userdata)
+{
+	struct filler_data *fid = (struct filler_data *)userdata;
+	struct libscols_column *cl = scols_table_get_column(fid->table, column_index);
+	bool needs_rawdata = !!scols_column_has_data_func(cl);
+	uint64_t rawdata = (uint64_t) -1;
+	char *data = get_data(fid->lslocks, fid->l, column_index,
+			      needs_rawdata ? &rawdata : NULL);
+	if (data) {
+		set_line_data(line, column_index, data);
+		if (needs_rawdata && rawdata != (uint64_t) -1)
+			set_rawdata_u64(line, column_index, rawdata);
+	}
+	return 0;
+}
+
+static void unref_line_rawdata(struct libscols_line *ln, struct libscols_table *tb)
+{
+	size_t i;
+
+	for (i = 0; i < ncolumns; i++) {
+		struct libscols_column *cl = scols_table_get_column(tb, i);
+		struct libscols_cell *ce;
+		void *data;
+
+		if (!scols_column_has_data_func(cl))
+			continue;
+
+		ce = scols_line_get_column_cell(ln, cl);
+		data = scols_cell_get_userdata(ce);
+		free(data);
+	}
+}
+
+static void add_scols_line(struct lslocks *lslocks,
+			   struct libscols_table *table, struct libscols_filter *filter,
+			   struct lock *l)
+{
+	struct libscols_line *line;
+	struct filler_data fid = {
+		.lslocks = lslocks,
+		.l = l,
+		.table = table,
+	};
 
 	assert(l);
 	assert(table);
@@ -614,86 +793,30 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 	if (!line)
 		err(EXIT_FAILURE, _("failed to allocate output line"));
 
-	for (i = 0; i < ncolumns; i++) {
-		char *str = NULL;
+	if (filter) {
+		int status = 0;
+		scols_filter_set_filler_cb(filter,
+					   filter_filler_cb, (void *)&fid);
 
-		switch (get_column_id(i)) {
-		case COL_SRC:
-			xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
-			break;
-		case COL_PID:
-			xasprintf(&str, "%d", l->pid);
-			break;
-		case COL_TYPE:
-			xasprintf(&str, "%s", l->type);
-			break;
-		case COL_INODE:
-			xasprintf(&str, "%ju", (uintmax_t) l->inode);
-			break;
-		case COL_MAJMIN:
-			if (json || raw)
-				xasprintf(&str, "%u:%u", major(l->dev), minor(l->dev));
-			else
-				xasprintf(&str, "%3u:%-3u", major(l->dev), minor(l->dev));
-			break;
-		case COL_SIZE:
-			if (!l->size)
-				break;
-			if (bytes)
-				xasprintf(&str, "%ju", l->size);
-			else
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, l->size);
-			break;
-		case COL_MODE:
-			xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
-			break;
-		case COL_M:
-			xasprintf(&str, "%d", l->mandatory ? 1 : 0);
-			break;
-		case COL_START:
-			xasprintf(&str, "%jd", l->start);
-			break;
-		case COL_END:
-			xasprintf(&str, "%jd", l->end);
-			break;
-		case COL_PATH:
-			xasprintf(&str, "%s", l->path ? l->path : notfnd);
-			break;
-		case COL_BLOCKER:
-		{
-			pid_t bl = l->blocked && l->id ?
-						get_blocker(l->id, locks) : 0;
-			if (bl)
-				xasprintf(&str, "%d", (int) bl);
-			break;
+		if (scols_line_apply_filter(line, filter, &status))
+			err(EXIT_FAILURE, _("failed to apply filter"));
+
+		if (status == 0) {
+			unref_line_rawdata(line, table);
+			scols_table_remove_line(table, line);
+			return;
 		}
-		case COL_HOLDERS:
-		{
-			struct lock_tnode tmp = { .dev = l->dev, .inode = l->inode, };
-			struct lock_tnode **head = tfind(&tmp, pid_locks, lock_tnode_compare);
-			struct list_head *p;
+	}
 
-			if (!head)
-				break;
+	for (size_t i = 0; i < ncolumns; i++) {
+		char *str;
 
-			list_for_each(p, &(*head)->chain) {
-				struct lock *m = list_entry(p, struct lock, locks);
+		if (scols_line_is_filled(line, i))
+			continue;
 
-				if (!is_holder(l, m))
-					continue;
-
-				if (str)
-					xstrputc(&str, '\n');
-				xstrcoholder(&str, m);
-			}
-			break;
-		}
-		default:
-			break;
-		}
-
-		if (str && scols_line_refer_data(line, i, str))
-			err(EXIT_FAILURE, _("failed to add output data"));
+		str = get_data(lslocks, l,  i, NULL);
+		if (str)
+			set_line_data(line, i, str);
 	}
 }
 
@@ -716,11 +839,11 @@ static void rem_tnode(void *node)
 	free(node);
 }
 
-static int get_json_type_for_column(int column_id, int representing_in_bytes)
+static int get_json_type_for_column(int column_id, int bytes)
 {
 	switch (column_id) {
 	case COL_SIZE:
-		if (!representing_in_bytes)
+		if (!bytes)
 			return SCOLS_JSON_STRING;
 		FALLTHROUGH;
 	case COL_PID:
@@ -738,11 +861,9 @@ static int get_json_type_for_column(int column_id, int representing_in_bytes)
 	}
 }
 
-static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks)
+static struct libscols_table *init_scols_table(int raw, int json, int no_headings, int bytes,
+					       bool use_filter)
 {
-	int rc = 0;
-	size_t i;
-	struct list_head *p;
 	struct libscols_table *table;
 
 	table = scols_new_table();
@@ -756,7 +877,7 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 	if (json)
 		scols_table_set_name(table, "locks");
 
-	for (i = 0; i < ncolumns; i++) {
+	for (size_t i = 0; i < ncolumns; i++) {
 		struct libscols_column *cl;
 		const struct colinfo *col = get_column_info(i);
 
@@ -772,27 +893,34 @@ static int show_locks(struct list_head *locks, pid_t target_pid, void *pid_locks
 			scols_column_set_safechars(cl, "\n");
 		}
 
-		if (json) {
+		if (json || use_filter) {
 			int id = get_column_id(i);
 			int json_type = get_json_type_for_column(id, bytes);
 			scols_column_set_json_type(cl, json_type);
 		}
 
 	}
+	return table;
+}
+
+static int show_locks(struct lslocks *lslocks, struct libscols_table *table,
+		      struct libscols_filter *filter)
+{
+	struct list_head *p;
 
 	/* prepare data for output */
-	list_for_each(p, locks) {
+	list_for_each(p, &lslocks->proc_locks) {
 		struct lock *l = list_entry(p, struct lock, locks);
 
-		if (target_pid && target_pid != l->pid)
+		if (lslocks->target_pid && lslocks->target_pid != l->pid)
 			continue;
 
-		add_scols_line(table, l, locks, pid_locks);
+
+		add_scols_line(lslocks, table, filter, l);
 	}
 
 	scols_print_table(table);
-	scols_unref_table(table);
-	return rc;
+	return 0;
 }
 
 
@@ -816,6 +944,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>    output columns (see --list-columns)\n"), out);
 	fputs(_("     --output-all       output all columns\n"), out);
 	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
+	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 
@@ -827,14 +956,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) list_columns(void)
+static void __attribute__((__noreturn__)) list_columns(struct lslocks *lslocks)
 {
 	struct libscols_table *col_tb = xcolumn_list_table_new(
-					"lslocks-columns", stdout, raw, json);
+					"lslocks-columns", stdout, lslocks->raw, lslocks->json);
 
 	for (size_t i = 0; i < ARRAY_SIZE(infos); i++) {
 		if (i != COL_SIZE) {
-			int json_type = get_json_type_for_column(i, bytes);
+			int json_type = get_json_type_for_column(i, lslocks->bytes);
 			xcolumn_list_table_append_line(col_tb, infos[i].name,
 						       json_type, NULL,
 						       _(infos[i].help));
@@ -850,11 +979,106 @@ static void __attribute__((__noreturn__)) list_columns(void)
 	exit(EXIT_SUCCESS);
 }
 
+static struct libscols_filter *new_filter(const char *query)
+{
+	struct libscols_filter *f;
+
+	f = scols_new_filter(NULL);
+	if (!f)
+		err(EXIT_FAILURE, _("failed to allocate filter"));
+	if (query && scols_filter_parse_string(f, query) != 0)
+		errx(EXIT_FAILURE, _("failed to parse \"%s\": %s"), query,
+		     scols_filter_get_errmsg(f));
+	return f;
+}
+
+static void *get_u64_cell(const struct libscols_column *cl __attribute__((__unused__)),
+			  struct libscols_cell *ce,
+			  void *data __attribute__((__unused__)))
+{
+	return scols_cell_get_userdata(ce);
+}
+
+static void init_scols_filter(struct libscols_table *tb, struct libscols_filter *filter,
+			      int bytes)
+{
+	struct libscols_iter *itr;
+	const char *name = NULL;
+	int nerrs = 0;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to allocate iterator"));
+
+	while (scols_filter_next_holder(filter, itr, &name, 0) == 0) {
+		struct libscols_column *col = scols_table_get_column_by_name(tb, name);
+		int id = column_name_to_id(name, strlen(name));
+		const struct colinfo *ci = id >= 0 ? &infos[id] : NULL;
+
+		if (!ci) {
+			nerrs++;
+			continue;   /* report all unknown columns */
+		}
+		if (!col) {
+			int json_type = get_json_type_for_column(id, bytes);
+			add_column(id);
+			col = scols_table_new_column(tb, ci->name,
+						     ci->whint, SCOLS_FL_HIDDEN);
+			if (!col)
+				err(EXIT_FAILURE, _("failed to allocate output column"));
+
+			scols_column_set_json_type(col, json_type);
+		}
+
+		if ((id == COL_SIZE && !bytes) || id == COL_PID) {
+			scols_column_set_data_type(col, SCOLS_DATA_U64);
+			scols_column_set_data_func(col, get_u64_cell, NULL);
+		}
+
+		scols_filter_assign_column(filter, itr, name, col);
+	}
+
+	scols_free_iter(itr);
+
+	if (!nerrs)
+		return;
+
+	errx(EXIT_FAILURE, _("failed to initialize filter"));
+}
+
+static void unref_table_rawdata(struct libscols_table *tb)
+{
+	struct libscols_iter *itr;
+	struct libscols_line *ln;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		return;
+	while (scols_table_next_line(tb, itr, &ln) == 0)
+		unref_line_rawdata(ln, tb);
+
+	scols_free_iter(itr);
+}
+
+static void lslocks_init(struct lslocks *lslocks)
+{
+	memset(lslocks, 0, sizeof(*lslocks));
+
+	INIT_LIST_HEAD(&lslocks->proc_locks);
+}
+
+static void lslocks_free(struct lslocks *lslocks)
+{
+	rem_locks(&lslocks->proc_locks);
+	tdestroy(lslocks->pid_locks, rem_tnode);
+}
+
 int main(int argc, char *argv[])
 {
+	struct lslocks lslocks;
 	int c, rc = 0, collist = 0;
-	struct list_head proc_locks;
-	void *pid_locks = NULL;
+	struct libscols_table *table;
+	struct libscols_filter *filter = NULL;
 	char *outarg = NULL;
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1
@@ -871,6 +1095,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "noinaccessible", no_argument, NULL, 'i' },
+		{ "filter",     required_argument, NULL, 'Q' },
 		{ "list-columns", no_argument,     NULL, 'H' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -880,30 +1105,31 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-	pid_t target_pid = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
+	lslocks_init(&lslocks);
+
 	while ((c = getopt_long(argc, argv,
-				"biJp:o:nruhVH", long_opts, NULL)) != -1) {
+				"biJp:o:nruhVHQ:", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
 		switch(c) {
 		case 'b':
-			bytes = 1;
+			lslocks.bytes = 1;
 			break;
 		case 'i':
-			no_inaccessible = 1;
+			lslocks.no_inaccessible = 1;
 			break;
 		case 'J':
-			json = 1;
+			lslocks.json = 1;
 			break;
 		case 'p':
-			target_pid = strtopid_or_err(optarg, _("invalid PID argument"));
+			lslocks.target_pid = strtopid_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			outarg = optarg;
@@ -913,10 +1139,10 @@ int main(int argc, char *argv[])
 				columns[ncolumns] = ncolumns;
 			break;
 		case 'n':
-			no_headings = 1;
+			lslocks.no_headings = 1;
 			break;
 		case 'r':
-			raw = 1;
+			lslocks.raw = 1;
 			break;
 		case 'u':
 			disable_columns_truncate();
@@ -924,6 +1150,9 @@ int main(int argc, char *argv[])
 
 		case 'H':
 			collist = 1;
+			break;
+		case 'Q':
+			filter = new_filter(optarg);
 			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
@@ -935,9 +1164,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (collist)
-		list_columns();	/* print end exit */
-
-	INIT_LIST_HEAD(&proc_locks);
+		list_columns(&lslocks);	/* print end exit */
 
 	if (!ncolumns) {
 		/* default columns */
@@ -959,20 +1186,27 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	scols_init_debug(0);
+	table = init_scols_table(lslocks.raw, lslocks.json, lslocks.no_headings, lslocks.bytes,
+				 (bool)filter);
+	if (filter)
+		init_scols_filter(table, filter, lslocks.bytes);
 
 	/* get_pids_locks() get locks related information from "lock:" fields
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
-	 * doesn't provides enough information or provides staled information. */
-	get_pids_locks(&pid_locks, add_to_tree);
-	rc = get_proc_locks(&proc_locks, add_to_list, &pid_locks);
+	 * doesn't provide enough information or provides stale information. */
+	lslocks.tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+	get_pids_locks(&lslocks);
+	rc = get_proc_locks(&lslocks);
+	mnt_unref_table(lslocks.tab);
 
-	if (!rc && !list_empty(&proc_locks))
-		rc = show_locks(&proc_locks, target_pid, &pid_locks);
+	if (!rc && !list_empty(&lslocks.proc_locks))
+		rc = show_locks(&lslocks, table, filter);
 
-	tdestroy(pid_locks, rem_tnode);
-	rem_locks(&proc_locks);
+	scols_unref_filter(filter);
+	unref_table_rawdata(table);
+	scols_unref_table(table);
 
-	mnt_unref_table(tab);
+	lslocks_free(&lslocks);
 	return rc;
 }

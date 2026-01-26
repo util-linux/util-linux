@@ -202,8 +202,8 @@ DEF_GUID("52637672-7900-11AA-AA11-00306543ECAC", N_("Apple Silicon recovery")),
 /* Solaris */
 DEF_GUID("6A82CB45-1DD2-11B2-99A6-080020736631", N_("Solaris boot")),
 DEF_GUID("6A85CF4D-1DD2-11B2-99A6-080020736631", N_("Solaris root")),
-/* same as Apple ZFS */
-DEF_GUID("6A898CC3-1DD2-11B2-99A6-080020736631", N_("Solaris /usr & Apple ZFS")),
+/* ZFS pool member; originally Solaris /usr and briefly Apple ZFS */
+DEF_GUID("6A898CC3-1DD2-11B2-99A6-080020736631", N_("ZFS pool member")),
 DEF_GUID("6A87C46F-1DD2-11B2-99A6-080020736631", N_("Solaris swap")),
 DEF_GUID("6A8B642B-1DD2-11B2-99A6-080020736631", N_("Solaris backup")),
 DEF_GUID("6A8EF2E9-1DD2-11B2-99A6-080020736631", N_("Solaris /var")),

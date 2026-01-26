@@ -1265,14 +1265,12 @@ int __scols_initialize_printing(struct libscols_table *tb, struct ul_buffer *buf
 
 	if (tb->is_term) {
 		size_t width = (size_t) scols_table_get_termwidth(tb);
-
-		if (tb->termreduce > 0 && tb->termreduce < width) {
-			width -= tb->termreduce;
-			scols_table_set_termwidth(tb, width);
-		}
-		bufsz = width;
-	} else
+		tb->outwidth = width > tb->termreduce ? width - tb->termreduce : width;
+		bufsz = tb->outwidth;
+	} else {
 		bufsz = BUFSIZ;
+		tb->outwidth = bufsz;
+	}
 
 	if (!tb->is_term || tb->format != SCOLS_FMT_HUMAN || scols_table_is_tree(tb))
 		tb->header_repeat = 0;

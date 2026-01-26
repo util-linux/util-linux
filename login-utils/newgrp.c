@@ -178,7 +178,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Log in to a new group; optionally executing a shell command.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fputs(_(" -c, --command <command>  pass a command to the user's shell with -c\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 	fprintf(out, USAGE_MAN_TAIL("newgrp(1)"));
 	exit(EXIT_SUCCESS);
 }

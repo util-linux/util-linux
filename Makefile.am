@@ -189,6 +189,8 @@ edit_cmd = sed \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
+	 -e 's|@PTHREAD_LIBS[@]|$(PTHREAD_LIBS)|g' \
+	 -e 's|@SYSTEMD_USER_LOCK[@]|$(SYSTEMD_USER_LOCK)|g' \
 	 -e 's|@SOCKET_LIBS[@]|$(SOCKET_LIBS)|g' \
 	 -e 's|@VERSION[@]|$(VERSION)|g' \
 	 -e 's|@ADJTIME_PATH[@]|$(ADJTIME_PATH)|g' \
@@ -338,10 +340,14 @@ checkdecl:
 checkcompletion:
 	@ $(top_srcdir)/tools/checkcompletion.sh $(top_srcdir)
 
+checkmanpage:
+	@ $(top_srcdir)/tools/checkmanpage.sh $(top_srcdir)
+
 checkusage:
-	@ $(top_srcdir)/tools/checkusage.sh \
+	@ $(top_srcdir)/tools/checkusage.sh $(top_srcdir) \
 		$(bin_PROGRAMS) $(sbin_PROGRAMS) \
 		$(usrbin_exec_PROGRAMS) $(usrsbin_exec_PROGRAMS)
+
 checklibdoc:
 	@ $(top_srcdir)/tools/checklibdocs.sh \
 		$(top_srcdir)/libmount/src/libmount.sym \

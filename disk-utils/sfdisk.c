@@ -121,8 +121,7 @@ struct sfdisk {
 		     movedata: 1,	/* move data after resize */
 		     movefsync: 1,	/* use fsync() after each write() */
 		     notell : 1,	/* don't tell kernel about new PT */
-		     noact  : 1,	/* do not write to device */
-		     no_device_names  : 1; /* do not display device names in partition rows */
+		     noact  : 1;	/* do not write to device */
 };
 
 #define SFDISK_PROMPT	">>> "
@@ -479,7 +478,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
 		printf(_("  start sector: (from/to) %ju / %ju\n"), (uintmax_t) from, (uintmax_t) to);
 		printf(_("  sectors: %ju\n"), (uintmax_t) nsectors);
-	        printf(_("  step size: %zu bytes\n"), step_bytes);
+		printf(_("  step size: %zu bytes\n"), step_bytes);
 		putchar('\n');
 		fflush(stdout);
 
@@ -603,7 +602,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 					i + 1, nsectors,
 					100.0 / ((double) nsectors/(i+1)));
 			fflush(stdout);
-                        fputc('\r', stdout);
+			fputc('\r', stdout);
 
 		}
 next:
@@ -1069,14 +1068,6 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate dump struct"));
-
-	if (sf->no_device_names) {
-		rc = fdisk_script_disable_devnames(dp, 1);
-		if (rc != 0 && !sf->quiet) {
-			fdisk_warnx(sf->cxt,
-				_("warning: libfdisk does not support --no-device-names, device names will be shown"));
-		}
-	}
 
 	rc = fdisk_script_read_context(dp, NULL);
 	if (rc)
@@ -2180,7 +2171,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_("     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"), out);
 	fputs(_("     --move-use-fsync      use fsync after each write when move data\n"), out);
-	fputs(_("     --no-device-names     omit device names in dump output (show partition numbers only)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 
 	fprintf(out,
@@ -2252,8 +2242,7 @@ int main(int argc, char *argv[])
 		OPT_NOTELL,
 		OPT_RELOCATE,
 		OPT_LOCK,
-		OPT_SECTORSIZE,
-		OPT_NO_DEVICE_NAMES
+		OPT_SECTORSIZE
 	};
 
 	static const struct option longopts[] = {
@@ -2276,12 +2265,10 @@ int main(int argc, char *argv[])
 		{ "list-free", no_argument,     NULL, 'F' },
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
-		{ "no-device-names",no_argument,      NULL, OPT_NO_DEVICE_NAMES },
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
 		{ "no-tell-kernel", no_argument, NULL, OPT_NOTELL },
 		{ "move-data", optional_argument, NULL, OPT_MOVEDATA },
 		{ "move-use-fsync", no_argument, NULL, OPT_MOVEFSYNC },
-		{ "no-device-names", no_argument, NULL, OPT_NO_DEVICE_NAMES },
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "reorder", no_argument,       NULL, 'r' },
@@ -2474,9 +2461,6 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_DELETE:
 			sf->act = ACT_DELETE;
-			break;
-		case OPT_NO_DEVICE_NAMES:
-			sf->no_device_names = 1;
 			break;
 		case OPT_NOTELL:
 			sf->notell = 1;

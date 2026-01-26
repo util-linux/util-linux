@@ -150,6 +150,7 @@ for phase in "${PHASES[@]}"; do
         make checklibdoc
         make checkxalloc
         make checkcompletion
+        make checkmanpage
         ;;
     CHECK)
         if [[ "$SANITIZE" == "yes" ]]; then
@@ -195,6 +196,8 @@ for phase in "${PHASES[@]}"; do
                 path="$(dirname "$path")"
             done
         fi
+
+        make checkusage
 
         ./tests/run.sh --show-diff
 

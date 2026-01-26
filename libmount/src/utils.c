@@ -395,6 +395,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"fuse.encfs", /* Not a true pseudofs (has source), but source is not reported. */
 		"fuse.gvfs-fuse-daemon", /* Old name, not used by gvfs any more. */
 		"fuse.gvfsd-fuse",
+		"fuse.kio-fuse",
 		"fuse.lxcfs",
 		"fuse.portal",
 		"fuse.rofiles-fuse",
@@ -506,10 +507,11 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
 	case STATFS_NCP_MAGIC:		return "ncp";
 	case STATFS_NFS_MAGIC:		return "nfs";
 	case STATFS_NILFS_MAGIC:	return "nilfs2";
-	case STATFS_NTFS_MAGIC:		return "ntfs3";
+	case STATFS_NTFS_MAGIC:		return "ntfs";
 	case STATFS_OCFS2_MAGIC:	return "ocfs2";
 	case STATFS_OMFS_MAGIC:		return "omfs";
 	case STATFS_OPENPROMFS_MAGIC:	return "openpromfs";
+	case STATFS_PIDFS_MAGIC:	return "pidfs";
 	case STATFS_PIPEFS_MAGIC:	return "pipefs";
 	case STATFS_PROC_MAGIC:		return "proc";
 	case STATFS_PSTOREFS_MAGIC:	return "pstore";
@@ -719,7 +721,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 			"cannot convert '%s' username to UID", username));
 		if (errno == 0)
 			errno = EINVAL;
-		rc = -errno;;
+		rc = -errno;
 	}
 
 	free(buf);
@@ -748,7 +750,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 			"cannot convert '%s' groupname to GID", groupname));
 		if (errno == 0)
 			errno = EINVAL;
-		rc = -errno;;
+		rc = -errno;
 	}
 
 	free(buf);

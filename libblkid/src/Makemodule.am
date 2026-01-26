@@ -224,7 +224,7 @@ test_blkid_fuzz_SOURCES = libblkid/src/fuzz.c
 nodist_EXTRA_test_blkid_fuzz_SOURCES = dummy.cxx
 
 test_blkid_fuzz_CFLAGS = $(blkid_tests_cflags) -DFUZZ_TARGET
-test_blkid_fuzz_LDFLAGS = $(blkid_tests_ldflags) -lpthread
+test_blkid_fuzz_LDFLAGS = $(blkid_tests_ldflags) $(PTHREAD_LIBS)
 test_blkid_fuzz_LDADD = $(blkid_tests_ldadd) $(LIB_FUZZING_ENGINE)
 endif
 

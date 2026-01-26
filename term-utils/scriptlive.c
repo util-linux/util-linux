@@ -38,6 +38,7 @@
 #include "pty-session.h"
 #include "script-playutils.h"
 #include "monotonic.h"
+#include "shells.h"
 
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original scriptreplay.pl */
@@ -143,7 +144,7 @@ static int mainloop_cb(void *data)
 
 	/* emit previous waiting step */
 	if (ss->step && !replay_step_is_empty(ss->step)) {
-		int fd = ul_pty_get_childfd(ss->pty);;
+		int fd = ul_pty_get_childfd(ss->pty);
 
 		rc = replay_emit_step_data(ss->setup, ss->step, fd);
 		fdatasync(fd);
@@ -281,9 +282,7 @@ main(int argc, char *argv[])
 		replay_set_delay_max(ss.setup, &maxdelay);
 	replay_set_delay_min(ss.setup, &mindelay);
 
-	shell = getenv("SHELL");
-	if (shell == NULL)
-		shell = _PATH_BSHELL;
+	shell = ul_default_shell(0, NULL);
 
 	fprintf(stdout, _(">>> scriptlive: Starting your typescript execution by %s.\n"),
 			command ? command : shell);

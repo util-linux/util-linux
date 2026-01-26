@@ -47,6 +47,7 @@
 #include "closestream.h"
 #include "monotonic.h"
 #include "timer.h"
+#include "shells.h"
 
 #ifndef F_OFD_GETLK
 #define F_OFD_GETLK	36
@@ -75,12 +76,13 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  " -s, --shared             get a shared lock\n"), stdout);
 	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stdout);
 	fputs(_(  " -u, --unlock             remove a lock\n"), stdout);
-	fputs(_(  " -n, --nonblock           fail rather than wait\n"), stdout);
+	fputs(_(  " -n, --nb, --nonblocking  fail rather than wait\n"), stdout);
 	fputs(_(  " -w, --timeout <secs>     wait for a limited amount of time\n"), stdout);
 	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stdout);
 	fputs(_(  " -o, --close              close file descriptor before running command\n"), stdout);
 	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stdout);
 	fputs(_(  " -F, --no-fork            execute command without forking\n"), stdout);
+	fputs(_(  "     --wait               same as --timeout\n"), stdout);
 	fputs(_(  "     --fcntl              use fcntl(F_OFD_SETLK) rather than flock()\n"), stdout);
 	fputs(_(  "     --start <offset>     starting offset for lock (implies --fcntl)\n"), stdout);
 	fputs(_(  "     --length <number>    number of bytes to lock (implies --fcntl)\n"), stdout);
@@ -207,6 +209,7 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
+
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1,
 		OPT_FCNTL,
@@ -327,9 +330,7 @@ int main(int argc, char *argv[])
 				     _("%s requires exactly one command argument"),
 				     argv[optind + 1]);
 			cmd_argv = sh_c_argv;
-			cmd_argv[0] = getenv("SHELL");
-			if (!cmd_argv[0] || !*cmd_argv[0])
-				cmd_argv[0] = _PATH_BSHELL;
+			cmd_argv[0] = (char *)ul_default_shell(0, NULL);
 			cmd_argv[1] = "-c";
 			cmd_argv[2] = argv[optind + 2];
 			cmd_argv[3] = NULL;

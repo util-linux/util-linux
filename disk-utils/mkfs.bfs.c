@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 			/* when called via mkfs we may get options c,l,v */
 			break;
 
-                case OPT_LOCK:
+		case OPT_LOCK:
 			lockmode = "1";
 			if (optarg) {
 				if (*optarg == '=')

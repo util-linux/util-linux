@@ -80,9 +80,6 @@ Display _number_ of months, starting from the month containing the date.
 *-S, --span*::
 Display months spanning the date.
 
-*-t*, *--saturday*::
-Display Saturday as the first day of the week.
-
 *-s*, *--sunday*::
 Display Sunday as the first day of the week.
 
@@ -122,6 +119,9 @@ Display week numbers in the calendar according to the US or ISO-8601 format.
 If a _number_ is specified, the requested week in the desired or current year
 will be printed and its number highlighted.
 The _number_ may be ignored if _month_ is also specified.
++
+If the _number_ is specified but the current day is unspecified on the command
+line, then the current day is not highlighted.
 +
 See the *NOTES* section for more details.
 

@@ -106,7 +106,7 @@ size_t unescape_to_buffer(const char *s, const char *wanted, char *buf, size_t l
 			s += 2;
 			sz += 2;
 		} else {
-			*buf++ = *s++;;
+			*buf++ = *s++;
 			sz++;
 		}
 	}

@@ -26,18 +26,14 @@
 #include "xalloc.h"
 
 #include "exec_shell.h"
-
-#define DEFAULT_SHELL "/bin/sh"
+#include "shells.h"
 
 void __attribute__((__noreturn__)) exec_shell(void)
 {
-	const char *shell = getenv("SHELL");
+	const char *shell = ul_default_shell(0, NULL);
 	char *shellc;
 	const char *shell_basename;
 	char *arg0;
-
-	if (!shell)
-		shell = DEFAULT_SHELL;
 
 	shellc = xstrdup(shell);
 	shell_basename = basename(shellc);

@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <inttypes.h>
 
+#include "buffer.h"
 #include "superblocks.h"
 #include "crc32c.h"
 #include "crc64.h"
@@ -79,13 +80,34 @@ struct bcachefs_sb_member {
 	uint64_t	nbuckets;
 	uint16_t	first_bucket;
 	uint16_t	bucket_size;
-	uint32_t	pad;
+	uint8_t		btree_bitmap_shift;
+	uint8_t		pad[3];
 	uint64_t	last_mount;
-	uint64_t	flags[2];
+	uint64_t	flags;
+	/* fields below were added after members_v1 */
+	uint32_t	iops[4];
+	uint64_t	errors[3];
+	uint64_t	errors_at_reset[3];
+	uint64_t	errors_reset_time;
+	uint64_t	seq;
+	uint64_t	btree_allocated_bitmap;
+	uint32_t	last_journal_bucket;
+	uint32_t	last_journal_bucket_offset;
+
+	/* device name/model info from the last FS mount */
+	uint8_t		device_name[16];
+	uint8_t		device_model[64];
 } __attribute__((packed));
 
-struct bcachefs_sb_field_members {
+struct bcachefs_sb_field_members_v1 {
 	struct bcachefs_sb_field	field;
+	struct bcachefs_sb_member	members[];
+}  __attribute__((packed));
+
+struct bcachefs_sb_field_members_v2 {
+	struct bcachefs_sb_field	field;
+	uint16_t			member_bytes;
+	uint8_t				pad[6];
 	struct bcachefs_sb_member	members[];
 }  __attribute__((packed));
 
@@ -166,8 +188,12 @@ struct bcachefs_super_block {
 #define BCACHEFS_SB_MAX_SIZE_SHIFT   0x10U
 /* fields offset within super block */
 #define BCACHEFS_SB_FIELDS_OFF offsetof(struct bcachefs_super_block, _start)
-/* tag value for members field */
-#define BCACHEFS_SB_FIELD_TYPE_MEMBERS 1
+/* tag value for v1 members field */
+#define BCACHEFS_SB_FIELD_TYPE_MEMBERS_V1 1
+/* v1 members field size in bytes */
+#define BCACHEFS_SB_FIELD_MEMBERS_V1_BYTES 56
+/* tag value for v2 members field */
+#define BCACHEFS_SB_FIELD_TYPE_MEMBERS_V2 11
 /* tag value for disk_groups field */
 #define BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS 5
 /* version splitting helpers */
@@ -226,42 +252,106 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 	return BLKID_PROBE_OK;
 }
 
+#define FIELD_END(s, field)	offsetof(s, field) + sizeof_member(s, field)
+
+/* Fields must be dynamically checked for existence before accessing (using FIELD_END) */
+static const struct bcachefs_sb_member *bcachefs_sb_member_get_unsafe(
+	const struct bcachefs_sb_member *members,
+	uint16_t member_bytes, size_t i)
+{
+	return (const void*)((const char *) members + i * member_bytes);
+}
+
 static void probe_bcachefs_sb_members(blkid_probe pr,
 				     const struct bcachefs_super_block *bcs,
 				     const struct bcachefs_sb_field *field,
-				     uint8_t dev_idx)
+				     const struct bcachefs_sb_member *members,
+				     uint16_t member_bytes, size_t member_array_offset,
+				     uint8_t *current_member_group)
 {
-	struct bcachefs_sb_field_members *members =
-			(struct bcachefs_sb_field_members *) field;
 	uint64_t sectors = 0;
 	uint8_t i;
+	const struct bcachefs_sb_member *current;
 
-	if (BYTES(field) != offsetof(__typeof__(*members), members[bcs->nr_devices]))
+	if (BYTES(field) != member_array_offset + bcs->nr_devices * member_bytes)
 		return;
 
-	blkid_probe_set_uuid_as(pr, members->members[dev_idx].uuid, "UUID_SUB");
+	current = bcachefs_sb_member_get_unsafe(members, member_bytes, bcs->dev_idx);
+
+	if (member_bytes < FIELD_END(struct bcachefs_sb_member, uuid))
+		return;
+
+	blkid_probe_set_uuid_as(pr, current->uuid, "UUID_SUB");
+
+	if (member_bytes < FIELD_END(struct bcachefs_sb_member, nbuckets) ||
+	    member_bytes < FIELD_END(struct bcachefs_sb_member, bucket_size))
+		return;
 
 	for (i = 0; i < bcs->nr_devices; i++) {
-		struct bcachefs_sb_member *member = &members->members[i];
+		const struct bcachefs_sb_member *member = bcachefs_sb_member_get_unsafe(members, member_bytes, i);
 		sectors += le64_to_cpu(member->nbuckets) * le16_to_cpu(member->bucket_size);
 	}
 	blkid_probe_set_fssize(pr, sectors * BCACHEFS_SECTOR_SIZE);
-}
 
-static void probe_bcachefs_sb_disk_groups(blkid_probe pr,
-					  const struct bcachefs_super_block *bcs,
-					  const struct bcachefs_sb_field *field,
-					  uint8_t dev_idx)
-{
-	struct bcachefs_sb_field_disk_groups *disk_groups =
-			(struct bcachefs_sb_field_disk_groups *) field;
-
-	if (BYTES(field) != offsetof(__typeof__(*disk_groups), disk_groups[bcs->nr_devices]))
+	if (member_bytes < FIELD_END(struct bcachefs_sb_member, flags))
 		return;
 
-	blkid_probe_set_id_label(pr, "LABEL_SUB",
-				 disk_groups->disk_groups[dev_idx].label,
-				 sizeof(disk_groups->disk_groups[dev_idx].label));
+	*current_member_group = le64_to_cpu(current->flags) >> 20 & 0xFF;
+}
+
+static void probe_bcachefs_device_label(blkid_probe pr,
+					const struct bcachefs_sb_field *field,
+					unsigned group_idx)
+{
+	const struct bcachefs_sb_field_disk_groups *disk_groups =
+			(const struct bcachefs_sb_field_disk_groups *) field;
+	const struct bcachefs_sb_disk_group *group;
+	size_t groups_nr = (BYTES(field) - offsetof(__typeof__(*disk_groups), disk_groups)) / sizeof(*group);
+	size_t nr = 0;
+	size_t total_sublabel_length = 0;
+	uint16_t path[32];
+	struct ul_buffer buf = UL_INIT_BUFFER;
+
+	while (1) {
+		if (nr == ARRAY_SIZE(path) || group_idx >= groups_nr)
+			return;
+
+		group = disk_groups->disk_groups + group_idx;
+
+		uint64_t group_flags_0 = le64_to_cpu(group->flags[0]);
+		bool deleted = group_flags_0 & 0x1;
+		uint32_t parent = group_flags_0 >> 6 & ((1 << 18) - 1);
+
+		if (deleted)
+			return;
+
+		path[nr++] = group_idx;
+		total_sublabel_length += strnlen((const char*)group->label, sizeof(group->label));
+
+		if (!parent)
+			break;
+		group_idx = parent - 1;
+	}
+
+	if (ul_buffer_alloc_data(&buf, total_sublabel_length + nr + 1))
+		return;
+
+	while (nr--) {
+		group_idx = path[nr];
+		group = disk_groups->disk_groups + group_idx;
+
+		ul_buffer_append_data(&buf, (const char*)group->label,
+			strnlen((const char*)group->label, sizeof(group->label)));
+		ul_buffer_append_data(&buf, nr ? "." : "", 1);
+	}
+
+	if (!ul_buffer_is_empty(&buf)) {
+		blkid_probe_set_id_label(pr, "LABEL_SUB",
+		                         (const unsigned char*)ul_buffer_get_data(&buf, NULL, NULL),
+		                         ul_buffer_get_datasiz(&buf));
+	}
+
+	ul_buffer_free_data(&buf);
 }
 
 static int is_within_range(const void *start, uint64_t size, const void *end)
@@ -279,6 +369,8 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 				     const unsigned char *sb_start, const unsigned char *sb_end)
 {
 	const unsigned char *field_addr = sb_start + BCACHEFS_SB_FIELDS_OFF;
+	const struct bcachefs_sb_field_disk_groups *disk_groups = NULL;
+	uint8_t current_member_group = 0;	/* 0 means unset */
 
 	while (1) {
 		struct bcachefs_sb_field *field = (struct bcachefs_sb_field *) field_addr;
@@ -300,14 +392,28 @@ static void probe_bcachefs_sb_fields(blkid_probe pr, const struct bcachefs_super
 		if (!type)
 			break;
 
-		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS)
-			probe_bcachefs_sb_members(pr, bcs, field, bcs->dev_idx);
+		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS_V1) {
+			struct bcachefs_sb_field_members_v1 *members = (struct bcachefs_sb_field_members_v1 *) field;
+			probe_bcachefs_sb_members(pr, bcs, field, members->members,
+				BCACHEFS_SB_FIELD_MEMBERS_V1_BYTES, offsetof(__typeof__(*members), members),
+				&current_member_group);
+		}
+
+		if (type == BCACHEFS_SB_FIELD_TYPE_MEMBERS_V2) {
+			struct bcachefs_sb_field_members_v2 *members = (struct bcachefs_sb_field_members_v2 *) field;
+			probe_bcachefs_sb_members(pr, bcs, field, members->members,
+				le16_to_cpu(members->member_bytes), offsetof(__typeof__(*members), members),
+				&current_member_group);
+		}
 
 		if (type == BCACHEFS_SB_FIELD_TYPE_DISK_GROUPS)
-			probe_bcachefs_sb_disk_groups(pr, bcs, field, bcs->dev_idx);
+			disk_groups = (const struct bcachefs_sb_field_disk_groups *) field;
 
 		field_addr += BYTES(field);
 	}
+
+	if (disk_groups && current_member_group)
+		probe_bcachefs_device_label(pr, &disk_groups->field, current_member_group - 1);
 }
 
 static int bcachefs_validate_checksum(blkid_probe pr, const struct bcachefs_super_block *bcs,

@@ -680,7 +680,7 @@ static int float_cast(int type, struct filter_param *n)
 		n->val.num = fnum;
 		break;
 	case SCOLS_DATA_FLOAT:
-		break;;
+		break;
 	case SCOLS_DATA_BOOLEAN:
 		n->val.boolean = fnum > 0.0 ? true : false;
 		break;
@@ -707,7 +707,7 @@ static int bool_cast(int type, struct filter_param *n)
 		n->val.fnum = x ? 1.0 : 0.0;
 		break;
 	case SCOLS_DATA_BOOLEAN:
-		break;;
+		break;
 	default:
 		return -EINVAL;
 	}

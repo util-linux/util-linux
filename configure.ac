@@ -353,6 +353,7 @@ AC_CHECK_HEADERS([ \
 	linux/securebits.h \
 	linux/tiocl.h \
 	linux/version.h \
+	linux/vm_sockets_diag.h \
 	linux/watchdog.h \
 	linux/if_alg.h \
 	locale.h \
@@ -561,7 +562,7 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
     [[#include <sys/stat.h>]])
 
-AC_CHECK_TYPES([struct statx], [], [], [[#include <sys/stat.h>]])
+AC_CHECK_TYPES([struct statx], [have_struct_statx=yes], [have_struct_statx=no], [[#include <sys/stat.h>]])
 AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
     [[#include <sys/stat.h>]])
 
@@ -668,7 +669,6 @@ AC_CHECK_FUNCS([ \
 	setresuid \
 	sigqueue \
 	srandom \
-	statx \
 	strnchr \
 	strndup \
 	strnlen \
@@ -695,6 +695,7 @@ AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=
 AC_CHECK_FUNCS([posix_fallocate], [have_posix_fallocate=yes], [have_posix_fallocate=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
+AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 AM_CONDITIONAL([HAVE_LINUX_LANDLOCK_H], [test "x$ac_cv_header_linux_landlock_h" = xyes])
@@ -1389,6 +1390,10 @@ AC_DEFINE_UNQUOTED([LIBMOUNT_VERSION], ["$LIBMOUNT_VERSION"], [libmount version 
 AC_ARG_ENABLE([libmount-mountfd-support],
   AS_HELP_STRING([--disable-libmount-mountfd-support], [do not use new mount API based on FDs]),
   [], [enable_libmount_mountfd_support=check]
+)
+AC_ARG_ENABLE([libmount-udev-support],
+  AS_HELP_STRING([--disable-libmount-udev-support], [do not read from udev in libmount]),
+  [], [enable_libmount_udev_support=check]
 )
 UL_BUILD_INIT([libmount_mountfd_support])
 UL_REQUIRES_BUILD([libmount_mountfd_support], [libmount])
@@ -2318,6 +2323,16 @@ UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
+AC_ARG_ENABLE([getino],
+  AS_HELP_STRING([--disable-getino], [do not build getino]),
+  [], [UL_DEFAULT_ENABLE([getino], [check])]
+)
+UL_BUILD_INIT([getino])
+UL_REQUIRES_LINUX([getino])
+UL_REQUIRES_SYSCALL_CHECK([getino], [UL_CHECK_SYSCALL([pidfd_open])], [pidfd_open])
+UL_REQUIRES_HAVE([getino], [statx], [statx function])
+UL_REQUIRES_HAVE([getino], [struct_statx], [statx struct])
+AM_CONDITIONAL([BUILD_GETINO], [test "x$build_getino" = xyes])
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--disable-last], [do not build last]),
@@ -2678,7 +2693,14 @@ AC_ARG_WITH([systemd],
 have_systemd=no
 AS_IF([test "x$with_systemd" != xno], [
   # new version -- all libsystemd-* libs merged into libsystemd
-  PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
+  # if 257 or newer, use locked system user accounts
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 257], [
+      have_systemd=yes
+      SYSTEMD_USER_LOCK="!"
+    ], [
+      SYSTEMD_USER_LOCK=
+      PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
+  ])
   # old versions
   AS_IF([test "x$have_systemd" != "xyes"], [
     PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon],
@@ -2697,10 +2719,25 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_CHECK_DECLS([sd_session_get_username], [], [], [#include <systemd/sd-login.h>])
        AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
        AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
+       AC_SUBST([SYSTEMD_USER_LOCK])
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
 
+libmount_udev_support=no
+AS_IF([test "x$enable_libmount_udev_support" != xno && test "x$build_libmount" = xyes], [
+  AS_CASE([$enable_libmount_udev_support:$have_systemd],
+    [yes:no],
+      [AC_MSG_ERROR([libmount udev support expected but libsystemd not found])],
+    [*:yes], [
+      AC_CHECK_DECLS([sd_device_new_from_devname], [
+        AC_DEFINE([USE_LIBMOUNT_UDEV_SUPPORT], [1], [Define if use udev support in libmount])
+        libmount_udev_support=yes],
+        [], [#include <systemd/sd-device.h>])
+      ]
+   )
+])
+AM_CONDITIONAL([USE_LIBMOUNT_UDEV_SUPPORT], [test "x$libmount_udev_support" = xyes])
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd unit files (requires systemd support)]),
@@ -2741,6 +2778,16 @@ AC_ARG_WITH([sysusersdir],
 AS_IF([test "x$with_sysusersdir" != "xno"], [
   AC_SUBST([sysusersdir], [$with_sysusersdir])
 ])
+
+
+AC_ARG_WITH([ntfs-mounttype],
+  AS_HELP_STRING([--with-ntfs-mounttype=TYPE], [overwrite default ntfs3 mount type for NTFS]),
+  [], [with_ntfs_mounttype=no]
+)
+AS_IF([test "x$with_ntfs_mounttype" != "xno"], [
+  AC_DEFINE_UNQUOTED([CONFIG_UL_NTFS_MOUNTTYPE], ["$with_ntfs_mounttype"], [NTFS mounttype])
+])
+
 
 AC_ARG_WITH([smack],
   AS_HELP_STRING([--with-smack], [build with SMACK support]),
@@ -2811,6 +2858,9 @@ AC_ARG_WITH([python],
   [], [with_python=check withval=check]
 )
 
+# Minimum required Python version defined by use of Py_REFCNT
+m4_define([MIN_PYTHON_VER], [2.6])
+
 have_python=no
 have_libpython=no
 AS_IF([test "x$with_python" != xno], [
@@ -2831,6 +2881,9 @@ AS_IF([test "x$with_python" != xno], [
     [*:yes],
        # check for python development stuff
        [
+         AX_COMPARE_VERSION([$PYTHON_VERSION], [lt], [MIN_PYTHON_VER],
+           [AC_MSG_ERROR([python version $PYTHON_VERSION is too old])])
+
          PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION], [have_libpython=yes], [have_libpython=no])
 
          # https://github.com/util-linux/util-linux/issues/2366

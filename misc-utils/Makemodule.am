@@ -159,7 +159,7 @@ endif
 
 check_PROGRAMS += test_uuidd
 test_uuidd_SOURCES = misc-utils/test_uuidd.c
-test_uuidd_LDADD =  $(LDADD) libcommon.la libuuid.la -lpthread
+test_uuidd_LDADD =  $(LDADD) libcommon.la libuuid.la $(PTHREAD_LIBS)
 test_uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 endif # BUILD_UUIDD
 
@@ -336,4 +336,13 @@ dist_noinst_DATA += misc-utils/lsclocks.1.adoc
 lsclocks_SOURCES = misc-utils/lsclocks.c
 lsclocks_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsclocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
+if BUILD_GETINO
+usrbin_exec_PROGRAMS += getino
+MANPAGES += misc-utils/getino.1
+dist_noinst_DATA += misc-utils/getino.1.adoc
+getino_SOURCES = misc-utils/getino.c
+getino_LDADD = $(LDADD) libcommon.la
+getino_CFLAGS = $(AM_CFLAGS)
 endif

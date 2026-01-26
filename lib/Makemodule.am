@@ -34,6 +34,7 @@ libcommon_la_SOURCES = \
 	lib/netaddrq.c \
 	lib/netlink.c \
 	lib/pidutils.c \
+	lib/pidfd-utils.c \
 	lib/pwdutils.c \
 	lib/randutils.c \
 	lib/sha1.c \
@@ -49,6 +50,7 @@ libcommon_la_SOURCES = \
 if LINUX
 libcommon_la_SOURCES += \
 	lib/linux_version.c \
+	lib/shells.c \
 	lib/loopdev.c
 endif
 
@@ -231,6 +233,7 @@ test_timeutils_LDADD = $(LDADD) libcommon.la
 
 test_pwdutils_SOURCES = lib/pwdutils.c
 test_pwdutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_pwdutils_LDADD = $(LDADD) libcommon.la
 
 test_remove_env_SOURCES = lib/env.c
 test_remove_env_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_ENV

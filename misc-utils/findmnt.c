@@ -812,14 +812,14 @@ static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 		break;
 	case COL_OLD_OPTIONS:
 		if (old_fs && (change == MNT_TABDIFF_REMOUNT ||
-			       change == MNT_TABDIFF_UMOUNT)
+		               change == MNT_TABDIFF_UMOUNT)
 		           && mnt_fs_get_options(old_fs))
 			str = xstrdup(mnt_fs_get_options(old_fs));
 		break;
 	case COL_OLD_TARGET:
 		if (old_fs && (change == MNT_TABDIFF_MOVE ||
-			       change == MNT_TABDIFF_UMOUNT)
-			   && mnt_fs_get_target(old_fs))
+		               change == MNT_TABDIFF_UMOUNT)
+		           && mnt_fs_get_target(old_fs))
 			str = xstrdup(mnt_fs_get_target(old_fs));
 		break;
 	default:
@@ -1519,10 +1519,10 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
-	" %1$s [options]\n"
-	" %1$s [options] <device> | <mountpoint>\n"
-	" %1$s [options] <device> <mountpoint>\n"
-	" %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"),
+		" %1$s [options]\n"
+		" %1$s [options] <device> | <mountpoint>\n"
+		" %1$s [options] <device> <mountpoint>\n"
+		" %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -1677,7 +1677,7 @@ static struct libscols_table *init_scols_table(struct findmnt *findmnt)
 						scols_wrapzero_nextchunk,
 						NULL);
 		if ((flags & FL_JSON) || use_filter)
-	                scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL,
+			scols_column_set_json_type(cl, get_column_json_type(id, fl, NULL,
 									    flags));
 	}
 

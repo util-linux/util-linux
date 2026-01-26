@@ -227,10 +227,10 @@ static const struct colinfo infos[] = {
 	[COL_ENDPOINTS]        = { "ENDPOINTS",
 				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_STRING,
 				   N_("IPC endpoints information communicated with the fd") },
-	[COL_EVENTFD_ID]       = {"EVENTFD.ID",
+	[COL_EVENTFD_ID]       = { "EVENTFD.ID",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
 				   N_("eventfd ID") },
-	[COL_EVENTPOLL_TFDS]   = {"EVENTPOLL.TFDS",
+	[COL_EVENTPOLL_TFDS]   = { "EVENTPOLL.TFDS",
 				   0,   SCOLS_FL_WRAP,  SCOLS_JSON_ARRAY_NUMBER,
 				   N_("file descriptors targeted by the eventpoll file") },
 	[COL_FD]               = { "FD",
@@ -363,7 +363,7 @@ static const struct colinfo infos[] = {
 				   N_("listening socket") },
 	[COL_SOCK_NETNS]       = { "SOCK.NETNS",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
-				   N_("inode identifying network namespace where the socket belongs to") },
+				   N_("inode identifying network namespace where the socket belongs") },
 	[COL_SOCK_PROTONAME]   = { "SOCK.PROTONAME",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("protocol name") },
@@ -406,6 +406,9 @@ static const struct colinfo infos[] = {
 	[COL_TIMERFD_REMAINING]= { "TIMERFD.REMAINING",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_FLOAT,
 				   N_("remaining time") },
+	[COL_TUN_DEVNETNS]     = { "TUN.DEVNETNS",
+				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER,
+				   N_("inode identifying network namespace where the device belongs") },
 	[COL_TUN_IFACE]        = { "TUN.IFACE",
 				   0,   SCOLS_FL_RIGHT, SCOLS_JSON_STRING,
 				   N_("network interface behind the tun device") },
@@ -754,43 +757,40 @@ static struct file *new_file(struct proc *proc, const struct file_class *class,
 	return file;
 }
 
-static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+static struct file *new_error_file_common(const struct file_class *error_class, const char *syscall,
+					  struct proc *proc, int error_no, int association,
+					  const char *name)
 {
 	struct file *file;
 
-	file = xcalloc(1, readlink_error_class.size);
-	file->class = &readlink_error_class;
+	file = xcalloc(1, error_class->size);
+	file->class = error_class;
 
 	file->proc = proc;
 
 	INIT_LIST_HEAD(&file->files);
 	list_add_tail(&file->files, &proc->files);
 
-	file->error.syscall = "readlink";
+	file->error.syscall = syscall;
 	file->error.number = error_no;
 	file->association = association;
-	file->name = NULL;
+	file->name = name ? xstrdup(name) : NULL;
 
 	return file;
 }
 
+static struct file *new_readlink_error_file(struct proc *proc, int error_no, int association)
+{
+	return new_error_file_common(&readlink_error_class, "readlink",
+				     proc, error_no, association,
+				     NULL);
+}
+
 static struct file *new_stat_error_file(struct proc *proc, const char *name, int error_no, int association)
 {
-	struct file *file;
-
-	file = xcalloc(1, stat_error_class.size);
-	file->class = &stat_error_class;
-
-	file->proc = proc;
-
-	INIT_LIST_HEAD(&file->files);
-	list_add_tail(&file->files, &proc->files);
-
-	file->error.syscall = "stat";
-	file->error.number = error_no;
-	file->association = association;
-	file->name = xstrdup(name);
-
+	struct file *file = new_error_file_common(&stat_error_class, "stat",
+						  proc, error_no, association,
+						  name);
 	return file;
 }
 
@@ -895,7 +895,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	 * path is the same to save stat() call.
 	 */
 	else if ((prev = list_last_entry(&proc->files, struct file, files))
-		 && (!prev->is_error)
+		 && (!is_error_object(prev))
 		 && prev->name && strcmp(prev->name, sym) == 0) {
 		f = copy_file(prev, assoc);
 		sb = prev->stat;
@@ -917,7 +917,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	file_init_content(f);
 
-	if (f->is_error)
+	if (is_error_object(f))
 		return f;
 
 	if (is_association(f, NS_MNT)) {
@@ -1007,7 +1007,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	 */
 	prev = list_last_entry(&proc->files, struct file, files);
 
-	if (prev && (!prev->is_error)
+	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
@@ -1050,6 +1050,17 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	f->map_end = end;
 	f->pos = offset;
 
+	f->mnt_id = 0;
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+	{
+		struct statx stx;
+		if (ul_path_statxf(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
+				   STATX_MNT_ID,
+				   "map_files/%"PRIx64"-%"PRIx64, start, end) == 0)
+			f->mnt_id = stx.stx_mnt_id;
+	}
+#endif	/* defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
+
 	file_init_content(f);
 }
 
@@ -1077,9 +1088,19 @@ static void collect_outofbox_files(struct path_cxt *pc,
 {
 	size_t i;
 
-	for (i = 0; i < count; i++)
-		collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
-				     sockets_only);
+	for (i = 0; i < count; i++) {
+		struct file *f __attribute__((unused))
+			= collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
+					       sockets_only);
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+		if (f && has_mnt_id(f)) {
+			struct statx stx;
+			if (ul_path_statx(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
+					  STATX_MNT_ID, names[assocs[i]]) == 0)
+				f->mnt_id = stx.stx_mnt_id;
+		}
+#endif	/* #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
+	}
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
@@ -1875,7 +1896,7 @@ static void mark_poll_fds_as_multiplexed(char *buf,
 		struct file *file = list_entry(f, struct file, files);
 		if (is_opened_file(file) && !file->multiplexed) {
 			int fd = file->association;
-			if (bsearch(&(struct pollfd){.fd = fd,}, local.iov_base,
+			if (bsearch((&(struct pollfd){.fd = fd,}), local.iov_base,
 				    nfds, sizeof(struct pollfd), pollfdcmp))
 				file->multiplexed = 1;
 		}
@@ -2317,7 +2338,7 @@ static struct libscols_filter *new_filter(const char *expr, bool debug, struct l
 	return f;
 }
 
-static struct counter_spec *new_counter_spec(const char *spec_str)
+static struct counter_spec *new_counter_spec(char *spec_str)
 {
 	char *sep;
 	struct counter_spec *spec;

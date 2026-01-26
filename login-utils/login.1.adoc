@@ -18,7 +18,7 @@ login - begin session on the system
 
 == SYNOPSIS
 
-*login* [*-p*] [*-h* _host_] [*-H*] [*-f* _username_|_username_]
+*login* [*-p*] [*-s* _shell_] [*-h* _host_] [*-H*] [[*-f*] _username_|_UID_]
 
 == DESCRIPTION
 
@@ -36,7 +36,7 @@ Other environment variables are preserved if the *-p* option is given or if *LOG
 
 The environment variables defined by PAM are always preserved.
 
-Then the user's shell is started. If no shell is specified for the user in _/etc/passwd_, then _/bin/sh_ is used. If the specified shell contains a space, it is treated as a shell script. If there is no home directory specified in _/etc/passwd_, then _/_ is used, followed by _.hushlogin_ check as described below.
+Then the user's shell is started. If no shell is specified for the user with *-s* or in _/etc/passwd_, then _/bin/sh_ is used. If the specified shell contains a space, it is treated as a shell script. If there is no home directory specified in _/etc/passwd_, then _/_ is used, followed by _.hushlogin_ check as described below.
 
 If the file _.hushlogin_ exists, then a "quiet" login is performed. This disables the checking of mail and the printing of the last login time and message of the day. Otherwise, if _/var/log/lastlog_ exists, the last login time is printed, and the current login is recorded.
 
@@ -55,6 +55,9 @@ Note that the *-h* option has an impact on the *PAM service* *name*. The standar
 
 *-H*::
 Used by other servers (for example, *telnetd*(8)) to tell *login* that printing the hostname should be suppressed in the login: prompt. See also *LOGIN_PLAIN_PROMPT* below.
+
+*-s*, *--shell* _shell_::
+Specify a _shell_, other than the one defined in _/etc/passwd_, to log in to.
 
 include::man-common/help-version.adoc[]
 

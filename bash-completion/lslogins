@@ -72,7 +72,8 @@ _lslogins_module()
 			--wtmp-file
 			--btmp-file
 			--shell
-			--lastlog
+			--lastlog-file
+			--lastlog2-file
 			--help
 			--version" -- $cur) )
 	return 0

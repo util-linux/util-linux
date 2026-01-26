@@ -30,6 +30,7 @@
 #include <sys/prctl.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <paths.h>
 
 #include "all-io.h"
 #include "c.h"
@@ -55,9 +56,6 @@
 #endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
-
-/* The shell to set SHELL env.variable if none is given in the user's passwd entry.  */
-#define DEFAULT_SHELL "/bin/sh"
 
 static gid_t get_group(const char *s, const char *err);
 
@@ -147,6 +145,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --clear-groups              clear supplementary groups\n"), out);
 	fputs(_(" --keep-groups               keep supplementary groups\n"), out);
 	fputs(_(" --init-groups               initialize supplementary groups\n"), out);
+	fputs(_(" --list-caps                 list all known capabilities\n"), out);
 	fputs(_(" --groups <group>[,...]      set supplementary group(s) by GID or name\n"), out);
 	fputs(_(" --securebits <bits>         set securebits\n"), out);
 	fputs(_(" --pdeathsig keep|clear|<signame>\n"
@@ -741,7 +740,7 @@ static void do_reset_environ(struct passwd *pw)
 	if (pw->pw_shell && *pw->pw_shell)
 		xsetenv("SHELL", pw->pw_shell, 1);
 	else
-		xsetenv("SHELL", DEFAULT_SHELL, 1);
+		xsetenv("SHELL", _PATH_BSHELL, 1);
 
 	xsetenv("HOME", pw->pw_dir, 1);
 	xsetenv("USER", pw->pw_name, 1);

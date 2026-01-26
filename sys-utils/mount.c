@@ -583,7 +583,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --onlyonce          check if filesystem is already mounted on target\n"), out);
 	fputs(_(" -o, --options <list>    comma-separated list of mount options\n"), out);
 	fputs(_(" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"), out);
-	fputs(_(" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"), out);
+	fputs(_(" -r, --ro, --read-only   mount the filesystem read-only (same as -o ro)\n"), out);
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_("     --source <src>      explicitly specifies source (path, label, uuid)\n"), out);
 	fputs(_("     --target <target>   explicitly specifies mountpoint\n"), out);

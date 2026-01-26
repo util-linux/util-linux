@@ -20,6 +20,10 @@
  */
 
 #include "lsfd.h"
+#include "pidfd-utils.h"
+
+#include <sys/ioctl.h>		/* ioctl */
+#include <linux/if_tun.h>	/* TUNGETDEVNETNS */
 
 static struct list_head miscdevs;
 static struct list_head ttydrvs;
@@ -286,7 +290,8 @@ static const struct ttydrv *get_ttydrv(unsigned long major,
 /*
  * generic (fallback implementation)
  */
-static bool cdev_generic_probe(struct cdev *cdev __attribute__((__unused__))) {
+static bool cdev_generic_probe(struct cdev *cdev __attribute__((__unused__)))
+{
 	return true;
 }
 
@@ -325,7 +330,8 @@ static struct cdev_ops cdev_generic_ops = {
 /*
  * misc device driver
  */
-static bool cdev_misc_probe(struct cdev *cdev) {
+static bool cdev_misc_probe(struct cdev *cdev)
+{
 	return cdev->devdrv && strcmp(cdev->devdrv, "misc") == 0;
 }
 
@@ -369,6 +375,11 @@ static struct cdev_ops cdev_misc_ops = {
 /*
  * tun device driver
  */
+struct tundata {
+	const char *iff;
+	ino_t devnetns;		/* 0 implies no value given. */
+};
+
 static bool cdev_tun_probe(struct cdev *cdev)
 {
 	const char *miscdev;
@@ -377,25 +388,37 @@ static bool cdev_tun_probe(struct cdev *cdev)
 		return false;
 
 	miscdev = get_miscdev(minor(cdev->file.stat.st_rdev));
-	if (miscdev && strcmp(miscdev, "tun") == 0)
+	if (miscdev && strcmp(miscdev, "tun") == 0) {
+		struct tundata *tundata = xcalloc(1, sizeof *tundata);
+		cdev->cdev_data = tundata;
 		return true;
+	}
 	return false;
 }
 
 static void cdev_tun_free(const struct cdev *cdev)
 {
-	if (cdev->cdev_data)
-		free(cdev->cdev_data);
+	if (cdev->cdev_data) {
+		struct tundata *tundata = cdev->cdev_data;
+		free((void *)tundata->iff);
+		free(tundata);
+	}
 }
 
 static char * cdev_tun_get_name(struct cdev *cdev)
 {
 	char *str = NULL;
+	struct tundata *tundata = cdev->cdev_data;
 
-	if (cdev->cdev_data == NULL)
+	if (tundata == NULL || tundata->iff == NULL)
 		return NULL;
 
-	xasprintf(&str, "iface=%s", (const char *)cdev->cdev_data);
+	if (tundata->devnetns)
+		xasprintf(&str, "iface=%s devnetns=%llu",
+			  tundata->iff, (unsigned long long)tundata->devnetns);
+	else
+		xasprintf(&str, "iface=%s", tundata->iff);
+
 	return str;
 }
 
@@ -406,6 +429,8 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 				 size_t column_index __attribute__((__unused__)),
 				 char **str)
 {
+	struct tundata *tundata = cdev->cdev_data;
+
 	switch(column_id) {
 	case COL_MISCDEV:
 		*str = xstrdup("tun");
@@ -413,22 +438,89 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 	case COL_SOURCE:
 		*str = xstrdup("misc:tun");
 		return true;
-	case COL_TUN_IFACE:
-		if (cdev->cdev_data) {
-			*str = xstrdup(cdev->cdev_data);
+	case COL_TUN_DEVNETNS:
+		if (tundata && tundata->devnetns) {
+			xasprintf(str, "%llu", (unsigned long long)tundata->devnetns);
 			return true;
 		}
+		break;
+	case COL_TUN_IFACE:
+		if (tundata && tundata->iff) {
+			*str = xstrdup(tundata->iff);
+			return true;
+		}
+		break;
 	}
 	return false;
 }
 
 static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char *val)
 {
-	if (strcmp(key, "iff") == 0 && cdev->cdev_data == NULL) {
-		cdev->cdev_data = xstrdup(val);
+	struct tundata *tundata = cdev->cdev_data;
+
+	if (strcmp(key, "iff") == 0 && tundata->iff == NULL) {
+		tundata->iff = xstrdup(val);
 		return 1;
 	}
-	return false;
+	return 0;
+}
+
+#ifdef TUNGETDEVNETNS
+static int call_with_foreign_fd(pid_t target_pid, int target_fd,
+				int (*fn)(int, void*), void *data)
+{
+	int pidfd, tfd, r;
+
+	pidfd = pidfd_open(target_pid, 0);
+	if (pidfd < 0)
+		return pidfd;
+
+	tfd = pidfd_getfd(pidfd, target_fd, 0);
+	if (tfd < 0) {
+		close(pidfd);
+		return tfd;
+	}
+
+	r = fn(tfd, data);
+
+	close(tfd);
+	close(pidfd);
+	return r;
+}
+
+static int cdev_tun_get_devnetns(int tfd, void *data)
+{
+
+	struct tundata *tundata = data;
+	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
+	struct stat sb;
+
+	if (nsfd < 0)
+		return -1;
+
+	if (fstat(nsfd, &sb) == 0)
+		tundata->devnetns = sb.st_ino;
+
+	close(nsfd);
+
+	return 0;
+}
+#endif
+
+static void cdev_tun_attach_xinfo(struct cdev *cdev)
+{
+	struct tundata *tundata = cdev->cdev_data;
+
+	if (tundata->iff == NULL)
+		return;
+
+#ifdef TUNGETDEVNETNS
+	{
+		struct file *file = &cdev->file;
+		call_with_foreign_fd(file->proc->pid, file->association,
+				     cdev_tun_get_devnetns, tundata);
+	}
+#endif
 }
 
 static struct cdev_ops cdev_tun_ops = {
@@ -438,6 +530,7 @@ static struct cdev_ops cdev_tun_ops = {
 	.get_name = cdev_tun_get_name,
 	.fill_column = cdev_tun_fill_column,
 	.handle_fdinfo = cdev_tun_handle_fdinfo,
+	.attach_xinfo = cdev_tun_attach_xinfo,
 };
 
 /*
@@ -451,7 +544,8 @@ struct ttydata {
 	struct ipc_endpoint endpoint;
 };
 
-static bool cdev_tty_probe(struct cdev *cdev) {
+static bool cdev_tty_probe(struct cdev *cdev)
+{
 	const struct ttydrv *ttydrv = get_ttydrv(major(cdev->file.stat.st_rdev),
 						 minor(cdev->file.stat.st_rdev));
 	struct ttydata *data;

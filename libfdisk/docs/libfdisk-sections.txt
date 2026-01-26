@@ -149,8 +149,6 @@ fdisk_script_write_file
 fdisk_script_set_userdata
 fdisk_script_get_userdata
 fdisk_unref_script
-fdisk_script_disable_devnames
-fdisk_script_has_devnames
 </SECTION>
 
 <SECTION>

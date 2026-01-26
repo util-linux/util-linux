@@ -27,7 +27,8 @@ _flock_module()
 			OPTS="--shared
 				--exclusive
 				--unlock
-				--nonblock
+				--nb
+				--nonblocking
 				--timeout
 				--conflict-exit-code
 				--close
@@ -36,6 +37,7 @@ _flock_module()
 				--fcntl
 				--start
 				--length
+				--wait
 				--verbose
 				--help
 				--version"

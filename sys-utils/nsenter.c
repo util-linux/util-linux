@@ -523,7 +523,7 @@ int main(int argc, char *argv[])
 		{ "keep-caps", no_argument, NULL, OPT_KEEPCAPS },
 		{ "user-parent", no_argument, NULL, OPT_USER_PARENT},
 #ifdef HAVE_LIBSELINUX
-		{ "follow-context", no_argument, NULL, 'Z' },
+		{ "follow-context", no_argument, NULL, 'Z' },	/* IGNORECHECK=yes */
 #endif
 		{ NULL, 0, NULL, 0 }
 	};
@@ -734,7 +734,7 @@ int main(int argc, char *argv[])
 		do_fork = 1;
 
 	/* for user namespaces we always set UID and GID (default is 0)
-	 * and clear root's groups if --preserve-credentials is no specified */
+	 * and clear root's groups if --preserve-credentials is not specified */
 	if ((namespaces & CLONE_NEWUSER) && !preserve_cred) {
 		force_uid = true, force_gid = true;
 

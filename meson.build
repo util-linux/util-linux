@@ -232,6 +232,7 @@ headers = '''
         linux/securebits.h
         linux/tiocl.h
         linux/version.h
+        linux/vm_sockets_diag.h
         linux/watchdog.h
         mqueue.h
         net/if.h
@@ -372,6 +373,11 @@ systemd = dependency(
   'systemd',
   required : get_option('systemd'))
 
+# Since systemd-257, which provides locked system user accounts.
+if systemd.version().version_compare('>=257')
+  conf.set('SYSTEMD_USER_LOCK', '!')
+endif
+
 lib_systemd = dependency(
   'libsystemd',
   required : get_option('systemd'))
@@ -395,6 +401,12 @@ have = cc.has_function(
   'sd_session_get_username',
   dependencies : lib_systemd)
 conf.set('HAVE_DECL_SD_SESSION_GET_USERNAME', have ? 1 : false)
+
+have = cc.has_function(
+  'sd_device_new_from_devname',
+  dependencies : lib_systemd)
+conf.set('USE_LIBMOUNT_UDEV_SUPPORT',
+  not get_option('build-libmount-udev-support').disabled() and have ? 1 : false)
 
 lib_udev = dependency(
   'libudev',
@@ -911,6 +923,11 @@ if fs_search_path_extra != ''
   fs_search_path = ':'.join(fs_search_path, fs_search_path_extra)
 endif
 conf.set_quoted('FS_SEARCH_PATH', fs_search_path)
+
+ntfs_mounttype = get_option('ntfs-mounttype')
+if ntfs_mounttype != ''
+  conf.set_quoted('CONFIG_UL_NTFS_MOUNTTYPE', ntfs_mounttype)
+endif
 
 systemdsystemunitdir = ''
 if systemd.found()
@@ -3356,6 +3373,23 @@ if opt and not is_disabler(exe)
   exes += exe
   manadocs += exch_manadocs
   bashcompletions += ['exch']
+endif
+
+opt = get_option('build-getino').require(LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1' \
+  and conf.get('HAVE_STATX').to_string() == '1' \
+  and conf.get('HAVE_STRUCT_STATX').to_string() == '1').allowed()
+exe = executable(
+  'getino',
+  getino_sources,
+  include_directories : includes,
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += getino_manadocs
+  bashcompletions += ['getino']
 endif
 
 ############################################################

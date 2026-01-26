@@ -270,7 +270,8 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 		   find_identical_file(orig->next, new, fslen_ub);
 }
 
-static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub) {
+static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub)
+{
 	if (orig) {
 		if (orig->size && orig->path)
 			find_identical_file(root,orig, fslen_ub);
@@ -764,9 +765,9 @@ int main(int argc, char **argv)
 			fslen_ub += (image_length + 3); /* 3 is for padding */
 			break;
 		case 'l':
-                        lockmode = "1";
+			lockmode = "1";
 			if (optarg) {
-                                if (*optarg == '=')
+				if (*optarg == '=')
 					optarg++;
 				lockmode = optarg;
 			}
@@ -810,7 +811,7 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(MKFS_EX_USAGE, _("cannot open %s"), outfile);
 
-        if (blkdev_lock(fd, outfile, lockmode) != 0)
+	if (blkdev_lock(fd, outfile, lockmode) != 0)
 		exit(MKFS_EX_ERROR);
 
 	root_entry = xcalloc(1, sizeof(struct entry));

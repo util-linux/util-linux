@@ -34,7 +34,10 @@ Print individual histogram-bin counts.
 Info. This makes *readprofile* only print the profiling step used by the kernel. The profiling step is the resolution of the profiling buffer, and is chosen during kernel configuration (through *make config*), or in the kernel's command line. If the *-t* (terse) switch is used together with *-i* only the decimal number is printed.
 
 *-m*, *--mapfile* _mapfile_::
-Specify a mapfile, which by default is _/usr/src/linux/System.map_. You should specify the map file on cmdline if your current kernel isn't the last one you compiled, or if you keep System.map elsewhere. If the name of the map file ends with _.gz_ it is decompressed on the fly.
+Specify a mapfile, which by default is _/boot/System.map_. You should specify the map file on cmdline if your current kernel isn't the last one you compiled, or if you keep System.map elsewhere. If the name of the map file ends with _.gz_ it is decompressed on the fly.
+
+*-n*, *--no-auto*::
+Disable automatic byte order detection.
 
 *-M*, *--multiplier* _multiplier_::
 On some architectures it is possible to alter the frequency at which the kernel delivers profiling interrupts to each CPU. This option allows you to set the frequency, as a multiplier of the system clock frequency, HZ. Linux 2.6.16 dropped multiplier support for most systems. This option also resets the profiling buffer, and requires superuser privileges.

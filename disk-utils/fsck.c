@@ -207,7 +207,7 @@ static int is_mounted(struct libmnt_fs *fs)
 	if (!mtab) {
 		mtab = mnt_new_table();
 		if (!mtab)
-			err(FSCK_EX_ERROR, ("failed to initialize libmount table"));
+			err(FSCK_EX_ERROR, _("failed to initialize libmount table"));
 		mnt_table_set_cache(mtab, mntcache);
 		mnt_table_parse_mtab(mtab, NULL);
 	}
@@ -442,7 +442,7 @@ static struct libmnt_fs *add_dummy_fs(const char *device)
 	}
 
 	mnt_unref_fs(fs);
-	err(FSCK_EX_ERROR, _("failed to setup description for %s"), device);
+	err(FSCK_EX_ERROR, _("failed to set up description for %s"), device);
 }
 
 static void fs_interpret_type(struct libmnt_fs *fs)
@@ -485,7 +485,7 @@ static void load_fs_info(void)
 
 	fstab = mnt_new_table();
 	if (!fstab)
-		err(FSCK_EX_ERROR, ("failed to initialize libmount table"));
+		err(FSCK_EX_ERROR, _("failed to initialize libmount table"));
 
 	mnt_table_set_parser_errcb(fstab, parser_errcb);
 	mnt_table_set_cache(fstab, mntcache);

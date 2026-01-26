@@ -80,7 +80,6 @@ _sfdisk_module()
 				--lock
 				--partno
 				--no-act
-				--no-device-names
 				--no-reread
 				--no-tell-kernel
 				--backup-file

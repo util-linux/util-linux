@@ -307,7 +307,7 @@ inotify:::
 inodes=_INOTIFY.INODES_
 +
 misc:tun:::
-iface=_TUN.IFACE_
+iface=_TUN.IFACE_[ devnetns=_TUN.DEVNETNS_]
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]
@@ -457,7 +457,7 @@ SOCK.LISTENING <``boolean``>::
 Listening socket.
 
 SOCK.NETS <``number``>::
-Inode identifying network namespace where the socket belongs to.
+Inode identifying network namespace where the socket belongs.
 
 SOCK.PROTONAME <``string``>::
 Protocol name.
@@ -524,6 +524,9 @@ Remaining time.
 
 PTMX.TTY-INDEX <``number``>::
 TTY index of the counterpart.
+
+TUN.DEVNETNS <``number``>::
+Inode identifying network namespace where the device belongs.
 
 TUN.IFACE <``string``>::
 Network interface behind the tun device.
@@ -616,8 +619,8 @@ descriptor, _L_ is used as the flag.
 +
 [-m]:::
 Multiplexed. If the file descriptor is targeted by a eventpoll file
-or classical system calls for multiplexing (*select*(), *pselect*(), *poll*(), and
-*ppoll*()), this bit flag is set. Note that if an invocation of the
+or classical system calls for multiplexing (*select*(2), *pselect*(2), *poll*(2), and
+*ppoll*(2)), this bit flag is set. Note that if an invocation of the
 classical system calls is interrupted, *lsfd* may fail to mark _m_
 on the file descriptors monitored by the invocation.
 See *restart_syscall*(2).

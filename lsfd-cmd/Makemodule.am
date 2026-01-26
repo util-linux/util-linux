@@ -1,6 +1,6 @@
 if BUILD_LSFD
 
-lsfd-cmd/file.c: errnos.h
+lsfd-cmd/error.c: errnos.h
 
 bin_PROGRAMS += lsfd
 MANPAGES += lsfd-cmd/lsfd.1
@@ -11,6 +11,7 @@ lsfd_SOURCES = \
 	lsfd-cmd/decode-file-flags.c \
 	lsfd-cmd/decode-file-flags.h \
 	lsfd-cmd/file.c \
+	lsfd-cmd/error.c \
 	lsfd-cmd/cdev.c \
 	lsfd-cmd/bdev.c \
 	lsfd-cmd/sock.c \

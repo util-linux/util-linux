@@ -432,7 +432,7 @@ struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t 
 	size_t rep_size;
 	int ret;
 
-	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone) * nzones;
+	rep_size = sizeof(struct blk_zone_report) + sizeof(struct blk_zone) * 2;
 	rep = calloc(1, rep_size);
 	if (!rep)
 		return NULL;

@@ -99,7 +99,7 @@ Omit printing the header. This option allows having user-supplied column names o
 *-o, --output-separator* _string_::
 Column delimiter for table output (default is two spaces).
 
-*-s, --separator* _separators_::
+*-s, --input-separator, --separator* _separators_::
 Possible input-item delimiters (default is whitespace).
 
 *-S, --use-spaces* _number_::

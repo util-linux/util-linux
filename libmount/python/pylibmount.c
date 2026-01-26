@@ -172,12 +172,14 @@ static PyMethodDef pylibmount_methods[] = {
 
 #if PY_MAJOR_VERSION >= 3
 
-static int pylibmount_traverse(PyObject *m, visitproc visit, void *arg) {
+static int pylibmount_traverse(PyObject *m, visitproc visit, void *arg)
+{
     Py_VISIT(GETSTATE(m)->error);
     return 0;
 }
 
-static int pylibmount_clear(PyObject *m) {
+static int pylibmount_clear(PyObject *m)
+{
     Py_CLEAR(GETSTATE(m)->error);
     return 0;
 }
