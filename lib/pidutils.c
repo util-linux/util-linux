@@ -22,7 +22,8 @@
  * If @pfd_ino is not destined to be set, pass it as NULL.
  *
  * Return: On success, 0 is returned.
- *         On failure, -1 is returned and errno is set to indicate the issue.
+ *         On failure, a negative errno number is returned
+ *         and errno is set to indicate the issue.
  */
 int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 {
@@ -30,37 +31,30 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 	char *end = NULL;
 	int64_t num = 0;
 
-	if (!pidstr || !*pidstr || !pid_num) {
-		errno = EINVAL;
-		return -1;
-	}
+	if (!pidstr || !*pidstr || !pid_num)
+		return -(errno = EINVAL);
 
 	num = strtoimax(pidstr, &end, 10);
-	if (num == 0 && end == pidstr) {
-		errno = EINVAL;
-		return -1;
-	}
+	if (num == 0 && end == pidstr)
+		return -(errno = EINVAL);
 
-	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t))) {
-		errno = ERANGE;
-		return -1;
-	}
+	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t)))
+		return -(errno = ERANGE);
 
 	*pid_num = (pid_t) num;
 
 	if (*end == ':' && pfd_ino) {
 		rc = ul_strtou64(++end, pfd_ino, 10);
-		if (rc != 0 || *pfd_ino == 0) {
-			errno = EINVAL;
-			return -1;
-		}
+		if (rc < 0)
+			return rc;
+
+		if (*pfd_ino == 0)
+			return -(errno = ERANGE);
 		*end = '\0';
 	}
 
-	if (end && *end != '\0') {
-		errno = EINVAL;
-		return -1;
-	}
+	if (end && *end != '\0')
+		return -(errno = EINVAL);
 	return 0;
 }
 
