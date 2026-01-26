@@ -23,9 +23,6 @@ struct id_part {
 };
 
 static const struct id_part arm_part[] = {
-    { 0xb36, "ARM1136j-s" },
-    { 0xb56, "ARM1156t2-s" },
-    { 0xb76, "ARM1176jz-s" },
     { 0x810, "ARM810" },
     { 0x920, "ARM920" },
     { 0x922, "ARM922" },
@@ -36,7 +33,7 @@ static const struct id_part arm_part[] = {
     { 0xa20, "ARM1020" },
     { 0xa22, "ARM1022" },
     { 0xa26, "ARM1026" },
-    { 0xb02, "ARM11 MPCore" },
+    { 0xb02, "ARM11-MPCore" },
     { 0xb36, "ARM1136" },
     { 0xb56, "ARM1156" },
     { 0xb76, "ARM1176" },
@@ -178,7 +175,7 @@ static const struct id_part samsung_part[] = {
 
 static const struct id_part nvidia_part[] = {
     { 0x000, "Denver" },
-    { 0x003, "Denver 2" },
+    { 0x003, "Denver-2" },
     { 0x004, "Carmel" },
     { 0x010, "Olympus" },
     { -1, "unknown" },
