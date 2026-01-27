@@ -26,16 +26,12 @@
 #include "ttyutils.h"
 #include "pager.h"
 
-#define NULL_DEVICE	"/dev/null"
-
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
 
 struct child_process {
 	const char **argv;
 	pid_t pid;
 	int in;
-	int out;
-	int err;
 
 	int org_err;
 	int org_out;
@@ -44,9 +40,6 @@ struct child_process {
 	struct sigaction orig_sigterm;
 	struct sigaction orig_sigquit;
 	struct sigaction orig_sigpipe;
-
-	bool no_stdin;
-	void (*preexec_cb)(void);
 };
 static struct child_process pager_process;
 
@@ -54,91 +47,6 @@ static inline void close_pair(int fd[2])
 {
 	close(fd[0]);
 	close(fd[1]);
-}
-
-static int start_command(struct child_process *cmd)
-{
-	int need_in;
-	int fdin[2];
-
-	/*
-	 * In case of errors we must keep the promise to close FDs
-	 * that have been passed in via ->in and ->out.
-	 */
-	need_in = !cmd->no_stdin && cmd->in < 0;
-	if (need_in) {
-		if (pipe(fdin) < 0) {
-			if (cmd->out > 0)
-				close(cmd->out);
-			return -1;
-		}
-		cmd->in = fdin[1];
-	}
-
-	fflush(NULL);
-	cmd->pid = fork();
-	if (!cmd->pid) {
-		if (need_in) {
-			dup2(fdin[0], STDIN_FILENO);
-			close_pair(fdin);
-		} else if (cmd->in > 0) {
-			dup2(cmd->in, STDIN_FILENO);
-			close(cmd->in);
-		}
-
-		cmd->preexec_cb();
-		execvp(cmd->argv[0], (char *const*) cmd->argv);
-		errexec(cmd->argv[0]);
-	}
-
-	if (cmd->pid < 0) {
-		if (need_in)
-			close_pair(fdin);
-		else if (0 <= cmd->in)
-			close(cmd->in);
-		return -1;
-	}
-
-	if (need_in)
-		close(fdin[0]);
-	else if (0 <= cmd->in)
-		close(cmd->in);
-	return 0;
-}
-
-static int wait_or_whine(pid_t pid)
-{
-	for (;;) {
-		int status, code;
-		pid_t waiting = waitpid(pid, &status, 0);
-
-		if (waiting < 0) {
-			if (errno == EINTR)
-				continue;
-			ul_sig_err(EXIT_FAILURE, "waitpid failed");
-		}
-		if (waiting != pid)
-			return -1;
-		if (WIFSIGNALED(status))
-			return -1;
-
-		if (!WIFEXITED(status))
-			return -1;
-		code = WEXITSTATUS(status);
-		switch (code) {
-		case 127:
-			return -1;
-		case 0:
-			return 0;
-		default:
-			return -1;
-		}
-	}
-}
-
-static int finish_command(struct child_process *cmd)
-{
-	return wait_or_whine(cmd->pid);
 }
 
 static void pager_preexec(void)
@@ -159,15 +67,50 @@ static void pager_preexec(void)
 		warn(_("failed to set the %s environment variable"), "LESS");
 }
 
+static int start_command(struct child_process *cmd)
+{
+	int fdin[2];
+
+	if (pipe(fdin) < 0)
+		return -1;
+	cmd->in = fdin[1];
+
+	fflush(NULL);
+	cmd->pid = fork();
+	if (!cmd->pid) {
+		dup2(fdin[0], STDIN_FILENO);
+		close_pair(fdin);
+
+		pager_preexec();
+		execvp(cmd->argv[0], (char *const*) cmd->argv);
+		errexec(cmd->argv[0]);
+	}
+
+	if (cmd->pid < 0) {
+		close_pair(fdin);
+		return -1;
+	}
+
+	close(fdin[0]);
+	return 0;
+}
+
 static void wait_for_pager(void)
 {
-	if (pager_process.pid == 0)
+	pid_t waiting;
+
+	if (!pager_process.pid)
 		return;
 
 	/* signal EOF to pager */
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
-	finish_command(&pager_process);
+
+	do {
+		waiting = waitpid(pager_process.pid, NULL, 0);
+		if (waiting == -1 && errno != EINTR)
+			ul_sig_err(EXIT_FAILURE, "waitpid failed");
+	} while (waiting == -1);
 }
 
 static void wait_for_pager_signal(int signo)
@@ -242,7 +185,6 @@ static void __setup_pager(void)
 	pager_argv[2] = pager;
 	pager_process.argv = pager_argv;
 	pager_process.in = -1;
-	pager_process.preexec_cb = pager_preexec;
 
 	if (start_command(&pager_process))
 		return;
@@ -267,7 +209,7 @@ static void __setup_pager(void)
 	sigaction(SIGPIPE, &sa, &pager_process.orig_sigpipe);
 }
 
-/* Setup pager and redirects output to the $PAGER. The pager is closed at exit.
+/* Setup pager and redirect output to the $PAGER. The pager is closed at exit.
  */
 void pager_redirect(void)
 {
@@ -308,7 +250,7 @@ void pager_close(void)
 	close(pager_process.org_out);
 	close(pager_process.org_err);
 
-	/* restore original segnals setting */
+	/* restore original signal settings */
 	sigaction(SIGINT,  &pager_process.orig_sigint, NULL);
 	sigaction(SIGHUP,  &pager_process.orig_sighup, NULL);
 	sigaction(SIGTERM, &pager_process.orig_sigterm, NULL);
