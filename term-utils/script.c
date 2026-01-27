@@ -97,7 +97,7 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
  * types of log files: "timing file" (simple or multistream) and "data file"
  * (raw).
  *
- * The same log file maybe be shared between both streams. For example
+ * The same log file may be shared between both streams. For example
  * multi-stream timing file is possible to use for stdin as well as for stdout.
  */
 enum {
