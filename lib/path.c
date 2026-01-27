@@ -306,6 +306,8 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 {
 	int rc;
 
+	if (!path)
+		return -EINVAL;
 	if (!pc) {
 		rc = access(path, mode);
 		DBG(CXT, ul_debug("access '%s' [no context, rc=%d]", path, rc));
@@ -313,7 +315,7 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
-		if (path && *path == '/')
+		if (*path == '/')
 			path++;
 
 		rc = faccessat(dir, path, mode, 0);
@@ -340,6 +342,9 @@ int ul_path_accessf(struct path_cxt *pc, int mode, const char *path, ...)
 	return !p ? -errno : ul_path_access(pc, mode, p);
 }
 
+/*
+ * If @path is NULL, then stat() is called for the directory itself addressed by @pc.
+ */
 int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path)
 {
 	int rc;
@@ -389,18 +394,24 @@ int ul_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *p
 	return rc;
 }
 #ifdef HAVE_STATX
+/*
+* This function follows the semantics of statx(). To call statx() for the directory
+* itself addressed by @pc, use an empty string and the AT_EMPTY_PATH @flag.
+*/
 int ul_path_statx(struct path_cxt *pc, struct statx *stx, int flags, unsigned int mask,
 		  const char *path)
 {
 	int rc;
 
+	if (!path)
+		return -EINVAL;
 	if (!pc)
 		rc = path ? statx(AT_FDCWD, path, flags, mask, stx) : - EINVAL;
 	else {
 		int dir = ul_path_get_dirfd(pc);
 		if (dir < 0)
 			return dir;
-		if (path && *path == '/')
+		if (*path == '/')
 			path++;
 
 		rc = statx(dir, path, flags, mask, stx);
