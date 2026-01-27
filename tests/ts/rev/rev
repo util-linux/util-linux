@@ -13,18 +13,22 @@
 # GNU General Public License for more details.
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="ionice"
+TS_DESC="rev"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_IONICE"
+ts_check_test_command "$TS_CMD_REV"
+ts_check_test_command "$TS_HELPER_MD5"
 
-$TS_CMD_IONICE -p $$ -n 0 -c 0 >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IONICE -p $$ -n 3 -c 7 >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IONICE -p $$ -n 4 -c 7 >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IONICE -p $$ -n 1 -c 8 >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IONICE -n 3 ls /etc/passwd >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_IONICE -p $$ >> $TS_OUTPUT 2>> $TS_ERRLOG
+for I in {0..512}; do printf "%s " {a..z}; done | "$TS_HELPER_MD5" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+for I in {0..512}; do printf "%s " {a..z}; done | \
+				    $TS_CMD_REV | "$TS_HELPER_MD5" >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+printf "abc\n123" | $TS_CMD_REV >> $TS_OUTPUT 2>> $TS_ERRLOG
+echo >> $TS_OUTPUT
+printf "abc\000123" | $TS_CMD_REV --zero | tr '\0' '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+echo >> $TS_OUTPUT
 
 ts_finalize

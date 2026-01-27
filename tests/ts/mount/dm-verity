@@ -50,19 +50,19 @@ veritysetup create $VERITY_DEVICE $SQUASHFS $HASH_DEVICE $HASH  || ts_skip "cann
 
 ts_init_subtest "roothash"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -o verity.hashdevice=$HASH_DEVICE,verity.roothash=$HASH,verity.hashoffset=0 \
+$TS_CMD_MOUNT --options verity.hashdevice=$HASH_DEVICE,verity.roothash=$HASH,verity.hashoffset=0 \
     $VERITY_DEVICE_ABS \
     $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_UMOUNT -l $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UMOUNT --lazy $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 
 ts_init_subtest "roothashfile"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -o verity.hashdevice=$HASH_DEVICE,verity.roothashfile=$ROOT_HASH_FILE \
+$TS_CMD_MOUNT --options verity.hashdevice=$HASH_DEVICE,verity.roothashfile=$ROOT_HASH_FILE \
     $VERITY_DEVICE_ABS \
     $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_UMOUNT -l $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UMOUNT --lazy $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
 

@@ -36,17 +36,17 @@ for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 	tar -C $dumpdir -zxf $dump
 
 	# Architecture information is not applicable with -s.
-	"${TS_CMD_LSCPU}" -s "${dumpdir}/${name}" | \
+	"${TS_CMD_LSCPU}" --sysroot "${dumpdir}/${name}" | \
 		grep -v "Architecture" >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	echo >>"${TS_OUTPUT}"
 
-	"${TS_CMD_LSCPU}" -p -s "${dumpdir}/${name}" \
+	"${TS_CMD_LSCPU}" --parse --sysroot "${dumpdir}/${name}" \
 		 >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	echo >>"${TS_OUTPUT}"
 
-	"${TS_CMD_LSCPU}" -p -y -s "${dumpdir}/${name}" \
+	"${TS_CMD_LSCPU}" --parse --physical --sysroot "${dumpdir}/${name}" \
 		 >> ${TS_OUTPUT} 2>> $TS_ERRLOG
 
 	if [[ ! -e "${dumpdir}/${name}/sys/kernel/cpu_byteorder" ]]; then

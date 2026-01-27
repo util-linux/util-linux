@@ -39,7 +39,7 @@ function call_cal {
 	ts_finalize_subtest
 }
 
-call_cal "Monday-based 1753 week numbers" -m3w $MYMONTH
+call_cal "Monday-based 1753 week numbers" --monday --three --week $MYMONTH
 call_cal "Sunday-based 1753 week numbers" -3w $MYMONTH
 
 ts_finalize

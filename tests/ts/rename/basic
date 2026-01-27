@@ -25,7 +25,7 @@ ts_check_test_command "$TS_CMD_RENAME"
 ts_cd "$TS_OUTDIR"
 
 touch rename_basic.{1..3}
-$TS_CMD_RENAME -v basic test rename_basic.? >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose basic test rename_basic.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 for i in rename_basic.?; do
 	echo "what is $i doing here?" >> $TS_OUTPUT
@@ -40,7 +40,7 @@ done
 
 
 touch rename_all\ file\ with\ spaces.{1..3}
-$TS_CMD_RENAME -v -a ' ' '_' rename_all*.? >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose --all ' ' '_' rename_all*.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 for i in rename_all*\ *.?; do
 	echo "what is $i doing here?" >> $TS_OUTPUT
@@ -54,7 +54,7 @@ for i in rename_all_file_with_spaces.{1..3}; do
 done
 
 touch rename_zz_last_{z,z{,z{,z}}}.{x..z}
-$TS_CMD_RENAME -v -l zz AAzzBB rename_zz_last_* >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose --last zz AAzzBB rename_zz_last_* >> $TS_OUTPUT 2>> $TS_ERRLOG
 for i in rename_AAzzBB_last_z.x rename_AAzzBB_last_z.y rename_AAzzBB_last_z.z \
 	rename_zz_last_AAzzBB.x rename_zz_last_AAzzBB.y rename_zz_last_AAzzBB.z \
 	rename_zz_last_zAAzzBB.x rename_zz_last_zAAzzBB.y rename_zz_last_zAAzzBB.z ; do
@@ -69,11 +69,11 @@ for i in rename*last* ; do
 done
 
 touch rename_all_empty
-$TS_CMD_RENAME -v -a '' _ rename_all_empty >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose --all '' _ rename_all_empty >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f _r_e_n_a_m_e___a_l_l___e_m_p_t_y_
 
 mkdir rename_dir
-$TS_CMD_RENAME -v dir new_dir rename_dir/ >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose dir new_dir rename_dir/ >> $TS_OUTPUT 2>> $TS_ERRLOG
 rmdir rename_new_dir
 
 ts_finalize

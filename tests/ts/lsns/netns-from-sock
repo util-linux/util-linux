@@ -58,7 +58,7 @@ NETNS=
 	for t in $(for t0 in "${!tcase[@]}"; do echo "$t0"; done | sort); do
 	    column=$t
 	    expected=${tcase[$t]}
-	    output=$(${TS_CMD_LSNS} -n --raw -o $column -Q "NS == $NETNS")
+	    output=$(${TS_CMD_LSNS} --noheadings --raw --output $column --filter "NS == $NETNS")
 	    echo "$column \$? $?"
 
 	    if [[ "${output}" == "$expected" ]]; then

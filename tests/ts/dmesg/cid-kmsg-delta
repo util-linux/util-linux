@@ -23,7 +23,7 @@ ts_check_test_command "$TS_HELPER_DMESG"
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
-$TS_HELPER_DMESG -d -K $TS_SELF/cid-kmsg-input >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --show-delta -K $TS_SELF/cid-kmsg-input >> $TS_OUTPUT 2>/dev/null
 
 # dmesg kmsg output can have varying number of caller_id padding spaces
 # normalize caller_id padding by removing leading spaces

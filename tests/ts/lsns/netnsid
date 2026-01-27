@@ -82,7 +82,7 @@ fi
 	fi
 
 	echo "===LSNS output" >> $LOG
-	$TS_CMD_LSNS -o+NETNSID,NSFS --type net >> $LOG
+	$TS_CMD_LSNS --output +NETNSID,NSFS --type net >> $LOG
 
 	LSNS_ID=$($TS_CMD_LSNS -n -o NETNSID --type net --task $PID | { read VAL; echo $VAL; } )
 	echo "===LSNS_ID=$LSNS_ID" >> $LOG
