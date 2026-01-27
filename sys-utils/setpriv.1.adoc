@@ -102,7 +102,7 @@ Block all file deletions and directory creations:
 +
 For a complete set of supported access categories use *setpriv --help*.
 +
-The generic placeholder "fs" are subject to change and may be extended in future versions
+The generic placeholder "fs" is subject to change and may be extended in future versions
 to support new access types.
 
 *--landlock-rule* _rule_::
