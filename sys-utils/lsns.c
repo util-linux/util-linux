@@ -1563,7 +1563,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-		_(" %s [options] [<namespace>]\n"), program_invocation_short_name);
+		_(" %s [options] [<namespace ID>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("List system namespaces.\n"), out);
