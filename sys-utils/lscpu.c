@@ -1216,6 +1216,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
 	fputs(_("     --hierarchic[=when] use subsections in summary (auto, never, always)\n"), out);
 	fputs(_("     --output-all        print all available columns for -e, -p or -C\n"), out);
+	fputs(_("     --arm-id[=<id>]     print the known ARM implementers and their names. If an id is given, print all the cores for that implementer.\n"), out);
+	fputs(_("     --arm-model <id>    print the name of the given ARM implementer and model. Requires --arm-id=<id>.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_LIST_COLUMNS_OPTION(25));
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -1258,11 +1260,15 @@ int main(int argc, char *argv[])
 	char *outarg = NULL;
 	size_t i, ncolumns = 0;
 	char *annotate_opt_arg = NULL;
+	unsigned int arm_id = 0xf00; /* Valid values are 0-0xff */
+	unsigned int arm_model = 0xf000; /* Valid values are 0-0xfff */
 
 	enum {
 		OPT_OUTPUT_ALL = CHAR_MAX + 1,
 		OPT_HIERARCHIC,
 		OPT_ANNOTATE,
+		OPT_ARM_ID,
+		OPT_ARM_MODEL,
 	};
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       NULL, 'a' },
@@ -1283,6 +1289,8 @@ int main(int argc, char *argv[])
 		{ "output-all",	no_argument,	   NULL, OPT_OUTPUT_ALL },
 		{ "hierarchic", optional_argument, NULL, OPT_HIERARCHIC },
 		{ "list-columns", no_argument,     NULL, 'H' },
+		{ "arm-id",	optional_argument, NULL, OPT_ARM_ID },
+		{ "arm-model",	required_argument, NULL, OPT_ARM_MODEL },
 		{ NULL,		0, NULL, 0 }
 	};
 
@@ -1372,6 +1380,18 @@ int main(int argc, char *argv[])
 			} else
 				hierarchic = 1;
 			break;
+		case OPT_ARM_ID:
+			if (optarg) {
+				if (cxt->mode != LSCPU_OUTPUT_ARM_SINGLE_MODEL)
+					cxt->mode = LSCPU_OUTPUT_ARM_MODELS;
+				arm_id = str2unum_or_err(optarg, 0, _("failed to parse implementer id"), 0xFF);
+			} else
+				cxt->mode = LSCPU_OUTPUT_ARM_IMPLEMENTERS;
+			break;
+		case OPT_ARM_MODEL:
+			cxt->mode = LSCPU_OUTPUT_ARM_SINGLE_MODEL;
+			arm_model = str2unum_or_err(optarg, 0, _("failed to parse model id"), 0xFFF);
+			break;
 		case 'H':
 			collist = 1;
 			break;
@@ -1406,6 +1426,9 @@ int main(int argc, char *argv[])
 			program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
+
+	if (cxt->mode == LSCPU_OUTPUT_ARM_SINGLE_MODEL && arm_id > 0xff)
+		errx(EXIT_FAILURE, _("--arm-model option needs to be used with --arm-id"));
 
 	if (argc != optind) {
 		warnx(_("bad usage"));
@@ -1531,6 +1554,15 @@ int main(int argc, char *argv[])
 		}
 
 		print_cpus_parsable(cxt, columns, ncolumns);
+		break;
+	case LSCPU_OUTPUT_ARM_IMPLEMENTERS:
+		lscpu_print_arm_implementers(cxt);
+		break;
+	case LSCPU_OUTPUT_ARM_MODELS:
+		lscpu_print_arm_models(cxt, arm_id);
+		break;
+	case LSCPU_OUTPUT_ARM_SINGLE_MODEL:
+		lscpu_print_arm_model(cxt, arm_id, arm_model);
 		break;
 	}
 

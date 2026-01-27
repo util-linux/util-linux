@@ -16,6 +16,7 @@
  *  - SMBIOS tables (if applicable)
  */
 #include "lscpu.h"
+#include <libsmartcols.h>
 
 struct id_part {
     const int id;
@@ -491,4 +492,108 @@ void lscpu_decode_arm(struct lscpu_cxt *cxt)
 
 	for (i = 0; i < cxt->ncputypes; i++)
 		arm_decode(cxt, cxt->cputypes[i]);
+}
+
+static struct libscols_table *arm_mktable(struct lscpu_cxt *cxt, const char *tabname)
+{
+	struct libscols_table *tb;
+
+	scols_init_debug(0);
+
+	tb = scols_new_table();
+	if (!tb)
+		 err(EXIT_FAILURE, _("failed to allocate output table"));
+	if (cxt->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, tabname);
+	}
+	if (cxt->raw)
+		scols_table_enable_raw(tb, 1);
+
+	scols_table_new_column(tb, _("id"), 0, 0);
+	scols_table_new_column(tb, _("name"), 0, 0);
+
+	return tb;
+}
+
+/*
+ * [--arm-id] backend
+ */
+void lscpu_print_arm_implementers(struct lscpu_cxt *cxt)
+{
+	size_t i;
+	struct libscols_table *tb;
+
+	tb = arm_mktable(cxt, "arm-implementers");
+
+	for (i = 0; hw_implementer[i].id != -1; i++) {
+		struct libscols_line *ln;
+		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
+		scols_line_sprintf(ln, 0, "0x%02x", hw_implementer[i].id);
+		scols_line_set_data(ln, 1, hw_implementer[i].name);
+	}
+
+	scols_print_table(tb);
+	scols_unref_table(tb);
+}
+
+/*
+ * [--arm-id=<impl>] backend
+ */
+void lscpu_print_arm_models(struct lscpu_cxt *cxt, int implementer)
+{
+	size_t i;
+	struct libscols_table *tb;
+	const struct id_part *parts = NULL;
+
+	for (i = 0; hw_implementer[i].id != -1; i++) {
+		if (hw_implementer[i].id == implementer) {
+			parts = hw_implementer[i].parts;
+			break;
+		}
+	}
+	if (!parts)
+		errx(EXIT_FAILURE, _("implementer not found"));
+
+	tb = arm_mktable(cxt, "arm-models");
+
+	for (i = 0; parts[i].id != -1; i++) {
+		struct libscols_line *ln;
+		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
+		scols_line_sprintf(ln, 0, "0x%03x", parts[i].id);
+		scols_line_set_data(ln, 1, parts[i].name);
+	}
+
+	scols_print_table(tb);
+	scols_unref_table(tb);
+}
+
+/*
+ * [--arm-id=<impl> --arm-model=<model>] backend
+ */
+void lscpu_print_arm_model(struct lscpu_cxt *cxt __attribute__((__unused__)), int implementer, int model)
+{
+	size_t i;
+	const struct id_part *parts = NULL;
+
+	for (i = 0; hw_implementer[i].id != -1; i++) {
+		if (hw_implementer[i].id == implementer) {
+			parts = hw_implementer[i].parts;
+			break;
+		}
+	}
+	if (!parts)
+		errx(EXIT_FAILURE, _("implementer not found"));
+
+	for (i = 0; parts[i].id != -1; i++) {
+		if (parts[i].id == model) {
+			printf("%s\n", parts[i].name);
+			return;
+		}
+	}
+	errx(EXIT_FAILURE, _("model not found"));
 }
