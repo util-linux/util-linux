@@ -6,8 +6,8 @@
  * This program is freely distributable.
  *
  * This set of netlink callbacks kernel and creates
- * and/or maintains a linked list of requested type. Using callback fuctions
- * and custom data, it could be used for arbitraty purpose.
+ * and/or maintains a linked list of requested type. Using callback functions
+ * and custom data, it could be used for arbitrary purpose.
  *
  */
 
@@ -37,7 +37,7 @@ const int max_ifaces = 12;
 static UL_DEBUG_DEFINE_MASK(netaddrq);
 UL_DEBUG_DEFINE_MASKNAMES(netaddrq) =
 {
-	{ "all",   ULNETADDRQ_DEBUG_ALL,	"complete adddress processing" },
+	{ "all",   ULNETADDRQ_DEBUG_ALL,	"complete address processing" },
 	{ "help",  ULNETADDRQ_DEBUG_HELP,	"this help" },
 	{ "addrq", ULNETADDRQ_DEBUG_ADDRQ,	"address rating" },
 	{ "list",  ULNETADDRQ_DEBUG_LIST,	"list processing" },
@@ -625,7 +625,7 @@ static void dump_addrq(struct ul_nl_data *nl, enum addrq_print_mode c)
 
 static int callback_post(struct ul_nl_data *nl)
 {
-	/* If not processing dump, process the change immediatelly by the
+	/* If not processing dump, process the change immediately by the
 	 * callback. */
 	if (!nl->dumping)
 	{

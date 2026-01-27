@@ -12,7 +12,7 @@
 #include <inttypes.h>
 
 /*
- * File descritors based mount API
+ * File descriptors based mount API
  */
 #ifdef HAVE_MOUNTFD_API
 

@@ -35,7 +35,7 @@ for dump in $(ls $TS_SELF/dumps/*.tar.xz | sort); do
 
 	#
 	# Read *.cols from the tarball, but the expected output is not used
-	# from the tarball due to changes in lsblk fomatting etc. We keep up to
+	# from the tarball due to changes in lsblk formatting etc. We keep up to
 	# date version in tests/expected/lsblk.
 	#
 	for cols_file in $(ls $dumpdir/$name/*.cols | sort); do

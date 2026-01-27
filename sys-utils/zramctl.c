@@ -966,7 +966,7 @@ int main(int argc, char **argv)
 		if (zram_lock(zram, LOCK_EX))
 			err(EXIT_FAILURE, _("%s: failed to lock"), zram->devname);
 
-		/* Writting 'reset' attribute is refused by the kernel when the device node is opened.
+		/* Writing 'reset' attribute is refused by the kernel when the device node is opened.
 		 * Hence, we cannot keep the lock, unfortunately. */
 		zram_unlock(zram);
 

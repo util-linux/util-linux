@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
         mnt_fs_get_root(fs);
         mnt_fs_print_debug(fs, stdout);
 
-	/* read all mising data */
+	/* read all missing data */
 	mnt_fs_fetch_statmount(fs, 0);
 	mnt_fs_print_debug(fs, stdout);
 

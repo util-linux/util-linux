@@ -953,7 +953,7 @@ static int has_line(struct libscols_table *table, struct libmnt_fs *fs)
 	return rc;
 }
 
-/* reads filesystems from @tb (libmount) and fillin @table (output table) */
+/* reads filesystems from @tb (libmount) and fills in @table (output table) */
 static int create_treenode(struct libscols_table *table, struct libmnt_table *tb,
 			   struct libmnt_fs *fs, struct libscols_line *parent_line, struct findmnt *findmnt)
 {

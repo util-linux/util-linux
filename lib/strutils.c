@@ -1469,7 +1469,7 @@ int main(int argc, char *argv[])
 
 	} else if  (argc == 4 && strcmp(argv[1], "--stralnumcmp") == 0) {
 		printf("%s\n", ul_stralnumcmp(argv[2], argv[3]) == 0 ?
-				"match" : "dismatch");
+				"match" : "mismatch");
 		return EXIT_SUCCESS;
 
 	} else if (argc == 4 && strcmp(argv[1], "--cstrcasecmp") == 0) {

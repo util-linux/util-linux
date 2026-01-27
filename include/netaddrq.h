@@ -6,8 +6,8 @@
  * This program is freely distributable.
  *
  * This set of netlink callbacks kernel and creates
- * and/or maintains a linked list of requested type. Using callback fuctions
- * and custom data, it could be used for arbitraty purpose.
+ * and/or maintains a linked list of requested type. Using callback functions
+ * and custom data, it could be used for arbitrary purpose.
  *
  */
 
@@ -37,7 +37,7 @@ struct ul_netaddrq_data {
 	ul_nl_callback callback_pre;  /* Function to process ul_netaddrq_data */
 	ul_nl_callback callback_post; /* Function to process ul_netaddrq_data */
 	void *callback_data;	      /* Arbitrary data for callback */
-	struct list_head ifaces;      /* The intefaces list */
+	struct list_head ifaces;      /* The interfaces list */
 	/* ifaces_change_* has to be changed by userspace when processed. */
 	bool ifaces_change_4;	      /* Any changes in the IPv4 list? */
 	bool ifaces_change_6;	      /* Any changes in the IPv6 list? */

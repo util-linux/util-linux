@@ -2414,7 +2414,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		if (!npa)
 			return -ENOMEM;
 
-		if (dflt_size == size)	/* default is to fillin all free space */
+		if (dflt_size == size)	/* default is to fill in all free space */
 			fdisk_partition_end_follow_default(npa, 1);
 		else
 			fdisk_partition_set_size(npa, secs);

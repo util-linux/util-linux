@@ -40,7 +40,7 @@ typedef enum pool_state {
 
 struct nvs_header_t {
 	char	  nvh_encoding;		/* encoding method */
-	char	  nvh_endian;		/* endianess */
+	char	  nvh_endian;		/* endianness */
 	char	  nvh_reserved1;
 	char	  nvh_reserved2;
 	uint32_t  nvh_reserved3;
@@ -317,7 +317,7 @@ static int probe_zfs(blkid_probe pr,
 
 		/*
 		 * Label supports XDR encoding, reject for any other unsupported format. Also
-		 * endianess can be 0 or 1, reject garbage value. Moreover, check if first
+		 * endianness can be 0 or 1, reject garbage value. Moreover, check if first
 		 * nvpair encode size is non-zero.
 		 */
 		if (!label || label->nvh_encoding != 0x1 || !be32_to_cpu(label->nvh_first_size) ||
@@ -339,7 +339,7 @@ static int probe_zfs(blkid_probe pr,
 	(void) zfs_extract_guid_name(pr, label, VDEV_PHYS_SIZE, false);
 
 	/*
-	 * Zero out whole nvlist header including fisrt nvpair size
+	 * Zero out whole nvlist header including first nvpair size
 	 */
 	if (blkid_probe_set_magic(pr, offset, sizeof(struct nvs_header_t),
 	    (unsigned char *) label))

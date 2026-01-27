@@ -65,7 +65,7 @@ static void *xcalloc(const size_t nelems, const size_t size)
 	return ret;
 }
 
-/* sigemptyset may not be defiend and/or declared in asm/signal.h */
+/* sigemptyset may not be defined and/or declared in asm/signal.h */
 static void clear_sigset(sigset_t *sigset)
 {
 	memset(sigset, 0, sizeof(*sigset));

@@ -142,7 +142,7 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
  * listmount() syscall. The default is to read all filesystems; use
  * statx(STATX_MNT_ID_UNIQUE) for subdirectory.
  *
- * Returns: 0 on sucess, < 0 on error
+ * Returns: 0 on success, < 0 on error
  * Since: 2.41
  */
 int mnt_table_listmount_set_id(struct libmnt_table *tb, uint64_t id)
@@ -164,7 +164,7 @@ int mnt_table_listmount_set_id(struct libmnt_table *tb, uint64_t id)
  *
  * Set namespace ID for listmount().
  *
- * Returns: 0 on sucess, < 0 on error
+ * Returns: 0 on success, < 0 on error
  * Since: 2.41
  */
 int mnt_table_listmount_set_ns(struct libmnt_table *tb, uint64_t ns)
@@ -184,7 +184,7 @@ int mnt_table_listmount_set_ns(struct libmnt_table *tb, uint64_t ns)
  * @tb: mount table
  * @sz: number of nodes read by one libmount() call
  *
- * Returns: 0 on sucess, < 0 on error
+ * Returns: 0 on success, < 0 on error
  * Since: 2.41
  */
 int mnt_table_listmount_set_stepsiz(struct libmnt_table *tb, size_t sz)

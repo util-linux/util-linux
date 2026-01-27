@@ -558,7 +558,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			/*
 			 * Ensure that, if signatures are supported, we only reuse the device if the previous mount
 			 * used the same settings, so that a previous unsigned mount will not be reused if the user
-			 * asks to use signing for the new one, and viceversa.
+			 * asks to use signing for the new one, and vice-versa.
 			 */
 #ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
 			if (!!hash_sig != !!(crypt_params.flags & CRYPT_VERITY_ROOT_HASH_SIGNATURE)) {

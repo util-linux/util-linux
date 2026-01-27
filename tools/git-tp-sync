@@ -94,7 +94,7 @@ function save_modified_files {
 
 	if [ $new_rev -gt $old_rev ]; then
 		if [ "$DRYRUN" = "true" ]; then
-			echo " updated (ingore, dry-run)"
+			echo " updated (ignore, dry-run)"
 		else
 			echo " updated"
 			git_commit $POFILE "$PODIR: update $POFILENAME (from translationproject.org)"

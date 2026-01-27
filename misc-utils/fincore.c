@@ -445,7 +445,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all      output all columns\n"), out);
 	fputs(_(" -r, --raw             use raw output format\n"), out);
 	fputs(_(" -R, --recursive       recursively check all files in directories\n"), out);
-	fputs(_(" -C, --cachestat       force useage of cachestat syscall\n"), out);
+	fputs(_(" -C, --cachestat       force usage of cachestat syscall\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(23));
