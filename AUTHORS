@@ -18,6 +18,7 @@ AUTHORS (merged projects & commands):
       blkpr:           zhenwei pi <zhenwei.pi@linux.dev>
       blkzone:         Shaun Tancheff <shaun@tancheff.com>
                        Damien Le Moal <damien.lemoal@wdc.com>
+      copyfilerange:   Dick Marinus <dick@mrns.nl>
       enosys:          Thomas Weißschuh <thomas@t-8ch.de>
       fallocate:       Eric Sandeen <sandeen@redhat.com>
                        Karel Zak <kzak@redhat.com>
