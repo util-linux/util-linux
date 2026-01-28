@@ -1,0 +1,98 @@
+//po4a: entry man manual
+= copyfilerange(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:range: copyfilerange
+
+== NAME
+
+copyfilerange - Copy file ranges from source to destination file.
+
+== SYNOPSIS
+
+*copyfilerange* [options] [<source>] [<destination>] [<range>...]
+
+== DESCRIPTION
+
+*copyfilerange* copy file ranges from source to destination file
+*copyfilerange* is a simple utility to call the *copy_file_range*(2) system call.
+
+It can be used write files with unallocated gaps (sparse files) and/or share blocks between multiple files (reflinks).
+
+== ARGUMENTS
+
+*source*::
+Source filename
+
+*destination*::
+Destination filename
+
+*range*::
+
+Consists of a range specified as *source_offset:dest_offset:length*
+
+All values are in bytes, if length is set to 0 copy as much as available.
+Multiple range can be supplied.
+
+When one or more of the offsets are omitted the operation will use the last used location, starting with 0
+
+== OPTIONS
+
+*-v*, *--verbose*::
+Verbose output of copied file ranges
+
+*-r*, *--ranges*::
+Ranges filename
+
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*copyfilerange* has the following exit status values:
+
+*0*::
+success
+*1*::
+unspecified failure
+
+== NOTES
+
+The *copy_file_range*(2) system call has some serious caveats, the source and destination files must use the same filesystem type and some virtual filesystems (like procfs) won't work. *copy_file_range*(2) will use reflinks when the filesystem supports this. To use reflinks the file range most often needs to align with the filesystem block size on both the source and destination file.
+
+== AUTHORS
+
+mailto:dick@mrns.nl[Dick Marinus]
+
+== EXAMPLES
+
+....
+~$ copyfilerange original-file reflink ::
+
+~$ copyfilerange original-file first-block ::4096
+
+~$ copyfilerange original-file even-blocks -r <(seq 0 8192 40960|awk '{print $1"::4096"}')
+
+~$ copyfilerange original-file sparse-file 0:1M:1
+
+~$ copyfilerange original-file split-first-mb ::1M
+
+~$ copyfilerange original-file split-remainder 1M::
+
+~$ copyfilerange split-first-mb join ::
+
+~$ copyfilerange split-remainder join 1M::
+....
+
+== SEE ALSO
+
+*copy_file_range*(2)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

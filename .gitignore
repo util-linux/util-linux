@@ -99,6 +99,7 @@ ylwrap
 /colcrt
 /colrm
 /column
+/copyfilerange
 /coresched
 /ctrlaltdel
 /delpart

@@ -346,3 +346,12 @@ getino_SOURCES = misc-utils/getino.c
 getino_LDADD = $(LDADD) libcommon.la
 getino_CFLAGS = $(AM_CFLAGS)
 endif
+
+if BUILD_COPYFILERANGE
+usrbin_exec_PROGRAMS += copyfilerange
+MANPAGES += misc-utils/copyfilerange.1
+dist_noinst_DATA += misc-utils/copyfilerange.1.adoc
+copyfilerange_SOURCES = misc-utils/copyfilerange.c
+copyfilerange_LDADD = $(LDADD) libcommon.la
+copyfilerange_CFLAGS = $(AM_CFLAGS)
+endif

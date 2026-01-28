@@ -1,0 +1,6 @@
+copy_file_range a to e 3:0:1
+copy_file_range a to e 1:1:2
+copy_file_range a to e 2:3:1
+copy_file_range a to e 0:4:1
+copy_file_range a to e 5:5:1
+aloof
