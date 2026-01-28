@@ -1,0 +1,108 @@
+#!/bin/bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="open files with same path across mount over"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_LSFD"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_HELPER_OPEN_TWICE"
+
+ts_check_losetup
+
+ts_check_prog "mkfs.ext2"
+ts_check_prog "rm"
+ts_check_prog "rmdir"
+ts_check_prog "stat"
+ts_check_prog "touch"
+
+ts_cd "$TS_OUTDIR"
+
+ts_device_init 1
+DEVICE=$TS_LODEV
+
+mkfs.ext2 "$DEVICE" &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
+# Let's wait for udev scanning the device modification.
+ts_udevadm_settle "$DEVICE"
+
+if ! ts_device_has "TYPE" "ext2" "$DEVICE"; then
+    ts_die "Cannot find ext2 on $DEVICE"
+fi
+
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p "$TS_MOUNTPOINT"
+
+if ! touch "$TS_MOUNTPOINT"/a; then
+    ts_failed "$TS_MOUNTPOINT/a: cannot make the file"
+fi
+
+if ! "$TS_CMD_MOUNT" "$DEVICE" "$TS_MOUNTPOINT"; then
+    ts_failed "$DEVICE: cannot mount the fs on the device(prep)"
+fi
+
+if ! touch "$TS_MOUNTPOINT"/a; then
+    ts_failed "$TS_MOUNTPOINT/a: cannot make the file"
+fi
+
+if ! "$TS_CMD_UMOUNT" -q "$TS_MOUNTPOINT"; then
+    ts_failed "$DEVICE: cannot umount the fs"
+fi
+
+INODE0=$(stat -c %i "$TS_MOUNTPOINT/a")
+coproc MKFDS { "$TS_HELPER_OPEN_TWICE" "$TS_MOUNTPOINT"/a; }
+if read -r -u "${MKFDS[0]}" PID FD0; then
+    if inode0=$(${TS_CMD_LSFD} --noheadings --raw --pid "$PID" --filter "FD == $FD0" -oINODE); then
+	if [[ -n "$INODE0" && "$INODE0" == "$inode0" ]]; then
+	    echo inode0: OK >> "$TS_OUTPUT"
+	else
+	    echo inode0: FAILED "$INODE0" == "$inode0" >> "$TS_OUTPUT"
+
+	    echo >&"${MKFDS[1]}"
+	    echo >&"${MKFDS[1]}"
+	    ts_failed "inode doesn't match in the first file open"
+	fi
+
+	if ! "$TS_CMD_MOUNT" "$DEVICE" "$TS_MOUNTPOINT"; then
+	    echo >&"${MKFDS[1]}"
+	    echo >&"${MKFDS[1]}"
+	    ts_failed "$DEVICE: cannot mount the fs on the device(fd1)"
+	fi
+	INODE1=$(stat -c %i "$TS_MOUNTPOINT"/a)
+
+	echo >&"${MKFDS[1]}"
+	if read -r -u "${MKFDS[0]}" FD1; then
+	    if inode1=$(${TS_CMD_LSFD} --noheadings --raw --pid "$PID" --filter "FD == $FD1" -oINODE); then
+		if [[ -n "$INODE1" && "$INODE1" == "$inode1" ]]; then
+		    echo inode1: OK >> $TS_OUTPUT
+		else
+		    echo inode1: FAILED "$INODE1" == "$inode1" >> $TS_OUTPUT
+
+		    echo >&"${MKFDS[1]}"
+		    ts_failed "inode doesn't match in the second file open"
+		fi
+	    fi
+	fi
+	echo >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+fi
+
+ts_finalize

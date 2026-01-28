@@ -60,3 +60,6 @@ check_PROGRAMS += test_cap
 test_cap_SOURCES = tests/helpers/test_cap.c
 test_cap_LDADD = -lcap-ng
 endif
+
+check_PROGRAMS += test_open_twice
+test_open_twice_SOURCES = tests/helpers/test_open_twice.c

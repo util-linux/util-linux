@@ -886,20 +886,11 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
-	struct file *f, *prev;
+	struct file *f;
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		f = new_readlink_error_file(proc, errno, assoc);
-	/* The /proc/#/{fd,ns} often contains the same file (e.g. /dev/tty)
-	 * more than once. Let's try to reuse the previous file if the real
-	 * path is the same to save stat() call.
-	 */
-	else if ((prev = list_last_entry(&proc->files, struct file, files))
-		 && (!is_error_object(prev))
-		 && prev->name && strcmp(prev->name, sym) == 0) {
-		f = copy_file(prev, assoc);
-		sb = prev->stat;
-	} else if (ul_path_stat(pc, &sb, 0, name) < 0)
+	else if (ul_path_stat(pc, &sb, 0, name) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
