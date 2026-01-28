@@ -743,7 +743,7 @@ int mnt_fs_is_attached(struct libmnt_fs *fs)
  * The move/attach/detach status depends on how @fs has been used by the library.  
  * The status is not set when working with fstab, etc.
  *
- * Returns: 1 if the filesystem has been dettached.
+ * Returns: 1 if the filesystem has been detached.
  */
 int mnt_fs_is_detached(struct libmnt_fs *fs)
 {
@@ -1540,7 +1540,7 @@ int mnt_fs_get_parent_id(struct libmnt_fs *fs)
  *
  * This ID is provided by statmount() since Linux kernel since v6.8.
  *
- * Returns: parent mount ID or 0 if not avalable
+ * Returns: parent mount ID or 0 if not available
  */
 uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs)
 {
@@ -1558,7 +1558,7 @@ uint64_t mnt_fs_get_parent_uniq_id(struct libmnt_fs *fs)
  *
  * This ID is provided by statmount() since Linux kernel since v6.10
  *
- * Returns: parent namespace ID or 0 if not avalable.
+ * Returns: parent namespace ID or 0 if not available.
  *
  * Since: 2.41
  */
@@ -1579,7 +1579,7 @@ uint64_t mnt_fs_get_ns(struct libmnt_fs *fs)
  *
  * Returns: 0 or <0 in case of error.
  *
- * Sinse: 2.41
+ * Since: 2.41
  */
 int mnt_fs_set_ns(struct libmnt_fs *fs, uint64_t id)
 {

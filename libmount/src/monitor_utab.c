@@ -202,7 +202,7 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 				status = 0;
 			else {
 				if (e->mask & IN_DELETE_SELF) {
-					DBG(MONITOR, ul_debugobj(mn, " reseting watch"));
+					DBG(MONITOR, ul_debugobj(mn, " resetting watch"));
 					userspace_free_data(me);
 				}
 

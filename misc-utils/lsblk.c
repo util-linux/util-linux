@@ -1409,7 +1409,7 @@ static void device_to_scols(
 		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
 	}
 
-	/* apply highligther */
+	/* apply highlighter */
 	if (ln && lsblk->hlighter) {
 		int status = 0;
 

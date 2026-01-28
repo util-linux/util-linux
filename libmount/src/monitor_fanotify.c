@@ -15,7 +15,7 @@
 #include "monitor.h"
 
 /*
- * The fanotify info header is suppported since kernel v5.1 (commit 5e469c830fdb5).
+ * The fanotify info header is supported since kernel v5.1 (commit 5e469c830fdb5).
  *
  * We do not provide fallback for so old systems. There is fallback only for
  * missing "struct fanotify_event_info_mnt" (since v6.15, commit 0f46d81f2bce9).
@@ -239,7 +239,7 @@ static const struct monitor_opers fanotify_opers = {
  * mnt_monitor_enable_fanotify:
  * @mn: monitor
  * @enable: 0 or 1
- * @ns: namespace file descritor (use -1 for default /proc/self/ns/mnt)
+ * @ns: namespace file descriptor (use -1 for default /proc/self/ns/mnt)
  *
  * Enables or disables kernel VFS monitoring based on fanotify (since Linux
  * 6.15). This monitor can return mount IDs of changed mount points. It's also

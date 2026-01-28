@@ -2,7 +2,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  *
- * Evaluting a list of configuration filenames which have to be handled/parsed.
+ * Evaluating a list of configuration filenames which have to be handled/parsed.
  *
  * The order of this file list has been defined by
  * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
@@ -14,7 +14,7 @@
 #include "list.h"
 
 /**
- * ul_configs_file_list - Evaluting a list of sorted configuration filenames which have to be handled
+ * ul_configs_file_list - Evaluating a list of sorted configuration filenames which have to be handled
  *                        in the correct order.
  *
  * @file_list: List of filenames which have to be parsed in that order

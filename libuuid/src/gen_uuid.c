@@ -642,7 +642,7 @@ static int uuid_generate_time_generic(uuid_t out)
 		/*
 		 * num + OP_BULK provides a local cache in each application.
 		 * Start with a small cache size to cover short running applications
-		 * and adjust the cache size over the runntime.
+		 * and adjust the cache size over the runtime.
 		 */
 		if ((uuidd_cache.last_used == uuidd_cache.cache_size) && (uuidd_cache.cache_size < CS_MAX))
 			uuidd_cache.cache_size *= CS_FACTOR;

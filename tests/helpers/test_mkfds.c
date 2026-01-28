@@ -130,7 +130,7 @@ enum ptype {
 struct ptype_class {
 	const char *name;
 
-	/* Covert to a string representation.
+	/* Convert to a string representation.
 	 * A caller must free the returned value with free(3) after using. */
 	char *(*sprint)(const union value *value);
 
@@ -364,7 +364,7 @@ static void reserve_fd(int fd)
 	(void)close(fd);
 	if (dup2(0, fd) < 0)
 		errx(EXIT_FAILURE,
-		     "faild to reserve fd with dup2(%d, %d)", 0, fd);
+		     "failed to reserve fd with dup2(%d, %d)", 0, fd);
 }
 
 static void *nop(const struct factory *factory _U_, struct fdesc fdescs[] _U_,
@@ -1233,9 +1233,9 @@ static void *make_unix_stream_core(const struct factory *factory, struct fdesc f
 	free_arg(&path);
 
 	if (iserver_shutdown < 0 || iserver_shutdown > 3)
-		errx(EXIT_FAILURE, "the server shudown specification in unexpected range");
+		errx(EXIT_FAILURE, "the server shutdown specification in unexpected range");
 	if (iclient_shutdown < 0 || iclient_shutdown > 3)
-		errx(EXIT_FAILURE, "the client shudown specification in unexpected range");
+		errx(EXIT_FAILURE, "the client shutdown specification in unexpected range");
 
 	ssd = socket(AF_UNIX, type, 0);
 	if (ssd < 0)

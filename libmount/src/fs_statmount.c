@@ -89,7 +89,7 @@ void mnt_unref_statmnt(struct libmnt_statmnt *sm)
  * @sm: statmount setting
  * @mask: default mask for statmount() or 0
  *
- * Returns: 0 on succees or  or <0 on error.
+ * Returns: 0 on success or  or <0 on error.
  */
 int mnt_statmnt_set_mask(struct libmnt_statmnt *sm, uint64_t mask)
 {

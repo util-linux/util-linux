@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: LGPL-2.1-or-later
  *
- * Very simple multibyte buffer editor. Allows to maintaine the current
+ * Very simple multibyte buffer editor. Allows to maintain the current
  * position in the string, add and remove chars on the current position.
  *
  * This file may be distributed under the terms of the

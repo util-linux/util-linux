@@ -100,7 +100,7 @@ ACK=
     if read -u ${SIGSTATE[0]} PID; then
 	"$TS_CMD_KILL" -USR1 "$PID"
 	if read -u ${SIGSTATE[0]} ACK; then
-	    # The taget process is in its signal handler for USR1.
+	    # The target process is in its signal handler for USR1.
 	    # Sending one more USR1 is for making the signal pending state.
 	    "$TS_CMD_KILL" -USR1 "$PID"
 	    "$TS_CMD_KILL" -d "$PID" | {

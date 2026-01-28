@@ -143,7 +143,7 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 	if (ls->nmaps + 1 >= MNT_OL_MAXMAPS)
 		return -ERANGE;
 
-	DBG(OPTLIST, ul_debugobj(ls, "registr map %p", map));
+	DBG(OPTLIST, ul_debugobj(ls, "register map %p", map));
 	ls->maps[ls->nmaps++] = map;
 	return 0;
 }

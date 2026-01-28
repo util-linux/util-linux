@@ -704,7 +704,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
  * @chld: NULL or returns the next child filesystem
  *
  * Since version 2.40, the filesystems are returned in the order specified by
- * @itr. In the old versions the derection is always MNT_ITER_FORWARD.
+ * @itr. In the old versions the direction is always MNT_ITER_FORWARD.
  *
  * Returns: 0 on success, negative number in case of error or 1 at the end of list.
  */

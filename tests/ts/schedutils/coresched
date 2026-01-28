@@ -16,7 +16,7 @@ ts_check_test_command "$TS_CMD_CORESCHED"
 ts_check_prog "tee"
 ts_check_prog "sed"
 
-# If coresched cannot succesfully run, skip the test suite
+# If coresched cannot successfully run, skip the test suite
 CORESCHED_TEST_KERNEL_SUPPORT_CMD=$($TS_CMD_CORESCHED 2>&1)
 if [[ $CORESCHED_TEST_KERNEL_SUPPORT_CMD == *"CONFIG_SCHED_CORE"* ]]; then
   ts_skip "Kernel has no CONFIG_SCHED_CORE support or SMT is not available"

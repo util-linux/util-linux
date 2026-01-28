@@ -21,7 +21,7 @@ TS_DESC="tun device and interface behind the device"
 ts_init "$*"
 ts_skip_nonroot
 
-[[ -e /dev/net/tun ]] || ts_skip "/dev/net/tun doest not exist"
+[[ -e /dev/net/tun ]] || ts_skip "/dev/net/tun does not exist"
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"

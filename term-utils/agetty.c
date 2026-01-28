@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 	} else {				/* regular (auto)login */
 		if ((options.flags & F_NOHOSTNAME) == 0 &&
 		    getlogindefs_bool("LOGIN_PLAIN_PROMPT", 0) == 1)
-			/* /etc/login.defs enbles --nohostname too */
+			/* /etc/login.defs enables --nohostname too */
 			options.flags |= F_NOHOSTNAME;
 
 		if (options.autolog) {
@@ -1881,7 +1881,7 @@ static void eval_issue_file(struct issue *ie,
 /* TODO:
  * Two pass processing for eval_issue_file()
  * Implement pass 1: Just evaluate list of netlink_groups (IP protocols) and
- * intefaces to monitor.
+ * interfaces to monitor.
  * That is why again label is here: netlink_groups will be re-evaluated and
  * dump will be performed again.
  */
@@ -1943,7 +1943,7 @@ skip:
 	struct list_head *current = NULL;
 	char *name = NULL;
 
-	/* Reading all issue files and concatinating all contents to one content.
+	/* Reading all issue files and concatenating all contents to one content.
 	 * The ordering rules are defineded in:
 	 * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
 	 *

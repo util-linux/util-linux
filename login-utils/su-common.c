@@ -146,7 +146,7 @@ struct su_context {
 #ifdef USE_PTY
 	struct ul_pty	*pty;			/* pseudo terminal handler (for --pty) */
 #endif
-	bool		runuser,		/* flase=su, true=runuser */
+	bool		runuser,		/* false=su, true=runuser */
 			runuser_uopt,		/* runuser -u specified */
 			isterm,			/* is stdin terminal? */
 			fast_startup,		/* pass the `-f' option to the subshell. */

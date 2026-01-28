@@ -6,8 +6,8 @@
  * This program is freely distributable.
  *
  * This set of functions processes netlink messages from kernel and creates
- * and/or maintains a linked list of requested type. Using callback fuctions
- * and custom data, it could be used for arbitraty purpose.
+ * and/or maintains a linked list of requested type. Using callback functions
+ * and custom data, it could be used for arbitrary purpose.
  *
  * The code here just processes the netlink stream. To do something useful,
  * callback for a selected message type has to be defined.
@@ -149,7 +149,7 @@ static int process_addr(struct ul_nl_data *nl, struct nlmsghdr *nh)
 	len = nh->nlmsg_len - NLMSG_LENGTH(sizeof(*ifaddr));
 	for (attr = IFA_RTA(ifaddr); RTA_OK(attr, len);
 	     attr = RTA_NEXT(attr, len)) {
-		/* Proces most common rta attributes */
+		/* Process most common rta attributes */
 		DBG(ADDR, ul_debugobj(attr, "processing rtattr"));
 		switch (attr->rta_type) {
 		case IFA_ADDRESS:

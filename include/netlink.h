@@ -9,8 +9,8 @@
  * joins message parts into a single structure and calls callback.
  *
  * To do something useful, callback for a selected message type has to be
- * defined. Using callback fuctions and custom data, it could be used for
- * arbitraty purpose.
+ * defined. Using callback functions and custom data, it could be used for
+ * arbitrary purpose.
  *
  * The code is incomplete. More could be implemented as needed by its use
  * cases.
