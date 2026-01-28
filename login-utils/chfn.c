@@ -2,6 +2,7 @@
  *   chfn.c -- change your finger information
  *   (c) 1994 by salvatore valente <svalente@athena.mit.edu>
  *   (c) 2012 by Cody Maloney <cmaloney@theoreticalchaos.com>
+ *   (c) 2025 by Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
  *
  *   this program is free software.  you can redistribute it and
  *   modify it under the terms of the gnu general public license.
@@ -59,32 +60,41 @@
 # include "auth.h"
 #endif
 
-struct finfo {
-	char *full_name;
-	char *office;
-	char *office_phone;
-	char *home_phone;
-	char *other;
+/* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
+#define MAX_FIELD_SIZE		256
+
+enum {
+	GECOS_FULL_NAME,
+	GECOS_OFFICE,
+	GECOS_OFFICE_PHONE,
+	GECOS_HOME_PHONE,
+	GECOS_OTHER		/* GECOS field "Other" is currently not supported */
+};
+
+struct gecos_field {
+	const char 	*name;		/* GECOS field name */
+	char 		*current;	/* currently defined GECOS field data */
+	char 		*new;		/* new GECOS field data */
+	bool 		allowed;	/* change allowed according to /etc/login.defs (CHFN_RESTRICT) */
+};
+
+/* global structure to store GECOS fields (current,new) with metadata */
+static struct gecos_field gecos_fields[] = {
+	[GECOS_FULL_NAME] = { N_("Name"), NULL, NULL, false },
+	[GECOS_OFFICE] = { N_("Office"), NULL, NULL, false },
+	[GECOS_OFFICE_PHONE] = { N_("Office Phone"), NULL, NULL, false },
+	[GECOS_HOME_PHONE] = { N_("Home Phone"), NULL, NULL, false },
+	[GECOS_OTHER] = { N_("Other"), NULL, NULL, false },
 };
 
 struct chfn_control {
 	struct passwd *pw;
 	char *username;
-	/*  "oldf"  Contains the user's original finger information.
-	 *  "newf"  Contains the changed finger information, and contains
-	 *          NULL in fields that haven't been changed.
-	 *  In the end, "newf" is folded into "oldf".  */
-	struct finfo oldf, newf;
-	bool 	allow_fullname,	/* The login.defs restriction */
-		allow_room,	/* see: man login.defs(5) */
-		allow_work,	/* and look for CHFN_RESTRICT */
-		allow_home,	/* keyword for these four. */
-		changed,	/* is change requested */
-		interactive;	/* whether to prompt for fields or not */
-};
 
-/* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
-#define MAX_FIELD_SIZE		256
+	bool 	changed,	/* is change requested */
+		interactive,	/* whether to prompt for fields or not */
+		restricted;	/* the program is running as a non-root user with setuid */
+};
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -117,7 +127,7 @@ static int check_gecos_string(const char *msg, char *gecos)
 	const size_t len = strlen(gecos);
 
 	if (MAX_FIELD_SIZE < len) {
-		warnx(_("field %s is too long"), msg);
+		warnx(_("field '%s' is too long"), _(msg));
 		return -1;
 	}
 	if (illegal_passwd_chars(gecos)) {
@@ -149,28 +159,20 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
-			if (!ctl->allow_fullname)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Name"));
-			ctl->newf.full_name = optarg;
-			status += check_gecos_string(_("Name"), optarg);
+			status += check_gecos_string(gecos_fields[GECOS_FULL_NAME].name, optarg);
+			gecos_fields[GECOS_FULL_NAME].new = optarg;
 			break;
 		case 'o':
-			if (!ctl->allow_room)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office"));
-			ctl->newf.office = optarg;
-			status += check_gecos_string(_("Office"), optarg);
+			status += check_gecos_string(gecos_fields[GECOS_OFFICE].name, optarg);
+			gecos_fields[GECOS_OFFICE].new = optarg;
 			break;
 		case 'p':
-			if (!ctl->allow_work)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office Phone"));
-			ctl->newf.office_phone = optarg;
-			status += check_gecos_string(_("Office Phone"), optarg);
+			status += check_gecos_string(gecos_fields[GECOS_OFFICE_PHONE].name, optarg);
+			gecos_fields[GECOS_OFFICE_PHONE].new = optarg;
 			break;
 		case 'h':
-			if (!ctl->allow_home)
-				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Home Phone"));
-			ctl->newf.home_phone = optarg;
-			status += check_gecos_string(_("Home Phone"), optarg);
+			status += check_gecos_string(gecos_fields[GECOS_HOME_PHONE].name, optarg);
+			gecos_fields[GECOS_HOME_PHONE].new = optarg;
 			break;
 		case 'v': /* deprecated */
 		case 'V':
@@ -180,10 +182,10 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
-		ctl->changed = 1;
-		ctl->interactive = 0;
+		ctl->changed = true;
+		ctl->interactive = false;
 	}
-	if (status != 0)
+	if (status)
 		exit(EXIT_FAILURE);
 	/* done parsing arguments.  check for a username. */
 	if (optind < argc) {
@@ -199,7 +201,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
  *  parse_passwd () --
  *	take a struct password and fill in the fields of the struct finfo.
  */
-static void parse_passwd(struct chfn_control *ctl)
+static void parse_passwd(const struct chfn_control *ctl)
 {
 	char *gecos;
 
@@ -208,13 +210,13 @@ static void parse_passwd(struct chfn_control *ctl)
 	/* use pw_gecos - we take a copy since PAM destroys the original */
 	gecos = xstrdup(ctl->pw->pw_gecos);
 	/* extract known fields */
-	ctl->oldf.full_name = strsep(&gecos, ",");
-	ctl->oldf.office = strsep(&gecos, ",");
-	ctl->oldf.office_phone = strsep(&gecos, ",");
-	ctl->oldf.home_phone = strsep(&gecos, ",");
+	gecos_fields[GECOS_FULL_NAME].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_OFFICE].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_OFFICE_PHONE].current = strsep(&gecos, ",");
+	gecos_fields[GECOS_HOME_PHONE].current = strsep(&gecos, ",");
 	/*  extra fields contain site-specific information, and can
 	 *  not be changed by this version of chfn.  */
-	ctl->oldf.other = strsep(&gecos, ",");
+	gecos_fields[GECOS_OTHER].current = strsep(&gecos, ",");
 }
 
 /*
@@ -241,22 +243,22 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		if (getline(&buf, &dummy, stdin) < 0)
 			errx(EXIT_FAILURE, _("Aborted."));
 
-		/* remove white spaces from string end */
+		/* remove whitespace from string start and end */
 		ltrim_whitespace((unsigned char *) buf);
 		len = rtrim_whitespace((unsigned char *) buf);
 		if (len == 0) {
 			free(buf);
 			return xstrdup(def_val);
 		}
-		if (!c_strcasecmp(buf, "none")) {
+		if (c_strcasecmp(buf, "none") == 0) {
 			free(buf);
-			ctl->changed = 1;
+			ctl->changed = true;
 			return xstrdup("");
 		}
 		if (check_gecos_string(question, buf) >= 0)
 			break;
 	}
-	ctl->changed = 1;
+	ctl->changed = true;
 	return buf;
 }
 
@@ -264,48 +266,80 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
  *  get_login_defs()
  *	find /etc/login.defs CHFN_RESTRICT and save restrictions to run time
  */
-static void get_login_defs(struct chfn_control *ctl)
+static void get_login_defs(const struct chfn_control *ctl)
 {
 	const char *s;
-	size_t i;
-	int broken = 0;
+	int invalid = 0;
 
-	/* real root does not have restrictions */
-	if (!is_privileged_execution() && getuid() == 0) {
-		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+	if (!ctl->restricted) {
+		for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+			/* allow the change of all fields */
+			gecos_fields[i].allowed = true;
+		}
 		return;
 	}
+
 	s = getlogindefs_str("CHFN_RESTRICT", "");
-	if (!strcmp(s, "yes")) {
-		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+	if (strcmp(s, "yes") == 0) {
+		gecos_fields[GECOS_OFFICE].allowed = true;
+		gecos_fields[GECOS_OFFICE_PHONE].allowed = true;
+		gecos_fields[GECOS_HOME_PHONE].allowed = true;
 		return;
 	}
-	if (!strcmp(s, "no")) {
-		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
-		return;
-	}
-	for (i = 0; s[i]; i++) {
-		switch (s[i]) {
-		case 'f':
-			ctl->allow_fullname = 1;
-			break;
-		case 'r':
-			ctl->allow_room = 1;
-			break;
-		case 'w':
-			ctl->allow_work = 1;
-			break;
-		case 'h':
-			ctl->allow_home = 1;
-			break;
-		default:
-			broken = 1;
+
+	if (strcmp(s, "no") == 0) {
+		for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+			/* disallow the change of all fields */
+			gecos_fields[i].allowed = false;
 		}
 	}
-	if (broken)
+
+	for (size_t i = 0; s[i]; i++) {
+		switch (s[i]) {
+		case 'f':
+			gecos_fields[GECOS_FULL_NAME].allowed = true;
+			break;
+		case 'r':
+			gecos_fields[GECOS_OFFICE].allowed = true;
+			break;
+		case 'w':
+			gecos_fields[GECOS_OFFICE_PHONE].allowed = true;
+			break;
+		case 'h':
+			gecos_fields[GECOS_HOME_PHONE].allowed = true;
+			break;
+		default:
+			invalid = 1;
+		}
+	}
+	if (invalid)
 		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
-	if (!ctl->allow_fullname && !ctl->allow_room && !ctl->allow_work && !ctl->allow_home)
+
+	if (!gecos_fields[GECOS_FULL_NAME].allowed
+			&& !gecos_fields[GECOS_OFFICE].allowed
+			&& !gecos_fields[GECOS_OFFICE_PHONE].allowed
+			&& !gecos_fields[GECOS_HOME_PHONE].allowed)
 		errx(EXIT_FAILURE, _("%s: CHFN_RESTRICT does not allow any changes"), _PATH_LOGINDEFS);
+}
+
+/*
+ *  validate_field_access () --
+ *	validate access to the fields that were passed on the command line
+ */
+static void validate_field_access(void)
+{
+	int status = 0;
+
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		if (!gf->allowed && gf->new) {
+			warnx(_("%s: CHFN_RESTRICT forbids setting \"%s\""), _PATH_LOGINDEFS, gf->name);
+			status++;
+		}
+	}
+	if (status)
+		exit(EXIT_FAILURE);
 }
 
 /*
@@ -314,20 +348,20 @@ static void get_login_defs(struct chfn_control *ctl)
  */
 static void ask_info(struct chfn_control *ctl)
 {
-	if (ctl->allow_fullname)
-		ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
-	if (ctl->allow_room)
-		ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
-	if (ctl->allow_work)
-		ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
-	if (ctl->allow_home)
-		ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
+	/* GECOS_OTHER is currently not supported */
+	for (size_t i = 0; i < GECOS_OTHER; i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		if (gf->allowed) {
+			gf->new = ask_new_field(ctl, gf->name, gf->current);
+		}
+	}
 	putchar('\n');
 }
 
 /*
  *  find_field () --
- *	find field value in uninteractive mode; can be new, old, or blank
+ *	find field value in non-interactive mode; can be new, old, or blank
  */
 static char *find_field(char *nf, char *of)
 {
@@ -340,16 +374,36 @@ static char *find_field(char *nf, char *of)
 
 /*
  *  add_missing () --
- *	add not supplied field values when in uninteractive mode
+ *	add not supplied field values when in non-interactive mode
  */
-static void add_missing(struct chfn_control *ctl)
+static void add_missing(void)
 {
-	ctl->newf.full_name = find_field(ctl->newf.full_name, ctl->oldf.full_name);
-	ctl->newf.office = find_field(ctl->newf.office, ctl->oldf.office);
-	ctl->newf.office_phone = find_field(ctl->newf.office_phone, ctl->oldf.office_phone);
-	ctl->newf.home_phone = find_field(ctl->newf.home_phone, ctl->oldf.home_phone);
-	ctl->newf.other = find_field(ctl->newf.other, ctl->oldf.other);
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+		gf->new = find_field(gf->new, gf->current);
+	}
 	printf("\n");
+}
+
+/*
+ *  free_gecos_new_fields () --
+ *	free the memory allocated for new GECOS fields
+ */
+static inline void free_gecos_new_fields(const struct chfn_control *ctl)
+{
+	/* When ran in interactive mode, we use getline(3)
+	 * to obtain the new GECOS fields. The memory used
+	 * to save the string is dynamically allocated, so
+	 * let us free it now where we don't need it.
+	 */
+	if (!ctl->interactive)
+		return;
+
+	for (size_t i = 0; i < ARRAY_SIZE(gecos_fields); i++) {
+		struct gecos_field *gf = &gecos_fields[i];
+
+		free(gf->new);
+	}
 }
 
 /*
@@ -364,18 +418,19 @@ static int save_new_data(struct chfn_control *ctl)
 
 	/* create the new gecos string */
 	len = xasprintf(&gecos, "%s,%s,%s,%s,%s",
-			ctl->newf.full_name,
-			ctl->newf.office,
-			ctl->newf.office_phone,
-			ctl->newf.home_phone,
-			ctl->newf.other);
+			gecos_fields[GECOS_FULL_NAME].new,
+			gecos_fields[GECOS_OFFICE].new,
+			gecos_fields[GECOS_OFFICE_PHONE].new,
+			gecos_fields[GECOS_HOME_PHONE].new,
+			gecos_fields[GECOS_OTHER].new );
 
 	/* remove trailing empty fields (but not subfields of ctl->newf.other) */
-	if (!ctl->newf.other || !*ctl->newf.other) {
+	if (!gecos_fields[GECOS_OTHER].new || !*gecos_fields[GECOS_OTHER].new) {
 		while (len > 0 && gecos[len - 1] == ',')
 			len--;
-		gecos[len] = 0;
+		gecos[len] = '\0';
 	}
+	free_gecos_new_fields(ctl);
 
 #ifdef HAVE_LIBUSER
 	if (set_value_libuser("chfn", ctl->username, ctl->pw->pw_uid,
@@ -387,7 +442,8 @@ static int save_new_data(struct chfn_control *ctl)
 		warn("setpwnam failed");
 #endif
 		printf(_
-		       ("Finger information *NOT* changed.  Try again later.\n"));
+		       ("Finger information *NOT* changed. Try again later.\n"));
+		free(gecos);
 		return -1;
 	}
 	free(gecos);
@@ -399,7 +455,8 @@ int main(int argc, char **argv)
 {
 	uid_t uid;
 	struct chfn_control ctl = {
-		.interactive = 1
+		.interactive = true,
+		.restricted = true
 	};
 
 	sanitize_env();
@@ -410,19 +467,22 @@ int main(int argc, char **argv)
 
 	uid = getuid();
 
+	if (!is_privileged_execution() && uid == 0)
+		ctl.restricted = false;
+
+	parse_argv(&ctl, argc, argv);
 	/* check /etc/login.defs CHFN_RESTRICT */
 	get_login_defs(&ctl);
 
-	parse_argv(&ctl, argc, argv);
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
 		if (!ctl.pw)
-			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
+			errx(EXIT_FAILURE, _("your user %d does not exist"),
 			     uid);
 	} else {
 		ctl.pw = ul_getuserpw_str(ctl.username);
 		if (!ctl.pw)
-			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
+			errx(EXIT_FAILURE, _("user \"%s\" does not exist"),
 			     ctl.username);
 	}
 	ctl.username = ctl.pw->pw_name;
@@ -456,9 +516,13 @@ int main(int argc, char **argv)
 	if (uid != 0 && uid != ctl.pw->pw_uid) {
 #endif
 		errno = EACCES;
-		err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
-		      "altering, change denied"));
+		err(EXIT_FAILURE, _("running UID doesn't match UID of the user you are "
+		      "attempting to alter, change denied"));
 	}
+
+	/* this validates access to the provided fields on the command line */
+	if (!ctl.interactive && ctl.restricted)
+		validate_field_access();
 
 	printf(_("Changing finger information for %s.\n"), ctl.username);
 
@@ -471,7 +535,7 @@ int main(int argc, char **argv)
 	if (ctl.interactive)
 		ask_info(&ctl);
 
-	add_missing(&ctl);
+	add_missing();
 
 	if (!ctl.changed) {
 		printf(_("Finger information not changed.\n"));

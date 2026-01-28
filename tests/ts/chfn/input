@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="input"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_CHFN"
+
+# invalid passwd characters are [,:="\n]
+ts_init_subtest "illegal-passwd-chars"
+if ! "$TS_CMD_CHFN" --full-name "foo=bar:," &>/dev/null; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+# currently we limit a valid GECOS field to 256 characters
+ts_init_subtest "too-long"
+if ! "$TS_CMD_CHFN" --full-name "$(head -c 257 /dev/zero | tr '\0' 'a')" &>/dev/null; then
+  echo "ok" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_finalize
