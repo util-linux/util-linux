@@ -180,6 +180,9 @@ to avoid collisions with *systemd-udevd*(8) or other tools.
 *-n*, *--no-act*::
 Do everything except writing to the device.
 
+*--no-device-names*::
+Do not print device names in partition table output.
+
 *--no-reread*::
 Do not check through the re-read-partition-table ioctl whether the device is in use.
 
