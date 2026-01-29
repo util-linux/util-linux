@@ -32,16 +32,16 @@ if [ $? -ne 0 ]; then
 fi
 
 test_flag() {
-	echo "options: $*" >> $TS_OUTPUT
-	$TS_CMD_UUIDD -s $UUIDD_SOCKET $* |
-		sed '/List of UUIDs:/d; s/^[[:space:]]*//' > "$OUTPUT_FILE" 2>>$TS_OUTPUT
-	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> $TS_OUTPUT 2>> $TS_ERRLOG
+	echo "options: $*" >> "$TS_OUTPUT"
+	$TS_CMD_UUIDD -s "$UUIDD_SOCKET" "$@" |
+		sed '/List of UUIDs:/d; s/^[[:space:]]*//' > "$OUTPUT_FILE" 2>>"$TS_OUTPUT"
+	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	ret=$?
 	if [ $ret -ne 0 ]; then
-		echo "something wrong with $OUTPUT_FILE" >> $TS_OUTPUT
-		cat $OUTPUT_FILE >> $TS_OUTPUT 2>> $TS_ERRLOG
+		echo "something wrong with $OUTPUT_FILE" >> "$TS_OUTPUT"
+		cat "$OUTPUT_FILE" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	fi
-	echo "return value: $ret" >> $TS_OUTPUT
+	echo "return value: $ret" >> "$TS_OUTPUT"
 }
 
 test_flag -t
@@ -50,9 +50,9 @@ test_flag -r
 test_flag --random
 test_flag -r -n 65
 
-$TS_CMD_UUIDD -k -s "$UUIDD_SOCKET" >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_UUIDD -k -s "$UUIDD_SOCKET" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
-sed -i 's/pid [0-9]*.$/pid <num>./' $TS_OUTPUT $TS_ERRLOG
+sed -i 's/pid [0-9]*.$/pid <num>./' "$TS_OUTPUT" "$TS_ERRLOG"
 
 rm -f "$OUTPUT_FILE" "$UUIDD_PID" "$UUIDD_SOCKET"
 
