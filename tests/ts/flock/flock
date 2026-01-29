@@ -91,7 +91,7 @@ for api in flock fcntl ; do
 
 
 	ts_init_subtest "${subtest_prefix}fd"
-	cd "$TS_OUTDIR"
+	cd "$TS_OUTDIR" || ts_failed "failed to change directory to $TS_OUTDIR"
 	rm 4 2> /dev/null
 	exec 4<>$TS_OUTDIR/lockfile || ts_log "Could not open lockfile"
 	$TS_CMD_FLOCK $api_arg --nonblock --exclusive --conflict-exit-code 123 4 \
