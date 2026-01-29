@@ -1,0 +1,16 @@
+option: -r
+return values: 0 and 0
+option: -t
+return values: 0 and 0
+option: -6
+return values: 0 and 0
+option: -7
+return values: 0 and 0
+option: --random
+return values: 0 and 0
+option: --time
+return values: 0 and 0
+option: --time-v6
+return values: 0 and 0
+option: --time-v7
+return values: 0 and 0
