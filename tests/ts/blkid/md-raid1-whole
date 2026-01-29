@@ -81,10 +81,10 @@ EOF
 udevadm settle
 
 ts_log "Probe first RAID member"
-$TS_CMD_BLKID -p -o udev $DEVICE1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
+$TS_CMD_BLKID --probe --output udev $DEVICE1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
 
 ts_log "Probe second RAID member"
-$TS_CMD_BLKID -p -o udev $DEVICE1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
+$TS_CMD_BLKID --probe --output udev $DEVICE1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
 
 ts_log "Stop RAID device"
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG

@@ -31,7 +31,7 @@ MIN_SWAP_SIZE=$(( 10 * $PAGE_SIZE ))
 MIN_SWAP_SIZE_KB=$(( MIN_SWAP_SIZE / 1024 ))
 
 rm -f $IMAGE
-$TS_CMD_FALLOCATE -x -l $(( $MIN_SWAP_SIZE - 1 )) $IMAGE 2> /dev/null
+$TS_CMD_FALLOCATE --posix --length $(( $MIN_SWAP_SIZE - 1 )) $IMAGE 2> /dev/null
 $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \
@@ -43,7 +43,7 @@ sed -i -e "s/ $MIN_SWAP_SIZE_KB KiB/ 10 pages/" \
    $TS_OUTPUT $TS_ERRLOG
 
 rm -f $IMAGE
-$TS_CMD_FALLOCATE -x -l $MIN_SWAP_SIZE $IMAGE 2> /dev/null
+$TS_CMD_FALLOCATE --posix --length $MIN_SWAP_SIZE $IMAGE 2> /dev/null
 $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \

@@ -19,7 +19,7 @@ FILE="ddtest"
 BS=65536
 COUNT=8
 
-FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$PWD")"
+FS="$("$TS_CMD_FINDMNT" --noheadings --raw --output FSTYPE --target "$PWD")"
 if [[ "$FS" = "tmpfs" || "$FS" = "overlay" || "$FS" = "" ]]; then
 	ts_skip "fincore does not work on tmpfs or unknown fs"
 fi
@@ -29,7 +29,7 @@ create_file() {
 }
 
 do_fincore() {
-    "$TS_CMD_FINCORE" -o RES,SIZE,FILE "$FILE"
+    "$TS_CMD_FINCORE" --output RES,SIZE,FILE "$FILE"
 }
 
 {
@@ -46,21 +46,21 @@ do_fincore() {
 
     create_file
     echo "offset: $(( 2 * $BS ))"
-    "$TS_CMD_FADVISE" -o $(( 2 * $BS )) "$FILE"
+    "$TS_CMD_FADVISE" --offset $(( 2 * $BS )) "$FILE"
     echo status: $?
     do_fincore
     echo
 
     create_file
     echo "length: $(( 4 * $BS ))"
-    "$TS_CMD_FADVISE" -l $(( 4 * $BS )) "$FILE"
+    "$TS_CMD_FADVISE" --length $(( 4 * $BS )) "$FILE"
     echo status: $?
     do_fincore
     echo
 
     create_file
     echo "offset: $(( 2 * $BS )), length: $(( 4 * $BS )) fd: 42"
-    "$TS_CMD_FADVISE" -o $(( 2 * $BS )) -l $(( 4 * $BS )) --fd 42 42<"$FILE"
+    "$TS_CMD_FADVISE" --offset $(( 2 * $BS )) --length $(( 4 * $BS )) --fd 42 42<"$FILE"
     echo status: $?
     do_fincore
     echo

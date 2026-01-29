@@ -26,16 +26,16 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 . "$TS_SELF"/functions.sh
 
 rm -f $TS_OUTDIR/id-sem
-$TS_CMD_IPCMK -S 1 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-sem
-$TS_CMD_IPCS -s -i "$(cat $TS_OUTDIR/id-sem)" | grep "^nsems" >>$TS_OUTPUT
-$TS_CMD_IPCRM -s $(cat $TS_OUTDIR/id-sem) >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCMK --semaphore 1 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-sem
+$TS_CMD_IPCS --semaphores --id "$(cat $TS_OUTDIR/id-sem)" | grep "^nsems" >>$TS_OUTPUT
+$TS_CMD_IPCRM -s "$(cat $TS_OUTDIR/id-sem)" >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 rm -f $TS_OUTDIR/id-sem
-$TS_CMD_IPCMK -S 2 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-sem
-$TS_CMD_IPCS -s -i "$(cat $TS_OUTDIR/id-sem)" | grep "^nsems" >>$TS_OUTPUT
-$TS_CMD_IPCRM -S "$(
-	$TS_CMD_IPCS -s |
-	awk -v id=$(cat $TS_OUTDIR/id-sem) '{if ($2 == id){print $1}}' |
+$TS_CMD_IPCMK --semaphore 2 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-sem
+$TS_CMD_IPCS --semaphores --id "$(cat $TS_OUTDIR/id-sem)" | grep "^nsems" >>$TS_OUTPUT
+$TS_CMD_IPCRM --semaphore-key "$(
+	$TS_CMD_IPCS --semaphores |
+	awk -v id="$(cat $TS_OUTDIR/id-sem)" '{if ($2 == id){print $1}}' |
 	uniq
 )" >> $TS_OUTPUT 2>> $TS_ERRLOG
 

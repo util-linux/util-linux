@@ -26,8 +26,8 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 . "$TS_SELF"/functions.sh
 
 rm -f $TS_OUTDIR/id-msg
-$TS_CMD_IPCMK -Q 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-msg
-$TS_CMD_IPCS -q -i "$(cat $TS_OUTDIR/id-msg)" |\
+$TS_CMD_IPCMK --queue 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-msg
+$TS_CMD_IPCS --queues --id "$(cat $TS_OUTDIR/id-msg)" |\
 	grep -c "^Message Queue msqid=$(cat $TS_OUTDIR/id-msg)$" >>$TS_OUTPUT
 $TS_CMD_IPCRM -q "$(cat $TS_OUTDIR/id-msg)" >> $TS_OUTPUT 2>> $TS_ERRLOG
 

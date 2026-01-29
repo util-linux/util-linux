@@ -24,6 +24,6 @@ ts_check_test_command "$TS_CMD_UL"
 TS_KNOWN_FAIL="yes"
 
 printf "a\x08ab\x5F\x08c\\n\\ttab\\f\\b\\r" |
-	$TS_CMD_UL -t xterm >> $TS_OUTPUT 2>> $TS_ERRLOG
+	$TS_CMD_UL --terminal xterm >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

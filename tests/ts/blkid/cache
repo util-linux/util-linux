@@ -30,8 +30,8 @@ ts_check_losetup
 
 ts_device_init
 
-"$TS_CMD_MKSWAP" --quiet --pagesize 4096 --endianness little --uuid \
-        11111111-1111-1111-1111-111111111111 \
+"$TS_CMD_MKSWAP" --quiet --pagesize 4096 --endianness little \
+	--uuid 11111111-1111-1111-1111-111111111111 \
 	"$TS_LODEV" \
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 

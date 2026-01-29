@@ -52,7 +52,7 @@ size=$(( $(cat /sys/block/${DEVNAME}/${DEVNAME}2/size) * 512))
 
 $TS_CMD_PARTX --delete ${TS_DEVICE} &> /dev/null
 
-$TS_CMD_BLKID -p -o udev --offset=${offset} --size=${size} $TS_DEVICE \
+$TS_CMD_BLKID --probe --output udev --offset=${offset} --size=${size} $TS_DEVICE \
 		>> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_finalize

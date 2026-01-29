@@ -43,7 +43,7 @@ for PROTOCOL in $(printf "%d" 0x10) 10000; do
 					  interface=${INTERFACE} socktype=${SOCKTYPE} protocol=${PROTOCOL}; }
 	if read -u ${MKFDS[0]} PID; then
 	    EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
-	    ${TS_CMD_LSFD} -p "$PID" -n -o SOCK.PROTONAME -Q "${EXPR}"
+	    ${TS_CMD_LSFD} --pid "$PID" --noheadings --output SOCK.PROTONAME --filter "${EXPR}"
 	    echo 'SOCK.PROTONAME': $?
 
 	    EXPR="(FD == $FD)"

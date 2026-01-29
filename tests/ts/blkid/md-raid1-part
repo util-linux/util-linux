@@ -75,13 +75,13 @@ mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
 udevadm settle
 
 ts_log "Probe whole-disk"
-$TS_CMD_BLKID -p -o udev ${TS_DEVICE} 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
+$TS_CMD_BLKID --probe --output udev ${TS_DEVICE} 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
 
 ts_log "Probe first RAID member"
-$TS_CMD_BLKID -p -o udev ${TS_DEVICE}1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
+$TS_CMD_BLKID --probe --output udev ${TS_DEVICE}1 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
 
 ts_log "Probe second RAID member"
-$TS_CMD_BLKID -p -o udev ${TS_DEVICE}2 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
+$TS_CMD_BLKID --probe --output udev ${TS_DEVICE}2 2>> $TS_ERRLOG | sort >> $TS_OUTPUT
 
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
