@@ -24,7 +24,7 @@
 # message and the script will exit with a non-zero exit code at
 # the end. The exit code reflects the amount of failed checks.
 
-top_srcdir="${1:-.}"
+top_srcdir="$(realpath -qLs "${1:-.}")"
 if [ -d "${top_srcdir}" ]; then
         shift 1
 else

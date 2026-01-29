@@ -11,7 +11,7 @@ if [ "$#" -lt 1 ]; then
 	exit 1
 fi
 
-top_srcdir=${1:-.}
+top_srcdir="$(realpath -qLs "${1:-.}")"
 if [ -d "${top_srcdir}" ]; then
 	shift 1
 else
@@ -154,7 +154,7 @@ function check_usage_long_options_completeness {
 
 	prog_long_opts="$( TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" \
 			| sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
-	
+
 	if [[ "$?" != "0" || -z "$prog_long_opts" ]]; then
 		echo "Failed to get long options for $prog"
 		return 1
