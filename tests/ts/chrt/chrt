@@ -25,7 +25,7 @@ ts_skip_docker
 ts_skip_qemu_user
 
 function do_chrt {
-	$TS_CMD_CHRT $* $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' >> $TS_OUTPUT 2>> $TS_ERRLOG
+	$TS_CMD_CHRT "$@" $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' >> $TS_OUTPUT 2>> $TS_ERRLOG
 }
 
 function skip_policy {
