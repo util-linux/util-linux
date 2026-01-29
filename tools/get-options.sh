@@ -20,7 +20,7 @@
 TOP_SRCDIR=${TOP_SRCDIR:-../}
 
 # Directories that contain relevant source files for util-linux programs.
-src_file_paths="$(grep -rE --include="*.c" --exclude="*test_*"          \
+src_file_paths="$(cd "${TOP_SRCDIR}" && grep -rE --include="*.c" --exclude="*test_*"          \
                         --exclude-dir="lib*"                            \
                         --exclude-dir="po*"                             \
                         --exclude-dir="tests"                           \
