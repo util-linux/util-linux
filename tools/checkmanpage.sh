@@ -17,9 +17,9 @@
 # This script verifies if each program has a corresponding manpage
 # and checks if said manpages have a description for each program's
 # long options. The list of program long options is based on the
-# respective program's source code. 
+# respective program's source code.
 
-top_srcdir="${1:-.}"
+top_srcdir="$(realpath -qLs "${1:-.}")"
 if [ -d "${top_srcdir}" ]; then
         shift 1
 else

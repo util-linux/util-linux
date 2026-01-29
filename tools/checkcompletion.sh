@@ -45,13 +45,13 @@ exclude_programs="nologin|agetty|login|sulogin|switch_root|vipw|line|kill"
 # These are handled via install-data-hook-bashcomp-* rules
 # - runuser: symlinked to su completion
 # - lastb: symlinked to last completion
-special_handling="runuser|lastb" 
+special_handling="runuser|lastb"
 
 # Certain completions have an unusual algorithm that is distinct from the pattern used
 # in the majority of completion files, we skip these for now.
 unusual_completions="pipesz"
 
-top_srcdir=${1:-.}
+top_srcdir="$(realpath -qLs "${1:-.}")"
 [ -d "${top_srcdir}" ] || die "directory '${top_srcdir}' not found"
 
 cd "${top_srcdir}" || die "cannot cd to ${top_srcdir}"

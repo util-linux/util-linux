@@ -24,7 +24,7 @@
 # will be added to each respective tool's row and the script will
 # exit with a non-zero status code.
 
-top_srcdir="${1:-.}"
+top_srcdir="$(realpath -qLs "${1:-.}")"
 if [ -d "${top_srcdir}" ]; then
         shift 1
 else
