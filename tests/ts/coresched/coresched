@@ -31,7 +31,7 @@ fi
 # The behavior of coresched does not depend on the exact values of these cookies, so using
 # placeholder values does not change the behavior tests.
 ts_init_subtest "set-cookie-parent-pid"
-CORESCHED_OUTPUT=$( ($TS_CMD_CORESCHED -v new -d $$ \
+CORESCHED_OUTPUT=$( ($TS_CMD_CORESCHED --verbose new --dest $$ \
   | tee -a "$TS_OUTPUT") 3>&1 1>&2 2>&3 \
   | sed "s/$$/PARENT_PID/g")
 CORESCHED_PARENT_COOKIE=$(echo "$CORESCHED_OUTPUT" | sed 's/^.*\(0x.*$\)/\1/g')
@@ -44,7 +44,7 @@ echo "$CORESCHED_OUTPUT" >> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "get-cookie-parent-pid"
-$TS_CMD_CORESCHED get -s $$ 2>> "$TS_ERRLOG" \
+$TS_CMD_CORESCHED get --source $$ 2>> "$TS_ERRLOG" \
   | sed -e "s/$$/PARENT_PID/g" \
         -e "s/$CORESCHED_PARENT_COOKIE/PARENT_COOKIE/g" >> "$TS_OUTPUT"
 ts_finalize_subtest
