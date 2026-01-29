@@ -3962,6 +3962,13 @@ exe = executable(
   build_by_default: program_tests)
 exes += exe
 
+exe = executable(
+  'test_open_twice',
+  'tests/helpers/test_open_twice.c',
+  include_directories : includes,
+  build_by_default: program_tests)
+exes += exe
+
 ############################################################
 
 if conf.get('HAVE_OPENAT').to_string() == '1'
