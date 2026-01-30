@@ -388,7 +388,7 @@ Use the specified user namespace for user and group mapping in an id-mapped moun
 Mount without writing in _/etc/mtab_. This is necessary for example when _/etc_ is on a read-only filesystem.
 
 *-N*, *--namespace* _ns_::
-Perform the mount operation in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace.
+Perform the mount operation in the mount namespace specified by _ns_. _ns_ is either the PID of the process running in that namespace or a special file representing that namespace.
 +
 *mount* switches to the mount namespace when it reads _/etc/fstab_, writes _/etc/mtab: (or writes to _/run/mount_) and calls *mount*(2), otherwise it runs in the original mount namespace. This means that the target namespace does not have to contain any libraries or other requirements necessary to execute the *mount*(2) call.
 +
