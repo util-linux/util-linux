@@ -23,15 +23,15 @@ getino - print the unique inode number associated to a process file descriptor o
 
 *getino* is a simple command that prints the inode numbers associated with the process file descriptor (pidfd) or namespace for all PIDs passed to it as arguments.
 
-The kernel guarantees that the inode number associated with a process's file descriptor is exempt from reuse for the current boot cycle; therefore, a process can be uniquely identified by its PID and the inode number, conveniently so in the format '_PID:inode_'.
-As an example, this enables race-free process signalling with the *kill(1)* command, which accepts addressing processes with the aforementioned format.
+The kernel guarantees that the inode number associated with a process's file descriptor is exempt from reuse during the current boot cycle; therefore, a process can be uniquely identified by its PID and the inode number, conveniently so with the format '_PID:inode_'.
+As an example, this enables race-free signalling of processes with *kill(1)*, which accepts the aforementioned _PID_ format.
 
 Inode numbers associated with a namespace for a given process are essentially namespace IDs, identical to the inode number reported by /proc/pid/ns/_nstype_, see *namespaces(7)* for more details.
 
 == OPTIONS
 
 *-p*, *--print-pid*::
-Print both the PID and pidfd/namespace inode separated by a colon _:_, in respective order.
+Print both the PID and pidfd/namespace inode separated by a colon ':', in respective order.
 This format convention can be used to address processes in a race-free manner, e.g. for signalling with the *kill(1)* command.
 
 *--pidfs*::
@@ -74,7 +74,7 @@ unspecified failure
 
 == NOTES
 
-*getino* requires support for the pidfs pseudo-filesystem, introduced in the Linux kernel version 6.9, to retrieve a valid inode for process file descriptor.
+*getino* requires support for the pidfs pseudo-filesystem (introduced in Linux version 6.9), to retrieve a valid inode for a process file descriptor.
 
 == AUTHORS
 
