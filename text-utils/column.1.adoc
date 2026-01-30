@@ -124,6 +124,8 @@ Supported attributes are:
 Column name.
 *trunc*;;
 Truncate column text when necessary. The same as *--table-truncate*.
+*tree*;;
+Use this column for tree-like output. See *--tree* for more details.
 *right*;;
 Right align text. The same as *--table-right*.
 **width=**_number_;;
@@ -131,14 +133,19 @@ Column width. It's used only as a hint. To enforce it, specify the *strictwidth*
 as well.
 *strictwidth*;;
 Strictly follow the *width=* setting.
-*noextreme*;;
+*noextremes*;;
 Ignore unusually long content width. See *--table-noextreme* for more details.
-*wrap*;;
-Allow using a multi-line cell for long text if necessary. See *--table-wrap* for more details.
 *hidden*;;
 Don't print the column. See *--table-hide* for more details.
+*wrap*;;
+Allow using a multi-line cell for long text if necessary. See *--table-wrap* for more details.
+*wrapnl*;;
+Wrap at newline characters; newlines in cell data are treated as line breaks.
+*wrapzero*;;
+Wrap at zero (NUL) characters in cell data.
 **json=**_type_;;
-Define the column type for JSON output. Supported types are *string*, *number* and *boolean*.
+Define the column type for JSON output. Supported types are *string*, *number*, *float*,
+*array-string*, *array-number* and *boolean*.
 **color=**_name_;;
 Define the column color for output on the terminal. The _name_ is a color name 
 (black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, 
