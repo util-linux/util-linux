@@ -135,7 +135,7 @@ Strictly follow the *width=* setting.
 Ignore unusually long content width. See *--table-noextreme* for more details.
 *wrap*;;
 Allow using a multi-line cell for long text if necessary. See *--table-wrap* for more details.
-*hide*;;
+*hidden*;;
 Don't print the column. See *--table-hide* for more details.
 **json=**_type_;;
 Define the column type for JSON output. Supported types are *string*, *number* and *boolean*.
