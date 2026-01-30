@@ -103,6 +103,7 @@ struct column_control {
 	bool	greedy,
 		json,
 		header_repeat,
+		header_as_columns,	/* --table-header-as-columns */
 		hide_unnamed,
 		maxout : 1,
 		keep_empty_lines,	/* --keep-empty-lines */
@@ -728,6 +729,32 @@ static void modify_table(struct column_control *ctl)
 		reorder_table(ctl);
 }
 
+/* Parse first line as column names for --table-header-as-columns (-K). */
+static void parse_header_line(struct column_control *ctl, wchar_t *wcs0)
+{
+	wchar_t *sv = NULL, *wcs = wcs0;
+	char **names = NULL;
+
+	do {
+		wchar_t *wcdata = local_wcstok(ctl, wcs, &sv);
+		char *data;
+
+		if (!wcdata)
+			break;
+
+		data = wcs_to_mbs(wcdata);
+		if (!data)
+			err(EXIT_FAILURE, _("failed to allocate column name"));
+
+		if (ul_strv_extend(&names, data))
+			err_oom();
+		free(data);
+		wcs = NULL;
+	} while (1);
+
+	ctl->tab_colnames = names;
+	ctl->header_as_columns = 0;
+}
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 {
@@ -735,6 +762,10 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs0)
 	size_t n = 0;
 	struct libscols_line *ln = NULL;
 
+	if (ctl->header_as_columns) {
+		parse_header_line(ctl, wcs0);
+		return 0;	/* first line was used as column names */
+	}
 
 	if (!ctl->tab)
 		init_table(ctl);
@@ -1004,6 +1035,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
 	fputs(_(" -m, --table-maxout               fill all available space\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
+	fputs(_(" -K, --table-header-as-columns    use the first row as table header\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
@@ -1082,6 +1114,7 @@ int main(int argc, char **argv)
 		{ "table-wrap",          required_argument, NULL, 'W' },
 		{ "table-empty-lines",   no_argument,       NULL, 'L' }, /* deprecated */
 		{ "table-header-repeat", no_argument,       NULL, 'e' },
+		{ "table-header-as-columns", no_argument,  NULL, 'K' },
 		{ "tree",                required_argument, NULL, 'r' },
 		{ "tree-id",             required_argument, NULL, 'i' },
 		{ "tree-parent",         required_argument, NULL, 'p' },
@@ -1091,7 +1124,7 @@ int main(int argc, char **argv)
 		{ NULL,	0, NULL, 0 },
 	};
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
-		{ 'C','N' },
+		{ 'C','K','N' },
 		{ 'J','x' },
 		{ 't','x' },
 		{ 0 }
@@ -1106,7 +1139,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:Jl:LN:n:mO:o:p:R:r:S:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:c:dE:eH:hi:JKl:LN:n:mO:o:p:R:r:S:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1139,6 +1172,10 @@ int main(int argc, char **argv)
 			break;
 		case 'J':
 			ctl.json = 1;
+			ctl.mode = COLUMN_MODE_TABLE;
+			break;
+		case 'K':
+			ctl.header_as_columns = 1;
 			ctl.mode = COLUMN_MODE_TABLE;
 			break;
 		case 'L':
@@ -1235,7 +1272,7 @@ int main(int argc, char **argv)
 		ctl.tab_colright || ctl.tab_colnames || ctl.tab_columns))
 		errx(EXIT_FAILURE, _("option --table required for all --table-*"));
 
-	if (!ctl.tab_colnames && !ctl.tab_columns && ctl.json)
+	if (!ctl.tab_colnames && !ctl.tab_columns && !ctl.header_as_columns && ctl.json)
 		errx(EXIT_FAILURE, _("option --table-columns or --table-column required for --json"));
 
 	if (ctl.mode == COLUMN_MODE_TABLE)

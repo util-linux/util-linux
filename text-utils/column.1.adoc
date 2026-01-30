@@ -182,6 +182,9 @@ This option is active by default for the last visible column.
 *-e, --table-header-repeat*::
 Print header line for each page.
 
+*-K, --table-header-as-columns*::
+Use the first input line as table header. This option is mutually exclusive with *--table-columns* and *--table-column*.
+
 *-W, --table-wrap* _columns_::
 Specify the columns where multi-line cells can be used for long text. By default, text is wrapped according to column width. Use *--wrap-separator* to wrap at custom separator characters instead.
 
