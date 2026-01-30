@@ -71,6 +71,7 @@ static const char *assocstr[N_ASSOCS] = {
 	/* "root" appears as user names, too.
 	 * So we use "rtd" here instead of "root". */
 	[ASSOC_ROOT]      = "rtd",
+	[ASSOC_PIDFS]     = "pidfs",
 	[ASSOC_NS_CGROUP] = "cgroup",
 	[ASSOC_NS_IPC]    = "ipc",
 	[ASSOC_NS_MNT]    = "mnt",
