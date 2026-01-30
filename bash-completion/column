@@ -42,6 +42,7 @@ _column_module()
 				--table-noextreme
 				--table-noheadings
 				--table-maxout
+				--table-header-as-columns
 				--table-header-repeat
 				--table-hide
 				--table-right
