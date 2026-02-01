@@ -1701,6 +1701,31 @@ static void *make_tcp(const struct factory *factory, struct fdesc fdescs[],
 			       (struct sockaddr *)&sin, (struct sockaddr *)&cin);
 }
 
+static void *make_tcp_bare(const struct factory *factory _U_, struct fdesc fdescs[],
+			   int argc _U_, char ** argv _U_)
+{
+	int sd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a tcp socket for listening");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
 static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[],
 			     int argc, char ** argv,
 			     int family,
@@ -3802,6 +3827,17 @@ static const struct factory factories[] = {
 				.desc = "TCP port the client may bind",
 				.defv.integer = 23456,
 			},
+			PARAM_END
+		}
+	},
+	{
+		.name = "tcp-bare",
+		.desc = "AF_INET+SOCK_STREAM sockets (no bind/connect)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_tcp_bare,
+		.params = (struct parameter []) {
 			PARAM_END
 		}
 	},
