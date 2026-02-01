@@ -189,6 +189,7 @@ struct proc {
 	struct list_head files;
 	unsigned int kthread: 1;
 	struct list_head eventpolls;
+	int pidfd;
 };
 
 struct proc *get_proc(pid_t pid);

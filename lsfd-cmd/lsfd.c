@@ -843,6 +843,9 @@ static struct proc *new_proc(pid_t pid, struct proc *leader)
 	INIT_LIST_HEAD(&proc->eventpolls);
 
 	proc->kthread = 0;
+
+	proc->pidfd = -1;
+
 	return proc;
 }
 
@@ -1106,24 +1109,27 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 			       sockets_only);
 }
 
-static void collect_pidfs_file(struct proc *proc, bool sockets_only)
+static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 {
 	struct file *f = NULL;
 	int pidfd;
 
 	if (sockets_only)
-		return;
+		return -1;
 
 	pidfd = pidfd_open(proc->pid, 0);
 	if (pidfd < 0)
-		return;
+		return -1;
 
 	{
 		struct stat sb;
 		const int assoc = ASSOC_PIDFS * -1;
 
-		if (fstat(pidfd, &sb) < 0)
-			goto out;
+		if (fstat(pidfd, &sb) < 0) {
+			/* Even fstat fails here, the pidfd is still
+			 * usable in the caller side. */
+			return pidfd;
+		}
 
 		if ((sb.st_mode & S_IFMT) == S_IFREG) {
 			char *name = NULL;
@@ -1151,8 +1157,7 @@ static void collect_pidfs_file(struct proc *proc, bool sockets_only)
 		free(fdinfo);
 	}
 
- out:
-	close(pidfd);
+	return pidfd;
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
@@ -2079,6 +2084,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	}
 	if (proc->kthread && !ctl->threads) {
 		free_proc(proc);
+		proc = NULL;
 		goto out;
 	}
 
@@ -2088,7 +2094,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc, ctl->sockets_only);
 
-	collect_pidfs_file(proc, ctl->sockets_only);
+	proc->pidfd = collect_pidfs_file(proc, ctl->sockets_only);
 
 	/* Reading /proc/$pid/mountinfo is expensive.
 	 * mnt_namespaces is a table for avoiding reading mountinfo files
@@ -2165,6 +2171,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		walk_threads(ctl, pc, pid, proc, parse_proc_syscall);
 
  out:
+	if (proc && proc->pidfd >= 0) {
+		close(proc->pidfd);
+		proc->pidfd = -1;
+	}
+
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(pc);
 }
