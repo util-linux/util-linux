@@ -86,6 +86,18 @@ struct chfn_control {
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
 
+/* Global options - reused in both early check and main parsing */
+static const char *short_options = "f:r:p:h:o:uvV";
+static const struct option long_options[] = {
+	{ "full-name",    required_argument, NULL, 'f' },
+	{ "office",       required_argument, NULL, 'o' },
+	{ "office-phone", required_argument, NULL, 'p' },
+	{ "home-phone",   required_argument, NULL, 'h' },
+	{ "help",         no_argument,       NULL, 'u' },
+	{ "version",      no_argument,       NULL, 'V' },
+	{ NULL, 0, NULL, 0 },
+};
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *fp = stdout;
@@ -128,24 +140,40 @@ static int check_gecos_string(const char *msg, char *gecos)
 }
 
 /*
- *  parse_argv () --
- *	parse the command line arguments.
- *	returns true if no information beyond the username was given.
+ *  parse_argv_basic () --
+ *	early parse for --help and --version without login.defs restrictions
  */
-static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
+static void parse_argv_basic(int argc, char **argv)
+{
+	int c, index;
+
+	opterr = 0;  /* suppress getopt error messages */
+	while ((c = getopt_long(argc, argv, short_options, long_options,
+				&index)) != -1) {
+		switch (c) {
+		case 'v': /* deprecated */
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'u':
+			usage();
+		default:
+			break;  /* ignore other options in early pass */
+		}
+	}
+	/* Reset getopt state for the main parse */
+	optind = 1;
+	opterr = 1;
+}
+
+/*
+ *  parse_argv_restricted () --
+ *	parse the command line arguments with login.defs restrictions applied
+ */
+static void parse_argv_restricted(struct chfn_control *ctl, int argc, char **argv)
 {
 	int index, c, status = 0;
-	static const struct option long_options[] = {
-		{ "full-name",    required_argument, NULL, 'f' },
-		{ "office",       required_argument, NULL, 'o' },
-		{ "office-phone", required_argument, NULL, 'p' },
-		{ "home-phone",   required_argument, NULL, 'h' },
-		{ "help",         no_argument,       NULL, 'u' },
-		{ "version",      no_argument,       NULL, 'V' },
-		{ NULL, 0, NULL, 0 },
-	};
 
-	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uvV", long_options,
+	while ((c = getopt_long(argc, argv, short_options, long_options,
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
@@ -172,11 +200,6 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 			ctl->newf.home_phone = optarg;
 			status += check_gecos_string(_("Home Phone"), optarg);
 			break;
-		case 'v': /* deprecated */
-		case 'V':
-			print_version(EXIT_SUCCESS);
-		case 'u':
-			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -411,10 +434,14 @@ int main(int argc, char **argv)
 
 	uid = getuid();
 
+	/* early check for --help and --version before restrictions */
+	parse_argv_basic(argc, argv);
+
 	/* check /etc/login.defs CHFN_RESTRICT */
 	get_login_defs(&ctl);
 
-	parse_argv(&ctl, argc, argv);
+	/* parse command line with restrictions applied */
+	parse_argv_restricted(&ctl, argc, argv);
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
 		if (!ctl.pw)
