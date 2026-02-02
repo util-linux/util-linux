@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="pidfd-ino"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+# The pidfs was only introduced in kernel version 6.9,
+# which means we cannot get a valid pidfd from earlier versions,
+# so we can confidently anticipate the test failure.
+if ts_kernel_ver_lt 6 9; then
+	TS_KNOWN_FAIL="yes"
+fi
+
+ts_check_test_command "$TS_CMD_WAITPID"
+ts_check_test_command "$TS_CMD_GETINO"
+
+ts_init_subtest one-pid-arg
+
+(sleep 0.5; echo 1 >> "$TS_OUTPUT") &
+PID="$( $TS_CMD_GETINO -p $! 2>/dev/null )"
+
+"$TS_CMD_WAITPID" "$PID" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo $? >> "$TS_ERRLOG"
+
+ts_finalize_subtest
+
+ts_init_subtest mixed-pid-formats
+
+(sleep 0.6; echo 1 >> "$TS_OUTPUT") &
+PID1="$( $TS_CMD_GETINO -p $! 2>/dev/null )"
+
+(sleep 0.2; echo 2 >> "$TS_OUTPUT") &
+PID2="$!"
+
+"$TS_CMD_WAITPID" "$PID1" "$PID2" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo $? >> "$TS_ERRLOG"
+
+ts_finalize_subtest
+
+ts_init_subtest count
+(sleep 0.2; echo 1 >> "$TS_OUTPUT") &
+BG1="$( $TS_CMD_GETINO -p $! 2>/dev/null )"
+
+"$TS_CMD_WAITPID" -c 1 1 "$BG1" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo $? >> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_finalize
