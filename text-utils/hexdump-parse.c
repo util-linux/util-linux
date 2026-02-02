@@ -358,14 +358,15 @@ isint:				cs[3] = '\0';
 						FALLTHROUGH;
 					case 'a':
 						pr->flags = F_ADDRESS;
-						++p2;
-						if (first_letter(p1 + 2, "dox")) {
+						if (p1[2] && first_letter(p1 + 2, "dox")) {
+							++p2;
 							cs[0] = 'l';
 							cs[1] = 'l';
 							cs[2] = p1[2];
 							cs[3] = '\0';
 						} else {
-							p1[3] = '\0';
+							if (p1[2])
+								p1[3] = '\0';
 							badconv(p1);
 						}
 						break;
