@@ -34,8 +34,8 @@
  */
 struct sock_xinfo {
 	ino_t inode;		/* inode in sockfs */
-	ino_t netns_inode;	/* inode of netns where
-				   the socket belongs to */
+	ino_t netns_inode;	/* inode of the network namespace where
+				 * the socket was created */
 	const struct sock_xinfo_class *class;
 };
 
