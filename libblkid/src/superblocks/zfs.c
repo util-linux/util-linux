@@ -81,6 +81,17 @@ struct nvlist {
 };
 
 /*
+ * Helper function to safely read uint32_t from potentially unaligned memory.
+ * This is needed for architectures with strict alignment requirements (e.g., SPARC).
+ */
+static inline uint32_t copy_be32_to_cpu(const void *ptr)
+{
+	uint32_t val;
+	memcpy(&val, ptr, sizeof(val));
+	return be32_to_cpu(val);
+}
+
+/*
  * Return the offset of the given label.
  */
 static uint64_t
@@ -94,13 +105,13 @@ label_offset(uint64_t size, int l)
 static bool zfs_process_value(blkid_probe pr, const char *name, size_t namelen,
     const void *value, size_t max_value_size, unsigned directory_level, int *found)
 {
-	uint32_t type = be32_to_cpu(*(uint32_t *)value);
+	uint32_t type = copy_be32_to_cpu(value);
 	if (strncmp(name, "name", namelen) == 0 &&
 	    type == DATA_TYPE_STRING && !directory_level) {
 		const struct nvstring *nvs = value;
 		if (max_value_size < sizeof(struct nvstring))
 			return (false);
-		uint32_t nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
+		uint32_t nvs_strlen = copy_be32_to_cpu(&nvs->nvs_strlen);
 		if ((uint64_t)nvs_strlen + sizeof(*nvs) > max_value_size)
 			return (false);
 
@@ -190,8 +201,8 @@ static bool zfs_extract_guid_name(blkid_probe pr, void *buf, size_t size, bool f
 	size -= (const unsigned char *)nvp - (const unsigned char *)buf;
 
 	while (size > sizeof(*nvp)) {
-		uint32_t nvp_size = be32_to_cpu(nvp->nvp_size);
-		uint32_t nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
+		uint32_t nvp_size = copy_be32_to_cpu(&nvp->nvp_size);
+		uint32_t nvp_namelen = copy_be32_to_cpu(&nvp->nvp_namelen);
 		uint64_t namesize = ((uint64_t)nvp_namelen + 3) & ~3;
 		size_t max_value_size;
 		const void *value;
@@ -222,7 +233,7 @@ static bool zfs_extract_guid_name(blkid_probe pr, void *buf, size_t size, bool f
 
 		max_value_size = nvp_size - (namesize + sizeof(*nvp));
 		value = nvp->nvp_name + namesize;
-		type = be32_to_cpu(*(uint32_t *)value);
+		type = copy_be32_to_cpu(value);
 
 		if (type == DATA_TYPE_UNKNOWN)
 			return (false);
@@ -320,7 +331,7 @@ static int probe_zfs(blkid_probe pr,
 		 * endianness can be 0 or 1, reject garbage value. Moreover, check if first
 		 * nvpair encode size is non-zero.
 		 */
-		if (!label || label->nvh_encoding != 0x1 || !be32_to_cpu(label->nvh_first_size) ||
+		if (!label || label->nvh_encoding != 0x1 || !copy_be32_to_cpu(&label->nvh_first_size) ||
 		    (unsigned char) label->nvh_endian > 0x1)
 			continue;
 
