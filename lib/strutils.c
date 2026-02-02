@@ -139,9 +139,9 @@ check_suffix:
 			} else
 				end = (char *) p;
 
-			if (frac && (!end  || !*end)) {
+			if (!end || !*end) {
 				rc = -EINVAL;
-				goto err;		/* without suffix, but with frac */
+				goto err;	/* without suffix, but with fractions */
 			}
 			p = end;
 			goto check_suffix;
