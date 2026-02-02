@@ -48,14 +48,14 @@ ts_finalize_subtest
 
 ## mount the device 
 ts_init_subtest "rw-mount"
-$TS_CMD_MOUNT -orw $DEVICE $A_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --options rw $DEVICE $A_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_is_mounted $DEVICE || ts_log "Cannot find $DEVICE in /proc/mounts"
 ts_finalize_subtest
 
 
 ## move device and set it read-only for VFS (FS is still rw)
 ts_init_subtest "ro-move"
-$TS_CMD_MOUNT --move -o ro $A_MOUNTPOINT $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --move --options ro $A_MOUNTPOINT $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 findmnt -nr -o VFS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'ro' \
 	|| ts_log "Cannot find ro VFS"
 findmnt -nr -o FS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'rw' \
@@ -65,7 +65,7 @@ ts_finalize_subtest
 
 ## remount to set FS to read-only (VFS is still ro)
 ts_init_subtest "ro-remount"
-$TS_CMD_MOUNT -oremount,ro,noexec $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --options remount,ro,noexec $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 findmnt -nr -o VFS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'ro' \
 	|| ts_log "Cannot find ro VFS"
 findmnt -nr -o FS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'ro' \
@@ -75,7 +75,7 @@ ts_finalize_subtest
 
 ## remount to set FS and VFS to read-write
 ts_init_subtest "rw-remount"
-$TS_CMD_MOUNT -oremount,rw $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --options remount,rw $B_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 findmnt -nr -o VFS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'rw' \
 	|| ts_log "Cannot find rw VFS"
 findmnt -nr -o FS-OPTIONS --mountpoint $B_MOUNTPOINT | grep -q 'rw' \
@@ -86,7 +86,7 @@ ts_finalize_subtest
 ## bind as read-only (VFS), set shared propagation,
 ## and remove noexec (but keep FS rw)
 ts_init_subtest "ro-shared-bind"
-$TS_CMD_MOUNT --make-shared --bind -oro,exec $B_MOUNTPOINT $A_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_MOUNT --make-shared --bind --options ro,exec $B_MOUNTPOINT $A_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 findmnt -nr -o VFS-OPTIONS --mountpoint $A_MOUNTPOINT | grep -q 'ro' \
 	|| ts_log "Cannot find ro VFS"
 findmnt -nr -o FS-OPTIONS --mountpoint $A_MOUNTPOINT | grep -q 'rw' \

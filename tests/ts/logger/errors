@@ -41,7 +41,7 @@ SOCAT_PID="$!"
 function logger_fun {
 	# logger without --no-act to write all data to the socket
 	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
-	$TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
+	$TS_HELPER_LOGGER --socket $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "ret: $?" >> "$TS_OUTPUT"
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
@@ -51,57 +51,57 @@ function logger_printf {
 	local fmt="$1"
 	shift
 	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
-	printf "$fmt" | $TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
+	printf "$fmt" | $TS_HELPER_LOGGER --socket $DEVLOG --stderr "$@" >> $TS_OUTPUT 2>> $TS_ERRLOG
 	echo "ret: $?" >> "$TS_OUTPUT"
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
 
 ts_init_subtest "kern_priority"
-logger_fun -t "prio" -p kern.emerg "message"
+logger_fun --tag "prio" --priority kern.emerg "message"
 ts_finalize_subtest
 
 ts_init_subtest "kern_priority_numeric"
-logger_fun -t "prio" -p 0 "message"
+logger_fun --tag "prio" --priority 0 "message"
 ts_finalize_subtest
 
 ts_init_subtest "invalid_prio"
-logger_fun -t "prio" -p 8 "message"
+logger_fun --tag "prio" --priority 8 "message"
 ts_finalize_subtest
 
 # should truncate
 ts_init_subtest "rfc5424_exceed_size"
-logger_fun -t "rfc5424_exceed_size" --rfc5424 --size 3 "abcd"
+logger_fun --tag "rfc5424_exceed_size" --rfc5424 --size 3 "abcd"
 ts_finalize_subtest
 
 ts_init_subtest "id_with_space"
-logger_fun -t "id_with_space" --id="A B" "message"
-logger_fun -t "rfc5424_id_with_space" --rfc5424 --id="A B" "message"
-logger_fun -t "id_with_space" --id="1 23" "message"
-logger_fun -t "id_with_leading space" --id=" 123" "message"
-logger_fun -t "id_with_trailing space" --id="123 " "message"
+logger_fun --tag "id_with_space" --id="A B" "message"
+logger_fun --tag "rfc5424_id_with_space" --rfc5424 --id="A B" "message"
+logger_fun --tag "id_with_space" --id="1 23" "message"
+logger_fun --tag "id_with_leading space" --id=" 123" "message"
+logger_fun --tag "id_with_trailing space" --id="123 " "message"
 
 ts_finalize_subtest
 
 # should not fail
 ts_init_subtest "tag_with_space"
-logger_fun -t "A B" "tag_with_space"
-logger_fun -t "A B" --rfc5424 "tag_with_space_rfc5424"
+logger_fun --tag "A B" "tag_with_space"
+logger_fun --tag "A B" --rfc5424 "tag_with_space_rfc5424"
 ts_finalize_subtest
 
 ts_init_subtest "tcp"
-logger_fun --tcp -t "tcp" "message"
+logger_fun --tcp --tag "tcp" "message"
 ts_finalize_subtest
 
 ts_init_subtest "multi-line"
-logger_printf "AAA\nBBB\nCCC\n" -t "multi"
+logger_printf "AAA\nBBB\nCCC\n" --tag "multi"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_msgid_with_space"
-logger_fun -t "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message"
+logger_fun --tag "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message"
 ts_finalize_subtest
 
 ts_init_subtest "invalid_socket"
-logger_fun -u /bad/boy -t "invalid_socket" "message"
+logger_fun --socket /bad/boy --tag "invalid_socket" "message"
 ts_finalize_subtest
 
 ts_init_subtest "check_socket"

@@ -27,14 +27,14 @@ ts_cd "$TS_OUTDIR"
 echo "== files ==" >> $TS_OUTPUT
 mkdir rename_a{a,b}
 touch rename_a{a,b}/aa
-$TS_CMD_RENAME -v a x rename_a?/aa >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose a x rename_a?/aa >> $TS_OUTPUT 2>> $TS_ERRLOG
 find rename_a{a,b} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 echo "== symlinks ==" >> $TS_OUTPUT
 for i in rename_a{a,b}/sublink.{1..3}; do
 	ln -s rename/aa $i
 done
-$TS_CMD_RENAME -s -v a x rename_a{a,b}/sublink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --symlink --verbose a x rename_a{a,b}/sublink.? >> $TS_OUTPUT 2>> $TS_ERRLOG
 for i in rename_a{a,b}/sublink.?; do
 	readlink $i >> $TS_OUTPUT 2>> $TS_ERRLOG
 done
@@ -43,7 +43,7 @@ rm -rf rename_a{a,b}
 
 echo "== fullpath ==" >> $TS_OUTPUT
 touch rename_path1
-$TS_CMD_RENAME -v ./rename_path1 ./rename_path2 ./rename_path1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose ./rename_path1 ./rename_path2 ./rename_path1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 find . -name 'rename_path*' >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f ./rename_path*
@@ -51,14 +51,14 @@ rm -f ./rename_path*
 mkdir rename_path_a
 touch rename_path_test1
 
-$TS_CMD_RENAME -v rename_path_test1 rename_path_a/test1 rename_path_test1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose rename_path_test1 rename_path_a/test1 rename_path_test1 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 find . -name '*test1*' >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_path_test1 rename_path_a/test1
 
 mkdir rename_path_b
 touch rename_path_a/test2
-$TS_CMD_RENAME -v rename_path_a/test2 rename_path_b/test2 rename_path_a/test2 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose rename_path_a/test2 rename_path_b/test2 rename_path_a/test2 >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 find rename_path_a rename_path_b >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f rename_path_a/test2 rename_path_b/test2
@@ -66,30 +66,30 @@ rm -f rename_path_a/test2 rename_path_b/test2
 rmdir rename_path_a rename_path_b
 
 ln -s some/nonexistent/path rename_link
-$TS_CMD_RENAME -s -v t/p _ rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_RENAME -s -v exist / rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
-$TS_CMD_RENAME -s -v e x rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --symlink --verbose t/p _ rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --symlink --verbose exist / rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --symlink --verbose e x rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
 readlink rename_link >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm rename_link
 
 echo "== empty 'from' ==" >> $TS_OUTPUT
 
 touch rename_test
-$TS_CMD_RENAME -v '' _ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose '' _ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f *rename_test
 
 touch rename_test
-$TS_CMD_RENAME -v '' _ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose '' _ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f *rename_test
 
 touch rename_test
 mkdir rename_subdir
-$TS_CMD_RENAME -v '' rename_subdir/ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose '' rename_subdir/ rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -rf rename_subdir
 
 touch rename_test
 mkdir rename_subdir
-$TS_CMD_RENAME -v '' rename_subdir/ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_RENAME --verbose '' rename_subdir/ ./rename_test >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -rf rename_subdir
 
 ts_finalize

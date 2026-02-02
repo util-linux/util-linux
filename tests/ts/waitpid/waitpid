@@ -39,12 +39,12 @@ echo 4 >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest timeout
-"$TS_CMD_WAITPID" -v -t 0.1 1 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_WAITPID" --verbose --timeout 0.1 1 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo $? >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest exited
-"$TS_CMD_WAITPID" -v -e 2147483647 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_WAITPID" --verbose --exited 2147483647 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo $? >> "$TS_ERRLOG"
 ts_finalize_subtest
 
@@ -52,7 +52,7 @@ ts_init_subtest count
 (sleep 0.2; echo 1 >> "$TS_OUTPUT") &
 BG1="$!"
 
-"$TS_CMD_WAITPID" -c 1 1 "$BG1" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_WAITPID" --count 1 1 "$BG1" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo $? >> "$TS_ERRLOG"
 ts_finalize_subtest
 

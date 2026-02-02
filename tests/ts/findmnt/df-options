@@ -26,7 +26,7 @@ ts_cd "$TS_OUTDIR"
 D_expectation="SOURCE FSTYPE SIZE USED AVAIL USE% TARGET"
 I_expectation="SOURCE FSTYPE INO.TOTAL INO.USED INO.AVAIL INO.USE% TARGET"
 {
-	if [[ $($TS_CMD_FINDMNT --raw -D | head -1) == "$D_expectation" ]]; then
+	if [[ $($TS_CMD_FINDMNT --raw --df | head -1) == "$D_expectation" ]]; then
 	    echo "-D: OK"
 	else
 	    echo "-D: ERROR"
@@ -34,7 +34,7 @@ I_expectation="SOURCE FSTYPE INO.TOTAL INO.USED INO.AVAIL INO.USE% TARGET"
 	    echo $?
 	fi
 
-	if [[ $($TS_CMD_FINDMNT --raw -I | head -1) == "$I_expectation" ]]; then
+	if [[ $($TS_CMD_FINDMNT --raw --dfi | head -1) == "$I_expectation" ]]; then
 	    echo "-I: OK"
 	else
 	    echo "-I: ERROR"

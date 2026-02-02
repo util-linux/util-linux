@@ -40,27 +40,27 @@ function call_cal {
 }
 
 ts_init_subtest "first-day-week-numbers"
-call_cal -w --color=always 1 1 1
+call_cal --week --color=always 1 1 1
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-1-week-numbers"
-call_cal -w --color=always 2 9 1752
+call_cal --week --color=always 2 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-2-week-numbers"
-call_cal -w --color=always 3 9 1752
+call_cal --week --color=always 3 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-3-week-numbers"
-call_cal -w --color=always 13 9 1752
+call_cal --week --color=always 13 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "reformation-corner-cases-4-week-numbers"
-call_cal -w --color=always 14 9 1752
+call_cal --week --color=always 14 9 1752
 ts_finalize_subtest
 
 ts_init_subtest "last-day-week-numbers"
-call_cal -w --color=always -3 31 12 9999
+call_cal --week --color=always -3 31 12 9999
 ts_finalize_subtest
 
 ts_finalize

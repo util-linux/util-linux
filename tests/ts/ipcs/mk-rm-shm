@@ -28,14 +28,14 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 rm -f $TS_OUTDIR/id-shm
 $TS_CMD_IPCMK -M 1 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-shm
 $TS_CMD_IPCS -m -i "$(cat $TS_OUTDIR/id-shm)" | sed -n '/^bytes/s/\t.*//p' >>$TS_OUTPUT
-$TS_CMD_IPCRM -m $(cat $TS_OUTDIR/id-shm) >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_IPCRM -m "$(cat $TS_OUTDIR/id-shm)" >> $TS_OUTPUT 2>> $TS_ERRLOG
 rm -f $TS_OUTDIR/id-shm
 
 $TS_CMD_IPCMK -M 12 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-shm
 $TS_CMD_IPCS -m -i "$(cat $TS_OUTDIR/id-shm)" | sed -n '/^bytes/s/\t.*//p' >>$TS_OUTPUT
 $TS_CMD_IPCRM -M "$(
 	$TS_CMD_IPCS -m |
-	awk -v id=$(cat $TS_OUTDIR/id-shm) '{if ($2 == id){print $1}}' |
+	awk -v id="$(cat $TS_OUTDIR/id-shm)" '{if ($2 == id){print $1}}' |
 	uniq
 )" >> $TS_OUTPUT 2>> $TS_ERRLOG
 

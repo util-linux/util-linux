@@ -55,9 +55,9 @@ do_lslocks_flock_crash()
 
     echo "#### crash when printing PID column ####"
     [[ "$pid" == $("$TS_CMD_LSLOCKS" \
-		       -r -n -p "$PID" \
-		       -Q 'PATH =~ '"'.*/$FILE'"" and TYPE == 'FLOCK'" \
-		       -o PID) ]]
+		       --raw --noheadings --pid "$PID" \
+		       --filter 'PATH =~ '"'.*/$FILE'"" and TYPE == 'FLOCK'" \
+		       --output PID) ]]
     echo "PID: $?"
 }
 

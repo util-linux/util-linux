@@ -76,7 +76,7 @@ TS_EXPECTED+="_${BSD_LABELSECTOR}_${BSD_LABELOFFSET}${BSD_EXTRA}.${BYTE_ORDER}"
 
 function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
-	$TS_CMD_FDISK -x ${TEST_IMAGE_NAME}  >> $TS_OUTPUT
+	$TS_CMD_FDISK --list-details ${TEST_IMAGE_NAME}  >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
@@ -89,38 +89,38 @@ function print_bsd_layout {
 
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_log "Create new DOS partition table"
 echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_SETID}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create 1st primary partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY1}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create 2nd primary partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY2}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 ts_log "Set 2nd partition type"
 echo -e "${FDISK_CMD_CHANGE_PART2TYPE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_layout
 
 ts_log "Create default BSD"
 echo -e "${FDISK_CMD_BSD_CREATE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_bsd_layout
 
@@ -129,7 +129,7 @@ echo -e "${FDISK_CMD_BSD_CREATE_PART}${FDISK_CMD_WRITE_CLOSE}" | \
 
 echo -e "${FDISK_CMD_BSD_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-$TS_CMD_HEXDUMP -C ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_CMD_HEXDUMP --canonical ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 print_bsd_layout
 

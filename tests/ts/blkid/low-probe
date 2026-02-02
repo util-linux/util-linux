@@ -47,8 +47,7 @@ for img in $(ls $TS_SELF/images-fs/*.img.xz | sort); do
 			| sed 's/-$//g')
 		for off in $sessions; do
 			ts_init_subtest $name-$off
-			$TS_CMD_BLKID -p -o udev $outimg \
-				--hint session_offset=$(( $off * 2048 )) \
+			$TS_CMD_BLKID --probe --output udev $outimg --hint session_offset=$(( $off * 2048 )) \
 				2> $TS_ERRLOG | sort > $TS_OUTPUT
 			ts_finalize_subtest
 		done
@@ -57,7 +56,7 @@ for img in $(ls $TS_SELF/images-fs/*.img.xz | sort); do
 	#
 	else
 		ts_init_subtest $name
-		$TS_CMD_BLKID -p -o udev $outimg 2> $TS_ERRLOG | sort > $TS_OUTPUT
+		$TS_CMD_BLKID --probe --output udev $outimg 2> $TS_ERRLOG | sort > $TS_OUTPUT
 		ts_finalize_subtest
 	fi
 done

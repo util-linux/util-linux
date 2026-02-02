@@ -33,7 +33,7 @@ fi
 SKIP_REASON=
 {
     PID=
-    coproc BASH { "$TS_CMD_SETARCH" -R bash -c 'echo $$; cat'; }
+    coproc BASH { "$TS_CMD_SETARCH" --addr-no-randomize bash -c 'echo $$; cat'; }
     if read -u ${BASH[0]} PID; then
 	personality_file="/proc/$PID/personality"
 	if personality=$(cat "$personality_file"); then

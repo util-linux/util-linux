@@ -55,7 +55,7 @@ function netnsid_subtest {
     local O
     
     ts_init_subtest "$1"
-    if O=$($TS_CMD_LSNS --raw --noheadings -Q "NETNSID == '$NETNSID'" -o $1); then
+    if O=$($TS_CMD_LSNS --raw --noheadings --filter "NETNSID == '$NETNSID'" --output $1); then
 	if "$eval_func" "$O"; then
 	    echo OK
 	else

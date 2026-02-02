@@ -32,7 +32,9 @@ ts_check_prog "userdel"
 ts_log "Initialize user"
 useradd -u 9899 --shell /bin/bash testuser_chfn_test
 grep testuser /etc/passwd >> $TS_OUTPUT
-$TS_CMD_CHFN -f test_gecos testuser_chfn_test >>$TS_OUTPUT
+$TS_CMD_CHFN --full-name test_gecos --office none --office-phone 111 \
+                                                testuser_chfn_test >>$TS_OUTPUT
+$TS_CMD_CHFN --home-phone 222 testuser_chfn_test >>$TS_OUTPUT
 grep testuser /etc/passwd >> $TS_OUTPUT
 userdel --remove testuser_chfn_test &> /dev/null
 ts_finalize
