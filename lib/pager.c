@@ -113,11 +113,11 @@ static void wait_for_pager(void)
 	} while (waiting == -1);
 }
 
-static void wait_for_pager_signal(int signo)
+static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
 {
 	UL_PROTECT_ERRNO;
 	wait_for_pager();
-	raise(signo);
+	_exit(EXIT_FAILURE);
 }
 
 static int has_command(const char *cmd)
