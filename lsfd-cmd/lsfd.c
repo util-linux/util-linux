@@ -55,6 +55,7 @@
 #include "fileutils.h"
 #include "idcache.h"
 #include "pathnames.h"
+#include "pidfd-utils.h"
 
 #include "lsfd.h"
 
@@ -1105,6 +1106,55 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 			       sockets_only);
 }
 
+static void collect_pidfs_file(struct proc *proc, bool sockets_only)
+{
+	struct file *f = NULL;
+	int pidfd;
+
+	if (sockets_only)
+		return;
+
+	pidfd = pidfd_open(proc->pid, 0);
+	if (pidfd < 0)
+		return;
+
+	{
+		struct stat sb;
+		const int assoc = ASSOC_PIDFS * -1;
+
+		if (fstat(pidfd, &sb) < 0)
+			goto out;
+
+		if ((sb.st_mode & S_IFMT) == S_IFREG) {
+			char *name = NULL;
+			xasprintf(&name, "pidfd:[%llu]", (unsigned long long)sb.st_ino);
+			f = new_file(proc, &pidfs_file_class, &sb, name, assoc);
+			free(name);
+		}
+		else
+			f = new_file(proc, &unkn_class, &sb, "anon_inode:[pidfd]", assoc);
+	}
+
+	file_init_content(f);
+
+	{
+		char *fdinfo = NULL;
+		FILE *fdinfo_fp;
+		const pid_t lsfd_pid = getpid();
+
+		xasprintf(&fdinfo, "%s/%d/fdinfo/%d", _PATH_PROC, lsfd_pid, pidfd);
+		fdinfo_fp = fopen(fdinfo, "r");
+		if (fdinfo_fp) {
+			read_fdinfo(f, fdinfo_fp);
+			fclose(fdinfo_fp);
+		}
+		free(fdinfo);
+	}
+
+ out:
+	close(pidfd);
+}
+
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 			     bool sockets_only)
 {
@@ -2037,6 +2087,8 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc, ctl->sockets_only);
+
+	collect_pidfs_file(proc, ctl->sockets_only);
 
 	/* Reading /proc/$pid/mountinfo is expensive.
 	 * mnt_namespaces is a table for avoiding reading mountinfo files

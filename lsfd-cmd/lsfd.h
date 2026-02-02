@@ -163,6 +163,7 @@ enum association {
 	ASSOC_EXE = 1,
 	ASSOC_CWD,
 	ASSOC_ROOT,
+	ASSOC_PIDFS,
 	ASSOC_NS_CGROUP,
 	ASSOC_NS_IPC,
 	ASSOC_NS_MNT,
@@ -226,7 +227,8 @@ struct file {
 #define is_mapped_file(_f) (is_association((_f), SHM) || is_association((_f), MEM))
 #define is_association(_f, a)	((_f)->association < 0 && (_f)->association == -ASSOC_ ## a)
 #define has_mnt_id(_f) (is_opened_file(_f) || is_mapped_file(_f) \
-			|| is_association(_f, EXE) || is_association(_f, CWD) || is_association(_f, ROOT))
+			|| is_association(_f, EXE) || is_association(_f, CWD) || is_association(_f, ROOT) \
+			|| is_association(_f, PIDFS))
 
 struct file_class {
 	const struct file_class *super;
