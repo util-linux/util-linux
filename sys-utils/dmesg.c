@@ -518,20 +518,20 @@ static int parse_facility(const char *str, size_t len)
  * bottom 3 bits are the priority (0-7) and the top 28 bits are the facility
  * (0-big number).
  *
- * Note that the number has to end with '>' or ',' char.
+ * Note that the number has to end with sep.
  */
-static const char *parse_faclev(const char *str, int *fac, int *lev)
+static const char *parse_faclev(const char *str, const char *end, const char sep, int *fac, int *lev)
 {
 	long num;
-	char *end = NULL;
+	char *num_end = NULL;
 
-	if (!str)
+	if (!str || strnchr(str, end - str, sep) == NULL)
 		return str;
 
 	errno = 0;
-	num = strtol(str, &end, 10);
+	num = strtol(str, &num_end, 10);
 
-	if (!errno && end && end > str) {
+	if (!errno && num_end && *num_end == sep && num_end > str) {
 		*fac = LOG_FAC(num);
 		*lev = LOG_PRI(num);
 
@@ -539,7 +539,7 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 			*lev = -1;
 		if (*fac < 0 || (size_t) *fac > ARRAY_SIZE(facility_names))
 			*fac = -1;
-		return end + 1;		/* skip '<' or ',' */
+		return num_end + 1;		/* skip sep */
 	}
 
 	return str;
@@ -552,26 +552,26 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
  *
  * the ']' is the timestamp field terminator.
  */
-static const char *parse_syslog_timestamp(const char *str0, struct timeval *tv)
+static const char *parse_syslog_timestamp(const char *str0, const char *end, struct timeval *tv)
 {
 	const char *str = str0;
-	char *end = NULL;
+	char *num_end = NULL;
 
-	if (!str0)
+	if (!str0 || strnchr(str0, end - str0, ']') == NULL)
 		return str0;
 
 	errno = 0;
-	tv->tv_sec = strtol(str, &end, 10);
+	tv->tv_sec = strtol(str, &num_end, 10);
 
-	if (!errno && end && *end == '.' && *(end + 1)) {
-		str = end + 1;
-		end = NULL;
-		tv->tv_usec = strtol(str, &end, 10);
+	if (!errno && num_end && *num_end == '.' && *(num_end + 1)) {
+		str = num_end + 1;
+		num_end = NULL;
+		tv->tv_usec = strtol(str, &num_end, 10);
 	}
-	if (errno || !end || end == str || *end != ']')
+	if (errno || !num_end || num_end == str || *num_end != ']')
 		return str0;
 
-	return end + 1;	/* skip ']' */
+	return num_end + 1;	/* skip ']' */
 }
 
 /*
@@ -911,7 +911,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 
 		if (*begin == '<') {
 			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode || ctl->color || ctl->json)
-				begin = parse_faclev(begin + 1, &rec->facility,
+				begin = parse_faclev(begin + 1, end, '>', &rec->facility,
 						     &rec->level);
 			else
 				begin = skip_item(begin, end, ">");
@@ -920,7 +920,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
 
-			begin = parse_syslog_timestamp(begin + 1, &rec->tv);
+			begin = parse_syslog_timestamp(begin + 1, end, &rec->tv);
 			if (begin < end && *begin == ' ')
 				begin++;
 		}
@@ -1445,7 +1445,7 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 	/* A) priority and facility */
 	if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode ||
 	    ctl->raw || ctl->color || ctl->json)
-		p = parse_faclev(p, &rec->facility, &rec->level);
+		p = parse_faclev(p, end, ',', &rec->facility, &rec->level);
 	else
 		p = skip_item(p, end, ",");
 	if (LAST_KMSG_FIELD(p))
