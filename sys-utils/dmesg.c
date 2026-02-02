@@ -946,14 +946,14 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 			rec->mesg_size = end - begin;
 		}
 
-		/* Don't count \n from the last message to the message size */
-		if (*end != '\n' && *(end - 1) == '\n')
-			rec->mesg_size--;
-
 		rec->next_size -= end - rec->next;
 		rec->next = rec->next_size > 0 ? end + 1 : NULL;
 		if (rec->next_size > 0)
 			rec->next_size--;
+
+		/* Don't count \n from the last message to the message size */
+		if ((!rec->next || *end != '\n') && *(end - 1) == '\n')
+			rec->mesg_size--;
 
 		return 0;
 	}
