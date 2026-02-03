@@ -107,25 +107,30 @@ static void init_fiemap(struct hexdump *hex, int fd)
 		return;
 	}
 
-	/* Check if we got all extents or need more */
-	if (fm->fm_mapped_extents == FIEMAP_EXTENTS_BATCH &&
-	    !(fm->fm_extents[fm->fm_mapped_extents - 1].fe_flags & FIEMAP_EXTENT_LAST)) {
-		unsigned int count = FIEMAP_EXTENTS_BATCH * 16;
-		free(fm);
-		fm_size = sizeof(struct fiemap) + sizeof(struct fiemap_extent) * count;
-		fm = xcalloc(1, fm_size);
-		fm->fm_start = 0;
-		fm->fm_length = st.st_size;
-		fm->fm_flags = 0;
-		fm->fm_extent_count = count;
-
-		if (ioctl(fd, FS_IOC_FIEMAP, fm) < 0) {
-			free(fm);
-			return;
-		}
-	}
-
 	hex->fiemap = fm;
+}
+
+/*
+ * Fetch next batch of extents.  Returns 1 on success, 0 on failure.
+ */
+static int fetch_more_extents(struct hexdump *hex, int fd)
+{
+	struct fiemap *fm = hex->fiemap;
+	struct fiemap_extent *last_ext;
+
+	if (!fm || fm->fm_mapped_extents == 0)
+		return 0;
+
+	last_ext = &fm->fm_extents[fm->fm_mapped_extents - 1];
+	fm->fm_start = last_ext->fe_logical + last_ext->fe_length;
+	fm->fm_length = ~0ULL;
+	fm->fm_extent_count = FIEMAP_EXTENTS_BATCH;
+
+	if (ioctl(fd, FS_IOC_FIEMAP, fm) < 0)
+		return 0;
+
+	hex->current_extent = 0;
+	return 1;
 }
 
 /*
@@ -133,7 +138,7 @@ static void init_fiemap(struct hexdump *hex, int fd)
  *
  * Returns: 1 if in hole, 0 if in data.
  */
-static int check_hole(struct hexdump *hex, off_t pos)
+static int check_hole(struct hexdump *hex, off_t pos, int fd)
 {
 	struct fiemap *fm = hex->fiemap;
 	unsigned int i;
@@ -152,38 +157,50 @@ static int check_hole(struct hexdump *hex, off_t pos)
 		return 1;
 	}
 
-	/* Start search from current_extent for efficiency */
-	for (i = hex->current_extent; i < fm->fm_mapped_extents; i++) {
-		struct fiemap_extent *ext = &fm->fm_extents[i];
-		off_t ext_end = ext->fe_logical + ext->fe_length;
+	while (TRUE) {
+		/* Start search from current_extent for efficiency */
+		for (i = hex->current_extent; i < fm->fm_mapped_extents; i++) {
+			struct fiemap_extent *ext = &fm->fm_extents[i];
+			off_t ext_end = ext->fe_logical + ext->fe_length;
 
-		if (pos < (off_t)ext->fe_logical) {
-			/* pos is before this extent - it's in a hole */
-			hex->current_extent = i;
+			if (pos < (off_t)ext->fe_logical) {
+				/* pos is before this extent - it's in a hole */
+				hex->current_extent = i;
+				hex->in_sparse_hole = 1;
+				hex->region_end = ext->fe_logical;
+				return 1;
+			}
+			if (pos < ext_end) {
+				/* pos is within this extent - it's in data */
+				hex->current_extent = i;
+				hex->in_sparse_hole = 0;
+				hex->region_end = ext_end;
+				return 0;
+			}
+		}
+
+		/* check if it is the last one */
+		last_ext = &fm->fm_extents[fm->fm_mapped_extents - 1];
+		if (last_ext->fe_flags & FIEMAP_EXTENT_LAST) {
 			hex->in_sparse_hole = 1;
-			hex->region_end = ext->fe_logical;
+			hex->region_end = hex->file_size;
 			return 1;
 		}
-		if (pos < ext_end) {
-			/* pos is within this extent - it's in data */
-			hex->current_extent = i;
+
+		/* fetch next batch of extents */
+		if (!fetch_more_extents(hex, fd)) {
 			hex->in_sparse_hole = 0;
-			hex->region_end = ext_end;
+			hex->region_end = hex->file_size;
 			return 0;
 		}
-	}
 
-	last_ext = &fm->fm_extents[fm->fm_mapped_extents - 1];
-	if (last_ext->fe_flags & FIEMAP_EXTENT_LAST) {
-		hex->in_sparse_hole = 1;
-		hex->region_end = hex->file_size;
-		return 1;
+		fm = hex->fiemap;
+		if (fm->fm_mapped_extents == 0) {
+			hex->in_sparse_hole = 1;
+			hex->region_end = hex->file_size;
+			return 1;
+		}
 	}
-
-	/* Incomplete extent map - disable optimization for safety */
-	hex->in_sparse_hole = 0;
-	hex->region_end = hex->file_size;
-	return 0;
 }
 #endif /* __linux__ */
 
@@ -521,7 +538,7 @@ get(struct hexdump *hex)
 			off_t curpos = address + nread;
 
 			if (curpos >= hex->region_end)
-				check_hole(hex, curpos);
+				check_hole(hex, curpos, fileno(stdin));
 
 			if (hex->in_sparse_hole && vflag == DUP) {
 				int savp_is_zero = 1;
