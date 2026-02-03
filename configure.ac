@@ -2217,6 +2217,22 @@ UL_REQUIRES_LINUX([exch])
 UL_REQUIRES_SYSCALL_CHECK([exch], [UL_CHECK_SYSCALL([renameat2])])
 AM_CONDITIONAL([BUILD_EXCH], [test "x$build_exch" = xyes])
 
+AC_ARG_ENABLE([fdsend],
+  AS_HELP_STRING([--disable-fdsend], [do not build fdsend]),
+  [], [UL_DEFAULT_ENABLE([fdsend], [check])]
+)
+UL_BUILD_INIT([fdsend])
+UL_REQUIRES_LINUX([fdsend])
+AM_CONDITIONAL([BUILD_FDSEND], [test "x$build_fdsend" = xyes])
+
+AC_ARG_ENABLE([fdrecv],
+  AS_HELP_STRING([--disable-fdrecv], [do not build fdrecv]),
+  [], [UL_DEFAULT_ENABLE([fdrecv], [check])]
+)
+UL_BUILD_INIT([fdrecv])
+UL_REQUIRES_LINUX([fdrecv])
+AM_CONDITIONAL([BUILD_FDRECV], [test "x$build_fdrecv" = xyes])
+
 UL_BUILD_INIT([fincore], [check])
 UL_REQUIRES_LINUX([fincore])
 UL_REQUIRES_BUILD([fincore], [libsmartcols])

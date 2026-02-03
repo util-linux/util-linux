@@ -79,6 +79,10 @@
 
 #define _PATH_SD_UNITSLOAD	_PATH_RUNSTATEDIR "/systemd/systemd-units-load"
 
+/* fdsend/fdrecv socket directories */
+#define _PATH_FDSEND_RUN	"/run/fdsend"
+#define _PATH_FDSEND_RUN_USER	"/run/user"
+
 /* misc paths */
 #define _PATH_WORDS             "/usr/share/dict/words"
 #define _PATH_WORDS_ALT         "/usr/share/dict/web2"
