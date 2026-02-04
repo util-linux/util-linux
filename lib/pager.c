@@ -229,9 +229,9 @@ void pager_redirect(void)
 	if (pager_process.pid)
 		return;		/* already running */
 
-	__setup_pager();
+	pager_open();
 
-	atexit(wait_for_pager);
+	atexit(pager_close);
 }
 
 /* Setup pager and redirect output, the pager may be closed by pager_close().
