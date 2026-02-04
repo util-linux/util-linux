@@ -742,6 +742,18 @@ static ssize_t prepare_buffer(struct dmesg_control *ctl, char **buf)
 	return n;
 }
 
+static void release_buffer(struct dmesg_control *ctl, char *buf)
+{
+	if (!ctl->mmap_buff)
+		free(buf);
+	if (ctl->kmsg >= 0)
+		close(ctl->kmsg);
+	if (ctl->json && ul_jsonwrt_is_ready(&ctl->jfmt)) {
+		ul_jsonwrt_array_close(&ctl->jfmt);
+		ul_jsonwrt_root_close(&ctl->jfmt);
+	}
+}
+
 static int fwrite_hex(const char *buf, size_t size, FILE *out)
 {
 	size_t i;
@@ -1917,14 +1929,7 @@ int main(int argc, char *argv[])
 		n = prepare_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
-		if (!ctl.mmap_buff)
-			free(buf);
-		if (ctl.kmsg >= 0)
-			close(ctl.kmsg);
-		if (ctl.json && ul_jsonwrt_is_ready(&ctl.jfmt)) {
-			ul_jsonwrt_array_close(&ctl.jfmt);
-			ul_jsonwrt_root_close(&ctl.jfmt);
-		}
+		release_buffer(&ctl, buf);
 		if (n < 0)
 			err(EXIT_FAILURE, _("read kernel buffer failed"));
 		else if (ctl.action == SYSLOG_ACTION_READ_CLEAR)
