@@ -20,7 +20,7 @@
 TOP_SRCDIR=${TOP_SRCDIR:-../}
 
 # Directories that contain relevant source files for util-linux programs.
-src_file_paths="$(grep -rE --include="*.c" --exclude="*test_*"          \
+src_file_paths="$(cd "${TOP_SRCDIR}" && grep -rE --include="*.c" --exclude="*test_*"          \
                         --exclude-dir="lib*"                            \
                         --exclude-dir="po*"                             \
                         --exclude-dir="tests"                           \
@@ -35,7 +35,7 @@ src_file_paths="$(grep -rE --include="*.c" --exclude="*test_*"          \
 
 # We skip these programs because they do not make use of 'struct option longopts[]'
 # which is passed to getopt(3) for command line argument parsing.
-unsupported_programs='blockdev|fsck|kill|mkfs\.cramfs|pg|renice|runuser|whereis'
+unsupported_programs='^blockdev$|^fsck$|^kill$|^mkfs\.cramfs$|^pg$|^renice$|^runuser$|^whereis$'
 
 # In general a program's source file name will be '<program_name>.c', however
 # some tools have differing file names. To handle these special cases we build
