@@ -470,39 +470,42 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 }
 
 #ifdef TUNGETDEVNETNS
-static int cdev_tun_get_devnetns(int tfd, void *data)
+static bool cdev_tun_needs_target_fd(struct cdev *cdev)
 {
-	struct tundata *tundata = data;
-	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
+	struct tundata *tundata = cdev->cdev_data;
+
+	return (tundata->iff != NULL);
+}
+#else
+static bool cdev_tun_needs_target_fd(struct cdev *cdev __attribute__((__unused__)))
+{
+	return false;
+}
+#endif	/* TUNGETDEVNETNS */
+
+#ifdef TUNGETDEVNETNS
+static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
+{
+	struct tundata *tundata = cdev->cdev_data;
+
+	int nsfd = ioctl(fd, TUNGETDEVNETNS);
 	struct stat sb;
 
 	if (nsfd < 0)
-		return -1;
+		return;
 
 	if (fstat(nsfd, &sb) == 0)
 		tundata->devnetns = sb.st_ino;
 
 	close(nsfd);
-
-	return 0;
 }
-#endif
-
-static void cdev_tun_attach_xinfo(struct cdev *cdev)
+#else
+static void cdev_tun_inspect_target_fd(struct cdev *cdev __attribute__((__unused__)),
+				       int fd __attribute__((__unused__)))
 {
-	struct tundata *tundata = cdev->cdev_data;
-
-	if (tundata->iff == NULL)
-		return;
-
-#ifdef TUNGETDEVNETNS
-	{
-		struct file *file = &cdev->file;
-		call_with_foreign_fd(file->proc->pid, file->association,
-				     cdev_tun_get_devnetns, tundata);
-	}
-#endif
+	/* Do nothing */
 }
+#endif	/* TUNGETDEVNETNS */
 
 static struct cdev_ops cdev_tun_ops = {
 	.parent = &cdev_misc_ops,
@@ -511,7 +514,8 @@ static struct cdev_ops cdev_tun_ops = {
 	.get_name = cdev_tun_get_name,
 	.fill_column = cdev_tun_fill_column,
 	.handle_fdinfo = cdev_tun_handle_fdinfo,
-	.attach_xinfo = cdev_tun_attach_xinfo,
+	.needs_target_fd = cdev_tun_needs_target_fd,
+	.inspect_target_fd = cdev_tun_inspect_target_fd,
 };
 
 /*
