@@ -105,10 +105,6 @@ static void wait_for_pager(void)
 	if (!pager_process.pid)
 		return;
 
-	/* signal EOF to pager */
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
-
 	do {
 		waiting = waitpid(pager_process.pid, NULL, 0);
 		if (waiting == -1 && errno != EINTR)
@@ -124,6 +120,11 @@ static void catch_signal(int signo)
 static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
 {
 	UL_PROTECT_ERRNO;
+
+	/* signal EOF to pager */
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+
 	wait_for_pager();
 	_exit(EXIT_FAILURE);
 }
@@ -268,10 +269,9 @@ void pager_close(void)
 
 	fflush(NULL);
 
-	wait_for_pager();
-
-	if (caught_signal)
-		_exit(EXIT_FAILURE);
+	/* signal EOF to pager */
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 
 	/* restore original output */
 	clearerr(stdout);
@@ -282,6 +282,8 @@ void pager_close(void)
 	close(pager_process.org_out);
 	close(pager_process.org_err);
 
+	wait_for_pager();
+
 	/* restore original signal settings */
 	sigaction(SIGCHLD, &pager_process.orig_sigchld, NULL);
 	sigaction(SIGINT,  &pager_process.orig_sigint, NULL);
@@ -289,6 +291,9 @@ void pager_close(void)
 	sigaction(SIGTERM, &pager_process.orig_sigterm, NULL);
 	sigaction(SIGQUIT, &pager_process.orig_sigquit, NULL);
 	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
+
+	if (caught_signal)
+		exit(EXIT_FAILURE);
 
 	memset(&pager_process, 0, sizeof(pager_process));
 	caught_signal = 0;
