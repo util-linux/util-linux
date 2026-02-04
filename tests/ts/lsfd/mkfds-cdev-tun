@@ -28,6 +28,8 @@ ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_test_command "$TS_CMD_UNSHARE"
 ts_check_test_command "$TS_CMD_LSNS"
 
+ts_check_prog "ip"
+
 ts_cd "$TS_OUTDIR"
 
 PID=
@@ -39,12 +41,41 @@ if [[ -z "$MYNETNS" ]]; then
     ts_skip "the current netns is unknown"
 fi
 
+cdev_tun_test_socknetns()
+{
+    local -r altnetns_name=mkfds-dev-tun-$$
+
+    local -r ifname=$1
+    local -r pid=$2
+    local -r expr=$3
+    local -r localnetns=$4
+    local altnetns
+    local socknetns
+
+    # Move the tun device to another net namespace
+    if ip netns add "$altnetns_name"; then
+	ip link set dev "$ifname" netns "$altnetns_name"
+	altnetns=$(ip netns exec "$altnetns_name" stat -Lc %i /proc/self/ns/net)
+	socknetns=$(${TS_CMD_LSFD} -p "${pid}" -n --raw -o SOCK.NETNS -Q "${expr}")
+	ip netns del "$altnetns_name"
+
+	if [[ "$localnetns" == "$socknetns" ]]; then
+	    echo 'SOCK.NETNS': 0
+	else
+	    echo 'SOCK.NETNS': 1
+	    echo "expected SOCK.NETNS: $localnetns"
+	    echo "actual SOCK.NETNS: $socknetns"
+	fi
+    fi
+}
+
 cdev_tun_test()
 {
     local unshare=$1
     local tname
     local devnetns_available
     local netns
+    local output
 
     if [[ -z "$unshare" ]]; then
 	tname=domestic
@@ -108,6 +139,12 @@ cdev_tun_test()
     fi
     ts_finalize_subtest
 
+    ts_init_subtest "$tname"-socknetns
+    if [[ -n "$IFNAME" ]]; then
+	cdev_tun_test_socknetns \
+	    "$IFNAME" "${PID}" "${EXPR}" "$netns" > $TS_OUTPUT 2>&1
+    fi
+    ts_finalize_subtest
 
     if [[ -n "$PID" ]]; then
 	echo DONE >&"${MKFDS[1]}"

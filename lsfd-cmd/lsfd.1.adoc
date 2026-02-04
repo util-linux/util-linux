@@ -307,7 +307,7 @@ inotify:::
 inodes=_INOTIFY.INODES_
 +
 misc:tun:::
-iface=_TUN.IFACE_[ devnetns=_TUN.DEVNETNS_]
+iface=_TUN.IFACE_[ devnetns=_TUN.DEVNETNS_][ socknetns=_SOCK.NETNS_]
 +
 NETLINK:::
 protocol=_NETLINK.PROTOCOL_[ lport=_NETLINK.LPORT_[ group=_NETLINK.GROUPS_]]

@@ -328,6 +328,7 @@ void load_sock_xinfo(struct path_cxt *pc, const char *name, ino_t netns);
 bool is_nsfs_dev(dev_t dev);
 
 void load_fdsk_xinfo(ino_t netns_ino, int netns_fd);
+ino_t get_netns_from_socket(int sk);
 
 /*
  * POSIX Mqueue

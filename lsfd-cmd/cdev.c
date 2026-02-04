@@ -382,6 +382,7 @@ static struct cdev_ops cdev_misc_ops = {
 struct tundata {
 	const char *iff;
 	ino_t devnetns;		/* 0 implies no value given. */
+	ino_t socknetns;
 };
 
 static bool cdev_tun_probe(struct cdev *cdev)
@@ -417,11 +418,13 @@ static char * cdev_tun_get_name(struct cdev *cdev)
 	if (tundata == NULL || tundata->iff == NULL)
 		return NULL;
 
+	xasprintf(&str, "iface=%s", tundata->iff);
 	if (tundata->devnetns)
-		xasprintf(&str, "iface=%s devnetns=%llu",
-			  tundata->iff, (unsigned long long)tundata->devnetns);
-	else
-		xasprintf(&str, "iface=%s", tundata->iff);
+		xstrfappend(&str, " devnetns=%llu",
+			    (unsigned long long)tundata->devnetns);
+	if (tundata->socknetns)
+		xstrfappend(&str, " socknetns=%llu",
+			    (unsigned long long)tundata->socknetns);
 
 	return str;
 }
@@ -454,6 +457,12 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 			return true;
 		}
 		break;
+	case COL_SOCK_NETNS:
+		if (tundata && tundata->socknetns) {
+			xasprintf(str, "%llu", (unsigned long long)tundata->socknetns);
+			return true;
+		}
+		break;
 	}
 	return false;
 }
@@ -469,25 +478,20 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 	return 0;
 }
 
-#ifdef TUNGETDEVNETNS
 static bool cdev_tun_needs_target_fd(struct cdev *cdev)
 {
 	struct tundata *tundata = cdev->cdev_data;
 
 	return (tundata->iff != NULL);
 }
-#else
-static bool cdev_tun_needs_target_fd(struct cdev *cdev __attribute__((__unused__)))
-{
-	return false;
-}
-#endif	/* TUNGETDEVNETNS */
 
-#ifdef TUNGETDEVNETNS
 static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
 {
 	struct tundata *tundata = cdev->cdev_data;
 
+	tundata->socknetns = get_netns_from_socket(fd);
+
+#ifdef TUNGETDEVNETNS
 	int nsfd = ioctl(fd, TUNGETDEVNETNS);
 	struct stat sb;
 
@@ -500,14 +504,8 @@ static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
 	}
 
 	close(nsfd);
-}
-#else
-static void cdev_tun_inspect_target_fd(struct cdev *cdev __attribute__((__unused__)),
-				       int fd __attribute__((__unused__)))
-{
-	/* Do nothing */
-}
 #endif	/* TUNGETDEVNETNS */
+}
 
 static struct cdev_ops cdev_tun_ops = {
 	.parent = &cdev_misc_ops,
