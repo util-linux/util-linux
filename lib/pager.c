@@ -44,6 +44,8 @@ struct child_process {
 };
 static struct child_process pager_process;
 
+static volatile sig_atomic_t caught_signal;
+
 static inline void close_pair(int fd[2])
 {
 	close(fd[0]);
@@ -112,6 +114,11 @@ static void wait_for_pager(void)
 		if (waiting == -1 && errno != EINTR)
 			ul_sig_err(EXIT_FAILURE, "waitpid failed");
 	} while (waiting == -1);
+}
+
+static void catch_signal(int signo)
+{
+	caught_signal = signo;
 }
 
 static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
@@ -244,10 +251,25 @@ void pager_open(void)
  */
 void pager_close(void)
 {
+	struct sigaction sa;
+
 	if (pager_process.pid == 0)
 		return;
 
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = catch_signal;
+
+	/* set flag instead of calling wait_for_pager again */
+	sigaction(SIGINT,  &sa, NULL);
+	sigaction(SIGHUP,  &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	sigaction(SIGQUIT, &sa, NULL);
+	sigaction(SIGPIPE, &sa, NULL);
+
 	wait_for_pager();
+
+	if (caught_signal)
+		_exit(EXIT_FAILURE);
 
 	/* restore original output */
 	dup2(pager_process.org_out, STDOUT_FILENO);
@@ -265,6 +287,7 @@ void pager_close(void)
 	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
 
 	memset(&pager_process, 0, sizeof(pager_process));
+	caught_signal = 0;
 }
 
 #ifdef TEST_PROGRAM_PAGER
