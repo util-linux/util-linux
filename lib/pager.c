@@ -274,7 +274,9 @@ void pager_close(void)
 		_exit(EXIT_FAILURE);
 
 	/* restore original output */
+	clearerr(stdout);
 	dup2(pager_process.org_out, STDOUT_FILENO);
+	clearerr(stderr);
 	dup2(pager_process.org_err, STDERR_FILENO);
 
 	close(pager_process.org_out);
