@@ -62,6 +62,10 @@ struct cdev_ops {
 			    char **);
 	void (*init)(const struct cdev *);
 	void (*free)(const struct cdev *);
+
+	bool (*needs_target_fd)(struct cdev *);
+	void (*inspect_target_fd)(struct cdev *, int);
+
 	void (*attach_xinfo)(struct cdev *);
 	int (*handle_fdinfo)(struct cdev *, const char *, const char *);
 	const struct ipc_class * (*get_ipc_class)(struct cdev *);
@@ -788,6 +792,23 @@ static const struct ipc_class *cdev_get_ipc_class(struct file *file)
 	return NULL;
 }
 
+static bool cdev_needs_target_fd(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->needs_target_fd)
+		return cdev->cdev_ops->needs_target_fd(cdev);
+	return false;
+}
+
+static void cdev_inspect_target_fd(struct file *file, int fd)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->inspect_target_fd)
+		cdev->cdev_ops->inspect_target_fd(cdev, fd);
+}
+
 const struct file_class cdev_class = {
 	.super = &file_class,
 	.size = sizeof(struct cdev),
@@ -799,4 +820,6 @@ const struct file_class cdev_class = {
 	.attach_xinfo = cdev_attach_xinfo,
 	.handle_fdinfo = cdev_handle_fdinfo,
 	.get_ipc_class = cdev_get_ipc_class,
+	.needs_target_fd = cdev_needs_target_fd,
+	.inspect_target_fd = cdev_inspect_target_fd,
 };
