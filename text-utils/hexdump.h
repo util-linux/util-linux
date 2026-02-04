@@ -92,6 +92,12 @@ struct hexdump {
   int exitval;				/* final exit value */
   ssize_t length;			/* max bytes to read */
   off_t skip;				/* bytes to skip */
+  /* Sparse file optimization using FIEMAP (Linux only) */
+  void *fiemap;				/* struct fiemap pointer */
+  unsigned int current_extent;		/* current extent index for search */
+  off_t file_size;			/* total file size */
+  int in_sparse_hole;			/* currently in a sparse file hole */
+  off_t region_end;			/* end of current hole/data region */
 };
 
 extern struct hexdump_fu *endfu;
