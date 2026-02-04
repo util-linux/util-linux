@@ -266,6 +266,8 @@ void pager_close(void)
 	sigaction(SIGQUIT, &sa, NULL);
 	sigaction(SIGPIPE, &sa, NULL);
 
+	fflush(NULL);
+
 	wait_for_pager();
 
 	if (caught_signal)
