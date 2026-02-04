@@ -137,7 +137,7 @@ static int has_command(const char *cmd)
 	if (!b)
 		goto cleanup;
 
-	if (*b == '/') {
+	if (strchr(b, '/')) {
 		rc = access(b, X_OK) == 0;
 		goto cleanup;
 	}
