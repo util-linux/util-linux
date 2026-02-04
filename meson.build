@@ -220,8 +220,8 @@ headers = '''
         linux/falloc.h
         linux/fd.h
         linux/fs.h
-	linux/fiemap.h
-	linux/gsmmux.h
+        linux/fiemap.h
+        linux/gsmmux.h
         linux/if_alg.h
         linux/landlock.h
         linux/kcmp.h
@@ -257,7 +257,7 @@ headers = '''
         sys/pidfd.h
         sys/prctl.h
         sys/resource.h
-	sys/sendfile.h
+        sys/sendfile.h
         sys/signalfd.h
         sys/socket.h
         sys/sockio.h
@@ -273,7 +273,7 @@ headers = '''
         sys/ucred.h
         sys/un.h
         sys/vfs.h
-	sys/xattr.h
+        sys/xattr.h
 '''.split()
 
 lib_m = cc.find_library('m')
