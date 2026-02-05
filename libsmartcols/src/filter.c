@@ -229,7 +229,7 @@ int scols_dump_filter(struct libscols_filter *fltr, FILE *out)
 	if (!fltr || !out)
 		return -EINVAL;
 
-	ul_jsonwrt_init(&json, out, 0);
+	ul_jsonwrt_init(&json, out, 0, UL_JSON_PRETTY);
 	ul_jsonwrt_root_open(&json);
 
 	filter_dump_node(&json, fltr->root);
