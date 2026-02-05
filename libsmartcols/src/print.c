@@ -1287,7 +1287,7 @@ int __scols_initialize_printing(struct libscols_table *tb, struct ul_buffer *buf
 		extra_bufsz += tb->ncols;			/* separator between columns */
 		break;
 	case SCOLS_FMT_JSON:
-		ul_jsonwrt_init(&tb->json, tb->out, 0);
+		ul_jsonwrt_init(&tb->json, tb->out, 0, tb->json_format);
 		extra_bufsz += tb->nlines * 3;		/* indentation */
 		FALLTHROUGH;
 	case SCOLS_FMT_EXPORT:

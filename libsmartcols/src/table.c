@@ -60,6 +60,22 @@ static void check_padding_debug(struct libscols_table *tb)
 	tb->padding_debug = 1;
 }
 
+static ul_json_format_t get_json_format(void)
+{
+	const char *str;
+
+	str = getenv("LIBSMARTCOLS_JSON");
+	if (!str)
+		return UL_JSON_PRETTY;
+	else if (strcmp(str, "compact") == 0)
+		return UL_JSON_COMPACT;
+	else if (strcmp(str, "lines") == 0)
+		return UL_JSON_LINE;
+
+	/* default to pretty */
+	return UL_JSON_PRETTY;
+}
+
 /**
  * scols_new_table:
  *
@@ -87,6 +103,7 @@ struct libscols_table *scols_new_table(void)
 
 	DBG(TAB, ul_debugobj(tb, "alloc"));
 	ON_DBG(INIT, check_padding_debug(tb));
+	tb->json_format = get_json_format();
 
 	return tb;
 }

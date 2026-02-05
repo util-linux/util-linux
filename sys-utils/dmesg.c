@@ -1145,7 +1145,7 @@ static void print_record(struct dmesg_control *ctl,
 
 	if (ctl->json) {
 		if (!ul_jsonwrt_is_ready(&ctl->jfmt)) {
-			ul_jsonwrt_init(&ctl->jfmt, stdout, 0);
+			ul_jsonwrt_init(&ctl->jfmt, stdout, 0, UL_JSON_PRETTY);
 			ul_jsonwrt_root_open(&ctl->jfmt);
 			ul_jsonwrt_array_open(&ctl->jfmt, "dmesg");
 		}

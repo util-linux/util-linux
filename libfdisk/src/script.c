@@ -562,7 +562,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 
 	DBG(SCRIPT, ul_debugobj(dp, "writing json dump to file"));
 
-	ul_jsonwrt_init(&json, f, 0);
+	ul_jsonwrt_init(&json, f, 0, UL_JSON_PRETTY);
 	ul_jsonwrt_root_open(&json);
 
 	ul_jsonwrt_object_open(&json, "partitiontable");

@@ -102,10 +102,11 @@ static void fputs_quoted_case_json(const char *data, FILE *out, int dir, size_t 
 #define fputs_quoted_json_upper(_d, _o) fputs_quoted_case_json(_d, _o, 1, 0)
 #define fputs_quoted_json_lower(_d, _o) fputs_quoted_case_json(_d, _o, -1, 0)
 
-void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent)
+void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent, ul_json_format_t json_format)
 {
 	fmt->out = out;
 	fmt->indent = indent;
+	fmt->json_format = json_format;
 	fmt->after_close = 0;
 }
 
@@ -124,81 +125,92 @@ void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
 
 static void print_name(struct ul_jsonwrt *fmt, const char *name)
 {
-	if (name) {
-		if (fmt->after_close)
-			fputs(",\n", fmt->out);
-		ul_jsonwrt_indent(fmt);
-		fputs_quoted_json_lower(name, fmt->out);
-	} else {
-		if (fmt->after_close)
-			fputs(",", fmt->out);
+	if (fmt->after_close) {
+		if (fmt->json_format == UL_JSON_LINE)
+			fputs(fmt->indent == 0 ? "\n" : ",", fmt->out);
 		else
-			ul_jsonwrt_indent(fmt);
+			fputs(name ? ",\n" : ",", fmt->out);
 	}
+	if (fmt->json_format != UL_JSON_LINE && (name || !fmt->after_close))
+		ul_jsonwrt_indent(fmt);
+	if (name)
+		fputs_quoted_json_lower(name, fmt->out);
 }
 
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 {
+	const char *s = "";
+
 	print_name(fmt, name);
 
 	switch (type) {
 	case UL_JSON_OBJECT:
-		fputs(name ? ": {\n" : "{\n", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":{" : "{") : (name ? ": {\n" : "{\n");
 		fmt->indent++;
 		break;
 	case UL_JSON_ARRAY:
-		fputs(name ? ": [\n" : "[\n", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":[" : "[") : (name ? ": [\n" : "[\n");
 		fmt->indent++;
 		break;
 	case UL_JSON_VALUE:
-		fputs(name ? ": " : " ", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":" : "") : (name ? ": " : " ");
 		break;
 	}
+	fputs(s, fmt->out);
 	fmt->after_close = 0;
 }
 
 void ul_jsonwrt_empty(struct ul_jsonwrt *fmt, const char *name, int type)
 {
+	const char *s = "";
+
 	print_name(fmt, name);
 
 	switch (type) {
 	case UL_JSON_OBJECT:
-		fputs(name ? ": {}" : "{}", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":{}" : "{}") : (name ? ": {}" : "{}");
 		break;
 	case UL_JSON_ARRAY:
-		fputs(name ? ": []" : "[]", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":[]" : "[]") : (name ? ": []" : "[]");
 		break;
 	case UL_JSON_VALUE:
-		fputs(name ? ": null" : "null", fmt->out);
+		s = fmt->json_format == UL_JSON_LINE ? (name ? ":null" : "null") : (name ? ": null" : "null");
 		break;
 	}
-
+	fputs(s, fmt->out);
 	fmt->after_close = 1;
 }
 
 void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 {
+	char endchr;
+
 	assert(fmt->indent > 0);
 
 	switch (type) {
 	case UL_JSON_OBJECT:
 		fmt->indent--;
-		fputc('\n', fmt->out);
-		ul_jsonwrt_indent(fmt);
-		fputs("}", fmt->out);
-		if (fmt->indent == 0)
-			fputs("\n", fmt->out);
+		endchr = '}';
 		break;
 	case UL_JSON_ARRAY:
 		fmt->indent--;
-		fputc('\n', fmt->out);
-		ul_jsonwrt_indent(fmt);
-		fputs("]", fmt->out);
+		endchr = ']';
 		break;
 	case UL_JSON_VALUE:
-		break;
+		fmt->after_close = 1;
+		return;
+	default:
+		fmt->after_close = 1;
+		return;
 	}
 
+	if (fmt->json_format != UL_JSON_LINE) {
+		fputc('\n', fmt->out);
+		ul_jsonwrt_indent(fmt);
+	}
+	fputc(endchr, fmt->out);
+	if (fmt->json_format != UL_JSON_LINE && type == UL_JSON_OBJECT && fmt->indent == 0)
+		fputc('\n', fmt->out);
 	fmt->after_close = 1;
 }
 
