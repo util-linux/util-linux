@@ -14,7 +14,9 @@
 #include "c.h"
 #include "fileutils.h"
 #include "pathnames.h"
+#include "pidfd-utils.h"
 
+#include <errno.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -267,8 +269,6 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd)
 
 	close(sock);
 	unlink(sockpath);
-	if (conn < 0)
-		return -1;
 
 	/* recvmsg: at least one byte in iov; control buffer for SCM_RIGHTS */
 	iov.iov_base = &dummy;
@@ -294,6 +294,44 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd)
 	close(conn);
 	errno = EINVAL;
 	return -1;
+}
+
+/*
+ * Get fd number @fd from process @pid by opening /proc/PID/fd/FD.
+ * Returns the new fd on success, -1 on error.
+ */
+static int open_proc_pid_fd(pid_t pid, int fd)
+{
+	char proc_path[PATH_MAX];
+
+	if (snprintf(proc_path, sizeof(proc_path), "/proc/%d/fd/%d",
+		     (int)pid, fd) >= (int)sizeof(proc_path)) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	return open(proc_path, O_RDWR);
+}
+
+/*
+ * Get fd number @fd from process @pid.
+ * use_pidfd_getfd: if true use pidfd_getfd only; if false use open(/proc/PID/fd/FD) only.
+ * Returns the new fd on success, -1 on error.
+ */
+static int fdsend_open_pid_fd(pid_t pid, int fd, int use_pidfd_getfd)
+{
+	int pidfd;
+	int ret;
+
+	if (!use_pidfd_getfd)
+		return open_proc_pid_fd(pid, fd);
+
+	pidfd = pidfd_open(pid, 0);
+	if (pidfd < 0)
+		return -1;
+
+	ret = pidfd_getfd(pidfd, fd, 0);
+	close(pidfd);
+	return ret;
 }
 
 /*
@@ -359,12 +397,11 @@ out:
 	return ret;
 }
 
-int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid)
+int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid, int use_pidfd_getfd)
 {
 	char path[PATH_MAX];
 	int fd_to_send = fd;
 	int own_fd = 0;
-	char proc_path[PATH_MAX];
 
 	if (sockpath_from_spec(sockspec, path, sizeof(path)) != 0)
 		return -1;
@@ -373,14 +410,7 @@ int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid)
 		return -1;
 
 	if (pid >= 0) {
-		if (snprintf(proc_path, sizeof(proc_path), "/proc/%d/fd/%d",
-			     (int)pid, fd) >= (int)sizeof(proc_path)) {
-			errno = ENAMETOOLONG;
-			return -1;
-		}
-
-		/* get fd_to_send by open /proc/PID/fd/FD */
-		fd_to_send = open(proc_path, O_RDWR);
+		fd_to_send = fdsend_open_pid_fd(pid, fd, use_pidfd_getfd);
 		if (fd_to_send < 0)
 			return -1;
 		own_fd = 1;
