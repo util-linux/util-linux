@@ -1,0 +1,63 @@
+//po4a: entry man manual
+= fdrecv(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: fdrecv
+
+== NAME
+
+fdrecv - receive a file descriptor from another process via Unix socket
+
+== SYNOPSIS
+
+*fdrecv* [options] _SOCKSPEC_ *--run* _command_ _args_...
+
+== DESCRIPTION
+
+*fdrecv* receives a file descriptor from another process using a Unix domain
+socket (SCM_RIGHTS), then execs the given command with that fd. _SOCKSPEC_ is
+either a path starting with '/' or a short name under /run/user/UID/fdsend/
+(or /run/fdsend/ for root).
+
+*--run* and a command are required. The received fd is dup2'd to the given
+target (or stdin/stdout/stderr) and the command is executed.
+
+== OPTIONS
+
+*-f*, *--fd* _num_::
+  Dup received fd to this number. One of *-f*, *-i*, *-o*, or *-e* is required.
+
+*-i*, *--stdin*::
+  Map received fd to command's stdin (fd 0).
+
+*-o*, *--stdout*::
+  Map received fd to command's stdout (fd 1).
+
+*-e*, *--stderr*::
+  Map received fd to command's stderr (fd 2).
+
+*-r*, *--run*::
+  Execute the following command with the received fd. Must appear after SOCKSPEC.
+
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*0*::
+  Success
+*1*::
+  Unspecified failure
+
+== SEE ALSO
+
+*fdsend*(1)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]
