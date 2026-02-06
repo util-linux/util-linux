@@ -34,8 +34,9 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --fd <num>     file descriptor to send (required)\n"), out);
-	fputs(_(" -p, --pid <pid>   process whose fd to send (default: current process)\n"), out);
-	fputs(_(" -b, --blocking    wait for socket to appear before connecting\n"), out);
+	fputs(_(" -p, --pid <pid>    process whose fd to send (default: current process)\n"), out);
+	fputs(_(" -b, --blocking     wait for socket to appear before connecting\n"), out);
+	fputs(_(" -g, --pidfd-getfd  use pidfd_getfd to obtain fd from process (default: open /proc/<PID>/fd/<FD>)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(20));
 	fprintf(out, USAGE_MAN_TAIL("fdsend(1)"));
@@ -48,15 +49,17 @@ int main(int argc, char **argv)
 	int c;
 	int opt_fd = -1;
 	int opt_blocking = 0;
+	int opt_pidfd_getfd = 0;
 	pid_t opt_pid = -1;
 	const char *sockspec = NULL;
 
 	static const struct option longopts[] = {
-		{ "fd",       required_argument, NULL, 'f' },
-		{ "pid",      required_argument, NULL, 'p' },
-		{ "blocking", no_argument,       NULL, 'b' },
-		{ "help",     no_argument,       NULL, 'h' },
-		{ "version",  no_argument,       NULL, 'V' },
+		{ "fd",          required_argument, NULL, 'f' },
+		{ "pid",         required_argument, NULL, 'p' },
+		{ "blocking",    no_argument,       NULL, 'b' },
+		{ "pidfd-getfd", no_argument,       NULL, 'g' },
+		{ "help",        no_argument,       NULL, 'h' },
+		{ "version",     no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -66,7 +69,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout_atexit);
 
 	/* '+' so we stop at first non-option (SOCKSPEC) */
-	while ((c = getopt_long(argc, argv, "+f:p:bhV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+f:p:bghV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			opt_fd = (int) str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
@@ -78,6 +81,9 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			opt_blocking = 1;
+			break;
+		case 'g':
+			opt_pidfd_getfd = 1;
 			break;
 		case 'h':
 			usage();
@@ -104,8 +110,8 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if (fdsend_do_send(sockspec, opt_fd, opt_blocking, opt_pid) != 0) {
-		warn(_("failed to send fd %d to %s"), opt_fd, sockspec);
+	if (fdsend_do_send(sockspec, opt_fd, opt_blocking, opt_pid, opt_pidfd_getfd) != 0) {
+		warn(_("failed to send fd %d to %s: %s"), opt_fd, sockspec, strerror(errno));
 		return EXIT_FAILURE;
 	}
 
