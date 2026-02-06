@@ -1,0 +1,38 @@
+_fdsend_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-f'|'--fd')
+			return 0
+			;;
+		'-p'|'--pid')
+			return 0
+			;;
+		'-g'|'--pidfd-getfd'|'-b'|'--blocking')
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS='
+				--fd
+				--pid
+				--blocking
+				--pidfd-getfd
+				--help
+				--version'
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local IFS=$'\n'
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _fdsend_module fdsend
