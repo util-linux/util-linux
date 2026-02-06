@@ -3504,6 +3504,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += fdsend_manadocs
+  bashcompletions += ['fdsend']
 endif
 
 opt = get_option('build-fdrecv').require(LINUX).allowed()
@@ -3518,6 +3519,7 @@ exe = executable(
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += fdrecv_manadocs
+  bashcompletions += ['fdrecv']
 endif
 
 opt = get_option('build-getino').require(LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1' \
