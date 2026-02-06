@@ -15,8 +15,9 @@
 
 #include <sys/types.h>
 
-/* Send fd to socket identified by sockspec. pid < 0 means current process. */
-extern int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid);
+/* Send fd to socket identified by sockspec. pid < 0 means current process.
+ * use_pidfd_getfd: if true use pidfd_getfd; if false use open(/proc/PID/fd/FD). */
+extern int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid, int use_pidfd_getfd);
 
 /* Receive fd from socket identified by sockspec. On success sets *out_fd.
  * dup2 and exec are done by the caller (fdrecv.c). */
