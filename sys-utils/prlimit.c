@@ -30,6 +30,7 @@
 #include "strutils.h"
 #include "list.h"
 #include "closestream.h"
+#include "path.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -344,6 +345,15 @@ static void get_unknown_hardsoft(struct prlimit *lim)
 		lim->rlim.rlim_max = old.rlim_max;
 }
 
+static unsigned int get_nr_open(struct path_cxt* pc) {
+	unsigned int ret;
+
+	if (ul_path_read_u32(pc, &ret, "nr_open") != 0)
+		err(EXIT_FAILURE, _("failed to read fs.nr_open"));
+
+	return ret;
+}
+
 static void do_prlimit(struct list_head *lims)
 {
 	struct list_head *p, *pnext;
@@ -361,6 +371,17 @@ static void do_prlimit(struct list_head *lims)
 				 lim->rlim.rlim_max != RLIM_INFINITY))
 				errx(EXIT_FAILURE, _("the soft limit %s cannot exceed the hard limit"),
 						lim->desc->name);
+
+			struct path_cxt *pc = ul_new_path("/proc/sys/fs");
+			unsigned int nr_open = get_nr_open(pc);
+			if ((lim->desc->resource == RLIMIT_NOFILE) &&
+				(lim->rlim.rlim_cur > nr_open ||
+				lim->rlim.rlim_max > nr_open)) {
+				errx(EXIT_FAILURE, _("the soft limit or hard limit %s cannot exceed the fs.nr_open limit of %d"),
+						lim->desc->name, nr_open);
+			}
+			ul_unref_path(pc);
+
 			new = &lim->rlim;
 		} else
 			old = &lim->rlim;
