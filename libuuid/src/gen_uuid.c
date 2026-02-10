@@ -419,6 +419,9 @@ static int get_clock_cont(uint32_t *clock_high,
 			rewind(state_f);
 			if (fscanf(state_f, "cont: %"SCNu64"\n", &last_clock_reg) != 1)
 				goto error;
+			/* don't use old timestamps, reset to current time */
+			if (last_clock_reg < clock_reg)
+				last_clock_reg = clock_reg;
 		} else
 			last_clock_reg = clock_reg;
 
