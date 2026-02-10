@@ -254,7 +254,12 @@ enum {
  * failed to execute external program
  */
 #define MNT_ERR_EXEC	5014
-
+/**
+ * MNT_ERR_NAMESPACE_STAGE:
+ *
+ * failed to set current mount stage for namespace switch check
+ */
+#define MNT_ERR_NAMESPACE_STAGE	5015
 
 
 /*

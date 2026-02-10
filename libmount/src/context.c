@@ -67,6 +67,7 @@ struct libmnt_context *mnt_new_context(void)
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
 	cxt->ns_cur = &cxt->ns_orig;
+	cxt->ns_stage.flags |= MNT_NS_STAGE_ALL;
 
 	cxt->map_linux = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	cxt->map_userspace = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
@@ -3402,6 +3403,15 @@ struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmn
 		return old;
 
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	/* check whether the switch to the target namespace
+	 * is appropriate for the current stage
+	 */
+	if (mnt_context_get_target_ns(cxt)) {
+		int rc = ns_switch_appropriate(cxt);
+		if (rc)
+			return old;
+	}
+
 	/* remember the current cache */
 	if (old->cache != cxt->cache) {
 		mnt_unref_cache(old->cache);
