@@ -423,4 +423,5 @@ MOUNT_2_42 {
 	mnt_context_set_ns_stage_flags;
 	mnt_context_set_ns_curr_stage;
 	mnt_context_get_ns_curr_stage;
+	mnt_str_to_ns_stage_flag;
 } MOUNT_2_41;

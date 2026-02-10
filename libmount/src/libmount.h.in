@@ -381,6 +381,7 @@ extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char *
 			__ul_attribute__((nonnull(3)));
 
 extern int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id);
+extern int mnt_str_to_ns_stage_flag(const char *str);
 
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void)

@@ -1359,6 +1359,39 @@ done:
 	return 1;
 }
 
+/**
+ * mnt_str_to_ns_stage_flag:
+ * @str: mount stage name
+ *
+ * Converts the mount stage name @str to its corresponding flag value (MNT_NS_STAGE_*).
+ *
+ * Valid values are: all (MNT_NS_STAGE_ALL),
+ *                   prepare (MNT_NS_STAGE_PREP), and
+ *                   attach (MNT_NS_STAGE_ATTACH)
+ *
+ * Returns: < 0 on success, and a negative errno number on failure.
+ *
+ * Since: 2.42
+ */
+int mnt_str_to_ns_stage_flag(const char *str)
+{
+	uint32_t flag = 0;
+
+	if (!str || !*str)
+		return -EINVAL;
+
+	if (strcmp("all", str) == 0)
+		flag = MNT_NS_STAGE_ALL;
+	else if (strcmp("prepare", str) == 0)
+		flag = MNT_NS_STAGE_PREP;
+	else if (strcmp("attach", str) == 0)
+		flag = MNT_NS_STAGE_ATTACH;
+	else
+		return -EINVAL;
+
+	return flag;
+}
+
 #ifdef TEST_PROGRAM
 static int test_match_fstype(struct libmnt_test *ts __attribute__((unused)),
 			     int argc, char *argv[])
