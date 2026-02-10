@@ -41,6 +41,10 @@ target (or stdin/stdout/stderr) and the command is executed.
 *-r*, *--run*::
   Execute the following command with the received fd. Must appear after SOCKSPEC.
 
+*-a*, *--abstract*::
+  Treat _SOCKSPEC_ as an abstract Unix socket name (Linux). No path resolution;
+  the name is used as-is in the kernel abstract namespace.
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
