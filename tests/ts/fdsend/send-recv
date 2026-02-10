@@ -26,10 +26,12 @@ ts_check_test_command "$TS_CMD_FDRECV"
 
 TESTFILE="$TS_OUTDIR/fdsend_test_data"
 SOCKPATH="$(cd "$TS_OUTDIR" 2>/dev/null && pwd)/fdsend_test.sock"
+SOCKNAME_ABSTRACT="fdsend_abstract_$$"
 mkdir -p "$TS_OUTDIR"
 echo "hello" > "$TESTFILE"
 
 {
+	# Test 1: filesystem socket
 	# Start fdrecv in background: receive fd, dup to stdin, run cat
 	# Options (e.g. --stdin) must come before SOCKSPEC
 	$TS_CMD_FDRECV --stdin "$SOCKPATH" --run cat &
@@ -39,6 +41,15 @@ echo "hello" > "$TESTFILE"
 	# Send fd 3 (testfile) to fdrecv; -b blocks until socket appears
 	exec 3<"$TESTFILE"
 	$TS_CMD_FDSEND -f 3 -b "$SOCKPATH"
+	exec 3<&-
+	wait $FDRECV_PID
+
+	# Test 2: abstract Unix socket
+	$TS_CMD_FDRECV -a --stdin "$SOCKNAME_ABSTRACT" --run cat &
+	FDRECV_PID=$!
+	sleep 1
+	exec 3<"$TESTFILE"
+	$TS_CMD_FDSEND -f 3 -a -b "$SOCKNAME_ABSTRACT"
 	exec 3<&-
 	wait $FDRECV_PID
 } > "$TS_OUTPUT" 2>&1
