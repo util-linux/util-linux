@@ -36,6 +36,7 @@ _fdrecv_module()
 		-*)
 			OPTS='
 				--fd
+				--abstract
 				--stdin
 				--stdout
 				--stderr
