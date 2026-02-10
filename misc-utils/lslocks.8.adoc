@@ -66,7 +66,7 @@ Print only the locks that meet the conditions specified by the expr.
 +
 This feature is EXPERIMENTAL. See also *scols-filter*(5). For example
 exclude POSIX type locks, but print all READ mode ones locks on files
-with .qcow2 as extension:
+with _.qcow2_ as extension:
 ____
  lslocks --filter 'TYPE != "POSIX" and MODE == "READ" and PATH =~ ".*\.qcow2"'
 ____

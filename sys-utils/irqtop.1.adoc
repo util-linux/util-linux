@@ -23,7 +23,7 @@ The default output is subject to change. So whenever possible, you should avoid 
 == OPTIONS
 
 *-o*, *--output* _list_::
-Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if list is specified in the format _+list_.
+Specify which output columns to print. Use *--help* to get a list of all supported columns. The default list of columns may be extended if _list_ is specified in the format _+list_.
 
 *-b*, *--batch*::
 Send the produced tables to stdout instead of to a static screen.
@@ -38,7 +38,7 @@ for the full list of CPUs.
 Specify cpus in list format to show.
 
 *-d*, *--delay* _seconds_::
-Update the tables every this number of seconds.
+Update the tables every this number of _seconds_.
 
 *-J*, *--json*::
 Use JSON output format. Implies *--batch*.

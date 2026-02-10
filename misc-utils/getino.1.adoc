@@ -24,7 +24,7 @@ getino - print the unique inode number associated to a process file descriptor o
 *getino* is a simple command that prints the inode numbers associated with the process file descriptor (pidfd) or namespace for all PIDs passed to it as arguments.
 
 The kernel guarantees that the inode number associated with a process's file descriptor is exempt from reuse during the current boot cycle; therefore, a process can be uniquely identified by its PID and the inode number, conveniently so with the format '_PID:inode_'.
-As an example, this enables race-free signalling of processes with *kill(1)*, which accepts the aforementioned _PID_ format.
+As an example, this enables race-free signalling of processes with *kill*(1), which accepts the aforementioned _PID_ format.
 
 Inode numbers associated with a namespace for a given process are essentially namespace IDs, identical to the inode number reported by /proc/pid/ns/_nstype_, see *namespaces(7)* for more details.
 

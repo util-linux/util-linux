@@ -28,25 +28,25 @@ The supported columns are RANGE, SIZE, STATE, REMOVABLE, BLOCK, NODE, ZONES, CON
 RANGE
 The start and end physical address of the memory range.
 
-SIZE
+_SIZE_::
 The size of the memory range, representing the total amount of memory in that range.
 
-STATE
+_STATE_::
 The current online status of the memory range. Common states include online, offline or transitional states.
 
-BLOCK
+_BLOCK_::
 The specific memory block number.
 
-NODE
+_NODE_::
 The NUMA (Non-Uniform Memory Access) node to which the memory block belongs.
 
-ZONES
+_ZONES_::
 The memory zones to which the blocks belongs, such as DMA, Normal, Movable.
 
-CONFIGURED
+_CONFIGURED_::
 The configuration state of a memory block. Refer to *chmem* for details on configuring or deconfiguring memory blocks.
 
-MEMMAP-ON-MEMORY
+_MEMMAP-ON-MEMORY_::
 The memmap-on-memory state of the memory block at configuration time. This setting indicates where memory hotplug stores its internal metadata (the struct pages array or memmap). If MEMMAP-ON-MEMORY is set to 1, the metadata is allocated directly from the newly added hotplugged memory, enabling hot-add operations even when the system is under high memory pressure. If set to 0, the memmap metadata is allocated from existing system memory.
 
 Possible BLOCK, CONFIGURED, STATE, MEMMAP-ON-MEMORY states::
@@ -62,7 +62,7 @@ Possible BLOCK, CONFIGURED, STATE, MEMMAP-ON-MEMORY states::
 | 2     | offline | no         | yes/no           | The memory is offline and deconfigured.
 |===
 
-Not all columns are supported on all systems. If an unsupported column is specified, *lsmem* prints the column but does not provide any data for it. Additionally, *lsmem* may skip columns like CONFIGURED or MEMMAP-ON-MEMORY if these states are not relevant to the system's architecture.
+Not all columns are supported on all systems. If an unsupported column is specified, *lsmem* prints the column but does not provide any data for it. Additionally, *lsmem* may skip columns like _CONFIGURED_ or _MEMMAP-ON-MEMORY_ if these states are not relevant to the system's architecture.
 
 Use the *--help* option to see the columns description.
 

@@ -91,7 +91,7 @@ This is only available on kernel versions >= 3.15.
 The starting offset for lock. This option implies *--fcntl*.
 
 *--length* _number_::
-The number of bytes to lock. Ths option implies *--fcntl*.
+The number of bytes to lock. This option implies *--fcntl*.
 
 *--verbose*::
 Report how long it took to acquire the lock, or why the lock could not be obtained.
