@@ -965,7 +965,9 @@ extern struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt);
 extern struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns);
 extern struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt);
 extern struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt);
-
+extern int mnt_context_set_ns_stage_flags(struct libmnt_context *cxt, uint32_t flags);
+extern int mnt_context_set_ns_curr_stage(struct libmnt_context *cxt, uint32_t stage);
+extern int mnt_context_get_ns_curr_stage(struct libmnt_context *cxt);
 
 /* context_mount.c */
 extern int mnt_context_mount(struct libmnt_context *cxt);

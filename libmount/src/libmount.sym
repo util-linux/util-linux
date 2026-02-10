@@ -420,4 +420,7 @@ MOUNT_2_42 {
 	mnt_fs_is_moved;
 	mnt_fs_is_attached;
 	mnt_fs_is_detached;
+	mnt_context_set_ns_stage_flags;
+	mnt_context_set_ns_curr_stage;
+	mnt_context_get_ns_curr_stage;
 } MOUNT_2_41;
