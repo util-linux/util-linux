@@ -15,12 +15,20 @@
 
 #include <sys/types.h>
 
-/* Send fd to socket identified by sockspec. pid < 0 means current process.
- * use_pidfd_getfd: if true use pidfd_getfd; if false use open(/proc/PID/fd/FD). */
-extern int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid, int use_pidfd_getfd);
+/* fdsend options. pid < 0 means current process. */
+struct fdsend_opts {
+	int blocking;       /* wait for socket / retry connect */
+	int abstract;       /* sockspec is abstract Unix socket name (Linux) */
+	pid_t pid;          /* process whose fd to send; < 0 = current */
+	int use_pidfd_getfd; /* use pidfd_getfd(2) to obtain fd from pid */
+};
+
+/* Send fd to socket identified by sockspec. */
+extern int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts);
 
 /* Receive fd from socket identified by sockspec. On success sets *out_fd.
- * dup2 and exec are done by the caller (fdrecv.c). */
-extern int fdrecv_do_recv(const char *sockspec, int *out_fd);
+ * dup2 and exec are done by the caller (fdrecv.c).
+ * abstract: if true, sockspec is an abstract Unix socket name (Linux). */
+extern int fdrecv_do_recv(const char *sockspec, int *out_fd, int abstract);
 
 #endif /* UTIL_LINUX_FDSEND_COMMON_H */
