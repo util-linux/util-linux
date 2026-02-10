@@ -394,6 +394,19 @@ Perform the mount operation in the mount namespace specified by _ns_. _ns_ is ei
 +
 See *mount_namespaces*(7) for more information.
 
+Note that, by default, *mount*(8) will be in the target namespace _ns_ for the entire mount process, this behavior can be controlled with *--namespace-stage*.
+
+*--namespace-stage* _stage_::
+Control at which stage of the mount process libmount should switch to the target namespace defined by *-N*.
++
+Valid values for _stage_ are:
++
+*all*: Switch to the target namespaces in all stages.
+
+*prepare*: During the mount preparation stage, i.e. fstab parsing, mount options preparation, source/target path canonicalization, file system type guessing and mount helper preparation.
+
+*attach*: After the *prepare* stage and before the file system is mounted.
+
 *-O*, *--test-opts* _opts_::
 Limit the set of filesystems to which the *-a* option applies. In this regard it is like the *-t* option except that *-O* is useless without *-a*. For example, the command
 +
