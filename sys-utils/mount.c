@@ -592,6 +592,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
 	fputs(_(" -w, --rw, --read-write  mount the filesystem read-write (default)\n"), out);
 	fputs(_(" -N, --namespace <ns>    perform mount in another namespace\n"), out);
+	fputs(_("     --namespace-stage=<stage>\n"
+		"                         enter the namespace at a specific stage\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -681,6 +683,36 @@ static pid_t parse_pid(const char *str)
 	return ret;
 }
 
+/* The option string is a valid namespace stage flag name.
+ *
+ * Valid names are:
+ * - all - switch to target namespace in all stages
+ * - prepare - when the mount is prepared, i.e. path canonicalization, etc...
+ * - attach - when the mount occurs
+ */
+static void parse_ns_stage_opt(struct libmnt_context *cxt, const char *optarg)
+{
+	int rc, flag;
+
+	if (!cxt || !optarg || !*optarg) {
+		errno = EINVAL;
+		goto fail;
+	}
+
+	flag = mnt_str_to_ns_stage_flag(optarg);
+	if (flag < 0)
+		errx(MNT_EX_USAGE, _("invalid namespace stage argument '%s'"), optarg);
+
+	rc = mnt_context_set_ns_stage_flags(cxt, (uint32_t)flag);
+	if (rc < 0)
+		errx(MNT_EX_USAGE, _("failed to set namespace switch stage"));
+
+	return;
+
+fail:
+	err(MNT_EX_USAGE, _("failed to parse --namespace-stage argument"));
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
@@ -713,6 +745,7 @@ int main(int argc, char **argv)
 		MOUNT_OPT_ONLYONCE,
 		MOUNT_OPT_EXCL,
 		MOUNT_OPT_BENEATH,
+		MOUNT_OPT_NAMESPACE_STAGE,
 	};
 
 	static const struct option longopts[] = {
@@ -760,6 +793,7 @@ int main(int argc, char **argv)
 		{ "options-source",   required_argument, NULL, MOUNT_OPT_OPTSRC      },
 		{ "options-source-force",   no_argument, NULL, MOUNT_OPT_OPTSRC_FORCE},
 		{ "namespace",        required_argument, NULL, 'N'                   },
+		{ "namespace-stage",  required_argument, NULL, MOUNT_OPT_NAMESPACE_STAGE },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -899,6 +933,9 @@ int main(int argc, char **argv)
 				err(MNT_EX_SYSERR, _("failed to set target namespace to %s"), pid ? path : optarg);
 			break;
 		}
+		case MOUNT_OPT_NAMESPACE_STAGE:
+			parse_ns_stage_opt(cxt, optarg);
+			break;
 		case MOUNT_OPT_SHARED:
 			append_option(cxt, "shared", NULL);
 			propa = 1;
