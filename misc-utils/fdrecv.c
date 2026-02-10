@@ -36,6 +36,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --fd <num>     dup received fd to this number\n"), out);
 	fputs(_(" -r, --run          exec command with received fd (must appear after SOCKSPEC)\n"), out);
+	fputs(_(" -a, --abstract     SOCKSPEC is an abstract Unix socket name (Linux)\n"), out);
 	fputs(_(" -i, --stdin        map received fd to command's stdin (fd 0)\n"), out);
 	fputs(_(" -o, --stdout       map received fd to command's stdout (fd 1)\n"), out);
 	fputs(_(" -e, --stderr       map received fd to command's stderr (fd 2)\n"), out);
@@ -51,19 +52,21 @@ int main(int argc, char **argv)
 	int c;
 	int fd;
 	int opt_fd = -1;
+	int opt_abstract = 0;
 	int opt_stdin = 0, opt_stdout = 0, opt_stderr = 0;
 	const char *sockspec = NULL;
 	char **run_argv = NULL;
 	int run_argc = 0;
 
 	static const struct option longopts[] = {
-		{ "fd",     required_argument, NULL, 'f' },
-		{ "run",    no_argument,       NULL, 'r' },
-		{ "stdin",  no_argument,       NULL, 'i' },
-		{ "stdout", no_argument,       NULL, 'o' },
-		{ "stderr", no_argument,       NULL, 'e' },
-		{ "help",   no_argument,       NULL, 'h' },
-		{ "version", no_argument,      NULL, 'V' },
+		{ "fd",      required_argument, NULL, 'f' },
+		{ "run",     no_argument,       NULL, 'r' },
+		{ "abstract", no_argument,      NULL, 'a' },
+		{ "stdin",   no_argument,       NULL, 'i' },
+		{ "stdout",  no_argument,       NULL, 'o' },
+		{ "stderr",  no_argument,       NULL, 'e' },
+		{ "help",    no_argument,       NULL, 'h' },
+		{ "version", no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
 	static const ul_excl_t excl[] = {
@@ -78,7 +81,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout_atexit);
 
 	/* '+' so we stop at first non-option (SOCKSPEC) */
-	while ((c = getopt_long(argc, argv, "+f:rioehV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+f:raioehV", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'f':
@@ -87,6 +90,9 @@ int main(int argc, char **argv)
 		case 'r':
 			warnx(_("--run must appear after SOCKSPEC"));
 			errtryhelp(EXIT_FAILURE);
+		case 'a':
+			opt_abstract = 1;
+			break;
 		case 'i':
 			opt_stdin = 1;
 			break;
@@ -139,7 +145,7 @@ int main(int argc, char **argv)
 	else if (opt_stdout) opt_fd = 1;
 	else if (opt_stderr) opt_fd = 2;
 
-	if (fdrecv_do_recv(sockspec, &fd) != 0) {
+	if (fdrecv_do_recv(sockspec, &fd, opt_abstract) != 0) {
 		warn(_("receive failed"));
 		return EXIT_FAILURE;
 	}

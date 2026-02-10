@@ -51,15 +51,32 @@ static void fdrecv_setup_cleanup_signals(void)
 	sigaction(SIGHUP, &sa, NULL);
 }
 
-static int sockpath_from_spec(const char *spec, char *path, size_t size)
+#define SOCK_NAME_MAX  (sizeof(((struct sockaddr_un *)0)->sun_path))
+/* Abstract Unix socket name length limit (sun_path[0] is NUL, name at +1). */
+#define ABSTRACT_SOCK_NAME_MAX  (SOCK_NAME_MAX - 1)
+#define ABSTRACT_SOCK_CONNECT_RETRY_MS  100
+
+static int sockpath_from_spec(const char *spec, char *path, size_t size, int abstract)
 {
 	char dir[PATH_MAX];
 	uid_t uid;
 	int r;
+	size_t len;
 
 	if (!spec || !path || size == 0) {
 		errno = EINVAL;
 		return -1;
+	}
+
+	if (abstract) {
+		/* SOCKSPEC is the abstract socket name; use as-is, no path resolution. */
+		len = strlen(spec);
+		if (len > ABSTRACT_SOCK_NAME_MAX || len >= size) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+		memcpy(path, spec, len + 1);
+		return 0;
 	}
 
 	if (spec[0] == '/') {
@@ -99,10 +116,10 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size)
 }
 
 /*
- * If blocking: wait for socket file to appear (receiver started first).
- * Returns 0 when socket exists or blocking is 0; -1 on error.
+ * Wait for socket file to appear (receiver started first).
+ * Returns 0 when socket exists; -1 on error.
  */
-static int fdsend_wait_for_socket(const char *sockpath, int blocking)
+static int fdsend_wait_for_socket(const char *sockpath)
 {
 	char dir[PATH_MAX];
 	char *base;
@@ -113,9 +130,6 @@ static int fdsend_wait_for_socket(const char *sockpath, int blocking)
 	char buf[INOTIFY_BUF_LEN];
 	int ret = -1;
 	int poll_timeout_ms = 2000;
-
-	if (!blocking)
-		return 0;
 
 	/* return if the socket exists */
 	if (access(sockpath, F_OK) == 0)
@@ -192,16 +206,44 @@ out:
 	return ret;
 }
 
+/* Unlink path-based (non-abstract) Unix socket file. No-op for abstract sockets. */
+static inline void unlink_socket_path(int abstract, const char *path)
+{
+	if (!abstract)
+		unlink(path);
+}
+
+/* Set permissions for path-based (non-abstract) Unix socket file. No-op for abstract sockets. */
+static inline int chmod_socket_path(int abstract, const char *path)
+{
+	if (!abstract)
+		return chmod(path, 0600);
+	return 0;
+}
+
 /*
- * Receiver: socket/bind/listen/accept, recvmsg with SCM_RIGHTS.
- * On success sets *out_fd to the received fd and returns 0.
+ * fdrecv_accept_and_recv_fd - receiver side: accept one connection and receive an fd.
+ *
+ * socket/bind/listen/accept on sockpath, then recvmsg(SCM_RIGHTS) to get the fd into *out_fd.
+ *
+ * sockpath:  For path-based sockets, a filesystem path; for abstract, the
+ *            name in the kernel abstract namespace.
+ * out_fd:   On success, the received file descriptor is stored here.
+ * abstract: Non-zero if sockpath is an abstract Unix socket name (Linux).
+ *
+ * Signal handling: If interrupted in accept(), the socket is unlinked and
+ * the function returns -1 with errno EINTR.
+ *
+ * Returns 0 on success, -1 on error (and errno set). On success *out_fd is
+ * the received fd; the caller owns it.
  */
-static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd)
+static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abstract)
 {
 	int sock = -1;
 	int conn = -1;
 	struct sockaddr_un sun;
 	size_t path_len;
+	socklen_t addr_len;
 	struct cmsghdr *cmsg;
 	union {
 		struct cmsghdr hdr;
@@ -217,9 +259,16 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd)
 	}
 
 	path_len = strlen(sockpath);
-	if (path_len >= sizeof(sun.sun_path)) {
-		errno = ENAMETOOLONG;
-		return -1;
+	if (abstract) {
+		if (path_len > ABSTRACT_SOCK_NAME_MAX) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+	} else {
+		if (path_len >= sizeof(sun.sun_path)) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
 	}
 
 	sock = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -228,47 +277,54 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd)
 
 	memset(&sun, 0, sizeof(sun));
 	sun.sun_family = AF_UNIX;
-	memcpy(sun.sun_path, sockpath, path_len + 1);
+	if (abstract) {
+		sun.sun_path[0] = '\0';
+		memcpy(sun.sun_path + 1, sockpath, path_len + 1);
+		addr_len = offsetof(struct sockaddr_un, sun_path) + 1 + path_len;
+	} else {
+		memcpy(sun.sun_path, sockpath, path_len + 1);
+		addr_len = sizeof(sun);
+	}
 
-	if (bind(sock, (struct sockaddr *)&sun, sizeof(sun)) != 0) {
+	if (bind(sock, (struct sockaddr *)&sun, addr_len) != 0) {
 		close(sock);
 		return -1;
 	}
 
-	if (chmod(sockpath, 0600) != 0) {
+	if (chmod_socket_path(abstract, sockpath) != 0) {
 		close(sock);
-		unlink(sockpath);
+		unlink_socket_path(abstract, sockpath);
 		return -1;
 	}
 
 	if (listen(sock, 1) != 0) {
 		close(sock);
-		unlink(sockpath);
+		unlink_socket_path(abstract, sockpath);
 		return -1;
 	}
 
 	/* Register handler so we unlink the socket file when interrupted in accept(). */
 	fdrecv_setup_cleanup_signals();
 
-	while(true) {
+	while (true) {
 		conn = accept(sock, NULL, NULL);
 		if (conn >= 0)
 			break;
 		if (errno != EINTR) {
 			close(sock);
-			unlink(sockpath);
+			unlink_socket_path(abstract, sockpath);
 			return -1;
 		}
 		if (fdrecv_got_signal) {
 			close(sock);
-			unlink(sockpath);
+			unlink_socket_path(abstract, sockpath);
 			errno = EINTR;
 			return -1;
 		}
 	}
 
 	close(sock);
-	unlink(sockpath);
+	unlink_socket_path(abstract, sockpath);
 
 	/* recvmsg: at least one byte in iov; control buffer for SCM_RIGHTS */
 	iov.iov_base = &dummy;
@@ -335,13 +391,15 @@ static int fdsend_open_pid_fd(pid_t pid, int fd, int use_pidfd_getfd)
 }
 
 /*
- * Sender: resolve path; get fd (open /proc/PID/fd/FD or use current); connect and sendmsg SCM_RIGHTS.
+ * Sender: connect and sendmsg SCM_RIGHTS.
+ * When opts->abstract and opts->blocking, retry connect on ECONNREFUSED until success.
  */
-static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int own_fd)
+static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int own_fd, const struct fdsend_opts *opts)
 {
 	int sock = -1;
 	struct sockaddr_un sun;
 	size_t path_len;
+	socklen_t addr_len;
 	union {
 		struct cmsghdr hdr;
 		char buf[CMSG_SPACE(sizeof(int))];
@@ -351,6 +409,10 @@ static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int 
 	struct iovec iov;
 	char dummy = ' ';
 	int ret = -1;
+	size_t sock_name_len_max = SOCK_NAME_MAX;
+
+	if (opts->abstract)
+		sock_name_len_max = ABSTRACT_SOCK_NAME_MAX;
 
 	if (!sockpath) {
 		errno = EINVAL;
@@ -358,7 +420,8 @@ static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int 
 	}
 
 	path_len = strlen(sockpath);
-	if (path_len >= sizeof(sun.sun_path)) {
+
+	if (path_len > sock_name_len_max) {
 		errno = ENAMETOOLONG;
 		return -1;
 	}
@@ -369,10 +432,28 @@ static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int 
 
 	memset(&sun, 0, sizeof(sun));
 	sun.sun_family = AF_UNIX;
-	memcpy(sun.sun_path, sockpath, path_len + 1);
+	if (opts->abstract) {
+		sun.sun_path[0] = '\0';
+		memcpy(sun.sun_path + 1, sockpath, path_len + 1);
+		addr_len = offsetof(struct sockaddr_un, sun_path) + 1 + path_len;
+	} else {
+		memcpy(sun.sun_path, sockpath, path_len + 1);
+		addr_len = sizeof(sun);
+	}
 
-	if (connect(sock, (struct sockaddr *)&sun, sizeof(sun)) != 0)
-		goto out;
+	/* Abstract sockets use connect retry instead of wait for socket file. */
+	if (opts->abstract && opts->blocking) {
+		for (;;) {
+			if (connect(sock, (struct sockaddr *)&sun, addr_len) == 0)
+				break;
+			if (errno != ECONNREFUSED)
+				goto out;
+			usleep(ABSTRACT_SOCK_CONNECT_RETRY_MS * 1000);
+		}
+	} else {
+		if (connect(sock, (struct sockaddr *)&sun, addr_len) != 0)
+			goto out;
+	}
 
 	iov.iov_base = &dummy;
 	iov.iov_len = 1;
@@ -397,29 +478,38 @@ out:
 	return ret;
 }
 
-int fdsend_do_send(const char *sockspec, int fd, int blocking, pid_t pid, int use_pidfd_getfd)
+int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
 {
 	char path[PATH_MAX];
 	int fd_to_send = fd;
 	int own_fd = 0;
 
-	if (sockpath_from_spec(sockspec, path, sizeof(path)) != 0)
+	if (!opts) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (sockpath_from_spec(sockspec, path, sizeof(path), opts->abstract) != 0)
 		return -1;
 
-	if (fdsend_wait_for_socket(path, blocking) != 0)
+	/*
+	 * Wait for socket file to appear when blocking;
+	 * For abstract sockets connect retry is used instead.
+	 */
+	if (!opts->abstract && opts->blocking && fdsend_wait_for_socket(path) != 0)
 		return -1;
 
-	if (pid >= 0) {
-		fd_to_send = fdsend_open_pid_fd(pid, fd, use_pidfd_getfd);
+	if (opts->pid >= 0) {
+		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->use_pidfd_getfd);
 		if (fd_to_send < 0)
 			return -1;
 		own_fd = 1;
 	}
 
-	return fdsend_connect_and_send_fd(path, fd_to_send, own_fd);
+	return fdsend_connect_and_send_fd(path, fd_to_send, own_fd, opts);
 }
 
-int fdrecv_do_recv(const char *sockspec, int *out_fd)
+int fdrecv_do_recv(const char *sockspec, int *out_fd, int abstract)
 {
 	char path[PATH_MAX];
 
@@ -428,8 +518,8 @@ int fdrecv_do_recv(const char *sockspec, int *out_fd)
 		return -1;
 	}
 
-	if (sockpath_from_spec(sockspec, path, sizeof(path)) != 0)
+	if (sockpath_from_spec(sockspec, path, sizeof(path), abstract) != 0)
 		return -1;
 
-	return fdrecv_accept_and_recv_fd(path, out_fd);
+	return fdrecv_accept_and_recv_fd(path, out_fd, abstract);
 }
