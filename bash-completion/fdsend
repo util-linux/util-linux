@@ -23,6 +23,7 @@ _fdsend_module()
 			OPTS='
 				--fd
 				--pid
+				--abstract
 				--blocking
 				--pidfd-getfd
 				--help
