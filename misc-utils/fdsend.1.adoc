@@ -31,6 +31,10 @@ under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
 *-b*, *--blocking*::
   Wait for the socket to appear before connecting (useful when receiver starts first).
 
+*-a*, *--abstract*::
+  Treat _SOCKSPEC_ as an abstract Unix socket name (Linux). No path resolution;
+  the name is used as-is in the kernel abstract namespace.
+
 *-g*, *--pidfd-getfd*::
   Use pidfd_getfd(2) to obtain the fd from the process. If not specified,
   open(/proc/PID/fd/FD) is used instead.
