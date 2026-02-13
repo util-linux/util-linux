@@ -337,6 +337,8 @@ static void print_value(const struct blkid_control *ctl, int num,
 		fputs("\n", stdout);
 
 	} else if (ctl->output & OUTPUT_JSON) {
+		if (num == 1 && devname)
+			ul_jsonwrt_value_s(ctl->json_fmt, "device", devname);
 		ul_jsonwrt_value_s_sized(ctl->json_fmt, name, value, valsz);
 
 	} else {
@@ -372,10 +374,8 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 		return;
 	}
 
-	if (ctl->output == OUTPUT_JSON) {
-		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
+	if (ctl->output == OUTPUT_JSON)
 		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
-	}
 
 	iter = blkid_tag_iterate_begin(dev);
 	while (blkid_tag_next(iter, &type, &value) == 0) {
@@ -981,6 +981,9 @@ int main(int argc, char **argv)
 		 */
 		blkid_dev dev;
 
+		if (ctl.output & OUTPUT_JSON)
+			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+
 		if (!search_type)
 			errx(BLKID_EXIT_OTHER,
 			     _("The lookup option requires a "
@@ -999,6 +1002,11 @@ int main(int argc, char **argv)
 		blkid_dev_iterate	iter;
 		blkid_dev		dev;
 
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+			ul_jsonwrt_array_open(ctl.json_fmt, NULL);
+		}
+
 		blkid_probe_all(cache);
 
 		iter = blkid_dev_iterate_begin(cache);
@@ -1011,10 +1019,19 @@ int main(int argc, char **argv)
 			err = 0;
 		}
 		blkid_dev_iterate_end(iter);
+
+		if (ctl.output == OUTPUT_JSON) {
+			ul_jsonwrt_array_close(ctl.json_fmt);
+			fprintf(stdout, "\n");
+		}
+
 	/* Add all specified devices to cache (optionally display tags) */
 	} else for (i = 0; i < numdev; i++) {
 		blkid_dev dev = blkid_get_dev(cache, devices[i],
 						  BLKID_DEV_NORMAL);
+
+		if (ctl.output & OUTPUT_JSON)
+			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
 
 		if (dev) {
 			if (search_type &&
