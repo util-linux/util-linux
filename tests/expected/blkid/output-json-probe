@@ -1,4 +1,5 @@
 {
+   "device": "blkid-output.img",
    "label": "tés\"'\n t",
    "fssize": "4096",
    "version": "2",
