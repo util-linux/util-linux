@@ -1052,6 +1052,10 @@ char *c = crypt("abc","pw");
 ])
 AM_CONDITIONAL([HAVE_LIBCRYPT], [test "x$have_libcrypt" = xyes])
 
+AC_CHECK_TYPES([struct nsfs_file_handle], [], [], [[
+#include <linux/nsfs.h>
+]])
+
 
 AC_ARG_WITH([selinux],
   AS_HELP_STRING([--with-selinux], [compile with SELinux support]),

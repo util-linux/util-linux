@@ -915,6 +915,9 @@ conf.set('USE_COLORS_BY_DEFAULT', get_option('colors-default') ? 1 : false)
 
 is_glibc = cc.has_header_symbol('limits.h', '__GLIBC__')
 
+have = cc.has_type('struct nsfs_file_handle', prefix : '#include <linux/nsfs.h>')
+conf.set('HAVE_STRUCT_NSFS_FILE_HANDLE', have ? 1 : false)
+
 ############################################################
 
 

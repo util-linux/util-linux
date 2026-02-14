@@ -93,16 +93,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                    enter all namespaces\n"), out);
 	fputs(_(" -t, --target <PID>           target process to get namespaces from\n"), out);
-	fputs(_(" -m, --mount[=<file>]         enter mount namespace\n"), out);
-	fputs(_(" -u, --uts[=<file>]           enter UTS namespace (hostname etc)\n"), out);
-	fputs(_(" -i, --ipc[=<file>]           enter System V IPC namespace\n"), out);
-	fputs(_(" -n, --net[=<file>]           enter network namespace\n"), out);
+	fputs(_(" -m, --mount[=<file|:nsid>]   enter mount namespace\n"), out);
+	fputs(_(" -u, --uts[=<file|:nsid>]     enter UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc[=<file|:nsid>]     enter System V IPC namespace\n"), out);
+	fputs(_(" -n, --net[=<file|:nsid>]     enter network namespace\n"), out);
 	fputs(_(" -N, --net-socket <fd>        enter socket's network namespace (use with --target)\n"), out);
-	fputs(_(" -p, --pid[=<file>]           enter pid namespace\n"), out);
-	fputs(_(" -C, --cgroup[=<file>]        enter cgroup namespace\n"), out);
-	fputs(_(" -U, --user[=<file>]          enter user namespace\n"), out);
+	fputs(_(" -p, --pid[=<file|:nsid>]     enter pid namespace\n"), out);
+	fputs(_(" -C, --cgroup[=<file|:nsid>]  enter cgroup namespace\n"), out);
+	fputs(_(" -U, --user[=<file|:nsid>]    enter user namespace\n"), out);
 	fputs(_("     --user-parent            enter parent user namespace\n"), out);
-	fputs(_(" -T, --time[=<file>]          enter time namespace\n"), out);
+	fputs(_(" -T, --time[=<file|:nsid>]    enter time namespace\n"), out);
 	fputs(_(" -S, --setuid[=<uid>]         set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid[=<gid>]         set gid in entered namespace\n"), out);
 	fputs(_("     --preserve-credentials   do not touch uids or gids\n"), out);
@@ -177,10 +177,89 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
 
+#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+
+static struct file_handle nsfs_fh_tmpl = {};
+static int nsfs_fd = -1;
+
+static int fill_nsfs_file_handle(struct file_handle *fh, uint64_t ns_id)
+{
+	struct nsfs_file_handle *nsfh = (struct nsfs_file_handle *)fh->f_handle;
+	int pidfd_self;
+	int mount_id;
+
+	if (nsfs_fh_tmpl.handle_type) {
+		*fh = nsfs_fh_tmpl;
+		goto out;
+	}
+
+	/*
+	 * Before we can build a file handle of the namespace file of given
+	 * nsid and open it, we need the handle_type of nsfs and a "mount_fd"
+	 * for open_by_handle_at(2)). However,
+	 *
+	 *  1. FILEID_NSFS is currently not exposed to userspace, and
+	 *  2. linux/fcntl.h, in which FD_NSFS_ROOT is defined, conflicts with
+	 *     fcntl.h,
+	 *
+	 * so we retrieve the information by grabbing a temporary ns file.
+	 */
+	pidfd_self = pidfd_open(getpid(), 0);
+	if (pidfd_self < 0)
+		return -errno;
+
+	/* Mount namespace can not be disabled by kernel config */
+	nsfs_fd = ioctl(pidfd_self, PIDFD_GET_MNT_NAMESPACE, 0);
+	if (nsfs_fd < 0)
+		return -errno;
+	close(pidfd_self);
+
+	fh->handle_bytes = sizeof(struct nsfs_file_handle);
+	if (name_to_handle_at(nsfs_fd, "", fh, &mount_id,
+			      AT_EMPTY_PATH | AT_HANDLE_FID) == -1)
+		return -errno;
+	assert(fh->handle_type);
+	nsfs_fh_tmpl = *fh;
+
+out:
+	memset(nsfh, 0, sizeof(*nsfh));
+	nsfh->ns_id = ns_id;
+	return 0;
+}
+
+static void open_target_fd_by_nsid(int *fd, const char *idstr)
+{
+	unsigned char fh_buf[sizeof(struct file_handle) +
+		sizeof(struct nsfs_file_handle)];
+	struct file_handle *fh = (struct file_handle *)fh_buf;
+	uint64_t ns_id;
+
+	if (ul_strtou64(idstr, &ns_id, 10) != 0)
+		errx(EXIT_FAILURE, _("failed to parse nsid: %s"), idstr);
+
+	if (fill_nsfs_file_handle(fh, ns_id) != 0)
+		err(EXIT_FAILURE, _("failed to fill namespace file handle"));
+
+	if (*fd >= 0)
+		close(*fd);
+
+	*fd = open_by_handle_at(nsfs_fd, fh, O_RDONLY);
+	if (*fd < 0)
+		err(EXIT_FAILURE, _("cannot open namespace of id %"PRIu64),
+		    ns_id);
+}
+#endif /* HAVE_STRUCT_NSFS_FILE_HANDLE */
+
 static void enable_nsfile(struct namespace_file *n, const char *path)
 {
-	if (path)
-		open_target_fd(&n->fd, n->name, path);
+	if (path) {
+#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+		if (*path == ':')
+			open_target_fd_by_nsid(&n->fd, path + 1);
+		else
+#endif
+			open_target_fd(&n->fd, n->name, path);
+	}
 	n->enabled = true;
 }
 
@@ -775,6 +854,11 @@ int main(int argc, char *argv[])
 
 	if (pid_fd >= 0)
 		close(pid_fd);
+
+#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+	if (nsfs_fd >= 0)
+		close(nsfs_fd);
+#endif
 
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
