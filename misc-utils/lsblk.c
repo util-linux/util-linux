@@ -1797,7 +1797,12 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 
 		DBG(DEV, ul_debug("%s: reading alone device", devname));
 
-		if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
+		if (stat(devname, &st) != 0) {
+			warn("%s", devname);
+			goto leave;
+		}
+
+		if (!S_ISBLK(st.st_mode)) {
 			warnx(_("%s: not a block device"), devname);
 			goto leave;
 		}
