@@ -292,7 +292,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 
 			if (type == BLK_ZONE_TYPE_CONVENTIONAL ||
 			    cond == BLK_ZONE_COND_FULL)
-				snprintf(wp_str, sizeof(wp_str), "N/A");
+				snprintf(wp_str, sizeof(wp_str), "%s", _("N/A"));
 			else
 				snprintf(wp_str, sizeof(wp_str),
 					 "0x%06" PRIx64, wp - start);
