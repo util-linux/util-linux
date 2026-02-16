@@ -55,9 +55,9 @@ data holes – ranges inside the file which are logically filled with zero bytes
 For each hole the offset, end and size in bytes are printed in verbose mode, followed by a summary that gives the total size and percentage of the file that each hole type represents by default.
 If no offset is specified with *--offset*, the whole file is scanned.
 +
-This option is read-only and can be used on any file to estimate how much space could be reclaimed by --dig-holes.
+This option is read-only and can be used on any file to estimate how much space could be reclaimed by *--dig-holes*.
 +
-See --punch-hole for a list of supported filesystems.
+See *--punch-hole* for a list of supported filesystems.
 
 *-i*, *--insert-range*::
 Insert a hole of _length_ bytes from _offset_, shifting existing data.
