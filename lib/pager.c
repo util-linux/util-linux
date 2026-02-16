@@ -44,7 +44,7 @@ struct child_process {
 };
 static struct child_process pager_process;
 
-static volatile sig_atomic_t caught_signal;
+static volatile sig_atomic_t pager_caught_signal;
 
 static inline void close_pair(int fd[2])
 {
@@ -114,7 +114,7 @@ static void wait_for_pager(void)
 
 static void catch_signal(int signo)
 {
-	caught_signal = signo;
+	pager_caught_signal = signo;
 }
 
 static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
@@ -298,11 +298,11 @@ void pager_close(void)
 	sigaction(SIGQUIT, &pager_process.orig_sigquit, NULL);
 	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
 
-	if (caught_signal)
+	if (pager_caught_signal)
 		exit(EXIT_FAILURE);
 
 	memset(&pager_process, 0, sizeof(pager_process));
-	caught_signal = 0;
+	pager_caught_signal = 0;
 }
 
 #ifdef TEST_PROGRAM_PAGER
