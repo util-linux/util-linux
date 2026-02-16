@@ -12,6 +12,7 @@ lsfd_sources = files (
   'unkn.c',
   'fifo.c',
   'pidfd.c',
+  'util.c',
 )
 
 lsfd_manadocs = files('lsfd.1.adoc')

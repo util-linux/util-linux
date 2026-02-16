@@ -21,6 +21,8 @@
 
 #include <sys/types.h>
 #include <sys/xattr.h>
+#include <linux/sockios.h>	/* SIOCGSKNS */
+#include <sys/ioctl.h>
 
 #include "lsfd.h"
 #include "sock.h"
@@ -29,7 +31,9 @@ static void attach_sock_xinfo(struct file *file)
 {
 	struct sock *sock = (struct sock *)file;
 
-	sock->xinfo = get_sock_xinfo(file->stat.st_ino);
+	if (!sock->xinfo)
+		sock->xinfo = get_sock_xinfo(file->stat.st_ino);
+
 	if (sock->xinfo) {
 		struct ipc *ipc = get_ipc(file);
 		if (ipc)
@@ -90,9 +94,14 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	case COL_SOCK_NETNS:
-		if (sock->xinfo) {
+		if (sock->xinfo && sock->xinfo->netns_inode != 0) {
 			xasprintf(&str, "%llu",
 				  (unsigned long long)sock->xinfo->netns_inode);
+			break;
+		}
+		if (sock->netns_inode) {
+			xasprintf(&str, "%llu",
+				  (unsigned long long)sock->netns_inode);
 			break;
 		}
 		return false;
@@ -135,6 +144,27 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 	return true;
 }
 
+
+static ino_t get_netns_from_socket(int sk)
+{
+	int nsfd;
+	struct stat sb;
+
+	nsfd = ioctl(sk, SIOCGSKNS);
+	if (nsfd < 0)
+		return 0;
+
+	if (fstat(nsfd, &sb) < 0) {
+		close(nsfd);
+		return 0;
+	}
+
+	load_fdsk_xinfo(sb.st_ino, nsfd);
+
+	close(nsfd);
+	return sb.st_ino;
+}
+
 static void init_sock_content(struct file *file)
 {
 	int fd;
@@ -169,6 +199,30 @@ static void init_sock_content(struct file *file)
 	init_endpoint(&sock->endpoint);
 }
 
+static bool sock_needs_target_fd(struct file *file)
+{
+	struct sock *sock = (struct sock *)file;
+
+	/* DB behind get_sock_xinfo() is not fulfilled enough yet.
+	 * However, if we are lucky enough to find an xinfo in the DB,
+	 * we can avoid calling sock_inspect_target_fd().
+	 *
+	 * Even if get_sock_xinfo() returns NULL in this timing,
+	 * eventually we call it again attach_sock_xinfo.
+	 * When calling attach_sock_xinfo, the DB is completely
+	 * fulfilled.
+	 */
+	sock->xinfo = get_sock_xinfo(file->stat.st_ino);
+	return !(sock->xinfo && sock->xinfo->netns_inode != 0);
+}
+
+static void sock_inspect_target_fd(struct file *file, int fd)
+{
+	struct sock *sock = (struct sock *)file;
+
+	sock->netns_inode = get_netns_from_socket(fd);
+}
+
 static void free_sock_content(struct file *file)
 {
 	struct sock *sock = (struct sock *)file;
@@ -194,6 +248,8 @@ const struct file_class sock_class = {
 	.fill_column = sock_fill_column,
 	.attach_xinfo = attach_sock_xinfo,
 	.initialize_content = init_sock_content,
+	.needs_target_fd = sock_needs_target_fd,
+	.inspect_target_fd = sock_inspect_target_fd,
 	.free_content = free_sock_content,
 	.initialize_class = initialize_sock_class,
 	.finalize_class = finalize_sock_class,

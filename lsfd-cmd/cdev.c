@@ -466,31 +466,8 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 }
 
 #ifdef TUNGETDEVNETNS
-static int call_with_foreign_fd(pid_t target_pid, int target_fd,
-				int (*fn)(int, void*), void *data)
-{
-	int pidfd, tfd, r;
-
-	pidfd = pidfd_open(target_pid, 0);
-	if (pidfd < 0)
-		return pidfd;
-
-	tfd = pidfd_getfd(pidfd, target_fd, 0);
-	if (tfd < 0) {
-		close(pidfd);
-		return tfd;
-	}
-
-	r = fn(tfd, data);
-
-	close(tfd);
-	close(pidfd);
-	return r;
-}
-
 static int cdev_tun_get_devnetns(int tfd, void *data)
 {
-
 	struct tundata *tundata = data;
 	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
 	struct stat sb;

@@ -843,6 +843,9 @@ static struct proc *new_proc(pid_t pid, struct proc *leader)
 	INIT_LIST_HEAD(&proc->eventpolls);
 
 	proc->kthread = 0;
+
+	proc->pidfd = -1;
+
 	return proc;
 }
 
@@ -877,6 +880,21 @@ static void read_fdinfo(struct file *file, FILE *fdinfo)
 			class = class->super;
 		}
 	}
+}
+
+static int call_inspect_target_fd_method(int fd, void *data)
+{
+	struct file *f = data;
+
+	f->class->inspect_target_fd(f, fd);
+	return 0;
+}
+
+static void inspect_target_fd(struct file *f, struct proc *proc)
+{
+	if (proc->pidfd >= 0)
+		call_with_foreign_fd_via_pidfd(proc->pidfd, f->association,
+					       call_inspect_target_fd_method, f);
 }
 
 static struct file *collect_file_symlink(struct path_cxt *pc,
@@ -921,7 +939,6 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	else if (assoc >= 0) {
 		/* file-descriptor based association */
-		bool is_socket = (sb.st_mode & S_IFMT) == S_IFSOCK;
 		FILE *fdinfo;
 
 		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
@@ -930,13 +947,17 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		if (is_nsfs_dev(f->stat.st_dev))
 			load_sock_xinfo(pc, name, f->stat.st_ino);
 
-		if (is_socket)
-			load_fdsk_xinfo(proc, assoc);
 
 		fdinfo = ul_path_fopenf(pc, "r", "fdinfo/%d", assoc);
 		if (fdinfo) {
 			read_fdinfo(f, fdinfo);
 			fclose(fdinfo);
+		}
+
+		if (f->class->needs_target_fd &&
+		    f->class->needs_target_fd(f)) {
+			assert(f->class->inspect_target_fd);
+			inspect_target_fd(f, proc);
 		}
 	}
 
@@ -1106,24 +1127,27 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 			       sockets_only);
 }
 
-static void collect_pidfs_file(struct proc *proc, bool sockets_only)
+static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 {
 	struct file *f = NULL;
 	int pidfd;
 
 	if (sockets_only)
-		return;
+		return -1;
 
 	pidfd = pidfd_open(proc->pid, 0);
 	if (pidfd < 0)
-		return;
+		return -1;
 
 	{
 		struct stat sb;
 		const int assoc = ASSOC_PIDFS * -1;
 
-		if (fstat(pidfd, &sb) < 0)
-			goto out;
+		if (fstat(pidfd, &sb) < 0) {
+			/* Even fstat fails here, the pidfd is still
+			 * usable in the caller side. */
+			return pidfd;
+		}
 
 		if ((sb.st_mode & S_IFMT) == S_IFREG) {
 			char *name = NULL;
@@ -1151,8 +1175,7 @@ static void collect_pidfs_file(struct proc *proc, bool sockets_only)
 		free(fdinfo);
 	}
 
- out:
-	close(pidfd);
+	return pidfd;
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
@@ -2079,6 +2102,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	}
 	if (proc->kthread && !ctl->threads) {
 		free_proc(proc);
+		proc = NULL;
 		goto out;
 	}
 
@@ -2088,7 +2112,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
 		collect_fs_files(pc, proc, ctl->sockets_only);
 
-	collect_pidfs_file(proc, ctl->sockets_only);
+	proc->pidfd = collect_pidfs_file(proc, ctl->sockets_only);
 
 	/* Reading /proc/$pid/mountinfo is expensive.
 	 * mnt_namespaces is a table for avoiding reading mountinfo files
@@ -2165,6 +2189,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		walk_threads(ctl, pc, pid, proc, parse_proc_syscall);
 
  out:
+	if (proc && proc->pidfd >= 0) {
+		close(proc->pidfd);
+		proc->pidfd = -1;
+	}
+
 	/* Let's be careful with number of open files */
 	ul_path_close_dirfd(pc);
 }

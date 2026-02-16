@@ -34,8 +34,8 @@
  */
 struct sock_xinfo {
 	ino_t inode;		/* inode in sockfs */
-	ino_t netns_inode;	/* inode of netns where
-				   the socket belongs to */
+	ino_t netns_inode;	/* inode of the network namespace where
+				 * the socket was created */
 	const struct sock_xinfo_class *class;
 };
 
@@ -44,6 +44,18 @@ struct sock {
 	char *protoname;
 	struct sock_xinfo *xinfo;
 	struct ipc_endpoint endpoint;
+
+	/*
+	 * There are two netns_inode fields reachable from struct sock:
+	 *
+	 * - sock->xinfo->netns_inode: filled via sock_diag netlink (when available)
+	 * - sock->netns_inode: filled via ioctl(SIOCGSKNS)
+	 *
+	 * Use sock->netns_inode as a fallback when xinfo is unavailable or
+	 * does not provide the netns inode.
+	 */
+	ino_t netns_inode;
+
 };
 
 struct sock_xinfo_class {
@@ -70,5 +82,6 @@ void initialize_sock_xinfos(void);
 void finalize_sock_xinfos(void);
 
 struct sock_xinfo *get_sock_xinfo(ino_t inode);
+void load_fdsk_xinfo(ino_t netns_ino, int netns_fd);
 
 #endif /* UTIL_LINUX_LSFD_SOCK_H */
