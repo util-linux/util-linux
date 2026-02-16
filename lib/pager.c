@@ -223,18 +223,6 @@ static void __setup_pager(void)
 	sigaction(SIGPIPE, &sa, &pager_process.orig_sigpipe);
 }
 
-/* Setup pager and redirect output to the $PAGER. The pager is closed at exit.
- */
-void pager_redirect(void)
-{
-	if (pager_process.pid)
-		return;		/* already running */
-
-	pager_open();
-
-	atexit(pager_close);
-}
-
 /* Setup pager and redirect output, the pager may be closed by pager_close().
  */
 void pager_open(void)
@@ -314,9 +302,10 @@ int main(int argc __attribute__ ((__unused__)),
 {
 	int i;
 
-	pager_redirect();
+	pager_open();
 	for (i = 0; i < MAX; i++)
 		printf("%d\n", i);
+	pager_close();
 	return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM_PAGER */
