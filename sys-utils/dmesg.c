@@ -273,8 +273,8 @@ struct dmesg_record {
 		(_r)->caller_id[0] = 0; \
 	} while (0)
 
-static int process_kmsg(struct dmesg_control *ctl);
-static int process_kmsg_file(struct dmesg_control *ctl, char **buf);
+static int print_kmsg(struct dmesg_control *ctl);
+static int print_kmsg_file(struct dmesg_control *ctl, size_t sz);
 
 static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 {
@@ -713,7 +713,7 @@ static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 /*
  * Top level function to read (and print in case of kmesg) messages
  */
-static ssize_t process_buffer(struct dmesg_control *ctl, char **buf)
+static ssize_t prepare_buffer(struct dmesg_control *ctl, char **buf)
 {
 	ssize_t n = -1;
 
@@ -731,18 +731,27 @@ static ssize_t process_buffer(struct dmesg_control *ctl, char **buf)
 		break;
 	case DMESG_METHOD_KMSG:
 		if (ctl->filename)
-			n = process_kmsg_file(ctl, buf);
+			n = mmap_file_buffer(ctl, buf);
 		else
-			/*
-			 * Since kernel 3.5.0
-			 */
-			n = process_kmsg(ctl);
+			n = ctl->kmsg_first_read;
 		break;
 	default:
 		abort();	/* impossible method -> drop core */
 	}
 
 	return n;
+}
+
+static void release_buffer(struct dmesg_control *ctl, char *buf)
+{
+	if (!ctl->mmap_buff)
+		free(buf);
+	if (ctl->kmsg >= 0)
+		close(ctl->kmsg);
+	if (ctl->json && ul_jsonwrt_is_ready(&ctl->jfmt)) {
+		ul_jsonwrt_array_close(&ctl->jfmt);
+		ul_jsonwrt_root_close(&ctl->jfmt);
+	}
 }
 
 static int fwrite_hex(const char *buf, size_t size, FILE *out)
@@ -1355,6 +1364,17 @@ static void print_buffer(struct dmesg_control *ctl,
 {
 	struct dmesg_record rec = { .next = buf, .next_size = size };
 
+	if (ctl->method == DMESG_METHOD_KMSG) {
+		if (ctl->filename)
+			print_kmsg_file(ctl, size);
+		else
+			/*
+			 * Since kernel 3.5.0
+			 */
+			print_kmsg(ctl);
+		return;
+	}
+
 	if (ctl->raw) {
 		raw_print(ctl, buf, size);
 		return;
@@ -1511,7 +1531,7 @@ mesg:
  *
  * Returns 0 on success, -1 on error.
  */
-static int process_kmsg(struct dmesg_control *ctl)
+static int print_kmsg(struct dmesg_control *ctl)
 {
 	struct dmesg_record rec;
 	ssize_t sz;
@@ -1542,18 +1562,13 @@ static int process_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
-static int process_kmsg_file(struct dmesg_control *ctl, char **buf)
+static int print_kmsg_file(struct dmesg_control *ctl, size_t sz)
 {
 	char str[sizeof(ctl->kmsg_buf)];
 	struct dmesg_record rec;
-	ssize_t sz;
 	size_t len;
 
 	if (ctl->method != DMESG_METHOD_KMSG || !ctl->filename)
-		return -1;
-
-	sz = mmap_file_buffer(ctl, buf);
-	if (sz == -1)
 		return -1;
 
 	while (sz > 0) {
@@ -1566,7 +1581,7 @@ static int process_kmsg_file(struct dmesg_control *ctl, char **buf)
 		if (parse_kmsg_record(ctl, &rec, str, len) == 0)
 			print_record(ctl, &rec);
 
-		if (len < (size_t)sz)
+		if (len < sz)
 			len++;
 
 		sz -= len;
@@ -1915,17 +1930,10 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
 		if (ctl.pager)
 			pager_redirect();
-		n = process_buffer(&ctl, &buf);
+		n = prepare_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
-		if (!ctl.mmap_buff)
-			free(buf);
-		if (ctl.kmsg >= 0)
-			close(ctl.kmsg);
-		if (ctl.json && ul_jsonwrt_is_ready(&ctl.jfmt)) {
-			ul_jsonwrt_array_close(&ctl.jfmt);
-			ul_jsonwrt_root_close(&ctl.jfmt);
-		}
+		release_buffer(&ctl, buf);
 		if (n < 0)
 			err(EXIT_FAILURE, _("read kernel buffer failed"));
 		else if (ctl.action == SYSLOG_ACTION_READ_CLEAR)
