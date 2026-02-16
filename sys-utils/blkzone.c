@@ -275,6 +275,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			unsigned int type = entry.type;
 			uint64_t start = entry.start;
 			uint64_t wp = entry.wp;
+			char wp_str[32] = {0};
 			uint8_t cond = entry.cond;
 			uint64_t len = entry.len;
 			uint64_t cap;
@@ -289,21 +290,28 @@ static int blkzone_report(struct blkzone_control *ctl)
 			else
 				cap = entry.len;
 
+			if (type == BLK_ZONE_TYPE_CONVENTIONAL ||
+			    cond == BLK_ZONE_COND_FULL)
+				snprintf(wp_str, sizeof(wp_str), "N/A");
+			else
+				snprintf(wp_str, sizeof(wp_str),
+					 "0x%06" PRIx64, wp - start);
+
 			if (only_capacity_sum) {
 				capacity_sum += cap;
 			} else if (has_zone_capacity(zi)) {
 				printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
-					", cap 0x%06"PRIx64", wptr 0x%06"PRIx64
+					", cap 0x%06"PRIx64", wptr %s"
 					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-					start, len, cap, (type == 0x1) ? 0 : wp - start,
+					start, len, cap, wp_str,
 					entry.reset, entry.non_seq,
 					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
 					type, type_text[type]);
 			} else {
 				printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64
-					", wptr 0x%06"PRIx64
+					", wptr %s"
 					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-					start, len, (type == 0x1) ? 0 : wp - start,
+					start, len, wp_str,
 					entry.reset, entry.non_seq,
 					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
 					type, type_text[type]);
