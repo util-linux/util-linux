@@ -914,6 +914,12 @@ int main(int argc, char **argv)
 		pretty_print_dev(NULL);
 	}
 
+	if (!ctl.eval && ctl.output & OUTPUT_JSON) {
+		ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+		ul_jsonwrt_root_open(ctl.json_fmt);
+		ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
+	}
+
 	if (ctl.lowprobe) {
 		/*
 		 * Low-level API
@@ -928,12 +934,6 @@ int main(int argc, char **argv)
 		/* automatically enable 'export' format for I/O Limits */
 		if (!ctl.output  && ctl.lowprobe_topology)
 			ctl.output = OUTPUT_EXPORT_LIST;
-
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
-			ul_jsonwrt_root_open(ctl.json_fmt);
-			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
-		}
 
 		pr = blkid_new_probe();
 		if (!pr)
@@ -973,11 +973,6 @@ int main(int argc, char **argv)
 		}
 		blkid_free_probe(pr);
 
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_array_close(ctl.json_fmt);
-			ul_jsonwrt_root_close(ctl.json_fmt);
-		}
-
 	} else if (ctl.eval) {
 		/*
 		 * Evaluate API
@@ -993,12 +988,6 @@ int main(int argc, char **argv)
 		 */
 		blkid_dev dev;
 
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
-			ul_jsonwrt_root_open(ctl.json_fmt);
-			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
-		}
-
 		if (!search_type)
 			errx(BLKID_EXIT_OTHER,
 			     _("The lookup option requires a "
@@ -1013,21 +1002,10 @@ int main(int argc, char **argv)
 			err = 0;
 		}
 
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_array_close(ctl.json_fmt);
-			ul_jsonwrt_root_close(ctl.json_fmt);
-		}
-
 	/* If we didn't specify a single device, show all available devices */
 	} else if (!numdev) {
 		blkid_dev_iterate	iter;
 		blkid_dev		dev;
-
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
-			ul_jsonwrt_root_open(ctl.json_fmt);
-			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
-		}
 
 		blkid_probe_all(cache);
 
@@ -1042,19 +1020,8 @@ int main(int argc, char **argv)
 		}
 		blkid_dev_iterate_end(iter);
 
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_array_close(ctl.json_fmt);
-			ul_jsonwrt_root_close(ctl.json_fmt);
-		}
-
 	/* Add all specified devices to cache (optionally display tags) */
 	} else {
-
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
-			ul_jsonwrt_root_open(ctl.json_fmt);
-			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
-		}
 
 		for (i = 0; i < numdev; i++) {
 			blkid_dev dev = blkid_get_dev(cache, devices[i],
@@ -1070,10 +1037,11 @@ int main(int argc, char **argv)
 			}
 		}
 
-		if (ctl.output & OUTPUT_JSON) {
-			ul_jsonwrt_array_close(ctl.json_fmt);
-			ul_jsonwrt_root_close(ctl.json_fmt);
-		}
+	}
+
+	if (!ctl.eval && ctl.output & OUTPUT_JSON) {
+		ul_jsonwrt_array_close(ctl.json_fmt);
+		ul_jsonwrt_root_close(ctl.json_fmt);
 	}
 
 exit:
