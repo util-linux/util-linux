@@ -201,4 +201,20 @@ ts_init_subtest "wrap-separator-multiple-separators"
 echo -e 'A:B:C\naa:b1|b2|b3:cc\nxx:y1|y2:zz' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "header-as-columns"
+echo -e 'NAME\tAGE\tCITY\nAlice\t30\tNew York\nBob\t25\tLos Angeles' | $TS_CMD_COLUMN --table -K >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "header-as-columns-csv"
+echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' | $TS_CMD_COLUMN --table -K --separator ',' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "header-as-columns-json"
+echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' | $TS_CMD_COLUMN --table -K --separator ',' --json >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "header-as-columns-empty"
+echo -e 'COL1\t\tCOL3\nData1\tData2\tData3' | $TS_CMD_COLUMN --table -K >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_finalize
