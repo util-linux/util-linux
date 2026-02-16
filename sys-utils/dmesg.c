@@ -1928,11 +1928,14 @@ int main(int argc, char *argv[])
 
 		if (ctl.force_prefix && ctl.method != DMESG_METHOD_KMSG)
 			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
-		if (ctl.pager)
-			pager_redirect();
 		n = prepare_buffer(&ctl, &buf);
-		if (n > 0)
+		if (n > 0) {
+			if (ctl.pager)
+				pager_open();
 			print_buffer(&ctl, buf, n);
+			if (ctl.pager)
+				pager_close();
+		}
 		release_buffer(&ctl, buf);
 		if (n < 0)
 			err(EXIT_FAILURE, _("read kernel buffer failed"));
