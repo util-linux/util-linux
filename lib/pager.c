@@ -238,6 +238,12 @@ void pager_open(void)
 	pager_process.org_err = dup(STDERR_FILENO);
 
 	__setup_pager();
+
+	if (!pager_process.pid) {
+		close(pager_process.org_out);
+		close(pager_process.org_err);
+		memset(&pager_process, 0, sizeof(pager_process));
+	}
 }
 
 /* Close pager and restore original std{out,err}.
