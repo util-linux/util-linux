@@ -374,7 +374,7 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 		return;
 	}
 
-	if (ctl->output == OUTPUT_JSON)
+	if (ctl->output & OUTPUT_JSON)
 		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
 
 	iter = blkid_tag_iterate_begin(dev);
@@ -391,7 +391,7 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 	}
 	blkid_tag_iterate_end(iter);
 
-	if (ctl->output == OUTPUT_JSON)
+	if (ctl->output & OUTPUT_JSON)
 		ul_jsonwrt_close(ctl->json_fmt, UL_JSON_OBJECT);
 
 	if (num > 1) {
@@ -554,11 +554,6 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		/* add extra line between output from devices */
 		fputc('\n', stdout);
 
-	if (ctl->output == OUTPUT_JSON) {
-		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
-		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
-	}
-
 	if (nvals && (ctl->output & OUTPUT_DEVICE_ONLY)) {
 		printf("%s\n", devname);
 		goto done;
@@ -581,8 +576,6 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 					OUTPUT_JSON)))
 		printf("\n");
 
-	if (ctl->output == OUTPUT_JSON)
-		ul_jsonwrt_close(ctl->json_fmt, UL_JSON_OBJECT);
 done:
 	if (rc == -2) {
 		if (ctl->output & OUTPUT_UDEV_LIST)
@@ -936,6 +929,12 @@ int main(int argc, char **argv)
 		if (!ctl.output  && ctl.lowprobe_topology)
 			ctl.output = OUTPUT_EXPORT_LIST;
 
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+			ul_jsonwrt_root_open(ctl.json_fmt);
+			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
+		}
+
 		pr = blkid_new_probe();
 		if (!pr)
 			goto exit;
@@ -961,11 +960,24 @@ int main(int argc, char **argv)
 		}
 
 		for (i = 0; i < numdev; i++) {
+
+			if (ctl.output & OUTPUT_JSON)
+				ul_jsonwrt_open(ctl.json_fmt, NULL, UL_JSON_OBJECT);
+
 			err = lowprobe_device(pr, devices[i], &ctl);
 			if (err)
 				break;
+
+			if (ctl.output & OUTPUT_JSON)
+				ul_jsonwrt_close(ctl.json_fmt, UL_JSON_OBJECT);
 		}
 		blkid_free_probe(pr);
+
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_array_close(ctl.json_fmt);
+			ul_jsonwrt_root_close(ctl.json_fmt);
+		}
+
 	} else if (ctl.eval) {
 		/*
 		 * Evaluate API
@@ -981,8 +993,11 @@ int main(int argc, char **argv)
 		 */
 		blkid_dev dev;
 
-		if (ctl.output & OUTPUT_JSON)
+		if (ctl.output & OUTPUT_JSON) {
 			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+			ul_jsonwrt_root_open(ctl.json_fmt);
+			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
+		}
 
 		if (!search_type)
 			errx(BLKID_EXIT_OTHER,
@@ -997,6 +1012,12 @@ int main(int argc, char **argv)
 			print_tags(&ctl, dev);
 			err = 0;
 		}
+
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_array_close(ctl.json_fmt);
+			ul_jsonwrt_root_close(ctl.json_fmt);
+		}
+
 	/* If we didn't specify a single device, show all available devices */
 	} else if (!numdev) {
 		blkid_dev_iterate	iter;
@@ -1004,7 +1025,8 @@ int main(int argc, char **argv)
 
 		if (ctl.output & OUTPUT_JSON) {
 			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
-			ul_jsonwrt_array_open(ctl.json_fmt, NULL);
+			ul_jsonwrt_root_open(ctl.json_fmt);
+			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
 		}
 
 		blkid_probe_all(cache);
@@ -1020,26 +1042,37 @@ int main(int argc, char **argv)
 		}
 		blkid_dev_iterate_end(iter);
 
-		if (ctl.output == OUTPUT_JSON) {
+		if (ctl.output & OUTPUT_JSON) {
 			ul_jsonwrt_array_close(ctl.json_fmt);
-			fprintf(stdout, "\n");
+			ul_jsonwrt_root_close(ctl.json_fmt);
 		}
 
 	/* Add all specified devices to cache (optionally display tags) */
-	} else for (i = 0; i < numdev; i++) {
-		blkid_dev dev = blkid_get_dev(cache, devices[i],
+	} else {
+
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+			ul_jsonwrt_root_open(ctl.json_fmt);
+			ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
+		}
+
+		for (i = 0; i < numdev; i++) {
+			blkid_dev dev = blkid_get_dev(cache, devices[i],
 						  BLKID_DEV_NORMAL);
 
-		if (ctl.output & OUTPUT_JSON)
-			ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+			if (dev) {
+				if (search_type &&
+				    !blkid_dev_has_tag(dev, search_type,
+						       search_value))
+					continue;
+				print_tags(&ctl, dev);
+				err = 0;
+			}
+		}
 
-		if (dev) {
-			if (search_type &&
-			    !blkid_dev_has_tag(dev, search_type,
-					       search_value))
-				continue;
-			print_tags(&ctl, dev);
-			err = 0;
+		if (ctl.output & OUTPUT_JSON) {
+			ul_jsonwrt_array_close(ctl.json_fmt);
+			ul_jsonwrt_root_close(ctl.json_fmt);
 		}
 	}
 
