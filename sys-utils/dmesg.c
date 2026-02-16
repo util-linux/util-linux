@@ -1788,8 +1788,9 @@ int main(int argc, char *argv[])
 			if (ctl.bufsize < 4096)
 				ctl.bufsize = 4096;
 			if (ctl.bufsize > SIZE_MAX - 8)
-				errx(EXIT_FAILURE, "%s: '%s'",
-						_("invalid buffer size argument"), optarg);
+				errx(EXIT_FAILURE,
+						_("buffer size %s is too large (maximum is %zu)"),
+						optarg, SIZE_MAX - 8);
 			break;
 		case 'T':
 			include_time_fmt(&ctl, DMESG_TIMEFTM_CTIME);
