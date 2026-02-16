@@ -252,7 +252,18 @@ will be colorized by direct color names.
 
 == ENVIRONMENT
 
-The environment variable *COLUMNS* is used to determine the size of the screen if no other information is available.
+*COLUMNS*::
+is used to determine the size of the screen if no other information is available.
+
+*LIBSMARTCOLS_JSON*::
+Controls JSON output format when using *--json*. Supported values:
++
+*compact*::
+Output JSON in compact form (minified, minimal whitespace).
+*lines*::
+Output in JSON Lines format (one JSON object per line).
++
+If unset or set to any other value, pretty-printed JSON is used.
 
 == HISTORY
 

@@ -270,6 +270,8 @@ struct libscols_table {
 	struct libscols_line *cur_line;		/* currently used line */
 	struct libscols_column *cur_column;	/* currently used column */
 
+	ul_json_format_t json_format;	/* JSON output format */
+
 	/* flags */
 	bool		ascii	      ,	/* don't use unicode */
 			colors_wanted ,	/* enable colors */

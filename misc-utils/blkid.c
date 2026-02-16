@@ -373,7 +373,7 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 	}
 
 	if (ctl->output == OUTPUT_JSON) {
-		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
+		ul_jsonwrt_init(ctl->json_fmt, stdout, 0, UL_JSON_PRETTY);
 		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
 	}
 
@@ -555,7 +555,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		fputc('\n', stdout);
 
 	if (ctl->output == OUTPUT_JSON) {
-		ul_jsonwrt_init(ctl->json_fmt, stdout, 0);
+		ul_jsonwrt_init(ctl->json_fmt, stdout, 0, UL_JSON_PRETTY);
 		ul_jsonwrt_open(ctl->json_fmt, NULL, UL_JSON_OBJECT);
 	}
 
