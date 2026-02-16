@@ -711,7 +711,7 @@ static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 }
 
 /*
- * Top level function to read (and print in case of kmesg) messages
+ * Top level function to read and prepare messages buffer
  */
 static ssize_t prepare_buffer(struct dmesg_control *ctl, char **buf)
 {
