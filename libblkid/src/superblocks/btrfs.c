@@ -179,12 +179,12 @@ static int sb_log_offset(blkid_probe pr, uint64_t *bytenr_ret)
 
 
 	zone_size_sector = pr->zone_size >> SECTOR_SHIFT;
-	rep = blkdev_get_zonereport(pr->fd, zone_num * zone_size_sector, 2);
+	rep = blkdev_get_zonereport(pr->fd, zone_num * zone_size_sector, BTRFS_NR_SB_LOG_ZONES);
 	if (!rep) {
 		ret = -errno;
 		goto out;
 	}
-	zones = (struct blk_zone *)(rep + 1);
+	zones = rep->zones;
 
 	/*
 	 * Use the head of the first conventional zone, if the zones
