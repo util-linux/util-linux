@@ -663,20 +663,29 @@ static void do_selinux_label(const char *label)
 static void do_apparmor_profile(const char *label)
 {
 	FILE *f;
+	const char *path;
 
-	if (access(_PATH_SYS_APPARMOR, F_OK) != 0)
-		errx(SETPRIV_EXIT_PRIVERR, _("AppArmor is not running"));
-
-	f = fopen(_PATH_PROC_ATTR_EXEC, "r+");
+	/* Since Linux 5.8 (commit 6413f852ce08), AppArmor has an LSM-specific
+	 * proc interface that is not affected by the LSM load ordering. Fall
+	 * back to the legacy shared interface for older kernels.
+	 *
+	 * See https://github.com/torvalds/linux/blob/master/Documentation/userspace-api/lsm.rst
+	 */
+	path = _PATH_PROC_ATTR_APPARMOR_EXEC;
+	f = fopen(path, "r+");
+	if (!f) {
+		path = _PATH_PROC_ATTR_EXEC;
+		f = fopen(path, "r+");
+	}
 	if (!f)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
+		    _("cannot open %s"), path);
 
 	fprintf(f, "exec %s", label);
 
 	if (close_stream(f) != 0)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
+		    _("write failed: %s"), path);
 }
 
 static void do_seccomp_filter(const char *file)
