@@ -1,4 +1,9 @@
 {
-   "label": "tés\"'\n t",
-   "type": "cramfs"
+   "blkid": [
+      {
+         "device": "blkid-output.img",
+         "label": "tés\"'\n t",
+         "type": "cramfs"
+      }
+   ]
 }
