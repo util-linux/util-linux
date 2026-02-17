@@ -310,7 +310,7 @@ int ul_nl_open(struct ul_nl_data *nl, uint32_t nl_groups)
 	int rc;
 
 	DBG(NLMSG, ul_debugobj(nl, "opening socket"));
-	sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+	sock = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
 	if (sock < 0)
 		return sock;
 	addr.nl_family = AF_NETLINK;
