@@ -914,6 +914,16 @@ int main(int argc, char **argv)
 		pretty_print_dev(NULL);
 	}
 
+	if (ctl.lowprobe && !numdev)
+		errx(BLKID_EXIT_OTHER,
+		     _("The low-level probing mode "
+		       "requires a device"));
+
+	if (ctl.lookup && !search_type)
+		errx(BLKID_EXIT_OTHER,
+		     _("The lookup option requires a "
+		       "search type specified using -t"));
+
 	if (!ctl.eval && ctl.output & OUTPUT_JSON) {
 		ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
 		ul_jsonwrt_root_open(ctl.json_fmt);
@@ -925,11 +935,6 @@ int main(int argc, char **argv)
 		 * Low-level API
 		 */
 		blkid_probe pr;
-
-		if (!numdev)
-			errx(BLKID_EXIT_OTHER,
-			     _("The low-level probing mode "
-			       "requires a device"));
 
 		/* automatically enable 'export' format for I/O Limits */
 		if (!ctl.output  && ctl.lowprobe_topology)
@@ -988,10 +993,6 @@ int main(int argc, char **argv)
 		 */
 		blkid_dev dev;
 
-		if (!search_type)
-			errx(BLKID_EXIT_OTHER,
-			     _("The lookup option requires a "
-			       "search type specified using -t"));
 		/* Load any additional devices not in the cache */
 		for (i = 0; i < numdev; i++)
 			blkid_get_dev(cache, devices[i], BLKID_DEV_NORMAL);
