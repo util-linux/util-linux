@@ -202,6 +202,7 @@
 /* sysctl fs paths */
 #define _PATH_PROC_SYS_FS	"/proc/sys/fs"
 #define _PATH_PROC_PIPE_MAX_SIZE	_PATH_PROC_SYS_FS "/pipe-max-size"
+#define _PATH_PROC_NR_OPEN	_PATH_PROC_SYS_FS "/nr_open"
 #define _PATH_PROC_BINFMT_MISC	_PATH_PROC_SYS_FS "/binfmt_misc"
 
 /* Posix ipc paths */
