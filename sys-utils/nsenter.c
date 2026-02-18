@@ -54,6 +54,10 @@
 #include "linux_version.h"
 #include "pidutils.h"
 
+#if defined(HAVE_STRUCT_NSFS_FILE_HANDLE) && defined(HAVE_PIDFD_OPEN)
+# define USE_NAMESPACE_ID_SUPPORT
+#endif
+
 static struct namespace_file {
 	int nstype;
 	const char *name;
@@ -177,7 +181,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
 
-#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+#ifdef USE_NAMESPACE_ID_SUPPORT
 
 static struct file_handle nsfs_fh_tmpl = { 0 };
 static int nsfs_fd = -1;
@@ -248,12 +252,12 @@ static void open_target_fd_by_nsid(int *fd, const char *idstr)
 		err(EXIT_FAILURE, _("cannot open namespace of id %"PRIu64),
 		    ns_id);
 }
-#endif /* HAVE_STRUCT_NSFS_FILE_HANDLE */
+#endif /* USE_NAMESPACE_ID_SUPPORT */
 
 static void enable_nsfile(struct namespace_file *n, const char *path)
 {
 	if (path) {
-#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+#ifdef USE_NAMESPACE_ID_SUPPORT
 		if (*path == ':')
 			open_target_fd_by_nsid(&n->fd, path + 1);
 		else
@@ -855,7 +859,7 @@ int main(int argc, char *argv[])
 	if (pid_fd >= 0)
 		close(pid_fd);
 
-#ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
+#ifdef USE_NAMESPACE_ID_SUPPORT
 	if (nsfs_fd >= 0)
 		close(nsfs_fd);
 #endif
