@@ -31,11 +31,6 @@
 # define PIDFD_GET_UTS_NAMESPACE               _IO(PIDFS_IOCTL_MAGIC, 10)
 #endif
 
-#if (defined(HAVE_PIDFD_OPEN) || defined(SYS_pidfd_open)) && defined(HAVE_STATX) \
-	&& defined(HAVE_STRUCT_STATX)
-#define USE_PIDFD_INO_SUPPORT 1
-#endif
-
 #ifdef HAVE_SYS_SYSCALL_H
 # include <sys/syscall.h>
 # include <unistd.h>
@@ -66,6 +61,9 @@ static inline int pidfd_getfd(int pidfd, int targetfd, unsigned int flags)
 # endif
 #endif /* HAVE_SYS_SYSCALL_H */
 
+#if defined(HAVE_PIDFD_OPEN) && defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
+# define USE_PIDFD_INO_SUPPORT 1
+#endif
 
 /*
  * Dummy fallbacks for cases when #ifdef HAVE_PIDFD_* makes the code too complex.
