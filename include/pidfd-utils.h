@@ -46,6 +46,7 @@ static inline int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 {
 	return syscall(SYS_pidfd_send_signal, pidfd, sig, info, flags);
 }
+#  define HAVE_PIDFD_SEND_SIGNAL 1
 # endif
 
 # if !defined(HAVE_PIDFD_OPEN) && defined(SYS_pidfd_open)
@@ -53,6 +54,7 @@ static inline int pidfd_open(pid_t pid, unsigned int flags)
 {
 	return syscall(SYS_pidfd_open, pid, flags);
 }
+#  define HAVE_PIDFD_OPEN 1
 # endif
 
 # if !defined(HAVE_PIDFD_GETFD) && defined(SYS_pidfd_getfd)
@@ -60,6 +62,7 @@ static inline int pidfd_getfd(int pidfd, int targetfd, unsigned int flags)
 {
 	return syscall(SYS_pidfd_getfd, pidfd, targetfd, flags);
 }
+#  define HAVE_PIDFD_GETFD 1
 # endif
 #endif /* HAVE_SYS_SYSCALL_H */
 
