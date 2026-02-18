@@ -161,7 +161,8 @@ include::man-common/help-version.adoc[]
 
 The *--user-parent* option requires Linux 4.9 or higher, older kernels will raise inappropriate ioctl for device error.
 
-Specifying namesapces by _nsid_ requires Linux 6.19 or higher.
+Specifying namespaces by _nsid_ requires Linux 6.19 or higher. If a namespace
+file name starts with a colon, prepend "./" for disambiguation.
 
 == AUTHORS
 

@@ -179,7 +179,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 
 #ifdef HAVE_STRUCT_NSFS_FILE_HANDLE
 
-static struct file_handle nsfs_fh_tmpl = {};
+static struct file_handle nsfs_fh_tmpl = { 0 };
 static int nsfs_fd = -1;
 
 static int fill_nsfs_file_handle(struct file_handle *fh, uint64_t ns_id)
@@ -210,9 +210,9 @@ static int fill_nsfs_file_handle(struct file_handle *fh, uint64_t ns_id)
 
 	/* Mount namespace can not be disabled by kernel config */
 	nsfs_fd = ioctl(pidfd_self, PIDFD_GET_MNT_NAMESPACE, 0);
+	close(pidfd_self);
 	if (nsfs_fd < 0)
 		return -errno;
-	close(pidfd_self);
 
 	fh->handle_bytes = sizeof(struct nsfs_file_handle);
 	if (name_to_handle_at(nsfs_fd, "", fh, &mount_id,
