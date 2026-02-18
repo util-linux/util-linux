@@ -615,7 +615,8 @@ static void prompt(long long pageno)
 	char key;
 	int state = COUNT;
 	int escape = 0;
-	char b[LINE_MAX], *p;
+	char b[LINE_MAX];
+	const char *p;
 
 	if (pageno != -1) {
 		if ((p = strstr(pstring, "%d")) == NULL) {
