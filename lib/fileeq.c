@@ -285,7 +285,7 @@ size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
 	eq->readsiz = readsiz;
 	eq->blocksmax = (filesiz + readsiz - 1) / readsiz;
 
-	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%ju, maxblocks=%" PRIu64 ", readsiz=%zu",
+	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%" PRIu64 ", maxblocks=%" PRIu64 ", readsiz=%zu",
 				eq->filesiz, eq->blocksmax, eq->readsiz));
 
 	reset_fileeq_bufs(eq);
@@ -393,7 +393,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		ul_fileeq_data_close_file(data);
 	}
 
-	DBG(DATA, ul_debugobj(data, "  read sz=%zu", rsz));
+	DBG(DATA, ul_debugobj(data, "  read sz=%zd", rsz));
 	return rsz;
 }
 
@@ -441,7 +441,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	assert(n <= eq->blocksmax);
 
 	rsz = sendfile(eq->fd_cip, data->fd, NULL, eq->readsiz);
-	DBG(DATA, ul_debugobj(data, "  sent %zu [%zu wanted] to cipher", rsz, eq->readsiz));
+	DBG(DATA, ul_debugobj(data, "  sent %zd [%zu wanted] to cipher", rsz, eq->readsiz));
 
 	if (rsz < 0)
 		return rsz;
@@ -458,7 +458,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		data->is_eof = 1;
 		ul_fileeq_data_close_file(data);
 	}
-	DBG(DATA, ul_debugobj(data, "  get %zuB digest", rsz));
+	DBG(DATA, ul_debugobj(data, "  get %zdB digest", rsz));
 	return rsz;
 }
 #endif
