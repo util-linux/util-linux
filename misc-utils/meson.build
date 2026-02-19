@@ -194,6 +194,18 @@ exch_sources = files(
 )
 exch_manadocs = files('exch.1.adoc')
 
+fdsend_sources = files(
+  'fdsend.c',
+  'fdsend-common.c',
+)
+fdsend_manadocs = files('fdsend.1.adoc')
+
+fdrecv_sources = files(
+  'fdrecv.c',
+  'fdsend-common.c',
+)
+fdrecv_manadocs = files('fdrecv.1.adoc')
+
 fincore_sources = files(
   'fincore.c',
 )

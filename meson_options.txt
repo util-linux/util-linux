@@ -183,6 +183,10 @@ option('build-ctrlaltdel', type : 'feature',
        description : 'build ctrlaltdel')
 option('build-exch', type : 'feature',
        description : 'build exch')
+option('build-fdsend', type : 'feature',
+       description : 'build fdsend')
+option('build-fdrecv', type : 'feature',
+       description : 'build fdrecv')
 option('build-fsfreeze', type : 'feature',
        description : 'build fsfreeze')
 option('build-blkdiscard', type : 'feature',
