@@ -1564,14 +1564,14 @@ static int print_kmsg(struct dmesg_control *ctl)
 
 static int print_kmsg_file(struct dmesg_control *ctl, size_t sz)
 {
-	char str[sizeof(ctl->kmsg_buf)];
-	struct dmesg_record rec;
-	size_t len;
-
 	if (ctl->method != DMESG_METHOD_KMSG || !ctl->filename)
 		return -1;
 
 	while (sz > 0) {
+		char str[sizeof(ctl->kmsg_buf)];
+		struct dmesg_record rec;
+		size_t len;
+
 		len = strnlen(ctl->mmap_buff, sz);
 		if (len > sizeof(str))
 			errx(EXIT_FAILURE, _("record too large"));
