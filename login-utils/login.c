@@ -130,6 +130,7 @@ struct login_context {
 	char		*thishost;		/* this machine */
 	char		*thisdomain;		/* this machine's domain */
 	char		*hostname;		/* remote machine */
+	char		*cmd_hostname;		/* remote machine as specified on command line */
 	char		hostaddress[16];	/* remote address */
 
 	pid_t		pid;
@@ -912,7 +913,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 	/* hostname & tty are either set to NULL or their correct values,
 	 * depending on how much we know. */
-	rc = pam_set_item(pamh, PAM_RHOST, cxt->hostname);
+	rc = pam_set_item(pamh, PAM_RHOST, cxt->cmd_hostname);
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
 
@@ -1249,6 +1250,8 @@ static void init_remote_info(struct login_context *cxt, char *remotehost)
 	cxt->remote = 1;
 
 	get_thishost(cxt, &domain);
+
+	cxt->cmd_hostname = xstrdup(remotehost);
 
 	if (domain && (p = strchr(remotehost, '.')) &&
 	    strcasecmp(p + 1, domain) == 0)
