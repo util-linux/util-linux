@@ -195,6 +195,15 @@ static void timedout(int sig __attribute__((__unused__)))
 }
 
 /*
+ * This blank handler is required for parent process to wake up from
+ * sigsuspend when SIGCHLD is encountered.
+ */
+static void sig_child(int signal __attribute__((__unused__)))
+{
+	/* Nothing to do here */
+}
+
+/*
  * This handler can be used to inform a shell about signals to login. If you have
  * (root) permissions, you can kill all login children by one signal to the
  * login process.
@@ -1122,6 +1131,12 @@ static void fork_session(struct login_context *cxt)
 	sigaction(SIGHUP, &sa, NULL);
 	sigaction(SIGTERM, &sa, &oldsa_term);
 
+	/*
+	 * Set a no-op SIGCHLD handler for sigsuspend.
+	 */
+	sa.sa_handler = sig_child;
+	sigaction(SIGCHLD, &sa, NULL);
+
 	closelog();
 
 	/*
@@ -1138,6 +1153,9 @@ static void fork_session(struct login_context *cxt)
 	}
 
 	if (child_pid) {
+		sigset_t oldset, ourset;
+		pid_t waiting;
+
 		/*
 		 * parent - wait for child to finish, then clean up session
 		 */
@@ -1150,8 +1168,28 @@ static void fork_session(struct login_context *cxt)
 		sigaction(SIGQUIT, &sa, NULL);
 		sigaction(SIGINT, &sa, NULL);
 
+		/* block SIGCHLD and sig_handler signals while checking children */
+		sigemptyset(&ourset);
+		sigaddset(&ourset, SIGCHLD);
+		sigaddset(&ourset, SIGHUP);
+		sigaddset(&ourset, SIGTERM);
+		sigprocmask(SIG_BLOCK, &ourset, &oldset);
+
+		/* let at least SIGCHLD, SIGHUP, and SIGTERM wake up sigsuspend */
+		ourset = oldset;
+		sigdelset(&ourset, SIGCHLD);
+		sigdelset(&ourset, SIGHUP);
+		sigdelset(&ourset, SIGTERM);
+
 		/* wait as long as any child is there */
-		while (wait(NULL) == -1 && errno == EINTR) ;
+		do {
+			waiting = waitpid(-1, NULL, WNOHANG);
+			if (waiting == 0)
+				sigsuspend(&ourset);
+		} while (waiting != -1);
+		child_pid = 0;
+		sigprocmask(SIG_SETMASK, &oldset, NULL);
+
 		openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
