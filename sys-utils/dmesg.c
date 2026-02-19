@@ -1450,7 +1450,7 @@ static int init_kmsg(struct dmesg_control *ctl)
 
 static int parse_kmsg_record(struct dmesg_control *ctl,
 			     struct dmesg_record *rec,
-			     char *buf,
+			     const char *buf,
 			     size_t sz)
 {
 	const char *p = buf, *end;
@@ -1568,17 +1568,10 @@ static int print_kmsg_file(struct dmesg_control *ctl, size_t sz)
 		return -1;
 
 	while (sz > 0) {
-		char str[sizeof(ctl->kmsg_buf)];
 		struct dmesg_record rec;
-		size_t len;
+		size_t len = strnlen(ctl->mmap_buff, sz);
 
-		len = strnlen(ctl->mmap_buff, sz);
-		if (len > sizeof(str))
-			errx(EXIT_FAILURE, _("record too large"));
-
-		memcpy(str, ctl->mmap_buff, len);
-
-		if (parse_kmsg_record(ctl, &rec, str, len) == 0)
+		if (parse_kmsg_record(ctl, &rec, ctl->mmap_buff, len) == 0)
 			print_record(ctl, &rec);
 
 		if (len < sz)
