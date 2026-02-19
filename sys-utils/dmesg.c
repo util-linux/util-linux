@@ -821,11 +821,8 @@ doprint:
 		} else
 			rc = fwrite(p, 1, len, out) != len;
 
-		if (rc != 0) {
-			if (errno != EPIPE)
-				err(EXIT_FAILURE, _("write failed"));
-			exit(EXIT_SUCCESS);
-		}
+		if (rc != 0 && errno != EPIPE)
+			err(EXIT_FAILURE, _("write failed"));
 	}
 }
 
@@ -1012,7 +1009,7 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 		/*
 		 * Print file in small chunks to save memory
 		 */
-		while (size) {
+		while (size && !ferror(stdout)) {
 			size_t sz = size > ctl->pagesize ? ctl->pagesize : size;
 			char *x = ctl->mmap_buff;
 
@@ -1380,7 +1377,7 @@ static void print_buffer(struct dmesg_control *ctl,
 		return;
 	}
 
-	while (get_next_syslog_record(ctl, &rec) == 0)
+	while (get_next_syslog_record(ctl, &rec) == 0 && !ferror(stdout))
 		print_record(ctl, &rec);
 }
 
@@ -1549,7 +1546,7 @@ static int print_kmsg(struct dmesg_control *ctl)
 	 */
 	sz = ctl->kmsg_first_read;
 
-	while (sz > 0) {
+	while (sz > 0 && !ferror(stdout)) {
 		*(ctl->kmsg_buf + sz) = '\0';	/* for debug messages */
 
 		if (parse_kmsg_record(ctl, &rec,
@@ -1571,7 +1568,7 @@ static int print_kmsg_file(struct dmesg_control *ctl, size_t sz)
 	if (ctl->method != DMESG_METHOD_KMSG || !ctl->filename)
 		return -1;
 
-	while (sz > 0) {
+	while (sz > 0 && !ferror(stdout)) {
 		len = strnlen(ctl->mmap_buff, sz);
 		if (len > sizeof(str))
 			errx(EXIT_FAILURE, _("record too large"));
@@ -1930,8 +1927,10 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
 		n = prepare_buffer(&ctl, &buf);
 		if (n > 0) {
-			if (ctl.pager)
+			if (ctl.pager) {
 				pager_open();
+				atexit(pager_close);
+			}
 			print_buffer(&ctl, buf, n);
 			if (ctl.pager)
 				pager_close();
