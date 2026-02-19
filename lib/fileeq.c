@@ -1,27 +1,27 @@
 /*
- * compare files content
+ * compare file contents
  *
- * The goal is to minimize number of data we need to read from the files and be
+ * The goal is to minimize amount of data we need to read from the files and be
  * ready to compare large set of files, it means reuse the previous data if
- * possible. It never read entire file if not necessary.
+ * possible. It never reads entire file if not necessary.
  *
- * The another goal is to minimize number of open files (imagine "hardlink /"),
+ * The other goal is to minimize number of open files (imagine "hardlink /"),
  * the code can open only two files and reopen the file next time if
  * necessary.
  *
  * This code supports multiple comparison methods. The very basic step which is
  * generic for all methods is to read and compare an "intro" (a few bytes from
- * the begging of the file). This intro buffer is always cached in 'struct
- * ul_fileeq_data', this intro buffer is addresses as block=0. This primitive
+ * the beginning of the file). This intro buffer is always cached in 'struct
+ * ul_fileeq_data', this intro buffer is addressed as block=0. This primitive
  * thing can reduce a lot ...
  *
  * The next steps depend on selected method:
  *
- *  * memcmp method: always read data to userspace, nothing is cached, compare
- *  directly files content; fast for small sets of the small files.
+ *  * memcmp method: always read data to userspace, nothing is cached, directly
+ *  compare file contents; fast for small sets of small files.
  *
  *  * Linux crypto API: zero-copy method based on sendfile(), data blocks are
- *  send to the kernel hash functions (sha1, ...), and only hash digest is read
+ *  sent to the kernel hash functions (sha1, ...), and only hash digest is read
  *  and cached in userspace. Fast for large set of (large) files.
  *
  *
@@ -448,7 +448,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 	off += rsz;
 
-	/* get block digest (note 1st block is data->intro */
+	/* get block digest (note 1st block is data->intro) */
 	*block = data->blocks + (n * eq->method->digsiz);
 	rsz = read_all(eq->fd_cip, (char *) *block, sz);
 
