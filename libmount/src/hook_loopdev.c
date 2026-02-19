@@ -272,7 +272,8 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	}
 
 	DBG(LOOP, ul_debugobj(cxt, "not found; create a new loop device"));
-	rc = loopcxt_init(&lc, 0);
+	rc = loopcxt_init(&lc,
+			mnt_context_is_restricted(cxt) ? LOOPDEV_FL_NOFOLLOW : 0);
 	if (rc)
 		goto done_no_deinit;
 	if (mnt_opt_has_value(loopopt)) {

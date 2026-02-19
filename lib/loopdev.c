@@ -1267,7 +1267,10 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	if (!lc)
 		return -EINVAL;
 
-	lc->filename = canonicalize_path(filename);
+	if (lc->flags & LOOPDEV_FL_NOFOLLOW)
+		lc->filename = strdup(filename);
+	else
+		lc->filename = canonicalize_path(filename);
 	if (!lc->filename)
 		return -errno;
 
@@ -1408,6 +1411,8 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 
 	if (lc->config.info.lo_flags & LO_FLAGS_DIRECT_IO)
 		flags |= O_DIRECT;
+	if (lc->flags & LOOPDEV_FL_NOFOLLOW)
+		flags |= O_NOFOLLOW;
 
 	if ((file_fd = open(lc->filename, mode | flags)) < 0) {
 		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))

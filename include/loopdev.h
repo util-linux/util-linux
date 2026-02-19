@@ -140,7 +140,8 @@ enum {
 	LOOPDEV_FL_NOIOCTL	= (1 << 6),
 	LOOPDEV_FL_DEVSUBDIR	= (1 << 7),
 	LOOPDEV_FL_CONTROL	= (1 << 8),	/* system with /dev/loop-control */
-	LOOPDEV_FL_SIZELIMIT	= (1 << 9)
+	LOOPDEV_FL_SIZELIMIT	= (1 << 9),
+	LOOPDEV_FL_NOFOLLOW	= (1 << 10)	/* O_NOFOLLOW, don't follow symlinks */
 };
 
 /*
