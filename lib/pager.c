@@ -45,6 +45,7 @@ struct child_process {
 static struct child_process pager_process;
 
 static volatile sig_atomic_t pager_caught_signal;
+static volatile sig_atomic_t pager_caught_sigpipe;
 
 static inline void close_pair(int fd[2])
 {
@@ -98,23 +99,34 @@ static int start_command(struct child_process *cmd)
 	return 0;
 }
 
-static void wait_for_pager(void)
+static int wait_for_pager(void)
 {
 	pid_t waiting;
+	int status;
 
 	if (!pager_process.pid)
-		return;
+		return 0;
 
 	do {
-		waiting = waitpid(pager_process.pid, NULL, 0);
+		waiting = waitpid(pager_process.pid, &status, 0);
 		if (waiting == -1 && errno != EINTR)
 			ul_sig_err(EXIT_FAILURE, "waitpid failed");
 	} while (waiting == -1);
+
+	if (waiting == pager_process.pid && WIFEXITED(status))
+		return WEXITSTATUS(status);
+
+	return 1;
 }
 
 static void catch_signal(int signo)
 {
 	pager_caught_signal = signo;
+}
+
+static void catch_sigpipe(int signo)
+{
+	pager_caught_sigpipe = signo;
 }
 
 static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
@@ -220,6 +232,10 @@ static void __setup_pager(void)
 	sigaction(SIGHUP,  &sa, &pager_process.orig_sighup);
 	sigaction(SIGTERM, &sa, &pager_process.orig_sigterm);
 	sigaction(SIGQUIT, &sa, &pager_process.orig_sigquit);
+
+	sa.sa_handler = catch_sigpipe;
+
+	/* this allows graceful handling of premature termination of pager */
 	sigaction(SIGPIPE, &sa, &pager_process.orig_sigpipe);
 }
 
@@ -247,6 +263,7 @@ void pager_open(void)
 void pager_close(void)
 {
 	struct sigaction sa;
+	int ret;
 
 	if (pager_process.pid == 0)
 		return;
@@ -259,7 +276,6 @@ void pager_close(void)
 	sigaction(SIGHUP,  &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 	sigaction(SIGQUIT, &sa, NULL);
-	sigaction(SIGPIPE, &sa, NULL);
 
 	fflush(NULL);
 
@@ -276,7 +292,7 @@ void pager_close(void)
 	close(pager_process.org_out);
 	close(pager_process.org_err);
 
-	wait_for_pager();
+	ret = wait_for_pager();
 
 	/* restore original signal settings */
 	sigaction(SIGCHLD, &pager_process.orig_sigchld, NULL);
@@ -286,11 +302,12 @@ void pager_close(void)
 	sigaction(SIGQUIT, &pager_process.orig_sigquit, NULL);
 	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
 
-	if (pager_caught_signal)
+	if (pager_caught_signal || (pager_caught_sigpipe && ret))
 		exit(EXIT_FAILURE);
 
 	memset(&pager_process, 0, sizeof(pager_process));
 	pager_caught_signal = 0;
+	pager_caught_sigpipe = 0;
 }
 
 #ifdef TEST_PROGRAM_PAGER
