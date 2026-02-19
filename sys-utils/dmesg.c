@@ -1930,8 +1930,10 @@ int main(int argc, char *argv[])
 			errx(EXIT_FAILURE, _("only kmsg supports multi-line messages"));
 		n = prepare_buffer(&ctl, &buf);
 		if (n > 0) {
-			if (ctl.pager)
+			if (ctl.pager) {
 				pager_open();
+				atexit(pager_close);
+			}
 			print_buffer(&ctl, buf, n);
 			if (ctl.pager)
 				pager_close();
