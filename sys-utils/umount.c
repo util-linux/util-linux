@@ -42,6 +42,7 @@
 #include "optutils.h"
 
 static int quiet;
+static int graceful;
 static struct ul_env_list *envs_removed;
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
@@ -104,6 +105,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
 	fputs(_(" -q, --quiet             suppress 'not mounted' error messages\n"), out);
 	fputs(_(" -N, --namespace <ns>    perform umount in another namespace\n"), out);
+	fputs(_(" -g, --graceful          don't return an error when the mountpoint has already\n"
+	        "                           been unmounted or the directory does not exist\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -160,6 +163,11 @@ static int mk_exit_code(struct libmnt_context *cxt, int api_rc)
 	int rc;
 
 	rc = mnt_context_get_excode(cxt, api_rc, buf, sizeof(buf));
+	/* exit succesfully even if the filesystem has already been unmounted or does not exist */
+	if (graceful && rc == MNT_EX_FAIL && mnt_context_syscall_called(cxt)
+				&& (mnt_context_get_syscall_errno(cxt) == EINVAL
+				|| mnt_context_get_syscall_errno(cxt) == ENOENT))
+		return MNT_EX_SUCCESS;
 
 	/* suppress "not mounted" error message */
 	if (quiet) {
@@ -496,6 +504,7 @@ int main(int argc, char **argv)
 		{ "verbose",         no_argument,       NULL, 'v'             },
 		{ "version",         no_argument,       NULL, 'V'             },
 		{ "namespace",       required_argument, NULL, 'N'             },
+		{ "graceful",        no_argument,       NULL, 'g'             },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -521,7 +530,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aAcdfhilnqRrO:t:vVN:",
+	while ((c = getopt_long(argc, argv, "aAcdfghilnqRrO:t:vVN:",
 					longopts, NULL)) != -1) {
 
 
@@ -599,7 +608,9 @@ int main(int argc, char **argv)
 				err(MNT_EX_SYSERR, _("failed to set target namespace to %s"), pid ? path : optarg);
 			break;
 		}
-
+		case 'g':
+			graceful = 1;
+			break;
 		case 'h':
 			mnt_free_context(cxt);
 			usage();

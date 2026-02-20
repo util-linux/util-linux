@@ -75,6 +75,7 @@ _umount_module()
 				--read-only
 				--types
 				--quiet
+				--graceful
 				--verbose
 				--help
 				--version"
