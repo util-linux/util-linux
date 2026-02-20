@@ -338,8 +338,42 @@ _/etc/inittab_::
 *agetty* supports configuration via systemd credentials (see https://systemd.io/CREDENTIALS/). *agetty* reads the following systemd credentials:
 
 *agetty.autologin* (string)::
-
 If set, configures *agetty* to automatically log in the specified user without asking for a username or password, similarly to the *--autologin* option.
+
+*agetty.delay* (unsigned int)::
+If set, configures *agetty* to sleep _delay_ seconds before opening the tty. Similar to the *--delay* option.
+
+*agetty.hangup* (boolean)::
+If set to a positive boolean value, configures *agetty* to do a virtual hangup of the specified terminal. Similar to the *--hangup* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nice* (int)::
+If set, configures *agetty* to run the login program with the specified priority. Similar to the *--nice* option.
+
+*agetty.noclear* (boolean)::
+If set to a positive boolean value, configures *agetty* to not clear the screen before prompting for the login name. Similar to the *--noclear* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nohints* (boolean)::
+If set to a positive boolean value, configures *agetty* to not print hints about Num, Caps and Scroll Locks. Similar to the *--nohints* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nohostname* (boolean)::
+If set to a positive boolean value, configures *agetty* to show no hostname. Similar to the *--nohostname* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.noissue* (boolean)::
+If set to a positive boolean value, configures *agetty* to not show contents of */etc/issue* before writing the login prompt. Similar to the *--noissue* option.
+Possible boolean values are listed at the end of this section.
+
+Valid boolean values::
+
+Positive;;
+"true", "t", "yes", "y", "on", "1"
+
+Negative;;
+"false", "f", "no", "n", "off", "0"
+
 
 == BUGS
 

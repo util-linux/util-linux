@@ -11,6 +11,7 @@
  * This program is freely distributable.
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -3113,12 +3114,40 @@ static void reload_agettys(void)
 #endif
 }
 
+static int parse_cred_boolean(const char *str)
+{
+	const char *pos_bool_val[] = {
+		"true", "t", "yes",
+		"y", "on", "1", };
+	const char *neg_bool_val[] = {
+		"false", "f", "no",
+		"no", "off", "0", };
+
+	if (!str)
+		return -EINVAL;
+
+	for (size_t i = 0; i < ARRAY_SIZE(pos_bool_val); i++) {
+		if ((strcmp(pos_bool_val[i], str) == 0))
+			return 1;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(neg_bool_val); i++) {
+		if ((strcmp(neg_bool_val[i], str) == 0))
+			return 0;
+	}
+
+	return -EINVAL;
+}
+
 static void load_credentials(struct options *op)
 {
 	char *env;
 	DIR *dir;
 	struct dirent *d;
 	struct path_cxt *pc;
+	int rc;
+	uint32_t u32_num = 0;
+	int32_t s32_num = 0;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
 	if (!env)
@@ -3143,6 +3172,89 @@ static void load_credentials(struct options *op)
 			ul_path_read_string(pc, &str, d->d_name);
 			free(op->autolog);
 			op->autolog = str;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.delay") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtou32(str, &u32_num, 10);
+			if (rc) {
+				log_warn(_("invalid 'delay' argument provided by credential"));
+				continue;
+			}
+			op->delay = u32_num;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.hangup") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = parse_cred_boolean(str);
+			if (rc == -EINVAL) {
+				log_warn(_("invalid 'hangup' boolean value provided by credential"));
+				continue;
+			} else if (rc) {
+				op->flags |= F_HANGUP;
+			}
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nice") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtos32(str, &s32_num, 10);
+			if (rc) {
+				log_warn(_("invalid 'nice' argument provided by credential"));
+				continue;
+			}
+			op->nice = s32_num;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noclear") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = parse_cred_boolean(str);
+			if (rc == -EINVAL) {
+				log_warn(_("invalid 'noclear' boolean value provided by credential"));
+				continue;
+			} else if (rc) {
+				op->flags |= F_NOCLEAR;
+			}
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohints") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = parse_cred_boolean(str);
+			if (rc == -EINVAL) {
+				log_warn(_("invalid 'nohints' boolean value provided by credential"));
+				continue;
+			} else if (rc) {
+				op->flags |= F_NOHINTS;
+			}
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohostname") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = parse_cred_boolean(str);
+			if (rc == -EINVAL) {
+				log_warn(_("invalid 'nohostname' boolean value provided by credential"));
+				continue;
+			} else if (rc) {
+				op->flags |= F_NOHINTS;
+			}
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noissue") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = parse_cred_boolean(str);
+			if (rc == -EINVAL) {
+				log_warn(_("invalid 'noissue' boolean value provided by credential"));
+				continue;
+			} else if (rc) {
+				op->flags &= ~F_ISSUE;
+			}
+			continue;
 		}
 	}
 	closedir(dir);
