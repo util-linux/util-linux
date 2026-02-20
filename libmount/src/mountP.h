@@ -446,6 +446,21 @@ struct libmnt_ns {
 	struct libmnt_cache *cache;	/* paths cache associated with NS */
 };
 
+struct libmnt_ns_stage {
+	uint32_t 	curr_stage,	/* current mount stage, i.e. MNT_NS_STAGE_ALL,... */
+			flags;		/* defines in which stages to switch to the namespace */
+};
+
+/* namespace stage flags
+ *
+ * These are used to create a bitmask that controls
+ * at which stage of the mount process to switch to
+ * the given namespace.
+ */
+#define MNT_NS_STAGE_ALL        (1 << 2)
+#define MNT_NS_STAGE_PREP       (1 << 3)
+#define MNT_NS_STAGE_ATTACH     (1 << 4)
+
 /*
  * Mount context -- high-level API
  */
@@ -511,6 +526,7 @@ struct libmnt_context
 	struct libmnt_ns	ns_orig;	/* original namespace */
 	struct libmnt_ns	ns_tgt;		/* target namespace */
 	struct libmnt_ns	*ns_cur;	/* pointer to current namespace */
+	struct libmnt_ns_stage	ns_stage;	/* controls when to switch to the target namespace*/
 
 	unsigned int	enabled_textdomain : 1;	/* bindtextdomain() called */
 	unsigned int	noautofs : 1;		/* ignore autofs mounts */
