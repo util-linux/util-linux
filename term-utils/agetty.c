@@ -11,6 +11,7 @@
  * This program is freely distributable.
  */
 
+#include <stdint.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -3119,6 +3120,9 @@ static void load_credentials(struct options *op)
 	DIR *dir;
 	struct dirent *d;
 	struct path_cxt *pc;
+	int rc;
+	uint32_t u32_num = 0;
+	int32_t s32_num = 0;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
 	if (!env)
@@ -3143,6 +3147,54 @@ static void load_credentials(struct options *op)
 			ul_path_read_string(pc, &str, d->d_name);
 			free(op->autolog);
 			op->autolog = str;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.delay") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtou32(str, &u32_num, 10);
+			if (rc) {
+				log_warn(_("invalid 'delay' argument provided by credential"));
+				continue;
+			}
+			op->delay = u32_num;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.hangup") == 0) {
+			op->flags |= F_HANGUP;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nice") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtos32(str, &s32_num, 10);
+			if (rc) {
+				log_warn(_("invalid 'nice' argument provided by credential"));
+				continue;
+			}
+			op->nice = s32_num;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noclear") == 0) {
+			op->flags |= F_NOCLEAR;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohints") == 0) {
+			op->flags |= F_NOHINTS;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohostname") == 0) {
+			op->flags |= F_NOHOSTNAME;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noissue") == 0) {
+			op->flags &= ~F_ISSUE;
+			continue;
 		}
 	}
 	closedir(dir);
