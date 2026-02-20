@@ -422,6 +422,25 @@ static int memory_block_get_node(struct lsmem *lsmem, char *name)
 	return node;
 }
 
+static int memory_block_has_zones(struct lsmem *lsmem, char *name)
+{
+	char *path = NULL;
+	int rc;
+
+	if (!name)
+		return -EINVAL;
+
+	xasprintf(&path, "%s/valid_zones", name);
+	rc = ul_path_access(lsmem->sysmem, F_OK, path);
+	if (rc != 0) {
+		free(path);
+		return rc;
+	}
+
+	free(path);
+	return 0;
+}
+
 static int memory_block_read_attrs(struct lsmem *lsmem, char *name,
 				    struct memory_block *blk)
 {
@@ -611,9 +630,23 @@ static void read_basic_info(struct lsmem *lsmem)
 		}
 	}
 
-	/* The valid_zones sysmem attribute was introduced with kernel 3.18 */
-	if (ul_path_access(lsmem->sysmem, F_OK, "memory0/valid_zones") == 0)
-		lsmem->have_zones = 1;
+	/* The valid_zones sysmem attribute was introduced with kernel 3.18.
+	 *
+	 * Note that some systems can have different physical memory layouts which
+	 * make it so that the first hotpluggable memory block starts with an ID
+	 * other than 0. Therefore, we have to walk through the sysmem dir and
+	 * find the memory<n>/ entries and test whether the valid_zones attribute
+	 * is available.
+	 */
+	for (i = 0; i < lsmem->ndirs; i++) {
+		if (strncmp("memory", lsmem->dirs[i]->d_name, 6) != 0)
+			continue;
+
+		if (memory_block_has_zones(lsmem, lsmem->dirs[i]->d_name) == 0) {
+			lsmem->have_zones = 1;
+			break;
+		}
+	}
 }
 
 static void __attribute__((__noreturn__)) usage(void)
