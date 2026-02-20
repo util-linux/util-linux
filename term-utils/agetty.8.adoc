@@ -341,6 +341,48 @@ _/etc/inittab_::
 
 If set, configures *agetty* to automatically log in the specified user without asking for a username or password, similarly to the *--autologin* option.
 
+*agetty.delay* (unsigned int)::
+
+If set, configures *agetty* to sleep for a specified number of seconds before opening the tty. Similar to the *--delay* option.
+
+*agetty.hangup* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to do a virtual hangup of the specified terminal. Similar to the *--hangup* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nice* (int)::
+
+If set, configures *agetty* to run the login program with the specified priority. Similar to the *--nice* option.
+
+*agetty.noclear* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not clear the screen before prompting for the login name. Similar to the *--noclear* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nohints* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not print hints about Num, Caps and Scroll Locks. Similar to the *--nohints* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.nohostname* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to show no hostname. Similar to the *--nohostname* option.
+Possible boolean values are listed at the end of this section.
+
+*agetty.noissue* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not show contents of */etc/issue* before writing the login prompt. Similar to the *--noissue* option.
+Possible boolean values are listed at the end of this section.
+
+Boolean credentials accept the following values::
+
+Positive;;
+"true", "t", "yes", "y", "on", "1"
+
+Negative;;
+"false", "f", "no", "n", "off", "0"
+
+
 == BUGS
 
 The baud-rate detection feature (the *--extract-baud* option) requires that *agetty* be scheduled soon enough after completion of a dial-in call (within 30 ms with modems that talk at 2400 baud). For robustness, always use the *--extract-baud* option in combination with a multiple baud rate command-line argument, so that BREAK processing is enabled.

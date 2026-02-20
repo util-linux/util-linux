@@ -3131,12 +3131,53 @@ static void reload_agettys(void)
 #endif
 }
 
+/*
+ * Set or clear flags according to the boolean value provided by
+ * a systemd credential.
+ *
+ * @str: credential value
+ * @flags: pointer to the flags bitmask that will be updated
+ * @flag: the flag to set or clear
+ * @invert: 0 = no rule inversion, 1 = invert the default
+ *          (true = set) / (false = clear) rule
+ *
+ * In some cases inverting the default rule is needed, e.g. F_ISSUE
+ * is set by default and needs to be cleared when the agetty.noissue
+ * credential is set to 'true'.
+ *
+ * Returns 0 on success and < 0 on error.
+ */
+static int update_flags_from_bool_cred(const char *str, int *flags, int flag, int invert)
+{
+	int rc;
+	bool res;
+
+	if (!str || !flags)
+		return -EINVAL;
+
+	rc = ul_strtobool(str, &res);
+	if (rc < 0)
+		return rc;
+
+	if ((res == true && !invert) || (res == false && invert)) {
+		*flags |= flag;
+		return 0;
+	} else if ((res == false && !invert) || (res == true && invert)) {
+		*flags &= ~flag;
+		return 0;
+	}
+
+	return -EINVAL;
+}
+
 static void load_credentials(struct options *op)
 {
 	char *env;
 	DIR *dir;
 	struct dirent *d;
 	struct path_cxt *pc;
+	int rc, num;
+	uint32_t u32num;
 
 	env = safe_getenv("CREDENTIALS_DIRECTORY");
 	if (!env)
@@ -3161,6 +3202,72 @@ static void load_credentials(struct options *op)
 			ul_path_read_string(pc, &str, d->d_name);
 			free(op->autolog);
 			op->autolog = str;
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.delay") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtou32(str, &u32num, 10);
+			if (rc)
+				log_warn(_("invalid 'delay' argument provided by credential"));
+			op->delay = u32num;
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.hangup") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = update_flags_from_bool_cred(str, &op->flags, F_HANGUP, 0);
+			if (rc < 0)
+				log_warn(_("invalid 'hangup' boolean value provided by credential"));
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nice") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = ul_strtos32(str, &num, 10);
+			if (rc)
+				log_warn(_("invalid 'nice' argument provided by credential"));
+			op->nice = num;
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noclear") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = update_flags_from_bool_cred(str, &op->flags, F_NOCLEAR, 0);
+			if (rc < 0)
+				log_warn(_("invalid 'noclear' boolean value provided by credential"));
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohints") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = update_flags_from_bool_cred(str, &op->flags, F_NOHINTS, 0);
+			if (rc < 0)
+				log_warn(_("invalid 'nohints' boolean value provided by credential"));
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.nohostname") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = update_flags_from_bool_cred(str, &op->flags, F_NOHOSTNAME, 0);
+			if (rc < 0)
+				log_warn(_("invalid 'nohostname' boolean value provided by credential"));
+			free(str);
+			continue;
+		}
+
+		if (strcmp(d->d_name, "agetty.noissue") == 0) {
+			ul_path_read_string(pc, &str, d->d_name);
+			rc = update_flags_from_bool_cred(str, &op->flags, F_ISSUE, 1);
+			if (rc < 0)
+				log_warn(_("invalid 'noissue' boolean value provided by credential"));
+			free(str);
+			continue;
 		}
 	}
 	closedir(dir);
