@@ -341,6 +341,35 @@ _/etc/inittab_::
 
 If set, configures *agetty* to automatically log in the specified user without asking for a username or password, similarly to the *--autologin* option.
 
+*agetty.delay* (unsigned int)::
+
+If set, configures *agetty* to sleep _delay_ seconds before opening the tty. Similar to the *--delay* option.
+
+*agetty.hangup*::
+
+If the file exists, configures *agetty* to do a virtual hangup of the specified terminal. Similar to the *--hangup* option.
+
+*agetty.nice* (int)::
+
+If set, configures *agetty* to run the login program with the specified priority. Similar to the *--nice* option.
+
+*agetty.noclear*::
+
+If the file exists, configures *agetty* to not clear the screen before prompting for the login name. Similar to the *--noclear* option.
+
+*agetty.nohints*::
+
+If the file exists, configures *agetty* to not print hints about Num, Caps and Scroll Locks. Similar to the *--nohints* option.
+
+*agetty.nohostname*::
+
+If the file exists, configures *agetty* to show no hostname. Similar to the *--nohostname* option.
+
+*agetty.noissue*::
+
+If the file exists, configures *agetty* to not show contents of */etc/issue* before writing the login prompt. Similar to the *--noissue* option.
+
+
 == BUGS
 
 The baud-rate detection feature (the *--extract-baud* option) requires that *agetty* be scheduled soon enough after completion of a dial-in call (within 30 ms with modems that talk at 2400 baud). For robustness, always use the *--extract-baud* option in combination with a multiple baud rate command-line argument, so that BREAK processing is enabled.
