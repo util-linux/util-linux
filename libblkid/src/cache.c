@@ -173,20 +173,22 @@ void blkid_put_cache(blkid_cache cache)
 void blkid_gc_cache(blkid_cache cache)
 {
 	struct list_head *p, *pnext;
-	struct stat st;
+	char *bid_name = NULL;
 
 	if (!cache)
 		return;
 
 	list_for_each_safe(p, pnext, &cache->bic_devs) {
 		blkid_dev dev = list_entry(p, struct blkid_struct_dev, bid_devs);
-		if (stat(dev->bid_name, &st) < 0) {
-			DBG(CACHE, ul_debugobj(cache, "freeing non-existing %s", dev->bid_name));
-			blkid_free_dev(dev);
+		bid_name = strdup(dev->bid_name);
+
+		if (blkid_verify(cache, dev) == NULL) {
+			DBG(CACHE, ul_debugobj(cache, "freed non-existing %s", bid_name));
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
 		} else {
 			DBG(CACHE, ul_debug("Device %s exists", dev->bid_name));
 		}
+		free(bid_name);
 	}
 }
 
