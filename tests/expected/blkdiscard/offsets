@@ -47,4 +47,6 @@ ret: 1
 ret: 1
 ret: 1
 ret: 1
+testing --force and --quiet
+ret: 0
 detach loop device from image
