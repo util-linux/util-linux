@@ -1,0 +1,89 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="options"
+
+. "$TS_TOPDIR"/functions.sh
+
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_test_command "$TS_CMD_BLKID"
+ts_check_test_command "$TS_CMD_MKSWAP"
+ts_check_losetup
+
+ts_device_init
+
+"$TS_CMD_MKSWAP" --quiet --endianness little --pagesize 4096 --label UL_TS_SWAPIMG \
+                        --uuid b397d7bd-87e9-4f12-8ac1-d3201d14b531 \
+                        "$TS_LODEV" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
+
+ts_init_subtest label
+
+if "$TS_CMD_BLKID" --label UL_TS_SWAPIMG | grep "$TS_LODEV" &>/dev/null; then
+        echo "ok" >> "$TS_OUTPUT"
+fi
+
+ts_finalize_subtest
+
+
+ts_init_subtest list-filesystems
+
+# Atleast swap should be in the list
+"$TS_CMD_BLKID" --list-filesystems \
+                        | grep -o "swap" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
+ts_finalize_subtest
+
+
+ts_init_subtest list-one
+
+lines=$("$TS_CMD_BLKID" --list-one --match-token TYPE="swap" 2>/dev/null | wc -l); 
+
+if [ "$lines" == 1 ]; then
+        echo "ok" >> "$TS_OUTPUT"
+fi
+
+ts_finalize_subtest
+
+
+ts_init_subtest match-tag
+"$TS_CMD_BLKID" --match-tag LABEL | grep -o UL_TS_SWAPIMG \
+                                >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest match-token
+
+if "$TS_CMD_BLKID" --match-token LABEL="UL_TS_SWAPIMG" &>/dev/null; then
+        echo "ok" >> "$TS_OUTPUT"
+fi
+
+ts_finalize_subtest
+
+ts_init_subtest match-types
+
+if "$TS_CMD_BLKID" --probe --match-types swap "$TS_LODEV" &>/dev/null; then
+        echo "ok" >> "$TS_OUTPUT"
+fi
+
+ts_finalize_subtest
+
+ts_finalize
