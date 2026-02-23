@@ -159,6 +159,8 @@ void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type)
 		if (fmt->json_format == UL_JSON_LINE)
 			s = "{";
 		else if (fmt->json_format == UL_JSON_COMPACT) {
+			/* At nesting depth 2, put the object opens on a new line
+			 * for readability; otherwise keep fully compact (no newline). */
 			if (fmt->indent == 2)
 				s = name ? ":{" : "\n{";
 			else
@@ -197,28 +199,22 @@ void ul_jsonwrt_empty(struct ul_jsonwrt *fmt, const char *name, int type)
 
 	switch (type) {
 	case UL_JSON_OBJECT:
-		if (fmt->json_format == UL_JSON_LINE)
-			s = name ? ":{}" : "{}";
-		else if (fmt->json_format == UL_JSON_COMPACT)
-			s = name ? ":{}" : "{}";
-		else
+		if (fmt->json_format == UL_JSON_PRETTY)
 			s = name ? ": {}" : "{}";
+		else
+			s = name ? ":{}" : "{}";
 		break;
 	case UL_JSON_ARRAY:
-		if (fmt->json_format == UL_JSON_LINE)
-			s = name ? ":[]" : "[]";
-		else if (fmt->json_format == UL_JSON_COMPACT)
-			s = name ? ":[]" : "[]";
-		else
+		if (fmt->json_format == UL_JSON_PRETTY)
 			s = name ? ": []" : "[]";
+		else
+			s = name ? ":[]" : "[]";
 		break;
 	case UL_JSON_VALUE:
-		if (fmt->json_format == UL_JSON_LINE)
-			s = name ? ":null" : "null";
-		else if (fmt->json_format == UL_JSON_COMPACT)
-			s = name ? ":null" : "null";
-		else
+		if (fmt->json_format == UL_JSON_PRETTY)
 			s = name ? ": null" : "null";
+		else
+			s = name ? ":null" : "null";
 		break;
 	}
 	fputs(s, fmt->out);
@@ -248,6 +244,8 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 		return;
 	}
 
+	/* In COMPACT, when closing a direct child of root (indent==1),
+	 * insert a newline so the closing bracket starts on its own line. */
 	if (fmt->json_format == UL_JSON_COMPACT && fmt->indent == 1)
 		fputc('\n', fmt->out);
 
