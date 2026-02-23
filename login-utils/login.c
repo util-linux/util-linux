@@ -1168,20 +1168,31 @@ static void fork_session(struct login_context *cxt)
 		sigaction(SIGQUIT, &sa, NULL);
 		sigaction(SIGINT, &sa, NULL);
 
-		/* block SIGCHLD and sig_handler signals while checking children */
+		/*
+		 * Block SIGCHLD, SIGHUP, and SIGTERM. These signals are
+		 * only delivered during sigsuspend() below, ensuring that
+		 * sig_handler() cannot use a stale child_pid between
+		 * waitpid() reaping the child and child_pid being cleared.
+		 */
 		sigemptyset(&ourset);
 		sigaddset(&ourset, SIGCHLD);
 		sigaddset(&ourset, SIGHUP);
 		sigaddset(&ourset, SIGTERM);
 		sigprocmask(SIG_BLOCK, &ourset, &oldset);
 
-		/* let at least SIGCHLD, SIGHUP, and SIGTERM wake up sigsuspend */
+		/* sigsuspend() mask: unblock SIGCHLD, SIGHUP, SIGTERM */
 		ourset = oldset;
 		sigdelset(&ourset, SIGCHLD);
 		sigdelset(&ourset, SIGHUP);
 		sigdelset(&ourset, SIGTERM);
 
-		/* wait as long as any child is there */
+		/*
+		 * Wait for all children to exit. The actual wait point is
+		 * sigsuspend(), which atomically unblocks signals and
+		 * sleeps -- this is where SIGTERM/SIGHUP are forwarded to
+		 * the child via sig_handler(). waitpid() with WNOHANG only
+		 * checks for already-terminated children without blocking.
+		 */
 		do {
 			waiting = waitpid(-1, NULL, WNOHANG);
 			if (waiting == 0)
