@@ -104,9 +104,6 @@ static int wait_for_pager(void)
 	pid_t waiting;
 	int status;
 
-	if (!pager_process.pid)
-		return 0;
-
 	do {
 		waiting = waitpid(pager_process.pid, &status, 0);
 	} while (waiting == -1 && errno == EINTR);
@@ -134,8 +131,6 @@ static void catch_sigpipe(int signo)
 
 static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
 {
-	UL_PROTECT_ERRNO;
-
 	/* signal EOF to pager */
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
