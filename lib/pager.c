@@ -109,9 +109,12 @@ static int wait_for_pager(void)
 
 	do {
 		waiting = waitpid(pager_process.pid, &status, 0);
-		if (waiting == -1 && errno != EINTR)
-			ul_sig_err(EXIT_FAILURE, "waitpid failed");
-	} while (waiting == -1);
+	} while (waiting == -1 && errno == EINTR);
+
+	pager_process.pid = 0;
+
+	if (waiting == -1)
+		err(EXIT_FAILURE, "waitpid failed");
 
 	if (waiting == pager_process.pid && WIFEXITED(status))
 		return WEXITSTATUS(status);
@@ -137,7 +140,10 @@ static void wait_for_pager_signal(int signo __attribute__ ((__unused__)))
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	wait_for_pager();
+	/* async-signal safe: wait for all children, including pager */
+	while (wait(NULL) != -1 || errno == EINTR)
+		;
+
 	_exit(EXIT_FAILURE);
 }
 
