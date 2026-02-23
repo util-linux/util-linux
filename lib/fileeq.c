@@ -367,8 +367,11 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	off_t off = 0;
 	ssize_t rsz;
 
-	if (data->is_eof || n > eq->blocksmax)
+	if (data->is_eof)
 		return 0;
+
+	if (n >= eq->blocksmax)
+		return -EINVAL;
 
 	fd = get_fd(eq, data, &off);
 	if (fd < 0)
@@ -406,9 +409,6 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	size_t sz;
 	int fd;
 
-	if (n > eq->blocksmax)
-		return 0;
-
 	/* return already cached if available */
 	if (n < get_cached_nblocks(data)) {
 		DBG(DATA, ul_debugobj(data, " digest cached"));
@@ -421,6 +421,9 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		DBG(DATA, ul_debugobj(data, " file EOF"));
 		return 0;
 	}
+
+	if (n >= eq->blocksmax)
+		return -EINVAL;
 
 	/* read new block */
 	fd = get_fd(eq, data, &off);
@@ -437,8 +440,6 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		if (!data->blocks)
 			return -ENOMEM;
 	}
-
-	assert(n <= eq->blocksmax);
 
 	rsz = sendfile(eq->fd_cip, data->fd, NULL, eq->readsiz);
 	DBG(DATA, ul_debugobj(data, "  sent %zu [%zu wanted] to cipher", rsz, eq->readsiz));
