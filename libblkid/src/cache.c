@@ -23,6 +23,7 @@
 #endif
 #include "blkidP.h"
 #include "env.h"
+#include "loopdev.h"
 
 /**
  * SECTION:cache
@@ -174,14 +175,23 @@ void blkid_gc_cache(blkid_cache cache)
 {
 	struct list_head *p, *pnext;
 	struct stat st;
+	int ret;
 
 	if (!cache)
 		return;
 
 	list_for_each_safe(p, pnext, &cache->bic_devs) {
 		blkid_dev dev = list_entry(p, struct blkid_struct_dev, bid_devs);
-		if (stat(dev->bid_name, &st) < 0) {
+
+		ret = stat(dev->bid_name, &st);
+		if (ret < 0) {
 			DBG(CACHE, ul_debugobj(cache, "freeing non-existing %s", dev->bid_name));
+			blkid_free_dev(dev);
+			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
+		} else if (is_loopdev(dev->bid_name)
+					&& !loopdev_has_backing_file(dev->bid_name)) {
+			/* remove empty loop device from cache */
+			DBG(CACHE, ul_debugobj(cache, "freeing empty loop device %s", dev->bid_name));
 			blkid_free_dev(dev);
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
 		} else {
