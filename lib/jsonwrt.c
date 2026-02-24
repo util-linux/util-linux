@@ -102,7 +102,7 @@ static void fputs_quoted_case_json(const char *data, FILE *out, int dir, size_t 
 #define fputs_quoted_json_upper(_d, _o) fputs_quoted_case_json(_d, _o, 1, 0)
 #define fputs_quoted_json_lower(_d, _o) fputs_quoted_case_json(_d, _o, -1, 0)
 
-void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent, ul_json_format_t json_format)
+void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent, enum ul_json_format json_format)
 {
 	fmt->out = out;
 	fmt->indent = indent;

@@ -11,21 +11,21 @@ enum {
 	UL_JSON_VALUE
 };
 
-typedef enum {
+enum ul_json_format {
 	UL_JSON_PRETTY,
 	UL_JSON_COMPACT,
 	UL_JSON_LINE,
-} ul_json_format_t;
+};
 
 struct ul_jsonwrt {
 	FILE *out;
 	int indent;
 
 	unsigned int after_close :1;
-	ul_json_format_t json_format;
+	enum ul_json_format json_format;
 };
 
-void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent, ul_json_format_t json_format);
+void ul_jsonwrt_init(struct ul_jsonwrt *fmt, FILE *out, int indent, enum ul_json_format json_format);
 int ul_jsonwrt_is_ready(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_indent(struct ul_jsonwrt *fmt);
 void ul_jsonwrt_open(struct ul_jsonwrt *fmt, const char *name, int type);

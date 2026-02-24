@@ -60,7 +60,7 @@ static void check_padding_debug(struct libscols_table *tb)
 	tb->padding_debug = 1;
 }
 
-static ul_json_format_t get_json_format(void)
+static enum ul_json_format get_json_format(void)
 {
 	const char *str;
 
