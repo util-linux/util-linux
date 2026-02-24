@@ -925,7 +925,7 @@ int main(int argc, char **argv)
 		       "search type specified using -t"));
 
 	if (!ctl.eval && ctl.output & OUTPUT_JSON) {
-		ul_jsonwrt_init(ctl.json_fmt, stdout, 0);
+		ul_jsonwrt_init(ctl.json_fmt, stdout, 0, UL_JSON_PRETTY);
 		ul_jsonwrt_root_open(ctl.json_fmt);
 		ul_jsonwrt_array_open(ctl.json_fmt, "blkid");
 	}

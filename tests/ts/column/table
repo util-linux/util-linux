@@ -139,6 +139,28 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 		>> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "json-lines"
+LIBSMARTCOLS_JSON=lines $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
+		--table-name "mountinfo" \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
+		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
+		--json \
+		--output-width 110 \
+		>> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "json-compact"
+LIBSMARTCOLS_JSON=compact $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
+		--table-name "mountinfo" \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
+		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
+		--json \
+		--output-width 110 \
+		>> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_init_subtest "use-spaces"
 $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
