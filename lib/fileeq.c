@@ -250,15 +250,22 @@ void ul_fileeq_data_set_file(struct ul_fileeq_data *data, const char *name)
 	data->name = name;
 }
 
-size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
-			 size_t readsiz, size_t memsiz)
+bool ul_fileeq_set_size(struct ul_fileeq *eq, int64_t st_size,
+			size_t readsiz, size_t memsiz)
 {
-	uint64_t nreads, maxdigs;
+	uint64_t filesiz, nreads, maxdigs;
 	size_t digsiz;
 
 	assert(eq);
+	assert(st_size >= 0);
+	assert(readsiz);
+
+	filesiz = (uint64_t) st_size;
 
 	eq->filesiz = filesiz;
+
+	if (filesiz != 0 && readsiz > filesiz)
+		readsiz = filesiz;
 
 	switch (eq->method->id) {
 	case UL_FILEEQ_MEMCMP:
@@ -275,22 +282,28 @@ size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
 		maxdigs = memsiz / digsiz;
 		if (maxdigs == 0)
 			maxdigs = 1;
+		else if (maxdigs > filesiz)
+			maxdigs = filesiz;
 		nreads = filesiz / readsiz;
 		/* enlarge readsize for large files */
-		if (nreads > maxdigs)
-			readsiz = (filesiz + maxdigs - 1) / maxdigs;
+		if (nreads > maxdigs) {
+			uint64_t ceiling = filesiz + maxdigs - 1;
+			if (ceiling / maxdigs > SIZE_MAX)
+				return false;
+			readsiz = ceiling / maxdigs;
+		}
 		break;
 	}
 
 	eq->readsiz = readsiz;
 	eq->blocksmax = (filesiz + readsiz - 1) / readsiz;
 
-	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%" PRIu64 ", maxblocks=%" PRIu64 ", readsiz=%zu",
+	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%" PRIu64 ", blocksmax=%" PRIu64 ", readsiz=%zu",
 				eq->filesiz, eq->blocksmax, eq->readsiz));
 
 	reset_fileeq_bufs(eq);
 
-	return eq->blocksmax;
+	return true;
 }
 
 static unsigned char *get_buffer(struct ul_fileeq *eq)
@@ -624,8 +637,9 @@ int main(int argc, char *argv[])
 	if (file_c)
 		ul_fileeq_data_set_file(&c, file_c);
 
-	/*                     filesiz,      readsiz,   memsiz */
-	ul_fileeq_set_size(&eq, st_a.st_size, 1024*1024, 4*1024);
+	/*                           st_size,      readsiz,   memsiz */
+	if (!ul_fileeq_set_size(&eq, st_a.st_size, 1024*1024, 4*1024))
+		err(EXIT_FAILURE, "failed to set sizes");
 
 	rc = ul_fileeq(&eq, &a, &b);
 
