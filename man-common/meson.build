@@ -9,5 +9,6 @@ man_common_adocs = files(
   'hyperlink.adoc',
   'in-bytes.adoc',
   'manpage-stub.adoc',
+  'env-smartcols.adoc',
   'translation.adoc',
 )

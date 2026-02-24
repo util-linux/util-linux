@@ -440,8 +440,8 @@ enables *sfdisk* debug output.
 enables libfdisk debug output.
 *LIBBLKID_DEBUG*=all::
 enables libblkid debug output.
-*LIBSMARTCOLS_DEBUG*=all::
-enables libsmartcols debug output.
+include::man-common/env-smartcols.adoc[]
+
 *LOCK_BLOCK_DEVICE*=<mode>::
 use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
 

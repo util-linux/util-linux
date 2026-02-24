@@ -228,11 +228,7 @@ enables *libblkid* debug output.
 *LIBMOUNT_DEBUG*=all::
 enables *libmount* debug output.
 
-*LIBSMARTCOLS_DEBUG*=all::
-enables *libsmartcols* debug output.
-
-*LIBSMARTCOLS_DEBUG_PADDING*=on::
-use visible padding characters.
+include::man-common/env-smartcols.adoc[]
 
 *LSBLK_COLUMNS*=::
 specifies a comma-separated list of output columns to print. All columns listed by *--list-columns* can be used.
