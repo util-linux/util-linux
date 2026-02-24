@@ -48,7 +48,7 @@ Specify the sector size of the disk. Valid values are 512, 1024, 2048, and 4096.
 Don't erase the beginning of the first disk sector when creating a new disk label. This feature is supported for GPT and MBR.
 
 *-c*, *--compatibility*[**=**_mode_]::
-Specify the compatibility mode, 'dos' or 'nondos'. The default is non-DOS mode. For backward compatibility, it is possible to use the option without the _mode_ argument -- then the default is used. Note that the optional _mode_ argument cannot be separated from the *-c* option by a space, the correct form is for example *-c*=_dos_.
+Specify the compatibility mode: 'dos' or 'nondos'. The default is non-DOS mode. For backward compatibility, it is possible to use the option without the _mode_ argument -- then the default is used. Note that the optional _mode_ argument cannot be separated from the *-c* option by a space; the correct form is *-c=dos*, for example.
 
 *-L*, *--color*[**=**_when_]::
 Colorize the output. The optional argument _when_ can be *auto*, *never* or *always*. If the _when_ argument is omitted, it defaults to *auto*. The colors can be disabled; for the current built-in default see the *--help* output. See also the *COLORS* section.
@@ -88,7 +88,7 @@ Print the size in 512-byte sectors of each given block device. This option is DE
 Enable support only for disklabels of the specified _type_, and disable support for all other types.
 
 *-u*, *--units*[**=**_unit_]::
-When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space, the correct form is for example '**-u=**__cylinders__'.
+When listing partition tables, show sizes in 'sectors' or in 'cylinders'. The default is to show sizes in sectors. For backward compatibility, it is possible to use the option without the _unit_ argument -- then the default is used. Note that the optional _unit_ argument cannot be separated from the *-u* option by a space; the correct form is *-u=cylinders*, for example.
 
 *-C*, *--cylinders* _number_::
 Specify the _number_ of cylinders of the disk. I have no idea why anybody would want to do so.
@@ -115,16 +115,13 @@ The _partition_ is a device name followed by a partition number. For example, _/
 
 == SIZES
 
-
 //TRANSLATORS: Keep {plus} untranslated.
 The "last sector" dialog accepts partition size specified by number of sectors or by {plus}/-<size>{K,B,M,G,...} notation.
-
 
 //TRANSLATORS: Keep {plus} untranslated.
 If the size is prefixed by '{plus}' then it is interpreted as relative to the partition first sector. If the size is prefixed by '-' then it is interpreted as relative to the high limit (last available sector for the partition).
 
 In the case the size is specified in bytes, then the number may be followed by the multiplicative suffixes KiB (1024 bytes), MiB (1024*1024 bytes), and so on for GiB, TiB, PiB, EiB, ZiB and YiB. The "iB" is optional, e.g., "K" has the same meaning as "KiB".
-
 
 //TRANSLATORS: Keep {plus} untranslated.
 The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,G,...} notation is recommended.
