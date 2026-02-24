@@ -39,9 +39,9 @@ EXPR=
 	echo "pid in a range:" $?
 
 	if [[ "${PID_0}" == "${PID}" ]]; then
-	    echo "coparing pids": $?
+	    echo "coparing pids": 0
 	else
-	    echo "coparing pids": $? "PID_0:${PID_0} == PID:${PID}"
+	    echo "coparing pids": 1 "PID_0:${PID_0} == PID:${PID}"
 	fi
 
 	EXPR='(TIMERFD.INTERVAL < 10.000051) and (TIMERFD.INTERVAL > 10)'

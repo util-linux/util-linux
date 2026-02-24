@@ -33,6 +33,8 @@ ID=
 TAG=
 FD=3
 NAME=mkdfs_prog
+RC=
+
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" bpf-prog "$FD" prog-type-id=2 name="$NAME"; }
     if read -r -u "${MKFDS[0]}" PID ID TAG; then
@@ -56,9 +58,10 @@ NAME=mkdfs_prog
 	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
+    RC=$?
 } > "$TS_OUTPUT" 2>&1
 
-if [ "$?" == "$TS_EXIT_NOTSUPP" ]; then
+if [ "$RC" == "$TS_EXIT_NOTSUPP" ]; then
     ts_skip "bpf(2) is not available"
 fi
 

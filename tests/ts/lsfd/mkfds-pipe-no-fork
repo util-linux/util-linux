@@ -85,7 +85,7 @@ EXPR=
 
 	expected=$(printf '%s\n%s' "${line0}" "${line1}")
 	if [ "${LSFD_ENDPOINTS}" == "${expected}" ]; then
-	    echo 'ENDPOINTS[STR]:' $?
+	    echo 'ENDPOINTS[STR]:' 0
 	else
 	    echo "lsfd output:"
 	    echo "${LSFD_ENDPOINTS}"

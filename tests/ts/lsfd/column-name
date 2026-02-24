@@ -30,6 +30,7 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 EXPR="(FD == 3)"
+RC=
 
 make_state_connected()
 {
@@ -41,6 +42,7 @@ make_state_connected()
 }
 
 for C in ro-regular-file pidfd socketpair; do
+    RC=
     ts_init_subtest $C
     {
 	coproc MKFDS {
@@ -64,8 +66,9 @@ for C in ro-regular-file pidfd socketpair; do
 	fi
     } > "$TS_OUTPUT" 2>&1
     wait "${MKFDS_PID}"
+    RC=$?
 
-    if [ "$C-$?" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
+    if [ "$C-$RC" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
 	ts_skip_subtest "pidfd_open(2) is not available"
 	continue
     fi

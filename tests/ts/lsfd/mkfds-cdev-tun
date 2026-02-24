@@ -68,12 +68,12 @@ cdev_tun_test()
 
 	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o NAME -Q "${EXPR}")
 	    if [[ "$output" =~ "iface=$IFNAME"(\\x20devnetns=$netns)? ]]; then
-		echo 'NAME': $?
+		echo 'NAME': 0
 		if [[ -n "${BASH_REMATCH[1]}" ]]; then
 		    devnetns_available=yes
 		fi
 	    else
-		echo 'NAME': $?
+		echo 'NAME': 1
 		echo "expected NAME: iface=$IFNAME"
 		echo "output NAME: $output"
 		echo "netns: $netns"
@@ -81,9 +81,9 @@ cdev_tun_test()
 
 	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o TUN.IFACE -Q "${EXPR}")
 	    if [[ "$output" == "$IFNAME" ]]; then
-		echo 'TUN.IFACE': $?
+		echo 'TUN.IFACE': 0
 	    else
-		echo 'TUN.IFACE': $?
+		echo 'TUN.IFACE': 1
 		echo "expected TUN.IFACE: $IFNAME"
 		echo "output TUN.IFACE: $output"
 	    fi
@@ -98,9 +98,9 @@ cdev_tun_test()
 	{
 	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o TUN.DEVNETNS -Q "${EXPR}")
 	    if [[ "$output" == "$netns" ]]; then
-		echo 'TUN.DEVNETNS': $?
+		echo 'TUN.DEVNETNS': 0
 	    else
-		echo 'TUN.DEVNETNS': $?
+		echo 'TUN.DEVNETNS': 1
 		echo "expected TUN.DEVNETNS: $netns"
 		echo "output TUN.DEVNETNS: $output"
 	    fi

@@ -35,6 +35,7 @@ FDALTNS=4
 FDSOCK=5
 
 EXPR='((TYPE == "UNIX") or (TYPE == "UNIX-STREAM")) and (FD == 5)'
+RC=
 
 compare_net_namespaces()
 {
@@ -65,6 +66,7 @@ strip_type_stream()
 }
 
 for t in stream dgram seqpacket; do
+    RC=
     ts_init_subtest "$t"
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" unix-in-netns $FDSELFNS $FDALTNS $FDSOCK \
@@ -97,8 +99,9 @@ for t in stream dgram seqpacket; do
 	    echo DONE >&"${MKFDS[1]}"
 	fi
 	wait "${MKFDS_PID}"
+	RC=$?
     } > "$TS_OUTPUT" 2>&1
-    if [ "$?" == "$EPERM" ]; then
+    if [ "$RC" == "$EPERM" ]; then
 	ts_skip_subtest "unshare(2) is not permitted on this platform"
 	continue
     fi

@@ -33,6 +33,7 @@ EXPR='(TYPE == "NETLINK") and (FD == 3)'
 NETLINK_PROTOCOL=4
 NETLINK_LPORT=
 NETLINK_GROUPS=5
+RC=
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" netlink $FD protocol=$NETLINK_PROTOCOL groups=$NETLINK_GROUPS; }
@@ -50,9 +51,10 @@ NETLINK_GROUPS=5
 	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
+    RC=$?
 } > "$TS_OUTPUT" 2>&1
 
-if [[ $? == "$EPROTONOSUPPORT" ]]; then
+if [[ $RC == "$EPROTONOSUPPORT" ]]; then
     ts_skip "It seems that this platform doesn't support making a netlink socket"
 fi
 

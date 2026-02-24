@@ -71,7 +71,7 @@ esac
 		cat
 	    fi
 	}
-	echo 'ASSOC,MODE,TYPE,FLAGS,NAME': $?
+	echo 'ASSOC,MODE,TYPE,FLAGS,NAME': ${PIPESTATUS[0]}
 
 	LSFD_PID=$(${TS_CMD_LSFD} --raw -n -o PID -Q "${EXPR}")
 	echo 'PID[RUN]:' $?
