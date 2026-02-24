@@ -281,6 +281,50 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	uint16_t logical_block_size = isonum_723(pvd->logical_block_size, false);
 	uint32_t space_size = isonum_733(pvd->space_size, false);
 
+	if (logical_block_size == 0)
+		return 1;
+
+	/*
+	 * Verify the root directory record to reduce false positives.
+	 *
+	 * The CD001 magic at 32KB can match data content on other
+	 * filesystems (e.g. an .iso file stored on XFS). Validate that
+	 * the root directory extent actually contains a valid directory
+	 * entry -- the first entry must be the "." self-reference with
+	 * file_id = 0x00 pointing back to the same LBA.
+	 */
+	{
+		const unsigned char *rdr = is_hs ?
+			pvd->hs.root_dir_record : pvd->iso.root_dir_record;
+		uint32_t root_lba = isonum_731(rdr + 2);
+		uint32_t root_len = isonum_731(rdr + 10);
+		uint64_t root_off = (uint64_t) root_lba * logical_block_size;
+		const unsigned char *rootdata;
+
+		if (root_len == 0)
+			return 1;
+
+		rootdata = blkid_probe_get_buffer(pr, root_off,
+				root_len < 2048 ? root_len : 2048);
+		if (!rootdata)
+			return errno ? -errno : 1;
+
+		/* The first directory entry must be "." (self-reference):
+		 *   - dr_len >= 34 (minimum directory record size)
+		 *   - file_id_len == 1
+		 *   - file_id == 0x00 (the "." identifier)
+		 *   - extent location == root_lba (points to itself)
+		 */
+		if (rootdata[0] < 34 ||
+		    rootdata[32] != 1 ||
+		    rootdata[33] != 0x00 ||
+		    isonum_731(rootdata + 2) != root_lba) {
+			DBG(LOWPROBE, ul_debug("ISO9660: root dir validation "
+				"failed (false positive CD001 signature?)"));
+			return 1;
+		}
+	}
+
 	blkid_probe_set_fsblocksize(pr, logical_block_size);
 	blkid_probe_set_block_size(pr, logical_block_size);
 	blkid_probe_set_fssize(pr, (uint64_t) space_size * logical_block_size);
