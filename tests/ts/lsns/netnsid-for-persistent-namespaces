@@ -53,9 +53,12 @@ function netnsid_subtest {
     local column=$1
     local eval_func=eval_"$column"
     local O
+    local rc
     
     ts_init_subtest "$1"
-    if O=$($TS_CMD_LSNS --raw --noheadings --filter "NETNSID == '$NETNSID'" --output $1); then
+    O=$($TS_CMD_LSNS --raw --noheadings --filter "NETNSID == '$NETNSID'" --output $1)
+    rc=$?
+    if [[ $rc -eq 0 ]]; then
 	if "$eval_func" "$O"; then
 	    echo OK
 	else
@@ -63,7 +66,7 @@ function netnsid_subtest {
 	    echo "$O"
 	fi
     else
-	echo ERROR $?
+	echo ERROR $rc
     fi > "$TS_OUTPUT" 2>&1
     ts_finalize_subtest
 }

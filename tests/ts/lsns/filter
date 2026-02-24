@@ -39,6 +39,7 @@ lsfd_check_userns
 ts_cd "$TS_OUTDIR"
 PID=
 FD=4
+RC=
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" --comm ABC userns $FD; }
@@ -72,8 +73,9 @@ FD=4
 	echo DONE >&"${MKFDS[1]}"
     fi
     wait "${MKFDS_PID}"
+    RC=$?
 } > $TS_OUTPUT 2>&1
-if [ "$?" == "$EPERM" ]; then
+if [ "$RC" == "$EPERM" ]; then
     ts_skip "unshare(2) is not permitted on this platform"
 fi
 ts_finalize
