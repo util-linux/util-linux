@@ -145,7 +145,7 @@ static bool sock_fill_column(struct proc *proc __attribute__((__unused__)),
 }
 
 
-static ino_t get_netns_from_socket(int sk)
+ino_t get_netns_from_socket(int sk)
 {
 	int nsfd;
 	struct stat sb;

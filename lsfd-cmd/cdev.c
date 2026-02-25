@@ -62,6 +62,10 @@ struct cdev_ops {
 			    char **);
 	void (*init)(const struct cdev *);
 	void (*free)(const struct cdev *);
+
+	bool (*needs_target_fd)(struct cdev *);
+	void (*inspect_target_fd)(struct cdev *, int);
+
 	void (*attach_xinfo)(struct cdev *);
 	int (*handle_fdinfo)(struct cdev *, const char *, const char *);
 	const struct ipc_class * (*get_ipc_class)(struct cdev *);
@@ -378,6 +382,7 @@ static struct cdev_ops cdev_misc_ops = {
 struct tundata {
 	const char *iff;
 	ino_t devnetns;		/* 0 implies no value given. */
+	ino_t socknetns;
 };
 
 static bool cdev_tun_probe(struct cdev *cdev)
@@ -413,11 +418,13 @@ static char * cdev_tun_get_name(struct cdev *cdev)
 	if (tundata == NULL || tundata->iff == NULL)
 		return NULL;
 
+	xasprintf(&str, "iface=%s", tundata->iff);
 	if (tundata->devnetns)
-		xasprintf(&str, "iface=%s devnetns=%llu",
-			  tundata->iff, (unsigned long long)tundata->devnetns);
-	else
-		xasprintf(&str, "iface=%s", tundata->iff);
+		xstrfappend(&str, " devnetns=%llu",
+			    (unsigned long long)tundata->devnetns);
+	if (tundata->socknetns)
+		xstrfappend(&str, " socknetns=%llu",
+			    (unsigned long long)tundata->socknetns);
 
 	return str;
 }
@@ -450,6 +457,12 @@ static bool cdev_tun_fill_column(struct proc *proc  __attribute__((__unused__)),
 			return true;
 		}
 		break;
+	case COL_SOCK_NETNS:
+		if (tundata && tundata->socknetns) {
+			xasprintf(str, "%llu", (unsigned long long)tundata->socknetns);
+			return true;
+		}
+		break;
 	}
 	return false;
 }
@@ -465,39 +478,33 @@ static int cdev_tun_handle_fdinfo(struct cdev *cdev, const char *key, const char
 	return 0;
 }
 
-#ifdef TUNGETDEVNETNS
-static int cdev_tun_get_devnetns(int tfd, void *data)
-{
-	struct tundata *tundata = data;
-	int nsfd = ioctl(tfd, TUNGETDEVNETNS);
-	struct stat sb;
-
-	if (nsfd < 0)
-		return -1;
-
-	if (fstat(nsfd, &sb) == 0)
-		tundata->devnetns = sb.st_ino;
-
-	close(nsfd);
-
-	return 0;
-}
-#endif
-
-static void cdev_tun_attach_xinfo(struct cdev *cdev)
+static bool cdev_tun_needs_target_fd(struct cdev *cdev)
 {
 	struct tundata *tundata = cdev->cdev_data;
 
-	if (tundata->iff == NULL)
-		return;
+	return (tundata->iff != NULL);
+}
+
+static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
+{
+	struct tundata *tundata = cdev->cdev_data;
+
+	tundata->socknetns = get_netns_from_socket(fd);
 
 #ifdef TUNGETDEVNETNS
-	{
-		struct file *file = &cdev->file;
-		call_with_foreign_fd(file->proc->pid, file->association,
-				     cdev_tun_get_devnetns, tundata);
+	int nsfd = ioctl(fd, TUNGETDEVNETNS);
+	struct stat sb;
+
+	if (nsfd < 0)
+		return;
+
+	if (fstat(nsfd, &sb) == 0) {
+		tundata->devnetns = sb.st_ino;
+		load_fdsk_xinfo(tundata->devnetns, nsfd);
 	}
-#endif
+
+	close(nsfd);
+#endif	/* TUNGETDEVNETNS */
 }
 
 static struct cdev_ops cdev_tun_ops = {
@@ -507,7 +514,8 @@ static struct cdev_ops cdev_tun_ops = {
 	.get_name = cdev_tun_get_name,
 	.fill_column = cdev_tun_fill_column,
 	.handle_fdinfo = cdev_tun_handle_fdinfo,
-	.attach_xinfo = cdev_tun_attach_xinfo,
+	.needs_target_fd = cdev_tun_needs_target_fd,
+	.inspect_target_fd = cdev_tun_inspect_target_fd,
 };
 
 /*
@@ -788,6 +796,23 @@ static const struct ipc_class *cdev_get_ipc_class(struct file *file)
 	return NULL;
 }
 
+static bool cdev_needs_target_fd(struct file *file)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->needs_target_fd)
+		return cdev->cdev_ops->needs_target_fd(cdev);
+	return false;
+}
+
+static void cdev_inspect_target_fd(struct file *file, int fd)
+{
+	struct cdev *cdev = (struct cdev *)file;
+
+	if (cdev->cdev_ops->inspect_target_fd)
+		cdev->cdev_ops->inspect_target_fd(cdev, fd);
+}
+
 const struct file_class cdev_class = {
 	.super = &file_class,
 	.size = sizeof(struct cdev),
@@ -799,4 +824,6 @@ const struct file_class cdev_class = {
 	.attach_xinfo = cdev_attach_xinfo,
 	.handle_fdinfo = cdev_handle_fdinfo,
 	.get_ipc_class = cdev_get_ipc_class,
+	.needs_target_fd = cdev_needs_target_fd,
+	.inspect_target_fd = cdev_inspect_target_fd,
 };

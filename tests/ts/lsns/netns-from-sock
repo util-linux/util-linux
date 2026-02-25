@@ -49,6 +49,7 @@ tcase[COMMAND]=
 
 PID_UNUSED=
 NETNS=
+RC=
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" foreign-sockets 3 4; }
@@ -73,8 +74,9 @@ NETNS=
     fi
 
     wait "${MKFDS_PID}"
+    RC=$?
 } > $TS_OUTPUT 2>&1
-if [[ "$?" == "$EPERM" ]]; then
+if [[ "$RC" == "$EPERM" ]]; then
     ts_skip "unshare(2) is not permitted on this platform"
 fi
 ts_finalize

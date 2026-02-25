@@ -60,25 +60,25 @@ ENDPOINTS=
 	echo 'child: ID': $?
 
 	if [ "${NAME0}" == "${NAME1}" ]; then
-	    echo 'NAME[STR]:' $?
+	    echo 'NAME[STR]:' 0
 	else
-	    echo 'NAME[STR]:' $?
+	    echo 'NAME[STR]:' 1
 	    echo NAME0: "${NAME0}"
 	    echo NAME1: "${NAME1}"
 	fi
 
 	if [ "${ID0}" == "${ID1}" ]; then
-	    echo 'ID[STR]:' $?
+	    echo 'ID[STR]:' 0
 	else
-	    echo 'ID[STR]:' $?
+	    echo 'ID[STR]:' 1
 	    echo ID0: "${ID0}"
 	    echo ID0: "${ID1}"
 	fi
 
 	if [ "${NAME0}" == "id=${ID1}" ]; then
-	    echo 'NAMExID[STR]:' $?
+	    echo 'NAMExID[STR]:' 0
 	else
-	    echo 'NAMExID[STR]:' $?
+	    echo 'NAMExID[STR]:' 1
 	    echo NAME0: "${NAME0}"
 	    echo ID0: "${ID0}"
 	fi
@@ -89,9 +89,9 @@ ENDPOINTS=
 		     "$PID0" "$FD0" "$PID1" "$FD1" \
 		     "$PID1" "$FD1" "$PID0" "$FD0")
 	if [ "$ENDPOINTS" == "$tmp" ]; then
-	    echo 'ENDPOINTS[STR]:' $?
+	    echo 'ENDPOINTS[STR]:' 0
 	else
-	    echo 'ENDPOINTS[STR]:' $?
+	    echo 'ENDPOINTS[STR]:' 1
 	    echo 'ENDPOINTS:' "$ENDPOINTS"
 	    echo 'lsfd:' "$tmp"
 	fi

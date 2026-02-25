@@ -82,6 +82,5 @@ void initialize_sock_xinfos(void);
 void finalize_sock_xinfos(void);
 
 struct sock_xinfo *get_sock_xinfo(ino_t inode);
-void load_fdsk_xinfo(ino_t netns_ino, int netns_fd);
 
 #endif /* UTIL_LINUX_LSFD_SOCK_H */
