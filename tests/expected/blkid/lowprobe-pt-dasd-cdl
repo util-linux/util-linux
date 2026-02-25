@@ -1,0 +1,4 @@
+size: 20971520, sector size: 512, PT: dasd, offset: 0, id=0X3726
+---
+#1:        192       4032  0x0 name='LINUX.V0X3726.PART0001' type='NATIVE'
+#2:       4224       4032  0x0 name='LINUX.V0X3726.PART0002' type='NATIVE'

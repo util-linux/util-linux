@@ -40,6 +40,7 @@ lib_blkid_sources = '''
   src/partitions/aix.h
   src/partitions/atari.c
   src/partitions/bsd.c
+  src/partitions/dasd.c
   src/partitions/dos.c
   src/partitions/gpt.c
   src/partitions/mac.c
