@@ -582,25 +582,28 @@ static const char *parse_syslog_timestamp(const char *str0, const char *end, str
  *
  * the ',' is fields separators and ';' items terminator (for the last item)
  */
-static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
+static const char *parse_kmsg_timestamp(const char *str0, const char *end,
+					struct timeval *tv)
 {
 	const char *str = str0;
-	char *end = NULL;
+	char *num_end = NULL;
 	uint64_t usec;
 
-	if (!str0)
+	if (!str0 || (!strnchr(str0, end - str0, ',') &&
+		      !strnchr(str0, end - str0, ';')))
 		return str0;
 
 	errno = 0;
-	usec = strtoumax(str, &end, 10);
+	usec = strtoumax(str, &num_end, 10);
 
-	if (!errno && end && (*end == ';' || *end == ',')) {
+	if (!errno && num_end && num_end <= end &&
+	    (*num_end == ';' || *num_end == ',')) {
 		tv->tv_usec = usec % USEC_PER_SEC;
 		tv->tv_sec = usec / USEC_PER_SEC;
 	} else
 		return str0;
 
-	return end + 1;	/* skip separator */
+	return num_end + 1;	/* skip separator */
 }
 
 static int get_syslog_buffer_size(void)
@@ -1476,7 +1479,7 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 		goto mesg;
 
 	/* C) timestamp */
-	p = parse_kmsg_timestamp(p, &rec->tv);
+	p = parse_kmsg_timestamp(p, end, &rec->tv);
 	if (LAST_KMSG_FIELD(p))
 		goto mesg;
 
@@ -1547,7 +1550,7 @@ static int print_kmsg(struct dmesg_control *ctl)
 	sz = ctl->kmsg_first_read;
 
 	while (sz > 0 && !ferror(stdout)) {
-		*(ctl->kmsg_buf + sz) = '\0';	/* for debug messages */
+		*(ctl->kmsg_buf + sz) = '\0';
 
 		if (parse_kmsg_record(ctl, &rec,
 				      ctl->kmsg_buf, (size_t) sz) == 0)
