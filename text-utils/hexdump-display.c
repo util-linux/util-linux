@@ -101,6 +101,9 @@ static void init_fiemap(struct hexdump *hex, int fd)
 		return;
 	}
 
+	if (fm->fm_mapped_extents > FIEMAP_EXTENTS_BATCH)
+		fm->fm_mapped_extents = FIEMAP_EXTENTS_BATCH;
+
 	/* If no extents, the entire file is a hole - keep fiemap to indicate this */
 	if (fm->fm_mapped_extents == 0) {
 		hex->fiemap = fm;
@@ -128,6 +131,9 @@ static int fetch_more_extents(struct hexdump *hex, int fd)
 
 	if (ioctl(fd, FS_IOC_FIEMAP, fm) < 0)
 		return 0;
+
+	if (fm->fm_mapped_extents > FIEMAP_EXTENTS_BATCH)
+		fm->fm_mapped_extents = FIEMAP_EXTENTS_BATCH;
 
 	hex->current_extent = 0;
 	return 1;
