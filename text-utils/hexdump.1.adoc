@@ -217,6 +217,8 @@ Further output by such format strings is replaced by an equivalent number of spa
 
 If no format strings are specified, the default display is very similar to the *-x* output format (the *-x* option causes more space to be used between format units than in the default output).
 
+Note that the default format and the *-x*, *-d*, and *-o* options use multi-byte format units that are displayed in the system's native byte order (endianness). This means the same input may produce different output on little-endian (e.g., x86, ARM64) and big-endian (e.g., s390x) systems. For byte-order independent output, use single-byte formats such as *-b*, *-c*, *-C*, or *-X*.
+
 == EXIT STATUS
 
 *hexdump* exits 0 on success and > 0 if an error occurred.
