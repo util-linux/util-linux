@@ -291,10 +291,10 @@ static int blkzone_report(struct blkzone_control *ctl)
 				cap = entry.len;
 
 			if (type == BLK_ZONE_TYPE_CONVENTIONAL ||
-			    (cond == BLK_ZONE_COND_FULL ||
-			     cond == BLK_ZONE_COND_READONLY ||
-			     cond == BLK_ZONE_COND_OFFLINE ||
-			     cond == BLK_ZONE_COND_NOT_WP))
+			    cond == BLK_ZONE_COND_FULL ||
+			    cond == BLK_ZONE_COND_READONLY ||
+			    cond == BLK_ZONE_COND_OFFLINE ||
+			    cond == BLK_ZONE_COND_NOT_WP)
 				snprintf(wp_str, sizeof(wp_str), "%s", _("N/A"));
 			else
 				snprintf(wp_str, sizeof(wp_str),
