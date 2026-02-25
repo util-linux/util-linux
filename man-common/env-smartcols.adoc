@@ -1,0 +1,11 @@
+*LIBSMARTCOLS_DEBUG*=all::
+enables libsmartcols debug output.
+
+*LIBSMARTCOLS_DEBUG_PADDING*=on::
+use visible padding characters.
+
+*LIBSMARTCOLS_JSON*=compact|lines::
+Controls JSON output format when using *--json*. Supported values are
+*compact* for JSON output with minimal whitespace, and *lines* for JSON Lines
+format (one JSON object per line). If unset or set to any other value,
+pretty-printed JSON is used.

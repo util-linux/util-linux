@@ -224,11 +224,7 @@ overrides the default location of the _mtab_ file
 *LIBMOUNT_DEBUG*=all::
 enables libmount debug output
 
-*LIBSMARTCOLS_DEBUG*=all::
-enables libsmartcols debug output
-
-*LIBSMARTCOLS_DEBUG_PADDING*=on::
-use visible padding characters.
+include::man-common/env-smartcols.adoc[]
 
 == EXAMPLES
 
