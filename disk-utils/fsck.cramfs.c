@@ -746,7 +746,7 @@ int main(int argc, char **argv)
 			rombufbits++;
 		rombufmask = rombufsize - 1;
 
-		outbuffer = xmalloc(blksize * 2);
+		outbuffer = xmalloc(blksize * 2 + 1);
 		read_buffer = xmalloc(rombufsize * 2);
 		test_fs(start);
 	}
