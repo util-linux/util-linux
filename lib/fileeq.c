@@ -361,7 +361,7 @@ static void memcmp_reset(struct ul_fileeq *eq, struct ul_fileeq_data *data)
 }
 
 static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
-				size_t n, unsigned char **block)
+				uint64_t n, unsigned char **block)
 {
 	int fd;
 	off_t off = 0;
@@ -402,7 +402,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 #ifdef USE_FILEEQ_CRYPTOAPI
 static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
-				size_t n, unsigned char **block)
+				uint64_t n, unsigned char **block)
 {
 	off_t off = 0;
 	ssize_t rsz;
@@ -486,7 +486,7 @@ static ssize_t get_intro(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 }
 
 static ssize_t get_cmp_data(struct ul_fileeq *eq, struct ul_fileeq_data *data,
-				size_t blockno, unsigned char **block)
+				uint64_t blockno, unsigned char **block)
 {
 	if (blockno == 0)
 		return get_intro(eq, data, block);
@@ -512,7 +512,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 	      struct ul_fileeq_data *a, struct ul_fileeq_data *b)
 {
 	int cmp;
-	size_t n = 0;
+	uint64_t n = 0;
 
 	DBG(EQ, ul_debugobj(eq, "--> compare %s %s", a->name, b->name));
 
@@ -525,7 +525,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 		unsigned char *da, *db;
 		ssize_t ca, cb;
 
-		DBG(EQ, ul_debugobj(eq, "compare block #%zu", n));
+		DBG(EQ, ul_debugobj(eq, "compare block #%" PRIu64, n));
 
 		ca = get_cmp_data(eq, a, n, &da);
 		if (ca < 0)
@@ -539,7 +539,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 
 		}
 		cmp = memcmp(da, db, ca);
-		DBG(EQ, ul_debugobj(eq, "#%zu=%s", n, cmp == 0 ? "match" : "not-match"));
+		DBG(EQ, ul_debugobj(eq, "#%" PRIu64 "=%s", n, cmp == 0 ? "match" : "not-match"));
 		n++;
 	} while (cmp == 0);
 
