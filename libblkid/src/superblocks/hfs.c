@@ -191,7 +191,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	unsigned int alloc_block_size;
 	unsigned int alloc_first_block;
 	unsigned int embed_first_block;
-	unsigned int off = 0;
+	uint64_t off = 0;
 	unsigned int blocksize;
 	unsigned int cat_block;
 	unsigned int ext_block_start = 0;
@@ -200,7 +200,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	unsigned int leaf_node_head;
 	unsigned int leaf_node_count;
 	unsigned int leaf_node_size;
-	unsigned int leaf_block;
+	uint64_t leaf_block;
 	int ext;
 	uint64_t leaf_off;
 	const unsigned char *buf;
@@ -223,8 +223,8 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 
 		alloc_first_block = be16_to_cpu(sbd->al_bl_st);
 		embed_first_block = be16_to_cpu(sbd->embed_startblock);
-		off = (alloc_first_block * 512) +
-			(embed_first_block * alloc_block_size);
+		off = ((uint64_t) alloc_first_block * 512) +
+			((uint64_t) embed_first_block * alloc_block_size);
 
 		buf = blkid_probe_get_buffer(pr,
 				off + (mag->kboff * 1024),
@@ -276,7 +276,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	    sizeof(struct hfsplus_catalog_key) || leaf_node_count == 0)
 		return 0;
 
-	leaf_block = (leaf_node_head * leaf_node_size) / blocksize;
+	leaf_block = ((uint64_t) leaf_node_head * leaf_node_size) / blocksize;
 
 	/* get physical location */
 	for (ext = 0; ext < HFSPLUS_EXTENT_COUNT; ext++) {
