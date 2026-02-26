@@ -127,7 +127,6 @@ static inline int move_mount(int from_dfd, const char *from_pathname, int to_dfd
 
 #ifndef HAVE_STRUCT_MOUNT_ATTR
 # ifndef MOUNT_ATTR_SIZE_VER0 /* For case mount.h comes from a place invisible for autotools/meson */
-# include <inttypes.h>
 struct mount_attr {
 	uint64_t attr_set;
 	uint64_t attr_clr;
