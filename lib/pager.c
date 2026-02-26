@@ -69,6 +69,8 @@ static void pager_preexec(void)
 
 	if (getenv("LESS") == NULL && setenv("LESS", "FRSX", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LESS");
+	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
+		warn(_("failed to set the %s environment variable"), "LV");
 }
 
 static int start_command(struct child_process *cmd)
