@@ -10,7 +10,6 @@
 
 #ifdef HAVE_SYS_VFS_H
 # include <sys/vfs.h>
-# include "statfs_magic.h"
 #endif
 
 #include "c.h"
