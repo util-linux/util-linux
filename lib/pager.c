@@ -55,18 +55,6 @@ static inline void close_pair(int fd[2])
 
 static void pager_preexec(void)
 {
-	/*
-	 * Work around bug in "less" by not starting it until we
-	 * have real input
-	 */
-	fd_set in, ex;
-
-	FD_ZERO(&in);
-	FD_SET(STDIN_FILENO, &in);
-	ex = in;
-
-	select(STDIN_FILENO + 1, &in, NULL, &ex, NULL);
-
 	if (getenv("LESS") == NULL && setenv("LESS", "FRSX", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LESS");
 	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
