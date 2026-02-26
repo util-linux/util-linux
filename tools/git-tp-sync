@@ -171,7 +171,8 @@ function regenerate_po_files {
 	local PODIR="$1"
 
 	if [ "$PODIR" = "po" ]; then
-		if [  "${PODIR}/Makefile" ]; then
+		if [ ! -f "${PODIR}/Makefile" ]; then
+			echo "missing ${PODIR}/Makefile (ingore)"
 			return;
 		else
 			echo "== Updating $PODIR (be patient) =="
