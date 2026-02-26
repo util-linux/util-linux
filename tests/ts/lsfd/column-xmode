@@ -87,6 +87,8 @@ EXPR='(ASSOC == "mem") and (INODE == '"$INO"') and (MODE != "r--") and (MODE != 
 ts_init_subtest "MODE-x-bit"
 if [ "$QEMU_USER" == "1" ]; then
     ts_skip_subtest "running under qemu-user emulation"
+elif [ "$UID" != "0" ]; then
+    ts_skip_subtest "no root permissions"
 else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
@@ -103,6 +105,8 @@ fi
 ts_init_subtest "XMODE-x-bit"
 if [ "$QEMU_USER" == "1" ]; then
     ts_skip_subtest "running under qemu-user emulation"
+elif [ "$UID" != "0" ]; then
+    ts_skip_subtest "no root permissions"
 else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
