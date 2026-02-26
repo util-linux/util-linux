@@ -185,8 +185,8 @@ static int probe_raid0(blkid_probe pr, uint64_t off)
 static int raid1_verify_csum(blkid_probe pr, off_t off,
 		const struct mdp1_super_block *mdp1)
 {
-	size_t csummed_size = sizeof(struct mdp1_super_block)
-		+ le32_to_cpu(mdp1->max_dev) * sizeof(mdp1->dev_roles[0]);
+	uint64_t csummed_size = sizeof(struct mdp1_super_block)
+		+ (uint64_t) le32_to_cpu(mdp1->max_dev) * sizeof(mdp1->dev_roles[0]);
 	const unsigned char *csummed = blkid_probe_get_buffer(pr, off, csummed_size);
 	if (!csummed)
 		return 1;
