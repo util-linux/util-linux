@@ -67,7 +67,7 @@ static void pager_preexec(void)
 
 	select(STDIN_FILENO + 1, &in, NULL, &ex, NULL);
 
-	if (setenv("LESS", "FRSX", 0) != 0)
+	if (getenv("LESS") == NULL && setenv("LESS", "FRSX", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LESS");
 }
 
