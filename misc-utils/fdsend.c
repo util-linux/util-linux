@@ -16,6 +16,7 @@
 #include "fdsend-common.h"
 #include "pidutils.h"
 
+#include <err.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -47,8 +48,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char **argv)
 {
-	int c;
-	int opt_fd = -1;
+	int c, opt_fd = -1;
 	const char *sockspec = NULL;
 	struct fdsend_opts opts = { .pid = -1 };
 
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "+f:p:baghV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
-			opt_fd = (int) str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
+			opt_fd = str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
 			break;
 		case 'p':
 			ul_parse_pid_str_or_err(optarg, &opts.pid, NULL);
@@ -111,10 +111,8 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if (fdsend_do_send(sockspec, opt_fd, &opts) != 0) {
-		warn(_("failed to send fd %d to %s"), opt_fd, sockspec);
-		return EXIT_FAILURE;
-	}
+	if (fdsend_do_send(sockspec, opt_fd, &opts) != 0)
+		err(EXIT_FAILURE, _("failed to send fd %d to %s"), opt_fd, sockspec);
 
 	return EXIT_SUCCESS;
 }
