@@ -47,9 +47,15 @@ while [ "$#" -ne 0 ]; do
 	# ENABLE_ and HAVE_ macros shouldn't be used for any other purpose than
 	# for config/build options.
 	#
-	DEFINES=$(sed -n -e 's/.*[ \t(]\+\(HAVE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
-			 -e 's/.*[ \t(]\+\(ENABLE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
-                         $srcfile | sort -u)
+	# Strip C/C++ comments to avoid false positives from
+	# macros mentioned in comments (e.g. "when HAVE_FOO is ...")
+	DEFINES=$(sed -e 's://.*::' \
+		      -e 's:/\*.*\*/::g' \
+		      $srcfile | \
+		  sed -e '/\/\*/,/\*\//d' | \
+		  sed -n -e 's/.*[ \t(]\+\(HAVE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
+			 -e 's/.*[ \t(]\+\(ENABLE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' | \
+		  sort -u)
 	[ -z "$DEFINES" ] && continue
 
 	for d in $DEFINES; do
