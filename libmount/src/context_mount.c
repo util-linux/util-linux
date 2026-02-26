@@ -772,6 +772,9 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	assert(cxt->syscall_status == 1);
 
 	cxt->action = MNT_ACT_MOUNT;
+	rc = mnt_context_set_ns_curr_stage(cxt, MNT_NS_STAGE_PREP);
+	if (rc)
+		return -MNT_ERR_NAMESPACE_STAGE;
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -860,6 +863,9 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	assert((cxt->action == MNT_ACT_MOUNT));
 
 	DBG(CXT, ul_debugobj(cxt, "mount: do mount"));
+	rc = mnt_context_set_ns_curr_stage(cxt, MNT_NS_STAGE_ATTACH);
+	if (rc)
+		return -MNT_ERR_NAMESPACE_STAGE;
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)

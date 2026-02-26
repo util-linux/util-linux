@@ -120,6 +120,9 @@ mnt_context_switch_target_ns
 mnt_context_syscall_called
 mnt_context_tab_applied
 mnt_context_wait_for_children
+mnt_context_get_ns_curr_stage
+mnt_context_set_ns_curr_stage
+mnt_context_set_ns_stage_flags
 <SUBSECTION>
 MNT_ERR_AMBIFS
 MNT_ERR_APPLYFLAGS
@@ -131,6 +134,7 @@ MNT_ERR_NOSOURCE
 MNT_ERR_LOOPOVERLAP
 MNT_ERR_LOCK
 MNT_ERR_NAMESPACE
+MNT_ERR_NAMESPACE_STAGE
 <SUBSECTION>
 MNT_EX_SUCCESS
 MNT_EX_USAGE
@@ -468,6 +472,7 @@ mnt_mangle
 mnt_match_fstype
 mnt_tag_is_valid
 mnt_unmangle
+mnt_str_to_ns_stage_flag
 </SECTION>
 
 <SECTION>
