@@ -31,6 +31,8 @@
 #include <sys/un.h>
 #include <sys/inotify.h>
 
+#define INOTIFY_BUF_LEN (sizeof(struct inotify_event) + NAME_MAX + 1)
+
 /* For fdrecv: cleanup socket file when interrupted in accept(). */
 static volatile sig_atomic_t fdrecv_got_signal;
 
@@ -60,7 +62,7 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 {
 	char dir[PATH_MAX];
 	uid_t uid;
-	int r;
+	int rc;
 	size_t len;
 
 	if (!spec || !path || size == 0) {
@@ -102,9 +104,9 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 		snprintf(dir, sizeof(dir), "%s/%u/fdsend", _PATH_FDSEND_RUN_USER, (unsigned) uid);
 
 	/* Ensure the directory exists */
-	r = ul_mkdir_p(dir, 0755);
-	if (r != 0) {
-		errno = -r;
+	rc = ul_mkdir_p(dir, 0755);
+	if (rc != 0) {
+		errno = -rc;
 		return -1;
 	}
 
@@ -126,7 +128,6 @@ static int fdsend_wait_for_socket(const char *sockpath)
 	int inotify_fd = -1;
 	int wd = -1;
 	struct pollfd pfd;
-#define INOTIFY_BUF_LEN (sizeof(struct inotify_event) + NAME_MAX + 1)
 	char buf[INOTIFY_BUF_LEN];
 	int ret = -1;
 	int poll_timeout_ms = 2000;
