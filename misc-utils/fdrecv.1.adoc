@@ -49,10 +49,16 @@ include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 
-*0*::
-  Success
+*fdrecv* normally returns the exit status of the command it executed. If the command was killed by a signal, the exit status is the signal number plus 128.
+
+Exit status from *fdrecv* itself:
+
 *1*::
-  Unspecified failure
+  Receive failed or failed to map fd (e.g. *dup2*(2) failed).
+*126*::
+  The requested command was found but could not be executed.
+*127*::
+  The requested command was not found.
 
 == SEE ALSO
 

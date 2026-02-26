@@ -31,10 +31,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] SOCKSPEC --run command args...\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Receive a file descriptor from another process via Unix domain socket and exec a command with it.\n"), out);
+	fputs(_("Receive a file descriptor from another process via Unix domain socket and run a command with it.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f, --fd <num>     dup received fd to this number\n"), out);
+	fputs(_(" -f, --fd <num>     map received fd to <num>\n"), out);
 	fputs(_(" -r, --run          exec command with received fd (must appear after SOCKSPEC)\n"), out);
 	fputs(_(" -a, --abstract     SOCKSPEC is an abstract Unix socket name (Linux)\n"), out);
 	fputs(_(" -i, --stdin        map received fd to command's stdin (fd 0)\n"), out);
@@ -145,21 +145,16 @@ int main(int argc, char **argv)
 	else if (opt_stdout) opt_fd = 1;
 	else if (opt_stderr) opt_fd = 2;
 
-	if (fdrecv_do_recv(sockspec, &fd, opt_abstract) != 0) {
-		warn(_("receive failed"));
-		return EXIT_FAILURE;
-	}
+	if (fdrecv_do_recv(sockspec, &fd, opt_abstract) != 0)
+		err(EXIT_FAILURE, _("receive failed"));
 
 	if (dup2(fd, opt_fd) < 0) {
-		warn(_("dup2 failed"));
 		close(fd);
-		return EXIT_FAILURE;
+		err(EXIT_FAILURE, _("map received fd failed"));
 	}
 	/* Only close the received fd if it's not the target; dup2(fd, fd) is a no-op. */
 	if (fd != opt_fd)
 		close(fd);
 	execvp(run_argv[0], run_argv);
 	errexec(run_argv[0]);
-
-	return EXIT_FAILURE;
 }
