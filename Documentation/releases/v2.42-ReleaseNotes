@@ -1,0 +1,1710 @@
+util-linux 2.42 Release Notes
+=============================
+
+The NTFS mount type (kernel FS driver) can be changed by the compile option
+--with-ntfs-mounttype=, the default is ntfs3.
+
+login(1) now uses the original FQDN (as specified by "-h <host>") to configure
+the PAM RHOST item. All previous versions used the hostname without domain.
+This may affect users who use login(1) for remote access (rlogin, rsh) and
+pam_access to define access rules. (Don't worry, if you still use rlogin then
+security is already irrelevant for you.)
+
+login(1), if configured with LOGIN_SHELL_FALLBACK in login.defs, can fall back
+to another valid shell from /etc/shells if the user's configured shell is
+inaccessible due to administrative errors.
+
+agetty reads issue file(s) in a way compatible with libeconf and systemd,
+hermetic-usr and drop-ins are now supported. For more details see
+https://uapi-group.org/specifications/specs/configuration_files_specification/
+
+agetty uses netlink to get network interface information for issue file output.
+
+The libsmartcols-based tools with JSON support can now produce additional JSON
+formats. The output format may be changed by LIBSMARTCOLS_JSON={lines,compact}
+environment variable.
+
+column(1) now supports colors.
+
+New command copyfilerange(1) to copy file ranges using the copy_file_range()
+syscall.
+
+New command getino(1) to print the unique inode number associated with a
+process file descriptor or namespace for a given PID.
+
+fadvise(1) now supports --fd to address a file by file descriptor rather than
+by path.
+
+fallocate(1) now supports --report-holes to scan the file and report the
+distribution of holes.
+
+A significant performance regression has been fixed in hardlink(1).
+
+hardlink(1) now supports FIEMAP-based sparse file optimization.
+
+kill(1), waitpid(1) and nsenter(1) now support the PID:INO convention to
+precisely address processes.
+
+mount(8) now supports --beneath to atomically replace a filesystem at a
+mountpoint.
+
+mount(8) now supports --exclusive to ensure that the filesystem is mounted as a
+unique instance and that the superblock is not reused by the kernel.
+
+libmount now reads filesystem information from udevd (with fallback to classic
+libblkid-based detection). This feature can be disabled by
+--disable-libmount-udev-support.
+
+setarch(8) now supports --pid to show the personality of a specified process.
+
+The pager support for tools like "dmesg -H" has been improved to work better
+with signals.
+
+losetup(8) now supports --remove to remove a loop device node from the system.
+
+lsblk(8), lslocks(8), lsmem(1) and lsclocks(1) support <NAME>_COLUMNS
+environment variable to specify output columns as an alternative to --output.
+
+lsfd(1) now supports new UNIX.IPEER, PACKET.PROTOCOL.RAW and TUN.DEVNETNS
+columns.
+
+setpriv(1) now supports landlock via --landlock-access and --landlock-rule
+options.
+
+
+Changes between v2.41 and v2.42
+-------------------------------
+
+agetty:
+    - Fix reading /run/issue.d/ again (by Fabian Vogt)
+    - Process all data from ul_nl_process() (by Stanislav Brabec)
+    - Implement netlink based IP processing (by Stanislav Brabec)
+    - use standard path macros (by Karel Zak)
+    - using configs lib for parsing issue files (by Stefan Schubert)
+    - fix erasure of escape sequences and tab characters (by Karel Zak)
+    - fix stdin conversion to tty name (by Karel Zak)
+
+agetty,setterm:
+    - (man) remove the mistakenly added -h and -V short options (by Benno Schulenberg)
+
+AUTHORS:
+    - add copyfilerange (by Karel Zak)
+    - update Zhenwei Pi email (by zhenwei pi)
+
+autotools:
+    - use $PTHREAD_LIBS everywhere (by Karel Zak)
+    - optionally add libpthread to uuid.pc (by Bernd Kuhls)
+    - cleanup tests to use libcommon.la (by Karel Zak)
+    - don't use wide-character ncurses if --disable-widechar (by Karel Zak)
+    - add missing meson.build files (by Karel Zak)
+    - Fix use of mq_open and mq_close (by Samuel Thibault)
+    - remove tools/git-tp-sync-man (by Karel Zak)
+
+bash-completion:
+    - add getino completions (by Christian Goeschel Ndjomouo)
+    - (lscpu) add --annotate option (by Christian Goeschel Ndjomouo)
+    - (lslogins) fix typo in long option (by Christian Goeschel Ndjomouo)
+    - (unshare) add missing --map-subids option (by Christian Goeschel Ndjomouo)
+    - (mountpoint) add missing --show option (by Christian Goeschel Ndjomouo)
+    - (mount) add missing --ro option (by Christian Goeschel Ndjomouo)
+    - (lslogins) add missing long options (by Christian Goeschel Ndjomouo)
+    - (lsclocks) add missing --no-discover-rtc option (by Christian Goeschel Ndjomouo)
+    - (hwclock) add missing --ul-debug option (by Christian Goeschel Ndjomouo)
+    - (flock) add missing long options (by Christian Goeschel Ndjomouo)
+    - (nsenter) add missing --follow-context (by cgoesche)
+    - (namei) add missing --context (by cgoesche)
+    - (setpriv) add missing long options (by cgoesche)
+    - (pg) add missing long options (by cgoesche)
+    - (lastlog2) add missing --active (by cgoesche)
+    - (whereis) add missing long options (by Christian Goeschel Ndjomouo)
+    - (wdctl) add missing long options (by Christian Goeschel Ndjomouo)
+    - (uuidd) add missing --cont-clock (by Christian Goeschel Ndjomouo)
+    - (unshare) add missing long options (by Christian Goeschel Ndjomouo)
+    - (swapon) add missing --options (by Christian Goeschel Ndjomouo)
+    - (sfdisk) add missing long options (by Christian Goeschel Ndjomouo)
+    - (setsid) add missing --fork (by Christian Goeschel Ndjomouo)
+    - (scriptlive) add missing --echo (by Christian Goeschel Ndjomouo)
+    - (renice) add missing --relative (by Christian Goeschel Ndjomouo)
+    - (more) add missing --exit-on-eof (by Christian Goeschel Ndjomouo)
+    - (mkswap) add missing long options (by Christian Goeschel Ndjomouo)
+    - (mkfs.minix) add missing --lock (by Christian Goeschel Ndjomouo)
+    - (mkfs.cramfs) add missing long options (by Christian Goeschel Ndjomouo)
+    - (mkfs.bfs) add missing --lock (by Christian Goeschel Ndjomouo)
+    - (lsmem) add missing --split (by Christian Goeschel Ndjomouo)
+    - (lslogins) add missing --shell (by Christian Goeschel Ndjomouo)
+    - (lscpu) add missing --hierarchic (by Christian Goeschel Ndjomouo)
+    - (lsclocks) add missing --no-discover-dynamic (by Christian Goeschel Ndjomouo)
+    - (lsblk) add missing long options (by Christian Goeschel Ndjomouo)
+    - (losetup) add missing long options (by Christian Goeschel Ndjomouo)
+    - (hwclock) add missing long options (by Christian Goeschel Ndjomouo)
+    - (hardlink) add missing long options (by Christian Goeschel Ndjomouo)
+    - (getopt) add missing --unknown (by Christian Goeschel Ndjomouo)
+    - (fsck) add missing long options (by Christian Goeschel Ndjomouo)
+    - (flock) add missing --verbose (by Christian Goeschel Ndjomouo)
+    - (findmnt) add missing long options (by Christian Goeschel Ndjomouo)
+    - (fincore) add missing --total (by Christian Goeschel Ndjomouo)
+    - (fallocate) add missing --write-zeroes (by Christian Goeschel Ndjomouo)
+    - (fadvise) add missing --fd (by Christian Goeschel Ndjomouo)
+    - (column) add missing long options (by Christian Goeschel Ndjomouo)
+    - (cfdisk) add missing --sector-size (by Christian Goeschel Ndjomouo)
+    - (cal) add missing long options (by Christian Goeschel Ndjomouo)
+    - (blockdev) add missing long options (by Christian Goeschel Ndjomouo)
+    - (blkid) add missing --hint (by Christian Goeschel Ndjomouo)
+    - (bits) add missing --binary (by Christian Goeschel Ndjomouo)
+    - (mount) add missing options (by Christian Goeschel Ndjomouo)
+    - (lslogins) add --list-columns option (by Christian Goeschel Ndjomouo)
+    - (lslogins) add --json completion (by Christian Goeschel Ndjomouo)
+    - dmesg remove redundant completion for --buffer-size (by Christian Goeschel Ndjomouo)
+    - dmesg complete filenames for --kmsg-file (by Christian Goeschel Ndjomouo)
+    - dmesg add missing long options (by Christian Goeschel Ndjomouo)
+    - add lsfd (by Karel Zak)
+    - add blkpr (by Karel Zak)
+    - add bits to dist tarball (by Karel Zak)
+    - (swapon) add --annotation option (by Christian Goeschel Ndjomouo)
+    - add MICROCODE to $OPTS_ALL (by Christian Goeschel Ndjomouo)
+    - (lsns) add -H/--list-columns options (by Christian Goeschel Ndjomouo)
+    - (lscpu) add -H/--list-columns options (by Christian Goeschel Ndjomouo)
+    - add fallback to filename expansion for umount (by Christian Goeschel Ndjomouo)
+    - fix function name of enosys completion (by Koichi Murase)
+    - add choom and coresched (by Karel Zak)
+    - update autocompletion list to 'ntfs3' (by Johannes Schneider)
+    - use "command ls" instead of "\ls" (by Koichi Murase)
+    - prefix "command" to other external commands (by Koichi Murase)
+    - prefer "builtin cd" to "cd" to avoid aliases (by Koichi Murase)
+    - prefer "command lsblk" to "lsblk" to avoid aliases (by Koichi Murase)
+    - (chrt) add completion for -e/--ext (by Shashank Balaji)
+    - (setarch) show some options as the 1st arg (by Masatake YAMATO)
+
+bits:
+    - only build when cpu_set_t is available (by Alyssa Ross)
+    - (man) normalize the markup and improve some layout (by Benno Schulenberg)
+
+blkdev:
+    - Correct zone report size calculation (by Leefancy)
+
+blkdiscard:
+    - (tests) add more long option tests (by Christian Goeschel Ndjomouo)
+
+blkid:
+    - add --garbage-collect test (by Christian Goeschel Ndjomouo)
+    - (testcoverage) add more long option tests (by Christian Goeschel Ndjomouo)
+    - move error checks before JSON output initialization (by Karel Zak)
+    - Drop const from blkid_partitions_get_name() (by Daan De Meyer)
+    - correct an erroneous error message (by Benno Schulenberg)
+
+blkpr:
+    - fix compilation [-Werror,-Wunused-function] (by Karel Zak)
+    - Call gettext() for descriptions, clean up (by Karel Zak)
+    - add read-reservation command (by Stefan Hajnoczi)
+    - add read-keys command (by Stefan Hajnoczi)
+    - prepare for _IOR() ioctls (by Stefan Hajnoczi)
+
+blkzone:
+    - remove unnecessary brackets (by Karel Zak)
+    - add more checks when printing zone write_pointer (by Wilfred Mallawa)
+    - make N/A string translatable (by Karel Zak)
+    - don't show wptr when zones are full (by Wilfred Mallawa)
+    - (man) reduce two overblown tables to legible proportions (by Benno Schulenberg)
+
+build:
+    - simplify checks for fallocate() and posix_fallocate() (by Thomas Weißschuh)
+
+build(deps):
+    - bump actions/cache from 4 to 5 (by dependabot[bot])
+    - bump actions/upload-artifact from 5 to 6 (by dependabot[bot])
+    - bump actions/checkout from 1 to 6 (by dependabot[bot])
+    - bump actions/upload-artifact from 4 to 5 (by dependabot[bot])
+    - bump github/codeql-action from 3 to 4 (by dependabot[bot])
+    - bump actions/labeler from 5 to 6 (by dependabot[bot])
+    - bump actions/checkout from 1 to 5 (by dependabot[bot])
+
+build-sys:
+    - add a target for tools/testcoverage.sh (by Christian Goeschel Ndjomouo)
+    - (gcc) ignore -Wunused-but-set-variable for bison (by Christian Goeschel Ndjomouo)
+    - make sure _PATH_SYSCONFDIR is defined (by Karel Zak)
+    - update release dates (by Karel Zak)
+    - keep the most recent version in NEWS (by Karel Zak)
+
+cal:
+    - add note about today highlight on -w (by Karel Zak)
+    - improve header color printing (by Karel Zak)
+
+cfdisk:
+    - fix memory leak and possible NULL dereference [gcc-analyzer] (by Karel Zak)
+
+chfn:
+    - allow --help and --version without login.defs restrictions (by Karel Zak)
+    - improve man page (by Christian Goeschel Ndjomouo)
+    - make comment more accurate (by Christian Goeschel Ndjomouo)
+    - fix minor grammar mistakes in comments (by Christian Goeschel Ndjomouo)
+    - use true/false bool values for semantic clarity (by Christian Goeschel Ndjomouo)
+    - use direct equality check for semantic clarity and readability (by Christian Goeschel Ndjomouo)
+    - free memory before return from save_new_data() (by Christian Goeschel Ndjomouo)
+    - use null character (0) for better readability (by Christian Goeschel Ndjomouo)
+    - fix typos, wording, and punctuation inconsistencies (by Christian Goeschel Ndjomouo)
+    - enable the use of the username or UID (by Christian Goeschel Ndjomouo)
+
+chmem:
+    - do not word a configuration failure as an instruction to the user (by Benno Schulenberg)
+    - improve messages (by Karel Zak)
+    - add chmem documentation for dynamic (de)configuration of memory (by Sumanth Korikkar)
+    - add support for dynamic (de)configuration of hotplug memory (by Sumanth Korikkar)
+    - Remove commit - chmem print warnings about failures always (by Sumanth Korikkar)
+    - (man) add missing end-of-bold marker, and add missing OR bar (by Benno Schulenberg)
+    - print warnings about failures always (not only with --verbose) (by Benno Schulenberg)
+
+choom:
+    - (testcoverage) add long options tests (by Christian Goeschel Ndjomouo)
+    - (man) add the missing SYNOPSIS section header, and improve wording (by Benno Schulenberg)
+
+chrt:
+    - (man) fix note about --sched-period lower limit (by Jan Krieg)
+    - (man,usage) put --pid first in synopses and examples, for clarity (by Benno Schulenberg)
+    - (man) improve wording and markup of some examples (by Benno Schulenberg)
+    - (man,usage) mark the priority value as optional in the synopses (by Benno Schulenberg)
+    - produce better error message for missing priority with implied -r (by Benno Schulenberg)
+    - Allow optional priority for non‑prio policies without --pid (by Madadi Vineeth Reddy)
+    - do not try to interpret any other option as a PID either (by Benno Schulenberg)
+    - simplify the other check for too few arguments (by Benno Schulenberg)
+    - do not try to interpret the --pid option itself as a PID (by Benno Schulenberg)
+    - with more than one argument, interpret first argument as priority (by Benno Schulenberg)
+    - (man) mark "argument" as optional, and unabbreviate it in usage (by Benno Schulenberg)
+    - (man) correct the short form of --ext, from -d to -e (by Benno Schulenberg)
+    - Make priority optional for policies that don't use it (by Madadi Vineeth Reddy)
+    - Only display current settings when no policy is specified (by Madadi Vineeth Reddy)
+    - Make minor cleanups in chrt (by Madadi Vineeth Reddy)
+    - (man) add SCHED_EXT (by Shashank Balaji)
+    - add support for SCHED_EXT (by Shashank Balaji)
+
+chsh:
+    - extend usage message (by Tobias Stoeckmann)
+    - use new xgetuserpw() instead of xgetpwnam() (by Christian Goeschel Ndjomouo)
+
+ci:
+    - add usage message consistency check to CI CODECHECK phase (by Christian Goeschel Ndjomouo)
+    - add usage message consistency check to CI CHECK phase (by Christian Goeschel Ndjomouo)
+    - roll back the version of checkout for "build (compat, ubuntu:18.04)" (by Masatake YAMATO)
+    - add bash-completion consistency check to CODECHECK (by Karel Zak)
+    - build on MIPS (by Thomas Weißschuh)
+    - add OpenWRT subtarget to matrix name (by Thomas Weißschuh)
+    - update gcc to version 14 (by Thomas Weißschuh)
+    - update clang to version 20 (by Thomas Weißschuh)
+    - bump uraimo/run-on-arch-action to v3 (by Frantisek Sumsal)
+    - (reverted) temporarily switch the alt-arch job worker to Ubuntu 22.04 (by Frantisek Sumsal)
+
+col:
+    - use snprintf() instead of sprintf() (by Karel Zak)
+
+colrm:
+    - make two error messages actually say that something is wrong (by Benno Schulenberg)
+
+column:
+    - using switch-case replaces if-else (by WanBingjiang)
+    - add JSON compact format output subtest. (by WanBingjiang)
+    - add JSON LINES format output subtest. (by WanBingjiang)
+    - introduce LIBSMARTCOLS_JSON environment argument (by WanBingjiang)
+    - add bash-completion for table-header-as-columns (by WanBingjiang)
+    - add option '--table-header-as-columns' for using first line as table columns names. (by WanBingjiang)
+    - add --input-separator as an alias for --separator (by Karel Zak)
+    - (usage) wrap two descriptions, to make them fit within 80 columns (by Benno Schulenberg)
+    - (usage) correct the description of --wrap-separator (by Benno Schulenberg)
+    - add --wrap-separator option for custom text wrapping (by Karel Zak)
+    - add support for color scheme (by Karel Zak)
+    - call gettext() on an error message only when it gets printed (by Benno Schulenberg)
+    - add --color[=<when>] to control colorization (by Karel Zak)
+    - add basic colors support (by Karel Zak)
+    - (man) fix broken markup, and improve other markup and wordings (by Benno Schulenberg)
+    - fix compiler warning for non-widechar compilation (by Karel Zak)
+    - replace a mistaken word in an error message (by Benno Schulenberg)
+
+column doc:
+    - add missing attrubutes (by WanBingjiang)
+    - fix incorrect attribute hidden (by WanBingjiang)
+
+{configure.ac,meson.build}:
+    - conditionally build {enosys,setpriv} if seccomp is present #3280 (by Thomas Devoogdt)
+
+copyfilerange:
+    - new command to call copy-file-range (by Dick Marinus)
+
+coresched:
+    - reduce excessive whitespace and verbosity in usage text (by Benno Schulenberg)
+
+cpuset:
+    - Use stride in cpulist_create (by Jesse Rosenstock)
+
+disk-utils:
+    - add attribute nonstring to bfs byte arrays (by Cristian Rodríguez)
+
+dmesg:
+    - add bounds checking to parse_kmsg_timestamp() (by Karel Zak)
+    - Gracefully handle EPIPE errors (by Tobias Stoeckmann)
+    - Register pager_close as exit handler (by Tobias Stoeckmann)
+    - Keep error messages in parent's stderr (by Tobias Stoeckmann)
+    - update prepare_buffer() comment (by Karel Zak)
+    - improve buffer size error message (by Karel Zak)
+    - Fix short memory allocation with 32 bit (by Tobias Stoeckmann)
+    - Add release_buffer function (by Tobias Stoeckmann)
+    - Split preparing and printing of buffer (by Tobias Stoeckmann)
+    - Check if file is too large (by Tobias Stoeckmann)
+    - Only check for newline if input exists (by Tobias Stoeckmann)
+    - Check input length before calling strtol (by Tobias Stoeckmann)
+    - fix const qualifier warnings in parse_callerid (by Karel Zak)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+
+docs:
+    - lsns(8) add missing a comma in SEE ALSO section (by Masatake YAMATO)
+    - write about EditorConfig (by Masatake YAMATO)
+    - update mount options for 'ntfs3' (by Johannes Schneider)
+    - update mount type to 'ntfs3' (by Johannes Schneider)
+    - stop the copyright verbiage from getting included in the POT file (by Benno Schulenberg)
+    - make the "po4a:" line the first line, like in all other .adoc files (by Benno Schulenberg)
+    - correct mistaken uses of "overwrite" to say "override" instead (by Benno Schulenberg)
+    - correct misspellings of "may be" and mistaken uses of "overwritten" (by Benno Schulenberg)
+    - add -h/--help and -V/--version to three man pages that lacked them (by Benno Schulenberg)
+    - fix a few indentation issues (by Benno Schulenberg)
+    - improve and harmonize the description of -H / --list-columns (by Benno Schulenberg)
+    - rewrite the description of --bytes, to be clearer (by Benno Schulenberg)
+    - cherry-pick 2.41-ReleaseNotes (by Karel Zak)
+
+docs,usage:
+    - harmonize description of --hyperlink, and add 2 missing ones (by Benno Schulenberg)
+
+Documentation:
+    - Fix "maybe be" typo (by Tobias Stoeckmann)
+
+editorconfig:
+    - add .sh setting (by Karel Zak)
+
+eject:
+    - fix const qualifier warning in read_speed (by Karel Zak)
+    - (man) add the missing SYNOPSIS header (by Benno Schulenberg)
+
+enosys:
+    - fix const qualifier warning in parse_block (by Karel Zak)
+    - add the missing arguments of -s and -i to the usage text (by Benno Schulenberg)
+
+env:
+    - ignore only invalid environment variables (by Tobias Stoeckmann)
+
+exch:
+    - cosmetic code changes (by Karel Zak)
+    - fix compile error if renameat2 is not present (by Thomas Devoogdt)
+
+fadvise:
+    - add --fd to the help output (by Christian Goeschel Ndjomouo)
+
+fallocate:
+    - refactor --report-holes and --dig-holes output (by Karel Zak)
+    - add --report-holes (by syokensyo)
+    - require posix_fallocate() from libc (by Thomas Weißschuh)
+    - drop syscall() fallback for fallocate() (by Thomas Weißschuh)
+    - allow O_CREATE if mode is FALLOC_FL_WRITE_ZEROES (by Lukas Herbolt)
+    - (man,usage) correct the alphabetical sorting of the options (by Benno Schulenberg)
+    - (man) slightly improve the grammar of two sentences (by Benno Schulenberg)
+    - redo four tweaks that were accidentally undone (by Benno Schulenberg)
+    - update FALLOC_FL_WRITE_ZEROES (by Karel Zak)
+    - add FALLOC_FL_WRITE_ZEROES support (by Zhang Yi)
+    - rework incompatible options (by Antonio Russo)
+
+fdformat:
+    - use size_t and ssize_t (by Karel Zak)
+
+fdisk:
+    - (man) correct the markup + punctuation of two option descriptions (by Benno Schulenberg)
+    - make SIGINT handler signal-safe (by Tobias Stoeckmann)
+    - (manpage) add --bytes option description (by Christian Goeschel Ndjomouo)
+    - fix possible memory leak (by Karel Zak)
+    - (man) add note about partition size calculation (by Karel Zak)
+
+fdisk,partx:
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+fincore:
+    - The previous exit did not call munmap, resulting in a memory mapping leak. (by fortunate-lee)
+    - close the ftsp to prevent fd leak (by syokensyo)
+    - do not fall back to mincore if cachestat fails with EPERM (by Thomas Weißschuh)
+    - add option to show a grand total (by Matteo Croce)
+    - add recursive directory scanning (by Matteo Croce)
+
+findmnt:
+    - fix misleading warning messages for ntfs3 (by Karel Zak)
+    - (usage) add a needed equals sign before an optional argument (by Benno Schulenberg)
+    - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
+    - fix -k option parsing regression (by Karel Zak)
+    - (man) remove duplicated option, and correct a description (by Benno Schulenberg)
+
+fix:
+    - use Py_REFCNT macro to work with free-threaded python (by Wouter Deconinck)
+
+fix typo:
+    - exciting -> existing (by Matteo Croce)
+
+flock:
+    - (manpage) fix typo in option description (by Christian Goeschel Ndjomouo)
+    - resolve consistency issue in the usage message (by Christian Goeschel Ndjomouo)
+    - fix incomplete -n option info in usage message (by Christian Goeschel Ndjomouo)
+    - support locking with byte-range (by Masatake YAMATO)
+
+fsck.cramfs:
+    - fix off-by-one heap write in do_symlink() (by Karel Zak)
+    - check buffer size for memcpy() (by Karel Zak)
+
+fstrim:
+    - use F_TYPE_EQUAL() macro for statfs.f_type comparison (by cgoesche)
+    - mark only the mountpoint as placeholder, not options -A and -a (by Benno Schulenberg)
+
+getino:
+    - (manpage) improve grammar and wording (by Christian Goeschel Ndjomouo)
+    - new tool to print the unique pidfd or namespace inode number (by Christian Goeschel Ndjomouo)
+
+getopt:
+    - (usage) make the description of -U fit within 80 columns (by Benno Schulenberg)
+    - add member posixly_correct to struct getopt_control (by Christian Goeschel Ndjomouo)
+    - add feature to ignore unknown options (by Christian Goeschel Ndjomouo)
+    - clarify the use of '--long' instead of '--longoptions' in shell examples (by cgoesche)
+    - document special symbols that should not be used as option characters (by cgoesche)
+
+github:
+    - revert actions/checkout for ubuntu 18.04 (by Karel Zak)
+
+gitignore:
+    - Ignore tests/diff/ and test/output/ (by Jesse Rosenstock)
+
+hardlink:
+    - (man) add note note about ULFILEEQ_DEBUG= (by Karel Zak)
+    - (man,usage) sort the options mostly alphabetically (by Benno Schulenberg)
+    - (usage) improve the descriptions of three options (by Benno Schulenberg)
+    - (usage) remove mistaken period from two option descriptions (by Benno Schulenberg)
+    - define more function as inline (by Karel Zak)
+    - fix performance regression (inefficient signal evaluation) (by Karel Zak)
+    - Use macro for verbose output (by Karel Zak)
+    - fix typoed semicolon to colon in error message (by Benno Schulenberg)
+    - replace a strange word in an error message (by Benno Schulenberg)
+
+hexdump:
+    - (man) document byte order dependency in multi-byte formats (by Karel Zak)
+    - sanitize fiemap ioctl output (by Karel Zak)
+    - add fetch_more_extents to retrieve all file extents (by WanBingjiang)
+    - fixes Heap-buffer-overflow in rewrite_rules (by WanBingjiang)
+    - add FIEMAP-based sparse file optimization (by WanBingjiang)
+    - (man) put a list item on a single line, to avoid a warning (by Benno Schulenberg)
+    - (man) normalize the synopsis, and shrink a list and two tables (by Benno Schulenberg)
+
+hwclock:
+    - (manpage) add --param-index description (by Christian Goeschel Ndjomouo)
+    - mark non-standard long options to ignore in CI CHECK (by Christian Goeschel Ndjomouo)
+    - skip RTC_PARAM_SET for --param-set with unchanged value (by Bastian Krause)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - remove two comments about parameters that no longer exist (by Benno Schulenberg)
+    - avoid dereferencing a pointer [coverity scan] (by Karel Zak)
+
+hwclock-rtc:
+    - fix verbose output when --param-set value is unchanged (by Jesse Gilles)
+
+hwclock-rtc.c:
+    - (reverted) try the 'new' rtc class first (by Rasmus Villemoes)
+
+include:
+    - rename mount-api-utils.h to mountutils.h (by Karel Zak)
+    - (pidfd-utils.h) conditionally define pidfd inode support (by Christian Goeschel Ndjomouo)
+    - (statfs_magic.h) add pidfs magic number (by Christian Goeschel Ndjomouo)
+    - add helper routines for opening and validating pidfds (by Christian Goeschel Ndjomouo)
+    - implement ARRAY_SIZE with compiler _Countof if supported (by Cristian Rodríguez)
+    - use public domain for colors.{c,h} and xalloc.h (by Karel Zak)
+
+include/cctype:
+    - fix string comparison (by Karel Zak)
+
+include/c.h:
+    - add MAX_OF_UINT_TYPE macro to get max num of an uint type (by Christian Goeschel Ndjomouo)
+    - add USAGE_LIST_COLUMNS_OPTION() macro (by Christian Goeschel Ndjomouo)
+
+include/list:
+    - add a macro for initializing list_head a declarative way (by Masatake YAMATO)
+
+include/list,lsfd:
+    - remove LIST_HEAD macro again (by Masatake YAMATO)
+
+include/mount-api-utils:
+    - update to recent kernel (by Karel Zak)
+    - avoid using sys/mount.h (by Karel Zak)
+    - include linux/unistd.h (by Thomas Weißschuh)
+    - improve coding style (by Karel Zak)
+
+include/mountutils:
+    - remove duplicate inttypes.h include (by Karel Zak)
+
+include/optutils:
+    - improve err_exclusive_options() output (by Karel Zak)
+
+include/path:
+    - fix HAVE_STRUCT_STATX use (by Karel Zak)
+
+include/pidfd-utils:
+    - improve robustness (by Karel Zak)
+
+include/strutils:
+    - add missing header guard comment (by Christian Goeschel Ndjomouo)
+    - add ul_strtou16() (by Karel Zak)
+    - Add startswithpath() (by Karel Zak)
+
+ipcrm:
+    - (manpage) add --verbose description (by Christian Goeschel Ndjomouo)
+    - in usage text, use two lines when option+arguments is very long (by Benno Schulenberg)
+    - move a constant argument in order to gettextize the message (by Benno Schulenberg)
+
+ipcs:
+    - align the first group of options with later ones in the usage text (by Benno Schulenberg)
+
+ipcutils, lsipc:
+    - unabbreviate two words in some error messages (by Benno Schulenberg)
+
+irqtop:
+    - use standard 'always/never' arguments instead of 'enable/disable' (by Benno Schulenberg)
+    - make the wording of an error message identical to that of another (by Benno Schulenberg)
+    - improve several more option descriptions, and align them all (by Benno Schulenberg)
+    - improve the description of --batch, and align it with others (by Benno Schulenberg)
+    - use output string in a more robust way (by Karel Zak)
+    - support json output format (by Joe Jin)
+    - add max iteration support (by Joe Jin)
+    - add batch mode support (by Joe Jin)
+
+irqtop,lsirq:
+    - use scols debug (by Karel Zak)
+    - set up locale path, so messages get actually translated (by Benno Schulenberg)
+
+jsonwrt:
+    - rename ul_json_format_t to enum ul_json_format (by Karel Zak)
+    - simplify ul_jsonwrt_empty() and add comments for COMPACT format (by WanBingjiang)
+    - support Compact JSON format output (by WanBingjiang)
+
+kill:
+    - use uint64_t as type for kill_control->pidfd_ino (by Christian Goeschel Ndjomouo)
+    - replace USE_KILL_WITH_PIDFD_INO ifdef with USE_PIDFD_INO_SUPPORT (by Christian Goeschel Ndjomouo)
+    - use ul_get_valid_pidfd_or_err() to validate user provided pidfd inodes (by Christian Goeschel Ndjomouo)
+    - the situation where fd is opened but not closed (by fortunate-lee)
+    - (refactor) rename parameter to better reflect its purpose (by Masatake YAMATO)
+    - add support for race-free process kills using pidfd inodes (by Christian Goeschel Ndjomouo)
+    - comments fix grammar in parse_arguments() (by Naoki Wake)
+    - usage fix wrapped indent in -l/--list description (by Naoki Wake)
+
+kill.1.adoc:
+    - update the description for -l/-L option (by Masatake YAMATO)
+
+kill (-l/-L):
+    - print one signal per line when stdout is not a TTY (by Masatake YAMATO)
+
+last:
+    - (man) reduce an inflated table to sane proportions (by Benno Schulenberg)
+    - (man) correct the descriptions of --present and --since (by Benno Schulenberg)
+    - don't use a tab character in the --help usage text (by Benno Schulenberg)
+
+lastlog2:
+    - besides -v, recognize also the standard -V for --version (by Benno Schulenberg)
+    - (man) fix some broken markup, and lowercase option arguments (by Benno Schulenberg)
+
+ldattach:
+    - Allow changing the MTU for GSM0710 framing (by Seppo Takalo)
+    - add ifndef BOTHER (by Karel Zak)
+
+lib:
+    - (strutils.c) fix unchecked lookahead in ul_parse_size() (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils) provide a more liberal variant of ul_get_valid_pidfd_or_err() (by Christian Goeschel Ndjomouo)
+    - (pidutils) improve the return protocol (by Christian Goeschel Ndjomouo)
+    - (pidutils) add a routine to parse pids and err() on failure (by Christian Goeschel Ndjomouo)
+    - (pidutils) improve 'PID:inode' parsing logic (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils) minor correction in the ul_get_valid_pidfd_or_err() description (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils.c) set __unused__ in right way (by Karel Zak)
+    - (procfs.c) remove extraneous return statement (by Christian Goeschel Ndjomouo)
+    - (pidutils.c) use uint64_t instead of ino_t for seamless cross-compatibility (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils.c) remove extraneous _GNU_SOURCE feature test macro (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils) new helper function to retrieve pidfd inode number (by Christian Goeschel Ndjomouo)
+    - (pidfd-utils.c) add a helper routine to check the pidfd fs type (by Christian Goeschel Ndjomouo)
+    - introduce ul_default_shell() for consistent shell resolution (by Alessandro Ratti)
+    - (pwdutils.c) new library routines to get a group/passwd struct by name or GID/UID (by Christian Goeschel Ndjomouo)
+    - fix bad indentation in meson.build (by Christian Goeschel Ndjomouo)
+    - add FSCONFIG_CMD_CREATE_EXCL (by Karel Zak)
+
+libblkid:
+    - fix integer overflows in HFS+ offset calculations (by Karel Zak)
+    - fix integer overflow in linux_raid checksum size (by Karel Zak)
+    - fix integer overflow in nvidia_raid size check (by Karel Zak)
+    - iso9660 validate root directory to reduce false positives (by Karel Zak)
+    - remove empty loop devices from cache when garbage collecting (by Christian Goeschel Ndjomouo)
+    - (btrfs) use BTRFS_NR_SB_LOG_ZONES and rep->zones (by Karel Zak)
+    - zfs fix unaligned memory access on SPARC (by Ameer Hamza)
+    - (bcachefs) fix LABEL_SUB probing (by Nikita Ofitserov)
+    - (bcachefs) add new bcachefs_sb_member fields (by Nikita Ofitserov)
+    - (bcachefs) add members_v2 parsing support (by Nikita Ofitserov)
+    - Keep NTFS name unmodified and mount driver independent (by Karel Zak)
+    - fix const qualifier warning in blkid_parse_tag_string (by Karel Zak)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - Fix probe_ioctl_tp assigning BLKGETDISKSEQ as physical sector size (by Sam Fink)
+    - (ext) reduce false positive (by 胡玮文)
+    - improve UUID_SUB= description (by Karel Zak)
+    - Add scoutfs filesystem. (by Auke Kok)
+    - Fix crash while parsing config with libeconf (by Stanislav Brabec)
+    - befs fix underflow (by Milan Broz)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+    - ddf_read validate header checksum (by Thomas Weißschuh)
+    - ddf_raid drop little-endian handling (by Thomas Weißschuh)
+    - ddf_raid respect constness of buffer (by Thomas Weißschuh)
+
+libblkid/libmount:
+    - ntfs return filesystem type 'ntfs3' (by Johannes Schneider)
+
+libblkid/src/topology/dm:
+    - fix fscanf return value check to match expected number of parsed items (by Mingjie Shen)
+
+lib/canonicalize:
+    - use ul_ prefix (by Karel Zak)
+    - introduce generic drop-permission caller (by Karel Zak)
+    - refactor canonicalize_path() (by Karel Zak)
+    - rename to ul_absolute_path() (by Karel Zak)
+
+libc/crc32:
+    - make fill value of excluded area configurable (by Thomas Weißschuh)
+
+lib/color-names:
+    - fix stupid bugs (by Karel Zak)
+    - Fix color name canonicalization (by Karel Zak)
+
+lib/colors:
+    - call gettext() only when the argument of --color is invalid (by Benno Schulenberg)
+
+libcommon:
+    - added lib "configs" for parsing configuration files in the correct order (by Stefan Schubert)
+
+lib/config:
+    - fix file counter (by Karel Zak)
+    - Make /run path configurable (by Karel Zak)
+
+lib/configs:
+    - simplify merge error checking (by Karel Zak)
+    - eliminate counter variable (by Karel Zak)
+    - add head parameter to configs_refer_filename() (by Karel Zak)
+    - simplify variable names (by Karel Zak)
+    - merge new_list_entry() and configs_add_filename() (by Karel Zak)
+    - refactor directory list merging (by Karel Zak)
+    - simplify suffix verification (by Karel Zak)
+    - introduce config_mk_path() helper (by Karel Zak)
+    - add test program for ul_configs_file_list() (by Karel Zak)
+    - initialize FD to -1 (by Karel Zak)
+    - improve readability (by Karel Zak)
+
+lib/env, ...:
+    - use getauxval(AT_SECURE) for SUID check (by Max Kellermann)
+
+libfdisk:
+    - remove duplicate code (by Karel Zak)
+    - (dos) fix logical partition start (by Martin Jungblut Schreiner)
+    - modernize ZFS GPT type description (by Martin Minkus)
+    - (dos) fix off-by-one in maximum last sector calculation (by Karel Zak)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - improve collision reporting (by Karel Zak)
+    - (script) improve separator usage in named-fields dump (by Karel Zak)
+    - (script) fix device name separator parsing (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+lib/fileeq:
+    - Handle large files on 32 bit correctly (by Tobias Stoeckmann)
+    - Prevent OOB with short read files (by Tobias Stoeckmann)
+    - Extend debug message (by Tobias Stoeckmann)
+    - Fix formatters (by Tobias Stoeckmann)
+    - Fix typos (by Tobias Stoeckmann)
+
+lib/fileutils:
+    - add is_dotdir_dirent() (by Karel Zak)
+
+liblastlog2:
+    - refactor conditional assignments for better readability (by Karel Zak)
+    - fix operator precedence in conditional assignments (by Karel Zak)
+    - markup fixes for man pages (by Mario Blättermann)
+    - (test) fix memory leak in failed test [coverity scan] (by Karel Zak)
+
+lib/loopdev:
+    - avoid null pointer dereferences [coverity] (by Karel Zak)
+    - introduce loopcxt_get_device_nr() helper (by Karel Zak)
+    - open loop control device read-only if possible (by Thomas Weißschuh)
+    - clarify comment about device and backing file modes (by Thomas Weißschuh)
+    - remove loopcxt_set_fd() (by Thomas Weißschuh)
+
+lib, lscpu:
+    - fix const qualifier discarded warnings in bsearch (by Karel Zak)
+
+lib/mbsalign:
+    - use snprintf() instead of sprintf() (by Karel Zak)
+
+libmount:
+    - move fstype_to_mounttype() to include/ (by Karel Zak)
+    - add option to override fs-type with mount-type (by Karel Zak)
+    - read from udev, add --disable-libmount-udev-support (by Karel Zak)
+    - enhance readability of read_from_blkid() (by Karel Zak)
+    - refactor mnt_cache_read_tags() (by Karel Zak)
+    - refactor mnt_get_fstype() (by Karel Zak)
+    - add pidfs magic number for fstype check (by Christian Goeschel Ndjomouo)
+    - fix const qualifier warning in mnt_parse_mountinfo_line (by Karel Zak)
+    - fix const qualifier warnings for C23 (by Karel Zak)
+    - don't report fsconfig errors with "nofail" (by Karel Zak)
+    - add MOVE_MOUNT_BENEATH support (by Karel Zak)
+    - ifdef for fanotify support on older systems (by Karel Zak)
+    - (monitor) add fanotify_next_fs() (by Karel Zak)
+    - (monitor) add basic fanotify support (by Karel Zak)
+    - (monitor) rename public API to "mountinfo" (by Karel Zak)
+    - (monitor) clean up mountinfo function names (by Karel Zak)
+    - add mnt_fs_is_{moved,attached,detached} functions (by Karel Zak)
+    - (monitor)  cleanup userspace_add_watch() exiting (by Karel Zak)
+    - (monitor) check for utab delete (by Karel Zak)
+    - (monitor) optimize inotify utab watch (by Karel Zak)
+    - (monitor) cleanup op_process_event() return codes (by Karel Zak)
+    - (monitor) add next-fs API (by Karel Zak)
+    - (monitor) epoll_wait code consolidation (by Karel Zak)
+    - (monitor) require entry-specific functions (by Karel Zak)
+    - (monitor) clean up internal names (by Karel Zak)
+    - (monitor) support type-specific data (by Karel Zak)
+    - (monitor) support additional monitor identifiers (by Karel Zak)
+    - split monitor code to more files (by Karel Zak)
+    - Add support for FSCONFIG_CMD_CREATE_EXCL (by Karel Zak)
+    - don't update utab when moving /run (by Karel Zak)
+    - (verity) use messages API for important errors (by Karel Zak)
+    - (verity) use messages API for dlopen errors (by Karel Zak)
+    - (verity) fix compiler warning (by Karel Zak)
+    - (verity) fix deinitialization (by Karel Zak)
+    - add function to remove escaped chars (by Karel Zak)
+    - fix typo in comment (by Karel Zak)
+    - use and add has_listmount() (by Karel Zak)
+    - avoid calling memset() unnecessarily (by Karel Zak)
+    - clean up statmount syscall-related functions (by Karel Zak)
+    - (subdir) support detached open_tree() (>=6.15) (by Karel Zak)
+    - (subdir) restrict for real mounts only (by Karel Zak)
+    - (subdir) remove unused code (by Karel Zak)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+    - fix --no-canonicalize regression (by Karel Zak)
+    - remove possible leak in mnt_context_guess_srcpath_fstype() [coverity scan] (by Karel Zak)
+    - add support for STATMOUNT_SB_SOURCE (by Karel Zak)
+
+Libmount:
+    - Fix removal of "owner" option when executed as root (by Karel Zak)
+
+lib/netlink:
+    - set SOCK_CLOEXEC on netlink socket (by Karel Zak)
+
+lib/pager:
+    - Remove unused code (by Tobias Stoeckmann)
+    - Use async-signal safe signal handler (by Tobias Stoeckmann)
+    - Handle dup errors (by Tobias Stoeckmann)
+    - Gracefully handle SIGPIPE errors (by Tobias Stoeckmann)
+    - Drop pager_redirect (by Tobias Stoeckmann)
+    - Rename caught_signal to pager_caught_signal (by Karel Zak)
+    - Use original stderr in pager_close (by Tobias Stoeckmann)
+    - Use pager_open/close for pager_redirect (by Tobias Stoeckmann)
+    - Release resources on pager_open error (by Tobias Stoeckmann)
+    - Clear potential stdout/stderr errors (by Tobias Stoeckmann)
+    - Flush outputs in pager_close (by Tobias Stoeckmann)
+    - Improve signal handling in pager_close (by Tobias Stoeckmann)
+    - Call _exit in signal handler, not raise (by Tobias Stoeckmann)
+    - Do not resolve directories with PATH (by Tobias Stoeckmann)
+    - Set SIGCHLD to default handling (by Tobias Stoeckmann)
+    - Fix typos (by Tobias Stoeckmann)
+    - Simplify wait_for_pager (by Tobias Stoeckmann)
+    - Merge wait_or_whine into wait_for_pager (by Tobias Stoeckmann)
+    - The variable need_in is always 1 (by Tobias Stoeckmann)
+    - Remove struct field `no_stdin` (by Tobias Stoeckmann)
+    - Remove struct field preexec_cb (by Tobias Stoeckmann)
+    - Remove unused define (by Tobias Stoeckmann)
+    - Remove unused struct entry `err` (by Tobias Stoeckmann)
+    - Remove unused struct field "out" (by Tobias Stoeckmann)
+
+lib/path:
+    - add NULL checks for path in statx and access (by Karel Zak)
+    - Ensure consistent and robust path checks (by Karel Zak)
+    - add wrapers for statx(2) (by Masatake YAMATO)
+    - add __format__ attr to ul_path_v?statf() (by Masatake YAMATO)
+    - (cosmetic) delete the empty line at the EOF (by Masatake YAMATO)
+    - avoid double free() for cpusets (by Karel Zak)
+
+lib/procfs:
+    - remove duplicate statfs_magic.h include (by Karel Zak)
+
+lib/shells:
+    - fix indentation (by Karel Zak)
+
+libsmartcols:
+    - support JSON Lines format output (by WanBingjiang)
+    - avoid cumulative width reduction during printing (by Alessandro Ratti)
+    - small uri and annotation cleanup (by Karel Zak)
+    - new scols_column_{refer,get}_annotation routines (by Christian Goeschel Ndjomouo)
+    - add function to set/get header colors (by Karel Zak)
+    - report cells data size on debug (by Karel Zak)
+    - add scols_filter_has_holder() (by Karel Zak)
+
+lib/strutils:
+    - add helper function for --annotation option (by Christian Goeschel Ndjomouo)
+    - add ul_optstr_get_value() (by Karel Zak)
+    - add ul_ prefix to strrep() and strrem() functions (by Karel Zak)
+    - add ul_ prefix to split() function (by Karel Zak)
+    - add ul_ prefix to strappend() functions (by Karel Zak)
+    - add ul_ prefix to strconcat() functions (by Karel Zak)
+    - add ul_ prefix to startswith() and endswith() (by Karel Zak)
+    - call gettext() only when argument of --hyperlink is invalid (by Benno Schulenberg)
+
+lib/strv:
+    - use ul_ prefix for strv functions (by Karel Zak)
+
+libuuid:
+    - reset initial cont-clock time on service start (by Michael Trapp)
+    - fix timestamp overflow for pre-1970 dates (by Kiran Rangoon)
+    - refactor gregorian_to_unix to populate timeval directly (by Kiran Rangoon)
+    - simplify gregorian-to-unix offset calculation (by Kiran Rangoon)
+    - fix uuid_time on macOS without attribute((alias)) (by Eugene Gershnik)
+
+logger:
+    - ignore libsystemd-dependent long opt in CI CHECK (by Christian Goeschel Ndjomouo)
+    - fix const qualifier warnings for C23 (by Karel Zak)
+    - fix buffer overflow when read stdin (by Karel Zak)
+    - fix incorrect warning message when both --file and a message are specified (by Alexander Kappner)
+    - drop pointless bitfields (by Karel Zak)
+    - (man) improve --prio-prefix and --stderr description (by Karel Zak)
+
+login:
+    - improve comments for signal handling in fork_session() (by Karel Zak)
+    - Fix signal race in child handling (by Tobias Stoeckmann)
+    - use original FQDN for PAM_RHOST (by Karel Zak)
+    - only print regular files for motd (by Tobias Stoeckmann)
+    - remove signal handler before cleanup (by Tobias Stoeckmann)
+    - Add UID to usage message (by Tobias Stoeckmann)
+    - duplicate --shell argument to avoid nulling through explicit_bzero() (by Christian Goeschel Ndjomouo)
+    - document -s and --shell on the man page (by Christian Goeschel Ndjomouo)
+    - define shell to log in to with -s or --shell (by Christian Goeschel Ndjomouo)
+    - use new xgetuserpw() instead of xgetpwnam() (by Christian Goeschel Ndjomouo)
+    - add line break after timeout message (by Karel Zak)
+    - fix minor grammar mistake in the manpage (by cgoesche)
+    - (adoc) add a description about LOGIN_SHELL_FALLBACK (by WanBingjiang)
+    - using an avaiable shell while logging in. (by WanBingjiang)
+    - use logindefs_setenv_path() (by Karel Zak)
+    - protect COLORTERM and NO_COLOR env. variables (by Karel Zak)
+
+logindefs:
+    - Add function to set PATH (by Karel Zak)
+
+login-utils:
+    - Use _PATH macros (by Tobias Stoeckmann)
+    - Use /etc/passwd- as backup file (by Tobias Stoeckmann)
+    - add UIDs to manual pages (by Tobias Stoeckmann)
+
+login-utils/login:
+    - Sync usage with manual page (by Tobias Stoeckmann)
+
+login-utils, sys-utils:
+    - use _PATH_BSHELL consistently (by Alessandro Ratti)
+
+losetup:
+    - snip --verbose from bash-completion, and 'v' from options string (by Benno Schulenberg)
+    - (man) put the synopses in a better order, the name-giver first (by Benno Schulenberg)
+    - remove the --verbose flag, as it doesn't actually do anything (by Benno Schulenberg)
+    - sort 'O' correctly for the mutual-exclusive check to work (by Benno Schulenberg)
+    - improve command line option processing (by Karel Zak)
+    - improve --remove documentation (by Karel Zak)
+    - make --remove a long-only option with mutual exclusivity (by Karel Zak)
+    - add error feedback for --remove command (by Karel Zak)
+    - Add the --remove/-R parameter to remove loop devices (by wguanghao)
+    - rename function *_delete_* to *_detach_* (by wguanghao)
+
+losetup,lscpu:
+    - (man) add the missing -h/--help and -V/--version options (by Benno Schulenberg)
+
+lostup:
+    - report EACCES on loop-control (by Karel Zak)
+
+lsblk:
+    - improve error reporting for invalid device paths (by Sina Abroshan)
+    - use ul_startswith() (by codefiles)
+    - add support for LSBLK_COLUMNS environmental variable as an alternative to --output (by cgoesche)
+    - (typo) rename list_colunms() to list_columns() (by cgoesche)
+    - fix possible use-after-free (by Karel Zak)
+    - fix memory leak [coverity scan] (by Karel Zak)
+    - use md as fallback TYPE when md/level empty (by codefiles)
+    - use ID_PART_ENTRY_SCHEME as fallback for PTTYPE (by Karel Zak)
+    - (man) remove the incorrect spaces between the arguments of --ct (by Benno Schulenberg)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+lsclocks:
+    - fix inconsistency in usage message (by Christian Goeschel Ndjomouo)
+    - add missing --no-discover-rtc option info in usage message (by Christian Goeschel Ndjomouo)
+    - add support for LSCLOCKS_COLUMNS environmental variable (by Christian Goeschel Ndjomouo)
+    - stop using MAX_CLOCKS (by Thomas Weißschuh)
+    - use MAX_CLOCKS, improve indention (by Karel Zak)
+    - add auxiliary clocks (by Thomas Weißschuh)
+    - (man) remove stray backslash, and correct short form of --time (by Benno Schulenberg)
+    - (man) list supported clock types (by Thomas Weißschuh)
+
+lscpu:
+    - Implement options for dumping ARM implementer/model name tables (by Martin Storsjö)
+    - remove duplicate ARM names, clean up names (by Karel Zak)
+    - add --annotate info to man page (by Christian Goeschel Ndjomouo)
+    - add column header annotations for -C and -e (by Christian Goeschel Ndjomouo)
+    - Add a few missing Arm CPU identifiers (by Jonathan Thackray)
+    - New Arm C1 parts (by Jeremy Linton)
+    - Add NVIDIA Olympus arm64 core (by Matthew R. Ochs)
+    - (man) add description of the --list-columns option (by Christian Goeschel Ndjomouo)
+    - add MICROCODE output column (by Christian Goeschel Ndjomouo)
+    - (man) document the LSCPU_{CACHES_}COLUMNS environment variables (by Christian Goeschel Ndjomouo)
+    - add --list-columns option and declutter --help output (by Christian Goeschel Ndjomouo)
+    - add support for LSCPU_{CACHES_}COLUMNS environment variables (by Christian Goeschel Ndjomouo)
+    - add 'microcode' information to the CPU summary (by cgoesche)
+    - use maximum CPU speed from DMI, avoid duplicate version string (by Karel Zak)
+    - Fix loongarch op-mode output with recent kernel (by Xi Ruoyao)
+    - fix possible buffer overflow in cpuinfo parser (by Karel Zak)
+    - (man) don't refer to a missing section, and improve some wordings (by Benno Schulenberg)
+    - RISC-V Print ISA information in summary (by Sunil V L)
+    - New Arm part numbers (by Jeremy Linton)
+
+lsfd:
+    - fill SOCK.NETNS column for tuntap (by Masatake YAMATO)
+    - load the information of the network namespace behind a tun device (by Masatake YAMATO)
+    - (refactor) call ioctl(TUNGETDEVNETNS) from target_fd related methods (by Masatake YAMATO)
+    - add stubs of target_fd related methods to cdev_class (by Masatake YAMATO)
+    - fill SOCK.NETNS even when sock_diag netlink can't report sockets (by Masatake YAMATO)
+    - add inspect_target_fd method to file_class (by Masatake YAMATO)
+    - (refactor) make call_with_foreign_fd reusable (by Masatake YAMATO)
+    - make pidfd for the target process available while collecting fds (by Masatake YAMATO)
+    - (comment) update the description of sock_xinfo::netns_inode (by Masatake YAMATO)
+    - (cosmetic) delete an empty line (by Masatake YAMATO)
+    - add new association "pidfs" (by Masatake YAMATO)
+    - (bugfix) do not reuse stat(2) buffer for files with identical names (by Masatake YAMATO)
+    - fix dependency on errnos.h (by Masatake YAMATO)
+    - make sure errors array is not empty [-Werror=type-limits] (by Karel Zak)
+    - (refactor) move the error object related code to a new file (by Masatake YAMATO)
+    - (refactor) remove redundant is_error member from struct file (by Masatake YAMATO)
+    - (refactor) add a helper function making error file objects (by Masatake YAMATO)
+    - remove __unused__ attr from parameters used actually (by Masatake YAMATO)
+    - (cosmetic) adjust white spaces in column definitions (by Masatake YAMATO)
+    - fill MNTID coulmn for exe, cwd, and rtd assocations (by Masatake YAMATO)
+    - fill MNTID coulmn for shm and mem assocations (by Masatake YAMATO)
+    - (refactor) add has_mnt_id helper macro (by Masatake YAMATO)
+    - fix memory leak related to stat_error_class (by Masatake YAMATO)
+    - fix const qualifier warning in strnrstr (by Karel Zak)
+    - fix const qualifier warning in new_counter_spec (by Karel Zak)
+    - add TUN.DEVNETNS column (by Masatake YAMATO)
+    - fix bsearch macro usage with glibc C23 (by Cristian Rodríguez)
+    - (doc) fix English in SOCK.NETNS description (by Masatake YAMATO)
+    - (cleanup) add missing "break" in a case statement (by Masatake YAMATO)
+    - (cleanup) return 0 instead of false (by Masatake YAMATO)
+    - (refactor) introduce tundata struct (by Masatake YAMATO)
+    - (bugfix) use PRIu32 for prining lport of netlink socket (by Masatake YAMATO)
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - refer to /proc/$pid/map_files if a mapped file is masked (by Masatake YAMATO)
+    - revise the code disabling hyperlinks (by Masatake YAMATO)
+    - decode protocol numbers of RAW and RAW6 sockets (by Masatake YAMATO)
+    - add PACKET.PROTOCOL.RAW, a new column (by Masatake YAMATO)
+    - improve grammar, and use angular brackets around placeholder word (by Benno Schulenberg)
+    - (bug fix) scan the protocol field of /proc/net/packet as a hex number (by Masatake YAMATO)
+    - fix the description for PACKET.PROTOCOL column (by Masatake YAMATO)
+    - (man) fix a typo (by Masatake YAMATO)
+    - add UNIX.IPEER column (by Masatake YAMATO)
+    - fill ENDPOINTS column for UNIX one-way sockets (by Masatake YAMATO)
+    - (refactor) add a helper function building ENDPOINTS strings for UNIX socket (by Masatake YAMATO)
+    - add a dummy entry for UNIX socket having no peer to the IPC table (by Masatake YAMATO)
+    - (man) fix a typo (by Masatake YAMATO)
+    - initialize struct stat [coverity scan] (by Karel Zak)
+
+lsfd/mkfds-foreign-sockets:
+    - skip when lacking sock_diag ability (by Chen Qi)
+
+lsfd,test_mkfds:
+    - make linux/vm_sockets_diag.h optional (by Masatake YAMATO)
+
+lsipc:
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - doesn't mount /dev/mqueue (by Prasanna Paithankar)
+
+lsirq:
+    - add support for reading data from given file (by Joe Jin)
+
+lslocks:
+    - (bugfix) don't set rawdata in COL_PID if rawdata is null (by Masatake YAMATO)
+    - special-case PID for filtering (skip −1) (by Masatake YAMATO)
+    - make SIZE filterable by normalizing to bytes (by Masatake YAMATO)
+    - implement Q, --filter option (by Masatake YAMATO)
+    - factor out code getting and setting the data from add_scols_line (by Masatake YAMATO)
+    - (refactor) move proc_locks to struct lslocks (by Masatake YAMATO)
+    - (refactor) move pid_locks in main to struct lslocks (by Masatake YAMATO)
+    - (refactor) move "tab" file static variable to struct lslocks (by Masatake YAMATO)
+    - (refactor) add struct lslocks representing the global context (by Masatake YAMATO)
+    - (refactor) use global bytes in get_json_type_for_column() (by Masatake YAMATO)
+    - (refactor) add a helper function refining value returned from get_lock (by Masatake YAMATO)
+    - (refactor) don't use redundant callback functions (by Masatake YAMATO)
+    - (refactor) specify list_head as type instead of abusing void* (by Masatake YAMATO)
+    - (refactor) use separate function to initialize libscols_table (by Masatake YAMATO)
+    - (refactor) remove an unused local variable (by Masatake YAMATO)
+    - (refactor) use narrow variable scoping for loop counters (by Masatake YAMATO)
+    - (comment) fix grammar (by Masatake YAMATO)
+    - (man) add LSLOCKS_COLUMNS description in new ENVIRONMENT section (by Christian Goeschel Ndjomouo)
+    - add support for LSLOCKS_COLUMNS environmental variable (by Christian Goeschel Ndjomouo)
+
+lslogins:
+    - (manpage) fix typo in option description (by Christian Goeschel Ndjomouo)
+    - ignore special long options in CI CHECK (by Christian Goeschel Ndjomouo)
+    - remove duplicate errno initialization (by Christian Goeschel Ndjomouo)
+    - fix incomplete option info in usage message (by Christian Goeschel Ndjomouo)
+    - (man) add --list-columns description (by Christian Goeschel Ndjomouo)
+    - add -H and --list-columns option; declutter --help output (by Christian Goeschel Ndjomouo)
+    - (man) add --json information (by Christian Goeschel Ndjomouo)
+    - add JSON output format mode (by Christian Goeschel Ndjomouo)
+    - fix typo (by Karel Zak)
+    - remove possible memory leaks [coverity scan] (by Karel Zak)
+
+lsmem:
+    - fix missing zone info when memory blocks start at an index other than 0 (by Christian Goeschel Ndjomouo)
+    - use xstrncpy() (by Karel Zak)
+    - add doc for dynamic (de)configuration and memmap-on-memory support (by Sumanth Korikkar)
+    - add support to display dynamic (de)configuration of memory (by Sumanth Korikkar)
+    - display global memmap on memory parameter (by Sumanth Korikkar)
+    - add support for LSMEM_COLUMNS environmental variable (by Christian Goeschel Ndjomouo)
+    - increase the available width for the summary text labels (by Benno Schulenberg)
+
+lsmem,chmem:
+    - add configure/deconfigure bash completion options (by Sumanth Korikkar)
+
+lsns:
+    - make the synopsis more coherent (by Christian Goeschel Ndjomouo)
+    - fix const qualifier warnings for C23 (by Karel Zak)
+    - don't abort if /proc/self/ns/user is absent; probe other ns entries (by Masatake YAMATO)
+    - fix --list-columns option (by Christian Goeschel Ndjomouo)
+    - enhance compilation without USE_NS_GET_API (by Karel Zak)
+    - fix undefined reference to add_namespace_for_nsfd #3483 (by Thomas Devoogdt)
+    - make "-Q NETNSID ..." work even if NETNSID column is not enabled (by Masatake YAMATO)
+    - show NETNSID for namespaces with no process running (by Masatake YAMATO)
+    - (refactor) generalize the code for collecting netnsid information (by Masatake YAMATO)
+
+man:
+    - Fixed incorrect ipcrm options (by Prasanna Paithankar)
+    - Replace RETURN VALUE with EXIT STATUS in section 1 (by Jesse Rosenstock)
+
+man-common:
+    - rename annotation.adoc to annotate.adoc (by Christian Goeschel Ndjomouo)
+
+man pages:
+    - consolidate libsmartcols environment variables (by Karel Zak)
+
+meson:
+    - fix non threaded toolchains (by Rosen Penev)
+    - cleanup tests to use libcommon.la (by Karel Zak)
+    - use curses dep for ncurses (by Rosen Penev)
+    - fix a bug in posixipc_libs configuration (by Martin Valgur)
+    - use .to_string() in configuration data check (by Thomas Weißschuh)
+    - add feature for translated documentation (by Thomas Weißschuh)
+    - remove tinfo dependency from 'more' (by Thomas Weißschuh)
+    - fix manadocs for libsmartcols and libblkid (by Karel Zak)
+    - fix po-man installation (by Karel Zak)
+    - bring hexdump in line with others (by Christian Hesse)
+
+misc:
+    - never include wchar.h (by Karel Zak)
+
+misc-utils/lastlog2:
+    - Add option -a for listing active users only (by WanBingjiang)
+
+mkfs.bfs:
+    - fix memory leaks and weak code (by Karel Zak)
+
+mkfs.cramfs:
+    - avoid uninitialized value [coverity scan] (by Karel Zak)
+    - (man) mark arguments of -N and -l in bold, not italics (by Benno Schulenberg)
+    - vertically align the option descriptions of the usage text (by Benno Schulenberg)
+    - reduce the synopsis to the standard, succinct form (by Benno Schulenberg)
+
+more:
+    - Use ul_strtou16() in a robust way (by Karel Zak)
+    - temporarily ignore stdin when waiting for stderr (by Karel Zak)
+    - Add MORE_SHELL_LINES environmental variable (by cgoesche)
+    - fix broken ':!command' command key (by cgoesche)
+    - fix implicit previous shell_line execution #3508 (by cgoesche)
+    - Add MORESECURE and PAGERSECURE environment variables #3503 (by Christian Goeschel Ndjomouo)
+    - improve help readability (by Karel Zak)
+    - fix repeat command (by Karel Zak)
+    - remove a duplicate call of setlocale() (by Benno Schulenberg)
+
+mount:
+    - (manpage) fix minor grammar mistakes (by Christian Goeschel Ndjomouo)
+    - (man) add link to mount.ceph(8) (by Karel Zak)
+    - (man) add hint for session= on iso9660 (by Karel Zak)
+    - document --ro option on the man page (by Christian Goeschel Ndjomouo)
+    - add missing --ro option info in usage message (by Christian Goeschel Ndjomouo)
+    - add note about systemd and --all historical context (by Karel Zak)
+    - improve --all documentation regarding swap areas (by Karel Zak)
+    - add --beneath support (by Karel Zak)
+    - (bash-completion) add --exclusive (by Karel Zak)
+    - add --exclusive command line option (by Karel Zak)
+    - check for stdout for fstab reload hint (by Karel Zak)
+    - (man) add missing word (by Jakub Wilk)
+    - (man) shorten an overlong line, and improve some markup (by Benno Schulenberg)
+    - (man) fix some indentation issues, and improve a few wordings (by Benno Schulenberg)
+    - (man) add info about info messages (by Karel Zak)
+
+mountpoint:
+    - use single libmount cache for all path resolutions (by Karel Zak)
+    - add --show option to print mountpoint path (by Karel Zak)
+    - use statmount() syscall on modern kernels (by Karel Zak)
+
+namei:
+    - ignore SELinux-specific long option in CI CHECK (by Christian Goeschel Ndjomouo)
+    - fix const qualifier warning in readlink_to_namei (by Karel Zak)
+    - reestablish --nosymlinks option's functionality (by Christian Goeschel Ndjomouo)
+
+namespace.h:
+    - fix compilation on Linux < 4.10 (by Thomas Devoogdt)
+
+netaddrq:
+    - Fix crash if there are no IP addresses (by Stanislav Brabec)
+
+netlink process_addr():
+    - Ignore UL_NL_SOFT_ERROR (by Stanislav Brabec)
+
+newgrp:
+    - provide --command info in output message (by Christian Goeschel Ndjomouo)
+
+nologin:
+    - ignore well-known shell command-line options in CI CHECK (by Christian Goeschel Ndjomouo)
+
+nsenter:
+    - use USE_NAMESPACE_ID_SUPPORT macro for nsid feature (by Karel Zak)
+    - fix minor issues with namespace ID support (by Karel Zak)
+    - Support specifying namespace by ID (by Xiao Liang)
+    - (manpage) fix minor grammar mistake (by Christian Goeschel Ndjomouo)
+    - support 'PID:inode' process address format (by Christian Goeschel Ndjomouo)
+    - ignore SELinux-specific long option in CI CHECK (by Christian Goeschel Ndjomouo)
+    - (man) improve descriptions for some options (by Martin Joerg)
+
+nsenter,unshare:
+    - (man) add the NS-related commands to SEE ALSO (by Masatake YAMATO)
+
+pager:
+    - remove stale pager_redirect() declaration (by Karel Zak)
+
+partx:
+    - fix const qualifier warning in get_max_partno (by Karel Zak)
+    - mark the --list option as deprecated (by Christian Goeschel Ndjomouo)
+
+pg:
+    - Fix compiler warning (by Tobias Stoeckmann)
+
+pidfd-utils:
+    - move USE_PIDFD_INO_SUPPORT after syscall fallbacks (by Karel Zak)
+    - define HAVE_PIDFD_* when syscall fallbacks are used (by Karel Zak)
+
+pipesz:
+    - use snprintf() instead of sprintf() (by Karel Zak)
+    - report default size in --help, instead of referring the user (by Benno Schulenberg)
+    - (man) improve the markup and some wordings (by Benno Schulenberg)
+
+po:
+    - merge changes (by Karel Zak)
+    - update LINGUAS list (by Karel Zak)
+    - add ar.po (from translationproject.org) (by Zayed Al-Saidi)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update sv.po (from translationproject.org) (by Daniel Nylander)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pt.po (from translationproject.org) (by Pedro Albuquerque)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Christian Kirbach)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pt.po (from translationproject.org) (by Pedro Albuquerque)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ja.po (from translationproject.org) (by YOSHIDA Hideki)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update cs.po (from translationproject.org) (by Petr Písař)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Jakub Bogusz)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - merge changes (by Karel Zak)
+    - update hr.po (from translationproject.org) (by Božidar Putanec)
+    - upadte LINGUAS file (by Karel Zak)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - merge changes (by Karel Zak)
+    - add sv.po (from translationproject.org) (by Daniel Nylander)
+    - add ar.po (from translationproject.org) (by Zayed Al-Saidi)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pl.po (from translationproject.org) (by Michał Kułach)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - merge changes (by Karel Zak)
+    - update sr.po (from translationproject.org) (by Мирослав Николић)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - add hyperlink.adoc to po4a.cfg (by Karel Zak)
+    - merge changes (by Karel Zak)
+    - add pl.po (from translationproject.org) (by Michał Kułach)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - fix typos in configuration (by Karel Zak)
+
+prlimit:
+    - raise a nicer error message when modifying NOFILE (by Karel Zak)
+
+procfs:
+    - use F_TYPE_EQUAL() macro for statfs.f_type comparison (by cgoesche)
+    - add a helper function to access /proc/$pid/personality (by Masatake YAMATO)
+
+pwdutils:
+    - fix grammar in comments (by Tobias Stoeckmann)
+
+readprofile:
+    - (manpage) add --no-auto option description (by Christian Goeschel Ndjomouo)
+    - fix memory leak related to boot_uname_r_str() in usage() (by Christian Goeschel Ndjomouo)
+    - (manpage) fix incorrect file name in --mapfile description (by Christian Goeschel Ndjomouo)
+
+rename:
+    - change "expression" to "substring" (by Haelwenn (lanodan) Monnier)
+
+renice:
+    - (man) reword several things, to be clearer, and improve some markup (by Benno Schulenberg)
+    - in usage text, condense the oververbose description of option -n (by Benno Schulenberg)
+
+rev:
+    - add --zero option to --help output (by Christian Goeschel Ndjomouo)
+
+rfkill:
+    - Output in JSON format if -J is provided. (by Xing Guo)
+
+rtcwake:
+    - (man) reduce an inflated table to sane proportions (by Benno Schulenberg)
+
+script:
+    - (man,usage) correct the markup of the synopsis (by Benno Schulenberg)
+    - support non-option argument as command (by WanBingjiang)
+
+scriptlive:
+    - (manpage) add --command option description (by Christian Goeschel Ndjomouo)
+    - improve some descriptions, markup, and grammar in the manpage (by Benno Schulenberg)
+    - reduce two usage synopses to one simple one (by Benno Schulenberg)
+
+scriptreplay:
+    - mark literal values in the man page in bold, not italic (by Benno Schulenberg)
+    - reduce two usage synopses to one, and drop the -t from it (by Benno Schulenberg)
+    - make Up/Down keys use a percentage instead of fixed amount (by Benno Schulenberg)
+    - indicate that <divisor> is conditional on <typescript> (by Benno Schulenberg)
+
+setarch:
+    - (man) correct the markup of the synopsis and of two options (by Benno Schulenberg)
+    - use strtopid_or_err() (by Karel Zak)
+    - add -p/--pid option showing the personality of specified process (by Masatake YAMATO)
+
+setpriv:
+    - use AppArmor LSM-specific proc interface (by Karel Zak)
+    - (man) Fix grammar (by Tobias Stoeckmann)
+    - (man) fix typo (by Jakub Wilk)
+    - (manpage) fix typo in option description (by Christian Goeschel Ndjomouo)
+    - fix usage message inconsistency (by Christian Goeschel Ndjomouo)
+    - improve landlock usage() output (by Karel Zak)
+    - Add support for LANDLOCK_ACCESS_FS_IOCTL_DEV (by Günther Noack)
+    - Improve getgroups() Portability (by Karel Zak)
+    - protect COLORTERM and NO_COLOR env. variables (by Karel Zak)
+    - follow /etc/login.defs for PATH (by Karel Zak)
+
+setpwnam:
+    - use getline instead of fgets (by Tobias Stoeckmann)
+    - only unlock when actually locked (by Tobias Stoeckmann)
+    - check if /etc/passwd was fully read (by Tobias Stoeckmann)
+
+sfdisk:
+    - (manpage) fix option description inconsistencies (by Christian Goeschel Ndjomouo)
+    - (man) do not use the common 'include' for --help and --version (by Benno Schulenberg)
+    - reject spurious arguments for --reorder/--backup-pt-sectors (by Thomas Weißschuh)
+
+sfdisk.8.adoc:
+    - Replace --help and --version with external entity (by Mario Blättermann)
+
+shells.c:
+    - call setusershell before getusershell (by WanBingjiang)
+
+strutils:
+    - move an error message to where it is used, and improve it (by Benno Schulenberg)
+
+strutils.c:
+    - ignore escape characters while parsing options. (by WanBingjiang)
+
+style:
+    - convert tabs to spaces in meson.build (by zhanghongyuan)
+    - adapt function definitions to kernel style (by Christian Goeschel Ndjomouo)
+    - fix coding style issues (by Christian Goeschel Ndjomouo)
+
+su:
+    - accept group name and GID in -g and -G options (by Christian Goeschel Ndjomouo)
+    - pass arguments after <user> to shell (by cgoesche)
+    - use logindefs_setenv_path() (by Karel Zak)
+    - protect COLORTERM and NO_COLOR env. variables (by Karel Zak)
+    - (man) fix duplicate asterisk (by Gaël PORTAY)
+
+su-common:
+    - ignore runuser(1) specific long option in CI CHECK (by Christian Goeschel Ndjomouo)
+
+swapoff:
+    - check  blkid_probe_lookup_value() return code [coverity scan] (by Karel Zak)
+    - add comments for do_swapoff (by zt20xx)
+    - clean up tag resolution (by Karel Zak)
+
+swapon:
+    - (man page) use "defaults" (plural) (by Chris Hofstaedtler)
+    - use ANNOTATE_OPTION as enum name for --annotate (by Christian Goeschel Ndjomouo)
+    - rename the new --annotation option to --annotate (by Benno Schulenberg)
+    - (usage) make the help text fit within 80 columns again (by Benno Schulenberg)
+    - document --annotation option on the man page (by Christian Goeschel Ndjomouo)
+    - control column header tooltips with --annotation (by Christian Goeschel Ndjomouo)
+    - annotate column header names with OSC8 hyperlinks (by Christian Goeschel Ndjomouo)
+    - (man page) add details about fstab configuration (by Karel Zak)
+    - improve a translator hint, and remove a pointless one (by Benno Schulenberg)
+    - remove unnecessary variable usage (by Karel Zak)
+    - make options --help and --version override --summary (by Benno Schulenberg)
+
+sys-utils/chmem:
+    - fix typo. (by WanBingjiang)
+
+sys-utils/lscpu:
+    - Change object type to SCOLS_JSON_STRING if data == "-" (by WanBingjiang)
+
+taskset:
+    - Accept 0 pid for current process (by Jesse Rosenstock)
+
+terminal-colors.d:
+    - (man) reduce two tables to succinct lists (by Benno Schulenberg)
+    - support NO_COLOR (by Karel Zak)
+
+test_mkfds:
+    - disable ppoll multiplexer if sigset_t is not defined (by Masatake YAMATO)
+    - remove local pidfd_open() fallback (by Karel Zak)
+
+tests:
+    - (lsfd::*) revise the way to use "$?" (by Masatake YAMATO)
+    - (lsns::*) revise the way to use "$?" (by Masatake YAMATO)
+    - add tests for column --table-header-as-columns (by Karel Zak)
+    - (test_mkfds:netns) conditionally report EPERM when ioctl(SIOCGSKNS) fails (by Masatake YAMATO)
+    - (test_mkfd::tcp-bare) new factory creating an unbound/unconnected TCP socket (by Masatake YAMATO)
+    - search for all executable scripts in test subdirs (by Christian Goeschel Ndjomouo)
+    - (waitpid) add tests for the pidfd inode format support (by Christian Goeschel Ndjomouo)
+    - (waitpid) move waitpid tests to a dedicated subdir (by Christian Goeschel Ndjomouo)
+    - (waitpid) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - use long options globally in test scripts (by Christian Goeschel Ndjomouo)
+    - (setarch) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (script) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (rev) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (rename) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (mount) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (more) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (lsns) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (lsmem) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (lscpu) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (lsclocks) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (losetup) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (logger) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (ipcs) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (ionice) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (hexdump) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (getopt) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (findmnt) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (fdisk) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (fallocate) use long options to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (enosys) use long options instead, to improve test coverage report (by Christian Goeschel Ndjomouo)
+    - (chfn) test all long options (by Christian Goeschel Ndjomouo)
+    - (cal) use more long options to improve test coverage accuracy (by Christian Goeschel Ndjomouo)
+    - (blkid) use more long options to improve test coverage accuracy (by Christian Goeschel Ndjomouo)
+    - (blkdiscard) use long options to improve test coverage accuracy (by Christian Goeschel Ndjomouo)
+    - (column) add more tests (by Christian Goeschel Ndjomouo)
+    - (chrt) fix various shellcheck warnings (by Christian Goeschel Ndjomouo)
+    - (flock) fix shellcheck warning (by Christian Goeschel Ndjomouo)
+    - (uuidd) fix various shellcheck warnings (by Christian Goeschel Ndjomouo)
+    - move schedutils tool test scripts to dedicated subdirs (by Christian Goeschel Ndjomouo)
+    - move uuid* tool test scripts to dedicated subdirectories (by Christian Goeschel Ndjomouo)
+    - move test scripts from tests/ts/misc to dedicated subdir (by Christian Goeschel Ndjomouo)
+    - (chfn) ensure that invalid input is detected correctly (by Christian Goeschel Ndjomouo)
+    - add a helper command, test_open_twice (by Masatake YAMATO)
+    - simplify TS_DESC in fdisk/mbr-logical-ebr-gap (by Karel Zak)
+    - (fdisk) make sure test_strerror avalable (by Karel Zak)
+    - add tests for unshare --forward-signals (by Kiran Rangoon)
+    - (lsfd::column-mntid) add a new case (by Masatake YAMATO)
+    - (test_mkfds::mmap) add "shared" paramter (by Masatake YAMATO)
+    - (refactor) add ts_skip_config, a new helper function (by Masatake YAMATO)
+    - (lsfd::mkfds-mmap-maksed-file) revise the description (by Masatake YAMATO)
+    - add getino tests (by Christian Goeschel Ndjomouo)
+    - add regression test for repeated termreduce printing (by Alessandro Ratti)
+    - add libsmartcols termreduce regression helper (by Alessandro Ratti)
+    - fdisk add regression test for missing EBR gap between logical partitions (by Martin Jungblut Schreiner)
+    - correct UUID timestamp test expectations (by Kiran Rangoon)
+    - (lslocks) test -Q,--filter option (by Masatake YAMATO)
+    - (test_mkfds::nop) new factory just printing pid (by Masatake YAMATO)
+    - convert fallocate to use subtests (by Karel Zak)
+    - (su) test GID argument in --group option (by Christian Goeschel Ndjomouo)
+    - (lsfd::mkfds-cdev-tun,refactor) make the case extensible (by Masatake YAMATO)
+    - (swaplabel) don't create test image with truncate(1) (by Thomas Weißschuh)
+    - update cal color outputs (by Karel Zak)
+    - update lsmem outputs (by Karel Zak)
+    - (su) add more options tests (by cgoesche)
+    - optstr test redundant commas (by Cole Robinson)
+    - (configs) add sorting and masking test (by Karel Zak)
+    - (configs) check for scandirat() (by Karel Zak)
+    - (configs) add file listings to expected output (by Karel Zak)
+    - add regression tests for ul_configs_file_list() (by Karel Zak)
+    - (libmount) improve explicit loop read-write mount check (by Christian Goeschel Ndjomouo)
+    - (lslogins) test --json output mode (by Christian Goeschel Ndjomouo)
+    - (lsfd/mkfds-unix-dgram) skip if the unix diag netlink interface is not available (by Masatake YAMATO)
+    - (lsfd-functions.sh) make lsfd_check_sockdiag usable in subtests (by Masatake YAMATO)
+    - (lsfd/mkfds-unix-stream-requiring-sockdiag) revise the test description (by Masatake YAMATO)
+    - (lsfd/column-source-btrfs) extract a minor number in a more reliable way (by Masatake YAMATO)
+    - (lsmem) update expected/lscpu/* with 'ZONES' column (by Christian Goeschel Ndjomouo)
+    - add canonicalize test (by Karel Zak)
+    - add color names test (by Karel Zak)
+    - update expected type to 'ntfs3' (by Johannes Schneider)
+    - add chrt SCHED_EXT test (by Shashank Balaji)
+    - update coresched tests (by Karel Zak)
+    - mark lsns/filer as TS_KNOWN_FAIL (by Karel Zak)
+    - (test_mkfds::mapped-packet-socket) add a new parameter, protocol (by Masatake YAMATO)
+    - (lscpu) update RISC-V tests to add ISA line (by Karel Zak)
+    - (lsfd::mkfds-unix-dgram, refactor) split the test into subtests (by Masatake YAMATO)
+    - add ts_is_in_docker as a helper function (by Masatake YAMATO)
+    - (lsns) verify NETNSID column for namespaces with no process running (by Masatake YAMATO)
+    - update lsmem outputs (by Karel Zak)
+    - (lsns/nsfs) consider the cases that lsns returns multiple paths (by Masatake YAMATO)
+    - (lsns/nsfs) check test_sysinfo helper (by Masatake YAMATO)
+    - improve test_sysinfo to check for NS_GET_NSTYPE usability (by Karel Zak)
+    - check for ns-get*-ok (by Karel Zak)
+    - (flock::range-lock) add a case testing --start/--length (by Masatake YAMATO)
+
+tests/helpers/test_sigstate.c:
+    - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
+
+tests/ts/kill/decode:
+    - avoid using shell built-in kill command (by Chen Qi)
+
+test_sysinfo:
+    - remove memory lea [coverity scan] (by Karel Zak)
+
+textual:
+    - rename list_colunms() to list_columns() and remove trailing whitespaces (by Christian Goeschel Ndjomouo)
+    - harmonize the messages for invalid count and timeout values (by Benno Schulenberg)
+    - harmonize the messages for an invalid size, length, and offset (by Benno Schulenberg)
+    - harmonize the wording of the error message for an invalid PID (by Benno Schulenberg)
+    - fix a mistruncated message, and fix a typo (by Benno Schulenberg)
+
+tools:
+    - git-version-bump, accept X.Y-devel version on master branch (by Karel Zak)
+    - (get-options.sh) refine regex for unsupported programs to avoid false positives (by Christian Goeschel Ndjomouo)
+    - expand relative paths provided by $top_srcdir for robustness (by Christian Goeschel Ndjomouo)
+    - helper script to generate a test coverage report (by Christian Goeschel Ndjomouo)
+    - (get-options.sh) ensure functionality for out-of-tree builds (by Christian Goeschel Ndjomouo)
+    - verify the consistency of manpages for all programs (by Christian Goeschel Ndjomouo)
+    - (get-options.sh) skip programs that do not use <struct option> (by Christian Goeschel Ndjomouo)
+    - (get-options.sh) ignore long opt definitions marked with IGNORECHECK=yes (by Christian Goeschel Ndjomouo)
+    - (checkusage.sh) verify the completeness of listed long options (by Christian Goeschel Ndjomouo)
+    - (checkcompletion.sh) test the integrity of long options completion (by Christian Goeschel Ndjomouo)
+    - new helper for extraction of program long options from source files (by cgoesche)
+    - rewrite checkcompletion.sh to be source-based (by Karel Zak)
+    - improve git-version-bump with validation and help (by Karel Zak)
+    - improve git-version-next to always output version variables (by Karel Zak)
+    - add git-version-next script release versioning (by Karel Zak)
+    - add checktarball-meson.sh (by Karel Zak)
+    - add SPDX-License-Identifier (by Karel Zak)
+    - improve in-repo check (by Karel Zak)
+
+tools/checkconfig:
+    - strip C comments before macro extraction (by Karel Zak)
+
+tools/git-grouped-log:
+    - sort output (by Karel Zak)
+    - add script to generated git log (by Karel Zak)
+
+tools/git-tp-sync:
+    - fix po/ update (by Karel Zak)
+    - update also po-man (by Karel Zak)
+    - fix checkout -f use (by Karel Zak)
+    - require git (by Karel Zak)
+    - merge changes to PO files (by Karel Zak)
+    - support multiple directories (by Karel Zak)
+    - reuse git ls-files calls (by Karel Zak)
+    - add --dry-run and --help (by Karel Zak)
+    - Compare Revisions (by Karel Zak)
+
+tools/git-tp-sync-man:
+    - remove obsolete script (by Karel Zak)
+
+tools/git-version-bump:
+    - add script to update hardcoded versions (by Karel Zak)
+
+tools/git-version-gen:
+    - accept -start in version (as -rc) (by Karel Zak)
+
+tools/poman-translate:
+    - fix to work outside on source dir (by Karel Zak)
+
+treewide:
+    - consistently use tabs for indentation where it is the rule (by Benno Schulenberg)
+    - use is_dotdir_dirent() helper (by Karel Zak)
+    - consolidate --list-columns option in usage() to USAGE_LIST_COLUMNS_OPTION() (by Christian Goeschel Ndjomouo)
+    - replace postal address in license specifier with a terse URL (by Benno Schulenberg)
+    - improve getauxval(AT_SECURE) usage (by Karel Zak)
+    - add ul_ to parse_timestamp() function name (by Karel Zak)
+    - add ul_ to parse_switch() function name (by Karel Zak)
+    - add ul_ to parse_size() function name (by Karel Zak)
+    - add ul_  to parse_range() function name (by Karel Zak)
+    - fix optional arguments usage (by Karel Zak)
+    - use strtopid_or_err() (by Masatake YAMATO)
+    - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
+
+ts/kill/decode:
+    - compare decoded output in an architecture-independent way (by Masatake YAMATO)
+    - check the availability of "sed" (by Masatake YAMATO)
+    - consider arch dependent signum/name association (by Masatake YAMATO)
+    - use RTMIN from 'kill -L' instead of hardcoding 34 (by Chen Qi)
+
+tunelp:
+    - remove extraneous -T option (by Christian Goeschel Ndjomouo)
+
+uclampset:
+    - simplify the synopsis in the --help usage text (by Benno Schulenberg)
+
+ul_nl_addr_dup():
+    - Fix address comparison (by Stanislav Brabec)
+
+umount:
+    - consider helper return status for success message (by Christian Goeschel Ndjomouo)
+
+unshare:
+    - document --forward-signals in man page (by Kiran Rangoon)
+    - implement signal forwarding when --forward-signals is used (by Kiran Rangoon)
+    - add --forward-signals option to argument parser (by Kiran Rangoon)
+    - (man) fix grammar (by Tobias Stoeckmann)
+    - fix inconsistency in usage message (by Christian Goeschel Ndjomouo)
+    - fix user namespace bind mounts (by Chris Webb)
+    - remove get_mnt_ino() check in bind_ns_files_from_child() (by Chris Webb)
+    - add --owner to set user namespace owner uid and gid (by Chris Webb)
+    - use MAX_OF_UINT_TYPE instead of (type)-1 (by Christian Goeschel Ndjomouo)
+    - use the new ul_get{grp,userpw}_str() routines (by Christian Goeschel Ndjomouo)
+    - make the wording of a message identical to that of three others (by Benno Schulenberg)
+    - fix typo in --map-groups=subids map name [coverity scan] (by Karel Zak)
+    - make strings more robust (by Karel Zak)
+
+uuidd:
+    - use locked system user account if available (by Tobias Stoeckmann)
+    - put an option and its description in a single message (by Benno Schulenberg)
+
+uuidgen.1.adoc:
+    - remove superfluous 'plus' (by Daniel Lublin)
+
+various:
+    - (man) list --help and --version last among the options (by Benno Schulenberg)
+
+waitpid:
+    - (manpage) document the support for the "PID:inode" addressing format (by Christian Goeschel Ndjomouo)
+    - close fd after removal from epoll interest list (by Christian Goeschel Ndjomouo)
+    - support 'PID:inode' process addressing format (by Christian Goeschel Ndjomouo)
+    - refactor to improve maintainability (by Christian Goeschel Ndjomouo)
+
+wdctl:
+    - remove -d option leftover (by Munehisa Kamata)
+
+whereis:
+    - fix const qualifier warnings for C23 (by Karel Zak)
+
+Wipefs:
+    - improve --all descriptions for whole-disks (by Karel Zak)
+
+zramctl:
+    - (manpage) add --bytes option description (by Christian Goeschel Ndjomouo)
+    - Add note about column descriptions (by Karel Zak)
+    - ignore ENOENT when setting max_comp_streams (by Jiang XueQian)
+    - fix MEM-USED column description (by Jérôme Poulin)
+    - (man) mention the required arguments for -p and -r (by Benno Schulenberg)
+    - restore normal description indentations in the usage text (by Benno Schulenberg)
+    - wait for device being initialized and unlocked by udevd (by Yu Watanabe)
+
+Misc:
+    - Fix formatting in getino.1.adoc (by Mario Blättermann)
+    - avoid repetitive code (by Arvin Schnell)
+    - always use array with name in json output (by Arvin Schnell)
+    - updated test case (by Arvin Schnell)
+    - include device in json output and use json array when needed (by Arvin Schnell)
+    - Fix various typos and markup in man pages (by Mario Blättermann)
+    - Fix typo in flock.1.adoc (by Mario Blättermann)
+    - Fix typos (by Tobias Stoeckmann)
+    - runuser (by su: elaborate man page regarding TIOCSTI/TIOCLINUX ioctl command injection|finefoot)
+    - Add man page section to (sys)calls (by Dick Marinus)
+    - Fix typos in comments (by Tobias Stoeckmann)
+    - Fix gettext macro calls (by Tobias Stoeckmann)
+    - Add fuse.kio-fuse to list of pseudo file systems (by Oliver Schramm)
+    - Fix memory leak in setpwnam() (by yao zhang)
+    - Fix typos when "set up" is used as a verb (by Louis Sautier)
+    - Fix the issue of fd resource leakage (by Leefancy)
+    - Fix memory leak issue in read_Subid_range() (by fortunate-lee)
+    - update .gitignore (by Karel Zak)
+    - parsing /run/issue.d/* too (by Stefan Schubert)
+    - New netlink library (by Stanislav Brabec)
+    - Using fix issue dir path "/usr/lib" for agetty (by Stefan Schubert)
+    - Fix another issue in login.1.adoc (by Mario Blättermann)
+    - Fix markup in pam_lastlog2.8.adoc (by Mario Blättermann)
+    - Fix markup in column.1.adoc (by Mario Blättermann)
+    - Fix markup in mount.8.adoc (by Mario Blättermann)
+    - Fix typo and markup in getopt.1.adoc (by Mario Blättermann)
+    - Fix markup in lsfd.1.adoc (by Mario Blättermann)
+    - Fix markup, grammar and spelling in scols-filter.5.adoc (by Mario Blättermann)
+    - Fix login.1.adoc (by Mario Blättermann)
+    - Fix markup in pam_lastlog2.8.adoc (by Mario Blättermann)
+    - Fix markup in ll2_import_lastlog.3.adoc (by Mario Blättermann)
+    - Fix markup in more.1.adoc (by Mario Blättermann)
+    - Fix markup in column.1.adoc (by Mario Blättermann)
+    - Fix markup in mesg.1.adoc (by Mario Blättermann)
+    - Fix markup in unshare.1.adoc (by Mario Blättermann)
+    - Fix markup in swapon.8.adoc (by Mario Blättermann)
+    - Fix typos and markup in setpriv.1.adoc (by Mario Blättermann)
+    - Fix markup in lsirq.1.adoc (by Mario Blättermann)
+    - Fix markup in flock.1.adoc (by Mario Blättermann)
+    - Fix markup in chmem.8.adoc (by Mario Blättermann)
+    - Fix markup in lastlog2.8.adoc (by Mario Blättermann)
+    - Fix markup in findmnt.8.adoc (by Mario Blättermann)
+    - Fix markup in su.1.adoc (by Mario Blättermann)
+    - Fix markup in login.1.adoc (by Mario Blättermann)
+    - Fix markup in scols-filter.5.adoc (by Mario Blättermann)
+    - Add reflink support for ZFS. (by Chester Gregg)
+    - Add missing ;; to -m case (#1) (by Nate Drake)
+    - Make scols_column_set_data_func docs visible (by FeRD (Frank Dana))
+    - correct the full name of the GPL in various files (by Benno Schulenberg)
+    - remove "Copyright (C) ...." notes from files that claim no copyright (by Benno Schulenberg)
+    - remove two leftover license lines from colors.{c,h} (by Benno Schulenberg)
+    - add option to force cachestat() usage (by Matteo Croce)
+    - Update bufflen (by Mohamed Maatallah)
+    - fix sectors typos (by formtapez)
+    - Update setpwnam.c (by Mohamed Maatallah)
+    - Do not call exit() on code ending in shared libraries (by Cristian Rodríguez)
+    - fix and add parse_switch() test (by Karel Zak)
+    - Do not use strerror on shared libraries (by Cristian Rodríguez)
+    - Use the 'fallthrough' attribute (by Matteo Croce)
+    - move XXH_FALLTHROUGH into a generic include file (by Matteo Croce)
+    - Fix XXH_HAS_C_ATTRIBUTE check (by easyaspi314 (Devin))
+    - Fix typo in blkdiscard docs (by pls-no-hack)
+    - sys-utils/flock.c Fix a typo in flock.c (by Masanari Iida)
+    - lib/fileeq.c Fix a typo in message. (by Masanari Iida)
+    - Use ipc_stat::cgid for the column COL_CGID. (by Koutheir Attouchi)
+    - use ul_default_shell() for interactive shell spawning (by Alessandro Ratti)
+
