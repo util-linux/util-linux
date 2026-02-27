@@ -1,0 +1,10 @@
+if BUILD_LIBPTYSESSION
+
+include libptysession/src/Makemodule.am
+
+pkgconfig_DATA += libptysession/ptysession.pc
+PATHFILES      += libptysession/ptysession.pc
+EXTRA_DIST     += libptysession/COPYING
+
+endif # BUILD_LIBPTYSESSION
+

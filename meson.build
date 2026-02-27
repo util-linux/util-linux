@@ -19,6 +19,7 @@ liblastlog2_version = '2.0.0'
 libmount_version = '1.1.0'
 libsmartcols_version = '1.1.0'
 libfdisk_version = '1.1.0'
+libptysession_version = '1.0.0'
 
 prefixdir = get_option('prefix')
 if not fs.is_absolute(prefixdir)
@@ -147,6 +148,10 @@ summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : '
 build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
 conf.set('HAVE_LIBFDISK', build_libfdisk ? 1 : false)
 summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
+
+build_libptysession = not get_option('build-libptysession').disabled()
+conf.set('HAVE_LIBPTYSESSION', build_libptysession ? 1 : false)
+summary('libptysession', build_libptysession ? 'enabled' : 'disabled', section : 'components')
 
 build_uuidd = not get_option('build-uuidd').disabled()
 conf.set('HAVE_UUIDD', build_uuidd ? 1 : false)
@@ -1032,6 +1037,7 @@ subdir('libsmartcols')
 subdir('libuuid')
 subdir('liblastlog2')
 subdir('libfdisk')
+subdir('libptysession')
 subdir('pam_lastlog2')
 subdir('login-utils')
 subdir('sys-utils')
@@ -1049,6 +1055,7 @@ includes = [dir_include,
             dir_libfdisk,
             dir_libuuid,
             dir_liblastlog2,
+            dir_libptysession,
             dir_sys_utils]
 
 exes = []

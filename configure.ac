@@ -70,6 +70,13 @@ LIBFDISK_LT_MINOR=1
 LIBFDISK_LT_MICRO=0
 LIBFDISK_VERSION_INFO=`expr $LIBFDISK_LT_MAJOR + $LIBFDISK_LT_MINOR`:$LIBFDISK_LT_MICRO:$LIBFDISK_LT_MINOR
 
+dnl libptysession version
+LIBPTYSESSION_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+LIBPTYSESSION_LT_MAJOR=1
+LIBPTYSESSION_LT_MINOR=0
+LIBPTYSESSION_LT_MICRO=0
+LIBPTYSESSION_VERSION_INFO=`expr $LIBPTYSESSION_LT_MAJOR + $LIBPTYSESSION_LT_MINOR`:$LIBPTYSESSION_LT_MICRO:$LIBPTYSESSION_LT_MINOR
+
 # Check whether exec_prefix=/usr:
 AS_CASE([$exec_prefix:$prefix],
 [NONE:NONE | NONE:/usr | /usr:*],
@@ -1328,6 +1335,23 @@ AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$build_liblastlog2" = xyes])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$build_liblastlog2" = xyes && test "x$enable_static" = xyes])
 AS_IF([test "x$build_liblastlog2" = xyes], [
   AC_DEFINE([HAVE_LIBLASTLOG2], [1], [Define to 1 if you have the -lblkid.])
+])
+
+dnl
+dnl libptysession
+dnl
+AC_ARG_ENABLE([libptysession],
+  AS_HELP_STRING([--disable-libptysession], [do not build libptysession]),
+  [], [UL_DEFAULT_ENABLE([libptysession], [yes])]
+)
+UL_BUILD_INIT([libptysession])
+
+AC_SUBST([LIBPTYSESSION_VERSION])
+AC_SUBST([LIBPTYSESSION_VERSION_INFO])
+AC_DEFINE_UNQUOTED([LIBPTYSESSION_VERSION], ["$LIBPTYSESSION_VERSION"], [libptysession version string])
+AM_CONDITIONAL([BUILD_LIBPTYSESSION], [test "x$build_libptysession" = xyes])
+AS_IF([test "x$build_libptysession" = xyes], [
+  AC_DEFINE([HAVE_LIBPTYSESSION], [1], [Define to 1 if you have the -lptysession.])
 ])
 
 
