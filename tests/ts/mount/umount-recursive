@@ -95,6 +95,10 @@ udevadm settle
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 [ $? == 0 ] || ts_die "umount failed"
 
+# the mountpoint has already been unmounted, so this second call should not fail
+$TS_CMD_UMOUNT --graceful $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
+[ $? == 0 ] || ts_die "--graceful option failed"
+
 ts_log "Success"
 ts_finalize
 
