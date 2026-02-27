@@ -52,6 +52,23 @@ echo "hello" > "$TESTFILE"
 	$TS_CMD_FDSEND -f 3 -a -b "$SOCKNAME_ABSTRACT"
 	exec 3<&-
 	wait $FDRECV_PID
+
+	# Test 3: multi-socket receive; fd 4,5,6 -> target 4,5,6
+	FDRECV_ARGS=""
+	for fd in 4 5 6; do
+		sock="$TS_OUTDIR/fdsend_multi_${fd}_$$.sock"
+		echo "from_sock${fd}" > "$TS_OUTDIR/multi_${fd}"
+		FDRECV_ARGS="$FDRECV_ARGS -f $fd $sock"
+	done
+	$TS_CMD_FDRECV $FDRECV_ARGS --run sh -c '(cat <&4); (cat <&5); (cat <&6)' &
+	FDRECV_PID=$!
+	sleep 1
+	for fd in 4 5 6; do
+		eval "exec ${fd}<\"\$TS_OUTDIR/multi_${fd}\""
+		$TS_CMD_FDSEND -f ${fd} -b "$TS_OUTDIR/fdsend_multi_${fd}_$$.sock"
+		eval "exec ${fd}<&-"
+	done
+	wait $FDRECV_PID
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
