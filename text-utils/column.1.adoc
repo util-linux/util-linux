@@ -41,6 +41,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: column
+:smartcols-json:
 
 == NAME
 
