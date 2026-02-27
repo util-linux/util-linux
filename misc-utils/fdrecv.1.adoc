@@ -1,0 +1,75 @@
+//po4a: entry man manual
+= fdrecv(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: fdrecv
+
+== NAME
+
+fdrecv - receive a file descriptor from another process via Unix socket
+
+== SYNOPSIS
+
+*fdrecv* [options] ([-a] (*-f* _N_ | *-i* | *-o* | *-e*) _SOCKSPEC_)... *--run* _command_ [_args_...]
+
+== DESCRIPTION
+
+*fdrecv* receives file descriptors from other processes using Unix domain
+sockets (SCM_RIGHTS), maps them to target fds, then execs the given command.
+
+Each (*-f* _N_ | *-i* | *-o* | *-e*) _SOCKSPEC_ pair specifies where to receive
+from and where to map the fd: *-f* _N_ maps to fd _N_, *-i*/*-o*/*-e* map to
+stdin/stdout/stderr. _SOCKSPEC_ is either a path starting with '/' or a short
+name under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
+
+*--run* and a command are required. Must appear after all _SOCKSPEC_ arguments.
+
+== OPTIONS
+
+*-f*, *--fd* _num_::
+  Map received fd to _num_. May be repeated with different _SOCKSPEC_ values.
+
+*-i*, *--stdin*::
+  Map received fd to command's stdin (fd 0).
+
+*-o*, *--stdout*::
+  Map received fd to command's stdout (fd 1).
+
+*-e*, *--stderr*::
+  Map received fd to command's stderr (fd 2).
+
+*-r*, *--run*::
+  Execute the following command with the received fds. Must appear after all _SOCKSPEC_ arguments.
+
+*-a*, *--abstract*::
+  Treat the following (or preceding) _SOCKSPEC_ as an abstract Unix socket name (Linux).
+  May appear before or after *-f*/*-i*/*-o*/*-e* within the same group.
+
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*fdrecv* normally returns the exit status of the command it executed. If the command was killed by a signal, the exit status is the signal number plus 128.
+
+Exit status from *fdrecv* itself:
+
+*1*::
+  Receive failed or failed to map fd (e.g. *dup2*(2) failed).
+*126*::
+  The requested command was found but could not be executed.
+*127*::
+  The requested command was not found.
+
+== SEE ALSO
+
+*fdsend*(1)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

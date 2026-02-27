@@ -3393,6 +3393,36 @@ if opt and not is_disabler(exe)
   bashcompletions += ['exch']
 endif
 
+opt = get_option('build-fdsend').require(LINUX).allowed()
+exe = executable(
+  'fdsend',
+  fdsend_sources,
+  include_directories : [includes, include_directories('misc-utils')],
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += fdsend_manadocs
+  bashcompletions += ['fdsend']
+endif
+
+opt = get_option('build-fdrecv').require(LINUX).allowed()
+exe = executable(
+  'fdrecv',
+  fdrecv_sources,
+  include_directories : [includes, include_directories('misc-utils')],
+  link_with : [lib_common],
+  install_dir : usrbin_exec_dir,
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
+  exes += exe
+  manadocs += fdrecv_manadocs
+  bashcompletions += ['fdrecv']
+endif
+
 opt = get_option('build-getino').require(LINUX and conf.get('HAVE_PIDFD_OPEN').to_string() == '1' \
   and conf.get('HAVE_STATX').to_string() == '1' \
   and conf.get('HAVE_STRUCT_STATX').to_string() == '1').allowed()

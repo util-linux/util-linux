@@ -265,6 +265,24 @@ exch_LDADD = $(LDADD) libcommon.la
 exch_CFLAGS = $(AM_CFLAGS)
 endif
 
+if BUILD_FDSEND
+usrbin_exec_PROGRAMS += fdsend
+MANPAGES += misc-utils/fdsend.1
+dist_noinst_DATA += misc-utils/fdsend.1.adoc
+fdsend_SOURCES = misc-utils/fdsend.c misc-utils/fdsend-common.c misc-utils/fdsend-common.h
+fdsend_LDADD = $(LDADD) libcommon.la
+fdsend_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/misc-utils
+endif
+
+if BUILD_FDRECV
+usrbin_exec_PROGRAMS += fdrecv
+MANPAGES += misc-utils/fdrecv.1
+dist_noinst_DATA += misc-utils/fdrecv.1.adoc
+fdrecv_SOURCES = misc-utils/fdrecv.c misc-utils/fdsend-common.c misc-utils/fdsend-common.h
+fdrecv_LDADD = $(LDADD) libcommon.la
+fdrecv_CFLAGS = $(AM_CFLAGS) -I$(top_srcdir)/misc-utils
+endif
+
 if BUILD_FINCORE
 usrbin_exec_PROGRAMS += fincore
 MANPAGES += misc-utils/fincore.1

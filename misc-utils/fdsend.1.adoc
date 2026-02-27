@@ -1,0 +1,61 @@
+//po4a: entry man manual
+= fdsend(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: fdsend
+
+== NAME
+
+fdsend - send a file descriptor to another process via Unix socket
+
+== SYNOPSIS
+
+*fdsend* [options] *--fd* _fd_ _SOCKSPEC_
+
+== DESCRIPTION
+
+*fdsend* sends a file descriptor to another process using a Unix domain socket
+(SCM_RIGHTS). _SOCKSPEC_ is either a path starting with '/' or a short name
+under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
+
+== OPTIONS
+
+*-f*, *--fd* _num_::
+  File descriptor to send (required).
+
+*-p*, *--pid* _pid_::
+  Process whose fd to send (default: current process).
+
+*-b*, *--blocking*::
+  Wait for the socket to appear before connecting (useful when receiver starts first).
+
+*-a*, *--abstract*::
+  Treat _SOCKSPEC_ as an abstract Unix socket name (Linux). No path resolution;
+  the name is used as-is in the kernel abstract namespace.
+
+*-g*, *--pidfd-getfd*::
+  Use pidfd_getfd(2) to obtain the fd from the process. If not specified,
+  open(/proc/PID/fd/FD) is used instead.
+
+include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*0*::
+  Success
+*1*::
+  Unspecified failure
+
+== SEE ALSO
+
+*fdrecv*(1)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

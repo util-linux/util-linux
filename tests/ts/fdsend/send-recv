@@ -1,0 +1,74 @@
+#!/bin/bash
+#
+# Copyright (C) 2026 WanBingjiang <wanbingjiang@webray.com.cn>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="send-recv"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDSEND"
+ts_check_test_command "$TS_CMD_FDRECV"
+
+TESTFILE="$TS_OUTDIR/fdsend_test_data"
+SOCKPATH="$(cd "$TS_OUTDIR" 2>/dev/null && pwd)/fdsend_test.sock"
+SOCKNAME_ABSTRACT="fdsend_abstract_$$"
+mkdir -p "$TS_OUTDIR"
+echo "hello" > "$TESTFILE"
+
+{
+	# Test 1: filesystem socket
+	# Start fdrecv in background: receive fd, dup to stdin, run cat
+	# Options (e.g. --stdin) must come before SOCKSPEC
+	$TS_CMD_FDRECV --stdin "$SOCKPATH" --run cat &
+	FDRECV_PID=$!
+	# Wait for socket to be created
+	sleep 1
+	# Send fd 3 (testfile) to fdrecv; -b blocks until socket appears
+	exec 3<"$TESTFILE"
+	$TS_CMD_FDSEND -f 3 -b "$SOCKPATH"
+	exec 3<&-
+	wait $FDRECV_PID
+
+	# Test 2: abstract Unix socket
+	$TS_CMD_FDRECV -a --stdin "$SOCKNAME_ABSTRACT" --run cat &
+	FDRECV_PID=$!
+	sleep 1
+	exec 3<"$TESTFILE"
+	$TS_CMD_FDSEND -f 3 -a -b "$SOCKNAME_ABSTRACT"
+	exec 3<&-
+	wait $FDRECV_PID
+
+	# Test 3: multi-socket receive; fd 4,5,6 -> target 4,5,6
+	FDRECV_ARGS=""
+	for fd in 4 5 6; do
+		sock="$TS_OUTDIR/fdsend_multi_${fd}_$$.sock"
+		echo "from_sock${fd}" > "$TS_OUTDIR/multi_${fd}"
+		FDRECV_ARGS="$FDRECV_ARGS -f $fd $sock"
+	done
+	$TS_CMD_FDRECV $FDRECV_ARGS --run sh -c '(cat <&4); (cat <&5); (cat <&6)' &
+	FDRECV_PID=$!
+	sleep 1
+	for fd in 4 5 6; do
+		eval "exec ${fd}<\"\$TS_OUTDIR/multi_${fd}\""
+		$TS_CMD_FDSEND -f ${fd} -b "$TS_OUTDIR/fdsend_multi_${fd}_$$.sock"
+		eval "exec ${fd}<&-"
+	done
+	wait $FDRECV_PID
+} > "$TS_OUTPUT" 2>&1
+
+ts_finalize
