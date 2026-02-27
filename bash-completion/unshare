@@ -1,64 +1,75 @@
 _unshare_module()
 {
-	local cur prev OPTS
-	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	case $prev in
-		'--propagation')
-			COMPREPLY=( $(compgen -W "slave shared private unchanged" -- $cur) )
-			return 0
-			;;
-		'-s'|'--setgroups')
-			COMPREPLY=( $(compgen -W "allow deny" -- $cur) )
-			return 0
-			;;
-		'-h'|'--help'|'-V'|'--version')
-			return 0
-			;;
-	esac
-	case $cur in
-		-*)
-			OPTS="--mount
-				--uts
-				--ipc
-				--net
-				--pid
-				--user
-				--cgroup
-				--time
-				--fork
-				--forward-signals
-				--kill-child
-				--keep-caps
-				--mount-proc
-				--map-current-user
-				--map-root-user
-				--owner
-				--propagation
-				--setgroups
-				--help
-				--version
-				--root
-				--wd
-				--load-interp
-				--map-auto
-				--map-group
-				--map-groups
-				--map-user
-				--map-users
-				--map-subids
-				--mount-binfmt
-				--monotonic
-				--boottime
-				--setuid
-				--setgid"
+	local cur prev words cword OPTS NOARGOPTS OPTARGOPTS REQARGOPTS
+	_comp_initialize -- "$@" || return
+
+	_comp_get_words -n = cur prev words cword
+
+	NOARGOPTS="--fork|--forward-signals|--map-root-user|-r|--map-current-user|--map-auto|\
+	--map-subids|--keep-caps|--help|--version"
+
+	NOARGOPTS_SHORT="-r|-f|-c|-h|-V"
+
+	OPTARGOPTS="--mount|--uts|--ipc|--net|--pid|--user|--cgroup|--time|--kill-child|\
+	--mount-proc|--mount-binfmt"
+
+	OPTARGOPTS_SHORT="-m|-u|-i|-n|-p|-U|-C|-T"
+
+	REQARGOPTS="--owner|--propagation|--setgroups|--root|--wd|--load-interp|--map-group|\
+	--map-groups|--map-user|--map-users|--map-subids|--monotonic|--boottime|--setuid|--setgid"
+
+	REQARGOPTS_SHORT="-R|-w|-S|-G"
+
+	OPTS="${NOARGOPTS//|/ } ${NOARGOPTS_SHORT//|/ } ${OPTARGOPTS//|/ } ${OPTARGOPTS_SHORT//|/ }\
+	${REQARGOPTS//|/ } ${REQARGOPTS_SHORT//|/ }"
+
+	# Check if we are still completing unshare(1)
+	# and set an offset that points to the end of
+	# the unshare options
+	local offset=0 i
+	for ((i = 1; i < COMP_CWORD; i++)); do
+		if [[ "${COMP_WORDS[$i]}" =~ $NOARGOPTS|$NOARGOPTS_SHORT ]]; then
+			continue
+		elif [[ "${COMP_WORDS[$i]}" =~ \
+				$OPTARGOPTS|$OPTARGOPTS_SHORT|$REQARGOPTS|$REQARGOPTS_SHORT ]]; then
+			((i++))
+			continue
+		fi
+		offset=$i
+		break
+	done
+
+	if (( offset > 0 )); then
+		_comp_command_offset $offset
+	else
+		case $prev in
+			'--propagation')
+				COMPREPLY=( $(compgen -W "slave shared private unchanged" -- $cur) )
+				return 0
+				;;
+			'-s'|'--setgroups')
+				COMPREPLY=( $(compgen -W "allow deny" -- $cur) )
+				return 0
+				;;
+			'-w'|'--wd')
+				# It's better than simply using 'compgen -f', 
+				# because it honours spaces in filenames.
+				_comp_compgen_filedir
+				return 0
+				;;
+			'-h'|'--help'|'-V'|'--version')
+				return 0
+				;;
+		esac
+
+		if [[ "$cur" == -* ]]; then
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
-			;;
-	esac
-	compopt -o bashdefault
-	COMPREPLY=( $(compgen -c -- $cur) )
+		else
+			_comp_compgen_commands
+		fi
+	fi
+
 	return 0
 }
-complete -F _unshare_module unshare
+complete -F _unshare_module -o default unshare
