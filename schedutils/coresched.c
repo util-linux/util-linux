@@ -122,20 +122,20 @@ static sched_core_cookie core_sched_get_cookie(pid_t pid)
 
 static void core_sched_create_cookie(pid_t pid, sched_core_scope type)
 {
-	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_CREATE, pid, type, 0))
+	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_CREATE, pid, type, 0L))
 		err(EXIT_FAILURE, _("Failed to create cookie for PID %d"), pid);
 }
 
 static void core_sched_pull_cookie(pid_t from)
 {
 	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_SHARE_FROM, from,
-		  PR_SCHED_CORE_SCOPE_THREAD, 0))
+		  PR_SCHED_CORE_SCOPE_THREAD, 0L))
 		err(EXIT_FAILURE, _("Failed to pull cookie from PID %d"), from);
 }
 
 static void core_sched_push_cookie(pid_t to, sched_core_scope type)
 {
-	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_SHARE_TO, to, type, 0))
+	if (prctl(PR_SCHED_CORE, PR_SCHED_CORE_SHARE_TO, to, type, 0L))
 		err(EXIT_FAILURE, _("Failed to push cookie to PID %d"), to);
 }
 

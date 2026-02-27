@@ -4490,7 +4490,7 @@ static void list_output_values(const char *factory_name)
 
 static void rename_self(const char *comm)
 {
-	if (prctl(PR_SET_NAME, (unsigned long)comm, 0, 0, 0) < 0)
+	if (prctl(PR_SET_NAME, (unsigned long)comm, 0L, 0L, 0L) < 0)
 		err(EXIT_FAILURE, "failed to rename self via prctl: %s", comm);
 }
 
