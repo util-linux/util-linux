@@ -12,6 +12,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: fincore
+:smartcols-json:
 :plus: +
 
 == NAME
@@ -62,6 +63,10 @@ Use JSON output format.
 Recursively check all files in directories.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == AUTHORS
 

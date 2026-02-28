@@ -12,6 +12,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsns
+:smartcols-json:
 
 == NAME
 
@@ -103,6 +104,8 @@ An ioctl was unknown to the kernel.
 
 *LSNS_DEBUG*=all::
 enables *lsns* debug output.
+
+include::man-common/env-smartcols.adoc[]
 
 == AUTHORS
 
