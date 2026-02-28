@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsirq
+:smartcols-json:
 
 == NAME
 
@@ -50,6 +51,10 @@ Only show IRQs with counters above the specified threshold. Human readable value
 Only show interrupt counters on the specified CPU list.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == AUTHORS
 

@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsipc
+:smartcols-json:
 
 == NAME
 
@@ -96,6 +97,10 @@ Print numeric permissions in PERMS column.
 
 *-y*, *--shell*::
 The column name will be modified to contain only characters allowed for shell variable identifiers. This is usable, for example, with *--export*. Note that this feature has been automatically enabled for *--export* in version 2.37, but due to compatibility issues, now it's necessary to request this behavior by *--shell*.
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == EXIT STATUS
 
