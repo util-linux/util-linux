@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsblk
+:smartcols-json:
 
 == NAME
 

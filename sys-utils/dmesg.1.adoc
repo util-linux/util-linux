@@ -11,6 +11,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: dmesg
+:smartcols-json:
 
 == NAME
 
@@ -186,6 +187,10 @@ The text of the message with the warning log priority.
 
 *segfault*::
 The text of the message that inform about segmentation fault.
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == EXIT STATUS
 

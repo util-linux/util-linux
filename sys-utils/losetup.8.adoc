@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: losetup
+:smartcols-json:
 
 == NAME
 
@@ -154,6 +155,8 @@ Since version 2.37 *losetup* uses *LOOP_CONFIGURE* ioctl to set up a new loop de
 
 *LOOPDEV_DEBUG*=all::
 enables debug output.
+
+include::man-common/env-smartcols.adoc[]
 
 == FILES
 
