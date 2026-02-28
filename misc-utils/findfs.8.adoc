@@ -16,35 +16,43 @@ findfs - find a filesystem by label or UUID
 
 == SYNOPSIS
 
-*findfs* *NAME*=_value_
+*findfs* _TAGNAME_**=**_value_
 
 == DESCRIPTION
 
-*findfs* will search the block devices in the system looking for a filesystem or partition with specified tag. The currently supported tags are:
+*findfs* will search the block devices in the system for a filesystem or partition
+with the specified tag. The currently supported tags are:
 
-*LABEL*=_<label>_::
-Specifies filesystem label.
+____
+**LABEL=**_label_::
+Specifies a filesystem label.
 
-*UUID*=_<uuid>_::
-Specifies filesystem UUID.
+**UUID=**_uuid_::
+Specifies a filesystem UUID.
 
-*PARTUUID*=_<uuid>_::
-Specifies partition UUID. This partition identifier is supported for example for GUID Partition Table (GPT) partition tables.
+**PARTUUID=**_uuid_::
+Specifies a partition UUID. Partition identifiers are supported for example for GUID Partition Table (GPT) partition tables.
 
-*PARTLABEL*=_<label>_::
-Specifies partition label (name). The partition labels are supported for example for GUID Partition Table (GPT) or MAC partition tables.
+**PARTLABEL=**_label_::
+Specifies a partition label (name). Partition labels are supported for example for GPT and MAC partition tables.
+____
 
-If the filesystem or partition is found, the device name will be printed on stdout. If the input is not in the format of NAME=value, then the input will be copied to the output without any modification.
+If the filesystem or partition is found, the device name will be printed on stdout.
+If the input is not in the format of _TAGNAME_**=**_value_, then the input will be
+copied to the output without any modification.
 
-The complete overview about filesystems and partitions you can get for example by
+You can get a complete overview about the filesystems and partitions in the system
+with one of the following commands:
 
 ____
 *lsblk --fs*
 
-*partx --show <disk>*
+*partx --show* _disk_
 
 *blkid*
 ____
+
+== OPTIONS
 
 include::man-common/help-version.adoc[]
 
@@ -53,7 +61,7 @@ include::man-common/help-version.adoc[]
 *0*::
 success
 *1*::
-label or uuid cannot be found
+label or UUID cannot be found
 *2*::
 usage error, wrong number of arguments or unknown option
 
