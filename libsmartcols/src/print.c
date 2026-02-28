@@ -975,7 +975,7 @@ int __scols_print_title(struct libscols_table *tb)
 			goto done;
 		}
 
-		if (!mbs_safe_encode_to_buffer(tb->title.data, &len, buf, bufsz, NULL) ||
+		if (!mbs_safe_encode_to_buffer(tb->title.data, &len, buf, bufsz, NULL, NULL) ||
 		    !len || len == (size_t) -1) {
 			rc = -EINVAL;
 			goto done;
