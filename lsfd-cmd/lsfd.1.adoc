@@ -12,6 +12,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsfd
+:smartcols-json:
 :colon: :
 
 == NAME
@@ -118,6 +119,10 @@ List the columns that can be specified with the *--output* option.
 Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == OUTPUT COLUMNS
 

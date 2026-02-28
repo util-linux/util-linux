@@ -9,6 +9,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lslogins
+:smartcols-json:
 
 == NAME
 
@@ -144,6 +145,10 @@ The password is not set (hash is missing); this is common for locked system acco
 
 *"Login by password disabled"*::
 'yes' means that there is no valid password. The password hash is missing, or the hash method is unknown or contains invalid chars.
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == HISTORY
 
