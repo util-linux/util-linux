@@ -1,0 +1,3 @@
+`rename_copy_foo.1' -> `rename_copy_bar.1'
+`rename_copy_foo.2' -> `rename_copy_bar.2'
+Skipping existing file: `rename_copy_bar.3'

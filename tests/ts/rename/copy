@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 WanBingjiang <wanbingjiang@webray.com.cn>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="copy check"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_RENAME"
+ts_cd "$TS_OUTDIR"
+
+# Test 1: regular file copy
+echo "test content" > rename_copy_foo.1
+$TS_CMD_RENAME -c -v foo bar rename_copy_foo.1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ ! -f rename_copy_foo.1 ]; then
+	echo "error: original file rename_copy_foo.1 is missing (should be preserved)" >> $TS_OUTPUT
+fi
+if [ ! -f rename_copy_bar.1 ]; then
+	echo "error: copy rename_copy_bar.1 is missing" >> $TS_OUTPUT
+elif [ "$(cat rename_copy_bar.1)" != "test content" ]; then
+	echo "error: copy content mismatch" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.1 rename_copy_bar.1
+
+# Test 2: symlink copy
+touch rename_copy_target
+ln -s rename_copy_target rename_copy_foo.2
+$TS_CMD_RENAME -c -v foo bar rename_copy_foo.2 >> $TS_OUTPUT 2>> $TS_ERRLOG
+where_orig="$(readlink rename_copy_foo.2)"
+where_new="$(readlink rename_copy_bar.2)"
+if [ "$where_orig" != "rename_copy_target" ]; then
+	echo "error: original symlink points to $where_orig" >> $TS_OUTPUT
+fi
+if [ "$where_new" != "rename_copy_target" ]; then
+	echo "error: new symlink points to $where_new" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.2 rename_copy_bar.2 rename_copy_target
+
+# Test 3: unsupported file type (directory)
+mkdir rename_copy_unsupported_foo
+$TS_CMD_RENAME -c -v foo bar rename_copy_unsupported_foo >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ -d rename_copy_unsupported_bar ]; then
+	echo "error: unsupported file type should not be copied" >> $TS_OUTPUT
+fi
+rmdir rename_copy_unsupported_foo 2>/dev/null
+rm -rf rename_copy_unsupported_bar 2>/dev/null
+
+# Test 4: --no-overwrite
+echo "original" > rename_copy_foo.3
+echo "existing" > rename_copy_bar.3
+$TS_CMD_RENAME -c -o -v foo bar rename_copy_foo.3 >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ "$(cat rename_copy_bar.3)" != "existing" ]; then
+	echo "error: existing file should not be overwritten" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.3 rename_copy_bar.3
+
+ts_finalize

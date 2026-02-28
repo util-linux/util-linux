@@ -31,6 +31,9 @@ rename - rename files
 *-s*, *--symlink*::
 Do not rename a symlink but change where it points.
 
+*-c*, *--copy*::
+Copy files instead of renaming them. The original files remain unchanged. For regular files, the content is copied; for symbolic links, a new link with the same target is created.
+
 *-v*, *--verbose*::
 Show which files were renamed, if any.
 
