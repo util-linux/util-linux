@@ -770,7 +770,7 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 		 * begin of the device.
 		 */
 		return blkid_probe_get_buffer(pr->parent,
-				pr->off + off - pr->parent->off, len);
+				pr->off + off + bias - pr->parent->off, len);
 	}
 
 	/* try buffers we already have in memory or read from device */
