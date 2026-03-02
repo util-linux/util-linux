@@ -53,8 +53,8 @@ extern void ul_fileeq_data_init(struct ul_fileeq_data *data);
 extern void ul_fileeq_data_deinit(struct ul_fileeq_data *data);
 extern void ul_fileeq_data_set_file(struct ul_fileeq_data *data,
 				    const char *name);
-extern size_t ul_fileeq_set_size(struct ul_fileeq *eq, uint64_t filesiz,
-                                 size_t readsiz, size_t memsiz);
+extern bool ul_fileeq_set_size(struct ul_fileeq *eq, int64_t st_size,
+                               size_t readsiz, size_t memsiz);
 
 extern int ul_fileeq(struct ul_fileeq *eq,
               struct ul_fileeq_data *a, struct ul_fileeq_data *b);

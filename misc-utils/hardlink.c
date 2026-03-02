@@ -1097,8 +1097,12 @@ static void visitor(const void *nodep, const VISIT which, const int depth)
 
 		/* per-file cache size */
 		memsiz = opts.cache_size / nnodes;
-		/*                                filesiz,      readsiz,      memsiz */
-		ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz);
+		/*                               st_size,            readsiz,      memsiz */
+		if (!ul_fileeq_set_size(&fileeq, master->st.st_size, opts.io_size, memsiz)) {
+			jlog(VERBOSE2,
+			     printf(_("Skipped (memory constraints) %s"), master->links->path));
+			continue;
+		}
 
 #ifdef USE_REFLINK
 		if (reflink_mode || reflinks_skip) {
