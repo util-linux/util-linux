@@ -6,20 +6,25 @@
 # as getopt-example.bash.
 
 # Example input and output (from the tcsh prompt):
-# ./getopt-example.tcsh -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
+# ./getopt-example.tcsh -a --a-long \
+#                       -barg_bs1 -b arg_bs2     --b-long=arg_bl1 --b-long arg_bl2 \
+#                       -carg_cs1 -c not_arg_cs1 --c-long=arg_cl1 --c-long not_arg_cl2 \
+#                       arg_p "string with quotes and space: '' \"\" "
 # Option a
+# Option a
+# Option b, argument `arg_bs1'
+# Option b, argument `arg_bs2'
+# Option b, argument `arg_bl1'
+# Option b, argument `arg_bl2'
+# Option c, argument `arg_cs1'
 # Option c, no argument
-# Option c, argument `more'
-# Option b, argument ` very long '
+# Option c, argument `arg_cl1'
+# Option c, no argument
 # Remaining arguments:
-# --> `par1'
-# --> `another arg'
-# --> `wow!*\?'
-
-# Note that we had to escape the exclamation mark in the wow-argument. This
-# is _not_ a problem with getopt, but with the tcsh command parsing. If you
-# would give the same line from the bash prompt (ie. call ./parse.tcsh),
-# you could remove the exclamation mark.
+# --> `not_arg_cs1'
+# --> `not_arg_cl2'
+# --> `arg_p'
+# --> `string with quotes and space: '' "" '
 
 # This is a bit tricky. We use a temp variable, to be able to check the
 # return value of getopt (eval nukes it). argv contains the command arguments
