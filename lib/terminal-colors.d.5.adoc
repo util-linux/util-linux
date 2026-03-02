@@ -99,19 +99,19 @@ control character anywhere in a string, as well as a hash mark as the first
 character. These C-style backslash-escapes can be used:
 
 ____
-``    *\a*   Bell (ASCII 7)``
-``    *\b*   Backspace (ASCII 8)``
-``    *\e*   Escape (ASCII 27)``
-``    *\f*   Form feed (ASCII 12)``
-``    *\n*   Newline (ASCII 10)``
-``    *\r*   Carriage Return (ASCII 13)``
-``    *\t*   Tab (ASCII 9)``
-``    *\v*   Vertical Tab (ASCII 11)``
-``    *\?*{nbsp}{nbsp}{nbsp}Delete (ASCII 127)``
-``    *\_*   Space``
-``    *\\*   Backslash (\)``
-``    *\^*   Caret (^)``
-``    *\\#*   Hash mark (#)``
+    *\a*   Bell (ASCII 7)
+    *\b*   Backspace (ASCII 8)
+    *\e*   Escape (ASCII 27)
+    *\f*   Form feed (ASCII 12)
+    *\n*   Newline (ASCII 10)
+    *\r*   Carriage Return (ASCII 13)
+    *\t*   Tab (ASCII 9)
+    *\v*   Vertical Tab (ASCII 11)
+    *\?*{nbsp}{nbsp}{nbsp}Delete (ASCII 127)
+    *\_*   Space
+    *\\*   Backslash (\)
+    *\^*   Caret (^)
+    *\\#*   Hash mark (#)
 ____
 
 === Comments
