@@ -37,6 +37,7 @@ libcommon_la_SOURCES = \
 	lib/randutils.c \
 	lib/sha1.c \
 	lib/sha256.c \
+	lib/shells.c \
 	lib/signames.c \
 	lib/strutils.c \
 	lib/strv.c \
@@ -48,7 +49,6 @@ libcommon_la_SOURCES = \
 if LINUX
 libcommon_la_SOURCES += \
 	lib/linux_version.c \
-	lib/shells.c \
 	lib/loopdev.c
 endif
 
