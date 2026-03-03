@@ -2948,8 +2948,9 @@ static void output_special_char(struct issue *ie,
 			users = sd_get_sessions(NULL);
 			if (users < 0)
 				users = 0;
-		} else {
+		} else
 #endif
+		{
 			users = 0;
 			struct utmpx *ut;
 			setutxent();
@@ -2957,9 +2958,7 @@ static void output_special_char(struct issue *ie,
 				if (ut->ut_type == USER_PROCESS)
 					users++;
 			endutxent();
-#ifdef USE_SYSTEMD
 		}
-#endif
 		if (c == 'U')
 			fprintf(ie->output, P_("%d user", "%d users", users), users);
 		else
