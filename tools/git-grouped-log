@@ -66,7 +66,28 @@ else
     range="$start_commit"
 fi
 
-while IFS='|' read -r subj author; do
+while IFS= read -r -d '' record; do
+    # Strip inter-entry newline separator added by git log format:
+    record="${record#$'\n'}"
+    [[ -z "$record" ]] && continue
+
+    # First line contains "subject|author", rest is commit body
+    first_line="${record%%$'\n'*}"
+    subj="${first_line%%|*}"
+    author="${first_line#*|}"
+
+    # Extract co-author names from commit body trailers
+    coauthors=""
+    while IFS= read -r name; do
+        [[ -n "$name" ]] && coauthors="${coauthors:+$coauthors, }$name"
+    done < <(echo "$record" | \
+        grep -iE '^[[:space:]]*(Co-authored-by|Co-Author)[[:space:]]*:' | \
+        sed -E 's/^[^:]+:[[:space:]]*//; s/[[:space:]]*<[^>]*>[[:space:]]*$//')
+
+    if [[ -n "$coauthors" ]]; then
+        author="$author, $coauthors"
+    fi
+
     # Handle "Revert" commits separately
     if [[ "$subj" =~ ^Revert\ \"([^:]+):.* ]]; then
         subsys="${BASH_REMATCH[1]}"
@@ -76,19 +97,19 @@ while IFS='|' read -r subj author; do
         subsys=$(echo "$subj" | awk -F': ' '{print $1}')
         desc=$(echo "$subj" | awk -F': ' '{$1=""; sub(/^ /, ""); print}')
     fi
-    
+
     # If no subsystem is detected, categorize under "Misc"
     if [[ -z "$desc" ]]; then
         subsys="Misc"
         desc="$subj"
     fi
-    
+
     key=$(echo "$subsys" | sed 's|[^a-zA-Z0-9_]|_|g')
-    
+
     subsystems["$key"]="$subsys"
     commits["$key"]+="    - $desc (by $author)
 "
-done < <(git log --no-merges --pretty=format:'%s|%an' "$range" --)
+done < <(git log --no-merges --pretty=format:'%s|%an%n%b%x00' "$range" --)
 
 misc=""
 for key in $(printf "%s\n" "${!commits[@]}" | sort); do
