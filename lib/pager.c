@@ -81,6 +81,7 @@ static int start_command(struct child_process *cmd)
 	}
 
 	if (cmd->pid < 0) {
+		cmd->pid = 0;
 		close_pair(fdin);
 		return -1;
 	}
