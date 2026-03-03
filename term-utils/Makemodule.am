@@ -51,6 +51,9 @@ agetty_SOURCES = term-utils/agetty.c \
 if USE_PLYMOUTH_SUPPORT
 agetty_SOURCES += lib/plymouth-ctrl.c
 endif
+if LINUX
+agetty_SOURCES += lib/netlink.c lib/netaddrq.c
+endif
 agetty_LDADD = $(LDADD) libcommon.la
 if BSD
 agetty_LDADD += -lutil

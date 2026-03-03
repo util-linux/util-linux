@@ -31,8 +31,6 @@ libcommon_la_SOURCES = \
 	lib/mbsalign.c \
 	lib/mbsedit.c\
 	lib/md5.c \
-	lib/netaddrq.c \
-	lib/netlink.c \
 	lib/pidutils.c \
 	lib/pidfd-utils.c \
 	lib/pwdutils.c \
@@ -99,8 +97,6 @@ check_PROGRAMS += \
 	test_ismounted \
 	test_pwdutils \
 	test_mangle \
-	test_netlink \
-	test_netaddrq \
 	test_randutils \
 	test_remove_env \
 	test_strutils \
@@ -120,7 +116,9 @@ check_PROGRAMS += \
 	test_pager \
 	test_caputils \
 	test_loopdev \
-	test_linux_version
+	test_linux_version \
+	test_netlink \
+	test_netaddrq
 endif
 
 if HAVE_OPENAT
@@ -147,12 +145,6 @@ test_ismounted_LDADD = libcommon.la $(LDADD)
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_MANGLE
-
-test_netlink_SOURCES = lib/netlink.c
-test_netlink_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETLINK
-
-test_netaddrq_SOURCES = lib/netaddrq.c lib/netlink.c
-test_netaddrq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETADDRQ
 
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_STRUTILS
@@ -210,6 +202,12 @@ test_linux_version_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LINUXVERSION
 test_loopdev_SOURCES = lib/loopdev.c
 test_loopdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LOOPDEV
 test_loopdev_LDADD = $(LDADD) libcommon.la
+
+test_netlink_SOURCES = lib/netlink.c
+test_netlink_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETLINK
+
+test_netaddrq_SOURCES = lib/netaddrq.c lib/netlink.c
+test_netaddrq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETADDRQ
 endif
 
 test_configs_SOURCES = lib/configs.c
