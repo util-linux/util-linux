@@ -365,7 +365,9 @@ int main(int argc, char **argv)
 	};
 	struct issue issue = {
 		.mem = NULL,
+#ifdef AGETTY_RELOAD
 		.nl.fd = -1
+#endif
 	};
 	char *login_argv[LOGIN_ARGV_MAX + 1];
 	int login_argc = 0;
@@ -1976,7 +1978,12 @@ done:
  */
 static void show_issue(struct options *op)
 {
-	struct issue ie = { .output = NULL, .nl.fd = -1 };
+	struct issue ie = {
+		.output = NULL,
+#ifdef AGETTY_RELOAD
+		.nl.fd = -1
+#endif
+	};
 	struct termios tp;
 
 	memset(&tp, 0, sizeof(struct termios));
@@ -2589,6 +2596,7 @@ static void log_warn(const char *fmt, ...)
 	va_end(ap);
 }
 
+#ifdef AGETTY_RELOAD
 static void print_iface_best(struct issue *ie,
 			     const char *ifname,
 			     uint8_t ifa_family)
@@ -2754,6 +2762,7 @@ static void dump_iface_all(struct issue *ie,
 	if (!first)
 		fputs("\n", ie->output);
 }
+#endif /* AGETTY_RELOAD */
 
 /*
  * parses \x{argument}, if not argument specified then returns NULL, the @fd
