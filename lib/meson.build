@@ -17,8 +17,6 @@ lib_common_sources = '''
 	mbsalign.c
 	mbsedit.c
 	md5.c
-	netaddrq.c
-	netlink.c
 	pidutils.c
 	pidfd-utils.c
 	procfs.c
@@ -50,6 +48,8 @@ lib_common_sources += [idcache_c,
                        sha1_c,
                        strutils_c,
                        strv_c]
+
+netlink_files_c = files('netlink.c', 'netaddrq.c')
 
 monotonic_c = files('monotonic.c')
 timer_c = files('timer.c')
