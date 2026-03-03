@@ -102,7 +102,7 @@ static int wait_for_pager(void)
 	pager_process.pid = 0;
 
 	if (waiting == -1)
-		err(EXIT_FAILURE, "waitpid failed");
+		return -1;
 
 	if (waiting == pager_process.pid && WIFEXITED(status))
 		return WEXITSTATUS(status);
@@ -205,8 +205,10 @@ static void __setup_pager(void)
 	/* this makes sure that waitpid works as expected */
 	sigaction(SIGCHLD, &sa, &pager_process.orig_sigchld);
 
-	if (start_command(&pager_process))
+	if (start_command(&pager_process)) {
+		sigaction(SIGCHLD, &pager_process.orig_sigchld, NULL);
 		return;
+	}
 
 	/* original process continues, but writes to the pipe */
 	dup2(pager_process.in, STDOUT_FILENO);
@@ -258,7 +260,7 @@ void pager_open(void)
 void pager_close(void)
 {
 	struct sigaction sa;
-	int ret;
+	int ret, safe_errno;
 
 	if (pager_process.pid == 0)
 		return;
@@ -290,12 +292,17 @@ void pager_close(void)
 	ret = wait_for_pager();
 
 	/* restore original signal settings */
+	safe_errno = errno;
 	sigaction(SIGCHLD, &pager_process.orig_sigchld, NULL);
 	sigaction(SIGINT,  &pager_process.orig_sigint, NULL);
 	sigaction(SIGHUP,  &pager_process.orig_sighup, NULL);
 	sigaction(SIGTERM, &pager_process.orig_sigterm, NULL);
 	sigaction(SIGQUIT, &pager_process.orig_sigquit, NULL);
 	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
+	errno = safe_errno;
+
+	if (ret == -1)
+		err(EXIT_FAILURE, "waitpid failed");
 
 	if (pager_caught_signal || (pager_caught_sigpipe && ret))
 		exit(EXIT_FAILURE);
