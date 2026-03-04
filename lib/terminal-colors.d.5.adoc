@@ -34,14 +34,15 @@ The _term_ is a terminal identifier (the *TERM* environment variable). The termi
 The _type_ is a file type. Supported file types are:
 
 *disable*::
-Turns off output colorization for all compatible utilities. See also the NO_COLOR environment variable below.
+Turns off output colorization for all compatible utilities. See also the *NO_COLOR* environment variable below.
+
 *enable*::
 Turns on output colorization; any matching *disable* files are ignored.
 
 *scheme*::
 Specifies colors used for output. The file format may be specific to the utility, the default format is described below.
 
-If there are more files that match for a utility, then the file with the more specific filename wins. For example, the filename "@xterm.scheme" has less priority than "dmesg@xterm.scheme". The lowest priority are those files without a utility name and terminal identifier (e.g., "disable").
+If there are more files that match for a utility, then the file with the more specific filename wins. For example, the filename _@xterm.scheme_ has less priority than _dmesg@xterm.scheme_. The lowest priority are those files without a utility name and terminal identifier (e.g., "disable").
 
 The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/terminal-colors.d_ overrides the global setting.
 
@@ -65,28 +66,70 @@ black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, lightb
 === ANSI color sequences
 
 The color sequences are composed of sequences of numbers separated by semicolons. The most common codes are:
-____
-     0   to restore default color
-     1   for brighter colors
-     4   for underlined text
-     5   for flashing text
-    30   for black foreground
-    31   for red foreground
-    32   for green foreground
-    33   for yellow (or brown) foreground
-    34   for blue foreground
-    35   for purple foreground
-    36   for cyan foreground
-    37   for white (or gray) foreground
-    40   for black background
-    41   for red background
-    42   for green background
-    43   for yellow (or brown) background
-    44   for blue background
-    45   for purple background
-    46   for cyan background
-    47   for white (or gray) background
-____
+
+[cols=">1,4"]
+|===
+|0
+|to restore default color
+
+|1
+|for brighter colors
+
+|4
+|for underlined text
+
+|5
+|for flashing text
+
+|30
+|for black foreground
+
+|31
+|for red foreground
+
+|32
+|for green foreground
+
+|33
+|for yellow (or brown) foreground
+
+|34
+|for blue foreground
+
+|35
+|for purple foreground
+
+|36
+|for cyan foreground
+
+|37
+|for white (or gray) foreground
+
+|40
+|for black background
+
+|41
+|for red background
+
+|42
+|for green background
+
+|43
+|for yellow (or brown) background
+
+|44
+|for blue background
+
+|45
+|for purple background
+
+|46
+|for cyan background
+
+|47
+|for white (or gray) background
+|===
+
 
 For example, to use a red background for alert messages in the output of *dmesg*(1), use:
 
@@ -98,21 +141,47 @@ An escape sequence is necessary to enter a space, backslash, caret, or any
 control character anywhere in a string, as well as a hash mark as the first
 character. These C-style backslash-escapes can be used:
 
-____
-    *\a*   Bell (ASCII 7)
-    *\b*   Backspace (ASCII 8)
-    *\e*   Escape (ASCII 27)
-    *\f*   Form feed (ASCII 12)
-    *\n*   Newline (ASCII 10)
-    *\r*   Carriage Return (ASCII 13)
-    *\t*   Tab (ASCII 9)
-    *\v*   Vertical Tab (ASCII 11)
-    *\?*{nbsp}{nbsp}{nbsp}Delete (ASCII 127)
-    *\_*   Space
-    *\\*   Backslash (\)
-    *\^*   Caret (^)
-    *\\#*   Hash mark (#)
-____
+[cols="1,4"]
+|===
+|*\a*
+|Bell (ASCII 7)
+
+|*\b*
+|Backspace (ASCII 8)
+
+|*\e*
+|Escape (ASCII 27)
+
+|*\f*
+|Form feed (ASCII 12)
+
+|*\n*
+|Newline (ASCII 10)
+
+|*\r*
+|Carriage Return (ASCII 13)
+
+|*\t*
+|Tab (ASCII 9)
+
+|*\v*
+|Vertical Tab (ASCII 11)
+
+|*\?*
+|Delete (ASCII 127)
+
+|*\_*
+|Space
+
+|*\\*
+|Backslash (\)
+
+|*\^*
+|Caret (^)
+
+|*\\#*
+|Hash mark (#)
+|===
 
 === Comments
 
