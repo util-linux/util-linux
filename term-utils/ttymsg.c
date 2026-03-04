@@ -136,6 +136,7 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 		}
 		if (errno == EWOULDBLOCK) {
 			int cpid, flags;
+			int rc;
 			sigset_t sigmask;
 
 			if (forked) {
@@ -161,8 +162,14 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 			sigemptyset(&sigmask);
 			sigprocmask (SIG_SETMASK, &sigmask, NULL);
 			alarm((u_int)tmout);
-			flags = fcntl(fd, F_GETFL);
-			fcntl(flags, F_SETFL, (long) (flags & ~O_NONBLOCK));
+			rc = flags = fcntl(fd, F_GETFL);
+			if (rc >= 0)
+				rc = fcntl(fd, F_SETFL, (long) (flags & ~O_NONBLOCK));
+			if (rc < 0) {
+				warn(_("fcntl failed: %s"), device); 
+				close_fd(fd);
+				_exit(EXIT_FAILURE);
+			}
 			continue;
 		}
 		/*
