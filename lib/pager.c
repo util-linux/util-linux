@@ -302,7 +302,7 @@ void pager_close(void)
 	errno = safe_errno;
 
 	if (ret == -1)
-		err(EXIT_FAILURE, "waitpid failed");
+		err(EXIT_FAILURE, _("waitpid failed"));
 
 	if (pager_caught_signal || (pager_caught_sigpipe && ret))
 		exit(EXIT_FAILURE);
