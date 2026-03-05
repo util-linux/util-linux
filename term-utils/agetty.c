@@ -48,7 +48,10 @@
 #include "path.h"
 #include "fileutils.h"
 #ifdef AGETTY_RELOAD
-#include "netaddrq.h"
+# include "netaddrq.h"
+# if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
+#  define USE_NETLINK
+# endif
 #endif
 
 #include "logindefs.h"
@@ -140,11 +143,11 @@
  */
 #ifdef AGETTY_RELOAD
 # include <sys/inotify.h>
-# include <linux/netlink.h>
-# include <linux/rtnetlink.h>
 # define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
 # define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
+#endif
+#ifdef USE_NETLINK
 static uint32_t netlink_groups;
 #endif
 
@@ -153,8 +156,10 @@ struct issue {
 	char *mem;
 	size_t mem_sz;
 
-#ifdef AGETTY_RELOAD
+#ifdef USE_NETLINK
 	struct ul_nl_data nl;
+#endif
+#ifdef AGETTY_RELOAD
 	char *mem_old;
 #endif
 	unsigned int do_tcsetattr : 1,
@@ -365,7 +370,9 @@ int main(int argc, char **argv)
 	};
 	struct issue issue = {
 		.mem = NULL,
+#ifdef USE_NETLINK
 		.nl.fd = -1
+#endif
 	};
 	char *login_argv[LOGIN_ARGV_MAX + 1];
 	int login_argc = 0;
@@ -1639,11 +1646,13 @@ static int wait_for_term_input(struct issue *ie, int fd)
 			FD_SET(inotify_fd, &rfds);
 			nfds = max(nfds, inotify_fd);
 		}
+
+#ifdef USE_NETLINK
 		if (ie->nl.fd >= 0) {
 			FD_SET(ie->nl.fd, &rfds);
 			nfds = max(nfds, ie->nl.fd);
 		}
-
+#endif
 		/* If waiting fails, just fall through, presumably reading input will fail */
 		if (select(nfds + 1, &rfds, NULL, NULL, NULL) < 0)
 			return 1;
@@ -1653,6 +1662,7 @@ static int wait_for_term_input(struct issue *ie, int fd)
 
 		}
 
+#ifdef USE_NETLINK
 		if (ie->nl.fd >= 0 && FD_ISSET(ie->nl.fd, &rfds)) {
 			int rc;
 
@@ -1667,7 +1677,9 @@ static int wait_for_term_input(struct issue *ie, int fd)
 			while (!rc || rc == UL_NL_SOFT_ERROR);
 
 		/* Just drain the inotify buffer */
-		} else if (inotify_fd >= 0 && FD_ISSET(inotify_fd, &rfds)) {
+		} else
+#endif /* USE_NETLINK */
+		if (inotify_fd >= 0 && FD_ISSET(inotify_fd, &rfds)) {
 			while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
 		}
 
@@ -1877,7 +1889,7 @@ static void eval_issue_file(struct issue *ie,
 	if (!(op->flags & F_ISSUE))
 		goto done;
 
-#ifdef AGETTY_RELOAD
+#ifdef USE_NETLINK
 /* TODO:
  * Two pass processing for eval_issue_file()
  * Implement pass 1: Just evaluate list of netlink_groups (IP protocols) and
@@ -1911,7 +1923,7 @@ error:
 	ul_nl_close(&(ie->nl));
 	ie->nl.fd = -1;
 skip:
-#endif
+#endif /* USE_NETLINK */
 	/*
 	 * The custom issue file or directory list specified by:
 	 *   agetty --issue-file <path[:path]...>
@@ -1976,7 +1988,12 @@ done:
  */
 static void show_issue(struct options *op)
 {
-	struct issue ie = { .output = NULL, .nl.fd = -1 };
+	struct issue ie = {
+		.output = NULL,
+#ifdef USE_NETLINK
+		.nl.fd = -1
+#endif
+	};
 	struct termios tp;
 
 	memset(&tp, 0, sizeof(struct termios));
@@ -2589,6 +2606,7 @@ static void log_warn(const char *fmt, ...)
 	va_end(ap);
 }
 
+#ifdef USE_NETLINK
 static void print_iface_best(struct issue *ie,
 			     const char *ifname,
 			     uint8_t ifa_family)
@@ -2754,6 +2772,7 @@ static void dump_iface_all(struct issue *ie,
 	if (!first)
 		fputs("\n", ie->output);
 }
+#endif /* USE_NETLINK */
 
 /*
  * parses \x{argument}, if not argument specified then returns NULL, the @fd
@@ -2929,8 +2948,9 @@ static void output_special_char(struct issue *ie,
 			users = sd_get_sessions(NULL);
 			if (users < 0)
 				users = 0;
-		} else {
+		} else
 #endif
+		{
 			users = 0;
 			struct utmpx *ut;
 			setutxent();
@@ -2938,16 +2958,14 @@ static void output_special_char(struct issue *ie,
 				if (ut->ut_type == USER_PROCESS)
 					users++;
 			endutxent();
-#ifdef USE_SYSTEMD
 		}
-#endif
 		if (c == 'U')
 			fprintf(ie->output, P_("%d user", "%d users", users), users);
 		else
 			fprintf (ie->output, "%d ", users);
 		break;
 	}
-#if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
+#ifdef USE_NETLINK
 	case '4':
 	case '6':
 	{
@@ -2992,7 +3010,7 @@ static void output_special_char(struct issue *ie,
 		}
 	}
 	break;
-#endif
+#endif /* USE_NETLINK */
 	default:
 		putc(c, ie->output);
 		break;

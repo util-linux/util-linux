@@ -188,12 +188,15 @@ void blkid_gc_cache(blkid_cache cache)
 			DBG(CACHE, ul_debugobj(cache, "freeing non-existing %s", dev->bid_name));
 			blkid_free_dev(dev);
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
+
+#ifdef __linux__
 		} else if (is_loopdev(dev->bid_name)
 					&& !loopdev_has_backing_file(dev->bid_name)) {
 			/* remove empty loop device from cache */
 			DBG(CACHE, ul_debugobj(cache, "freeing empty loop device %s", dev->bid_name));
 			blkid_free_dev(dev);
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
+#endif
 		} else {
 			DBG(CACHE, ul_debug("Device %s exists", dev->bid_name));
 		}
