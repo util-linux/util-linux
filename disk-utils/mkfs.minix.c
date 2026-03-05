@@ -610,31 +610,25 @@ static size_t do_check(const struct fs_control *ctl, char * buffer, int try, uns
 	return got;
 }
 
-static unsigned int currently_testing = 0;
+static volatile sig_atomic_t print_status;
 
 static void alarm_intr(int alnum __attribute__ ((__unused__)))
 {
-	unsigned long zones = get_nzones();
-
-	if (currently_testing >= zones)
-		return;
-	signal(SIGALRM,alarm_intr);
-	alarm(5);
-	if (!currently_testing)
-		return;
-	printf("%d ...", currently_testing);
-	fflush(stdout);
+	print_status = 1;
 }
 
 static void check_blocks(struct fs_control *ctl)
 {
+	struct sigaction sa, old;
 	size_t try, got;
 	static char buffer[MINIX_BLOCK_SIZE * TEST_BUFFER_BLOCKS];
 	unsigned long zones = get_nzones();
 	unsigned long first_zone = get_first_zone();
+	unsigned int currently_testing = 0;
 
-	currently_testing=0;
-	signal(SIGALRM,alarm_intr);
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = alarm_intr;
+	sigaction(SIGALRM, &sa, &old);
 	alarm(5);
 	while (currently_testing < zones) {
 		if (lseek(ctl->device_fd, currently_testing * MINIX_BLOCK_SIZE,SEEK_SET) !=
@@ -646,6 +640,12 @@ static void check_blocks(struct fs_control *ctl)
 			try = zones-currently_testing;
 		got = do_check(ctl, buffer, try, currently_testing);
 		currently_testing += got;
+		if (print_status) {
+			print_status = 0;
+			printf("%u ...", currently_testing);
+			fflush(stdout);
+			alarm(5);
+		}
 		if (got == try)
 			continue;
 		if (currently_testing < first_zone)
@@ -655,6 +655,8 @@ static void check_blocks(struct fs_control *ctl)
 		ctl->fs_bad_blocks++;
 		currently_testing++;
 	}
+	alarm(0);
+	sigaction(SIGALRM, &old, NULL);
 	if (ctl->fs_bad_blocks > 0)
 		printf(P_("%d bad block\n", "%d bad blocks\n", ctl->fs_bad_blocks), ctl->fs_bad_blocks);
 }
