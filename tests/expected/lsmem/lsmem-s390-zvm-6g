@@ -17,7 +17,6 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -28,7 +27,6 @@ RANGE                                 SIZE
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -42,7 +40,6 @@ RANGE                                  SIZE   STATE
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -76,7 +73,6 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK NODE        
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -220,7 +216,6 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK          ZON
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -242,7 +237,6 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK NODE        
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no
 
 ---
 
@@ -262,4 +256,3 @@ RANGE                                  SIZE   STATE REMOVABLE BLOCK
 Memory block size:                256M
 Total online memory:              4.8G
 Total offline memory:             1.3G
-Memmap on memory parameter:         no

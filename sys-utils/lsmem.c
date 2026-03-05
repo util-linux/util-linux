@@ -32,7 +32,7 @@
 #include "optutils.h"
 
 #define _PATH_SYS_MEMORY		"/sys/devices/system/memory"
-#define _PATH_SYS_MEMMAP_PARM		"/sys/module/memory_hotplug/parameters/memmap_on_memory"
+#define _PATH_SYS_MEMPARAM		"/sys/module/memory_hotplug/parameters"
 #define _PATH_SYS_MEMCONFIG		"/sys/firmware/memory"
 
 #define MEMORY_STATE_ONLINE		0
@@ -361,7 +361,8 @@ static int get_memmap_mode(char *res, char *src, int len)
 static void print_summary(struct lsmem *lsmem)
 {
 	char buf[8], res[8];
-	FILE *memmap;
+	struct path_cxt *pc;
+	const char *prefix;
 
 	if (lsmem->bytes) {
 		printf("%-32s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
@@ -382,18 +383,23 @@ static void print_summary(struct lsmem *lsmem)
 			printf("%-32s %5s\n",_("Total offline memory:"), p);
 		free(p);
 	}
-	memmap = fopen(_PATH_SYS_MEMMAP_PARM, "r");
-	if (!memmap)
+
+	pc = ul_new_path(_PATH_SYS_MEMPARAM);
+	if (!pc)
 		return;
-	if (fgets(buf, sizeof(buf), memmap)) {
-		if (!get_memmap_mode(res, buf, sizeof(res))) {
-			if (lsmem->bytes)
-				printf("%-32s %15s\n", _("Memmap on memory parameter:"), _(res));
-			else
-				printf("%-32s %5s\n", _("Memmap on memory parameter:"), _(res));
-		}
+	prefix = ul_path_get_prefix(lsmem->sysmem);
+	if (prefix && ul_path_set_prefix(pc, prefix) != 0)
+		goto done;
+	if (ul_path_read_buffer(pc, buf, sizeof(buf), "memmap_on_memory") <= 0)
+		goto done;
+	if (!get_memmap_mode(res, buf, sizeof(res))) {
+		if (lsmem->bytes)
+			printf("%-32s %15s\n", _("Memmap on memory parameter:"), _(res));
+		else
+			printf("%-32s %5s\n", _("Memmap on memory parameter:"), _(res));
 	}
-	fclose(memmap);
+done:
+	ul_unref_path(pc);
 }
 
 static int memory_block_get_node(struct lsmem *lsmem, char *name)
@@ -801,19 +807,25 @@ int main(int argc, char **argv)
 
 	ul_path_init_debug();
 
+	/* open /sys/devices/system/memory handler (required) */
 	lsmem->sysmem = ul_new_path(_PATH_SYS_MEMORY);
 	if (!lsmem->sysmem)
 		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
-	lsmem->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
-	/* Always check for the existence of /sys/firmware/memory/memory0 first */
-	if (ul_path_access(lsmem->sysmemconfig, F_OK, "memory0") == 0)
-		lsmem->have_memconfig = 1;
-	if (!lsmem->sysmemconfig)
-		err(EXIT_FAILURE, _("failed to initialized %s handler"), _PATH_SYS_MEMCONFIG);
 	if (prefix && ul_path_set_prefix(lsmem->sysmem, prefix) != 0)
 		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
 	if (!ul_path_is_accessible(lsmem->sysmem))
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_MEMORY);
+
+	/* open /sys/firmware/memory handler (optional) */
+	lsmem->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
+	if (!lsmem->sysmemconfig)
+		err(EXIT_FAILURE, _("failed to initialized %s handler"), _PATH_SYS_MEMCONFIG);
+	if (prefix && ul_path_set_prefix(lsmem->sysmemconfig, prefix) != 0)
+		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
+
+	/* Always check for the existence of /sys/firmware/memory/memory0 first */
+	if (ul_path_access(lsmem->sysmemconfig, F_OK, "memory0") == 0)
+		lsmem->have_memconfig = 1;
 
 	/* Shortcut to avoid scols machinery on --summary=only */
 	if (lsmem->want_table == 0 && lsmem->want_summary) {
@@ -918,6 +930,7 @@ int main(int argc, char **argv)
 
 	scols_unref_table(lsmem->table);
 	ul_unref_path(lsmem->sysmem);
+	ul_unref_path(lsmem->sysmemconfig);
 	free_info(lsmem);
 	return 0;
 }
