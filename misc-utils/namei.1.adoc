@@ -22,17 +22,35 @@ This program is useful for finding "too many levels of symbolic links" problems.
 
 For each line of output, *namei* uses the following characters to identify the file type found:
 
-....
-   f: = the pathname currently being resolved
-    d = directory
-    l = symbolic link (both the link and its contents are output)
-    s = socket
-    b = block device
-    c = character device
-    p = FIFO (named pipe)
-    - = regular file
-    ? = an error of some kind
-....
+[cols=">1,4"]
+|===
+|f:
+|the pathname currently being resolved
+
+|d
+|directory
+
+|l
+|symbolic link (both the link and its contents are output)
+
+|s
+|socket
+
+|b
+|block device
+
+|c
+|character device
+
+|p
+|FIFO (named pipe)
+
+|-
+|regular file
+
+|?
+|an error of some kind
+|===
 
 *namei* prints an informative message when the maximum number of symbolic links this system can have has been exceeded.
 
