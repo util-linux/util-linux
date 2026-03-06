@@ -868,9 +868,10 @@ int main(int argc, char **argv)
 		verbose(&ctl, _("using default device `%s'"), ctl.device);
 	} else {
 		char *p;
+		size_t len = strlen(ctl.device);
 
-		if (ctl.device[strlen(ctl.device) - 1] == '/')
-			ctl.device[strlen(ctl.device) - 1] = '\0';
+		if (len && ctl.device[len - 1] == '/')
+			ctl.device[len - 1] = '\0';
 
 		/* figure out full device or mount point name */
 		p = find_device(ctl.device);
