@@ -72,6 +72,7 @@
 
 #define MAX_DEVICES 32
 #define MAX_ARGS 32
+#define MAX_OPTIONS 128
 
 #define FSCK_RUNTIME_DIRNAME	"/run/fsck"
 
@@ -1436,7 +1437,7 @@ static void parse_argv(int argc, char *argv[])
 {
 	int	i, j;
 	char	*arg, *dev, *tmp = NULL;
-	char	options[128];
+	char	options[MAX_OPTIONS + 1];
 	int	opt = 0;
 	int     opts_for_fsck = 0;
 	struct sigaction	sa;
@@ -1505,6 +1506,8 @@ static void parse_argv(int argc, char *argv[])
 		}
 		for (j=1; arg[j]; j++) {
 			if (opts_for_fsck) {
+				if (opt >= MAX_OPTIONS)
+					errx(FSCK_EX_ERROR, _("too many options"));
 				options[++opt] = arg[j];
 				continue;
 			}
@@ -1587,12 +1590,16 @@ static void parse_argv(int argc, char *argv[])
 				usage();
 				break;
 			default:
+				if (opt >= MAX_OPTIONS)
+					errx(FSCK_EX_ERROR, _("too many options"));
 				options[++opt] = arg[j];
 				break;
 			}
 		}
 	next_arg:
 		if (opt) {
+			if (opt >= MAX_OPTIONS)
+				errx(FSCK_EX_ERROR, _("too many options"));
 			options[0] = '-';
 			options[++opt] = '\0';
 			if (num_args >= MAX_ARGS)
