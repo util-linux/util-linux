@@ -819,7 +819,7 @@ int main(int argc, char **argv)
 	/* open /sys/firmware/memory handler (optional) */
 	lsmem->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
 	if (!lsmem->sysmemconfig)
-		err(EXIT_FAILURE, _("failed to initialized %s handler"), _PATH_SYS_MEMCONFIG);
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMCONFIG);
 	if (prefix && ul_path_set_prefix(lsmem->sysmemconfig, prefix) != 0)
 		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
 
