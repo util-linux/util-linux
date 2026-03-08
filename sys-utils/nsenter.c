@@ -95,34 +95,34 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Run a program with namespaces of other processes.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all                    enter all namespaces\n"), out);
-	fputs(_(" -t, --target <PID>           target process to get namespaces from\n"), out);
-	fputs(_(" -m, --mount[=<file>|=:<nsid>]  enter mount namespace\n"), out);
-	fputs(_(" -u, --uts[=<file>|=:<nsid>]  enter UTS namespace (hostname etc)\n"), out);
-	fputs(_(" -i, --ipc[=<file>|=:<nsid>]  enter System V IPC namespace\n"), out);
-	fputs(_(" -n, --net[=<file>|=:<nsid>]  enter network namespace\n"), out);
-	fputs(_(" -N, --net-socket <fd>        enter socket's network namespace (use with --target)\n"), out);
-	fputs(_(" -p, --pid[=<file>|=:<nsid>]  enter pid namespace\n"), out);
+	fputs(_(" -a, --all                     enter all namespaces\n"), out);
+	fputs(_(" -t, --target <PID>            target process to get namespaces from\n"), out);
+	fputs(_(" -m, --mount[=<file>|=:<nsid>] enter mount namespace\n"), out);
+	fputs(_(" -u, --uts[=<file>|=:<nsid>]   enter UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc[=<file>|=:<nsid>]   enter System V IPC namespace\n"), out);
+	fputs(_(" -n, --net[=<file>|=:<nsid>]   enter network namespace\n"), out);
+	fputs(_(" -N, --net-socket <fd>         enter socket's network namespace (needs --target)\n"), out);
+	fputs(_(" -p, --pid[=<file>|=:<nsid>]   enter pid namespace\n"), out);
 	fputs(_(" -C, --cgroup[=<file>|=:<nsid>]  enter cgroup namespace\n"), out);
-	fputs(_(" -U, --user[=<file>|=:<nsid>] enter user namespace\n"), out);
-	fputs(_("     --user-parent            enter parent user namespace\n"), out);
-	fputs(_(" -T, --time[=<file>|=:<nsid>] enter time namespace\n"), out);
-	fputs(_(" -S, --setuid[=<uid>]         set uid in entered namespace\n"), out);
-	fputs(_(" -G, --setgid[=<gid>]         set gid in entered namespace\n"), out);
-	fputs(_("     --preserve-credentials   do not touch uids or gids\n"), out);
-	fputs(_("     --keep-caps              retain capabilities granted in user namespaces\n"), out);
-	fputs(_(" -r, --root[=<dir>]           set the root directory\n"), out);
-	fputs(_(" -w, --wd[=<dir>]             set the working directory\n"), out);
-	fputs(_(" -W, --wdns <dir>             set the working directory in namespace\n"), out);
-	fputs(_(" -e, --env                    inherit environment variables from target process\n"), out);
-	fputs(_(" -F, --no-fork                do not fork before exec'ing <program>\n"), out);
-	fputs(_(" -c, --join-cgroup            join the cgroup of the target process\n"), out);
+	fputs(_(" -U, --user[=<file>|=:<nsid>]  enter user namespace\n"), out);
+	fputs(_("     --user-parent             enter parent user namespace\n"), out);
+	fputs(_(" -T, --time[=<file>|=:<nsid>]  enter time namespace\n"), out);
+	fputs(_(" -S, --setuid[=<uid>]          set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid[=<gid>]          set gid in entered namespace\n"), out);
+	fputs(_("     --preserve-credentials    do not touch uids or gids\n"), out);
+	fputs(_("     --keep-caps               retain capabilities granted in user namespaces\n"), out);
+	fputs(_(" -r, --root[=<dir>]            set the root directory\n"), out);
+	fputs(_(" -w, --wd[=<dir>]              set the working directory\n"), out);
+	fputs(_(" -W, --wdns <dir>              set the working directory in namespace\n"), out);
+	fputs(_(" -e, --env                     inherit environment variables from target process\n"), out);
+	fputs(_(" -F, --no-fork                 do not fork before exec'ing <program>\n"), out);
+	fputs(_(" -c, --join-cgroup             join the cgroup of the target process\n"), out);
 #ifdef HAVE_LIBSELINUX
-	fputs(_(" -Z, --follow-context   set SELinux context according to --target PID\n"), out);
+	fputs(_(" -Z, --follow-context          set SELinux context according to --target PID\n"), out);
 #endif
 
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_HELP_OPTIONS(30));
+	fprintf(out, USAGE_HELP_OPTIONS(31));
 	fprintf(out, USAGE_MAN_TAIL("nsenter(1)"));
 
 	exit(EXIT_SUCCESS);
