@@ -196,6 +196,7 @@ static int get_cstat_value(const struct fincore_state *st, int column_id,
 	case COL_WRITEBACK_PAGES:
 	case COL_WRITEBACK:
 		if (!st->cstat_fields.writeback)
+			break;
 		*value = st->cstat.nr_writeback;
 		return 1;
 	case COL_EVICTED_PAGES:
