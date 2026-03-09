@@ -74,7 +74,7 @@ static inline int get_pidfd(const struct waitpid_control *ctl, struct process_in
 	if (pi->pidfd_ino) {
 		fd = ul_get_valid_pidfd(pi->pid, pi->pidfd_ino);
 		if (fd < 0 && ctl->verbose)
-			warnx(_("pidfd inode %"PRIu64" not found for pid %d"),
+			warnx(_("pidfd inode %"PRIu64" not found for PID %d"),
 					pi->pidfd_ino, pi->pid);
 	} else {
 		fd = pidfd_open(pi->pid, 0);
@@ -94,7 +94,7 @@ static void open_pidfds_or_err(const struct waitpid_control *ctl, struct process
 					warnx(_("PID %d has exited, skipping"), pi->pid);
 				continue;
 			}
-			err_nosys(EXIT_FAILURE, _("could not open pid %u"), pi->pid);
+			err_nosys(EXIT_FAILURE, _("could not open PID %d"), pi->pid);
 		}
 	}
 }
