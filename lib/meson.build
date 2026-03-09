@@ -17,7 +17,6 @@ lib_common_sources = '''
 	mbsedit.c
 	pidutils.c
 	pidfd-utils.c
-	procfs.c
 	pwdutils.c
 	sha256.c
 	shells.c
