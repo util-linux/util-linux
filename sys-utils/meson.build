@@ -221,18 +221,21 @@ switch_root_manadocs = files('switch_root.8.adoc')
 unshare_sources = files(
   'unshare.c',
 ) + \
+    caputils_c + \
     exec_shell_c
 unshare_manadocs = files('unshare.1.adoc')
 
 nsenter_sources = files(
   'nsenter.c',
 ) + \
+    caputils_c + \
     exec_shell_c
 nsenter_manadocs = files('nsenter.1.adoc')
 
 setpriv_sources = files(
   'setpriv.c',
-)
+) + \
+    caputils_c
 if LINUX and conf.get('HAVE_LINUX_LANDLOCK_H').to_string() == '1'
   setpriv_sources += files('setpriv-landlock.c')
 endif
