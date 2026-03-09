@@ -853,7 +853,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			user->uid = pwd->pw_uid;
 			break;
 		case COL_GROUP:
-			if (!grp->gr_name)
+			if (!user->group)
 				user->group = xstrdup(grp->gr_name);
 			break;
 		case COL_GID:
