@@ -671,13 +671,12 @@ static void umount_one(const struct eject_control *ctl, const char *name)
 		break;
 
 	default: /* parent */
-		wait(&status);
-		if (WIFEXITED(status) == 0)
+		if (wait(&status) == -1 || WIFEXITED(status) == 0)
 			errx(EXIT_FAILURE,
 			     _("unmount of `%s' did not exit normally"), name);
 
 		if (WEXITSTATUS(status) != 0)
-			errx(EXIT_FAILURE, _("unmount of `%s' failed\n"), name);
+			errx(EXIT_FAILURE, _("unmount of `%s' failed"), name);
 		break;
 	}
 }
@@ -862,6 +861,9 @@ int main(int argc, char **argv)
 		info(_("default device: `%s'"), EJECT_DEFAULT_DEVICE);
 		return EXIT_SUCCESS;
 	}
+
+	/* clear any inherited settings */
+	signal(SIGCHLD, SIG_DFL);
 
 	if (!ctl.device) {
 		ctl.device = mnt_resolve_path(EJECT_DEFAULT_DEVICE, NULL);
