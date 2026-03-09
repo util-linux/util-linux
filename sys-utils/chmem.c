@@ -509,7 +509,8 @@ static void read_info(struct chmem_desc *desc)
 	desc->ndirs = scandir(_PATH_SYS_MEMORY, &desc->dirs, filter, versionsort);
 	if (desc->ndirs <= 0)
 		goto fail;
-	ul_path_read_buffer(desc->sysmem, line, sizeof(line), "block_size_bytes");
+	if (ul_path_read_buffer(desc->sysmem, line, sizeof(line), "block_size_bytes") < 0)
+		goto fail;
 
 	errno = 0;
 	desc->block_size = strtoumax(line, NULL, 16);
