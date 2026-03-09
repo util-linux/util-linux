@@ -1687,6 +1687,10 @@ int main(int argc, char **argv)
 			invopt(argv[arg]);
 		}
 	}
+
+	/* clear any inherited settings */
+	signal(SIGCHLD, SIG_DFL);
+
 	if (argc == 1)
 		pgfile(stdin, "stdin");
 	else
