@@ -58,9 +58,10 @@ logindefs_c = static_library('logindefs',
 )
 selinux_utils_c = files('selinux-utils.c')
 
+caputils_c = files('caputils.c')
+
 if LINUX
   lib_common_sources += '''
-    caputils.c
     linux_version.c
     loopdev.c
 '''.split()
