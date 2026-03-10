@@ -104,9 +104,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
 	fputs(_(" -q, --quiet             suppress 'not mounted' error messages\n"), out);
+	fputs(_(" -g, --graceful          exit successfully if the target is not mounted\n"), out);
 	fputs(_(" -N, --namespace <ns>    perform umount in another namespace\n"), out);
-	fputs(_(" -g, --graceful          don't return an error when the mountpoint has already\n"
-	        "                           been unmounted or the directory does not exist\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(25));
@@ -163,7 +162,7 @@ static int mk_exit_code(struct libmnt_context *cxt, int api_rc)
 	int rc;
 
 	rc = mnt_context_get_excode(cxt, api_rc, buf, sizeof(buf));
-	/* exit succesfully even if the filesystem has already been unmounted or does not exist */
+	/* exit successfully even if the filesystem has already been unmounted or does not exist */
 	if (graceful && rc == MNT_EX_FAIL && mnt_context_syscall_called(cxt)
 				&& (mnt_context_get_syscall_errno(cxt) == EINVAL
 				|| mnt_context_get_syscall_errno(cxt) == ENOENT))

@@ -100,8 +100,8 @@ Unmount only the filesystems that have the specified option set in _/etc/fstab_.
 *-q*, *--quiet*::
 Suppress "not mounted" error messages.
 
-*-g* *--graceful*::
-Exit successfully even if the filesystem has already been unmounted or does not exist.
+*-g*, *--graceful*::
+Exit successfully even if the target is not mounted or does not exist. This option is designed for use in shutdown scripts and service managers where idempotent unmount behavior is desired. Only effective for the root user.
 
 *-R*, *--recursive*::
 Recursively unmount each specified directory. Recursion for each directory will stop if any unmount operation in the chain fails for any reason. The relationship between mountpoints is determined by _/proc/self/mountinfo_ entries. The filesystem must be specified by mountpoint path; a recursive unmount by device name (or UUID) is unsupported. Since version 2.37 it umounts also all over-mounted filesystems (more filesystems on the same mountpoint).

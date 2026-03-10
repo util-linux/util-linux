@@ -97,7 +97,11 @@ $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 # the mountpoint has already been unmounted, so this second call should not fail
 $TS_CMD_UMOUNT --graceful $TS_MOUNTPOINT >> $TS_OUTPUT 2>> $TS_ERRLOG
-[ $? == 0 ] || ts_die "--graceful option failed"
+[ $? == 0 ] || ts_die "--graceful on unmounted mountpoint failed"
+
+# non-existent path should not fail with --graceful
+$TS_CMD_UMOUNT --graceful /non-existent-path-$$ >> $TS_OUTPUT 2>> $TS_ERRLOG
+[ $? == 0 ] || ts_die "--graceful on non-existent path failed"
 
 ts_log "Success"
 ts_finalize
