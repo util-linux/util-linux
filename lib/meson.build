@@ -10,24 +10,17 @@ lib_common_sources = '''
 	encode.c
 	env.c
 	fileutils.c
-	idcache.c
 	jsonwrt.c
 	mangle.c
 	match.c
 	mbsalign.c
 	mbsedit.c
-	md5.c
 	pidutils.c
 	pidfd-utils.c
-	procfs.c
 	pwdutils.c
-	randutils.c
-	sha1.c
 	sha256.c
 	shells.c
 	signames.c
-	strutils.c
-	strv.c
 	timeutils.c
 	ttyutils.c
 	xxhash.c
@@ -65,9 +58,10 @@ logindefs_c = static_library('logindefs',
 )
 selinux_utils_c = files('selinux-utils.c')
 
+caputils_c = files('caputils.c')
+
 if LINUX
   lib_common_sources += '''
-    caputils.c
     linux_version.c
     loopdev.c
 '''.split()
