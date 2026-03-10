@@ -663,6 +663,8 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 	if (fd < 0)
 		err(MKFS_EX_ERROR, _("cannot open %s"), file);
 	buf = mmap(NULL, image_length, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (buf == MAP_FAILED)
+		err(MKFS_EX_ERROR, _("cannot map %s"), file);
 	memcpy(base + offset, buf, image_length);
 	munmap(buf, image_length);
 	if (close (fd) < 0)
@@ -853,7 +855,7 @@ int main(int argc, char **argv)
 			 MAP_PRIVATE | MAP_ANONYMOUS,
 			 -1, 0);
 
-	if (-1 == (int) (long) rom_image)
+	if (MAP_FAILED == rom_image)
 		err(MKFS_EX_ERROR, _("ROM image map"));
 
 	/* Skip the first opt_pad bytes for boot loader code */
