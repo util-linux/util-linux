@@ -1024,7 +1024,10 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 		} else if (value && strncmp(name, "width", namesz) == 0) {
 
 			char *end = NULL;
-			double x = strtod(value, &end);
+			double x;
+
+			errno = 0;
+			x = strtod(value, &end);
 			if (errno || value == end)
 				return -EINVAL;
 			rc = scols_column_set_whint(cl, x);
