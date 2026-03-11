@@ -1172,72 +1172,72 @@ static void print_record(struct dmesg_control *ctl,
 			 level_names[rec->level].name);
 
 	/* Store the timestamp in a buffer */
+	full_tsbuf[0] = '\0';
+	ctl->indent = 0;
+
 	for (format_iter = 0;
 	     format_iter < (ctl->ntime_fmts > 0 ? ctl->ntime_fmts : 1);
 	     format_iter++) {
+		int len = 0;
+
+		if (ctl->time_fmts[format_iter] == DMESG_TIMEFTM_NONE)
+			continue; /* skip NONE, add nothing */
+
 		switch (ctl->time_fmts[format_iter]) {
 			struct tm cur;
-		case DMESG_TIMEFTM_NONE:
-			ctl->indent = 0;
-			break;
 		case DMESG_TIMEFTM_CTIME:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
-						record_ctime(ctl, rec, buf, sizeof(buf)));
+			len = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
+			               record_ctime(ctl, rec, buf, sizeof(buf)));
 			break;
 		case DMESG_TIMEFTM_CTIME_DELTA:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s <%12.06f>] ",
-						record_ctime(ctl, rec, buf, sizeof(buf)),
-						delta);
+			len = snprintf(tsbuf, sizeof(tsbuf), "[%s <%12.06f>] ",
+			               record_ctime(ctl, rec, buf, sizeof(buf)),
+			               delta);
 			break;
 		case DMESG_TIMEFTM_DELTA:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[<%12.06f>] ",
-						delta);
+			len = snprintf(tsbuf, sizeof(tsbuf), "[<%12.06f>] ",
+			               delta);
 			break;
 		case DMESG_TIMEFTM_RELTIME:
 			record_localtime(ctl, rec, &cur);
 			if (cur.tm_min != ctl->lasttm.tm_min ||
-				cur.tm_hour != ctl->lasttm.tm_hour ||
-				cur.tm_yday != ctl->lasttm.tm_yday) {
+			    cur.tm_hour != ctl->lasttm.tm_hour ||
+			    cur.tm_yday != ctl->lasttm.tm_yday) {
 				timebreak = 1;
-				ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
-							short_ctime(&cur, buf,
-								sizeof(buf)));
+				len = snprintf(tsbuf, sizeof(tsbuf), "[%s] ",
+				               short_ctime(&cur, buf, sizeof(buf)));
 			} else {
 				if (delta < 10)
-					ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-							"[  %+8.06f] ",  delta);
+					len = snprintf(tsbuf, sizeof(tsbuf),
+					               "[  %+8.06f] ",  delta);
 				else
-					ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-							"[ %+9.06f] ", delta);
+					len = snprintf(tsbuf, sizeof(tsbuf),
+					               "[ %+9.06f] ", delta);
 			}
 			ctl->lasttm = cur;
 			break;
 		case DMESG_TIMEFTM_TIME:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf),
-						ctl->json ? "%5ld.%06ld" : "[%5ld.%06ld] ",
-						(long)rec->tv.tv_sec,
-						(long)rec->tv.tv_usec);
+			len = snprintf(tsbuf, sizeof(tsbuf),
+			               ctl->json ? "%5ld.%06ld" : "[%5ld.%06ld] ",
+			               (long)rec->tv.tv_sec, (long)rec->tv.tv_usec);
 			break;
 		case DMESG_TIMEFTM_TIME_DELTA:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld <%12.06f>] ",
-						(long)rec->tv.tv_sec,
-						(long)rec->tv.tv_usec,
-						delta);
+			len = snprintf(tsbuf, sizeof(tsbuf), "[%5ld.%06ld <%12.06f>] ",
+			               (long)rec->tv.tv_sec, (long)rec->tv.tv_usec,
+			               delta);
 			break;
 		case DMESG_TIMEFTM_ISO8601:
-			ctl->indent = snprintf(tsbuf, sizeof(tsbuf), "%s ",
-						iso_8601_time(ctl, rec, buf,
-								sizeof(buf)));
+			len = snprintf(tsbuf, sizeof(tsbuf), "%s ",
+			               iso_8601_time(ctl, rec, buf, sizeof(buf)));
 			break;
 		default:
 			abort();
 		}
 
-		if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
-			break;
-		else if (*tsbuf)
+		if (len > 0) {
 			strcat(full_tsbuf, tsbuf);
-
+			ctl->indent += len;
+		}
 	}
 
 	ctl->indent += strlen(fpbuf);

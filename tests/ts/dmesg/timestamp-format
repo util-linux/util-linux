@@ -39,4 +39,8 @@ ts_init_subtest "delta-raw"
 $TS_HELPER_DMESG --time-format raw --time-format ctime --time-format delta -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
 ts_finalize_subtest
 
+ts_init_subtest "delta-t"
+$TS_HELPER_DMESG -d -t -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
+
 ts_finalize
