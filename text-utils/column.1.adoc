@@ -123,22 +123,24 @@ Supported attributes are:
 **name=**_string_;;
 Column name.
 *trunc*;;
-Truncate column text when necessary. The same as *--table-truncate*.
+Truncate column text when necessary. The same as *--table-truncate*. Note that
+the column header is never truncated, and it is the minimal column width.
 *tree*;;
 Use this column for tree-like output. See *--tree* for more details.
 *right*;;
 Right align text. The same as *--table-right*.
 **width=**_number_;;
 Column width. It's used only as a hint. To enforce it, specify the *strictwidth* attribute
-as well.
+as well. The actual minimum width is the column header width.
 *strictwidth*;;
-Strictly follow the *width=* setting.
+Strictly follow the *width=* to set the minimum size of the column. The column
+can be larger if the output width provides enough space.
 *noextremes*;;
 Ignore unusually long content width. See *--table-noextreme* for more details.
 *hidden*;;
 Don't print the column. See *--table-hide* for more details.
 *wrap*;;
-Allow using a multi-line cell for long text if necessary. See *--table-wrap* for more details.
+Allow the use of a multi-line cell for long text if necessary. Note that the column header is never wrapped and determines the minimum column width. See *--table-wrap* for more details.
 *wrapnl*;;
 Wrap at newline characters; newlines in cell data are treated as line breaks.
 *wrapzero*;;
@@ -186,7 +188,7 @@ Print header line for each page.
 Use the first input line as table header. This option is mutually exclusive with *--table-columns* and *--table-column*.
 
 *-W, --table-wrap* _columns_::
-Specify the columns where multi-line cells can be used for long text. By default, text is wrapped according to column width. Use *--wrap-separator* to wrap at custom separator characters instead.
+Specify the columns where multi-line cells can be used for long text. By default, text is wrapped according to column width. Use *--wrap-separator* to wrap at custom separator characters instead. Note that the column header is never wrapped and determines the minimum column width.
 
 *--wrap-separator* _string_::
 Use _string_ as a separator for wrapping text within columns that have wrapping enabled. The separator is replaced with newlines when the text is displayed. This option requires table mode and columns with wrapping enabled (see *--table-wrap*). For example, use `|` to allow wrapping at pipe characters within column data.
