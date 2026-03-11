@@ -215,7 +215,7 @@ static int count_column_width(struct libscols_table *tb,
 	cl->width = st->width_max;
 
 	/* enlarge to minimal width */
-	if (cl->width < st->width_min && !scols_column_is_strict_width(cl))
+	if (cl->width <= st->width_min && !scols_column_is_strict_width(cl))
 		cl->width = st->width_min;
 
 	/* use absolute size for large columns */
