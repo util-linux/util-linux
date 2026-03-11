@@ -380,7 +380,7 @@ static int reduce_column(struct libscols_table *tb,
 		if (nth == 0)
 			/* columns are reduced in "bad first" way, be more
 			 * aggressive for the the worst column */
-			reduce = 3;
+			reduce = wanted < 3 ? wanted : 3;
 
 		if (cl->width < reduce)
 			reduce = cl->width;
