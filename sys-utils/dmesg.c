@@ -423,6 +423,27 @@ static void exclude_time_fmt(struct dmesg_control *ctl, unsigned int time_format
 	}
 }
 
+static void replace_time_fmt(struct dmesg_control *ctl,
+			     unsigned int old_fmt, unsigned int new_fmt)
+{
+	size_t idx;
+
+	for (idx = 0; idx < ctl->ntime_fmts; idx++) {
+		if (ctl->time_fmts[idx] == old_fmt) {
+			ctl->time_fmts[idx] = new_fmt;
+			break;
+		}
+	}
+}
+
+static void replace_delta_fmt(struct dmesg_control *ctl,
+			      unsigned int delta_fmt,
+			      unsigned int old_fmt, unsigned int new_fmt)
+{
+	exclude_time_fmt(ctl, delta_fmt);
+	replace_time_fmt(ctl, old_fmt, new_fmt);
+}
+
 /*
  * LEVEL     ::= <number> | <name>
  *  <number> ::= @len is set:  number in range <0..N>, where N < ARRAY_SIZE(level_names)
@@ -1899,35 +1920,18 @@ int main(int argc, char *argv[])
 
 	/* -d uses TIME_DELTA; merge with -T (CTIME) if both specified */
 	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
-	    && is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
-		exclude_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA);
-		for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-			if (ctl.time_fmts[n] == DMESG_TIMEFTM_CTIME) {
-				ctl.time_fmts[n] = DMESG_TIMEFTM_CTIME_DELTA;
-				break;
-			}
-		}
-	}
+	    && is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME))
+		replace_delta_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA,
+				  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
 
 	/* --time-format delta: merge with TIME or CTIME if also specified */
 	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
-		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME)) {
-			exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-			for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-				if (ctl.time_fmts[n] == DMESG_TIMEFTM_TIME) {
-					ctl.time_fmts[n] = DMESG_TIMEFTM_TIME_DELTA;
-					break;
-				}
-			}
-		} else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
-			exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-			for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-				if (ctl.time_fmts[n] == DMESG_TIMEFTM_CTIME) {
-					ctl.time_fmts[n] = DMESG_TIMEFTM_CTIME_DELTA;
-					break;
-				}
-			}
-		}
+		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME))
+			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
+					  DMESG_TIMEFTM_TIME, DMESG_TIMEFTM_TIME_DELTA);
+		else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME))
+			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
+					  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
 	}
 
 	if (!ctl.json)
