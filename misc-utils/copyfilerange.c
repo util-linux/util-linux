@@ -55,25 +55,23 @@ static void __attribute__((__noreturn__)) usage(void)
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %1$s [options] [<source>] [<destination>] [<range>...]\n"),
+		_(" %1$s [options] <source> <destination> <range>...\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputsln(_("Copy file ranges from source to destination file."), out);
-
-	fputs(USAGE_SEPARATOR, out);
-	fputsln(_(" source                      source filename"), out);
-	fputsln(_(" destination                 destination filename"), out);
-	fputsln(_(" range                       source_offset:dest_offset:length, all values are in bytes"), out);
-	fputsln(_("                             if length is set to 0 as much as available will be copied"), out);
-	fputsln(_("                             when the offset is omitted the last file position is used"), out);
+	fputsln(_("Copy the specified range(s) from source to destination file."), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputsln(_(" --ranges, -r filename       read range(s) separated by newlines from filename"), out);
-	fputsln(_(" --verbose, -v               verbose mode"), out);
+	fputsln(_(" -r, --ranges <file>     read ranges separated by newlines from this file"), out);
+	fputsln(_(" -v, --verbose           verbose mode"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_HELP_OPTIONS(16));
+	fprintf(out, USAGE_HELP_OPTIONS(25));
+
+	fputs(USAGE_ARGUMENTS, out);
+	fputsln(_(" <range> is of the form <source_offset>:<destination_offset>:<length>,\n"
+	          " with all values in bytes. If <length> is 0, as much data as available\n"
+	          " is copied. When an offset is omitted, the last file position is used."), out);
 
 	fprintf(out, USAGE_MAN_TAIL("copyfilerange(1)"));
 	exit(EXIT_SUCCESS);
