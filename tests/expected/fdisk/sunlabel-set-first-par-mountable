@@ -12,5 +12,5 @@ Physical cylinders: 325
 Extra sects/cyl: 0
 Interleave: 1
 
-Device             Start   End Cylinders    Size Id Type      Flags
-<removed>1     1   128       129 4128768  4 SunOS usr    ur
+Device             Start End Cylinders    Size Id Type      Flags
+<removed>1     1 128       129 4128768  4 SunOS usr    ur
