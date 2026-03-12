@@ -1640,7 +1640,6 @@ int main(int argc, char *argv[])
 	int  c, nopager = 0;
 	int  console_level = 0;
 	int  klog_rc = 0;
-	int  delta = 0;
 	ssize_t n;
 	static struct dmesg_control ctl = {
 		.filename = NULL,
@@ -1733,7 +1732,7 @@ int main(int argc, char *argv[])
 			ctl.action = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
 		case 'd':
-			delta = 1;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA);
 			break;
 		case 'E':
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
@@ -1811,7 +1810,6 @@ int main(int argc, char *argv[])
 			include_time_fmt(&ctl, DMESG_TIMEFTM_CTIME);
 			break;
 		case 't':
-			reset_time_fmts(&ctl);
 			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
 			break;
 		case 'u':
@@ -1864,7 +1862,6 @@ int main(int argc, char *argv[])
 	if (ctl.json) {
 		reset_time_fmts(&ctl);
 		ctl.ntime_fmts = 0;
-		delta = 0;
 		ctl.force_prefix = 0;
 		ctl.raw = 0;
 		ctl.noesc = 1;
@@ -1882,17 +1879,26 @@ int main(int argc, char *argv[])
 			ctl.suspended_time = dmesg_get_suspended_time();
 	}
 
-	if (delta || is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
+	/* -d uses TIME_DELTA; merge with -T (CTIME) if both specified */
+	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+	    && is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
+		exclude_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA);
+		for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
+			if (ctl.time_fmts[n] == DMESG_TIMEFTM_CTIME) {
+				ctl.time_fmts[n] = DMESG_TIMEFTM_CTIME_DELTA;
+				break;
+			}
+		}
+	}
+
+	/* --time-format delta: merge with TIME or CTIME if also specified */
+	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
 		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME)) {
-			if (ctl.ntime_fmts == 0) {
-				ctl.time_fmts[ctl.ntime_fmts++] = DMESG_TIMEFTM_TIME_DELTA;
-			} else {
-				exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-				for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-					if (ctl.time_fmts[n] == DMESG_TIMEFTM_TIME) {
-						ctl.time_fmts[n] = DMESG_TIMEFTM_TIME_DELTA;
-						break;
-					}
+			exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
+			for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
+				if (ctl.time_fmts[n] == DMESG_TIMEFTM_TIME) {
+					ctl.time_fmts[n] = DMESG_TIMEFTM_TIME_DELTA;
+					break;
 				}
 			}
 		} else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
@@ -1903,8 +1909,6 @@ int main(int argc, char *argv[])
 					break;
 				}
 			}
-		} else {
-			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
 		}
 	}
 
