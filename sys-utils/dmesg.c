@@ -1879,6 +1879,24 @@ int main(int argc, char *argv[])
 			ctl.suspended_time = dmesg_get_suspended_time();
 	}
 
+	/*
+	 * Resolve NONE (--notime) vs. delta combinations. When both are
+	 * specified (e.g. -d -t), delta wins and timestamp is suppressed.
+	 * When NONE is used without delta, it suppresses all timestamps.
+	 */
+	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_NONE)) {
+		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+		    || is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
+			reset_time_fmts(&ctl);
+			ctl.ntime_fmts = 0;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
+		} else {
+			reset_time_fmts(&ctl);
+			ctl.ntime_fmts = 0;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
+		}
+	}
+
 	/* -d uses TIME_DELTA; merge with -T (CTIME) if both specified */
 	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
 	    && is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
