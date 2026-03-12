@@ -9,6 +9,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: uuidparse
+:smartcols-json:
 
 == NAME
 
@@ -62,6 +63,10 @@ Specify which output columns to print. Use *--help* to get a list of all support
 Use the raw output format.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == AUTHORS
 

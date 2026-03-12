@@ -17,6 +17,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lslocks
+:smartcols-json:
 :plus: +
 
 == NAME
@@ -78,6 +79,10 @@ Use the raw output format.
 Do not truncate text in columns.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == OUTPUT
 

@@ -20,6 +20,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: sfdisk
+:smartcols-json:
 :plus: +
 :asterisk: *
 

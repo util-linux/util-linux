@@ -9,6 +9,7 @@ ifdef::neverdefined[---]
 :man source: util-linux {release-version}
 :page-layout: base
 :command: wipefs
+:smartcols-json:
 
 == NAME
 
@@ -94,6 +95,8 @@ enables *libblkid*(3) debug output.
 
 LOCK_BLOCK_DEVICE=<mode>::
 use exclusive BSD lock. The mode is "1" or "0". See *--lock* for more details.
+
+include::man-common/env-smartcols.adoc[]
 
 == EXAMPLES
 

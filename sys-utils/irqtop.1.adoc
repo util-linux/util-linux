@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: irqtop
+:smartcols-json:
 
 == NAME
 
@@ -56,6 +57,10 @@ Show softirqs information.
 Only show IRQs with counters above the specified threshold. Human readable values are supported (e.g. 1.2K).
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
 
 == INTERACTIVE MODE KEY COMMANDS
 

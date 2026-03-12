@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lscpu
+:smartcols-json:
 
 == NAME
 
@@ -127,6 +128,8 @@ Specifies a comma-separated list of output columns to print. All columns listed 
 
 LSCPU_CACHES_COLUMNS=::
 Same as *LSCPU_COLUMNS* with the difference that columns only listed for the *-C* option can be used.
+
+include::man-common/env-smartcols.adoc[]
 
 include::man-common/help-version.adoc[]
 

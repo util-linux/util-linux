@@ -5,6 +5,7 @@
 :man source: util-linux {release-version}
 :page-layout: base
 :command: lsmem
+:smartcols-json:
 
 == NAME
 
@@ -109,6 +110,8 @@ include::man-common/help-version.adoc[]
 
 LSMEM_COLUMNS=::
 Specifies a comma-separated list of output columns to print. All columns listed in *--help* can be used.
+
+include::man-common/env-smartcols.adoc[]
 
 == AUTHORS
 
