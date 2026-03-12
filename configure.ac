@@ -1310,12 +1310,12 @@ dnl liblastlog2
 dnl
 AC_ARG_ENABLE([liblastlog2],
   AS_HELP_STRING([--disable-liblastlog2], [do not build liblastlog2 and lastlog2 utilities]),
-  [], [UL_DEFAULT_ENABLE([liblastlog2], [yes])]
+  [], [UL_DEFAULT_ENABLE([liblastlog2], [check])]
 )
 UL_BUILD_INIT([liblastlog2])
 
 have_sqlite3=no
-AS_IF([test "x$build_liblastlog2" = xyes], [
+AS_IF([test "x$build_liblastlog2" != xno], [
   PKG_CHECK_MODULES([SQLITE3], [sqlite3], [have_sqlite3=yes], [have_sqlite3=no])
 ])
 UL_REQUIRES_HAVE([liblastlog2], [sqlite3], [sqlite3 library])
@@ -1327,7 +1327,7 @@ AC_DEFINE_UNQUOTED([LIBLASTLOG2_VERSION], ["$LIBLASTLOG2_VERSION"], [liblastlog2
 AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$build_liblastlog2" = xyes])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$build_liblastlog2" = xyes && test "x$enable_static" = xyes])
 AS_IF([test "x$build_liblastlog2" = xyes], [
-  AC_DEFINE([HAVE_LIBLASTLOG2], [1], [Define to 1 if you have the -lblkid.])
+  AC_DEFINE([HAVE_LIBLASTLOG2], [1], [Define to 1 if you have the -llastlog2.])
 ])
 
 
