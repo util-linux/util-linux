@@ -382,7 +382,7 @@ static void reset_time_fmts(struct dmesg_control *ctl)
 	ctl->time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
 }
 
-static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
+static int is_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
 {
 	size_t i;
 
@@ -398,7 +398,7 @@ static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
 
 static void include_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
 {
-	if (ctl->ntime_fmts > 0 && is_time_fmt_set(ctl, time_format))
+	if (ctl->ntime_fmts > 0 && is_time_fmt(ctl, time_format))
 		return;
 
 	if (ctl->ntime_fmts < __DMESG_TIMEFTM_COUNT)
@@ -1254,7 +1254,7 @@ static void print_record(struct dmesg_control *ctl,
 			abort();
 		}
 
-		if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
+		if (is_time_fmt(ctl, DMESG_TIMEFTM_NONE))
 			break;
 		else if (*tsbuf)
 			strcat(full_tsbuf, tsbuf);
@@ -1281,7 +1281,7 @@ full_output:
 		if (ctl->color)
 			dmesg_enable_color(timebreak ? DMESG_COLOR_TIMEBREAK :
 						       DMESG_COLOR_TIME);
-		if (!is_time_fmt_set(ctl, DMESG_TIMEFTM_RELTIME)) {
+		if (!is_time_fmt(ctl, DMESG_TIMEFTM_RELTIME)) {
 			if (ctl->json)
 				ul_jsonwrt_value_raw(&ctl->jfmt, "time", full_tsbuf);
 			else
@@ -1894,9 +1894,9 @@ int main(int argc, char *argv[])
 	 * specified (e.g. -d -t), delta wins and timestamp is suppressed.
 	 * When NONE is used without delta, it suppresses all timestamps.
 	 */
-	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_NONE)) {
-		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
-		    || is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_NONE)) {
+		if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+		    || is_time_fmt(&ctl, DMESG_TIMEFTM_DELTA)) {
 			reset_time_fmts(&ctl);
 			ctl.ntime_fmts = 0;
 			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
@@ -1908,26 +1908,26 @@ int main(int argc, char *argv[])
 	}
 
 	/* -d uses TIME_DELTA; merge with -T (CTIME) if both specified */
-	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME_DELTA)
-	    && is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME))
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+	    && is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME))
 		replace_delta_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA,
 				  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
 
 	/* --time-format delta: merge with TIME or CTIME if also specified */
-	if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
-		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME))
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_DELTA)) {
+		if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME))
 			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
 					  DMESG_TIMEFTM_TIME, DMESG_TIMEFTM_TIME_DELTA);
-		else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME))
+		else if (is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME))
 			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
 					  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
 	}
 
 	/* Boot time is needed for wall-clock timestamp formats */
-	if ((is_time_fmt_set(&ctl, DMESG_TIMEFTM_RELTIME)     ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)       ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME_DELTA) ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_ISO8601))    ||
+	if ((is_time_fmt(&ctl, DMESG_TIMEFTM_RELTIME)     ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME)       ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME_DELTA) ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_ISO8601))    ||
 	     ctl.since ||
 	     ctl.until) {
 		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
