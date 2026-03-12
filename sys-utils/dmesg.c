@@ -1889,17 +1889,6 @@ int main(int argc, char *argv[])
 		nopager = 1;
 	}
 
-	if ((is_time_fmt_set(&ctl, DMESG_TIMEFTM_RELTIME) ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)   ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_ISO8601)) ||
-	     ctl.since ||
-	     ctl.until) {
-		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
-			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
-		else
-			ctl.suspended_time = dmesg_get_suspended_time();
-	}
-
 	/*
 	 * Resolve NONE (--notime) vs. delta combinations. When both are
 	 * specified (e.g. -d -t), delta wins and timestamp is suppressed.
@@ -1932,6 +1921,20 @@ int main(int argc, char *argv[])
 		else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME))
 			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
 					  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
+	}
+
+	/* Boot time is needed for wall-clock timestamp formats */
+	if ((is_time_fmt_set(&ctl, DMESG_TIMEFTM_RELTIME)     ||
+	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)       ||
+	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME_DELTA) ||
+	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_ISO8601))    ||
+	     ctl.since ||
+	     ctl.until) {
+		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
+			warnx(_("failed to determine boot time, "
+				"timestamps will be inaccurate"));
+		else
+			ctl.suspended_time = dmesg_get_suspended_time();
 	}
 
 	if (!ctl.json)
