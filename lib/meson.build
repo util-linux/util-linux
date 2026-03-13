@@ -7,6 +7,7 @@ lib_common_sources = '''
 	crc32c.c
 	crc64.c
 	c_strtod.c
+	debug.c
 	encode.c
 	env.c
 	fileutils.c
