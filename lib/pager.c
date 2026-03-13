@@ -23,6 +23,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
+#include "strutils.h"
 #include "ttyutils.h"
 #include "pager.h"
 
@@ -59,33 +60,30 @@ static inline void close_pair(int fd[2])
 static void pager_preexec(void)
 {
 	const char *less_env = getenv("LESS");
-	char less_val[256];
+	const char *base = less_env ? less_env : "FRSX";
 	int header_lines = pager_process.header_lines;
 	int header_width = pager_process.header_width;
+	char *less_val = NULL;
 
 	if (header_lines > 0 && header_width > 0)
-		snprintf(less_val, sizeof(less_val),
-			 "%s --header %d,%d",
-			 less_env ? less_env : "FRSX",
-			 header_lines, header_width);
+		less_val = ul_strfconcat(base, " --header %d,%d",
+					 header_lines, header_width);
 	else if (header_width > 0)
-		snprintf(less_val, sizeof(less_val),
-			 "%s --header 0,%d",
-			 less_env ? less_env : "FRSX",
-			 header_width);
+		less_val = ul_strfconcat(base, " --header 0,%d",
+					 header_width);
 	else if (header_lines > 0)
-		snprintf(less_val, sizeof(less_val),
-			 "%s --header %d",
-			 less_env ? less_env : "FRSX",
-			 header_lines);
-	else if (less_env == NULL)
-		snprintf(less_val, sizeof(less_val), "FRSX");
-	else
-		goto skip_less;
+		less_val = ul_strfconcat(base, " --header %d",
+					 header_lines);
 
-	if (setenv("LESS", less_val, 1) != 0)
-		warn(_("failed to set the %s environment variable"), "LESS");
-skip_less:
+	if (less_val) {
+		if (setenv("LESS", less_val, 1) != 0)
+			warn(_("failed to set the %s environment variable"), "LESS");
+		free(less_val);
+	} else if (less_env == NULL) {
+		if (setenv("LESS", "FRSX", 0) != 0)
+			warn(_("failed to set the %s environment variable"), "LESS");
+	}
+
 	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LV");
 }
