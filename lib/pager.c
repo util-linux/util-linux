@@ -33,6 +33,9 @@ struct child_process {
 	pid_t pid;
 	int in;
 
+	int header_lines;
+	int header_width;
+
 	int org_err;
 	int org_out;
 	struct sigaction orig_sigchld;
@@ -53,33 +56,31 @@ static inline void close_pair(int fd[2])
 	close(fd[1]);
 }
 
-static int pager_header_lines;
-static size_t pager_header_width;
-
 static void pager_preexec(void)
 {
-	if (getenv("LESS") == NULL) {
-		if (pager_header_lines > 0) {
-			char less_env[256];
+	const char *less_env = getenv("LESS");
+	char less_val[256];
+	int header_lines = pager_process.header_lines;
+	int header_width = pager_process.header_width;
 
-			if (pager_header_width > 0)
-				snprintf(less_env, sizeof(less_env),
-					 "FRSX --header %d,%zu",
-					 pager_header_lines,
-					 pager_header_width);
-			else
-				snprintf(less_env, sizeof(less_env),
-					 "FRSX --header %d",
-					 pager_header_lines);
+	if (header_lines > 0 && header_width > 0)
+		snprintf(less_val, sizeof(less_val),
+			 "%s --header %d,%d",
+			 less_env ? less_env : "FRSX",
+			 header_lines, header_width);
+	else if (header_lines > 0)
+		snprintf(less_val, sizeof(less_val),
+			 "%s --header %d",
+			 less_env ? less_env : "FRSX",
+			 header_lines);
+	else if (less_env == NULL)
+		snprintf(less_val, sizeof(less_val), "FRSX");
+	else
+		goto skip_less;
 
-			if (setenv("LESS", less_env, 0) != 0)
-				warn(_("failed to set the %s environment variable"), "LESS");
-		} else {
-			if (setenv("LESS", "FRSX", 0) != 0)
-				warn(_("failed to set the %s environment variable"), "LESS");
-		}
-	}
-
+	if (setenv("LESS", less_val, 1) != 0)
+		warn(_("failed to set the %s environment variable"), "LESS");
+skip_less:
 	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LV");
 }
@@ -260,8 +261,24 @@ static void __setup_pager(void)
  */
 void pager_open(void)
 {
+	pager_open_header(0, 0);
+}
+
+/* Setup pager with "less --header" support to freeze header lines and
+ * optionally freeze the first column. The @header_lines specifies the
+ * number of header lines to freeze (typically 1 for table header).
+ * The @first_col_width specifies the number of character columns to
+ * freeze (width of first column including separator), or 0 to not
+ * freeze any column. If @header_lines is 0, no header freezing takes
+ * place regardless of @first_col_width.
+ */
+void pager_open_header(int header_lines, int first_col_width)
+{
 	if (pager_process.pid)
 		return;		/* already running */
+
+	pager_process.header_lines = header_lines;
+	pager_process.header_width = first_col_width;
 
 	pager_process.org_out = dup(STDOUT_FILENO);
 	pager_process.org_err = dup(STDERR_FILENO);
@@ -276,22 +293,6 @@ void pager_open(void)
 			close(pager_process.org_err);
 		memset(&pager_process, 0, sizeof(pager_process));
 	}
-}
-
-/* Setup pager with "less --header" support to freeze header lines and
- * optionally freeze the first column. The @header_lines specifies the
- * number of header lines to freeze (typically 1 for table header).
- * The @first_col_width specifies the number of character columns to
- * freeze (width of first column including separator), or 0 to not
- * freeze any column.
- */
-void pager_open_header(int header_lines, size_t first_col_width)
-{
-	pager_header_lines = header_lines;
-	pager_header_width = first_col_width;
-	pager_open();
-	pager_header_lines = 0;
-	pager_header_width = 0;
 }
 
 /* Close pager and restore original std{out,err}.
