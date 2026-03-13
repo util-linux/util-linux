@@ -23,6 +23,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
+#include "strutils.h"
 #include "ttyutils.h"
 #include "pager.h"
 
@@ -32,6 +33,9 @@ struct child_process {
 	const char **argv;
 	pid_t pid;
 	int in;
+
+	int header_lines;
+	int header_width;
 
 	int org_err;
 	int org_out;
@@ -55,8 +59,31 @@ static inline void close_pair(int fd[2])
 
 static void pager_preexec(void)
 {
-	if (getenv("LESS") == NULL && setenv("LESS", "FRSX", 0) != 0)
-		warn(_("failed to set the %s environment variable"), "LESS");
+	const char *less_env = getenv("LESS");
+	const char *base = less_env ? less_env : "FRSX";
+	int header_lines = pager_process.header_lines;
+	int header_width = pager_process.header_width;
+	char *less_val = NULL;
+
+	if (header_lines > 0 && header_width > 0)
+		less_val = ul_strfconcat(base, " --header %d,%d",
+					 header_lines, header_width);
+	else if (header_width > 0)
+		less_val = ul_strfconcat(base, " --header 0,%d",
+					 header_width);
+	else if (header_lines > 0)
+		less_val = ul_strfconcat(base, " --header %d",
+					 header_lines);
+
+	if (less_val) {
+		if (setenv("LESS", less_val, 1) != 0)
+			warn(_("failed to set the %s environment variable"), "LESS");
+		free(less_val);
+	} else if (less_env == NULL) {
+		if (setenv("LESS", "FRSX", 0) != 0)
+			warn(_("failed to set the %s environment variable"), "LESS");
+	}
+
 	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LV");
 }
@@ -237,8 +264,24 @@ static void __setup_pager(void)
  */
 void pager_open(void)
 {
+	pager_open_header(0, 0);
+}
+
+/* Setup pager with "less --header" support to freeze header lines and
+ * optionally freeze the first column. The @header_lines specifies the
+ * number of header lines to freeze (typically 1 for table header).
+ * The @first_col_width specifies the number of character columns to
+ * freeze (width of first column including separator), or 0 to not
+ * freeze any column. Either parameter can be 0 independently;
+ * less supports --header 0,M to freeze columns without header lines.
+ */
+void pager_open_header(int header_lines, int first_col_width)
+{
 	if (pager_process.pid)
 		return;		/* already running */
+
+	pager_process.header_lines = header_lines;
+	pager_process.header_width = first_col_width;
 
 	pager_process.org_out = dup(STDOUT_FILENO);
 	pager_process.org_err = dup(STDERR_FILENO);

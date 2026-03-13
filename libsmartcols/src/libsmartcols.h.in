@@ -430,6 +430,7 @@ extern size_t scols_table_get_termheight(const struct libscols_table *tb);
 
 
 /* table_print.c */
+extern int scols_table_calculate(struct libscols_table *tb);
 extern int scols_print_table(struct libscols_table *tb);
 extern int scols_print_table_to_string(struct libscols_table *tb, char **data);
 

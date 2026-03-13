@@ -8,6 +8,7 @@
 #define UTIL_LINUX_PAGER
 
 void pager_open(void);
+void pager_open_header(int header_lines, int first_col_width);
 void pager_close(void);
 
 #endif

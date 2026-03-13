@@ -98,6 +98,46 @@ int scols_table_print_range_to_string(
 }
 #endif
 
+/**
+ * scols_table_calculate:
+ * @tb: table
+ *
+ * Force column width calculation without printing. After this call,
+ * scols_column_get_width() returns valid column widths. This is useful
+ * when you need to know column widths before printing, for example to
+ * set up a pager with "less --header" to freeze the header row and
+ * first column.
+ *
+ * Note that scols_print_table() will skip recalculation if this
+ * function has already been called.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.42
+ */
+int scols_table_calculate(struct libscols_table *tb)
+{
+	struct ul_buffer buf = UL_INIT_BUFFER;
+	int rc;
+
+	if (!tb)
+		return -EINVAL;
+	if (list_empty(&tb->tb_columns))
+		return -EINVAL;
+	if (list_empty(&tb->tb_lines))
+		return 0;
+
+	DBG(TAB, ul_debugobj(tb, "pre-calculate"));
+
+	rc = __scols_initialize_printing(tb, &buf);
+	__scols_cleanup_printing(tb, &buf);
+
+	if (rc == 0)
+		tb->is_calculated = 1;
+
+	return rc;
+}
+
 static int do_print_table(struct libscols_table *tb, int *is_empty)
 {
 	int rc = 0;
@@ -161,6 +201,7 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	}
 done:
 	__scols_cleanup_printing(tb, &buf);
+	tb->is_calculated = 0;
 	return rc;
 }
 
