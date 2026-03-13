@@ -68,6 +68,11 @@ static void pager_preexec(void)
 			 "%s --header %d,%d",
 			 less_env ? less_env : "FRSX",
 			 header_lines, header_width);
+	else if (header_width > 0)
+		snprintf(less_val, sizeof(less_val),
+			 "%s --header 0,%d",
+			 less_env ? less_env : "FRSX",
+			 header_width);
 	else if (header_lines > 0)
 		snprintf(less_val, sizeof(less_val),
 			 "%s --header %d",
@@ -269,8 +274,8 @@ void pager_open(void)
  * number of header lines to freeze (typically 1 for table header).
  * The @first_col_width specifies the number of character columns to
  * freeze (width of first column including separator), or 0 to not
- * freeze any column. If @header_lines is 0, no header freezing takes
- * place regardless of @first_col_width.
+ * freeze any column. Either parameter can be 0 independently;
+ * less supports --header 0,M to freeze columns without header lines.
  */
 void pager_open_header(int header_lines, int first_col_width)
 {
