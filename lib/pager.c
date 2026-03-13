@@ -53,10 +53,33 @@ static inline void close_pair(int fd[2])
 	close(fd[1]);
 }
 
+static int pager_header_lines;
+static size_t pager_header_width;
+
 static void pager_preexec(void)
 {
-	if (getenv("LESS") == NULL && setenv("LESS", "FRSX", 0) != 0)
-		warn(_("failed to set the %s environment variable"), "LESS");
+	if (getenv("LESS") == NULL) {
+		if (pager_header_lines > 0) {
+			char less_env[256];
+
+			if (pager_header_width > 0)
+				snprintf(less_env, sizeof(less_env),
+					 "FRSX --header %d,%zu",
+					 pager_header_lines,
+					 pager_header_width);
+			else
+				snprintf(less_env, sizeof(less_env),
+					 "FRSX --header %d",
+					 pager_header_lines);
+
+			if (setenv("LESS", less_env, 0) != 0)
+				warn(_("failed to set the %s environment variable"), "LESS");
+		} else {
+			if (setenv("LESS", "FRSX", 0) != 0)
+				warn(_("failed to set the %s environment variable"), "LESS");
+		}
+	}
+
 	if (getenv("LV") == NULL && setenv("LV", "-c", 0) != 0)
 		warn(_("failed to set the %s environment variable"), "LV");
 }
@@ -253,6 +276,22 @@ void pager_open(void)
 			close(pager_process.org_err);
 		memset(&pager_process, 0, sizeof(pager_process));
 	}
+}
+
+/* Setup pager with "less --header" support to freeze header lines and
+ * optionally freeze the first column. The @header_lines specifies the
+ * number of header lines to freeze (typically 1 for table header).
+ * The @first_col_width specifies the number of character columns to
+ * freeze (width of first column including separator), or 0 to not
+ * freeze any column.
+ */
+void pager_open_header(int header_lines, size_t first_col_width)
+{
+	pager_header_lines = header_lines;
+	pager_header_width = first_col_width;
+	pager_open();
+	pager_header_lines = 0;
+	pager_header_width = 0;
 }
 
 /* Close pager and restore original std{out,err}.

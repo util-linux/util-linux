@@ -1334,7 +1334,7 @@ int __scols_initialize_printing(struct libscols_table *tb, struct ul_buffer *buf
 	if (has_groups(tb) && scols_table_is_tree(tb))
 		scols_groups_fix_members_order(tb);
 
-	if (tb->format == SCOLS_FMT_HUMAN) {
+	if (tb->format == SCOLS_FMT_HUMAN && !tb->is_calculated) {
 		rc = __scols_calculate(tb, buf);
 		if (rc != 0)
 			goto err;

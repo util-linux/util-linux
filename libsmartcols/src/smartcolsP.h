@@ -288,7 +288,8 @@ struct libscols_table {
 			no_headings   ,	/* don't print header */
 			no_encode     ,	/* don't care about control and non-printable chars */
 			no_linesep    ,	/* don't print line separator */
-			no_wrap	      ;	/* never wrap lines */
+			no_wrap	      ,	/* never wrap lines */
+			is_calculated ;	/* column widths already calculated */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)
