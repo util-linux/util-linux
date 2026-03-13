@@ -21,6 +21,7 @@ libcommon_la_SOURCES = \
 	lib/crc32c.c \
 	lib/crc64.c \
 	lib/c_strtod.c \
+	lib/debug.c \
 	lib/encode.c \
 	lib/env.c \
 	lib/fileutils.c \
@@ -71,7 +72,7 @@ endif
 EXTRA_LTLIBRARIES += libtcolors.la
 libtcolors_la_CFLAGS = $(AM_CFLAGS)
 libtcolors_la_SOURCES = lib/colors.c lib/color-names.c include/colors.h include/color-names.h
-libtcolors_la_LIBADD =
+libtcolors_la_LIBADD = libcommon.la
 # tinfo or ncurses are optional
 if HAVE_TINFO
 libtcolors_la_LIBADD += $(TINFO_LIBS)
@@ -203,10 +204,10 @@ test_loopdev_SOURCES = lib/loopdev.c
 test_loopdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LOOPDEV
 test_loopdev_LDADD = $(LDADD) libcommon.la
 
-test_netlink_SOURCES = lib/netlink.c
+test_netlink_SOURCES = lib/debug.c lib/netlink.c
 test_netlink_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETLINK
 
-test_netaddrq_SOURCES = lib/netaddrq.c lib/netlink.c
+test_netaddrq_SOURCES = lib/debug.c lib/netaddrq.c lib/netlink.c
 test_netaddrq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_NETADDRQ
 endif
 
@@ -214,7 +215,7 @@ test_configs_SOURCES = lib/configs.c
 test_configs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CONFIGS
 test_configs_LDADD = $(LDADD) libcommon.la
 
-test_fileeq_SOURCES = lib/fileeq.c
+test_fileeq_SOURCES = lib/debug.c lib/fileeq.c
 test_fileeq_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_FILEEQ
 
 test_fileutils_SOURCES = lib/fileutils.c
