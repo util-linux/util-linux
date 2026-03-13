@@ -49,6 +49,8 @@ option('build-libsmartcols', type : 'feature',
        description : 'build libsmartcols')
 option('build-libfdisk', type : 'feature',
        description : 'build libfdisk')
+option('build-libptysession', type : 'feature',
+       description : 'build libptysession')
 
 
 option('build-fdisks', type : 'feature',

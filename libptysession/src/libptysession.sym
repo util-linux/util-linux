@@ -1,0 +1,25 @@
+LIBPTYSESSION_2_42 {
+  global:
+	ul_pty_init_debug;
+	ul_new_pty;
+	ul_free_pty;
+	ul_pty_slave_echo;
+	ul_pty_get_delivered_signal;
+	ul_pty_set_callback_data;
+	ul_pty_set_child;
+	ul_pty_get_callbacks;
+	ul_pty_is_running;
+	ul_pty_setup;
+	ul_pty_signals_setup;
+	ul_pty_cleanup;
+	ul_pty_chownmod_slave;
+	ul_pty_init_slave;
+	ul_pty_proxy_master;
+	ul_pty_set_mainloop_time;
+	ul_pty_get_childfd;
+	ul_pty_wait_for_child;
+	ul_pty_get_child;
+	ul_pty_write_eof_to_child;
+  local: *;
+};
+
