@@ -7,6 +7,7 @@ lib_common_sources = '''
 	crc32c.c
 	crc64.c
 	c_strtod.c
+	debug.c
 	encode.c
 	env.c
 	fileutils.c
@@ -49,6 +50,7 @@ timer_c = files('timer.c')
 swapprober_c = files('swapprober.c')
 pty_session_c = files('pty-session.c')
 ismounted_c = files('ismounted.c')
+debug_c = files('debug.c')
 exec_shell_c = files('exec_shell.c')
 fileeq_c = files('fileeq.c')
 logindefs_c = static_library('logindefs',
@@ -98,6 +100,7 @@ lib_common = static_library(
 lib_color_sources = files('''
   colors.c
   color-names.c
+  debug.c
 '''.split())
 # colors.h include/color-names.h
 

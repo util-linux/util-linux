@@ -202,6 +202,7 @@ fincore_manadocs = files('fincore.1.adoc')
 hardlink_sources = files(
   'hardlink.c',
 ) + \
+  debug_c + \
   monotonic_c + \
   fileeq_c
 hardlink_manadocs = files('hardlink.1.adoc')
