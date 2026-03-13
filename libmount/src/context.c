@@ -67,6 +67,7 @@ struct libmnt_context *mnt_new_context(void)
 	cxt->ns_orig.fd = -1;
 	cxt->ns_tgt.fd = -1;
 	cxt->ns_cur = &cxt->ns_orig;
+	cxt->ns_stage.flags |= MNT_NS_STAGE_ALL;
 
 	cxt->map_linux = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	cxt->map_userspace = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
@@ -3247,6 +3248,24 @@ static void close_ns(struct libmnt_ns *ns)
 	ns->cache = NULL;
 }
 
+static int ns_switch_appropriate(struct libmnt_context *cxt)
+{
+	uint32_t curr_stage, flags;
+
+	if (!cxt)
+		return -EINVAL;
+
+	curr_stage = mnt_context_get_ns_curr_stage(cxt);
+	flags = cxt->ns_stage.flags;
+	if (flags & MNT_NS_STAGE_ALL || flags & curr_stage) {
+		DBG(CXT, ul_debug("namespace switch appropriate"));
+		return 0;
+	}
+
+	DBG(CXT, ul_debug("namespace switch not appropriate now"));
+	return -1;
+}
+
 /**
  * mnt_context_set_target_ns:
  * @cxt: mount context
@@ -3384,6 +3403,15 @@ struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmn
 		return old;
 
 #ifdef USE_LIBMOUNT_SUPPORT_NAMESPACES
+	/* check whether the switch to the target namespace
+	 * is appropriate for the current stage
+	 */
+	if (mnt_context_get_target_ns(cxt)) {
+		int rc = ns_switch_appropriate(cxt);
+		if (rc)
+			return old;
+	}
+
 	/* remember the current cache */
 	if (old->cache != cxt->cache) {
 		mnt_unref_cache(old->cache);
@@ -3460,6 +3488,64 @@ struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 	return mnt_context_switch_ns(cxt, mnt_context_get_target_ns(cxt));
 }
 
+/**
+ * mnt_context_set_ns_stage_flags:
+ * @cxt: mount context
+ * @flags: namespace stage flags
+ *
+ * Sets flags that control at which stage of the mount process a switch
+ * to the target namespace is appropriate.
+ *
+ * Returns: 0 on success, negative errno number in case of failure.
+ *
+ * Since: 2.42
+ */
+int mnt_context_set_ns_stage_flags(struct libmnt_context *cxt, uint32_t flags)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(CXT, ul_debugobj(cxt, "setting namespace stage flags to %u", flags));
+	cxt->ns_stage.flags = flags;
+	return 0;
+}
+
+/**
+ * mnt_context_set_ns_curr_stage:
+ * @cxt: mount context
+ * @stage: current mount stage
+ *
+ * Sets the current mount process stage.
+ *
+ * Returns: 0 on success, negative errno number in case of failure.
+ *
+ * Since: 2.42
+ */
+int mnt_context_set_ns_curr_stage(struct libmnt_context *cxt, uint32_t stage)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(CXT, ul_debugobj(cxt, "setting current namespace stage to %u", stage));
+	cxt->ns_stage.curr_stage = stage;
+	return 0;
+}
+
+/**
+ * mnt_context_get_ns_curr_stage:
+ * @cxt: mount context
+ * @flags: namespace stage flags
+ *
+ * Returns the last recorded mount process stage.
+ *
+ * Returns: 0 on success, negative errno number in case of failure.
+ *
+ * Since: 2.42
+ */
+int mnt_context_get_ns_curr_stage(struct libmnt_context *cxt)
+{
+	return cxt->ns_stage.curr_stage;
+}
 
 #ifdef TEST_PROGRAM
 

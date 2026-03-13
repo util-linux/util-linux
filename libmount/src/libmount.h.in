@@ -254,7 +254,12 @@ enum {
  * failed to execute external program
  */
 #define MNT_ERR_EXEC	5014
-
+/**
+ * MNT_ERR_NAMESPACE_STAGE:
+ *
+ * failed to set current mount stage for namespace switch check
+ */
+#define MNT_ERR_NAMESPACE_STAGE	5015
 
 
 /*
@@ -376,6 +381,7 @@ extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char *
 			__ul_attribute__((nonnull(3)));
 
 extern int mnt_id_from_path(const char *path, uint64_t *uniq_id, int *id);
+extern int mnt_str_to_ns_stage_flag(const char *str);
 
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void)
@@ -965,7 +971,9 @@ extern struct libmnt_ns *mnt_context_get_origin_ns(struct libmnt_context *cxt);
 extern struct libmnt_ns *mnt_context_switch_ns(struct libmnt_context *cxt, struct libmnt_ns *ns);
 extern struct libmnt_ns *mnt_context_switch_origin_ns(struct libmnt_context *cxt);
 extern struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt);
-
+extern int mnt_context_set_ns_stage_flags(struct libmnt_context *cxt, uint32_t flags);
+extern int mnt_context_set_ns_curr_stage(struct libmnt_context *cxt, uint32_t stage);
+extern int mnt_context_get_ns_curr_stage(struct libmnt_context *cxt);
 
 /* context_mount.c */
 extern int mnt_context_mount(struct libmnt_context *cxt);
