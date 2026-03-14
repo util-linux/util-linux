@@ -216,8 +216,18 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 {
 	int fd;
 	blkid_probe pr = NULL;
+	struct stat sb;
 
-	fd = open(filename, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
+	/*
+	 * Check for private device-mapper devices (LVM internals, etc.)
+	 * before open() to avoid bumping the kernel open count.  A racing
+	 * DM_DEVICE_REMOVE would otherwise see EBUSY.
+	 */
+	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
+	    sysfs_devno_is_dm_private(sb.st_rdev, NULL))
+		return NULL;
+
+	fd = open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
 	if (fd < 0)
 		return NULL;
 
