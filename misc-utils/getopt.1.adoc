@@ -35,7 +35,7 @@ Traditional implementations of *getopt*(1) are unable to cope with whitespace an
 Allow long options to start with a single '*-*'.
 
 *-l*, *--longoptions* _longopts_::
-The long (multi-character) options to be recognized. More than one option name may be specified at once, by separating the names with commas. This option may be given more than once, the _longopts_ are cumulative. Each long option name in _longopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
+The long (multi-character) options to be recognized. More than one option name may be specified at once, by separating the names with commas, whitespace (spaces, tabs, or newlines). This option may be given more than once, the _longopts_ are cumulative. Each long option name in _longopts_ may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
 
 *-n*, *--name* _progname_::
 The name that will be used by the *getopt*(3) routines when it reports errors. Note that errors of *getopt*(1) are still reported as coming from getopt.
