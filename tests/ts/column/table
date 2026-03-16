@@ -239,4 +239,16 @@ ts_init_subtest "header-as-columns-empty"
 echo -e 'COL1\t\tCOL3\nData1\tData2\tData3' | $TS_CMD_COLUMN --table -K >> $TS_OUTPUT 2>> $TS_ERRLOG
 ts_finalize_subtest
 
+ts_init_subtest "min-width"
+echo -e "a b c\na b c" | $TS_CMD_COLUMN --table --table-column "name=X,width=5" -C "name=YY,width=5" -C "name=Z" --output-separator '|' --output-width unlimited >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "strictwidth"
+echo -e "a b c\na b c" | $TS_CMD_COLUMN --table --table-column "name=X,width=5" -C "name=YY,width=5,strictwidth" -C "name=Z" --output-separator '|' --output-width unlimited >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "trunc-wanted"
+echo -e "123456 bbb\na bbb" | $TS_CMD_COLUMN --table --table-column "name=X,width=4,trunc" -C "name=Y" --output-separator '|' --output-width 9 >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
 ts_finalize

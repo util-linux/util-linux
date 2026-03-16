@@ -214,12 +214,13 @@ static int count_column_width(struct libscols_table *tb,
 	/* this is default, may be later reduced */
 	cl->width = st->width_max;
 
-	/* enlarge to minimal width */
-	if (cl->width < st->width_min && !scols_column_is_strict_width(cl))
+	/* enlarge to minimal width (usually header width) */
+	if (cl->width <= st->width_min && !scols_column_is_strict_width(cl))
 		cl->width = st->width_min;
 
-	/* use absolute size for large columns */
-	else if (cl->width_hint >= 1 && cl->width < (size_t) cl->width_hint
+	/* use absolute width if specified (usually "strictwidth" columns) */
+	else if (cl->width_hint >= 1
+		 && cl->width     < (size_t) cl->width_hint
 		 && st->width_min < (size_t) cl->width_hint)
 
 		cl->width = (size_t) cl->width_hint;
@@ -380,7 +381,7 @@ static int reduce_column(struct libscols_table *tb,
 		if (nth == 0)
 			/* columns are reduced in "bad first" way, be more
 			 * aggressive for the the worst column */
-			reduce = 3;
+			reduce = wanted < 3 ? wanted : 3;
 
 		if (cl->width < reduce)
 			reduce = cl->width;
@@ -560,6 +561,35 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 			}
 		}
 
+		if (width < tb->outwidth) {
+			DBG(TAB, ul_debugobj(tb, " enlarge (absolute, available %zu)",
+						tb->outwidth - width));
+
+			/* try enlarging all columns with absolute hint */
+			while (width < tb->outwidth) {
+				int changed = 0;
+
+				scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
+				while (scols_table_next_column(tb, &itr, &cl) == 0) {
+					if (scols_column_is_hidden(cl))
+						continue;
+					if (cl->width_hint < 1.0)
+						continue;
+					if (cl->width >= (size_t) cl->width_hint)
+						continue;
+					DBG(COL, ul_debugobj(cl, "  add +1 (%s)",
+								cl->header.data));
+					cl->width++;
+					width++;
+					changed++;
+					if (width == tb->outwidth)
+						break;
+				}
+				if (!changed)
+					break;
+			}
+
+		}
 		if (width < tb->outwidth && scols_table_is_maxout(tb)) {
 			DBG(TAB, ul_debugobj(tb, " enlarge (max-out, available %zu)",
 						tb->outwidth - width));
@@ -578,6 +608,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 						break;
 				}
 			}
+
 		} else if (width < tb->outwidth) {
 			/* enlarge the last column */
 			DBG(TAB, ul_debugobj(tb, " enlarge (last column, available %zu)",
