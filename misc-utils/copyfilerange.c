@@ -133,19 +133,23 @@ static void copy_range(struct rangeitem *range) {
 	uintmax_t remaining = range->length;
 
 	if (range->in_offset > range->in_st_size)
-		errx(EXIT_FAILURE, _("%s offset %"PRId64" beyond file size of %"PRId64""), range->in_filename, range->in_offset, range->in_st_size);
+		errx(EXIT_FAILURE, _("%s offset %"PRId64" is beyond file size of %"PRId64""),
+		                     range->in_filename, range->in_offset, range->in_st_size);
 
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		if (verbose)
-			printf("copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n", range->in_filename,
-							range->out_filename, range->in_offset, range->out_offset, chunk);
+			printf("copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n",
+			       range->in_filename, range->out_filename,
+			       range->in_offset, range->out_offset, chunk);
 
-		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd,
-																										&range->out_offset, chunk, 0);
+		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset,
+		                                       range->out_fd, &range->out_offset, chunk, 0);
 		if (copied < 0)
-			errx(EXIT_FAILURE, _("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju:%m\n"),
-							range->in_offset, range->out_offset, range->length, range->in_filename, range->out_filename, remaining);
+			errx(EXIT_FAILURE, _("failed to copy range %"PRId64":%"PRId64":%ju "
+			                     "from %s to %s with %ju remaining: %m\n"),
+			                     range->in_offset, range->out_offset, range->length,
+			                     range->in_filename, range->out_filename, remaining);
 		if (copied == 0)
 			break;
 
