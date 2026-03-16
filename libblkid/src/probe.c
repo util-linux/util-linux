@@ -224,8 +224,11 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	 * DM_DEVICE_REMOVE would otherwise see EBUSY.
 	 */
 	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_dm_private(sb.st_rdev, NULL))
+	    sysfs_devno_is_dm_private(sb.st_rdev, NULL)) {
+		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
+		errno = EINVAL;
 		return NULL;
+	}
 
 	fd = open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
 	if (fd < 0)
