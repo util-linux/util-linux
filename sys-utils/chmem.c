@@ -542,6 +542,8 @@ static void parse_single_param(struct chmem_desc *desc, char *str)
 
 static void parse_range_param(struct chmem_desc *desc, char *start, char *end)
 {
+	if (!start || !end)
+		errx(EXIT_FAILURE, _("Invalid range"));
 	if (desc->use_blocks) {
 		desc->start = strtou64_or_err(start, _("Failed to parse start"));
 		desc->end = strtou64_or_err(end, _("Failed to parse end"));
@@ -568,7 +570,7 @@ static void parse_parameter(struct chmem_desc *desc, char *param)
 	char **split;
 
 	split = ul_strv_split(param, "-");
-	if (ul_strv_length(split) > 2)
+	if (ul_strv_length(split) < 1 || ul_strv_length(split) > 2)
 		errx(EXIT_FAILURE, _("Invalid parameter: %s"), param);
 	if (ul_strv_length(split) == 1)
 		parse_single_param(desc, split[0]);
