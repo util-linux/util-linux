@@ -242,16 +242,12 @@ int main(const int argc, char **argv)
 			range.out_filename = argv[rem_optind];
 	}
 
-	if (!range.in_filename)
-		errx(EXIT_FAILURE, _("source file is required"));
-
-	if (!range.out_filename)
-		errx(EXIT_FAILURE, _("destination file is required"));
+	if (!range.out_filename || (rem_optind == argc && !nrange_files))
+		errx(EXIT_FAILURE, _("too few arguments"));
 
 	range.in_fd = open(range.in_filename, O_RDONLY);
 	if (range.in_fd < 0)
 		err(EXIT_FAILURE, _("cannot open source %s"), range.in_filename);
-
 
 	if (fstat(range.in_fd, &sb) == -1)
 		err(EXIT_FAILURE, _("cannot determine size of source file %s"), range.in_filename);
@@ -259,10 +255,7 @@ int main(const int argc, char **argv)
 
 	range.out_fd = open(range.out_filename, O_WRONLY | O_CREAT, 0666);
 	if (range.out_fd < 0)
-		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
-
-	if (rem_optind == argc && !nrange_files)
-		errx(EXIT_FAILURE, _("nothing to do, no ranges supplied"));
+		err(EXIT_FAILURE, _("cannot open destination %s"), range.out_filename);
 
 	if (nrange_files)
 		handle_range_files(&range, nrange_files, range_files);
