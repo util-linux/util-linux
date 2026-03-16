@@ -382,7 +382,7 @@ static void reset_time_fmts(struct dmesg_control *ctl)
 	ctl->time_fmts[0] = DMESG_TIMEFTM_DEFAULT;
 }
 
-static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
+static int is_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
 {
 	size_t i;
 
@@ -398,7 +398,7 @@ static int is_time_fmt_set(struct dmesg_control *ctl, unsigned int time_format)
 
 static void include_time_fmt(struct dmesg_control *ctl, unsigned int time_format)
 {
-	if (ctl->ntime_fmts > 0 && is_time_fmt_set(ctl, time_format))
+	if (ctl->ntime_fmts > 0 && is_time_fmt(ctl, time_format))
 		return;
 
 	if (ctl->ntime_fmts < __DMESG_TIMEFTM_COUNT)
@@ -421,6 +421,27 @@ static void exclude_time_fmt(struct dmesg_control *ctl, unsigned int time_format
 		if (ctl->ntime_fmts == 0)
 			reset_time_fmts(ctl);
 	}
+}
+
+static void replace_time_fmt(struct dmesg_control *ctl,
+			     unsigned int old_fmt, unsigned int new_fmt)
+{
+	size_t idx;
+
+	for (idx = 0; idx < ctl->ntime_fmts; idx++) {
+		if (ctl->time_fmts[idx] == old_fmt) {
+			ctl->time_fmts[idx] = new_fmt;
+			break;
+		}
+	}
+}
+
+static void replace_delta_fmt(struct dmesg_control *ctl,
+			      unsigned int delta_fmt,
+			      unsigned int old_fmt, unsigned int new_fmt)
+{
+	exclude_time_fmt(ctl, delta_fmt);
+	replace_time_fmt(ctl, old_fmt, new_fmt);
 }
 
 /*
@@ -1233,7 +1254,7 @@ static void print_record(struct dmesg_control *ctl,
 			abort();
 		}
 
-		if (is_time_fmt_set(ctl, DMESG_TIMEFTM_NONE))
+		if (is_time_fmt(ctl, DMESG_TIMEFTM_NONE))
 			break;
 		else if (*tsbuf)
 			strcat(full_tsbuf, tsbuf);
@@ -1260,7 +1281,7 @@ full_output:
 		if (ctl->color)
 			dmesg_enable_color(timebreak ? DMESG_COLOR_TIMEBREAK :
 						       DMESG_COLOR_TIME);
-		if (!is_time_fmt_set(ctl, DMESG_TIMEFTM_RELTIME)) {
+		if (!is_time_fmt(ctl, DMESG_TIMEFTM_RELTIME)) {
 			if (ctl->json)
 				ul_jsonwrt_value_raw(&ctl->jfmt, "time", full_tsbuf);
 			else
@@ -1640,7 +1661,6 @@ int main(int argc, char *argv[])
 	int  c, nopager = 0;
 	int  console_level = 0;
 	int  klog_rc = 0;
-	int  delta = 0;
 	ssize_t n;
 	static struct dmesg_control ctl = {
 		.filename = NULL,
@@ -1733,7 +1753,7 @@ int main(int argc, char *argv[])
 			ctl.action = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
 		case 'd':
-			delta = 1;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA);
 			break;
 		case 'E':
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
@@ -1811,7 +1831,6 @@ int main(int argc, char *argv[])
 			include_time_fmt(&ctl, DMESG_TIMEFTM_CTIME);
 			break;
 		case 't':
-			reset_time_fmts(&ctl);
 			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
 			break;
 		case 'u':
@@ -1864,48 +1883,58 @@ int main(int argc, char *argv[])
 	if (ctl.json) {
 		reset_time_fmts(&ctl);
 		ctl.ntime_fmts = 0;
-		delta = 0;
 		ctl.force_prefix = 0;
 		ctl.raw = 0;
 		ctl.noesc = 1;
 		nopager = 1;
 	}
 
-	if ((is_time_fmt_set(&ctl, DMESG_TIMEFTM_RELTIME) ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)   ||
-	     is_time_fmt_set(&ctl, DMESG_TIMEFTM_ISO8601)) ||
+	/*
+	 * Resolve NONE (--notime) vs. delta combinations. When both are
+	 * specified (e.g. -d -t), delta wins and timestamp is suppressed.
+	 * When NONE is used without delta, it suppresses all timestamps.
+	 */
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_NONE)) {
+		if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+		    || is_time_fmt(&ctl, DMESG_TIMEFTM_DELTA)) {
+			reset_time_fmts(&ctl);
+			ctl.ntime_fmts = 0;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
+		} else {
+			reset_time_fmts(&ctl);
+			ctl.ntime_fmts = 0;
+			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
+		}
+	}
+
+	/* -d uses TIME_DELTA; merge with -T (CTIME) if both specified */
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA)
+	    && is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME))
+		replace_delta_fmt(&ctl, DMESG_TIMEFTM_TIME_DELTA,
+				  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
+
+	/* --time-format delta: merge with TIME or CTIME if also specified */
+	if (is_time_fmt(&ctl, DMESG_TIMEFTM_DELTA)) {
+		if (is_time_fmt(&ctl, DMESG_TIMEFTM_TIME))
+			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
+					  DMESG_TIMEFTM_TIME, DMESG_TIMEFTM_TIME_DELTA);
+		else if (is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME))
+			replace_delta_fmt(&ctl, DMESG_TIMEFTM_DELTA,
+					  DMESG_TIMEFTM_CTIME, DMESG_TIMEFTM_CTIME_DELTA);
+	}
+
+	/* Boot time is needed for wall-clock timestamp formats */
+	if ((is_time_fmt(&ctl, DMESG_TIMEFTM_RELTIME)     ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME)       ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_CTIME_DELTA) ||
+	     is_time_fmt(&ctl, DMESG_TIMEFTM_ISO8601))    ||
 	     ctl.since ||
 	     ctl.until) {
 		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
-			include_time_fmt(&ctl, DMESG_TIMEFTM_NONE);
+			warnx(_("failed to determine boot time, "
+				"timestamps will be inaccurate"));
 		else
 			ctl.suspended_time = dmesg_get_suspended_time();
-	}
-
-	if (delta || is_time_fmt_set(&ctl, DMESG_TIMEFTM_DELTA)) {
-		if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_TIME)) {
-			if (ctl.ntime_fmts == 0) {
-				ctl.time_fmts[ctl.ntime_fmts++] = DMESG_TIMEFTM_TIME_DELTA;
-			} else {
-				exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-				for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-					if (ctl.time_fmts[n] == DMESG_TIMEFTM_TIME) {
-						ctl.time_fmts[n] = DMESG_TIMEFTM_TIME_DELTA;
-						break;
-					}
-				}
-			}
-		} else if (is_time_fmt_set(&ctl, DMESG_TIMEFTM_CTIME)) {
-			exclude_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-			for (n = 0; (size_t) n < ctl.ntime_fmts; n++) {
-				if (ctl.time_fmts[n] == DMESG_TIMEFTM_CTIME) {
-					ctl.time_fmts[n] = DMESG_TIMEFTM_CTIME_DELTA;
-					break;
-				}
-			}
-		} else {
-			include_time_fmt(&ctl, DMESG_TIMEFTM_DELTA);
-		}
 	}
 
 	if (!ctl.json)
