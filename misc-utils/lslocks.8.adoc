@@ -143,7 +143,7 @@ LSLOCKS_COLUMNS=::
 Specifies a comma-separated list of output columns to print. All columns listed by *--list-columns* can be used.
 
 PAGER_ENABLE=::
-If set to "yes", "true", "on", or "1", automatically pipe output through a pager.
+If set to "yes" or "1", automatically pipe output through a pager.
 The *--pager* and *--nopager* command-line options override this variable.
 This is a project-independent variable; other tools may support it as well.
 Ignored in privileged (setuid/setgid) contexts.

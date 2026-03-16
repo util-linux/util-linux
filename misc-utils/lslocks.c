@@ -949,8 +949,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_("     --pager              pipe output into a pager\n"), out);
-	fputs(_("     --nopager            disable pager output\n"), out);
+	fputs(_("     --pager            pipe output into a pager\n"), out);
+	fputs(_("     --nopager          disable pager output\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_LIST_COLUMNS_OPTION(24));
