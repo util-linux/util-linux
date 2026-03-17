@@ -43,7 +43,12 @@ size_t mbs_nwidth(const char *buf, size_t bufsz)
 
 	while (p && *p && p <= last) {
 		if (iscntrl((unsigned char) *p)) {
+			char ctrl_char = *p;
 			p++;
+
+			/* only process escape sequences if the control char is ESC */
+			if (ctrl_char != '\e')
+				continue;
 
 			/* try detect "\e[x;ym" and skip on success */
 			if (*p && *p == '[') {
