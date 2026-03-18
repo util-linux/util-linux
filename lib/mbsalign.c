@@ -43,7 +43,12 @@ size_t mbs_nwidth(const char *buf, size_t bufsz)
 
 	while (p && *p && p <= last) {
 		if (iscntrl((unsigned char) *p)) {
+			char ctrl_char = *p;
 			p++;
+
+			/* only process escape sequences if the control char is ESC */
+			if (ctrl_char != '\e')
+				continue;
 
 			/* try detect "\e[x;ym" and skip on success */
 			if (*p && *p == '[') {
@@ -52,6 +57,12 @@ size_t mbs_nwidth(const char *buf, size_t bufsz)
 					e++;
 				if (*e == 'm')
 					p = e + 1;
+			}
+			/* try detect SCS sequences "\e(X", "\e)X", "\e*X", "\e+X" and skip on success */
+			else if (*p && (*p == '(' || *p == ')' || *p == '*' || *p == '+')) {
+				p++;  /* skip the SCS introducer */
+				if (p <= last)
+					p++;  /* skip the character */
 			}
 			continue;
 		}
