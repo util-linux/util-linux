@@ -45,7 +45,8 @@ whereis_manadocs = files('whereis.1.adoc')
 
 lslocks_sources = files(
   'lslocks.c',
-)
+) + \
+  pager_c
 lslocks_manadocs = files('lslocks.8.adoc')
 
 lsblk_sources = files(
