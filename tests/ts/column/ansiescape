@@ -25,6 +25,13 @@ ts_check_test_command "$TS_CMD_COLUMN"
 
 ts_cd "$TS_OUTDIR"
 
-printf '%b' "$(cat $TS_SELF/files/ansiescape)" | $TS_CMD_COLUMN -c 32 | cat -v >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_init_subtest "sgr"
+printf '%b' "$(cat $TS_SELF/files/ansiescape)" | $TS_CMD_COLUMN --columns 32 | cat -v >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
+
+ts_init_subtest "scs"
+printf '%b' "\033[32mgreen\033(B\033[m|colored with SCS reset\n\033[31mred\033[m|colored without SCS\nnormal|no colors\n" \
+	| $TS_CMD_COLUMN --table --separator '|' --output-separator '|' >> $TS_OUTPUT 2>> $TS_ERRLOG
+ts_finalize_subtest
 
 ts_finalize
