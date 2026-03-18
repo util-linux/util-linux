@@ -1,0 +1,53 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="strtobool"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_STRUTILS"
+
+# true values
+$TS_HELPER_STRUTILS --strtobool 1 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool y >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool t >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool yes >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool true >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool on >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool enable >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# true values (case insensitive)
+$TS_HELPER_STRUTILS --strtobool YES >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool True >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool ON >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# false values
+$TS_HELPER_STRUTILS --strtobool 0 >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool no >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool not >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool false >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool off >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool disable >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+# false values (case insensitive)
+$TS_HELPER_STRUTILS --strtobool NO >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool False >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_STRUTILS --strtobool OFF >> $TS_OUTPUT 2>> $TS_ERRLOG
+
+ts_finalize
