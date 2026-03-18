@@ -71,6 +71,7 @@ extern int isxdigit_strend(const char *str, const char **end);
 #define isxdigit_string(_s)	isxdigit_strend(_s, NULL)
 
 
+extern int ul_strtobool(const char *str, bool *result);
 extern int ul_parse_switch(const char *arg, ...);
 
 #ifndef HAVE_MEMPCPY
