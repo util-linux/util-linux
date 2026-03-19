@@ -377,10 +377,10 @@ Possible boolean values are listed at the end of this section.
 Boolean credentials accept the following values::
 
 Positive;;
-"true", "t", "yes", "y", "on", "1"
+"true", "t", "yes", "y", "on", "1", "enable"
 
 Negative;;
-"false", "f", "no", "n", "off", "0"
+"false", "f", "not", "no", "n", "off", "0", "disable"
 
 
 == BUGS
