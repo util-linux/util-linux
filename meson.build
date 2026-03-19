@@ -899,7 +899,7 @@ build_plymouth_support = (not build_plymouth_support.disabled() and
                           have_sock_cloexec and
                           have_sock_nonblock and
                           have_so_passcred)
-conf.set('ENABLE_PLYMOUTH_SUPPORT', build_plymouth_support ? 1 : false)
+conf.set('USE_PLYMOUTH_SUPPORT', build_plymouth_support ? 1 : false)
 summary('plymouth support',
         build_plymouth_support  ? 'enabled' : 'disabled',
         section : 'components')
