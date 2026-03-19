@@ -1,0 +1,71 @@
+#!/bin/sh
+#
+# Compare commit subject lines between master and a stable/* branch
+# to identify commits missing from the stable branch (backport candidates).
+#
+# Merge commits are ignored. Cherry-picked commits are detected by
+# matching subject lines (git cherry-pick preserves the subject).
+#
+
+STABLE="$1"
+
+if [ -z "$STABLE" ]; then
+	echo "Usage: $0 <stable-branch>"
+	echo "Example: $0 stable/v2.40"
+	exit 1
+fi
+
+if ! git rev-parse --verify "$STABLE" >/dev/null 2>&1; then
+	echo "error: branch '$STABLE' not found"
+	exit 1
+fi
+
+MERGE_BASE=$(git merge-base master "$STABLE")
+if [ -z "$MERGE_BASE" ]; then
+	echo "error: no common ancestor between master and '$STABLE'"
+	exit 1
+fi
+
+TMPFILE_STABLE=$(mktemp /tmp/util-linux-stable-XXXXXX)
+trap 'rm -f $TMPFILE_STABLE' EXIT
+
+git log "$MERGE_BASE".."$STABLE" --no-merges --format="%s" | sort -u > "$TMPFILE_STABLE"
+
+NSTABLE=$(wc -l < "$TMPFILE_STABLE")
+echo "stable: $STABLE (merge-base: $(echo $MERGE_BASE | cut -c1-12))"
+echo "stable: $NSTABLE unique non-merge subjects"
+echo
+
+git log "$MERGE_BASE"..master --no-merges --reverse --format="%h %s" | awk '
+	NR==FNR { stable[$0] = 1; next }
+	{
+		subject = $0
+		sub(/^[^ ]+ /, "", subject)
+		if (subject in stable)
+			next
+
+		s = tolower(subject)
+
+		type = ""
+
+		if (s ~ /^tests:|^tests\//)
+			type = "test"
+		else if (s ~ /^docs:|^doc:|\(man\)|\.adoc/)
+			type = "docs"
+		else if (s ~ /^build:|^meson:|^autotools:|^ci:|^ci\/|makemodule|meson\.build|\.sym/)
+			type = "build"
+		else if (s ~ /fix|segfault|sigsegv|crash|overflow|oob|regression|cve|correct |repair|broken/)
+			type = "fix"
+		else if (s ~ /cleanup|clean up|refactor|cosmetic|whitespace|rename|reorganize|simplify/)
+			type = "cleanup"
+		else if (s ~ /revert/)
+			type = "revert"
+		else if (s ~ /^bash-completion:|^completion:/)
+			type = "compl"
+		else if (s ~ / new | introduce | add | support for | implement/)
+			type = "feature"
+
+		hash = $1
+		printf "%s\t%s\t%s\n", type, hash, subject
+	}
+' "$TMPFILE_STABLE" - | column --table --separator $'\t' --table-columns TYPE,HASH,SUBJECT --table-truncate SUBJECT
