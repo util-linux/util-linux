@@ -307,7 +307,6 @@ endif
 
 conf.set('HAVE_LIBNCURSESW', lib_ncursesw.found() ? 1 : false)
 conf.set('HAVE_LIBNCURSES', lib_ncurses.found() ? 1 : false)
-conf.set('HAVE_NCURSES', (lib_ncursesw.found() or lib_ncurses.found()) ? 1 : false)
 
 lib_slang = dependency(
   'slang',
