@@ -1019,7 +1019,8 @@ static int parser_errcb(struct libmnt_table *tb,
 {
 	struct findmnt *findmnt = mnt_table_get_userdata(tb);
 	warnx(_("%s: parse error at line %d -- ignored"), filename, line);
-	findmnt->parse_nerrors++;
+	if (findmnt)
+		findmnt->parse_nerrors++;
 	return 1;
 }
 
@@ -1039,7 +1040,8 @@ static char **append_pid_tabfile(char **files, int *nfiles, pid_t pid)
 }
 
 /* calls libmount fstab/mtab/mountinfo parser */
-static struct libmnt_table *parse_tabfiles(char **files,
+static struct libmnt_table *parse_tabfiles(struct findmnt *findmnt,
+					   char **files,
 					   int nfiles,
 					   int tabtype)
 {
@@ -1051,6 +1053,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
 		warn(_("failed to initialize libmount table"));
 		return NULL;
 	}
+	mnt_table_set_userdata(tb, findmnt);
 	mnt_table_set_parser_errcb(tb, parser_errcb);
 
 	do {
@@ -1086,7 +1089,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
 	return tb;
 }
 
-static struct libmnt_table *fetch_listmount(void)
+static struct libmnt_table *fetch_listmount(struct findmnt *findmnt)
 {
 	struct libmnt_table *tb = NULL;
 	struct libmnt_statmnt *sm = NULL;
@@ -1102,6 +1105,7 @@ static struct libmnt_table *fetch_listmount(void)
 		warn(_("failed to initialize libmount table"));
 		goto failed;
 	}
+	mnt_table_set_userdata(tb, findmnt);
 
 	mnt_table_refer_statmnt(tb, sm);
 
@@ -1121,7 +1125,7 @@ failed:
  * Parses mountinfo and calls mnt_cache_set_targets(cache, mtab). Only
  * necessary if @tb in main() was read from a non-kernel source.
  */
-static void cache_set_targets(struct libmnt_cache *tmp)
+static void cache_set_targets(struct findmnt *findmnt, struct libmnt_cache *tmp)
 {
 	struct libmnt_table *tb;
 	const char *path;
@@ -1129,6 +1133,8 @@ static void cache_set_targets(struct libmnt_cache *tmp)
 	tb = mnt_new_table();
 	if (!tb)
 		return;
+	mnt_table_set_userdata(tb, findmnt);
+	mnt_table_set_parser_errcb(tb, parser_errcb);
 
 	path = access(_PATH_PROC_MOUNTINFO, R_OK) == 0 ?
 		_PATH_PROC_MOUNTINFO :
@@ -1402,6 +1408,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		goto done;
 	}
 
+	mnt_table_set_userdata(tb_new, findmnt);
 	mnt_table_set_parser_errcb(tb_new, parser_errcb);
 
 	fds[0].fd = fileno(f);
@@ -2142,12 +2149,11 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);
 
 	if (tabtype == TABTYPE_KERNEL_LISTMOUNT)
-		tb = fetch_listmount();
+		tb = fetch_listmount(&findmnt);
 	else
-		tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
+		tb = parse_tabfiles(&findmnt, tabfiles, ntabfiles, tabtype);
 	if (!tb)
 		goto leave;
-	mnt_table_set_userdata(tb, &findmnt);
 
 	if (tabtype == TABTYPE_MTAB && tab_is_kernel(tb))
 		tabtype = TABTYPE_KERNEL_MOUNTINFO;
@@ -2168,7 +2174,7 @@ int main(int argc, char *argv[])
 		mnt_table_set_cache(tb, findmnt.cache);
 
 		if (tabtype == TABTYPE_FSTAB || tabtype == TABTYPE_MTAB)
-			cache_set_targets(findmnt.cache);
+			cache_set_targets(&findmnt, findmnt.cache);
 	}
 
 	if (findmnt.flags & FL_UNIQ)
