@@ -62,9 +62,6 @@ endif
 
 pc_version = '.'.join(pc_version)
 
-conf.set_quoted('LIBBLKID_VERSION', pc_version)
-conf.set_quoted('LIBBLKID_DATE', libblkid_date)
-
 conf.set('bindir', bindir)
 conf.set('sbindir', sbindir)
 conf.set('runstatedir', runstatedir)
