@@ -917,6 +917,9 @@ use_hwclock_cmos = host_machine.cpu_family() in ['x86', 'x86_64']
 message('Use CMOS clock: @0@'.format(use_hwclock_cmos))
 conf.set('USE_HWCLOCK_CMOS', use_hwclock_cmos ? 1 : false)
 
+use_hwclock_gplv3 = get_option('hwclock-gplv3')
+conf.set('USE_HWCLOCK_GPLv3_DATETIME', use_hwclock_gplv3 ? 1 : false)
+
 conf.set('HAVE_TLS', get_option('use-tls') ? 1 : false)
 conf.set('PG_BELL', get_option('pg-bell') ? 1 : false)
 conf.set('USE_COLORS_BY_DEFAULT', get_option('colors-default') ? 1 : false)
