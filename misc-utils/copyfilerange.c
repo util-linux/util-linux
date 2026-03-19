@@ -133,19 +133,23 @@ static void copy_range(struct rangeitem *range) {
 	uintmax_t remaining = range->length;
 
 	if (range->in_offset > range->in_st_size)
-		errx(EXIT_FAILURE, _("%s offset %"PRId64" beyond file size of %"PRId64""), range->in_filename, range->in_offset, range->in_st_size);
+		errx(EXIT_FAILURE, _("%s offset %"PRId64" is beyond file size of %"PRId64""),
+		                     range->in_filename, range->in_offset, range->in_st_size);
 
 	while (remaining > 0) {
 		const size_t chunk = remaining > SIZE_MAX ? SIZE_MAX : remaining;
 		if (verbose)
-			printf("copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n", range->in_filename,
-							range->out_filename, range->in_offset, range->out_offset, chunk);
+			printf("copy_file_range %s to %s %"PRId64":%"PRId64":%zu\n",
+			       range->in_filename, range->out_filename,
+			       range->in_offset, range->out_offset, chunk);
 
-		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset, range->out_fd,
-																										&range->out_offset, chunk, 0);
+		const ssize_t copied = copy_file_range(range->in_fd, &range->in_offset,
+		                                       range->out_fd, &range->out_offset, chunk, 0);
 		if (copied < 0)
-			errx(EXIT_FAILURE, _("failed copy file range %"PRId64":%"PRId64":%ju from %s to %s with remaining %ju:%m\n"),
-							range->in_offset, range->out_offset, range->length, range->in_filename, range->out_filename, remaining);
+			errx(EXIT_FAILURE, _("failed to copy range %"PRId64":%"PRId64":%ju "
+			                     "from %s to %s with %ju remaining: %m\n"),
+			                     range->in_offset, range->out_offset, range->length,
+			                     range->in_filename, range->out_filename, remaining);
 		if (copied == 0)
 			break;
 
@@ -238,16 +242,12 @@ int main(const int argc, char **argv)
 			range.out_filename = argv[rem_optind];
 	}
 
-	if (!range.in_filename)
-		errx(EXIT_FAILURE, _("source file is required"));
-
-	if (!range.out_filename)
-		errx(EXIT_FAILURE, _("destination file is required"));
+	if (!range.out_filename || (rem_optind == argc && !nrange_files))
+		errx(EXIT_FAILURE, _("too few arguments"));
 
 	range.in_fd = open(range.in_filename, O_RDONLY);
 	if (range.in_fd < 0)
 		err(EXIT_FAILURE, _("cannot open source %s"), range.in_filename);
-
 
 	if (fstat(range.in_fd, &sb) == -1)
 		err(EXIT_FAILURE, _("cannot determine size of source file %s"), range.in_filename);
@@ -255,10 +255,7 @@ int main(const int argc, char **argv)
 
 	range.out_fd = open(range.out_filename, O_WRONLY | O_CREAT, 0666);
 	if (range.out_fd < 0)
-		err(EXIT_FAILURE, _("cannot open destination %s"), argv[2]);
-
-	if (rem_optind == argc && !nrange_files)
-		errx(EXIT_FAILURE, _("nothing to do, no ranges supplied"));
+		err(EXIT_FAILURE, _("cannot open destination %s"), range.out_filename);
 
 	if (nrange_files)
 		handle_range_files(&range, nrange_files, range_files);
