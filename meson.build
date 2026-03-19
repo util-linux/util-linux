@@ -142,11 +142,9 @@ conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
 summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
 
 build_libsmartcols = not get_option('build-libsmartcols').disabled()
-conf.set('HAVE_LIBSMARTCOLS', build_libsmartcols ? 1 : false)
 summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
 
 build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
-conf.set('HAVE_LIBFDISK', build_libfdisk ? 1 : false)
 summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
 
 build_uuidd = not get_option('build-uuidd').disabled()
