@@ -1,8 +1,22 @@
 cc = meson.get_compiler('c')
 pkg = import('pkgconfig')
-dir_liblastlog2 = include_directories('src')
+dir_liblastlog2 = include_directories('.', 'src')
+
+defs = configuration_data()
+defs.set('LIBLASTLOG2_VERSION', pc_version)
+defs.set('LIBLASTLOG2_MAJOR_VERSION', pc_version.split('.')[0])
+defs.set('LIBLASTLOG2_MINOR_VERSION', pc_version.split('.')[1])
+defs.set('LIBLASTLOG2_PATCH_VERSION', pc_version.split('.')[2])
+
+configure_file(
+  input : 'src/lastlog2.h.in',
+  output : 'lastlog2.h',
+  configuration : defs,
+  install : build_liblastlog2,
+  install_dir : get_option('includedir') / 'liblastlog2',
+)
+
 lib_lastlog2_sources = '''
-  src/lastlog2.h
   src/lastlog2P.h
   src/lastlog2.c
 '''.split()
@@ -44,8 +58,6 @@ if build_liblastlog2
     version : pc_version
   )
   meson.override_dependency('lastlog2', lastlog2_dep)
-
-  install_headers('src/lastlog2.h', subdir : 'liblastlog2')
 
   foreach lastlog2_test: lastlog2_tests
     test_name = 'test_lastlog2_' + lastlog2_test

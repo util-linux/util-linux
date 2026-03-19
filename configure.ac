@@ -1322,6 +1322,9 @@ UL_REQUIRES_HAVE([liblastlog2], [sqlite3], [sqlite3 library])
 AC_SUBST([SQLITE3_LIBS])
 
 AC_SUBST([LIBLASTLOG2_VERSION])
+AC_SUBST([LIBLASTLOG2_MAJOR_VERSION], $PACKAGE_VERSION_MAJOR)
+AC_SUBST([LIBLASTLOG2_MINOR_VERSION], $PACKAGE_VERSION_MINOR)
+AC_SUBST([LIBLASTLOG2_PATCH_VERSION], $PACKAGE_VERSION_RELEASE)
 AC_SUBST([LIBLASTLOG2_VERSION_INFO])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2], [test "x$build_liblastlog2" = xyes])
 AM_CONDITIONAL([BUILD_LIBLASTLOG2_TESTS], [test "x$build_liblastlog2" = xyes && test "x$enable_static" = xyes])
@@ -3124,6 +3127,7 @@ libblkid/src/blkid.h
 libfdisk/docs/Makefile
 libfdisk/docs/version.xml
 libfdisk/src/libfdisk.h
+liblastlog2/src/lastlog2.h
 libmount/docs/Makefile
 libmount/docs/version.xml
 libmount/src/libmount.h
