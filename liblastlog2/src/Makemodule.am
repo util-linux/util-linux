@@ -1,6 +1,6 @@
-# includes
+# lastlog2.h is generated, so it's stored in builddir!
 lastlog2incdir = $(includedir)/liblastlog2
-lastlog2inc_HEADERS = liblastlog2/src/lastlog2.h
+nodist_lastlog2inc_HEADERS = liblastlog2/src/lastlog2.h
 
 usrlib_exec_LTLIBRARIES += liblastlog2.la
 

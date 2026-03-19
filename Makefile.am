@@ -43,7 +43,7 @@ ul_libblkid_incdir = $(top_builddir)/libblkid/src
 ul_libmount_incdir = $(top_builddir)/libmount/src
 ul_libsmartcols_incdir = $(top_builddir)/libsmartcols/src
 ul_libfdisk_incdir  = $(top_builddir)/libfdisk/src
-ul_liblastlog2_incdir  = $(top_srcdir)/liblastlog2/src
+ul_liblastlog2_incdir  = $(top_builddir)/liblastlog2/src
 ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 
 bashcompletiondir = @bashcompletiondir@
