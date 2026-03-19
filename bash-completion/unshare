@@ -4,21 +4,17 @@ _unshare_module()
 	local OPTS NOARGOPTS OPTARGOPTS REQARGOPTS REQARGOPTS_SHORT NOARGOPTS_SHORT
 	_init_completion -n = -- "$@" || return
 
-	OPTARGOPTS="--mount=|--uts=|--ipc=|--net=|--pid=|--user=|--cgroup=|--time=|--kill-child=|\
-	--mount-proc=|--mount-binfmt="
+	OPTARGOPTS="--mount=|--uts=|--ipc=|--net=|--pid=|--user=|--cgroup=|--time=|--kill-child=|--mount-proc=|--mount-binfmt="
 
-	REQARGOPTS="--owner|--propagation|--setgroups|--root|--wd|--load-interp|--map-group|\
-	--map-groups|--map-user|--map-users|--monotonic|--boottime|--setuid|--setgid"
+	REQARGOPTS="--owner|--propagation|--setgroups|--root|--wd|--load-interp|--map-group|--map-groups|--map-user|--map-users|--monotonic|--boottime|--setuid|--setgid"
 
 	REQARGOPTS_SHORT="-l|-R|-w|-S|-G"
 
-	NOARGOPTS="--fork|--forward-signals|--map-root-user|--map-current-user|--map-auto|\
-	--map-subids|--keep-caps|--help|--version|${OPTARGOPTS//=/}"
+	NOARGOPTS="--fork|--forward-signals|--map-root-user|--map-current-user|--map-auto|--map-subids|--keep-caps|--help|--version|${OPTARGOPTS//=/}"
 
 	NOARGOPTS_SHORT="-r|-f|-c|-h|-V|-m|-u|-i|-n|-p|-U|-C|-T"
 
-	OPTS="${NOARGOPTS//[|]/ } ${NOARGOPTS_SHORT//[|]/ } ${OPTARGOPTS//[|]/ }\
-		${REQARGOPTS//[|]/ } ${REQARGOPTS_SHORT//[|]/ }"
+	OPTS="${NOARGOPTS//[|]/ } ${NOARGOPTS_SHORT//[|]/ } ${OPTARGOPTS//[|]/ } ${REQARGOPTS//[|]/ } ${REQARGOPTS_SHORT//[|]/ }"
 
 	# Check if we are still completing unshare(1) and set 
 	# the offset so that it points to the command that is
