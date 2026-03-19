@@ -301,9 +301,9 @@ else
               'term.h']
 endif
 
-conf.set('HAVE_LIBNCURSESW', lib_ncursesw.found())
-conf.set('HAVE_LIBNCURSES', lib_ncurses.found())
-conf.set('HAVE_NCURSES', lib_ncursesw.found() or lib_ncurses.found())
+conf.set('HAVE_LIBNCURSESW', lib_ncursesw.found() ? 1 : false)
+conf.set('HAVE_LIBNCURSES', lib_ncurses.found() ? 1 : false)
+conf.set('HAVE_NCURSES', (lib_ncursesw.found() or lib_ncurses.found()) ? 1 : false)
 
 lib_slang = dependency(
   'slang',
@@ -314,7 +314,7 @@ if lib_slang.found()
               'slcurses.h',
               'slang/slcurses.h']
 endif
-conf.set('HAVE_SLANG', lib_slang.found())
+conf.set('HAVE_SLANG', lib_slang.found() ? 1 : false)
 
 foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
   if curses_libs.found()
