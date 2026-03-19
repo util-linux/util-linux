@@ -325,6 +325,9 @@ option('pamlibdir', type : 'string',
 option('login-lastlogin', type : 'boolean',
        value : false,
        description : 'program login writes lastlog entries')
+option('login-stat-mail', type : 'boolean',
+       value : false,
+       description : 'let login stat() the mailbox')
 
 option('tty-setgid', type : 'boolean',
        value : true,
