@@ -473,6 +473,11 @@ lib_selinux = dependency(
   version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
+if lib_selinux.found()
+  have = cc.has_function('security_get_initial_context',
+                         dependencies : lib_selinux)
+  conf.set('HAVE_SECURITY_GET_INITIAL_CONTEXT', have ? 1 : false)
+endif
 
 lib_magic = dependency(
   'libmagic',
