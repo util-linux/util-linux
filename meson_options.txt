@@ -328,6 +328,9 @@ option('login-lastlogin', type : 'boolean',
 option('login-stat-mail', type : 'boolean',
        value : false,
        description : 'let login stat() the mailbox')
+option('hwclock-gplv3', type : 'boolean',
+       value : true,
+       description : 'use datetime parsing GPLv3 code for hwclock')
 
 option('tty-setgid', type : 'boolean',
        value : true,
