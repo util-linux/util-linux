@@ -100,6 +100,10 @@ login_lastlogin = get_option('login-lastlogin')
 conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
 summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
 
+login_stat_mail = get_option('login-stat-mail')
+conf.set('LOGIN_STAT_MAIL', login_stat_mail ? 1 : false)
+summary('login-stat-mail', login_stat_mail ? 'enabled' : 'disabled', section : 'components')
+
 have = cc.has_type('struct fanotify_event_info_header', prefix : '#include <linux/fanotify.h>')
 conf.set('HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER', have ? 1 : false)
 
