@@ -8,6 +8,9 @@ endif
 defs = configuration_data()
 defs.set('LIBBLKID_DATE', libblkid_date)
 defs.set('LIBBLKID_VERSION', pc_version)
+defs.set('LIBBLKID_MAJOR_VERSION', pc_version.split('.')[0])
+defs.set('LIBBLKID_MINOR_VERSION', pc_version.split('.')[1])
+defs.set('LIBBLKID_PATCH_VERSION', pc_version.split('.')[2])
 
 configure_file(
   input : 'src/blkid.h.in',
