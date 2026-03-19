@@ -16,6 +16,7 @@
 #include <assert.h>
 
 #include "c.h"
+#include "cctype.h"
 #include "nls.h"
 #include "strutils.h"
 #include "bitops.h"
@@ -250,6 +251,34 @@ int isxdigit_strend(const char *str, const char **end)
 /*
  *  For example: ul_parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
+int ul_strtobool(const char *str, bool *result)
+{
+	static const char *bool_true[]  = { "1", "y", "t", "yes", "true", "on", "enable" };
+	static const char *bool_false[] = { "0", "no", "not", "false", "off", "disable" };
+	size_t i;
+
+	if (!str || !result)
+		return -(errno = EINVAL);
+
+	errno = 0;
+
+	for (i = 0; i < ARRAY_SIZE(bool_true); i++) {
+		if (c_strcasecmp(str, bool_true[i]) == 0) {
+			*result = true;
+			return 0;
+		}
+	}
+
+	for (i = 0; i < ARRAY_SIZE(bool_false); i++) {
+		if (c_strcasecmp(str, bool_false[i]) == 0) {
+			*result = false;
+			return 0;
+		}
+	}
+
+	return -(errno = EINVAL);
+}
+
 int ul_parse_switch(const char *arg, ...)
 {
 	const char *a, *b;
@@ -1326,8 +1355,6 @@ char *ul_optstr_get_value(const char *optstr, const char *key)
 
 #ifdef TEST_PROGRAM_STRUTILS
 
-#include "cctype.h"
-
 struct testS {
 	char *name;
 	char *value;
@@ -1461,6 +1488,13 @@ int main(int argc, char *argv[])
 						"1", "0",
 						NULL));
 		return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--strtobool") == 0) {
+		bool val;
+		if (ul_strtobool(argv[2], &val))
+			err(EXIT_FAILURE, "could not parse '%s'", argv[2]);
+		printf("'%s'-->%s\n", argv[2], val ? "true" : "false");
+		return EXIT_SUCCESS;
+
 	} else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0) {
 		return test_strutils_cmp_paths(argc - 1, argv + 1);
 
@@ -1530,6 +1564,7 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
+				"       %1$s --strtobool <str>\n"
 				"       %1$s --parse-switch <str>\n"
 				"       %1$s --cmp-paths <path> <path>\n"
 				"       %1$s --strdup-member <str> <str>\n"
