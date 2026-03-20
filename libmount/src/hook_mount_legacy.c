@@ -26,7 +26,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data = NULL;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
@@ -57,7 +57,7 @@ static int hook_propagation(struct libmnt_context *cxt,
 	assert(cxt->fs);
 	assert(cxt->optlist);
 
-	DBG(HOOK, ul_debugobj(hs, " calling mount(2) for propagation: 0x%08lx %s",
+	DBG_OBJ(HOOK, hs, ul_debug(" calling mount(2) for propagation: 0x%08lx %s",
 				hd->flags,
 				hd->flags & MS_REC ? " (recursive)" : ""));
 
@@ -79,7 +79,7 @@ static int hook_propagation(struct libmnt_context *cxt,
 		if (mnt_context_propagation_only(cxt))
 			mnt_context_syscall_save_status(cxt, "mount", rc == 0);
 
-		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed [errno=%d %m]", errno));
+		DBG_OBJ(HOOK, hs, ul_debug("  mount(2) failed [errno=%d %m]", errno));
 		rc = -MNT_ERR_APPLYFLAGS;
 	}
 	return rc;
@@ -121,7 +121,7 @@ static int prepare_propagation(struct libmnt_context *cxt,
 
 		data->flags = ent->id;
 
-		DBG(HOOK, ul_debugobj(hs, " adding mount(2) call for %s", ent->name));
+		DBG_OBJ(HOOK, hs, ul_debug(" adding mount(2) call for %s", ent->name));
 		rc = mnt_context_append_hook(cxt, hs,
 					MNT_STAGE_MOUNT_POST,
 					data,
@@ -129,7 +129,7 @@ static int prepare_propagation(struct libmnt_context *cxt,
 		if (rc)
 			return rc;
 
-		DBG(HOOK, ul_debugobj(hs, " removing '%s' flag from primary mount(2)", ent->name));
+		DBG_OBJ(HOOK, hs, ul_debug(" removing '%s' flag from primary mount(2)", ent->name));
 		mnt_optlist_remove_opt(ol, opt);
 	}
 
@@ -144,7 +144,7 @@ static int hook_bindremount(struct libmnt_context *cxt,
 	struct hook_data *hd = (struct hook_data *) data;
 	unsigned long extra = 0;
 
-	DBG(HOOK, ul_debugobj(hs, " mount(2) for bind-remount: 0x%08lx %s",
+	DBG_OBJ(HOOK, hs, ul_debug(" mount(2) for bind-remount: 0x%08lx %s",
 				hd->flags,
 				hd->flags & MS_REC ? " (recursive)" : ""));
 
@@ -156,7 +156,7 @@ static int hook_bindremount(struct libmnt_context *cxt,
 			hd->flags | extra, NULL);
 
 	if (rc)
-		DBG(HOOK, ul_debugobj(hs, "  mount(2) failed"
+		DBG_OBJ(HOOK, hs, ul_debug("  mount(2) failed"
 				  " [rc=%d errno=%d %m]", rc, errno));
 	else
 		mnt_fs_mark_attached(cxt->fs);
@@ -176,7 +176,7 @@ static int prepare_bindremount(struct libmnt_context *cxt,
 
 	assert(cxt);
 
-	DBG(HOOK, ul_debugobj(hs, " adding mount(2) call for bint-remount"));
+	DBG_OBJ(HOOK, hs, ul_debug(" adding mount(2) call for bint-remount"));
 
 	data = new_hook_data();
 	if (!data)
@@ -234,7 +234,7 @@ static int hook_mount(struct libmnt_context *cxt,
 	if (rc)
 		return rc;
 
-	DBG(HOOK, ul_debugobj(hs, "  mount(2) "
+	DBG_OBJ(HOOK, hs, ul_debug("  mount(2) "
 		"[source=%s, target=%s, type=%s, flags=0x%08lx, options=%s]",
 		src, target, type, flags,
 		options ? (cxt->flags & MNT_FL_MOUNTDATA) ? "binary" :

@@ -75,7 +75,7 @@ static void fdisk_script_free_header(struct fdisk_scriptheader *fi)
 	if (!fi)
 		return;
 
-	DBG(SCRIPT, ul_debugobj(fi, "free header %s", fi->name));
+	DBG_OBJ(SCRIPT, fi, ul_debug("free header %s", fi->name));
 	free(fi->name);
 	free(fi->data);
 	list_del(&fi->headers);
@@ -99,7 +99,7 @@ struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt)
 	if (!dp)
 		return NULL;
 
-	DBG(SCRIPT, ul_debugobj(dp, "alloc"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("alloc"));
 	dp->refcount = 1;
 	dp->cxt = cxt;
 	fdisk_ref_context(cxt);
@@ -169,7 +169,7 @@ static void fdisk_reset_script(struct fdisk_script *dp)
 {
 	assert(dp);
 
-	DBG(SCRIPT, ul_debugobj(dp, "reset"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("reset"));
 
 	if (dp->table)
 		fdisk_reset_table(dp->table);
@@ -199,7 +199,7 @@ void fdisk_unref_script(struct fdisk_script *dp)
 		fdisk_reset_script(dp);
 		fdisk_unref_context(dp->cxt);
 		fdisk_unref_table(dp->table);
-		DBG(SCRIPT, ul_debugobj(dp, "free script"));
+		DBG_OBJ(SCRIPT, dp, ul_debug("free script"));
 		free(dp);
 	}
 }
@@ -297,7 +297,7 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		return 0;	/* want to remove header that does not exist, success */
 
 	if (!data) {
-		DBG(SCRIPT, ul_debugobj(dp, "freeing header %s", name));
+		DBG_OBJ(SCRIPT, dp, ul_debug("freeing header %s", name));
 
 		/* no data, remove the header */
 		fdisk_script_free_header(fi);
@@ -307,7 +307,7 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 	if (!fi) {
 		int rc;
 
-		DBG(SCRIPT, ul_debugobj(dp, "setting new header %s='%s'", name, data));
+		DBG_OBJ(SCRIPT, dp, ul_debug("setting new header %s='%s'", name, data));
 
 		/* new header */
 		fi = calloc(1, sizeof(*fi));
@@ -327,7 +327,7 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		/* update existing */
 		char *x = strdup(data);
 
-		DBG(SCRIPT, ul_debugobj(dp, "update '%s' header '%s' -> '%s'", name, fi->data, data));
+		DBG_OBJ(SCRIPT, dp, ul_debug("update '%s' header '%s' -> '%s'", name, fi->data, data));
 
 		if (!x)
 			return -ENOMEM;
@@ -397,7 +397,7 @@ int fdisk_script_set_table(struct fdisk_script *dp, struct fdisk_table *tb)
 	fdisk_unref_table(dp->table);
 	dp->table = tb;
 
-	DBG(SCRIPT, ul_debugobj(dp, "table replaced"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("table replaced"));
 	return 0;
 }
 
@@ -409,7 +409,7 @@ static struct fdisk_label *script_get_label(struct fdisk_script *dp)
 	if (!dp->label) {
 		dp->label = fdisk_get_label(dp->cxt,
 					fdisk_script_get_header(dp, "label"));
-		DBG(SCRIPT, ul_debugobj(dp, "label '%s'", dp->label ? dp->label->name : ""));
+		DBG_OBJ(SCRIPT, dp, ul_debug("label '%s'", dp->label ? dp->label->name : ""));
 	}
 	return dp->label;
 }
@@ -466,7 +466,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	if (!cxt)
 		cxt = dp->cxt;
 
-	DBG(SCRIPT, ul_debugobj(dp, "reading context into script"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("reading context into script"));
 	fdisk_reset_script(dp);
 
 	lb = fdisk_get_label(cxt, NULL);
@@ -528,7 +528,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 		rc = fdisk_script_set_header(dp, "sector-size", buf);
 	}
 
-	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
+	DBG_OBJ(SCRIPT, dp, ul_debug("read context done [rc=%d]", rc));
 	return rc;
 }
 
@@ -560,7 +560,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	DBG(SCRIPT, ul_debugobj(dp, "writing json dump to file"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("writing json dump to file"));
 
 	ul_jsonwrt_init(&json, f, 0, UL_JSON_PRETTY);
 	ul_jsonwrt_root_open(&json);
@@ -596,11 +596,11 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 
 
 	if (!dp->table || fdisk_table_is_empty(dp->table)) {
-		DBG(SCRIPT, ul_debugobj(dp, "script table empty"));
+		DBG_OBJ(SCRIPT, dp, ul_debug("script table empty"));
 		goto done;
 	}
 
-	DBG(SCRIPT, ul_debugobj(dp, "%zu entries", fdisk_table_get_nents(dp->table)));
+	DBG_OBJ(SCRIPT, dp, ul_debug("%zu entries", fdisk_table_get_nents(dp->table)));
 
 	ul_jsonwrt_array_open(&json, "partitions");
 
@@ -612,7 +612,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
 		if (p) {
-			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
+			DBG_OBJ(SCRIPT, dp, ul_debug("write %s entry", p));
 			ul_jsonwrt_value_s(&json, "node", p);
 			free(p);
 		}
@@ -655,7 +655,7 @@ done:
 	ul_jsonwrt_object_close(&json);
 	ul_jsonwrt_root_close(&json);
 
-	DBG(SCRIPT, ul_debugobj(dp, "write script done"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("write script done"));
 	return 0;
 }
 
@@ -669,7 +669,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	DBG(SCRIPT, ul_debugobj(dp, "writing sfdisk-like script to file"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("writing sfdisk-like script to file"));
 
 	/* script headers */
 	list_for_each(h, &dp->headers) {
@@ -680,11 +680,11 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 	}
 
 	if (!dp->table || fdisk_table_is_empty(dp->table)) {
-		DBG(SCRIPT, ul_debugobj(dp, "script table empty"));
+		DBG_OBJ(SCRIPT, dp, ul_debug("script table empty"));
 		return 0;
 	}
 
-	DBG(SCRIPT, ul_debugobj(dp, "%zu entries", fdisk_table_get_nents(dp->table)));
+	DBG_OBJ(SCRIPT, dp, ul_debug("%zu entries", fdisk_table_get_nents(dp->table)));
 
 	fputc('\n', f);
 
@@ -696,7 +696,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
 		if (p) {
-			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
+			DBG_OBJ(SCRIPT, dp, ul_debug("write %s entry", p));
 			fprintf(f, "%s : ", p);
 			free(p);
 		} else
@@ -738,7 +738,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 		fputc('\n', f);
 	}
 
-	DBG(SCRIPT, ul_debugobj(dp, "write script done"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("write script done"));
 	return 0;
 }
 
@@ -781,7 +781,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 		"first-lba", "last-lba", "table-length", "sector-size"
 	};
 
-	DBG(SCRIPT, ul_debugobj(dp, "   parse header '%s'", s));
+	DBG_OBJ(SCRIPT, dp, ul_debug("   parse header '%s'", s));
 
 	if (!s || !*s)
 		return -EINVAL;
@@ -1058,7 +1058,7 @@ static int parse_start_value(struct fdisk_script *dp, struct fdisk_partition *pa
 	}
 
 done:
-	DBG(SCRIPT, ul_debugobj(dp, "  start parse result: rc=%d, move=%s, start=%ju, default=%s",
+	DBG_OBJ(SCRIPT, dp, ul_debug("  start parse result: rc=%d, move=%s, start=%ju, default=%s",
 				rc, pa->movestart == FDISK_MOVE_DOWN ? "down" :
 				    pa->movestart == FDISK_MOVE_UP ? "up" : "none",
 				    pa->start,
@@ -1115,7 +1115,7 @@ static int parse_size_value(struct fdisk_script *dp, struct fdisk_partition *pa,
 	}
 
 done:
-	DBG(SCRIPT, ul_debugobj(dp, "  size parse result: rc=%d, move=%s, size=%ju, default=%s",
+	DBG_OBJ(SCRIPT, dp, ul_debug("  size parse result: rc=%d, move=%s, size=%ju, default=%s",
 				rc, pa->resize == FDISK_RESIZE_REDUCE ? "reduce" :
 				    pa->resize == FDISK_RESIZE_ENLARGE ? "enlarge" : "none",
 				    pa->size,
@@ -1144,7 +1144,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	assert(s);
 	assert(dp->table);
 
-	DBG(SCRIPT, ul_debugobj(dp, "   parse script line: '%s'", s));
+	DBG_OBJ(SCRIPT, dp, ul_debug("   parse script line: '%s'", s));
 
 	pa = fdisk_new_partition();
 	if (!pa)
@@ -1180,7 +1180,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 	while (rc == 0 && p && *p) {
 
-		DBG(SCRIPT, ul_debugobj(dp, " parsing '%s'", p));
+		DBG_OBJ(SCRIPT, dp, ul_debug(" parsing '%s'", p));
 		p = (char *) skip_blank(p);
 
 		if (!c_strncasecmp(p, "start=", 6)) {
@@ -1234,7 +1234,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			}
 			free(type);
 		} else {
-			DBG(SCRIPT, ul_debugobj(dp, "script parse error: unknown field '%s'", p));
+			DBG_OBJ(SCRIPT, dp, ul_debug("script parse error: unknown field '%s'", p));
 			rc = -EINVAL;
 			break;
 		}
@@ -1243,7 +1243,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 	if (!rc)
 		rc = fdisk_table_add_partition(dp->table, pa);
 	if (rc)
-		DBG(SCRIPT, ul_debugobj(dp, "script parse error: [rc=%d]", rc));
+		DBG_OBJ(SCRIPT, dp, ul_debug("script parse error: [rc=%d]", rc));
 
 	fdisk_unref_partition(pa);
 	return rc;
@@ -1278,7 +1278,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 		p = (char *) skip_blank(p);
 		item++;
 
-		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
+		DBG_OBJ(SCRIPT, dp, ul_debug(" parsing item %d ('%s')", item, p));
 		begin = p;
 
 		switch (item) {
@@ -1335,7 +1335,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 	if (!rc)
 		rc = fdisk_table_add_partition(dp->table, pa);
 	if (rc)
-		DBG(SCRIPT, ul_debugobj(dp, "script parse error: [rc=%d]", rc));
+		DBG_OBJ(SCRIPT, dp, ul_debug("script parse error: [rc=%d]", rc));
 
 	fdisk_unref_partition(pa);
 	return rc;
@@ -1349,7 +1349,7 @@ static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 	assert(dp);
 	assert(s);
 
-	DBG(SCRIPT, ul_debugobj(dp, "  parsing buffer"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("  parsing buffer"));
 
 	s = (char *) skip_blank(s);
 	if (!s || !*s)
@@ -1371,7 +1371,7 @@ static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 		rc = parse_line_valcommas(dp, s);
 
 	if (rc)
-		DBG(SCRIPT, ul_debugobj(dp, "%zu: parse error [rc=%d]",
+		DBG_OBJ(SCRIPT, dp, ul_debug("%zu: parse error [rc=%d]",
 				dp->nlines, rc));
 	return rc;
 }
@@ -1416,7 +1416,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 	assert(f);
 	assert(bufsz);
 
-	DBG(SCRIPT, ul_debugobj(dp, " parsing line %zu", dp->nlines));
+	DBG_OBJ(SCRIPT, dp, ul_debug(" parsing line %zu", dp->nlines));
 
 	/* read the next non-blank non-comment line */
 	do {
@@ -1433,10 +1433,10 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 			/* Missing final newline?  Otherwise an extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
-				DBG(SCRIPT, ul_debugobj(dp, "no final newline"));
+				DBG_OBJ(SCRIPT, dp, ul_debug("no final newline"));
 				s = strchr(buf, '\0');
 			} else {
-				DBG(SCRIPT, ul_debugobj(dp,
+				DBG_OBJ(SCRIPT, dp, ul_debug(
 					"%zu: missing newline at line", dp->nlines));
 				return -EINVAL;
 			}
@@ -1469,7 +1469,7 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	DBG(SCRIPT, ul_debugobj(dp, "parsing file"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("parsing file"));
 
 	while (!feof(f)) {
 		rc = fdisk_script_read_line(dp, f, buf, sizeof(buf));
@@ -1480,7 +1480,7 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 	if (rc == 1)
 		rc = 0;		/* end of file */
 
-	DBG(SCRIPT, ul_debugobj(dp, "parsing file done [rc=%d]", rc));
+	DBG_OBJ(SCRIPT, dp, ul_debug("parsing file done [rc=%d]", rc));
 	return rc;
 }
 
@@ -1517,7 +1517,7 @@ int fdisk_set_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	/* ref new */
 	cxt->script = dp;
 	if (cxt->script) {
-		DBG(CXT, ul_debugobj(cxt, "setting reference to script %p", cxt->script));
+		DBG_OBJ(CXT, cxt, ul_debug("setting reference to script %p", cxt->script));
 		fdisk_ref_script(cxt->script);
 	}
 
@@ -1555,7 +1555,7 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 	assert(cxt);
 	assert(dp);
 
-	DBG(SCRIPT, ul_debugobj(dp, "applying script headers"));
+	DBG_OBJ(SCRIPT, dp, ul_debug("applying script headers"));
 	fdisk_set_script(cxt, dp);
 
 	if (dp->sector_size && dp->cxt->sector_size != dp->sector_size) {
@@ -1634,7 +1634,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	assert(dp);
 	assert(cxt);
 
-	DBG(CXT, ul_debugobj(cxt, "applying script %p", dp));
+	DBG_OBJ(CXT, cxt, ul_debug("applying script %p", dp));
 
 	old = fdisk_get_script(cxt);
 	fdisk_ref_script(old);
@@ -1649,7 +1649,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	fdisk_set_script(cxt, old);
 	fdisk_unref_script(old);
 
-	DBG(CXT, ul_debugobj(cxt, "script done [rc=%d]", rc));
+	DBG_OBJ(CXT, cxt, ul_debug("script done [rc=%d]", rc));
 	return rc;
 }
 

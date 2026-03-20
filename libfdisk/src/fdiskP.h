@@ -45,12 +45,10 @@
 #define LIBFDISK_DEBUG_ALL	0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
-#define DBG(m, x)	__UL_DBG(libfdisk, LIBFDISK_DEBUG_, m, x)
-#define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, LIBFDISK_DEBUG_, m, x)
-#define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, LIBFDISK_DEBUG_)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libfdisk)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(libfdisk, LIBFDISK_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(libfdisk, LIBFDISK_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(libfdisk, LIBFDISK_DEBUG_, m, x)
+#define DBG_FLUSH		__UL_DBG_FLUSH(libfdisk, LIBFDISK_DEBUG_)
 
 /*
  * NLS -- the library has to be independent on main program, so define

@@ -352,11 +352,9 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_ALL		0xFFFF		/* (1 << 16) aka FFFF is expected by API */
 
 UL_DEBUG_DECLARE_MASK(libblkid);
-#define DBG(m, x)	__UL_DBG(libblkid, BLKID_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(libblkid, BLKID_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libblkid)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(libblkid, BLKID_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(libblkid, BLKID_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(libblkid, BLKID_DEBUG_, m, x)
 
 extern void blkid_debug_dump_dev(blkid_dev dev);
 

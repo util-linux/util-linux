@@ -148,7 +148,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	sys = cxt->syscpu;				/* /sys/devices/system/cpu/ */
 	npos = cxt->npossibles;				/* possible CPUs */
 
-	DBG(TYPE, ul_debugobj(ct, "reading %s/%s/%s topology",
+	DBG_OBJ(TYPE, ct, ul_debug("reading %s/%s/%s topology",
 				ct->vendor ?: "", ct->model ?: "", ct->modelname ?:""));
 
 	hp_online_state = get_online_state(sys);
@@ -239,7 +239,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		int t0, t1;
 		char buf[BUFSIZ];
 
-		DBG(TYPE, ul_debugobj(ct, " reading sysinfo"));
+		DBG_OBJ(TYPE, ct, ul_debug(" reading sysinfo"));
 
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
 			if (sscanf(buf, "CPU Topology SW: %d %d %zu %zu %zu %zu",
@@ -249,7 +249,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 					&ct->nsockets_per_book,
 					&ct->ncores_per_socket) == 6) {
 				sw_topo = 1;
-				DBG(TYPE, ul_debugobj(ct, " using SW topology"));
+				DBG_OBJ(TYPE, ct, ul_debug(" using SW topology"));
 				break;
 			}
 		}
@@ -271,11 +271,11 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 		ct->ndrawers_per_system = ct->ndrawers;
 	}
 
-	DBG(TYPE, ul_debugobj(ct, " nthreads: %zu (per core)", ct->nthreads_per_core));
-	DBG(TYPE, ul_debugobj(ct, "   ncores: %zu (%zu per socket)", ct->ncores, ct->ncores_per_socket));
-	DBG(TYPE, ul_debugobj(ct, " nsockets: %zu (%zu per books)", ct->nsockets, ct->nsockets_per_book));
-	DBG(TYPE, ul_debugobj(ct, "   nbooks: %zu (%zu per drawer)", ct->nbooks, ct->nbooks_per_drawer));
-	DBG(TYPE, ul_debugobj(ct, " ndrawers: %zu (%zu per system)", ct->ndrawers, ct->ndrawers_per_system));
+	DBG_OBJ(TYPE, ct, ul_debug(" nthreads: %zu (per core)", ct->nthreads_per_core));
+	DBG_OBJ(TYPE, ct, ul_debug("   ncores: %zu (%zu per socket)", ct->ncores, ct->ncores_per_socket));
+	DBG_OBJ(TYPE, ct, ul_debug(" nsockets: %zu (%zu per books)", ct->nsockets, ct->nsockets_per_book));
+	DBG_OBJ(TYPE, ct, ul_debug("   nbooks: %zu (%zu per drawer)", ct->nbooks, ct->nbooks_per_drawer));
+	DBG_OBJ(TYPE, ct, ul_debug(" ndrawers: %zu (%zu per system)", ct->ndrawers, ct->ndrawers_per_system));
 
 	return 0;
 }
@@ -350,7 +350,7 @@ static struct lscpu_cache *add_cache(struct lscpu_cxt *cxt,
 	ca->level = level;
 	ca->type = xstrdup(type);
 
-	DBG(GATHER, ul_debugobj(cxt, "add cache %s%d::%d", type, level, id));
+	DBG_OBJ(GATHER, cxt, ul_debug("add cache %s%d::%d", type, level, id));
 	return ca;
 }
 
@@ -394,7 +394,7 @@ static int read_sparc_onecache(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu,
 	if (rc != 0)
 		return rc;
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading sparc %s cache", num, buf));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading sparc %s cache", num, buf));
 
 	id = mk_cache_id(cxt, cpu, typestr, level);
 
@@ -454,7 +454,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 				"cpu%d/l1_icache_size", num) == 0)
 		return read_sparc_caches(cxt, cpu);
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading %zd caches", num, ncaches));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading %zd caches", num, ncaches));
 
 	for (i = 0; i < ncaches; i++) {
 		struct lscpu_cache *ca;
@@ -531,7 +531,7 @@ static int read_ids(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_accessf(sys, F_OK, "cpu%d/topology", num) != 0)
 		return 0;
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading IDs", num));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading IDs", num));
 
 	if (ul_path_readf_s32(sys, &cpu->coreid, "cpu%d/topology/core_id", num) != 0)
 		cpu->coreid = -1;
@@ -556,7 +556,7 @@ static int read_polarization(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 
 	ul_path_readf_buffer(sys, mode, sizeof(mode), "cpu%d/polarization", num);
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading polar=%s", num, mode));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading polar=%s", num, mode));
 
 	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
 		cpu->polarization = POLAR_VLOW;
@@ -582,7 +582,7 @@ static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_accessf(sys, F_OK, "cpu%d/address", num) != 0)
 		return 0;
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading address", num));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading address", num));
 
 	ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num);
 	if (cpu->type)
@@ -598,7 +598,7 @@ static int read_configure(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	if (ul_path_accessf(sys, F_OK, "cpu%d/configure", num) != 0)
 		return 0;
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading configure", num));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading configure", num));
 
 	ul_path_readf_s32(sys, &cpu->configured, "cpu%d/configure", num);
 	if (cpu->type)
@@ -612,7 +612,7 @@ static int read_mhz(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 	int num = cpu->logical_id;
 	int mhz;
 
-	DBG(CPU, ul_debugobj(cpu, "#%d reading mhz", num));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading mhz", num));
 
 	if (ul_path_readf_s32(sys, &mhz, "cpu%d/cpufreq/cpuinfo_max_freq", num) == 0)
 		cpu->mhz_max_freq = (float) mhz / 1000;
@@ -704,7 +704,7 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 		if (!cpu || !cpu->type)
 			continue;
 
-		DBG(CPU, ul_debugobj(cpu, "#%d reading topology", cpu->logical_id));
+		DBG_OBJ(CPU, cpu, ul_debug("#%d reading topology", cpu->logical_id));
 
 		rc = read_ids(cxt, cpu);
 		if (!rc)
@@ -720,10 +720,10 @@ int lscpu_read_topology(struct lscpu_cxt *cxt)
 	}
 
 	lscpu_sort_caches(cxt->caches, cxt->ncaches);
-	DBG(GATHER, ul_debugobj(cxt, " L1d: %zu", lscpu_get_cache_full_size(cxt, "L1d", NULL)));
-	DBG(GATHER, ul_debugobj(cxt, " L1i: %zu", lscpu_get_cache_full_size(cxt, "L1i", NULL)));
-	DBG(GATHER, ul_debugobj(cxt, " L2: %zu", lscpu_get_cache_full_size(cxt, "L2", NULL)));
-	DBG(GATHER, ul_debugobj(cxt, " L3: %zu", lscpu_get_cache_full_size(cxt, "L3", NULL)));
+	DBG_OBJ(GATHER, cxt, ul_debug(" L1d: %zu", lscpu_get_cache_full_size(cxt, "L1d", NULL)));
+	DBG_OBJ(GATHER, cxt, ul_debug(" L1i: %zu", lscpu_get_cache_full_size(cxt, "L1i", NULL)));
+	DBG_OBJ(GATHER, cxt, ul_debug(" L2: %zu", lscpu_get_cache_full_size(cxt, "L2", NULL)));
+	DBG_OBJ(GATHER, cxt, ul_debug(" L3: %zu", lscpu_get_cache_full_size(cxt, "L3", NULL)));
 
 	return rc;
 }

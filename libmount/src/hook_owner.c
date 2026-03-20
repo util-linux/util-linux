@@ -30,7 +30,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
@@ -60,13 +60,13 @@ static int hook_post(
 		return 0;
 
 	if (hd->owner != (uid_t) -1 || hd->group != (uid_t) -1) {
-		DBG(CXT, ul_debugobj(cxt, " lchown(%s, %u, %u)", target, hd->owner, hd->group));
+		DBG_OBJ(CXT, cxt, ul_debug(" lchown(%s, %u, %u)", target, hd->owner, hd->group));
 		if (lchown(target, hd->owner, hd->group) == -1)
 			return -MNT_ERR_CHOWN;
 	}
 
 	if (hd->mode != (mode_t) -1) {
-		DBG(CXT, ul_debugobj(cxt, " chmod(%s, %04o)", target, hd->mode));
+		DBG_OBJ(CXT, cxt, ul_debug(" chmod(%s, %04o)", target, hd->mode));
 		if (chmod(target, hd->mode) == -1)
 			return -MNT_ERR_CHMOD;
 	}
@@ -147,7 +147,7 @@ static int hook_prepare_options(
 	}
 
 	if (hd) {
-		DBG(CXT, ul_debugobj(cxt, " wanted ownership %d:%d, mode %04o",
+		DBG_OBJ(CXT, cxt, ul_debug(" wanted ownership %d:%d, mode %04o",
 					hd->owner, hd->group, hd->mode));
 		rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_POST,

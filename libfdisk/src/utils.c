@@ -19,13 +19,13 @@ static int read_from_device(struct fdisk_context *cxt,
 
 	assert(cxt);
 
-	DBG(CXT, ul_debugobj(cxt, "reading: offset=%ju, size=%zu",
+	DBG_OBJ(CXT, cxt, ul_debug("reading: offset=%ju, size=%zu",
 				start, size));
 
 	r = lseek(cxt->dev_fd, start, SEEK_SET);
 	if (r == -1)
 	{
-		DBG(CXT, ul_debugobj(cxt, "failed to seek to offset %ju: %m", start));
+		DBG_OBJ(CXT, cxt, ul_debug("failed to seek to offset %ju: %m", start));
 		return -errno;
 	}
 
@@ -34,7 +34,7 @@ static int read_from_device(struct fdisk_context *cxt,
 	if (r < 0 || (size_t)r != size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */
-		DBG(CXT, ul_debugobj(cxt, "failed to read %zu from offset %ju: %m",
+		DBG_OBJ(CXT, cxt, ul_debug("failed to read %zu from offset %ju: %m",
 				size, start));
 		return -errno;
 	}
@@ -61,7 +61,7 @@ int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
 		if (!cxt->parent || cxt->parent->firstsector != cxt->firstsector)
 			free(cxt->firstsector);
 
-		DBG(CXT, ul_debugobj(cxt, "initialize in-memory first sector "
+		DBG_OBJ(CXT, cxt, ul_debug("initialize in-memory first sector "
 				"buffer [sector_size=%lu]", cxt->sector_size));
 		cxt->firstsector = calloc(1, cxt->sector_size);
 		if (!cxt->firstsector)
@@ -71,7 +71,7 @@ int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
 		return 0;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "zeroize in-memory first sector buffer"));
+	DBG_OBJ(CXT, cxt, ul_debug("zeroize in-memory first sector buffer"));
 	memset(cxt->firstsector, 0, cxt->firstsector_bufsz);
 
 	if (protect_size) {
@@ -83,7 +83,7 @@ int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
 		 * maybe it was already modified. Let's re-read from the device
 		 * to be sure.			-- kzak 13-Apr-2015
 		 */
-		DBG(CXT, ul_debugobj(cxt, "first sector protection enabled -- re-reading"));
+		DBG_OBJ(CXT, cxt, ul_debug("first sector protection enabled -- re-reading"));
 		read_from_device(cxt, cxt->firstsector, protect_off, protect_size);
 	}
 	return 0;

@@ -24,7 +24,7 @@ static blkid_tag blkid_new_tag(void)
 	if (!(tag = calloc(1, sizeof(struct blkid_struct_tag))))
 		return NULL;
 
-	DBG(TAG, ul_debugobj(tag, "alloc"));
+	DBG_OBJ(TAG, tag, ul_debug("alloc"));
 	INIT_LIST_HEAD(&tag->bit_tags);
 	INIT_LIST_HEAD(&tag->bit_names);
 
@@ -36,7 +36,7 @@ void blkid_free_tag(blkid_tag tag)
 	if (!tag)
 		return;
 
-	DBG(TAG, ul_debugobj(tag, "freeing tag %s (%s)", tag->bit_name, tag->bit_val));
+	DBG_OBJ(TAG, tag, ul_debug("freeing tag %s (%s)", tag->bit_name, tag->bit_val));
 
 	list_del(&tag->bit_tags);	/* list of tags for this device */
 	list_del(&tag->bit_names);	/* list of tags with this type */
@@ -138,7 +138,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 			free(val);
 			return 0;
 		}
-		DBG(TAG, ul_debugobj(t, "update (%s) '%s' -> '%s'", t->bit_name, t->bit_val, val));
+		DBG_OBJ(TAG, t, ul_debug("update (%s) '%s' -> '%s'", t->bit_name, t->bit_val, val));
 		free(t->bit_val);
 		t->bit_val = val;
 	} else {
@@ -149,7 +149,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 		t->bit_val = val;
 		t->bit_dev = dev;
 
-		DBG(TAG, ul_debugobj(t, "setting (%s) '%s'", t->bit_name, t->bit_val));
+		DBG_OBJ(TAG, t, ul_debug("setting (%s) '%s'", t->bit_name, t->bit_val));
 		list_add_tail(&t->bit_tags, &dev->bid_tags);
 
 		if (dev->bid_cache) {
@@ -160,7 +160,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 				if (!head)
 					goto errout;
 
-				DBG(TAG, ul_debugobj(head, "creating new cache tag head %s", name));
+				DBG_OBJ(TAG, head, ul_debug("creating new cache tag head %s", name));
 				head->bit_name = strdup(name);
 				if (!head->bit_name)
 					goto errout;

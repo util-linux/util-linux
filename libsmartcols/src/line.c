@@ -42,7 +42,7 @@ struct libscols_line *scols_new_line(void)
 	if (!ln)
 		return NULL;
 
-	DBG(LINE, ul_debugobj(ln, "alloc"));
+	DBG_OBJ(LINE, ln, ul_debug("alloc"));
 	ln->refcount = 1;
 	INIT_LIST_HEAD(&ln->ln_lines);
 	INIT_LIST_HEAD(&ln->ln_children);
@@ -73,7 +73,7 @@ void scols_ref_line(struct libscols_line *ln)
 void scols_unref_line(struct libscols_line *ln)
 {
 	if (ln && --ln->refcount <= 0) {
-		DBG(CELL, ul_debugobj(ln, "dealloc"));
+		DBG_OBJ(CELL, ln, ul_debug("dealloc"));
 		list_del(&ln->ln_lines);
 		list_del(&ln->ln_children);
 		list_del(&ln->ln_groups);
@@ -98,7 +98,7 @@ void scols_line_free_cells(struct libscols_line *ln)
 	if (!ln || !ln->cells)
 		return;
 
-	DBG(LINE, ul_debugobj(ln, "free cells"));
+	DBG_OBJ(LINE, ln, ul_debug("free cells"));
 
 	for (i = 0; i < ln->ncells; i++)
 		scols_reset_cell(&ln->cells[i]);
@@ -134,7 +134,7 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 		return 0;
 	}
 
-	DBG(LINE, ul_debugobj(ln, "alloc %zu cells", n));
+	DBG_OBJ(LINE, ln, ul_debug("alloc %zu cells", n));
 
 	ce = reallocarray(ln->cells, n, sizeof(struct libscols_cell));
 	if (!ce)
@@ -158,7 +158,7 @@ int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn)
 	if (oldn == newn)
 		return 0;
 
-	DBG(LINE, ul_debugobj(ln, "move cells[%zu] -> cells[%zu]", oldn, newn));
+	DBG_OBJ(LINE, ln, ul_debug("move cells[%zu] -> cells[%zu]", oldn, newn));
 
 	/* remember data from old position */
 	memcpy(&ce, &ln->cells[oldn], sizeof(struct libscols_cell));
@@ -220,7 +220,7 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
 	if (!ln || !child)
 		return -EINVAL;
 
-	DBG(LINE, ul_debugobj(ln, "remove child"));
+	DBG_OBJ(LINE, ln, ul_debug("remove child"));
 
 	list_del_init(&child->ln_children);
 	child->parent = NULL;
@@ -244,7 +244,7 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 	if (!ln || !child)
 		return -EINVAL;
 
-	DBG(LINE, ul_debugobj(ln, "add child"));
+	DBG_OBJ(LINE, ln, ul_debug("add child"));
 	scols_ref_line(child);
 	scols_ref_line(ln);
 
@@ -667,7 +667,7 @@ struct libscols_line *scols_copy_line(const struct libscols_line *ln)
 	ret->ncells   = ln->ncells;
 	ret->seqnum   = ln->seqnum;
 
-	DBG(LINE, ul_debugobj(ln, "copy"));
+	DBG_OBJ(LINE, ln, ul_debug("copy"));
 
 	for (i = 0; i < ret->ncells; ++i) {
 		if (scols_cell_copy_content(&ret->cells[i], &ln->cells[i]))

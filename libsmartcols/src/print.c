@@ -142,7 +142,7 @@ static int groups_ascii_art_to_buffer(	struct libscols_table *tb,
 	if (!has_groups(tb))
 		return 0;
 
-	DBG(LINE, ul_debugobj(ln, "printing groups chart"));
+	DBG_OBJ(LINE, ln, ul_debug("printing groups chart"));
 
 	if (tb->is_dummy_print)
 		return 0;		/* allocate grpset[] only */
@@ -361,7 +361,7 @@ static void print_empty_cell(struct libscols_table *tb,
 {
 	size_t len_pad = 0;		/* in screen cells as opposed to bytes */
 
-	DBG(COL, ul_debugobj(cl, " printing empty cell"));
+	DBG_OBJ(COL, cl, ul_debug(" printing empty cell"));
 
 	fputs_color_cell_open(tb, cl, ln, ce);
 
@@ -439,7 +439,7 @@ static void print_newline_padding(struct libscols_table *tb,
 	assert(tb);
 	assert(cl);
 
-	DBG(LINE, ul_debugobj(ln, "printing newline padding"));
+	DBG_OBJ(LINE, ln, ul_debug("printing newline padding"));
 
 	fputs(linesep(tb), tb->out);		/* line break */
 	tb->termlines_used++;
@@ -468,7 +468,7 @@ static int print_pending_data(struct libscols_table *tb, struct ul_buffer *buf)
 	if (!width)
 		return -EINVAL;
 
-	DBG(COL, ul_debugobj(cl, "printing pending data"));
+	DBG_OBJ(COL, cl, ul_debug("printing pending data"));
 
 	if (scols_column_get_uri(cl) || scols_cell_get_uri(ce))
 		uri = mk_cell_uri(cl, ce, buf);
@@ -733,7 +733,7 @@ static int print_data(struct libscols_table *tb, struct ul_buffer *buf)
 	fputs_color_cell_close(tb, cl, ln, ce);
 
 	if (len > width && !scols_column_is_trunc(cl)) {
-		DBG(COL, ul_debugobj(cl, "*** data len=%zu > column width=%zu", len, width));
+		DBG_OBJ(COL, cl, ul_debug("*** data len=%zu > column width=%zu", len, width));
 		print_newline_padding(tb, cl, ln, ce, ul_buffer_get_bufsiz(buf));	/* next column starts on next line */
 
 	} else if (!is_last)
@@ -862,7 +862,7 @@ done:
 	if (cal && scols_column_is_wrap(cl))
 		scols_column_reset_wrap(cl);
 
-	DBG(COL, ul_debugobj(cl, "__cursor_to_buffer rc=%d len=%zu", rc,
+	DBG_OBJ(COL, cl, ul_debug("__cursor_to_buffer rc=%d len=%zu", rc,
 				ul_buffer_get_datasiz(buf)));
 	return rc;
 }
@@ -881,7 +881,7 @@ static int print_line(struct libscols_table *tb,
 
 	assert(ln);
 
-	DBG(LINE, ul_debugobj(ln, "     printing line"));
+	DBG_OBJ(LINE, ln, ul_debug("     printing line"));
 
 	fputs_color_line_open(tb, ln);
 
@@ -908,7 +908,7 @@ static int print_line(struct libscols_table *tb,
 
 	/* extra lines of the multi-line cells */
 	while (rc == 0 && pending) {
-		DBG(LINE, ul_debugobj(ln, "printing pending data"));
+		DBG_OBJ(LINE, ln, ul_debug("printing pending data"));
 		pending = 0;
 		fputs(linesep(tb), tb->out);
 		fputs_color_line_open(tb, ln);
@@ -953,7 +953,7 @@ int __scols_print_title(struct libscols_table *tb)
 	if (!tb->title.data)
 		return 0;
 
-	DBG(TAB, ul_debugobj(tb, "printing title"));
+	DBG_OBJ(TAB, tb, ul_debug("printing title"));
 
 	/* encode data */
 	if (tb->no_encode) {
@@ -966,7 +966,7 @@ int __scols_print_title(struct libscols_table *tb)
 	} else {
 		bufsz = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
 		if (bufsz == 1) {
-			DBG(TAB, ul_debugobj(tb, "title is empty string -- ignore"));
+			DBG_OBJ(TAB, tb, ul_debug("title is empty string -- ignore"));
 			return 0;
 		}
 		buf = malloc(bufsz);
@@ -1038,7 +1038,7 @@ int __scols_print_title(struct libscols_table *tb)
 done:
 	free(buf);
 	free(title);
-	DBG(TAB, ul_debugobj(tb, "printing title done [rc=%d]", rc));
+	DBG_OBJ(TAB, tb, ul_debug("printing title done [rc=%d]", rc));
 	return rc;
 }
 
@@ -1057,7 +1057,7 @@ int __scols_print_header(struct libscols_table *tb, struct ul_buffer *buf)
 	    list_empty(&tb->tb_lines))
 		return 0;
 
-	DBG(TAB, ul_debugobj(tb, "printing header"));
+	DBG_OBJ(TAB, tb, ul_debug("printing header"));
 
 	/* set the width according to the size of the data */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -1097,7 +1097,7 @@ int __scols_print_header(struct libscols_table *tb, struct ul_buffer *buf)
 	tb->header_printed = 1;
 	tb->header_next = tb->termlines_used + tb->termheight;
 	if (tb->header_repeat)
-		DBG(TAB, ul_debugobj(tb, "\tnext header: %zu [current=%zu, rc=%d]",
+		DBG_OBJ(TAB, tb, ul_debug("\tnext header: %zu [current=%zu, rc=%d]",
 					tb->header_next, tb->termlines_used, rc));
 	return rc;
 }
@@ -1112,7 +1112,7 @@ int __scols_print_range(struct libscols_table *tb,
 	struct libscols_line *ln;
 
 	assert(tb);
-	DBG(TAB, ul_debugobj(tb, "printing range"));
+	DBG_OBJ(TAB, tb, ul_debug("printing range"));
 
 	while (rc == 0 && scols_table_next_line(tb, itr, &ln) == 0) {
 
@@ -1158,7 +1158,7 @@ static int print_tree_line(struct libscols_table *tb,
 	struct ul_buffer *buf = (struct ul_buffer *) data;
 	int rc;
 
-	DBG(LINE, ul_debugobj(ln, "   printing tree line"));
+	DBG_OBJ(LINE, ln, ul_debug("   printing tree line"));
 
 	if (scols_table_is_json(tb))
 		ul_jsonwrt_object_open(&tb->json, NULL);
@@ -1207,7 +1207,7 @@ static int print_tree_line(struct libscols_table *tb,
 int __scols_print_tree(struct libscols_table *tb, struct ul_buffer *buf)
 {
 	assert(tb);
-	DBG(TAB, ul_debugobj(tb, "----printing-tree-----"));
+	DBG_OBJ(TAB, tb, ul_debug("----printing-tree-----"));
 
 	return scols_walk_tree(tb, NULL, print_tree_line, (void *) buf);
 }
@@ -1248,7 +1248,7 @@ int __scols_initialize_printing(struct libscols_table *tb, struct ul_buffer *buf
 	struct libscols_iter itr;
 	int rc;
 
-	DBG(TAB, ul_debugobj(tb, "initialize printing"));
+	DBG_OBJ(TAB, tb, ul_debug("initialize printing"));
 
 	if (!tb->symbols) {
 		rc = scols_table_set_default_symbols(tb);

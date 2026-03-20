@@ -87,7 +87,7 @@ struct libmnt_table *mnt_new_table(void)
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "alloc"));
+	DBG_OBJ(TAB, tb, ul_debug("alloc"));
 	tb->refcount = 1;
 	INIT_LIST_HEAD(&tb->ents);
 	return tb;
@@ -107,7 +107,7 @@ int mnt_reset_table(struct libmnt_table *tb)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "reset"));
+	DBG_OBJ(TAB, tb, ul_debug("reset"));
 
 	while (!list_empty(&tb->ents)) {
 		struct libmnt_fs *fs = list_entry(tb->ents.next,
@@ -131,7 +131,7 @@ void mnt_ref_table(struct libmnt_table *tb)
 {
 	if (tb) {
 		tb->refcount++;
-		/*DBG(FS, ul_debugobj(tb, "ref=%d", tb->refcount));*/
+		/*DBG_OBJ(FS, tb, ul_debug("ref=%d", tb->refcount));*/
 	}
 }
 
@@ -146,7 +146,7 @@ void mnt_unref_table(struct libmnt_table *tb)
 {
 	if (tb) {
 		tb->refcount--;
-		/*DBG(FS, ul_debugobj(tb, "unref=%d", tb->refcount));*/
+		/*DBG_OBJ(FS, tb, ul_debug("unref=%d", tb->refcount));*/
 		if (tb->refcount <= 0)
 			mnt_free_table(tb);
 	}
@@ -169,7 +169,7 @@ void mnt_free_table(struct libmnt_table *tb)
 		return;
 
 	mnt_reset_table(tb);
-	DBG(TAB, ul_debugobj(tb, "free [refcount=%d]", tb->refcount));
+	DBG_OBJ(TAB, tb, ul_debug("free [refcount=%d]", tb->refcount));
 
 	mnt_unref_cache(tb->cache);
 	free(tb->comm_intro);
@@ -431,7 +431,7 @@ int mnt_table_refer_statmnt(struct libmnt_table *tb, struct libmnt_statmnt *sm)
 	mnt_unref_statmnt(tb->stmnt);
 	mnt_ref_statmnt(sm);
 
-	DBG(TAB, ul_debugobj(tb, "refer statmnt"));
+	DBG_OBJ(TAB, tb, ul_debug("refer statmnt"));
 
 	tb->stmnt = sm;
 	return 0;
@@ -495,7 +495,7 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	fs->tab = tb;
 	tb->nents++;
 
-	DBG(TAB, ul_debugobj(tb, "add entry: %s %s",
+	DBG_OBJ(TAB, tb, ul_debug("add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
 	if (tb->stmnt)
 		mnt_fs_refer_statmnt(fs, tb->stmnt);
@@ -518,9 +518,9 @@ static int __table_insert_fs(
 	tb->nents++;
 
 	if (mnt_fs_get_uniq_id(fs)) {
-		DBG(TAB, ul_debugobj(tb, "insert entry: %" PRIu64, mnt_fs_get_uniq_id(fs)));
+		DBG_OBJ(TAB, tb, ul_debug("insert entry: %" PRIu64, mnt_fs_get_uniq_id(fs)));
 	} else {
-		DBG(TAB, ul_debugobj(tb, "insert entry: %s %s",
+		DBG_OBJ(TAB, tb, ul_debug("insert entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
 	}
 
@@ -668,7 +668,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 	if (!tb || !is_mountinfo(tb))
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup root fs"));
+	DBG_OBJ(TAB, tb, ul_debug("lookup root fs"));
 
 	/* get smallest possible ID from the table */
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
@@ -686,7 +686,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 		struct libmnt_fs *x = get_parent_fs(tb, root_fs);
 		if (!x || x == root_fs)
 			break;
-		DBG(TAB, ul_debugobj(tb, " messy mountinfo, walk to %s", mnt_fs_get_target(x)));
+		DBG_OBJ(TAB, tb, ul_debug(" messy mountinfo, walk to %s", mnt_fs_get_target(x)));
 		root_fs = x;
 	}
 
@@ -718,7 +718,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	if (!tb || !itr || !parent || !is_mountinfo(tb))
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup next child of '%s'",
+	DBG_OBJ(TAB, tb, ul_debug("lookup next child of '%s'",
 				mnt_fs_get_target(parent)));
 	parent_id = mnt_fs_get_id(parent);
 	direction = mnt_iter_get_direction(itr);
@@ -942,7 +942,7 @@ int mnt_table_find_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	if (!tb || !itr || !match_func)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup next fs"));
+	DBG_OBJ(TAB, tb, ul_debug("lookup next fs"));
 
 	if (fs)
 		*fs = NULL;
@@ -974,7 +974,7 @@ static int mnt_table_move_parent(struct libmnt_table *tb, int oldid, int newid)
 	if (list_empty(&tb->ents))
 		return 0;
 
-	DBG(TAB, ul_debugobj(tb, "moving parent ID from %d -> %d", oldid, newid));
+	DBG_OBJ(TAB, tb, ul_debug("moving parent ID from %d -> %d", oldid, newid));
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -1019,7 +1019,7 @@ int mnt_table_uniq_fs(struct libmnt_table *tb, int flags,
 	if (flags & MNT_UNIQ_FORWARD)
 		direction = MNT_ITER_FORWARD;
 
-	DBG(TAB, ul_debugobj(tb, "de-duplicate"));
+	DBG_OBJ(TAB, tb, ul_debug("de-duplicate"));
 	mnt_reset_iter(&itr, direction);
 
 	if ((flags & MNT_UNIQ_KEEPTREE) && !is_mountinfo(tb))
@@ -1042,7 +1042,7 @@ int mnt_table_uniq_fs(struct libmnt_table *tb, int flags,
 				mnt_table_move_parent(tb, mnt_fs_get_id(fs),
 							  mnt_fs_get_parent_id(fs));
 
-			DBG(TAB, ul_debugobj(tb, "remove duplicate %s",
+			DBG_OBJ(TAB, tb, ul_debug("remove duplicate %s",
 						mnt_fs_get_target(fs)));
 			mnt_table_remove_fs(tb, fs);
 		}
@@ -1097,7 +1097,7 @@ struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup MOUNTPOINT: '%s'", path));
+	DBG_OBJ(TAB, tb, ul_debug("lookup MOUNTPOINT: '%s'", path));
 
 	if (!mnt_is_path(path))
 		return NULL;
@@ -1151,7 +1151,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup TARGET: '%s'", path));
+	DBG_OBJ(TAB, tb, ul_debug("lookup TARGET: '%s'", path));
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
@@ -1162,7 +1162,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 
 	/* try absolute path */
 	if (ul_is_relative_path(path) && (cn = ul_absolute_path(path))) {
-		DBG(TAB, ul_debugobj(tb, "lookup absolute TARGET: '%s'", cn));
+		DBG_OBJ(TAB, tb, ul_debug("lookup absolute TARGET: '%s'", cn));
 		mnt_reset_iter(&itr, direction);
 		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (mnt_fs_streq_target(fs, cn)) {
@@ -1176,7 +1176,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup canonical TARGET: '%s'", cn));
+	DBG_OBJ(TAB, tb, ul_debug("lookup canonical TARGET: '%s'", cn));
 
 	/* canonicalized paths in struct libmnt_table */
 	mnt_reset_iter(&itr, direction);
@@ -1240,7 +1240,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup SRCPATH: '%s'", path));
+	DBG_OBJ(TAB, tb, ul_debug("lookup SRCPATH: '%s'", path));
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
@@ -1261,7 +1261,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 					uint64_t subvol_id;
 
 					if (mnt_parse_offset(val, len, &subvol_id)) {
-						DBG(TAB, ul_debugobj(tb, "failed to parse subvolid="));
+						DBG_OBJ(TAB, tb, ul_debug("failed to parse subvolid="));
 						continue;
 					}
 					if (subvol_id != default_id)
@@ -1278,7 +1278,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	if (!path || !tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup canonical SRCPATH: '%s'", cn));
+	DBG_OBJ(TAB, tb, ul_debug("lookup canonical SRCPATH: '%s'", cn));
 
 	nents = mnt_table_get_nents(tb);
 
@@ -1370,7 +1370,7 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup by TAG: %s %s", tag, val));
+	DBG_OBJ(TAB, tb, ul_debug("lookup by TAG: %s %s", tag, val));
 
 	/* look up by TAG */
 	mnt_reset_iter(&itr, direction);
@@ -1420,7 +1420,7 @@ struct libmnt_fs *mnt_table_find_target_with_option(
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup TARGET: '%s' with OPTION %s %s", path, option, val));
+	DBG_OBJ(TAB, tb, ul_debug("lookup TARGET: '%s' with OPTION %s %s", path, option, val));
 
 	/* look up by native @target with OPTION */
 	mnt_reset_iter(&itr, direction);
@@ -1457,7 +1457,7 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup SOURCE: '%s'", source));
+	DBG_OBJ(TAB, tb, ul_debug("lookup SOURCE: '%s'", source));
 
 	if (blkid_parse_tag_string(source, &t, &v) || !mnt_valid_tagname(t))
 		fs = mnt_table_find_srcpath(tb, source, direction);
@@ -1494,7 +1494,7 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup SOURCE: %s TARGET: %s", source, target));
+	DBG_OBJ(TAB, tb, ul_debug("lookup SOURCE: %s TARGET: %s", source, target));
 
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -1529,7 +1529,7 @@ struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup DEVNO: %d", (int) devno));
+	DBG_OBJ(TAB, tb, ul_debug("lookup DEVNO: %d", (int) devno));
 
 	mnt_reset_iter(&itr, direction);
 
@@ -1560,7 +1560,7 @@ struct libmnt_fs *mnt_table_find_id(struct libmnt_table *tb, int id)
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup ID: %d", id));
+	DBG_OBJ(TAB, tb, ul_debug("lookup ID: %d", id));
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -1590,7 +1590,7 @@ struct libmnt_fs *mnt_table_find_uniq_id(struct libmnt_table *tb, uint64_t id)
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "lookup uniq-ID: %" PRIu64, id));
+	DBG_OBJ(TAB, tb, ul_debug("lookup uniq-ID: %" PRIu64, id));
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -1816,7 +1816,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		 */
 		src_root = mnt_fs_get_root(src_fs);
 
-		DBG(FS, ul_debugobj(fs, "source root: %s, source FS root: %s", root, src_root));
+		DBG_OBJ(FS, fs, ul_debug("source root: %s, source FS root: %s", root, src_root));
 
 		if (src_root && root && !ul_startswith(root, src_root)) {
 			if (strcmp(root, "/") == 0) {
@@ -1875,12 +1875,12 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 	int rc = 0;
 	dev_t devno = 0;
 
-	DBG(FS, ul_debugobj(fstab_fs, "mnt_table_is_fs_mounted: target=%s, source=%s",
+	DBG_OBJ(FS, fstab_fs, ul_debug("mnt_table_is_fs_mounted: target=%s, source=%s",
 				mnt_fs_get_target(fstab_fs),
 				mnt_fs_get_source(fstab_fs)));
 
 	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_is_empty(tb)) {
-		DBG(FS, ul_debugobj(fstab_fs, "- ignore (swap or no data)"));
+		DBG_OBJ(FS, fstab_fs, ul_debug("- ignore (swap or no data)"));
 		return 0;
 	}
 
@@ -1924,12 +1924,12 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 	tgt = mnt_fs_get_target(fstab_fs);
 
 	if (!tgt || !src) {
-		DBG(FS, ul_debugobj(fstab_fs, "- ignore (no source/target)"));
+		DBG_OBJ(FS, fstab_fs, ul_debug("- ignore (no source/target)"));
 		goto done;
 	}
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	DBG(FS, ul_debugobj(fstab_fs, "mnt_table_is_fs_mounted: src=%s, tgt=%s, root=%s", src, tgt, root));
+	DBG_OBJ(FS, fstab_fs, ul_debug("mnt_table_is_fs_mounted: src=%s, tgt=%s, root=%s", src, tgt, root));
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
@@ -1953,18 +1953,18 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 
 			if (mnt_fs_get_option(fstab_fs, "offset", &val, &len) == 0) {
 				if (mnt_parse_offset(val, len, &offset)) {
-					DBG(FS, ul_debugobj(fstab_fs, "failed to parse offset="));
+					DBG_OBJ(FS, fstab_fs, ul_debug("failed to parse offset="));
 					continue;
 				}
 				flags = LOOPDEV_FL_OFFSET;
 			}
 
-			DBG(FS, ul_debugobj(fs, "checking for loop: src=%s", mnt_fs_get_srcpath(fs)));
+			DBG_OBJ(FS, fs, ul_debug("checking for loop: src=%s", mnt_fs_get_srcpath(fs)));
 #if __linux__
 			if (!loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, 0, flags))
 				continue;
 
-			DBG(FS, ul_debugobj(fs, "used loop"));
+			DBG_OBJ(FS, fs, ul_debug("used loop"));
 #endif
 		}
 
@@ -2021,7 +2021,7 @@ done:
 	free(root);
 	free(tgt_buf);
 
-	DBG(TAB, ul_debugobj(tb, "mnt_table_is_fs_mounted: %s [rc=%d]", src, rc));
+	DBG_OBJ(TAB, tb, ul_debug("mnt_table_is_fs_mounted: %s [rc=%d]", src, rc));
 	free(src2);
 	return rc;
 }

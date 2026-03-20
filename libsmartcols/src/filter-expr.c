@@ -171,7 +171,7 @@ static int guess_expr_datatype(struct filter_expr *n)
 			type = SCOLS_DATA_FLOAT;
 	}
 
-	DBG(FPARAM, ul_debugobj(n, " expr datatype: %d", type));
+	DBG_OBJ(FPARAM, n, ul_debug(" expr datatype: %d", type));
 	return type;
 }
 

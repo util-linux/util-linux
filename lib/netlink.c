@@ -42,11 +42,9 @@ UL_DEBUG_DEFINE_MASKNAMES(netlink) =
 	{ NULL, 0 }
 };
 
-#define DBG(m, x)       __UL_DBG(netlink, ULNETLINK_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(netlink, ULNETLINK_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(netlink)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(netlink, ULNETLINK_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(netlink, ULNETLINK_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(netlink, ULNETLINK_DEBUG_, m, x)
 
 static void netlink_init_debug(void)
 {
@@ -78,7 +76,7 @@ int ul_nl_request_dump(struct ul_nl_data *nl, uint16_t nlmsg_type)
 	req.nh.nlmsg_type = nlmsg_type;
 	req.g.rtgen_family = AF_NETLINK;
 	nl->dumping = true;
-	DBG(NLMSG, ul_debugobj(nl, "sending dump request"));
+	DBG_OBJ(NLMSG, nl, ul_debug("sending dump request"));
 	if (send(nl->fd, &req, req.nh.nlmsg_len, 0) < 0)
 		return -1;
 	return 0;
@@ -119,7 +117,7 @@ static int process_addr(struct ul_nl_data *nl, struct nlmsghdr *nh)
 	static char ifname[IF_NAMESIZE];
 	bool has_local_address = false;
 
-	DBG(ADDR, ul_debugobj(nh, "processing nlmsghdr"));
+	DBG_OBJ(ADDR, nh, ul_debug("processing nlmsghdr"));
 	memset(&(nl->addr), 0, sizeof(struct ul_nl_addr));
 
 	/* Process ifaddrmsg. */
@@ -150,7 +148,7 @@ static int process_addr(struct ul_nl_data *nl, struct nlmsghdr *nh)
 	for (attr = IFA_RTA(ifaddr); RTA_OK(attr, len);
 	     attr = RTA_NEXT(attr, len)) {
 		/* Process most common rta attributes */
-		DBG(ADDR, ul_debugobj(attr, "processing rtattr"));
+		DBG_OBJ(ADDR, attr, ul_debug("processing rtattr"));
 		switch (attr->rta_type) {
 		case IFA_ADDRESS:
 			nl->addr.ifa_address = RTA_DATA(attr);
@@ -199,7 +197,7 @@ static int process_addr(struct ul_nl_data *nl, struct nlmsghdr *nh)
 		break;
 		}
 	}
-	DBG(NLMSG, ul_debugobj(nl, "callback %p", nl->callback_addr));
+	DBG_OBJ(NLMSG, nl, ul_debug("callback %p", nl->callback_addr));
 	return (*(nl->callback_addr))(nl);
 }
 
@@ -214,7 +212,7 @@ static int process_msg(struct ul_nl_data *nl, struct nlmsghdr *nh)
 		/* fallthrough */
 	case RTM_DELADDR:
 	/* If callback_addr is not set, skip process_addr */
-		DBG(NLMSG, ul_debugobj(nl, "%s",
+		DBG_OBJ(NLMSG, nl, ul_debug("%s",
 				       (UL_NL_IS_RTM_DEL(nl) ?
 					"RTM_DELADDR" : "RTM_NEWADDR")));
 		if (nl->callback_addr)
@@ -222,7 +220,7 @@ static int process_msg(struct ul_nl_data *nl, struct nlmsghdr *nh)
 		break;
 	/* More can be implemented in future (RTM_NEWLINK, RTM_DELLINK etc.). */
 	default:
-		DBG(NLMSG, ul_debugobj(nl, "nlmsg_type = %hu", nh->nlmsg_type));
+		DBG_OBJ(NLMSG, nl, ul_debug("nlmsg_type = %hu", nh->nlmsg_type));
 		break;
 
 	}
@@ -252,19 +250,18 @@ int ul_nl_process(struct ul_nl_data *nl, bool async, bool loop)
 	};
 
 	while (1) {
-		DBG(NLMSG, ul_debugobj(nl, "waiting for message"));
+		DBG_OBJ(NLMSG, nl, ul_debug("waiting for message"));
 		rc = recvmsg(nl->fd, &msg, (loop ? 0 :
 					    (async ? MSG_DONTWAIT : 0)));
-		DBG(NLMSG, ul_debugobj(nl, "got message"));
+		DBG_OBJ(NLMSG, nl, ul_debug("got message"));
 		if (rc < 0) {
 			if (errno == EWOULDBLOCK || errno == EAGAIN) {
-				DBG(NLMSG,
-				    ul_debugobj(nl, "no data"));
+				DBG_OBJ(NLMSG, nl, ul_debug("no data"));
 				return UL_NL_WOULDBLOCK;
 			}
 			/* Failure, just stop listening for changes */
 			nl->dumping = false;
-			DBG(NLMSG, ul_debugobj(nl, "error"));
+			DBG_OBJ(NLMSG, nl, ul_debug("error"));
 			return rc;
 		}
 		else
@@ -275,13 +272,12 @@ int ul_nl_process(struct ul_nl_data *nl, bool async, bool loop)
 		     nh = NLMSG_NEXT(nh, len)) {
 
 			if (nh->nlmsg_type == NLMSG_ERROR) {
-				DBG(NLMSG, ul_debugobj(nl, "NLMSG_ERROR"));
+				DBG_OBJ(NLMSG, nl, ul_debug("NLMSG_ERROR"));
 				nl->dumping = false;
 				return -1;
 			}
 			if (nh->nlmsg_type == NLMSG_DONE) {
-				DBG(NLMSG,
-				    ul_debugobj(nl, "NLMSG_DONE"));
+				DBG_OBJ(NLMSG, nl, ul_debug("NLMSG_DONE"));
 				nl->dumping = false;
 				return UL_NL_DONE;
 			}
@@ -289,17 +285,15 @@ int ul_nl_process(struct ul_nl_data *nl, bool async, bool loop)
 			rc = process_msg(nl, nh);
 			if (rc)
 			{
-				DBG(NLMSG,
-				    ul_debugobj(nl,
-						"process_msg() returned %d",
-						rc));
+				DBG_OBJ(NLMSG, nl,
+				    ul_debug("process_msg() returned %d", rc));
 				if (rc != UL_NL_SOFT_ERROR)
 					return rc;
 			}
 		}
 		if (!loop)
 			return 0;
-		DBG(NLMSG, ul_debugobj(nl, "looping until NLMSG_DONE"));
+		DBG_OBJ(NLMSG, nl, ul_debug("looping until NLMSG_DONE"));
 	}
 }
 
@@ -309,7 +303,7 @@ int ul_nl_open(struct ul_nl_data *nl, uint32_t nl_groups)
 	int sock;
 	int rc;
 
-	DBG(NLMSG, ul_debugobj(nl, "opening socket"));
+	DBG_OBJ(NLMSG, nl, ul_debug("opening socket"));
 	sock = socket(AF_NETLINK, SOCK_RAW | SOCK_CLOEXEC, NETLINK_ROUTE);
 	if (sock < 0)
 		return sock;
@@ -330,7 +324,7 @@ int ul_nl_open(struct ul_nl_data *nl, uint32_t nl_groups)
 
 int ul_nl_close(struct ul_nl_data *nl)
 {
-	DBG(NLMSG, ul_debugobj(nl, "closing socket"));
+	DBG_OBJ(NLMSG, nl, ul_debug("closing socket"));
 	return close(nl->fd);
 }
 

@@ -165,7 +165,7 @@ int mnt_context_set_hookset_data(struct libmnt_context *cxt,
 	/* deallocate old data */
 	if (data == NULL) {
 		if (hd) {
-			DBG(CXT, ul_debugobj(cxt, " free '%s' data", hs->name));
+			DBG_OBJ(CXT, cxt, ul_debug(" free '%s' data", hs->name));
 			list_del(&hd->datas);
 			free(hd);
 		}
@@ -178,7 +178,7 @@ int mnt_context_set_hookset_data(struct libmnt_context *cxt,
 		if (!hd)
 			return -ENOMEM;
 
-		DBG(CXT, ul_debugobj(cxt, " alloc '%s' data", hs->name));
+		DBG_OBJ(CXT, cxt, ul_debug(" alloc '%s' data", hs->name));
 		INIT_LIST_HEAD(&hd->datas);
 		hd->hookset = hs;
 		list_add_tail(&hd->datas, &cxt->hooksets_datas);
@@ -215,7 +215,7 @@ static int append_hook(struct libmnt_context *cxt,
 	if (!hook)
 		return -ENOMEM;
 
-	DBG(CXT, ul_debugobj(cxt, " appending %s hook from %s",
+	DBG_OBJ(CXT, cxt, ul_debug(" appending %s hook from %s",
 				stagenames[stage], hs->name));
 
 	INIT_LIST_HEAD(&hook->hooks);
@@ -288,7 +288,7 @@ int mnt_context_remove_hook(struct libmnt_context *cxt,
 
 	hook = get_hookset_hook(cxt, hs, stage, NULL);
 	if (hook) {
-		DBG(CXT, ul_debugobj(cxt, " removing %s hook from %s",
+		DBG_OBJ(CXT, cxt, ul_debug(" removing %s hook from %s",
 			stagenames[hook->stage], hook->hookset->name));
 
 		if (data)
@@ -315,7 +315,7 @@ static int call_hook(struct libmnt_context *cxt, struct hookset_hook *hook)
 	int rc = 0;
 
 	if (mnt_context_is_fake(cxt))
-		DBG(CXT, ul_debugobj(cxt, " FAKE call"));
+		DBG_OBJ(CXT, cxt, ul_debug(" FAKE call"));
 	else
 		rc = hook->func(cxt, hook->hookset, hook->data);
 
@@ -337,7 +337,7 @@ static int call_depend_hooks(struct libmnt_context *cxt, const char *name, int s
 		    x->after == NULL || strcmp(x->after, name) != 0)
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "calling %s [after]", x->hookset->name));
+		DBG_OBJ(CXT, cxt, ul_debug("calling %s [after]", x->hookset->name));
 		rc = call_hook(cxt, x);
 		if (rc)
 			break;
@@ -352,7 +352,7 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 	size_t i;
 	int rc = 0;
 
-	DBG(CXT, ul_debugobj(cxt, "---> stage:%s", stagenames[stage]));
+	DBG_OBJ(CXT, cxt, ul_debug("---> stage:%s", stagenames[stage]));
 
 	/* call initial hooks */
 	for (i = 0; i <  ARRAY_SIZE(hooksets); i++) {
@@ -361,10 +361,10 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 		if (hs->firststage != stage)
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "calling %s [first]", hs->name));
+		DBG_OBJ(CXT, cxt, ul_debug("calling %s [first]", hs->name));
 
 		if (mnt_context_is_fake(cxt))
-			DBG(CXT, ul_debugobj(cxt, " FAKE call"));
+			DBG_OBJ(CXT, cxt, ul_debug(" FAKE call"));
 		else
 			rc = hs->firstcall(cxt, hs, NULL);
 		if (!rc)
@@ -380,7 +380,7 @@ int mnt_context_call_hooks(struct libmnt_context *cxt, int stage)
 		if (x->stage != stage || x->executed)
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "calling %s [active]", x->hookset->name));
+		DBG_OBJ(CXT, cxt, ul_debug("calling %s [active]", x->hookset->name));
 		rc = call_hook(cxt, x);
 		if (rc < 0)
 			goto done;
@@ -397,7 +397,7 @@ done:
 		x->executed = 0;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "<--- stage:%s [rc=%d status=%d]",
+	DBG_OBJ(CXT, cxt, ul_debug("<--- stage:%s [rc=%d status=%d]",
 				stagenames[stage], rc, cxt->syscall_status));
 	return rc;
 }

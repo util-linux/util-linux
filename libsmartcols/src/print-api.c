@@ -22,7 +22,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 	if (scols_table_is_tree(tb))
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "printing range from API"));
+	DBG_OBJ(TAB, tb, ul_debug("printing range from API"));
 
 	rc = __scols_initialize_printing(tb, &buf);
 	if (rc)
@@ -72,7 +72,7 @@ int scols_table_print_range_to_string(	struct libscols_table *tb,
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "printing range to string"));
+	DBG_OBJ(TAB, tb, ul_debug("printing range to string"));
 
 	/* create a stream for output */
 	stream = open_memstream(data, &sz);
@@ -132,7 +132,7 @@ int scols_table_calculate(struct libscols_table *tb)
 	if (list_empty(&tb->tb_lines))
 		return 0;
 
-	DBG(TAB, ul_debugobj(tb, "pre-calculate"));
+	DBG_OBJ(TAB, tb, ul_debug("pre-calculate"));
 
 	rc = __scols_initialize_printing(tb, &buf);
 	__scols_cleanup_printing(tb, &buf);
@@ -151,16 +151,16 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "printing"));
+	DBG_OBJ(TAB, tb, ul_debug("printing"));
 	if (is_empty)
 		*is_empty = 0;
 
 	if (list_empty(&tb->tb_columns)) {
-		DBG(TAB, ul_debugobj(tb, "error -- no columns"));
+		DBG_OBJ(TAB, tb, ul_debug("error -- no columns"));
 		return -EINVAL;
 	}
 	if (list_empty(&tb->tb_lines)) {
-		DBG(TAB, ul_debugobj(tb, "ignore -- no lines"));
+		DBG_OBJ(TAB, tb, ul_debug("ignore -- no lines"));
 		if (scols_table_is_json(tb)) {
 			ul_jsonwrt_init(&tb->json, tb->out, 0, tb->json_format);
 			if (tb->json_format != UL_JSON_LINE) {
@@ -247,7 +247,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "printing to string"));
+	DBG_OBJ(TAB, tb, ul_debug("printing to string"));
 
 	/* create a stream for output */
 	stream = open_memstream(data, &sz);

@@ -93,9 +93,9 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 	/* check if supported by current kernel */
 	if (!ls && !has_listmount()) {
 		if (errno == ENOSYS)
-			DBG(TAB, ul_debugobj(tb, "listmount: unsuppported"));
+			DBG_OBJ(TAB, tb, ul_debug("listmount: unsuppported"));
 		if (errno == EINVAL)
-			DBG(TAB, ul_debugobj(tb, "listmount: reverse unsuppported"));
+			DBG_OBJ(TAB, tb, ul_debug("listmount: reverse unsuppported"));
 		errno = ENOSYS;
 		return -ENOSYS;
 	}
@@ -129,7 +129,7 @@ static int table_init_listmount(struct libmnt_table *tb, size_t stepsiz)
 		tb->lsmnt = ls;
 	}
 
-	DBG(TAB, ul_debugobj(tb, "listmount: init [step=%zu]", ls->stepsiz));
+	DBG_OBJ(TAB, tb, ul_debug("listmount: init [step=%zu]", ls->stepsiz));
 	return 0;
 }
 
@@ -233,7 +233,7 @@ int mnt_table_enable_listmount(struct libmnt_table *tb, int enable)
 	if (tb && tb->lsmnt) {
 		old = tb->lsmnt->enabled;
 		tb->lsmnt->enabled = enable;
-		DBG(TAB, ul_debugobj(tb, "listmount() %s",
+		DBG_OBJ(TAB, tb, ul_debug("listmount() %s",
 					enable ? "on" : "off"));
 	}
 	return old;
@@ -263,7 +263,7 @@ static int lsmnt_to_table(
 	if (prev)
 		mnt_ref_fs(prev);
 
-	DBG(TAB, ul_debugobj(tb, "listmount: insert %zu", nitems));
+	DBG_OBJ(TAB, tb, ul_debug("listmount: insert %zu", nitems));
 
 	for (i = 0; rc == 0 && i < nitems; i++) {
 		struct libmnt_fs *fs;
@@ -321,7 +321,7 @@ int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction)
 
 	ls->reverse = reverse;
 
-	DBG(TAB, ul_debugobj(tb, "listmount: call "
+	DBG_OBJ(TAB, tb, ul_debug("listmount: call "
 				 "[id=%" PRIu64", ns=%" PRIu64
 				 "last=%" PRIu64", sz=%zu %s]",
 				ls->id, ls->ns,
@@ -345,7 +345,7 @@ int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction)
 done:
 	mnt_table_enable_listmount(tb, 1);
 
-	DBG(TAB, ul_debugobj(tb, "listmount: on-demand done [rc=%d]", rc));
+	DBG_OBJ(TAB, tb, ul_debug("listmount: on-demand done [rc=%d]", rc));
 	return rc;		/* nothing */
 }
 
@@ -371,7 +371,7 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "listmount: fetching all"));
+	DBG_OBJ(TAB, tb, ul_debug("listmount: fetching all"));
 
 	if (!tb->lsmnt && (rc = table_init_listmount(tb, 0)) != 0)
 		return rc;
@@ -387,7 +387,7 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb)
 	ls = tb->lsmnt;
 
 	do {
-		DBG(TAB, ul_debugobj(tb, "listmount: call "
+		DBG_OBJ(TAB, tb, ul_debug("listmount: call "
 				 "[id=%" PRIu64", ns=%" PRIu64
 				 "last=%" PRIu64", sz=%zu]",
 				ls->id, ls->ns,
@@ -413,7 +413,7 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb)
 		mnt_statmnt_disable_fetching(tb->stmnt, stmnt_status);
 	mnt_table_enable_listmount(tb, lsmnt_status);
 
-	DBG(TAB, ul_debugobj(tb, "listmount: fetching done [rc=%d]", rc));
+	DBG_OBJ(TAB, tb, ul_debug("listmount: fetching done [rc=%d]", rc));
 
 	return rc;
 }

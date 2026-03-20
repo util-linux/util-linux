@@ -58,7 +58,7 @@ struct libmnt_monitor *mnt_new_monitor(void)
 	mn->fd = -1;
 	INIT_LIST_HEAD(&mn->ents);
 
-	DBG(MONITOR, ul_debugobj(mn, "alloc"));
+	DBG_OBJ(MONITOR, mn, ul_debug("alloc"));
 	return mn;
 }
 
@@ -198,7 +198,7 @@ int monitor_modify_epoll(struct libmnt_monitor *mn,
 		if (fd < 0)
 			goto err;
 
-		DBG(MONITOR, ul_debugobj(mn, " add fd=%d (for %s)", fd, me->path));
+		DBG_OBJ(MONITOR, mn, ul_debug(" add fd=%d (for %s)", fd, me->path));
 
 		ev.data.ptr = (void *) me;
 
@@ -212,7 +212,7 @@ int monitor_modify_epoll(struct libmnt_monitor *mn,
 			while (epoll_wait(mn->fd, events, 1, 0) > 0);
 		}
 	} else if (me->fd) {
-		DBG(MONITOR, ul_debugobj(mn, " remove fd=%d (for %s)", me->fd, me->path));
+		DBG_OBJ(MONITOR, mn, ul_debug(" remove fd=%d (for %s)", me->fd, me->path));
 		if (epoll_ctl(mn->fd, EPOLL_CTL_DEL, me->fd, NULL) < 0) {
 			if (errno != ENOENT)
 				goto err;
@@ -259,7 +259,7 @@ int mnt_monitor_close_fd(struct libmnt_monitor *mn)
 	}
 
 	if (mn->fd >= 0) {
-		DBG(MONITOR, ul_debugobj(mn, "closing top-level monitor fd"));
+		DBG_OBJ(MONITOR, mn, ul_debug("closing top-level monitor fd"));
 		close(mn->fd);
 	}
 	mn->fd = -1;
@@ -287,14 +287,14 @@ int mnt_monitor_get_fd(struct libmnt_monitor *mn)
 	if (mn->fd >= 0)
 		return mn->fd;
 
-	DBG(MONITOR, ul_debugobj(mn, "create top-level monitor fd"));
+	DBG_OBJ(MONITOR, mn, ul_debug("create top-level monitor fd"));
 	mn->fd = epoll_create1(EPOLL_CLOEXEC);
 	if (mn->fd < 0)
 		return -errno;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	DBG(MONITOR, ul_debugobj(mn, "adding monitor entries to epoll (fd=%d)", mn->fd));
+	DBG_OBJ(MONITOR, mn, ul_debug("adding monitor entries to epoll (fd=%d)", mn->fd));
 	while (monitor_next_entry(mn, &itr, &me) == 0) {
 		if (!me->enabled)
 			continue;
@@ -303,13 +303,13 @@ int mnt_monitor_get_fd(struct libmnt_monitor *mn)
 			goto err;
 	}
 
-	DBG(MONITOR, ul_debugobj(mn, "successfully created monitor"));
+	DBG_OBJ(MONITOR, mn, ul_debug("successfully created monitor"));
 	return mn->fd;
 err:
 	rc = errno ? -errno : -EINVAL;
 	close(mn->fd);
 	mn->fd = -1;
-	DBG(MONITOR, ul_debugobj(mn, "failed to create monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to create monitor [rc=%d]", rc));
 	return rc;
 }
 
@@ -324,7 +324,7 @@ static int read_epoll_events(struct libmnt_monitor *mn, int timeout, struct moni
 		*act = NULL;
 
 	do {
-		DBG(MONITOR, ul_debugobj(mn, "calling epoll_wait(), timeout=%d", timeout));
+		DBG_OBJ(MONITOR, mn, ul_debug("calling epoll_wait(), timeout=%d", timeout));
 		rc = epoll_wait(mn->fd, events, 1, timeout);
 		if (rc < 0) {
 			rc = -errno;
@@ -355,10 +355,10 @@ static int read_epoll_events(struct libmnt_monitor *mn, int timeout, struct moni
 	return 0;
 
 nothing:
-	DBG(MONITOR, ul_debugobj(mn, " *** nothing"));
+	DBG_OBJ(MONITOR, mn, ul_debug(" *** nothing"));
 	return 1;
 failed:
-	DBG(MONITOR, ul_debugobj(mn, " *** error"));
+	DBG_OBJ(MONITOR, mn, ul_debug(" *** error"));
 	return rc;
 }
 
@@ -449,7 +449,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	if (type)
 		*type = me->type;
 
-	DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s, type=%d]", me->path, me->type));
+	DBG_OBJ(MONITOR, mn, ul_debug(" *** success [changed: %s, type=%d]", me->path, me->type));
 	return 0;
 }
 

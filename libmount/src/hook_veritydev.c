@@ -164,7 +164,7 @@ static void libcryptsetup_log(int level __attribute__((__unused__)),
 			      const char *msg, void *data)
 {
 	const struct libmnt_hookset *hs = (struct libmnt_hookset *) data;
-	DBG(HOOK, ul_debugobj(hs, "cryptsetup: %s", msg));
+	DBG_OBJ(HOOK, hs, ul_debug("cryptsetup: %s", msg));
 }
 
 /* free global data */
@@ -220,7 +220,7 @@ failed:
 /* libmount callback -- cleanup all */
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks */
 	while (mnt_context_remove_hook(cxt, hs, 0, NULL) == 0);
@@ -262,7 +262,7 @@ static int is_veritydev_required(struct libmnt_context *cxt,
 		return 0;
 
 	if (flags & (MNT_MS_HASH_DEVICE | MNT_MS_ROOT_HASH | MNT_MS_HASH_OFFSET)) {
-		DBG(HOOK, ul_debugobj(hs, "verity options detected"));
+		DBG_OBJ(HOOK, hs, ul_debug("verity options detected"));
 		return 1;
 	}
 
@@ -287,7 +287,7 @@ static void delete_veritydev(struct libmnt_context *cxt,
 
 	rc = verity_call( crypt_deactivate_by_name(NULL, hsd->devname, flags) );
 
-	DBG(HOOK, ul_debugobj(hs, "deleted %s [rc=%d%s]",
+	DBG_OBJ(HOOK, hs, ul_debug("deleted %s [rc=%d%s]",
 				hsd->devname, rc,
 				flags & CRYPT_DEACTIVATE_DEFERRED ? " deferred" : "" ));
 	if (rc == 0) {
@@ -367,7 +367,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	if (!backing_file)
 		return -EINVAL;
 
-	DBG(HOOK, ul_debugobj(hs, "verity: setup for %s", backing_file));
+	DBG_OBJ(HOOK, hs, ul_debug("verity: setup for %s", backing_file));
 
 	/* verity.hashdevice= */
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_HASH_DEVICE, cxt->map_userspace)))
@@ -383,7 +383,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_HASH_OFFSET, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)) {
 		if (strtosize(mnt_opt_get_value(opt), &offset)) {
-			DBG(HOOK, ul_debugobj(hs, "failed to parse verity.hashoffset="));
+			DBG_OBJ(HOOK, hs, ul_debug("failed to parse verity.hashoffset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -400,7 +400,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_FEC_OFFSET, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)
 	    && strtosize(mnt_opt_get_value(opt), &fec_offset)) {
-		DBG(HOOK, ul_debugobj(hs, "failed to parse verity.fecoffset="));
+		DBG_OBJ(HOOK, hs, ul_debug("failed to parse verity.fecoffset="));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
@@ -408,7 +408,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_FEC_ROOTS, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)
 	    && strtosize(mnt_opt_get_value(opt), &fec_roots)) {
-		DBG(HOOK, ul_debugobj(hs, "failed to parse verity.fecroots="));
+		DBG_OBJ(HOOK, hs, ul_debug("failed to parse verity.fecroots="));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
@@ -417,7 +417,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	    && mnt_opt_has_value(opt)) {
 		root_hash_sig_file = mnt_opt_get_value(opt);
 
-		DBG(HOOK, ul_debugobj(hs, "verity: checking %s", root_hash_sig_file));
+		DBG_OBJ(HOOK, hs, ul_debug("verity: checking %s", root_hash_sig_file));
 
 		rc = ul_path_stat(NULL, &hash_sig_st, 0, root_hash_sig_file);
 		if (rc == 0)
@@ -446,16 +446,16 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 #ifdef CRYPT_ACTIVATE_PANIC_ON_CORRUPTION
 			crypt_activate_flags |= CRYPT_ACTIVATE_PANIC_ON_CORRUPTION;
 #else
-			DBG(HOOK, ul_debugobj(hs, "verity.oncorruption=panic not supported by libcryptsetup, ignoring"));
+			DBG_OBJ(HOOK, hs, ul_debug("verity.oncorruption=panic not supported by libcryptsetup, ignoring"));
 #endif
 		else {
-			DBG(HOOK, ul_debugobj(hs, "failed to parse verity.oncorruption="));
+			DBG_OBJ(HOOK, hs, ul_debug("failed to parse verity.oncorruption="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
 
 	if (!rc && root_hash && root_hash_file) {
-		DBG(HOOK, ul_debugobj(hs, "verity.roothash and verity.roothashfile are mutually exclusive"));
+		DBG_OBJ(HOOK, hs, ul_debug("verity.roothash and verity.roothashfile are mutually exclusive"));
 		rc = -EINVAL;
 	} else if (!rc && root_hash_file) {
 		rc = ul_path_read_string(NULL, &root_hash, root_hash_file);
@@ -463,7 +463,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	}
 
 	if (!rc && (!hash_device || !root_hash)) {
-		DBG(HOOK, ul_debugobj(hs, "verity.hashdevice and one of verity.roothash or verity.roothashfile are mandatory"));
+		DBG_OBJ(HOOK, hs, ul_debug("verity.hashdevice and one of verity.roothash or verity.roothashfile are mandatory"));
 		rc = -EINVAL;
 	}
 
@@ -492,7 +492,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 
 	hash_size = verity_call( crypt_get_volume_key_size(crypt_dev) );
 	if (crypt_hex_to_bytes(root_hash, &root_hash_binary) != hash_size) {
-		DBG(HOOK, ul_debugobj(hs, "root hash %s is not of length %zu", root_hash, hash_size));
+		DBG_OBJ(HOOK, hs, ul_debug("root hash %s is not of length %zu", root_hash, hash_size));
 		rc = -EINVAL;
 		goto done;
 	}
@@ -503,7 +503,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 				hash_sig, hash_sig_size, crypt_activate_flags) );
 #else
 		rc = -EINVAL;
-		DBG(HOOK, ul_debugobj(hs, "verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
+		DBG_OBJ(HOOK, hs, ul_debug("verity.roothashsig=%s passed but libcryptsetup does not provide crypt_activate_by_signed_key()", hash_sig));
 #endif
 	} else
 		rc = verity_call( crypt_activate_by_volume_key(crypt_dev, mapper_device, root_hash_binary, hash_size,
@@ -522,7 +522,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 	 * Pass through only OOM errors or mismatching root hash errors.
 	 */
 	if (rc == -EEXIST) {
-		DBG(HOOK, ul_debugobj(hs, "%s already in use as /dev/mapper/%s", backing_file, mapper_device));
+		DBG_OBJ(HOOK, hs, ul_debug("%s already in use as /dev/mapper/%s", backing_file, mapper_device));
 
 		verity_call( crypt_free(crypt_dev) );
 
@@ -541,7 +541,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 				rc = verity_call( crypt_volume_key_get(crypt_dev, CRYPT_ANY_SLOT, key, &keysize, NULL, 0) );
 			}
 			if (!rc) {
-				DBG(HOOK, ul_debugobj(hs, "comparing root hash of existing device with %s", root_hash));
+				DBG_OBJ(HOOK, hs, ul_debug("comparing root hash of existing device with %s", root_hash));
 				if (memcmp(key, root_hash_binary, hash_size)) {
 					/* TRANSLATORS: Don't translate "e ". It's a message classifier. */
 					mnt_context_append_mesg(cxt, _("e device's hash does not match with root hash"));
@@ -549,7 +549,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 					goto done;
 				}
 			} else {
-				DBG(HOOK, ul_debugobj(hs, "libcryptsetup does not support extracting root hash of existing device"));
+				DBG_OBJ(HOOK, hs, ul_debug("libcryptsetup does not support extracting root hash of existing device"));
 			}
 		}
 		if (rc) {
@@ -568,7 +568,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 				goto done;
 			}
 #endif
-			DBG(HOOK, ul_debugobj(hs, "root hash of %s matches %s, reusing device", mapper_device, root_hash));
+			DBG_OBJ(HOOK, hs, ul_debug("root hash of %s matches %s, reusing device", mapper_device, root_hash));
 		}
 	}
 

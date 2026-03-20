@@ -104,7 +104,7 @@ static int fanotify_get_fd(struct libmnt_monitor *mn, struct monitor_entry *me)
 
 	data = (struct monitor_entrydata *) me->data;
 	assert(data->ns_fd >= 0);
-	DBG(MONITOR, ul_debugobj(mn, " opening fanotify for %s", me->path));
+	DBG_OBJ(MONITOR, mn, ul_debug(" opening fanotify for %s", me->path));
 
 	me->fd = fanotify_init(FAN_REPORT_MNT | FAN_CLOEXEC | FAN_NONBLOCK, 0);
 
@@ -121,7 +121,7 @@ static int fanotify_get_fd(struct libmnt_monitor *mn, struct monitor_entry *me)
 		close(me->fd);
 		me->fd = -1;
 	}
-	DBG(MONITOR, ul_debugobj(mn, "failed to open fanotify FD [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to open fanotify FD [rc=%d]", rc));
 	return rc;
 }
 
@@ -136,14 +136,14 @@ static int fanotify_process_event(
 	if (!mn || !me || me->fd < 0 || !me->data)
 		return -EINVAL;
 
-	DBG(MONITOR, ul_debugobj(mn, "reading fanotify event"));
+	DBG_OBJ(MONITOR, mn, ul_debug("reading fanotify event"));
 
 	data = (struct monitor_entrydata *) me->data;
 	data->remaining = 0;
 	data->current = data->buf;
 
 	if (mn->kernel_veiled && access(MNT_PATH_UTAB ".act", F_OK) == 0) {
-		DBG(MONITOR, ul_debugobj(mn, " kernel event veiled"));
+		DBG_OBJ(MONITOR, mn, ul_debug(" kernel event veiled"));
 
 		/* just drain out */
 		do {
@@ -160,7 +160,7 @@ static int fanotify_process_event(
 		return 1;	/* nothing */
 
 	data->remaining = (size_t) len;
-	DBG(MONITOR, ul_debugobj(mn, " fanotify event [len=%zu %p]",
+	DBG_OBJ(MONITOR, mn, ul_debug(" fanotify event [len=%zu %p]",
 				data->remaining, data->current));
 
 	return 0;
@@ -179,7 +179,7 @@ static int fanotify_next_fs(struct libmnt_monitor *mn, struct monitor_entry *me,
 	if (!mn || !me || me->fd < 0 || !me->data)
 		return -EINVAL;
 
-	DBG(MONITOR, ul_debugobj(mn, "next fanotify fs"));
+	DBG_OBJ(MONITOR, mn, ul_debug("next fanotify fs"));
 
 	data = (struct monitor_entrydata *) me->data;
 	if (!fs || !data->remaining)
@@ -210,7 +210,7 @@ static int fanotify_next_fs(struct libmnt_monitor *mn, struct monitor_entry *me,
 	if (meta->mask & FAN_MNT_DETACH)
 		fs->flags |= MNT_FS_STATUS_DETACH;
 
-	DBG(MONITOR, ul_debugobj(mn, "fanotify fs id=%ju %s\n",
+	DBG_OBJ(MONITOR, mn, ul_debug("fanotify fs id=%ju %s\n",
 		(uintmax_t) mnt_fs_get_uniq_id(fs),
 		mnt_fs_is_attached(fs) ? "ATTACHED" :
 		mnt_fs_is_detached(fs) ? "DETACHED" :
@@ -280,7 +280,7 @@ int mnt_monitor_enable_fanotify(struct libmnt_monitor *mn, int enable, int ns)
 	if (!enable)
 		return 0;
 
-	DBG(MONITOR, ul_debugobj(mn, "allocate new fanotify monitor"));
+	DBG_OBJ(MONITOR, mn, ul_debug("allocate new fanotify monitor"));
 
 	/* create a new entry */
 	me = monitor_new_entry(mn);
@@ -324,7 +324,7 @@ int mnt_monitor_enable_fanotify(struct libmnt_monitor *mn, int enable, int ns)
 err:
 	rc = -errno;
 	free_monitor_entry(me);
-	DBG(MONITOR, ul_debugobj(mn, "failed to allocate fanotify monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to allocate fanotify monitor [rc=%d]", rc));
 	return rc;
 }
 

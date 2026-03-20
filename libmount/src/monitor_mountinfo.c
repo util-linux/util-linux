@@ -41,7 +41,7 @@ static int mountinfo_get_fd(struct libmnt_monitor *mn,
 		return me->fd;		/* already initialized */
 
 	assert(me->path);
-	DBG(MONITOR, ul_debugobj(mn, " open kernel monitor for %s", me->path));
+	DBG_OBJ(MONITOR, mn, ul_debug(" open kernel monitor for %s", me->path));
 
 	me->fd = open(me->path, O_RDONLY|O_CLOEXEC);
 	if (me->fd < 0)
@@ -50,7 +50,7 @@ static int mountinfo_get_fd(struct libmnt_monitor *mn,
 	return me->fd;
 err:
 	rc = -errno;
-	DBG(MONITOR, ul_debugobj(mn, "failed to create kernel  monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to create kernel  monitor [rc=%d]", rc));
 	return rc;
 }
 
@@ -62,7 +62,7 @@ static int mountinfo_process_event(struct libmnt_monitor *mn,
 		return -EINVAL;
 
 	if (mn->kernel_veiled && access(MNT_PATH_UTAB ".act", F_OK) == 0) {
-		DBG(MONITOR, ul_debugobj(mn, "kernel event veiled"));
+		DBG_OBJ(MONITOR, mn, ul_debug("kernel event veiled"));
 		return 1;
 	}
 	return 0;
@@ -116,7 +116,7 @@ int mnt_monitor_enable_mountinfo(struct libmnt_monitor *mn, int enable)
 	if (!enable)
 		return 0;
 
-	DBG(MONITOR, ul_debugobj(mn, "allocate new kernel monitor"));
+	DBG_OBJ(MONITOR, mn, ul_debug("allocate new kernel monitor"));
 
 	/* create a new entry */
 	me = monitor_new_entry(mn);
@@ -147,7 +147,7 @@ int mnt_monitor_enable_mountinfo(struct libmnt_monitor *mn, int enable)
 err:
 	rc = -errno;
 	free_monitor_entry(me);
-	DBG(MONITOR, ul_debugobj(mn, "failed to allocate kernel monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to allocate kernel monitor [rc=%d]", rc));
 	return rc;
 }
 

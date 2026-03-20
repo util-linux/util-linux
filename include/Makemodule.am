@@ -21,7 +21,6 @@ dist_noinst_HEADERS += \
 	include/crc64.h \
 	include/c_strtod.h \
 	include/debug.h \
-	include/debugobj.h \
 	include/encode.h \
 	include/env.h \
 	include/exec_shell.h \

@@ -40,7 +40,7 @@ struct libmnt_fs *mnt_new_fs(void)
 
 	fs->refcount = 1;
 	INIT_LIST_HEAD(&fs->ents);
-	DBG(FS, ul_debugobj(fs, "alloc"));
+	DBG_OBJ(FS, fs, ul_debug("alloc"));
 	return fs;
 }
 
@@ -58,7 +58,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	if (!fs)
 		return;
 
-	DBG(FS, ul_debugobj(fs, "free [refcount=%d]", fs->refcount));
+	DBG_OBJ(FS, fs, ul_debug("free [refcount=%d]", fs->refcount));
 
 	mnt_reset_fs(fs);
 	free(fs);
@@ -121,7 +121,7 @@ void mnt_ref_fs(struct libmnt_fs *fs)
 {
 	if (fs) {
 		fs->refcount++;
-		/*DBG(FS, ul_debugobj(fs, "ref=%d", fs->refcount));*/
+		/*DBG_OBJ(FS, fs, ul_debug("ref=%d", fs->refcount));*/
 	}
 }
 
@@ -136,7 +136,7 @@ void mnt_unref_fs(struct libmnt_fs *fs)
 {
 	if (fs) {
 		fs->refcount--;
-		/*DBG(FS, ul_debugobj(fs, "unref=%d", fs->refcount));*/
+		/*DBG_OBJ(FS, fs, ul_debug("unref=%d", fs->refcount));*/
 		if (fs->refcount <= 0)
 			mnt_free_fs(fs);
 	}
@@ -213,10 +213,10 @@ static inline int sync_opts_from_optlist(struct libmnt_fs *fs, struct libmnt_opt
 			rc = strdup_to_struct_member(fs, user_optstr, p);
 
 		if (rc) {
-			DBG(FS, ul_debugobj(fs, "sync failed [rc=%d]", rc));
+			DBG_OBJ(FS, fs, ul_debug("sync failed [rc=%d]", rc));
 			return rc;
 		} else {
-			DBG(FS, ul_debugobj(fs, "synced: "
+			DBG_OBJ(FS, fs, ul_debug("synced: "
 				"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'",
 				fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
 			fs->opts_age = age;

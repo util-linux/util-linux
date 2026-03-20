@@ -119,7 +119,7 @@ static struct libmnt_sysapi *new_hookset_data(
 /* de-initiallize this module */
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks */
 	while (mnt_context_remove_hook(cxt, hs, 0, NULL) == 0);
@@ -148,7 +148,7 @@ static inline int fsconfig_set_value(
 		value = s;
 	}
 
-	DBG(HOOK, ul_debugobj(hs, "  fsconfig(name=\"%s\" value=\"%s\")", name,
+	DBG_OBJ(HOOK, hs, ul_debug("  fsconfig(name=\"%s\" value=\"%s\")", name,
 				value ? : ""));
 	if (value) {
 		rc = fsconfig(fd, FSCONFIG_SET_STRING, name, value, 0);
@@ -169,7 +169,7 @@ static int configure_superblock(struct libmnt_context *cxt,
 	struct libmnt_opt *opt;
 	int rc = 0, has_rwro = 0;
 
-	DBG(HOOK, ul_debugobj(hs, " config FS"));
+	DBG_OBJ(HOOK, hs, ul_debug(" config FS"));
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -212,7 +212,7 @@ static int configure_superblock(struct libmnt_context *cxt,
 		rc = fsconfig_set_value(cxt, hs, fd, "rw", NULL);
 
 done:
-	DBG(HOOK, ul_debugobj(hs, " config done [rc=%d]", rc));
+	DBG_OBJ(HOOK, hs, ul_debug(" config done [rc=%d]", rc));
 	return rc != 0 && errno ? -errno : rc;
 }
 
@@ -221,7 +221,7 @@ static int create_superblock(struct libmnt_context *cxt,
 {
 	int rc = 0;
 
-	DBG(HOOK, ul_debugobj(hs, " create FS %s",
+	DBG_OBJ(HOOK, hs, ul_debug(" create FS %s",
 			mnt_context_is_exclusive(cxt) ? "excl" : ""));
 	errno = 0;
 
@@ -232,7 +232,7 @@ static int create_superblock(struct libmnt_context *cxt,
 
 	hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
 
-	DBG(HOOK, ul_debugobj(hs, " create done [rc=%d]", rc));
+	DBG_OBJ(HOOK, hs, ul_debug(" create done [rc=%d]", rc));
 	return rc != 0 && errno ? -errno : rc;
 }
 
@@ -285,7 +285,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	if (!src)
 		return -EINVAL;
 
-	DBG(HOOK, ul_debugobj(hs, "init FS"));
+	DBG_OBJ(HOOK, hs, ul_debug("init FS"));
 
 	rc = fsconfig(api->fd_fs, FSCONFIG_SET_STRING, "source", src, 0);
 	hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
@@ -303,7 +303,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 			/*
 			 * subdir for Linux >= 6.15, see hook_subdir.c for more details.
 			 */
-			DBG(HOOK, ul_debugobj(hs, "opening subdir (detached) '%s'", api->subdir));
+			DBG_OBJ(HOOK, hs, ul_debug("opening subdir (detached) '%s'", api->subdir));
 			int sub_fd = open_tree(fd, api->subdir,
 					AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW |
 					AT_RECURSIVE | OPEN_TREE_CLOEXEC |
@@ -339,7 +339,7 @@ static int hook_create_mount(struct libmnt_context *cxt,
 #endif
 
 done:
-	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
+	DBG_OBJ(HOOK, hs, ul_debug("create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
 	return rc;
 }
 
@@ -369,12 +369,12 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 
 	rc = configure_superblock(cxt, hs, api->fd_fs, 1);
 	if (!rc) {
-		DBG(HOOK, ul_debugobj(hs, "reconfigure FS"));
+		DBG_OBJ(HOOK, hs, ul_debug("reconfigure FS"));
 		rc = fsconfig(api->fd_fs, FSCONFIG_CMD_RECONFIGURE, NULL, NULL, 0);
 		hookset_set_syscall_status(cxt, "fsconfig", rc == 0);
 	}
 
-	DBG(HOOK, ul_debugobj(hs, "reconf FS done [rc=%d]", rc));
+	DBG_OBJ(HOOK, hs, ul_debug("reconf FS done [rc=%d]", rc));
 	return rc;
 }
 
@@ -402,7 +402,7 @@ static int set_vfsflags(struct libmnt_context *cxt,
 	if (recursive)
 		callflags |= AT_RECURSIVE;
 
-	DBG(HOOK, ul_debugobj(hs,
+	DBG_OBJ(HOOK, hs, ul_debug(
 			"mount_setattr(set=0x%08" PRIx64" clr=0x%08" PRIx64")", set, clr));
 	attr.attr_set = set;
 	attr.attr_clr = clr;
@@ -428,7 +428,7 @@ static int hook_set_vfsflags(struct libmnt_context *cxt,
 	if (mnt_context_helper_executed(cxt))
 		return 0;
 
-	DBG(HOOK, ul_debugobj(hs, "setting VFS flags"));
+	DBG_OBJ(HOOK, hs, ul_debug("setting VFS flags"));
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -459,7 +459,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 	struct libmnt_opt *opt;
 	int rc = 0;
 
-	DBG(HOOK, ul_debugobj(hs, "setting propagation"));
+	DBG_OBJ(HOOK, hs, ul_debug("setting propagation"));
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -496,7 +496,7 @@ static int hook_set_propagation(struct libmnt_context *cxt,
 		if (ent->id & MS_REC)
 			flgs |= AT_RECURSIVE;
 
-		DBG(HOOK, ul_debugobj(hs,
+		DBG_OBJ(HOOK, hs, ul_debug(
 			"mount_setattr(propagation=0x%08" PRIx64")",
 			(uint64_t) attr.propagation));
 
@@ -532,14 +532,14 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	assert(api);
 	assert(api->fd_tree >= 0);
 
-	DBG(HOOK, ul_debugobj(hs, "move_mount(to=%s)", target));
+	DBG_OBJ(HOOK, hs, ul_debug("move_mount(to=%s)", target));
 
 	/* umount old target if we created a clone */
 	if (cxt->force_clone
 	    && !api->is_new_fs
 	    && !mnt_optlist_is_bind(cxt->optlist)) {
 
-		DBG(HOOK, ul_debugobj(hs, "remove expired target"));
+		DBG_OBJ(HOOK, hs, ul_debug("remove expired target"));
 		umount2(target, MNT_DETACH);
 	}
 
@@ -598,12 +598,12 @@ static int init_sysapi(struct libmnt_context *cxt,
 	assert(cxt);
 	assert(hs);
 
-	DBG(HOOK, ul_debugobj(hs, "initialize API fds"));
+	DBG_OBJ(HOOK, hs, ul_debug("initialize API fds"));
 
 	/* A) tree based operation -- the tree is mount point */
 	if ((flags & MS_REMOUNT)
 	    || mnt_context_propagation_only(cxt)) {
-		DBG(HOOK, ul_debugobj(hs, " REMOUNT/propagation"));
+		DBG_OBJ(HOOK, hs, ul_debug(" REMOUNT/propagation"));
 		path = mnt_fs_get_target(cxt->fs);
 		if (!path)
 			return -EINVAL;
@@ -611,7 +611,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 	/* B) tree based operation -- the tree is mount source */
 	} else if ((flags & MS_BIND)
 	    || (flags & MS_MOVE)) {
-		DBG(HOOK, ul_debugobj(hs, " BIND/MOVE"));
+		DBG_OBJ(HOOK, hs, ul_debug(" BIND/MOVE"));
 		path = mnt_fs_get_srcpath(cxt->fs);
 		if (!path)
 			return -EINVAL;
@@ -651,7 +651,7 @@ static int init_sysapi(struct libmnt_context *cxt,
 
 	return 0;
 fail:
-	DBG(HOOK, ul_debugobj(hs, "init fs/tree failed [errno=%d %m]", errno));
+	DBG_OBJ(HOOK, hs, ul_debug("init fs/tree failed [errno=%d %m]", errno));
 	return -errno;
 }
 
@@ -713,11 +713,11 @@ static int hook_prepare(struct libmnt_context *cxt,
 	assert(hs == &hookset_mount);
 
 	if (force_classic_mount(cxt)) {
-		DBG(HOOK, ul_debugobj(hs, "new API disabled"));
+		DBG_OBJ(HOOK, hs, ul_debug("new API disabled"));
 		return 0;
 	}
 
-	DBG(HOOK, ul_debugobj(hs, "prepare mount"));
+	DBG_OBJ(HOOK, hs, ul_debug("prepare mount"));
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
@@ -796,13 +796,13 @@ static int hook_prepare(struct libmnt_context *cxt,
 					hook_set_propagation);
 	}
 
-	DBG(HOOK, ul_debugobj(hs, "prepare mount done [rc=%d]", rc));
+	DBG_OBJ(HOOK, hs, ul_debug("prepare mount done [rc=%d]", rc));
 	return rc;
 
 enosys:
 	/* we need to recover from this error, so hook_mount_legacy.c
 	 * can try to continue */
-	DBG(HOOK, ul_debugobj(hs, "failed to init new API"));
+	DBG_OBJ(HOOK, hs, ul_debug("failed to init new API"));
 	mnt_context_syscall_reset_status(cxt);
 	hookset_deinit(cxt, hs);
 	return 1;

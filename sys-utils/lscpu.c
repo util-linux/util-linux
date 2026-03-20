@@ -214,7 +214,7 @@ cache_column_name_to_id(const char *name, size_t namesz)
 
 static void lscpu_context_init_paths(struct lscpu_cxt *cxt)
 {
-	DBG(MISC, ul_debugobj(cxt, "initialize paths"));
+	DBG_OBJ(MISC, cxt, ul_debug("initialize paths"));
 	ul_path_init_debug();
 
 	/* / */
@@ -253,19 +253,19 @@ static void lscpu_free_context(struct lscpu_cxt *cxt)
 	if (!cxt)
 		return;
 
-	DBG(MISC, ul_debugobj(cxt, "freeing context"));
+	DBG_OBJ(MISC, cxt, ul_debug("freeing context"));
 
-	DBG(MISC, ul_debugobj(cxt, " de-initialize paths"));
+	DBG_OBJ(MISC, cxt, ul_debug(" de-initialize paths"));
 	ul_unref_path(cxt->syscpu);
 	ul_unref_path(cxt->procfs);
 	ul_unref_path(cxt->rootfs);
 
-	DBG(MISC, ul_debugobj(cxt, " freeing cpus"));
+	DBG_OBJ(MISC, cxt, ul_debug(" freeing cpus"));
 	for (i = 0; i < cxt->npossibles; i++) {
 		lscpu_unref_cpu(cxt->cpus[i]);
 		cxt->cpus[i] = NULL;
 	}
-	DBG(MISC, ul_debugobj(cxt, " freeing types"));
+	DBG_OBJ(MISC, cxt, ul_debug(" freeing types"));
 	for (i = 0; i < cxt->ncputypes; i++) {
 		lscpu_unref_cputype(cxt->cputypes[i]);
 		cxt->cputypes[i] = NULL;

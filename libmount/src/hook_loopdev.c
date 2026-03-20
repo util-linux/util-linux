@@ -28,7 +28,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
@@ -79,7 +79,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	DBG(LOOP, ul_debugobj(cxt, "checking if %s mounted on %s",
+	DBG_OBJ(LOOP, cxt, ul_debug("checking if %s mounted on %s",
 				backing_file, target));
 
 	rc = mnt_context_get_user_mflags(cxt, &flags);
@@ -117,7 +117,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 		}
 	}
 	if (rc)
-		DBG(LOOP, ul_debugobj(cxt, "%s already mounted", backing_file));
+		DBG_OBJ(LOOP, cxt, ul_debug("%s already mounted", backing_file));
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
@@ -138,10 +138,10 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!backing_file)
 		return -EINVAL;
 
-	DBG(LOOP, ul_debugobj(cxt, "trying to set up device for %s", backing_file));
+	DBG_OBJ(LOOP, cxt, ul_debug("trying to set up device for %s", backing_file));
 
 	if (mnt_optlist_is_rdonly(ol)) {
-		DBG(LOOP, ul_debugobj(cxt, "enabling READ-ONLY flag"));
+		DBG_OBJ(LOOP, cxt, ul_debug("enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
 
@@ -157,7 +157,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_OFFSET, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)) {
 		if (strtosize(mnt_opt_get_value(opt), &offset)) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to parse offset="));
+			DBG_OBJ(LOOP, cxt, ul_debug("failed to parse offset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -168,7 +168,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (!rc && (opt = mnt_optlist_get_opt(ol, MNT_MS_SIZELIMIT, cxt->map_userspace))
 	    && mnt_opt_has_value(opt)) {
 		if (strtosize(mnt_opt_get_value(opt), &sizelimit)) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to parse sizelimit="));
+			DBG_OBJ(LOOP, cxt, ul_debug("failed to parse sizelimit="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -177,7 +177,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	 * encryption=
 	 */
 	if (!rc && mnt_optlist_get_opt(ol, MNT_MS_ENCRYPTION, cxt->map_userspace)) {
-		DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported"));
+		DBG_OBJ(LOOP, cxt, ul_debug("encryption no longer supported"));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
@@ -202,12 +202,12 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
 		switch (rc) {
 		case 0: /* not found */
-			DBG(LOOP, ul_debugobj(cxt, "not found overlapping loopdev"));
+			DBG_OBJ(LOOP, cxt, ul_debug("not found overlapping loopdev"));
 			loopcxt_deinit(&lc);
 			break;
 
 		case 1:	/* overlap */
-			DBG(LOOP, ul_debugobj(cxt, "overlapping %s detected",
+			DBG_OBJ(LOOP, cxt, ul_debug("overlapping %s detected",
 						loopcxt_get_device(&lc)));
 			rc = -MNT_ERR_LOOPOVERLAP;
 			goto done;
@@ -216,12 +216,12 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		{
 			uint32_t lc_encrypt_type = 0;
 
-			DBG(LOOP, ul_debugobj(cxt, "re-using existing loop device %s",
+			DBG_OBJ(LOOP, cxt, ul_debug("re-using existing loop device %s",
 				loopcxt_get_device(&lc)));
 
 			/* Open loop device to block device autoclear... */
 			if (loopcxt_get_fd(&lc) < 0) {
-				DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+				DBG_OBJ(LOOP, cxt, ul_debug("failed to get loopdev FD"));
 				rc = -errno;
 				goto done;
 			}
@@ -232,7 +232,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			 * mean time.
 			 */
 			if (!loopcxt_get_info(&lc)) {
-				DBG(LOOP, ul_debugobj(cxt, "lost race with %s teardown",
+				DBG_OBJ(LOOP, cxt, ul_debug("lost race with %s teardown",
 						loopcxt_get_device(&lc)));
 				loopcxt_deinit(&lc);
 				break;
@@ -242,7 +242,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			 * way to change its parameters. */
 			if (loopcxt_is_readonly(&lc)
 			    && !(lo_flags & LO_FLAGS_READ_ONLY)) {
-				DBG(LOOP, ul_debugobj(cxt, "%s is read-only",
+				DBG_OBJ(LOOP, cxt, ul_debug("%s is read-only",
 						loopcxt_get_device(&lc)));
 				rc = -EROFS;
 				goto done;
@@ -251,7 +251,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			/* This is no more supported, but check to be safe. */
 			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type) == 0
 			    && lc_encrypt_type != LO_CRYPT_NONE) {
-				DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported for device %s",
+				DBG_OBJ(LOOP, cxt, ul_debug("encryption no longer supported for device %s",
 					loopcxt_get_device(&lc)));
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
@@ -271,14 +271,14 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		}
 	}
 
-	DBG(LOOP, ul_debugobj(cxt, "not found; create a new loop device"));
+	DBG_OBJ(LOOP, cxt, ul_debug("not found; create a new loop device"));
 	rc = loopcxt_init(&lc, 0);
 	if (rc)
 		goto done_no_deinit;
 	if (mnt_opt_has_value(loopopt)) {
 		rc = loopcxt_set_device(&lc, mnt_opt_get_value(loopopt));
 		if (rc == 0 && loopcxt_is_lost(&lc)) {
-			DBG(LOOP, ul_debugobj(cxt, "node lost"));
+			DBG_OBJ(LOOP, cxt, ul_debug("node lost"));
 
 			dev_t devno = loopcxt_get_devno(&lc);
 			/* TRANSLATORS: Do not translate "e ". It is a message classifier. */
@@ -296,7 +296,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	 * because kernel provides the name in /sys.
 	 */
 	if (get_linux_version() >= KERNEL_VERSION(2, 6, 37)) {
-		DBG(LOOP, ul_debugobj(cxt, "enabling AUTOCLEAR flag"));
+		DBG_OBJ(LOOP, cxt, ul_debug("enabling AUTOCLEAR flag"));
 		lo_flags |= LO_FLAGS_AUTOCLEAR;
 	}
 
@@ -306,7 +306,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			rc = loopcxt_find_unused(&lc);
 			if (rc)
 				goto done;
-			DBG(LOOP, ul_debugobj(cxt, "trying to use %s",
+			DBG_OBJ(LOOP, cxt, ul_debug("trying to use %s",
 						loopcxt_get_device(&lc)));
 		}
 
@@ -322,7 +322,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 		if (!rc)
 			loopcxt_set_flags(&lc, lo_flags);
 		if (rc) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to set loop attributes"));
+			DBG_OBJ(LOOP, cxt, ul_debug("failed to set loop attributes"));
 			goto done;
 		}
 
@@ -332,11 +332,11 @@ static int setup_loopdev(struct libmnt_context *cxt,
 			break;		/* success */
 
 		if (loopdev || rc != -EBUSY) {
-			DBG(LOOP, ul_debugobj(cxt, "failed to set up device"));
+			DBG_OBJ(LOOP, cxt, ul_debug("failed to set up device"));
 			rc = -MNT_ERR_LOOPDEV;
 			goto done;
 		}
-		DBG(LOOP, ul_debugobj(cxt, "device stolen...trying again"));
+		DBG_OBJ(LOOP, cxt, ul_debug("device stolen...trying again"));
 	} while (1);
 
 success:
@@ -349,7 +349,7 @@ success:
 			 * autoclear flag accepted by the kernel, don't store
 			 * the "loop=" option to utab.
 			 */
-			DBG(LOOP, ul_debugobj(cxt, "removing unnecessary loop= from utab"));
+			DBG_OBJ(LOOP, cxt, ul_debug("removing unnecessary loop= from utab"));
 			mnt_optlist_remove_opt(ol, loopopt);
 			loopopt = NULL;
 		}
@@ -370,8 +370,8 @@ success:
 		 */
 		hd->loopdev_fd = open(lc.device, O_RDONLY | O_CLOEXEC);
 		if (hd->loopdev_fd < 0) {
-			DBG(LOOP,
-			    ul_debugobj(cxt, "failed to reopen loopdev FD"));
+			DBG_OBJ(LOOP, cxt, 
+			    ul_debug("failed to reopen loopdev FD"));
 			rc = -errno;
 		}
 	}
@@ -400,7 +400,7 @@ static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd)
 
 	rc = loopdev_detach(src);	/* see lib/loopdev.c */
 
-	DBG(LOOP, ul_debugobj(cxt, "deleted [rc=%d]", rc));
+	DBG_OBJ(LOOP, cxt, ul_debug("deleted [rc=%d]", rc));
 	return rc;
 }
 
@@ -438,7 +438,7 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 
 	/* loop= (sizelimit= or offset=) explicitly specified */
 	if (flags & (MNT_MS_LOOP | MNT_MS_OFFSET | MNT_MS_SIZELIMIT)) {
-		DBG(LOOP, ul_debugobj(cxt, "loopdev specific options detected"));
+		DBG_OBJ(LOOP, cxt, ul_debug("loopdev specific options detected"));
 		return 1;
 	}
 
@@ -459,7 +459,7 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 		rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
 		if (rc) {
 			free(autotype);
-			DBG(CXT, ul_debugobj(cxt, "failed to guess regfile FS type [rc=%d]", rc));
+			DBG_OBJ(CXT, cxt, ul_debug("failed to guess regfile FS type [rc=%d]", rc));
 			return 0;
 		}
 		if (autotype) {
@@ -483,7 +483,7 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 	if (type && !blkid_known_fstype(type))
 		return 0;
 
-	DBG(LOOP, ul_debugobj(cxt, "automatically enabling loop= option"));
+	DBG_OBJ(LOOP, cxt, ul_debug("automatically enabling loop= option"));
 	mnt_optlist_append_flags(ol, MNT_MS_LOOP, cxt->map_userspace);
 	return 1;
 }
@@ -509,7 +509,7 @@ static int hook_cleanup_loopdev(
 		/*
 		 * mount(2) success, close the device
 		 */
-		DBG(LOOP, ul_debugobj(cxt, "closing FD"));
+		DBG_OBJ(LOOP, cxt, ul_debug("closing FD"));
 		close(hd->loopdev_fd);
 		hd->loopdev_fd = -1;
 	}

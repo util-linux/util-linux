@@ -807,16 +807,16 @@ static void process_mq(struct lsblk_device *dev, char **str)
 {
 	unsigned int queues = 0;
 
-	DBG(DEV, ul_debugobj(dev, "%s: process mq", dev->name));
+	DBG_OBJ(DEV, dev, ul_debug("%s: process mq", dev->name));
 
 	queues = ul_path_count_dirents(dev->sysfs, "mq");
 	if (!queues) {
 		*str = xstrdup("1");
-		DBG(DEV, ul_debugobj(dev, "%s: no mq supported, use a single queue", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: no mq supported, use a single queue", dev->name));
 		return;
 	}
 
-	DBG(DEV, ul_debugobj(dev, "%s: has %d queues", dev->name, queues));
+	DBG_OBJ(DEV, dev, ul_debug("%s: has %d queues", dev->name, queues));
 	xasprintf(str, "%3u", queues);
 }
 
@@ -1275,7 +1275,7 @@ static void device_fill_scols_cell(struct lsblk_device *dev,
 
 	if (!data)
 		return;
-	DBG(DEV, ul_debugobj(dev, " refer data[%zu]=\"%s\"", colnum, data));
+	DBG_OBJ(DEV, dev, ul_debug(" refer data[%zu]=\"%s\"", colnum, data));
 	ce = scols_line_get_cell(ln, colnum);
 	if (!ce)
 		return;
@@ -1317,8 +1317,13 @@ static void device_to_scols(
 	int link_group = 0, nocount = 0;
 
 
-	DBG(DEV, ul_debugobj(dev, "add '%s' to scols", dev->name));
-	ON_DBG(DEV, if (ul_path_isopen_dirfd(dev->sysfs)) ul_debugobj(dev, "%s ---> is open!", dev->name));
+	DBG_OBJ(DEV, dev, ul_debug("add '%s' to scols", dev->name));
+	ON_DBG(DEV,
+		if (ul_path_isopen_dirfd(dev->sysfs)) {
+			ul_debugobj(dev, UL_DEBUG_MASK(lsblk));
+			ul_debug("%s ---> is open!", dev->name);
+		}
+	);
 
 	if (!parent && dev->wholedisk)
 		parent = dev->wholedisk;
@@ -1375,19 +1380,19 @@ static void device_to_scols(
 		struct libscols_line *gr = parent_line;
 
 		/* Merge all my parents to the one group */
-		DBG(DEV, ul_debugobj(dev, " grouping parents [--merge]"));
+		DBG_OBJ(DEV, dev, ul_debug(" grouping parents [--merge]"));
 		lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 		while (lsblk_device_next_parent(dev, &itr, &p) == 0) {
 			if (!p->scols_line) {
-				DBG(DEV, ul_debugobj(dev, " *** ignore '%s' no scols line yet", p->name));
+				DBG_OBJ(DEV, dev, ul_debug(" *** ignore '%s' no scols line yet", p->name));
 				continue;
 			}
-			DBG(DEV, ul_debugobj(dev, " group '%s'", p->name));
+			DBG_OBJ(DEV, dev, ul_debug(" group '%s'", p->name));
 			scols_table_group_lines(tab, p->scols_line, gr, 0);
 		}
 
 		/* Link the group -- this makes group->child connection */
-		DBG(DEV, ul_debugobj(dev, " linking the group [--merge]"));
+		DBG_OBJ(DEV, dev, ul_debug(" linking the group [--merge]"));
 		scols_line_link_group(ln, gr, 0);
 	}
 
@@ -1404,9 +1409,9 @@ static void device_to_scols(
 
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 	while (lsblk_device_next_child(dev, &itr, &child) == 0) {
-		DBG(DEV, ul_debugobj(dev, "%s -> continue to child", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s -> continue to child", dev->name));
 		device_to_scols(child, dev, tab, ln);
-		DBG(DEV, ul_debugobj(dev, "%s <- child done", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s <- child done", dev->name));
 	}
 
 	/* apply highlighter */
@@ -1468,11 +1473,11 @@ static int initialize_device(struct lsblk_device *dev,
 {
 	dev_t devno;
 
-	DBG(DEV, ul_debugobj(dev, "initialize %s [wholedisk=%p %s]",
+	DBG_OBJ(DEV, dev, ul_debug("initialize %s [wholedisk=%p %s]",
 			name, wholedisk, wholedisk ? wholedisk->name : ""));
 
 	if (sysfs_devname_is_hidden(lsblk->sysroot, name)) {
-		DBG(DEV, ul_debugobj(dev, "%s: hidden, ignore", name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: hidden, ignore", name));
 		return -1;
 	}
 
@@ -1485,20 +1490,20 @@ static int initialize_device(struct lsblk_device *dev,
 
 	dev->filename = get_device_path(dev);
 	if (!dev->filename) {
-		DBG(DEV, ul_debugobj(dev, "%s: failed to get device path", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: failed to get device path", dev->name));
 		return -1;
 	}
-	DBG(DEV, ul_debugobj(dev, "%s: filename=%s", dev->name, dev->filename));
+	DBG_OBJ(DEV, dev, ul_debug("%s: filename=%s", dev->name, dev->filename));
 
 	devno = __sysfs_devname_to_devno(lsblk->sysroot, dev->name, wholedisk ? wholedisk->name : NULL);
 	if (!devno) {
-		DBG(DEV, ul_debugobj(dev, "%s: unknown device name", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: unknown device name", dev->name));
 		return -1;
 	}
 
 	dev->sysfs = ul_new_sysfs_path(devno, wholedisk ? wholedisk->sysfs : NULL, lsblk->sysroot);
 	if (!dev->sysfs) {
-		DBG(DEV, ul_debugobj(dev, "%s: failed to initialize sysfs handler", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: failed to initialize sysfs handler", dev->name));
 		return -1;
 	}
 
@@ -1511,13 +1516,13 @@ static int initialize_device(struct lsblk_device *dev,
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && ignore_empty(dev)) {
-		DBG(DEV, ul_debugobj(dev, "zero size device -- ignore"));
+		DBG_OBJ(DEV, dev, ul_debug("zero size device -- ignore"));
 		return -1;
 	}
 	if (is_dm(dev->name)) {
 		ul_path_read_string(dev->sysfs, &dev->dm_name, "dm/name");
 		if (!dev->dm_name) {
-			DBG(DEV, ul_debugobj(dev, "%s: failed to get dm name", dev->name));
+			DBG_OBJ(DEV, dev, ul_debug("%s: failed to get dm name", dev->name));
 			return -1;
 		}
 	}
@@ -1526,12 +1531,12 @@ static int initialize_device(struct lsblk_device *dev,
 	dev->nholders = ul_path_count_dirents(dev->sysfs, "holders");
 	dev->nslaves = ul_path_count_dirents(dev->sysfs, "slaves");
 
-	DBG(DEV, ul_debugobj(dev, "%s: npartitions=%d, nholders=%d, nslaves=%d",
+	DBG_OBJ(DEV, dev, ul_debug("%s: npartitions=%d, nholders=%d, nslaves=%d",
 			dev->name, dev->npartitions, dev->nholders, dev->nslaves));
 
 	/* ignore non-SCSI devices */
 	if (lsblk->scsi && sysfs_blkdev_scsi_get_hctl(dev->sysfs, NULL, NULL, NULL, NULL)) {
-		DBG(DEV, ul_debugobj(dev, "non-scsi device -- ignore"));
+		DBG_OBJ(DEV, dev, ul_debug("non-scsi device -- ignore"));
 		return -1;
 	}
 
@@ -1540,7 +1545,7 @@ static int initialize_device(struct lsblk_device *dev,
 		const char *transport = get_transport(dev);
 
 		if (!transport || strcmp(transport, "nvme")) {
-			DBG(DEV, ul_debugobj(dev, "non-nvme device -- ignore"));
+			DBG_OBJ(DEV, dev, ul_debug("non-nvme device -- ignore"));
 			return -1;
 		}
 	}
@@ -1550,12 +1555,12 @@ static int initialize_device(struct lsblk_device *dev,
 		const char *transport = get_transport(dev);
 
 		if (!transport || strcmp(transport, "virtio")) {
-			DBG(DEV, ul_debugobj(dev, "non-virtio device -- ignore"));
+			DBG_OBJ(DEV, dev, ul_debug("non-virtio device -- ignore"));
 			return -1;
 		}
 	}
 
-	DBG(DEV, ul_debugobj(dev, "%s: context successfully initialized", dev->name));
+	DBG_OBJ(DEV, dev, ul_debug("%s: context successfully initialized", dev->name));
 	return 0;
 }
 
@@ -1577,7 +1582,7 @@ static struct lsblk_device *devtree_get_device_or_new(struct lsblk_devtree *tr,
 		lsblk_devtree_add_device(tr, dev);
 		lsblk_unref_device(dev);		/* keep it referenced by devtree only */
 	} else
-		DBG(DEV, ul_debugobj(dev, "%s: already processed", name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: already processed", name));
 
 	return dev;
 }
@@ -1624,7 +1629,7 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *dis
 	if (!disk->npartitions || device_is_partition(disk))
 		return -EINVAL;
 
-	DBG(DEV, ul_debugobj(disk, "%s: probe whole-disk for partitions", disk->name));
+	DBG_OBJ(DEV, disk, ul_debug("%s: probe whole-disk for partitions", disk->name));
 
 	dir = ul_path_opendir(disk->sysfs, NULL);
 	if (!dir)
@@ -1636,7 +1641,7 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *dis
 		if (!(sysfs_blkdev_is_partition_dirent(dir, d, disk->name)))
 			continue;
 
-		DBG(DEV, ul_debugobj(disk, "  checking %s", d->d_name));
+		DBG_OBJ(DEV, disk, ul_debug("  checking %s", d->d_name));
 
 		part = devtree_get_device_or_new(tr, disk, d->d_name);
 		if (!part)
@@ -1652,7 +1657,7 @@ static int process_partitions(struct lsblk_devtree *tr, struct lsblk_device *dis
 	 * often, so close it now when all is done */
 	ul_path_close_dirfd(disk->sysfs);
 
-	DBG(DEV, ul_debugobj(disk, "probe whole-disk for partitions -- done"));
+	DBG_OBJ(DEV, disk, ul_debug("probe whole-disk for partitions -- done"));
 	closedir(dir);
 	return 0;
 }
@@ -1703,22 +1708,22 @@ static int process_dependencies(
 	if (do_partitions && dev->npartitions)
 		process_partitions(tr, dev);
 
-	DBG(DEV, ul_debugobj(dev, "%s: reading dependencies", dev->name));
+	DBG_OBJ(DEV, dev, ul_debug("%s: reading dependencies", dev->name));
 
 	if (!(lsblk->inverse ? dev->nslaves : dev->nholders)) {
-		DBG(DEV, ul_debugobj(dev, " ignore (no slaves/holders)"));
+		DBG_OBJ(DEV, dev, ul_debug(" ignore (no slaves/holders)"));
 		goto done;
 	}
 
 	depname = lsblk->inverse ? "slaves" : "holders";
 	dir = ul_path_opendir(dev->sysfs, depname);
 	if (!dir) {
-		DBG(DEV, ul_debugobj(dev, " ignore (no slaves/holders directory)"));
+		DBG_OBJ(DEV, dev, ul_debug(" ignore (no slaves/holders directory)"));
 		goto done;
 	}
 	ul_path_close_dirfd(dev->sysfs);
 
-	DBG(DEV, ul_debugobj(dev, " %s: checking for '%s' dependence", dev->name, depname));
+	DBG_OBJ(DEV, dev, ul_debug(" %s: checking for '%s' dependence", dev->name, depname));
 
 	while ((d = xreaddir(dir))) {
 		struct lsblk_device *disk = NULL;
@@ -1729,13 +1734,13 @@ static int process_dependencies(
 			char buf[PATH_MAX];
 			char *diskname;
 
-			DBG(DEV, ul_debugobj(dev, " %s: dependence is partition", d->d_name));
+			DBG_OBJ(DEV, dev, ul_debug(" %s: dependence is partition", d->d_name));
 
 			diskname = get_wholedisk_from_partition_dirent(dir, d, buf, sizeof(buf));
 			if (diskname)
 				disk = devtree_get_device_or_new(tr, NULL, diskname);
 			if (!disk) {
-				DBG(DEV, ul_debugobj(dev, "  ignore no wholedisk ???"));
+				DBG_OBJ(DEV, dev, ul_debug("  ignore no wholedisk ???"));
 				goto next;
 			}
 
@@ -1752,7 +1757,7 @@ static int process_dependencies(
 		}
 		/* The dependency is a whole device. */
 		else {
-			DBG(DEV, ul_debugobj(dev, " %s: %s: dependence is whole-disk",
+			DBG_OBJ(DEV, dev, ul_debug(" %s: %s: dependence is whole-disk",
 								dev->name, d->d_name));
 
 			dep = devtree_get_device_or_new(tr, NULL, d->d_name);
@@ -2095,7 +2100,7 @@ static void device_set_dedupkey(
 
 	dev->dedupkey = device_get_data(dev, parent, id, NULL, NULL);
 	if (dev->dedupkey)
-		DBG(DEV, ul_debugobj(dev, "%s: de-duplication key: %s", dev->name, dev->dedupkey));
+		DBG_OBJ(DEV, dev, ul_debug("%s: de-duplication key: %s", dev->name, dev->dedupkey));
 
 	if (dev->npartitions == 0)
 		/* For partitions we often read from parental whole-disk sysfs,

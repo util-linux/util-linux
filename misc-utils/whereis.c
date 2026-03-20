@@ -73,11 +73,9 @@ UL_DEBUG_DEFINE_MASKNAMES(whereis) = UL_DEBUG_EMPTY_MASKNAMES;
 #define WHEREIS_DEBUG_LIST	(1 << 7)
 #define WHEREIS_DEBUG_ALL	0xFFFF
 
-#define DBG(m, x)       __UL_DBG(whereis, WHEREIS_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(whereis, WHEREIS_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(whereis)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(whereis, WHEREIS_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(whereis, WHEREIS_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(whereis, WHEREIS_DEBUG_, m, x)
 
 static char uflag;
 static char use_glob;
@@ -240,7 +238,7 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 		if (ls->st_ino == st.st_ino &&
 		    ls->st_dev == st.st_dev &&
 		    ls->type == type) {
-			DBG(LIST, ul_debugobj(*ls0, "  ignore (already in list): %s", dir));
+			DBG_OBJ(LIST, *ls0, ul_debug("  ignore (already in list): %s", dir));
 			return;
 		}
 		prev = ls;
@@ -261,7 +259,7 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 		prev->next = ls;	/* add to the end of the list */
 	}
 
-	DBG(LIST, ul_debugobj(*ls0, "  add dir: %s", ls->path));
+	DBG_OBJ(LIST, *ls0, ul_debug("  add dir: %s", ls->path));
 }
 
 /* special case for '*' in the paths */
@@ -294,7 +292,7 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	if (!dirp)
 		goto ignore;
 
-	DBG(LIST, ul_debugobj(*ls, " scanning subdirs: %s [%s<subdir>%s]",
+	DBG_OBJ(LIST, *ls, ul_debug(" scanning subdirs: %s [%s<subdir>%s]",
 				dir, buf, postfix ? postfix : ""));
 
 	while ((dp = readdir(dirp)) != NULL) {
@@ -310,7 +308,7 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	closedir(dirp);
 	return;
 ignore:
-	DBG(LIST, ul_debugobj(*ls, " ignore path: %s", dir));
+	DBG_OBJ(LIST, *ls, ul_debug(" ignore path: %s", dir));
 }
 
 static void construct_dirlist_from_env(const char *env,
@@ -323,7 +321,7 @@ static void construct_dirlist_from_env(const char *env,
 		return;
 	pathcp = xstrdup(path);
 
-	DBG(ENV, ul_debugobj(*ls, "construct %s dirlist from: %s",
+	DBG_OBJ(ENV, *ls, ul_debug("construct %s dirlist from: %s",
 				whereis_type_to_name(type), path));
 
 	for (tok = strtok_r(pathcp, ":", &key); tok;
@@ -341,14 +339,14 @@ static void construct_dirlist_from_argv(struct wh_dirlist **ls,
 {
 	int i;
 
-	DBG(ARGV, ul_debugobj(*ls, "construct %s dirlist from argv[%d..]",
+	DBG_OBJ(ARGV, *ls, ul_debug("construct %s dirlist from argv[%d..]",
 				whereis_type_to_name(type), *idx));
 
 	for (i = *idx; i < argc; i++) {
 		if (*argv[i] == '-')			/* end of the list */
 			break;
 
-		DBG(ARGV, ul_debugobj(*ls, "  using argv[%d]: %s", *idx, argv[*idx]));
+		DBG_OBJ(ARGV, *ls, ul_debug("  using argv[%d]: %s", *idx, argv[*idx]));
 		dirlist_add_dir(ls, type, argv[i]);
 		*idx = i;
 	}
@@ -360,7 +358,7 @@ static void construct_dirlist(struct wh_dirlist **ls,
 {
 	size_t i;
 
-	DBG(STATIC, ul_debugobj(*ls, "construct %s dirlist from static array",
+	DBG_OBJ(STATIC, *ls, ul_debug("construct %s dirlist from static array",
 				whereis_type_to_name(type)));
 
 	for (i = 0; paths[i]; i++) {
@@ -377,12 +375,12 @@ static void free_dirlist(struct wh_dirlist **ls0, int type)
 
 	*ls0 = NULL;
 
-	DBG(LIST, ul_debugobj(*ls0, "free dirlist"));
+	DBG_OBJ(LIST, *ls0, ul_debug("free dirlist"));
 
 	while (ls) {
 		if (ls->type & type) {
 			next = ls->next;
-			DBG(LIST, ul_debugobj(*ls0, " free: %s", ls->path));
+			DBG_OBJ(LIST, *ls0, ul_debug(" free: %s", ls->path));
 			free(ls->path);
 			free(ls);
 			ls = next;

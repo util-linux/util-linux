@@ -56,7 +56,7 @@ static int param_set_data(struct filter_param *n, int type, const void *data)
 {
 	const char *p;
 
-	/*DBG(FPARAM, ul_debugobj(n, " set %s data", datatype2str(type)));*/
+	/*DBG_OBJ(FPARAM, n, ul_debug(" set %s data", datatype2str(type)));*/
 
 	switch (type) {
 	case SCOLS_DATA_STRING:
@@ -113,7 +113,7 @@ struct filter_node *filter_new_param(
 
 	if (holder == F_HOLDER_COLUMN) {
 		n->holder_name = strdup((char *) data);
-		DBG(FLTR, ul_debugobj(fltr, "new %s holder", n->holder_name));
+		DBG_OBJ(FLTR, fltr, ul_debug("new %s holder", n->holder_name));
 	}
 
 	if (fltr)
@@ -167,7 +167,7 @@ static struct filter_param *copy_param(struct filter_param *n)
 		break;
 	}
 
-	DBG(FPARAM, ul_debugobj(n, "copying"));
+	DBG_OBJ(FPARAM, n, ul_debug("copying"));
 	return (struct filter_param *) filter_new_param(NULL, n->type, F_HOLDER_NONE, data);
 }
 
@@ -272,7 +272,7 @@ int filter_param_reset_holder(struct filter_param *n)
 		}
 	}
 
-	DBG(FPARAM, ul_debugobj(n, "holder %s type: %s", n->holder_name, datatype2str(n->type)));
+	DBG_OBJ(FPARAM, n, ul_debug("holder %s type: %s", n->holder_name, datatype2str(n->type)));
 	return 0;
 }
 
@@ -287,13 +287,13 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	if (n->fetched || n->holder != F_HOLDER_COLUMN)
 		return 0;
 	if (!cl) {
-		DBG(FPARAM, ul_debugobj(n, "no column for %s holder", n->holder_name));
+		DBG_OBJ(FPARAM, n, ul_debug("no column for %s holder", n->holder_name));
 		return -EINVAL;
 	}
-	DBG(FPARAM, ul_debugobj(n, "fetching %s data", n->holder_name));
+	DBG_OBJ(FPARAM, n, ul_debug("fetching %s data", n->holder_name));
 
 	if (fltr->filler_cb && !scols_line_is_filled(ln, cl->seqnum)) {
-		DBG(FPARAM, ul_debugobj(n, "  by callback"));
+		DBG_OBJ(FPARAM, n, ul_debug("  by callback"));
 		rc = fltr->filler_cb(fltr, ln, cl->seqnum, fltr->filler_data);
 		if (rc)
 			return rc;
@@ -304,13 +304,13 @@ static int fetch_holder_data(struct libscols_filter *fltr __attribute__((__unuse
 	if (scols_column_has_data_func(cl)) {
 		struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
 
-		DBG(FPARAM, ul_debugobj(n, " using datafunc()"));
+		DBG_OBJ(FPARAM, n, ul_debug(" using datafunc()"));
 		if (ce)
 			data = cl->datafunc(n->col, ce, cl->datafunc_data);
 		if (data)
 			rc = param_set_data(n, scols_column_get_data_type(cl), data);
 	} else {
-		DBG(FPARAM, ul_debugobj(n, " using as string"));
+		DBG_OBJ(FPARAM, n, ul_debug(" using as string"));
 		data = scols_line_get_column_data(ln, n->col);
 		rc = param_set_data(n, SCOLS_DATA_STRING, data);
 	}
@@ -328,7 +328,7 @@ int filter_eval_param(struct libscols_filter *fltr,
 {
 	int rc = 0;
 
-	DBG(FLTR, ul_debugobj(fltr, "eval param"));
+	DBG_OBJ(FLTR, fltr, ul_debug("eval param"));
 
 	rc = fetch_holder_data(fltr, n, ln);
 	if (n->empty || rc) {
@@ -355,7 +355,7 @@ int filter_eval_param(struct libscols_filter *fltr,
 	}
 done:
 	if (rc)
-		DBG(FLTR, ul_debugobj(fltr, "failed eval param [rc=%d]", rc));
+		DBG_OBJ(FLTR, fltr, ul_debug("failed eval param [rc=%d]", rc));
 	return rc;
 }
 
@@ -405,7 +405,7 @@ int filter_count_param(struct libscols_filter *fltr,
 	}
 
 	ct->has_result = 1;
-	DBG(FLTR, ul_debugobj(fltr, "counted '%s' [result: %llu]", ct->name, ct->result));
+	DBG_OBJ(FLTR, fltr, ul_debug("counted '%s' [result: %llu]", ct->name, ct->result));
 	return 0;
 }
 
@@ -723,9 +723,9 @@ static int cast_param(int type, struct filter_param *n)
 		return 0;
 
 	if (orgtype == SCOLS_DATA_STRING)
-		DBG(FPARAM, ul_debugobj(n, " casting \"%s\" to %s", n->val.str, datatype2str(type)));
+		DBG_OBJ(FPARAM, n, ul_debug(" casting \"%s\" to %s", n->val.str, datatype2str(type)));
 	else
-		DBG(FPARAM, ul_debugobj(n, " casting %s to %s", datatype2str(orgtype), datatype2str(type)));
+		DBG_OBJ(FPARAM, n, ul_debug(" casting %s to %s", datatype2str(orgtype), datatype2str(type)));
 
 	switch (orgtype) {
 	case SCOLS_DATA_STRING:
@@ -749,7 +749,7 @@ static int cast_param(int type, struct filter_param *n)
 		n->type = type;
 
 	if (rc)
-		DBG(FPARAM, ul_debugobj(n, "cast done [rc=%d]", rc));
+		DBG_OBJ(FPARAM, n, ul_debug("cast done [rc=%d]", rc));
 	return rc;
 }
 
@@ -762,7 +762,7 @@ int filter_cast_param(struct libscols_filter *fltr,
 	int rc;
 	int orgtype = n->type;
 
-	DBG(FPARAM, ul_debugobj(n, "casting param to %s", datatype2str(type)));
+	DBG_OBJ(FPARAM, n, ul_debug("casting param to %s", datatype2str(type)));
 	rc = fetch_holder_data(fltr, n, ln);
 	if (rc)
 		return rc;
@@ -778,7 +778,7 @@ int filter_cast_param(struct libscols_filter *fltr,
 		return -ENOMEM;
 	rc = cast_param(type, *result);
 
-	DBG(FPARAM, ul_debugobj(n, "cast done [rc=%d]", rc));
+	DBG_OBJ(FPARAM, n, ul_debug("cast done [rc=%d]", rc));
 	return rc;
 }
 
@@ -844,7 +844,7 @@ int scols_filter_assign_column(struct libscols_filter *fltr,
 		if (n->col)
 			scols_unref_column(n->col);
 
-		DBG(FPARAM, ul_debugobj(n, "assign %s to column %s", name,
+		DBG_OBJ(FPARAM, n, ul_debug("assign %s to column %s", name,
 					scols_column_get_name(col)));
 		n->col = col;
 		scols_ref_column(col);

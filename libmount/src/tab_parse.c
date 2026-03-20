@@ -532,7 +532,7 @@ static int append_comment(struct libmnt_table *tb,
 	if (intro && is_terminated_by_blank(mnt_table_get_intro_comment(tb)))
 		intro = 0;
 
-	DBG(TAB, ul_debugobj(tb, "appending %s comment",
+	DBG_OBJ(TAB, tb, ul_debug("appending %s comment",
 			intro ? "intro" :
 			eof ? "trailing" : "fs"));
 	if (intro)
@@ -571,7 +571,7 @@ next_line:
 		pa->line++;
 		s = strchr(pa->buf, '\n');
 		if (!s) {
-			DBG(TAB, ul_debugobj(tb, "%s:%zu: no final newline",
+			DBG_OBJ(TAB, tb, ul_debug("%s:%zu: no final newline",
 						pa->filename, pa->line));
 
 			/* Missing final newline?  Otherwise an extremely */
@@ -633,7 +633,7 @@ next_line:
 	if (rc == 0)
 		return 0;
 err:
-	DBG(TAB, ul_debugobj(tb, "%s:%zu: %s parse error", pa->filename, pa->line,
+	DBG_OBJ(TAB, tb, ul_debug("%s:%zu: %s parse error", pa->filename, pa->line,
 				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
 				tb->fmt == MNT_FMT_SWAPS ? "swaps" :
 				tb->fmt == MNT_FMT_FSTAB ? "tab" : "utab"));
@@ -714,7 +714,7 @@ static int kernel_fs_postparse(struct libmnt_parser *pa,
 			if (!real)
 				return -ENOMEM;
 
-			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
+			DBG_OBJ(TAB, tb, ul_debug("canonical root FS: %s", real));
 			rc = __mnt_fs_set_source_ptr(fs, real);
 
 		} else if (rc == 1) {
@@ -746,7 +746,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	assert(f);
 	assert(filename);
 
-	DBG(TAB, ul_debugobj(tb, "%s: start parsing [entries=%d, filter=%s]",
+	DBG_OBJ(TAB, tb, ul_debug("%s: start parsing [entries=%d, filter=%s]",
 				filename, mnt_table_get_nents(tb),
 				tb->fltrcb ? "yes" : "not"));
 
@@ -765,7 +765,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		struct libmnt_fs *fs;
 
 		if (feof(f)) {
-			DBG(TAB, ul_debugobj(tb, "end-of-file"));
+			DBG_OBJ(TAB, tb, ul_debug("end-of-file"));
 			break;
 		}
 		fs = mnt_new_fs();
@@ -803,23 +803,23 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 
 		/* recoverable error */
 		if (rc > 0) {
-			DBG(TAB, ul_debugobj(tb, "recoverable error (continue)"));
+			DBG_OBJ(TAB, tb, ul_debug("recoverable error (continue)"));
 			continue;
 		}
 
 		/* fatal errors */
 		if (rc < 0 && !feof(f)) {
-			DBG(TAB, ul_debugobj(tb, "fatal error"));
+			DBG_OBJ(TAB, tb, ul_debug("fatal error"));
 			goto err;
 		}
 	} while (1);
 
-	DBG(TAB, ul_debugobj(tb, "%s: stop parsing (%d entries)",
+	DBG_OBJ(TAB, tb, ul_debug("%s: stop parsing (%d entries)",
 				filename, mnt_table_get_nents(tb)));
 	parser_cleanup(&pa);
 	return 0;
 err:
-	DBG(TAB, ul_debugobj(tb, "%s: parse error (rc=%d)", filename, rc));
+	DBG_OBJ(TAB, tb, ul_debug("%s: parse error (rc=%d)", filename, rc));
 	parser_cleanup(&pa);
 	return rc;
 }
@@ -851,7 +851,7 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 	} else
 		rc = -errno;
 
-	DBG(TAB, ul_debugobj(tb, "parsing done [filename=%s, rc=%d]", filename, rc));
+	DBG_OBJ(TAB, tb, ul_debug("parsing done [filename=%s, rc=%d]", filename, rc));
 	return rc;
 }
 
@@ -991,7 +991,7 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt, in
 
 	tb = mnt_new_table();
 	if (tb) {
-		DBG(TAB, ul_debugobj(tb, "new tab for file: %s", filename));
+		DBG_OBJ(TAB, tb, ul_debug("new tab for file: %s", filename));
 		tb->fmt = fmt;
 		if (mnt_table_parse_file(tb, filename) != 0) {
 			mnt_unref_table(tb);
@@ -1076,7 +1076,7 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "%s table parser filter", cb ? "set" : "unset"));
+	DBG_OBJ(TAB, tb, ul_debug("%s table parser filter", cb ? "set" : "unset"));
 	tb->fltrcb = cb;
 	tb->fltrcb_data = data;
 	return 0;
@@ -1192,7 +1192,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	if (!tb || !uf)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "merging user fs"));
+	DBG_OBJ(TAB, tb, ul_debug("merging user fs"));
 
 	src = mnt_fs_get_srcpath(uf);
 	target = mnt_fs_get_target(uf);
@@ -1214,12 +1214,12 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 			continue;
 
 		if (uniq_id > 0 && mnt_fs_get_uniq_id(fs)) {
-			DBG(TAB, ul_debugobj(tb, " using uniq ID"));
+			DBG_OBJ(TAB, tb, ul_debug(" using uniq ID"));
 			if (mnt_fs_get_uniq_id(fs) == uniq_id)
 				break;
 
 		} else if (id > 0 && mnt_fs_get_id(fs)) {
-			DBG(TAB, ul_debugobj(tb, " using ID"));
+			DBG_OBJ(TAB, tb, ul_debug(" using ID"));
 			if (mnt_fs_get_id(fs) == id)
 				break;
 
@@ -1230,7 +1230,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	}
 
 	if (fs) {
-		DBG(TAB, ul_debugobj(tb, " found"));
+		DBG_OBJ(TAB, tb, ul_debug(" found"));
 		mnt_fs_append_options(fs, optstr);
 		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
@@ -1252,12 +1252,12 @@ int __mnt_table_parse_mountinfo(struct libmnt_table *tb, const char *filename,
 	assert(tb);
 
 	if (filename)
-		DBG(TAB, ul_debugobj(tb, "%s requested as mount table", filename));
+		DBG_OBJ(TAB, tb, ul_debug("%s requested as mount table", filename));
 
 	if (!filename || strcmp(filename, _PATH_PROC_MOUNTINFO) == 0) {
 		filename = _PATH_PROC_MOUNTINFO;
 		tb->fmt = MNT_FMT_MOUNTINFO;
-		DBG(TAB, ul_debugobj(tb, "mountinfo parse: #1 read mountinfo"));
+		DBG_OBJ(TAB, tb, ul_debug("mountinfo parse: #1 read mountinfo"));
 	} else
 		tb->fmt = MNT_FMT_GUESS;
 
@@ -1273,7 +1273,7 @@ int __mnt_table_parse_mountinfo(struct libmnt_table *tb, const char *filename,
 
 	if (!is_mountinfo(tb))
 		return 0;
-	DBG(TAB, ul_debugobj(tb, "mountinfo parse: #2 read utab"));
+	DBG_OBJ(TAB, tb, ul_debug("mountinfo parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)
 		return 0;			/* empty, ignore utab */
@@ -1297,7 +1297,7 @@ int __mnt_table_parse_mountinfo(struct libmnt_table *tb, const char *filename,
 		priv_utab = 1;
 	}
 
-	DBG(TAB, ul_debugobj(tb, "mountinfo parse: #3 merge utab"));
+	DBG_OBJ(TAB, tb, ul_debug("mountinfo parse: #3 merge utab"));
 
 	if (rc == 0) {
 		struct libmnt_fs *u_fs;

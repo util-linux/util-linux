@@ -47,7 +47,7 @@ struct lsblk_device *lsblk_new_device(void)
 	INIT_LIST_HEAD(&dev->ls_roots);
 	INIT_LIST_HEAD(&dev->ls_devices);
 
-	DBG(DEV, ul_debugobj(dev, "alloc"));
+	DBG_OBJ(DEV, dev, ul_debug("alloc"));
 	return dev;
 }
 
@@ -63,7 +63,7 @@ static int remove_dependence(struct lsblk_devdep *dep)
 	if (!dep)
 		return -EINVAL;
 
-	DBG(DEP, ul_debugobj(dep, "   dealloc"));
+	DBG_OBJ(DEP, dep, ul_debug("   dealloc"));
 
 	list_del_init(&dep->ls_childs);
 	list_del_init(&dep->ls_parents);
@@ -78,7 +78,7 @@ static int device_remove_dependences(struct lsblk_device *dev)
 		return -EINVAL;
 
 	if (!list_empty(&dev->childs))
-		DBG(DEV, ul_debugobj(dev, "  %s: remove all children deps", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("  %s: remove all children deps", dev->name));
 	while (!list_empty(&dev->childs)) {
 		struct lsblk_devdep *dp = list_entry(dev->childs.next,
 					struct lsblk_devdep, ls_childs);
@@ -86,7 +86,7 @@ static int device_remove_dependences(struct lsblk_device *dev)
 	}
 
 	if (!list_empty(&dev->parents))
-		DBG(DEV, ul_debugobj(dev, "  %s: remove all parents deps", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("  %s: remove all parents deps", dev->name));
 	while (!list_empty(&dev->parents)) {
 		struct lsblk_devdep *dp = list_entry(dev->parents.next,
 					struct lsblk_devdep, ls_parents);
@@ -102,7 +102,7 @@ void lsblk_unref_device(struct lsblk_device *dev)
 		return;
 
 	if (--dev->refcount <= 0) {
-		DBG(DEV, ul_debugobj(dev, " freeing [%s] <<", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug(" freeing [%s] <<", dev->name));
 
 		device_remove_dependences(dev);
 		lsblk_device_free_properties(dev->properties);
@@ -116,7 +116,7 @@ void lsblk_unref_device(struct lsblk_device *dev)
 
 		ul_unref_path(dev->sysfs);
 
-		DBG(DEV, ul_debugobj(dev, " >> dealloc [%s]", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug(" >> dealloc [%s]", dev->name));
 		free(dev->name);
 		free(dev);
 	}
@@ -160,7 +160,7 @@ int lsblk_device_new_dependence(struct lsblk_device *parent, struct lsblk_device
 	dp->parent = parent;
 	list_add_tail(&dp->ls_parents, &child->parents);
 
-	DBG(DEV, ul_debugobj(parent, "add dependence 0x%p [%s->%s]", dp, parent->name, child->name));
+	DBG_OBJ(DEV, parent, ul_debug("add dependence 0x%p [%s->%s]", dp, parent->name, child->name));
 
 	return 0;
 }
@@ -247,7 +247,7 @@ struct lsblk_devtree *lsblk_new_devtree(void)
 	INIT_LIST_HEAD(&tr->devices);
 	INIT_LIST_HEAD(&tr->pktcdvd_map);
 
-	DBG(TREE, ul_debugobj(tr, "alloc"));
+	DBG_OBJ(TREE, tr, ul_debug("alloc"));
 	return tr;
 }
 
@@ -263,7 +263,7 @@ void lsblk_unref_devtree(struct lsblk_devtree *tr)
 		return;
 
 	if (--tr->refcount <= 0) {
-		DBG(TREE, ul_debugobj(tr, "dealloc"));
+		DBG_OBJ(TREE, tr, ul_debug("dealloc"));
 
 		while (!list_empty(&tr->devices)) {
 			struct lsblk_device *dev = list_entry(tr->devices.next,
@@ -307,7 +307,7 @@ int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
 	/* We don't increment reference counter for tr->roots list. The primary
 	 * reference is tr->devices */
 
-	DBG(TREE, ul_debugobj(tr, "add root device 0x%p [%s]", dev, dev->name));
+	DBG_OBJ(TREE, tr, ul_debug("add root device 0x%p [%s]", dev, dev->name));
 	list_add_tail(&dev->ls_roots, &tr->roots);
 	return 0;
 }
@@ -315,7 +315,7 @@ int lsblk_devtree_add_root(struct lsblk_devtree *tr, struct lsblk_device *dev)
 int lsblk_devtree_remove_root(struct lsblk_devtree *tr __attribute__((unused)),
 			      struct lsblk_device *dev)
 {
-	DBG(TREE, ul_debugobj(tr, "remove root device 0x%p [%s]", dev, dev->name));
+	DBG_OBJ(TREE, tr, ul_debug("remove root device 0x%p [%s]", dev, dev->name));
 	list_del_init(&dev->ls_roots);
 
 	return 0;
@@ -343,7 +343,7 @@ int lsblk_devtree_add_device(struct lsblk_devtree *tr, struct lsblk_device *dev)
 {
 	lsblk_ref_device(dev);
 
-	DBG(TREE, ul_debugobj(tr, "add device 0x%p [%s]", dev, dev->name));
+	DBG_OBJ(TREE, tr, ul_debug("add device 0x%p [%s]", dev, dev->name));
 	list_add_tail(&dev->ls_devices, &tr->devices);
 	return 0;
 }
@@ -398,7 +398,7 @@ struct lsblk_device *lsblk_devtree_get_device(struct lsblk_devtree *tr, const ch
 
 int lsblk_devtree_remove_device(struct lsblk_devtree *tr, struct lsblk_device *dev)
 {
-	DBG(TREE, ul_debugobj(tr, "remove device 0x%p [%s]", dev, dev->name));
+	DBG_OBJ(TREE, tr, ul_debug("remove device 0x%p [%s]", dev, dev->name));
 
 	if (!lsblk_devtree_has_device(tr, dev))
 		return 1;
@@ -478,7 +478,7 @@ static int device_dedupkey_is_equal(
 		if (!device_is_partition(dev) ||
 		    !dev->wholedisk->dedupkey ||
 		     strcmp(dev->dedupkey, dev->wholedisk->dedupkey) != 0) {
-			DBG(DEV, ul_debugobj(dev, "%s: match deduplication pattern", dev->name));
+			DBG_OBJ(DEV, dev, ul_debug("%s: match deduplication pattern", dev->name));
 			return 1;
 		}
 	}
@@ -498,7 +498,7 @@ static void device_dedup_dependencies(
 		struct lsblk_device *child = dp->child;
 
 		if (device_dedupkey_is_equal(child, pattern)) {
-			DBG(DEV, ul_debugobj(dev, "remove duplicate dependence: 0x%p [%s]",
+			DBG_OBJ(DEV, dev, ul_debug("remove duplicate dependence: 0x%p [%s]",
 						dp->child, dp->child->name));
 			remove_dependence(dp);
 		} else
@@ -513,11 +513,11 @@ static void devtree_dedup(struct lsblk_devtree *tr, struct lsblk_device *pattern
 
 	lsblk_reset_iter(&itr, LSBLK_ITER_FORWARD);
 
-	DBG(TREE, ul_debugobj(tr, "de-duplicate by key: %s", pattern->dedupkey));
+	DBG_OBJ(TREE, tr, ul_debug("de-duplicate by key: %s", pattern->dedupkey));
 
 	while (lsblk_devtree_next_root(tr, &itr, &dev) == 0) {
 		if (device_dedupkey_is_equal(dev, pattern)) {
-			DBG(TREE, ul_debugobj(tr, "remove duplicate device: 0x%p [%s]",
+			DBG_OBJ(TREE, tr, ul_debug("remove duplicate device: 0x%p [%s]",
 						dev, dev->name));
 			/* Note that root list does not use ref-counting; the
 			 * primary reference is ls_devices */

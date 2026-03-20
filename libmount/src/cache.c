@@ -107,7 +107,7 @@ struct libmnt_cache *mnt_new_cache(void)
 	struct libmnt_cache *cache = calloc(1, sizeof(*cache));
 	if (!cache)
 		return NULL;
-	DBG(CACHE, ul_debugobj(cache, "alloc"));
+	DBG_OBJ(CACHE, cache, ul_debug("alloc"));
 	cache->refcount = 1;
 	return cache;
 }
@@ -126,7 +126,7 @@ void mnt_free_cache(struct libmnt_cache *cache)
 	if (!cache)
 		return;
 
-	DBG(CACHE, ul_debugobj(cache, "free [refcount=%d]", cache->refcount));
+	DBG_OBJ(CACHE, cache, ul_debug("free [refcount=%d]", cache->refcount));
 
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
@@ -150,7 +150,7 @@ void mnt_ref_cache(struct libmnt_cache *cache)
 {
 	if (cache) {
 		cache->refcount++;
-		/*DBG(CACHE, ul_debugobj(cache, "ref=%d", cache->refcount));*/
+		/*DBG_OBJ(CACHE, cache, ul_debug("ref=%d", cache->refcount));*/
 	}
 }
 
@@ -165,7 +165,7 @@ void mnt_unref_cache(struct libmnt_cache *cache)
 {
 	if (cache) {
 		cache->refcount--;
-		/*DBG(CACHE, ul_debugobj(cache, "unref=%d", cache->refcount));*/
+		/*DBG_OBJ(CACHE, cache, ul_debug("unref=%d", cache->refcount));*/
 		if (cache->refcount <= 0) {
 			mnt_unref_table(cache->mountinfo);
 
@@ -240,7 +240,7 @@ static int cache_add_entry(struct libmnt_cache *cache, char *key,
 	e->flag = flag;
 	cache->nents++;
 
-	DBG(CACHE, ul_debugobj(cache, "add entry [%2zd] (%s): %s: %s",
+	DBG_OBJ(CACHE, cache, ul_debug("add entry [%2zd] (%s): %s: %s",
 			cache->nents,
 			(flag & MNT_CACHE_ISPATH) ? "path" : "tag",
 			value, key));
@@ -379,7 +379,7 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 	assert(cache);
 	assert(devname);
 
-	DBG(CACHE, ul_debugobj(cache, "%s: reading from blkid", devname));
+	DBG_OBJ(CACHE, cache, ul_debug("%s: reading from blkid", devname));
 
 	pr =  blkid_new_probe_from_filename(devname);
 	if (!pr)
@@ -415,7 +415,7 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 	}
 
 done:
-	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
+	DBG_OBJ(CACHE, cache, ul_debug("\tread %zd tags [rc=%d]", ntags, rc));
 	blkid_free_probe(pr);
 	free(cacheval);
 
@@ -442,7 +442,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 	if (rc < 0)
 		return rc;
 
-	DBG(CACHE, ul_debugobj(cache, "%s: reading from udev", devname));
+	DBG_OBJ(CACHE, cache, ul_debug("%s: reading from udev", devname));
 
 	for (t = mnttags; t && t->mnt_name; t++) {
 		const char *data;
@@ -468,7 +468,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 		free(tagval), tagval = NULL;
 	}
 
-	DBG(CACHE, ul_debugobj(cache, "\tread %zd tags [rc=%d]", ntags, rc));
+	DBG_OBJ(CACHE, cache, ul_debug("\tread %zd tags [rc=%d]", ntags, rc));
 	sd_device_unref(sd);
 	free(cacheval);
 	free(tagval);
@@ -493,7 +493,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	if (!cache || !devname)
 		return -EINVAL;
 
-	DBG(CACHE, ul_debugobj(cache, "tags for %s requested", devname));
+	DBG_OBJ(CACHE, cache, ul_debug("tags for %s requested", devname));
 
 	if (is_device_cached(cache, devname))
 		return 0;
@@ -610,7 +610,7 @@ static char *fstype_from_blkid(const char *devname, int *ambi)
  */
 char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 {
-	DBG(CACHE, ul_debugobj(cache, "get %s FS type", devname));
+	DBG_OBJ(CACHE, cache, ul_debug("get %s FS type", devname));
 
 	if (cache)
 		return fstype_from_cache(devname, cache);
@@ -625,7 +625,7 @@ static char *canonicalize_path_and_cache(const char *path,
 	char *key;
 	char *value;
 
-	DBG(CACHE, ul_debugobj(cache, "canonicalize path %s", path));
+	DBG_OBJ(CACHE, cache, ul_debug("canonicalize path %s", path));
 	p = ul_canonicalize_path(path);
 
 	if (p && cache) {
@@ -664,7 +664,7 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 {
 	char *p = NULL;
 
-	/*DBG(CACHE, ul_debugobj(cache, "resolving path %s", path));*/
+	/*DBG_OBJ(CACHE, cache, ul_debug("resolving path %s", path));*/
 
 	if (!path)
 		return NULL;
@@ -699,7 +699,7 @@ char *mnt_resolve_target(const char *path, struct libmnt_cache *cache)
 	if (!path)
 		return NULL;
 
-	/*DBG(CACHE, ul_debugobj(cache, "resolving target %s", path));*/
+	/*DBG_OBJ(CACHE, cache, ul_debug("resolving target %s", path));*/
 
 	if (!cache || !cache->mountinfo)
 		return mnt_resolve_path(path, cache);
@@ -801,7 +801,7 @@ char *mnt_resolve_tag(const char *token, const char *value,
 {
 	char *p = NULL;
 
-	/*DBG(CACHE, ul_debugobj(cache, "resolving tag token=%s value=%s",
+	/*DBG_OBJ(CACHE, cache, ul_debug("resolving tag token=%s value=%s",
 				token, value));*/
 
 	if (!token || !value)

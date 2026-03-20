@@ -47,7 +47,7 @@ struct libmnt_tabdiff *mnt_new_tabdiff(void)
 	if (!df)
 		return NULL;
 
-	DBG(DIFF, ul_debugobj(df, "alloc"));
+	DBG_OBJ(DIFF, df, ul_debug("alloc"));
 
 	INIT_LIST_HEAD(&df->changes);
 	INIT_LIST_HEAD(&df->unused);
@@ -75,7 +75,7 @@ void mnt_free_tabdiff(struct libmnt_tabdiff *df)
 	if (!df)
 		return;
 
-	DBG(DIFF, ul_debugobj(df, "free"));
+	DBG_OBJ(DIFF, df, ul_debug("free"));
 
 	while (!list_empty(&df->changes)) {
 		struct tabdiff_entry *de = list_entry(df->changes.next,
@@ -129,7 +129,7 @@ static int tabdiff_reset(struct libmnt_tabdiff *df)
 {
 	assert(df);
 
-	DBG(DIFF, ul_debugobj(df, "resetting"));
+	DBG_OBJ(DIFF, df, ul_debug("resetting"));
 
 	/* zeroize all entries and move them to the list of unused
 	 */
@@ -158,7 +158,7 @@ static int tabdiff_add_entry(struct libmnt_tabdiff *df, struct libmnt_fs *old,
 
 	assert(df);
 
-	DBG(DIFF, ul_debugobj(df, "add change on %s",
+	DBG_OBJ(DIFF, df, ul_debug("add change on %s",
 				mnt_fs_get_target(new ? new : old)));
 
 	if (!list_empty(&df->unused)) {
@@ -243,7 +243,7 @@ int mnt_diff_tables(struct libmnt_tabdiff *df, struct libmnt_table *old_tab,
 	if (!no && !nn)			/* both tables are empty */
 		return 0;
 
-	DBG(DIFF, ul_debugobj(df, "analyze new (%d entries), "
+	DBG_OBJ(DIFF, df, ul_debug("analyze new (%d entries), "
 				          "old (%d entries)",
 				nn, no));
 
@@ -303,7 +303,7 @@ int mnt_diff_tables(struct libmnt_tabdiff *df, struct libmnt_table *old_tab,
 		}
 	}
 done:
-	DBG(DIFF, ul_debugobj(df, "%d changes detected", df->nchanges));
+	DBG_OBJ(DIFF, df, ul_debug("%d changes detected", df->nchanges));
 	return df->nchanges;
 }
 

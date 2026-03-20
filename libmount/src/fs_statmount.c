@@ -43,7 +43,7 @@ struct libmnt_statmnt *mnt_new_statmnt(void)
 		return NULL;
 
 	sm->refcount = 1;
-	DBG(STATMNT, ul_debugobj(sm, "alloc"));
+	DBG_OBJ(STATMNT, sm, ul_debug("alloc"));
 	return sm;
 #else
 	errno = ENOSYS;
@@ -61,7 +61,7 @@ void mnt_ref_statmnt(struct libmnt_statmnt *sm)
 {
 	if (sm) {
 		sm->refcount++;
-		/*DBG(STATMNT, ul_debugobj(sm, "ref=%d", sm->refcount));*/
+		/*DBG_OBJ(STATMNT, sm, ul_debug("ref=%d", sm->refcount));*/
 	}
 }
 
@@ -76,7 +76,7 @@ void mnt_unref_statmnt(struct libmnt_statmnt *sm)
 {
 	if (sm) {
 		sm->refcount--;
-		/*DBG(STATMNT, ul_debugobj(sm, "unref=%d", sm->refcount));*/
+		/*DBG_OBJ(STATMNT, sm, ul_debug("unref=%d", sm->refcount));*/
 		if (sm->refcount <= 0) {
 			free(sm->buf);
 			free(sm);
@@ -97,7 +97,7 @@ int mnt_statmnt_set_mask(struct libmnt_statmnt *sm, uint64_t mask)
 		return -EINVAL;
 	sm->mask = mask;
 
-	DBG(STATMNT, ul_debugobj(sm, "mask=0x%" PRIx64, sm->mask));
+	DBG_OBJ(STATMNT, sm, ul_debug("mask=0x%" PRIx64, sm->mask));
 	return 0;
 }
 
@@ -123,7 +123,7 @@ int mnt_statmnt_disable_fetching(struct libmnt_statmnt *sm, int disable)
 	sm->disabled = disable ? 1 : 0;
 
 	/*
-	DBG(STATMNT, ul_debugobj(sm, "statmount() %s",
+	DBG_OBJ(STATMNT, sm, ul_debug("statmount() %s",
 				sm->disabled ? "off" : "on"));
 	*/
 	return old;
@@ -303,7 +303,7 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 	if (!fs)
 		return -EINVAL;
 
-	DBG(FS, ul_debugobj(fs, "statmount fetch"));
+	DBG_OBJ(FS, fs, ul_debug("statmount fetch"));
 
 	/* add default mask if on-demand enabled */
 	if (fs->stmnt
@@ -335,7 +335,7 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		rc = mnt_id_from_path(fs->target, &fs->uniq_id, NULL);
 		if (rc)
 			goto done;
-		DBG(FS, ul_debugobj(fs, " uniq-ID=%" PRIu64, fs->uniq_id));
+		DBG_OBJ(FS, fs, ul_debug(" uniq-ID=%" PRIu64, fs->uniq_id));
 	}
 
 	/* fetch all missing information by default */
@@ -359,7 +359,7 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		ns = fs->ns_id;
 
 	if (fs->stmnt) {
-		DBG(FS, ul_debugobj(fs, " reuse libmnt_stmnt"));
+		DBG_OBJ(FS, fs, ul_debug(" reuse libmnt_stmnt"));
 
 		/* note that ul_statmount() (re)allocates the buffer */
 		if (fs->stmnt->buf && fs->stmnt->bufsiz > 0)
@@ -370,10 +370,10 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		buf = fs->stmnt->buf;
 		bufsiz = fs->stmnt->bufsiz;
 	} else {
-		DBG(FS, ul_debugobj(fs, " use private buffer"));
+		DBG_OBJ(FS, fs, ul_debug(" use private buffer"));
 		rc = ul_statmount(fs->uniq_id, 0, mask, &buf, &bufsiz, 0);
 	}
-	DBG(FS, ul_debugobj(fs, " statmount [rc=%d bufsiz=%zu ns=%" PRIu64 " mask: %s%s%s%s%s%s%s]",
+	DBG_OBJ(FS, fs, ul_debug(" statmount [rc=%d bufsiz=%zu ns=%" PRIu64 " mask: %s%s%s%s%s%s%s]",
 				rc, bufsiz, ns,
 				mask & STATMOUNT_SB_BASIC ? "sb-basic " : "",
 				mask & STATMOUNT_MNT_BASIC ? "mnt-basic " : "",

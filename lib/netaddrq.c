@@ -46,11 +46,9 @@ UL_DEBUG_DEFINE_MASKNAMES(netaddrq) =
 	{ NULL, 0 }
 };
 
-#define DBG(m, x)       __UL_DBG(netaddrq, ULNETADDRQ_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(netaddrq, ULNETADDRQ_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(netaddrq)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(netaddrq, ULNETADDRQ_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(netaddrq, ULNETADDRQ_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(netaddrq, ULNETADDRQ_DEBUG_, m, x)
 
 static void netaddrq_init_debug(void)
 {
@@ -117,14 +115,14 @@ static int callback_addrq(struct ul_nl_data *nl)
 	int rc;
 	bool *ifaces_change;
 
-	DBG(LIST, ul_debugobj(addrq, "callback_addrq() for %s on %s",
+	DBG_OBJ(LIST, addrq, ul_debug("callback_addrq() for %s on %s",
 			      ul_nl_addr_ntop_address(&(nl->addr)),
 			      nl->addr.ifname));
 	if (addrq->callback_pre)
 	{
-		DBG(LIST, ul_debugobj(addrq, "callback_pre"));
+		DBG_OBJ(LIST, addrq, ul_debug("callback_pre"));
 		if ((rc = (*(addrq->callback_pre))(nl)))
-			DBG(LIST, ul_debugobj(nl, "callback_pre rc != 0"));
+			DBG_OBJ(LIST, nl, ul_debug("callback_pre rc != 0"));
 	}
 
 	/* Search for interface in ifaces */
@@ -136,7 +134,7 @@ static int callback_addrq(struct ul_nl_data *nl)
 		ifaceqq = list_entry(li, struct ul_netaddrq_iface, entry);
 		if (ifaceqq->ifa_index == nl->addr.ifa_index) {
 			ifaceq = ifaceqq;
-			DBG(LIST, ul_debugobj(ifaceq,
+			DBG_OBJ(LIST, ifaceq, ul_debug(
 					      "%s found in addrq",
 					      nl->addr.ifname));
 			break;
@@ -147,12 +145,12 @@ static int callback_addrq(struct ul_nl_data *nl)
 	if (ifaceq == NULL) {
 		if (nl->rtm_event) {
 			if (addrq->nifaces >= max_ifaces) {
-				DBG(LIST, ul_debugobj(addrq,
+				DBG_OBJ(LIST, addrq, ul_debug(
 						       "too many interfaces"));
 				addrq->overflow = true;
 				return UL_NL_IFACES_MAX;
 			}
-			DBG(LIST, ul_debugobj(addrq,
+			DBG_OBJ(LIST, addrq, ul_debug(
 					       "new ifa_index in addrq"));
 			if (!(ifaceq = malloc(sizeof(struct ul_netaddrq_iface))))
 				return -ENOMEM;
@@ -161,17 +159,17 @@ static int callback_addrq(struct ul_nl_data *nl)
 			ifaceq->ifa_index = nl->addr.ifa_index;
 			if (!(ifaceq->ifname = strdup(nl->addr.ifname)))
 			{
-				DBG(LIST, ul_debugobj(addrq,
+				DBG_OBJ(LIST, addrq, ul_debug(
 						      "malloc() failed"));
 				free(ifaceq);
 				return -ENOMEM;
 			}
 			list_add_tail(&(ifaceq->entry), &(addrq->ifaces));
-			DBG(LIST, ul_debugobj(ifaceq,
+			DBG_OBJ(LIST, ifaceq, ul_debug(
 					       "new interface"));
 		} else {
 			/* Should never happen. */
-			DBG(LIST, ul_debugobj(ifaceq,
+			DBG_OBJ(LIST, ifaceq, ul_debug(
 					       "interface not found"));
 			return UL_NL_SOFT_ERROR;
 		}
@@ -193,13 +191,13 @@ static int callback_addrq(struct ul_nl_data *nl)
 			if (!memcmp(ipqq->addr->address, nl->addr.address,
 				   nl->addr.address_len)) {
 				ipq = ipqq;
-				DBG(LIST, ul_debugobj(ipq,
+				DBG_OBJ(LIST, ipq, ul_debug(
 						      "address found in ipq_list"));
 				break;
 			}
 	}
 	if (ipq == NULL) {
-			DBG(LIST, ul_debugobj(ipq_list,
+			DBG_OBJ(LIST, ipq_list, ul_debug(
 					      "address not found in the list"));
 	}
 
@@ -222,16 +220,16 @@ static int callback_addrq(struct ul_nl_data *nl)
 			}
 			ipq->addr = addr;
 			list_add_tail(&(ipq->entry), ipq_list);
-			DBG(LIST, ul_debugobj(ipq, "new address"));
+			DBG_OBJ(LIST, ipq, ul_debug("new address"));
 			*ifaces_change = true;
 		} else {
-			DBG(LIST, ul_debugobj(addrq, "updating address data"));
+			DBG_OBJ(LIST, addrq, ul_debug("updating address data"));
 			ul_nl_addr_free(ipq->addr);
 			ipq->addr = addr;
 		}
 		ipq->quality = evaluate_ip_quality(addr);
-		DBG(ADDRQ,
-		    ul_debugobj(addrq, "%s rating: %s",
+		DBG_OBJ(ADDRQ, addrq,
+		    ul_debug("%s rating: %s",
 				ul_nl_addr_ntop_address(&(nl->addr)),
 				ip_rating_as_string(ipq->quality)));
 	} else {
@@ -239,12 +237,12 @@ static int callback_addrq(struct ul_nl_data *nl)
 		if (ipq == NULL)
 		{
 			/* Should not happen. */
-			DBG(LIST, ul_debugobj(nl,
+			DBG_OBJ(LIST, nl, ul_debug(
 					      "UL_NL_RTM_DEL: unknown address"));
 			return UL_NL_SOFT_ERROR;
 		}
 		/* Delist the address */
-		DBG(LIST, ul_debugobj(ipq, "removing address"));
+		DBG_OBJ(LIST, ipq, ul_debug("removing address"));
 		*ifaces_change = true;
 		list_del(&(ipq->entry));
 		ul_nl_addr_free(ipq->addr);
@@ -252,9 +250,8 @@ static int callback_addrq(struct ul_nl_data *nl)
 	error:
 		if (list_empty(&(ifaceq->ip_quality_list_4)) &&
 		    list_empty(&(ifaceq->ip_quality_list_6))) {
-		DBG(LIST,
-		    ul_debugobj(ifaceq,
-				"deleted last address, removing interface"));
+		DBG_OBJ(LIST, ifaceq,
+		    ul_debug("deleted last address, removing interface"));
 			list_del(&(ifaceq->entry));
 			addrq->nifaces--;
 			free(ifaceq->ifname);
@@ -263,9 +260,9 @@ static int callback_addrq(struct ul_nl_data *nl)
 	}
 	if (!rc && addrq->callback_post)
 	{
-		DBG(LIST, ul_debugobj(addrq, "callback_post"));
+		DBG_OBJ(LIST, addrq, ul_debug("callback_post"));
 		if ((rc = (*(addrq->callback_post))(nl)))
-			DBG(LIST, ul_debugobj(nl, "callback_post rc != 0"));
+			DBG_OBJ(LIST, nl, ul_debug("callback_post rc != 0"));
 	}
 	return rc;
 }
@@ -285,7 +282,7 @@ int ul_netaddrq_init(struct ul_nl_data *nl, ul_nl_callback callback_pre,
 	addrq->callback_post = callback_post;
 	addrq->callback_data = data;
 	INIT_LIST_HEAD(&(addrq->ifaces));
-	DBG(LIST, ul_debugobj(addrq, "callback initialized"));
+	DBG_OBJ(LIST, addrq, ul_debug("callback initialized"));
 	return 0;
 }
 
@@ -306,8 +303,8 @@ ul_netaddrq_iface_bestaddr(struct list_head *ipq_list,
 		    ipq->addr->ifa_valid >
 		    (*best)[ipq->quality]->addr->ifa_valid)
 		{
-			DBG(BEST,
-			    ul_debugobj((*best), "%s -> best[%s]",
+			DBG_OBJ(BEST, (*best),
+			    ul_debug("%s -> best[%s]",
 					ul_nl_addr_ntop_address(ipq->addr),
 					ip_rating_as_string(ipq->quality)));
 			(*best)[ipq->quality] = ipq;
@@ -356,8 +353,8 @@ ul_netaddrq_bestaddr(struct ul_nl_data *nl,
 		t = ul_netaddrq_iface_bestaddr(ipq_list, best);
 		if (t < threshold)
 		{
-			DBG(BEST,
-			    ul_debugobj(*best, "best iface %s, threshold %hhd",
+			DBG_OBJ(BEST, *best,
+			    ul_debug("best iface %s, threshold %hhd",
 					ifaceq->ifname, t));
 			*best_ifaceq = ifaceq;
 			threshold = t;

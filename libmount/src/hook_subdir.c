@@ -88,7 +88,7 @@ static struct hookset_data *new_hookset_data(
 /* de-initiallize this module */
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks */
 	while (mnt_context_remove_hook(cxt, hs, 0, NULL) == 0);
@@ -338,7 +338,7 @@ static int hook_mount_pre(
 	if (api
 	    && cxt->helper == NULL
 	    && get_linux_version() >= KERNEL_VERSION(6, 15, 0)) {
-		DBG(HOOK, ul_debugobj(hs, "detached subdir open (ignore hook)"));
+		DBG_OBJ(HOOK, hs, ul_debug("detached subdir open (ignore hook)"));
 		api->subdir = hsd->subdir;
 		hsd->subdir = NULL;
 		return 0;
@@ -358,7 +358,7 @@ static int hook_mount_pre(
 				MNT_STAGE_MOUNT_POST,
 				NULL, hook_mount_post);
 
-	DBG(HOOK, ul_debugobj(hs, "unshared tmp target %s [rc=%d]",
+	DBG_OBJ(HOOK, hs, ul_debug("unshared tmp target %s [rc=%d]",
 				MNT_PATH_TMPTGT, rc));
 	return rc;
 }
@@ -440,7 +440,7 @@ static int hook_prepare_target(
 		}
 		hsd->subdir = subdir;
 
-		DBG(HOOK, ul_debugobj(hs, "subdir %s wanted", subdir));
+		DBG_OBJ(HOOK, hs, ul_debug("subdir %s wanted", subdir));
 
 		rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_PRE,

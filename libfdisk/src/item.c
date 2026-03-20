@@ -44,7 +44,7 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
 		return NULL;
 
 	li->refcount = 1;
-	DBG(ITEM, ul_debugobj(li, "alloc"));
+	DBG_OBJ(ITEM, li, ul_debug("alloc"));
 	return li;
 }
 
@@ -107,7 +107,7 @@ void fdisk_unref_labelitem(struct fdisk_labelitem *li)
 
 	li->refcount--;
 	if (li->refcount <= 0) {
-		DBG(ITEM, ul_debugobj(li, "free"));
+		DBG_OBJ(ITEM, li, ul_debug("free"));
 		fdisk_reset_labelitem(li);
 		free(li);
 	}

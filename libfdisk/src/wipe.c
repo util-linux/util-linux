@@ -36,7 +36,7 @@ void fdisk_free_wipe_areas(struct fdisk_context *cxt)
 	while (!list_empty(&cxt->wipes)) {
 		struct fdisk_wipe *wp = list_entry(cxt->wipes.next,
 				                  struct fdisk_wipe, wipes);
-		DBG(WIPE, ul_debugobj(wp, "free [start=%ju, size=%ju]",
+		DBG_OBJ(WIPE, wp, ul_debug("free [start=%ju, size=%ju]",
 				(uintmax_t) wp->start, (uintmax_t) wp->size));
 		list_del(&wp->wipes);
 		free(wp);
@@ -69,7 +69,7 @@ int fdisk_set_wipe_area(struct fdisk_context *cxt,
 	/* disable */
 	if (!enable) {
 		if (wp) {
-			DBG(WIPE, ul_debugobj(wp, "disable [start=%ju, size=%ju]",
+			DBG_OBJ(WIPE, wp, ul_debug("disable [start=%ju, size=%ju]",
 						(uintmax_t) start, (uintmax_t) size));
 			list_del(&wp->wipes);
 			free(wp);
@@ -87,7 +87,7 @@ int fdisk_set_wipe_area(struct fdisk_context *cxt,
 	if (!wp)
 		return -ENOMEM;
 
-	DBG(WIPE, ul_debugobj(wp, "enable [start=%ju, size=%ju]",
+	DBG_OBJ(WIPE, wp, ul_debug("enable [start=%ju, size=%ju]",
 				(uintmax_t) start, (uintmax_t) size));
 
 	INIT_LIST_HEAD(&wp->wipes);
@@ -125,17 +125,17 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
 		blkid_loff_t start = (blkid_loff_t) wp->start * cxt->sector_size,
 			     size = (blkid_loff_t) wp->size * cxt->sector_size;
 
-		DBG(WIPE, ul_debugobj(wp, "initialize libblkid prober [start=%ju, size=%ju]",
+		DBG_OBJ(WIPE, wp, ul_debug("initialize libblkid prober [start=%ju, size=%ju]",
                                             (uintmax_t) start, (uintmax_t) size));
 
 		rc = blkid_probe_set_device(pr, cxt->dev_fd, start, size);
 		if (rc) {
-			DBG(WIPE, ul_debugobj(wp, "blkid_probe_set_device() failed [rc=%d]", rc));
+			DBG_OBJ(WIPE, wp, ul_debug("blkid_probe_set_device() failed [rc=%d]", rc));
 			return rc;
 		}
 		blkid_probe_set_sectorsize(pr, cxt->sector_size);
 
-		DBG(WIPE, ul_debugobj(wp, " wiping..."));
+		DBG_OBJ(WIPE, wp, ul_debug(" wiping..."));
 		blkid_wipe_all(pr);
 	}
 
@@ -164,7 +164,7 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
-	DBG(WIPE, ul_debugobj(cxt, "wipe check: initialize libblkid prober"));
+	DBG_OBJ(WIPE, cxt, ul_debug("wipe check: initialize libblkid prober"));
 
 	pr = blkid_new_probe();
 	if (!pr)

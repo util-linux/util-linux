@@ -676,7 +676,7 @@ struct lscpu_virt *lscpu_read_virtualization(struct lscpu_cxt *cxt)
 		}
 	}
 done:
-	DBG(VIRT, ul_debugobj(virt, "virt: cpu='%s' hypervisor='%s' vendor=%d type=%d",
+	DBG_OBJ(VIRT, virt, ul_debug("virt: cpu='%s' hypervisor='%s' vendor=%d type=%d",
 				virt->cpuflag,
 				virt->hypervisor,
 				virt->vendor,

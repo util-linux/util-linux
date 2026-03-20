@@ -28,7 +28,7 @@ struct fdisk_table *fdisk_new_table(void)
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debugobj(tb, "alloc"));
+	DBG_OBJ(TAB, tb, ul_debug("alloc"));
 	tb->refcount = 1;
 	INIT_LIST_HEAD(&tb->parts);
 	return tb;
@@ -49,7 +49,7 @@ int fdisk_reset_table(struct fdisk_table *tb)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "reset"));
+	DBG_OBJ(TAB, tb, ul_debug("reset"));
 
 	while (!list_empty(&tb->parts)) {
 		struct fdisk_partition *pa = list_entry(tb->parts.next,
@@ -89,7 +89,7 @@ void fdisk_unref_table(struct fdisk_table *tb)
 	if (tb->refcount <= 0) {
 		fdisk_reset_table(tb);
 
-		DBG(TAB, ul_debugobj(tb, "free"));
+		DBG_OBJ(TAB, tb, ul_debug("free"));
 		free(tb);
 	}
 }
@@ -232,7 +232,7 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	list_add_tail(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, ul_debugobj(tb, "add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+	DBG_OBJ(TAB, tb, ul_debug("add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
 			pa,
 			(uintmax_t) fdisk_partition_get_start(pa),
 			fdisk_partition_has_end(pa) ? (uintmax_t) fdisk_partition_get_end(pa) : 0,
@@ -259,7 +259,7 @@ static int table_insert_partition(
 		list_add(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, ul_debugobj(tb, "insert entry %p pre=%p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+	DBG_OBJ(TAB, tb, ul_debug("insert entry %p pre=%p [start=%ju, end=%ju, size=%ju, %s %s %s]",
 			pa, poz ? poz : NULL,
 			(uintmax_t) fdisk_partition_get_start(pa),
 			(uintmax_t) fdisk_partition_get_end(pa),
@@ -287,7 +287,7 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
 	if (!tb || !pa)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "remove entry %p", pa));
+	DBG_OBJ(TAB, tb, ul_debug("remove entry %p", pa));
 	list_del(&pa->parts);
 	INIT_LIST_HEAD(&pa->parts);
 
@@ -316,7 +316,7 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, " -- get table --"));
+	DBG_OBJ(CXT, cxt, ul_debug(" -- get table --"));
 
 	if (!*tb && !(*tb = fdisk_new_table()))
 		return -ENOMEM;
@@ -340,8 +340,9 @@ void fdisk_debug_print_table(struct fdisk_table *tb)
 	struct fdisk_partition *pa;
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
-	while (fdisk_table_next_partition(tb, &itr, &pa) == 0)
-		ul_debugobj(tb, "partition %p [partno=%zu, start=%ju, end=%ju, size=%ju%s%s%s] ",
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		ul_debugobj(tb, UL_DEBUG_MASK(libfdisk));
+		ul_debug("partition %p [partno=%zu, start=%ju, end=%ju, size=%ju%s%s%s] ",
 			    pa, pa->partno,
 			    (uintmax_t) fdisk_partition_get_start(pa),
 			    (uintmax_t) fdisk_partition_get_end(pa),
@@ -349,6 +350,7 @@ void fdisk_debug_print_table(struct fdisk_table *tb)
 			    fdisk_partition_is_nested(pa) ? " nested" : "",
 			    fdisk_partition_is_freespace(pa) ? " freespace" : "",
 			    fdisk_partition_is_container(pa) ? " container" : "");
+	}
 
 }
 
@@ -383,14 +385,14 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 		return -EINVAL;
 
 	/*
-	DBG(TAB, ul_debugobj(tb, "Before sort:"));
+	DBG_OBJ(TAB, tb, ul_debug("Before sort:"));
 	ON_DBG(TAB, fdisk_debug_print_table(tb));
 	*/
 
 	list_sort(&tb->parts, cmp_parts_wrapper, (void *) cmp);
 
 	/*
-	DBG(TAB, ul_debugobj(tb, "After sort:"));
+	DBG_OBJ(TAB, tb, ul_debug("After sort:"));
 	ON_DBG(TAB, fdisk_debug_print_table(tb));
 	*/
 
@@ -462,7 +464,7 @@ static int table_add_freespace(
 	assert(fdisk_partition_has_start(pa));
 	assert(fdisk_partition_has_end(pa));
 
-	DBG(TAB, ul_debugobj(tb, "adding freespace"));
+	DBG_OBJ(TAB, tb, ul_debug("adding freespace"));
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	if (parent && fdisk_partition_has_partno(parent)) {
@@ -475,7 +477,7 @@ static int table_add_freespace(
 			}
 		}
 		if (!real_parent) {
-			DBG(TAB, ul_debugobj(tb, "not found freespace parent (partno=%zu)",
+			DBG_OBJ(TAB, tb, ul_debug("not found freespace parent (partno=%zu)",
 					parent->partno));
 			fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 		}
@@ -501,7 +503,7 @@ static int table_add_freespace(
 
 	fdisk_unref_partition(pa);
 
-	DBG(TAB, ul_debugobj(tb, "adding freespace DONE [rc=%d]", rc));
+	DBG_OBJ(TAB, tb, ul_debug("adding freespace DONE [rc=%d]", rc));
 	return rc;
 }
 
@@ -523,25 +525,25 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	assert(cont);
 	assert(fdisk_partition_has_start(cont));
 
-	DBG(TAB, ul_debugobj(tb, "analyze container 0x%p", cont));
+	DBG_OBJ(TAB, tb, ul_debug("analyze container 0x%p", cont));
 
 	last = fdisk_partition_get_start(cont);
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
-	DBG(CXT, ul_debugobj(cxt, "initialized:  last=%ju, grain=%ju",
+	DBG_OBJ(CXT, cxt, ul_debug("initialized:  last=%ju, grain=%ju",
 	                     (uintmax_t)last,  (uintmax_t)grain));
 
 	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
 
-		DBG(CXT, ul_debugobj(cxt, "partno=%zu, start=%ju",
+		DBG_OBJ(CXT, cxt, ul_debug("partno=%zu, start=%ju",
 		                     pa->partno, (uintmax_t)pa->start));
 
 		if (!pa->used || !fdisk_partition_is_nested(pa)
 			      || !fdisk_partition_has_start(pa))
 			continue;
 
-		DBG(CXT, ul_debugobj(cxt, "freespace container analyze: partno=%zu, start=%ju, end=%ju",
+		DBG_OBJ(CXT, cxt, ul_debug("freespace container analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno,
 					(uintmax_t) fdisk_partition_get_start(pa),
 					(uintmax_t) fdisk_partition_get_end(pa)));
@@ -558,12 +560,12 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	x = fdisk_partition_get_start(cont) + fdisk_partition_get_size(cont) - 1;
 	lastplusoff = last + cxt->first_lba;
 	if (lastplusoff < x && x - lastplusoff > grain) {
-		DBG(TAB, ul_debugobj(tb, "add remaining space in container 0x%p", cont));
+		DBG_OBJ(TAB, tb, ul_debug("add remaining space in container 0x%p", cont));
 		rc = table_add_freespace(cxt, tb, lastplusoff, x, cont);
 	}
 
 done:
-	DBG(TAB, ul_debugobj(tb, "analyze container 0x%p DONE [rc=%d]", cont, rc));
+	DBG_OBJ(TAB, tb, ul_debug("analyze container 0x%p DONE [rc=%d]", cont, rc));
 	return rc;
 }
 
@@ -590,7 +592,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
 
-	DBG(CXT, ul_debugobj(cxt, "-- get freespace --"));
+	DBG_OBJ(CXT, cxt, ul_debug("-- get freespace --"));
 
 	if (!cxt || !cxt->label || !tb)
 		return -EINVAL;
@@ -606,19 +608,19 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	last = cxt->first_lba;
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 
-	DBG(CXT, ul_debugobj(cxt, "initialized:  last=%ju, grain=%ju",
+	DBG_OBJ(CXT, cxt, ul_debug("initialized:  last=%ju, grain=%ju",
 	                     (uintmax_t)last,  (uintmax_t)grain));
 
 	/* analyze gaps between partitions */
 	while (rc == 0 && fdisk_table_next_partition(parts, &itr, &pa) == 0) {
 
-		DBG(CXT, ul_debugobj(cxt, "partno=%zu, start=%ju",
+		DBG_OBJ(CXT, cxt, ul_debug("partno=%zu, start=%ju",
 		                     pa->partno, (uintmax_t)pa->start));
 
 		if (!pa->used || pa->wholedisk || fdisk_partition_is_nested(pa)
 			      || !fdisk_partition_has_start(pa))
 			continue;
-		DBG(CXT, ul_debugobj(cxt, "freespace analyze: partno=%zu, start=%ju, end=%ju",
+		DBG_OBJ(CXT, cxt, ul_debug("freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno,
 					(uintmax_t) fdisk_partition_get_start(pa),
 					(uintmax_t) fdisk_partition_get_end(pa)));
@@ -649,7 +651,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	/* add free-space behind last partition to the end of the table (so
 	 * don't use table_add_freespace()) */
 	if (rc == 0 && last + grain < cxt->last_lba - 1) {
-		DBG(CXT, ul_debugobj(cxt, "freespace behind last partition detected"));
+		DBG_OBJ(CXT, cxt, ul_debug("freespace behind last partition detected"));
 		rc = new_freespace(cxt,
 			last + (last > cxt->first_lba || nparts ? 1 : 0),
 			cxt->last_lba, NULL, &pa);
@@ -662,7 +664,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 done:
 	fdisk_unref_table(parts);
 
-	DBG(CXT, ul_debugobj(cxt, "get freespace DONE [rc=%d]", rc));
+	DBG_OBJ(CXT, cxt, ul_debug("get freespace DONE [rc=%d]", rc));
 	return rc;
 }
 
@@ -678,7 +680,7 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 	struct fdisk_iter itr;
 	fdisk_sector_t last = 0;
 
-	DBG(TAB, ul_debugobj(tb, "wrong older check"));
+	DBG_OBJ(TAB, tb, ul_debug("wrong older check"));
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
@@ -712,7 +714,7 @@ int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb)
 	assert(cxt);
 	assert(tb);
 
-	DBG(TAB, ul_debugobj(tb, "applying to context %p", cxt));
+	DBG_OBJ(TAB, tb, ul_debug("applying to context %p", cxt));
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
@@ -737,10 +739,10 @@ int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 	assert(res);
 	assert(change);
 
-	DBG(TAB, ul_debugobj(a, "table diff [new table=%p]", b));
+	DBG_OBJ(TAB, a, ul_debug("table diff [new table=%p]", b));
 
 	if (a && (itr->head == NULL || itr->head == &a->parts)) {
-		DBG(TAB, ul_debugobj(a, " scanning old table"));
+		DBG_OBJ(TAB, a, ul_debug(" scanning old table"));
 		do {
 			rc = fdisk_table_next_partition(a, itr, &pa);
 			if (rc != 0)
@@ -749,9 +751,9 @@ int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 	}
 
 	if (rc == 1 && b) {
-		DBG(TAB, ul_debugobj(a, " scanning new table"));
+		DBG_OBJ(TAB, a, ul_debug(" scanning new table"));
 		if (itr->head != &b->parts) {
-			DBG(TAB, ul_debugobj(a, "  initialize to TAB=%p", b));
+			DBG_OBJ(TAB, a, ul_debug("  initialize to TAB=%p", b));
 			fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
 		}
 
@@ -760,7 +762,7 @@ int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 				continue;
 			if (a == NULL ||
 			    fdisk_table_get_partition_by_partno(a, pb->partno) == NULL) {
-				DBG(TAB, ul_debugobj(a, " #%zu ADDED", pb->partno));
+				DBG_OBJ(TAB, a, ul_debug(" #%zu ADDED", pb->partno));
 				*change = FDISK_DIFF_ADDED;
 				*res = pb;
 				return 0;
@@ -769,26 +771,26 @@ int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 	}
 
 	if (rc) {
-		DBG(TAB, ul_debugobj(a, "table diff done [rc=%d]", rc));
+		DBG_OBJ(TAB, a, ul_debug("table diff done [rc=%d]", rc));
 		return rc;	/* error or done */
 	}
 
 	pb = fdisk_table_get_partition_by_partno(b, pa->partno);
 
 	if (!pb) {
-		DBG(TAB, ul_debugobj(a, " #%zu REMOVED", pa->partno));
+		DBG_OBJ(TAB, a, ul_debug(" #%zu REMOVED", pa->partno));
 		*change = FDISK_DIFF_REMOVED;
 		*res = pa;
 	} else if (pb->start != pa->start) {
-		DBG(TAB, ul_debugobj(a, " #%zu MOVED", pb->partno));
+		DBG_OBJ(TAB, a, ul_debug(" #%zu MOVED", pb->partno));
 		*change = FDISK_DIFF_MOVED;
 		*res = pb;
 	} else if (pb->size != pa->size) {
-		DBG(TAB, ul_debugobj(a, " #%zu RESIZED", pb->partno));
+		DBG_OBJ(TAB, a, ul_debug(" #%zu RESIZED", pb->partno));
 		*change = FDISK_DIFF_RESIZED;
 		*res = pb;
 	} else {
-		DBG(TAB, ul_debugobj(a, " #%zu UNCHANGED", pb->partno));
+		DBG_OBJ(TAB, a, ul_debug(" #%zu UNCHANGED", pb->partno));
 		*change = FDISK_DIFF_UNCHANGED;
 		*res = pa;
 	}

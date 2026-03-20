@@ -19,7 +19,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data = NULL;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
@@ -111,7 +111,7 @@ static int hook_prepare_target(
 		if (!mnt_context_is_restricted(cxt)) {
 			rc = ul_mkdir_p(tgt, mode);
 			if (rc)
-				DBG(HOOK, ul_debugobj(hs, "mkdir %s failed: %m", tgt));
+				DBG_OBJ(HOOK, hs, ul_debug("mkdir %s failed: %m", tgt));
 		} else
 			rc = -EPERM;
 

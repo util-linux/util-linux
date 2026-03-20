@@ -310,7 +310,7 @@ static int hook_mount_post(
 	assert(target);
 	assert(hd->userns_fd >= 0);
 
-	DBG(HOOK, ul_debugobj(hs, " attaching namespace to %s", target));
+	DBG_OBJ(HOOK, hs, ul_debug(" attaching namespace to %s", target));
 
 	/*
 	 * Once a mount has been attached to the filesystem it can't be
@@ -323,7 +323,7 @@ static int hook_mount_post(
 		if (api && api->fd_tree >= 0) {
 			fd_tree = api->fd_tree;
 			is_private = 0;
-			DBG(HOOK, ul_debugobj(hs, " reuse tree FD"));
+			DBG_OBJ(HOOK, hs, ul_debug(" reuse tree FD"));
 		}
 	}
 #endif
@@ -332,7 +332,7 @@ static int hook_mount_post(
 			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
 			    (recursive ? AT_RECURSIVE : 0));
 	if (fd_tree < 0) {
-		DBG(HOOK, ul_debugobj(hs, " failed to open tree"));
+		DBG_OBJ(HOOK, hs, ul_debug(" failed to open tree"));
 		mnt_context_syscall_save_status(cxt, "open_tree", 0);
 		return -MNT_ERR_IDMAP;
 	}
@@ -480,7 +480,7 @@ static int hook_prepare_options(
 
 done:
 	/* define post-mount hook to enter the namespace */
-	DBG(HOOK, ul_debugobj(hs, " wanted new user namespace"));
+	DBG_OBJ(HOOK, hs, ul_debug(" wanted new user namespace"));
 	cxt->force_clone = 1; /* require OPEN_TREE_CLONE */
 	rc = mnt_context_append_hook(cxt, hs,
 				MNT_STAGE_MOUNT_POST,
@@ -492,7 +492,7 @@ done:
 	return 0;
 
 err:
-	DBG(HOOK, ul_debugobj(hs, " failed to set up idmap"));
+	DBG_OBJ(HOOK, hs, ul_debug(" failed to set up idmap"));
 	free_hook_data(hd);
 	free(buf);
 	return -MNT_ERR_MOUNTOPT;
@@ -504,7 +504,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {

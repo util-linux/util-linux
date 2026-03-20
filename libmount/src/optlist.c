@@ -86,7 +86,7 @@ struct libmnt_optlist *mnt_new_optlist(void)
 
 	ls->linux_map = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 
-	DBG(OPTLIST, ul_debugobj(ls, "alloc"));
+	DBG_OBJ(OPTLIST, ls, ul_debug("alloc"));
 	return ls;
 }
 
@@ -143,7 +143,7 @@ int mnt_optlist_register_map(struct libmnt_optlist *ls, const struct libmnt_optm
 	if (ls->nmaps + 1 >= MNT_OL_MAXMAPS)
 		return -ERANGE;
 
-	DBG(OPTLIST, ul_debugobj(ls, "register map %p", map));
+	DBG_OBJ(OPTLIST, ls, ul_debug("register map %p", map));
 	ls->maps[ls->nmaps++] = map;
 	return 0;
 }
@@ -183,7 +183,7 @@ int mnt_optlist_remove_opt(struct libmnt_optlist *ls, struct libmnt_opt *opt)
 	if (!opt)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, " remove %s", opt->name));
+	DBG_OBJ(OPTLIST, ls, ul_debug(" remove %s", opt->name));
 
 	if (opt->map && opt->ent && opt->map == ls->linux_map) {
 		if (opt->ent->id & MS_PROPAGATION)
@@ -315,7 +315,7 @@ int mnt_optlist_merge_opts(struct libmnt_optlist *ls)
 	if (!ls)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "merging"));
+	DBG_OBJ(OPTLIST, ls, ul_debug("merging"));
 	ls->merged = 1;
 
 	/* deduplicate, keep last instance of the option only */
@@ -484,10 +484,10 @@ static struct libmnt_opt *optlist_new_opt(struct libmnt_optlist *ls,
 		opt->recursive = 1;
 #endif
 	if (ent && map) {
-		DBG(OPTLIST, ul_debugobj(ls, " added %s [id=0x%08x map=%p]",
+		DBG_OBJ(OPTLIST, ls, ul_debug(" added %s [id=0x%08x map=%p]",
 				opt->name, ent->id, map));
 	} else {
-		DBG(OPTLIST, ul_debugobj(ls, " added %s", opt->name));
+		DBG_OBJ(OPTLIST, ls, ul_debug(" added %s", opt->name));
 	}
 	return opt;
 fail:
@@ -550,7 +550,7 @@ int mnt_optlist_set_optstr(struct libmnt_optlist *ls, const char *optstr,
 	if (!ls)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "set %s", optstr));
+	DBG_OBJ(OPTLIST, ls, ul_debug("set %s", optstr));
 
 	/* remove all already set options */
 	list_for_each_safe(p, next, &ls->opts) {
@@ -573,7 +573,7 @@ int mnt_optlist_append_optstr(struct libmnt_optlist *ls, const char *optstr,
 	if (!ls)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "append %s", optstr));
+	DBG_OBJ(OPTLIST, ls, ul_debug("append %s", optstr));
 	return optlist_add_optstr(ls, optstr, map, NULL);
 }
 
@@ -583,7 +583,7 @@ int mnt_optlist_prepend_optstr(struct libmnt_optlist *ls, const char *optstr,
 	if (!ls)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "prepend %s", optstr));
+	DBG_OBJ(OPTLIST, ls, ul_debug("prepend %s", optstr));
 	return optlist_add_optstr(ls, optstr, map, &ls->opts);
 }
 
@@ -644,7 +644,7 @@ int mnt_optlist_append_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "append 0x%08lx", flags));
+	DBG_OBJ(OPTLIST, ls, ul_debug("append 0x%08lx", flags));
 	return optlist_add_flags(ls, flags, map, NULL);
 }
 
@@ -657,7 +657,7 @@ int mnt_optlist_set_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "set 0x%08lx", flags));
+	DBG_OBJ(OPTLIST, ls, ul_debug("set 0x%08lx", flags));
 
 	/* remove all already set options */
 	list_for_each_safe(p, next, &ls->opts) {
@@ -682,7 +682,7 @@ int mnt_optlist_remove_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!ls || !map)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "remove 0x%08lx", flags));
+	DBG_OBJ(OPTLIST, ls, ul_debug("remove 0x%08lx", flags));
 
 	list_for_each_safe(p, next, &ls->opts) {
 		struct libmnt_opt *opt = list_entry(p, struct libmnt_opt, opts);
@@ -711,7 +711,7 @@ int mnt_optlist_insert_flags(struct libmnt_optlist *ls, unsigned long flags,
 	if (!opt)
 		return -EINVAL;
 
-	DBG(OPTLIST, ul_debugobj(ls, "insert 0x%08lx (after %s)",
+	DBG_OBJ(OPTLIST, ls, ul_debug("insert 0x%08lx (after %s)",
 				flags, opt->ent ? opt->ent->name : "???"));
 
 	return optlist_add_flags(ls, flags, map, &opt->opts);
@@ -815,7 +815,7 @@ int mnt_optlist_get_flags(struct libmnt_optlist *ls, unsigned long *flags,
 
 	*flags = cache->flags;
 
-	DBG(OPTLIST, ul_debugobj(ls, "return flags 0x%08lx [map=%p]", *flags, map));
+	DBG_OBJ(OPTLIST, ls, ul_debug("return flags 0x%08lx [map=%p]", *flags, map));
 	return 0;
 }
 
@@ -883,7 +883,7 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 			remount_reset &= ~x;
 
 		if (opt->ent->mask & MNT_INVERT) {
-			DBG(OPTLIST, ul_debugobj(ls, " clr: %s 0x%08" PRIx64,
+			DBG_OBJ(OPTLIST, ls, ul_debug(" clr: %s 0x%08" PRIx64,
 						opt->ent->name, x));
 
 			if (x == MOUNT_ATTR_RELATIME || x == MOUNT_ATTR_NOATIME ||
@@ -898,12 +898,12 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 				 * the last option wins and MOUNT_ATTR__ATIME
 				 * is required in clr mask.
 				 */
-				DBG(OPTLIST, ul_debugobj(ls, " atime: %s 0x%08" PRIx64,
+				DBG_OBJ(OPTLIST, ls, ul_debug(" atime: %s 0x%08" PRIx64,
 							opt->ent->name, x));
 				*clr |= MOUNT_ATTR__ATIME;
 				atime_set = x;
 			} else {
-				DBG(OPTLIST, ul_debugobj(ls, " set: %s 0x%08" PRIx64,
+				DBG_OBJ(OPTLIST, ls, ul_debug(" set: %s 0x%08" PRIx64,
 							opt->ent->name, x));
 				*set |= x;
 			}
@@ -911,13 +911,13 @@ int mnt_optlist_get_attrs(struct libmnt_optlist *ls, uint64_t *set, uint64_t *cl
 	}
 
 	if (atime_set) {
-		DBG(OPTLIST, ul_debugobj(ls, " set atime 0x%08" PRIx64, atime_set));
+		DBG_OBJ(OPTLIST, ls, ul_debug(" set atime 0x%08" PRIx64, atime_set));
 		*set |= atime_set;
 	}
 	if (remount_reset)
 		*clr |= remount_reset;
 
-	DBG(OPTLIST, ul_debugobj(ls, "return attrs set=0x%08" PRIx64
+	DBG_OBJ(OPTLIST, ls, ul_debug("return attrs set=0x%08" PRIx64
 				      ", clr=0x%08" PRIx64 " %s",
 				*set, *clr,
 				rec == MNT_OL_REC ? "[rec]" :
@@ -1107,7 +1107,7 @@ int mnt_optlist_is_propagation_only(struct libmnt_optlist *ls)
 		return 0;
 
 	rest = flags & ~MS_PROPAGATION;
-	DBG(OPTLIST, ul_debugobj(ls, " propagation-only: %s",
+	DBG_OBJ(OPTLIST, ls, ul_debug(" propagation-only: %s",
 		(rest == 0 || (rest & (MS_SILENT | MS_REC)) ? "y" : "n")));
 
 	return (rest == 0 || (rest & (MS_SILENT | MS_REC)));

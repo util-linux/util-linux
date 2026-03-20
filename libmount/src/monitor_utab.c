@@ -145,7 +145,7 @@ static int userspace_monitor_get_fd(struct libmnt_monitor *mn,
 		return me->fd;		/* already initialized */
 
 	assert(me->path);
-	DBG(MONITOR, ul_debugobj(mn, " open userspace monitor for %s", me->path));
+	DBG_OBJ(MONITOR, mn, ul_debug(" open userspace monitor for %s", me->path));
 
 	me->fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
 	if (me->fd < 0)
@@ -160,7 +160,7 @@ err:
 	if (me->fd >= 0)
 		close(me->fd);
 	me->fd = -1;
-	DBG(MONITOR, ul_debugobj(mn, "failed to create userspace monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to create userspace monitor [rc=%d]", rc));
 	return rc;
 }
 
@@ -178,7 +178,7 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 	if (!me || me->fd < 0)
 		return -EINVAL;
 
-	DBG(MONITOR, ul_debugobj(mn, "process utab event"));
+	DBG_OBJ(MONITOR, mn, ul_debug("process utab event"));
 
 	/* the me->fd is non-blocking */
 	do {
@@ -196,27 +196,27 @@ static int userspace_process_event(struct libmnt_monitor *mn,
 			int fd = -1;
 
 			e = (const struct inotify_event *) p;
-			DBG(MONITOR, ul_debugobj(mn, " inotify event 0x%x [%s]\n", e->mask, e->len ? e->name : ""));
+			DBG_OBJ(MONITOR, mn, ul_debug(" inotify event 0x%x [%s]\n", e->mask, e->len ? e->name : ""));
 
 			if (e->mask & IN_CLOSE_WRITE)
 				status = 0;
 			else {
 				if (e->mask & IN_DELETE_SELF) {
-					DBG(MONITOR, ul_debugobj(mn, " resetting watch"));
+					DBG_OBJ(MONITOR, mn, ul_debug(" resetting watch"));
 					userspace_free_data(me);
 				}
 
 				/* add watch for the event file */
 				if (userspace_add_watch(me, &status, &fd) == 0
 				    && fd >= 0 && fd != e->wd) {
-					DBG(MONITOR, ul_debugobj(mn, " removing watch [fd=%d]", e->wd));
+					DBG_OBJ(MONITOR, mn, ul_debug(" removing watch [fd=%d]", e->wd));
 					inotify_rm_watch(me->fd, e->wd);
 				}
 			}
 		}
 	} while (1);
 
-	DBG(MONITOR, ul_debugobj(mn, "%s", status < 0  ? " failed" :
+	DBG_OBJ(MONITOR, mn, ul_debug("%s", status < 0  ? " failed" :
 					   status == 0 ? " success" : " nothing"));
 	return status;
 }
@@ -270,12 +270,12 @@ int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const ch
 	if (!enable)
 		return 0;
 
-	DBG(MONITOR, ul_debugobj(mn, "allocate new userspace monitor"));
+	DBG_OBJ(MONITOR, mn, ul_debug("allocate new userspace monitor"));
 
 	if (!filename)
 		filename = mnt_get_utab_path();		/* /run/mount/utab */
 	if (!filename) {
-		DBG(MONITOR, ul_debugobj(mn, "failed to get userspace mount table path"));
+		DBG_OBJ(MONITOR, mn, ul_debug("failed to get userspace mount table path"));
 		return -EINVAL;
 	}
 
@@ -294,6 +294,6 @@ int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const ch
 err:
 	rc = -errno;
 	free_monitor_entry(me);
-	DBG(MONITOR, ul_debugobj(mn, "failed to allocate userspace monitor [rc=%d]", rc));
+	DBG_OBJ(MONITOR, mn, ul_debug("failed to allocate userspace monitor [rc=%d]", rc));
 	return rc;
 }

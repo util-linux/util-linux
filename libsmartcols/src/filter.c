@@ -42,7 +42,7 @@ struct libscols_filter *scols_new_filter(const char *str)
 	if (!fltr)
 		return NULL;
 
-	DBG(FLTR, ul_debugobj(fltr, "alloc"));
+	DBG_OBJ(FLTR, fltr, ul_debug("alloc"));
 	fltr->refcount = 1;
 	INIT_LIST_HEAD(&fltr->params);
 	INIT_LIST_HEAD(&fltr->counters);
@@ -89,7 +89,7 @@ static void remove_counters(struct libscols_filter *fltr)
 	if (!fltr)
 		return;
 
-	DBG(FLTR, ul_debugobj(fltr, "remove all counters"));
+	DBG_OBJ(FLTR, fltr, ul_debug("remove all counters"));
 	while (!list_empty(&fltr->counters)) {
 		struct libscols_counter *ct = list_entry(fltr->counters.next,
 				struct libscols_counter, counters);
@@ -113,7 +113,7 @@ static void remove_counters(struct libscols_filter *fltr)
 void scols_unref_filter(struct libscols_filter *fltr)
 {
 	if (fltr && --fltr->refcount <= 0) {
-		DBG(FLTR, ul_debugobj(fltr, "dealloc"));
+		DBG_OBJ(FLTR, fltr, ul_debug("dealloc"));
 		reset_filter(fltr);
 		remove_counters(fltr);
 		free(fltr);
@@ -309,7 +309,7 @@ int scols_line_apply_filter(struct libscols_line *ln,
 
 	if (status)
 		*status = res;
-	DBG(FLTR, ul_debugobj(fltr, "filter done [rc=%d, status=%d]", rc, res));
+	DBG_OBJ(FLTR, fltr, ul_debug("filter done [rc=%d, status=%d]", rc, res));
 	return rc;
 }
 
@@ -382,7 +382,7 @@ struct libscols_counter *scols_filter_new_counter(struct libscols_filter *fltr)
 	if (!ct)
 		return NULL;
 
-	DBG(FLTR, ul_debugobj(fltr, "alloc counter"));
+	DBG_OBJ(FLTR, fltr, ul_debug("alloc counter"));
 
 	ct->filter = fltr;		/* don't use ref.counting here */
 	INIT_LIST_HEAD(&ct->counters);

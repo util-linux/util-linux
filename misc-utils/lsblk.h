@@ -27,11 +27,9 @@
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lsblk);
-#define DBG(m, x)       __UL_DBG(lsblk, LSBLK_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(lsblk, LSBLK_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsblk)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(lsblk, LSBLK_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(lsblk, LSBLK_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(lsblk, LSBLK_DEBUG_, m, x)
 
 /* --properties-by items */
 enum lsblk_devprop_method {

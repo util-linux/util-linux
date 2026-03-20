@@ -58,14 +58,18 @@ struct ul_debug_maskname {
 #define __UL_DEBUG_FL_NOADDR	(1 << 24)	/* Don't print object address */
 
 
-/* l - library name, p - flag prefix, m - flag postfix, x - function */
-#define __UL_DBG(l, p, m, x) \
+/* l - library name, p - flag prefix, m - flag postfix, h - handle, x - function */
+#define __UL_DBG_OBJ(l, p, m, h, x) \
 	do { \
 		if ((p ## m) & l ## _debug_mask) { \
-			fprintf(stderr, "%d: %s: %8s: ", getpid(), # l, # m); \
+			ul_debug_prefix(# l, # m, h, l ## _debug_mask); \
 			x; \
 		} \
 	} while (0)
+
+/* l - library name, p - flag prefix, m - flag postfix, x - function */
+#define __UL_DBG(l, p, m, x) \
+	__UL_DBG_OBJ(l, p, m, NULL, x)
 
 #define __UL_DBG_CALL(l, p, m, x) \
 	do { \
@@ -108,6 +112,9 @@ struct ul_debug_maskname {
 
 extern void ul_debug(const char *mesg, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
+extern void ul_debugobj(const void *handler, int mask);
+extern void ul_debug_prefix(const char *lib, const char *flag,
+			    const void *handler, int mask);
 extern int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
 			       const char *mask);
 extern void ul_debug_print_masks(const char *env,

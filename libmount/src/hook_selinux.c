@@ -24,7 +24,7 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 {
 	void *data = NULL;
 
-	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
+	DBG_OBJ(HOOK, hs, ul_debug("deinit '%s'", hs->name));
 
 	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
@@ -83,9 +83,9 @@ static int hook_selinux_target(
 	rc = getfilecon_raw(tgt, &raw);
 	if (rc <= 0 || !raw) {
 		rc = errno ? -errno : -EINVAL;
-		DBG(HOOK, ul_debugobj(hs, " SELinux fix @target failed [rc=%d]", rc));
+		DBG_OBJ(HOOK, hs, ul_debug(" SELinux fix @target failed [rc=%d]", rc));
 	} else {
-		DBG(HOOK, ul_debugobj(hs, " SELinux fix @target to %s", raw));
+		DBG_OBJ(HOOK, hs, ul_debug(" SELinux fix @target to %s", raw));
 		rc = 0;	/* getfilecon_raw(3) returns the size of the extended attribute value */
 	}
 	if (!rc)
@@ -128,7 +128,7 @@ static int hook_prepare_options(
 		/* For normal mount, contexts are translated */
 		se_fix = 1;
 
-	DBG(HOOK, ul_debugobj(hs, " SELinux fix options"));
+	DBG_OBJ(HOOK, hs, ul_debug(" SELinux fix options"));
 
 	/* Fix SELinux contexts */
 	if (se_rem || se_fix) {
@@ -172,7 +172,7 @@ static int hook_prepare_options(
 						rc = -EINVAL;
 				}
 				if (!rc) {
-					DBG(HOOK, ul_debugobj(hs, "  %s: %s to %s",
+					DBG_OBJ(HOOK, hs, ul_debug("  %s: %s to %s",
 								opt_name, val, raw));
 					rc = mnt_opt_set_quoted_value(opt, raw);
 				}

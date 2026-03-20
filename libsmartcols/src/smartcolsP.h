@@ -39,12 +39,10 @@
 #define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);
-#define DBG(m, x)	__UL_DBG(libsmartcols, SCOLS_DEBUG_, m, x)
-#define ON_DBG(m, x)	__UL_DBG_CALL(libsmartcols, SCOLS_DEBUG_, m, x)
-#define DBG_FLUSH	__UL_DBG_FLUSH(libsmartcols, SCOLS_DEBUG_)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(libsmartcols)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(libsmartcols, SCOLS_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(libsmartcols, SCOLS_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(libsmartcols, SCOLS_DEBUG_, m, x)
+#define DBG_FLUSH		__UL_DBG_FLUSH(libsmartcols, SCOLS_DEBUG_)
 
 #define SCOLS_BUFPTR_TREEEND	0
 

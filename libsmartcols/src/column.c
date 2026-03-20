@@ -40,7 +40,7 @@ struct libscols_column *scols_new_column(void)
 	cl = calloc(1, sizeof(*cl));
 	if (!cl)
 		return NULL;
-	DBG(COL, ul_debugobj(cl, "alloc"));
+	DBG_OBJ(COL, cl, ul_debug("alloc"));
 	cl->refcount = 1;
 	INIT_LIST_HEAD(&cl->cl_columns);
 	return cl;
@@ -68,7 +68,7 @@ void scols_ref_column(struct libscols_column *cl)
 void scols_unref_column(struct libscols_column *cl)
 {
 	if (cl && --cl->refcount <= 0) {
-		DBG(COL, ul_debugobj(cl, "dealloc"));
+		DBG_OBJ(COL, cl, ul_debug("dealloc"));
 		list_del(&cl->cl_columns);
 		scols_reset_cell(&cl->header);
 		free(cl->color);
@@ -99,7 +99,7 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	if (!ret)
 		return NULL;
 
-	DBG(COL, ul_debugobj(cl, "copy"));
+	DBG_OBJ(COL, cl, ul_debug("copy"));
 
 	if (scols_column_set_color(ret, cl->color))
 		goto err;
@@ -173,7 +173,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 			cl->table->ntreecols--;
 	}
 
-	DBG(COL, ul_debugobj(cl, "setting flags from 0x%04x to 0x%04x", cl->flags, flags));
+	DBG_OBJ(COL, cl, ul_debug("setting flags from 0x%04x to 0x%04x", cl->flags, flags));
 	cl->flags = flags;
 	return 0;
 }
@@ -965,7 +965,7 @@ int scols_column_set_properties(struct libscols_column *cl, const char *opts)
 	unsigned int flags = 0;
 	int rc = 0;
 
-	DBG(COL, ul_debugobj(cl, "apply properties '%s'", opts));
+	DBG_OBJ(COL, cl, ul_debug("apply properties '%s'", opts));
 
 	while (rc == 0
 	       && !ul_optstr_next(&str, &name, &namesz, &value, &valuesz)) {

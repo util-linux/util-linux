@@ -54,7 +54,7 @@ struct fdisk_context *fdisk_new_context(void)
 	if (!cxt)
 		return NULL;
 
-	DBG(CXT, ul_debugobj(cxt, "alloc"));
+	DBG_OBJ(CXT, cxt, ul_debug("alloc"));
 	cxt->dev_fd = -1;
 	cxt->refcount = 1;
 
@@ -156,7 +156,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	if (!cxt)
 		return NULL;
 
-	DBG(CXT, ul_debugobj(parent, "alloc nested [%p] [name=%s]", cxt, name));
+	DBG_OBJ(CXT, parent, ul_debug("alloc nested [%p] [name=%s]", cxt, name));
 	cxt->refcount = 1;
 
 	fdisk_ref_context(parent);
@@ -176,14 +176,14 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	}
 
 	if (lb && parent->dev_fd >= 0) {
-		DBG(CXT, ul_debugobj(cxt, "probing for nested %s", lb->name));
+		DBG_OBJ(CXT, cxt, ul_debug("probing for nested %s", lb->name));
 
 		cxt->label = lb;
 
 		if (lb->op->probe(cxt) == 1)
 			__fdisk_switch_label(cxt, lb);
 		else {
-			DBG(CXT, ul_debugobj(cxt, "not found %s label", lb->name));
+			DBG_OBJ(CXT, cxt, ul_debug("not found %s label", lb->name));
 			if (lb->op->deinit)
 				lb->op->deinit(lb);
 			cxt->label = NULL;
@@ -236,7 +236,7 @@ struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
 		    && c_strcasecmp(cxt->labels[i]->name, name) == 0)
 			return cxt->labels[i];
 
-	DBG(CXT, ul_debugobj(cxt, "failed to found %s label driver", name));
+	DBG_OBJ(CXT, cxt, ul_debug("failed to found %s label driver", name));
 	return NULL;
 }
 
@@ -298,11 +298,11 @@ int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 	if (!lb || !cxt)
 		return -EINVAL;
 	if (lb->disabled) {
-		DBG(CXT, ul_debugobj(cxt, "*** attempt to switch to disabled label %s -- ignore!", lb->name));
+		DBG_OBJ(CXT, cxt, ul_debug("*** attempt to switch to disabled label %s -- ignore!", lb->name));
 		return -EINVAL;
 	}
 	cxt->label = lb;
-	DBG(CXT, ul_debugobj(cxt, "--> switching context to %s!", lb->name));
+	DBG_OBJ(CXT, cxt, ul_debug("--> switching context to %s!", lb->name));
 
 	return fdisk_apply_label_device_properties(cxt);
 }
@@ -543,7 +543,7 @@ static void reset_context(struct fdisk_context *cxt)
 {
 	size_t i;
 
-	DBG(CXT, ul_debugobj(cxt, "*** resetting context"));
+	DBG_OBJ(CXT, cxt, ul_debug("*** resetting context"));
 
 	/* reset drives' private data */
 	for (i = 0; i < cxt->nlabels; i++)
@@ -552,14 +552,14 @@ static void reset_context(struct fdisk_context *cxt)
 	if (cxt->parent) {
 		/* the first sector may be independent on parent */
 		if (cxt->parent->firstsector != cxt->firstsector) {
-			DBG(CXT, ul_debugobj(cxt, "  firstsector independent on parent (freeing)"));
+			DBG_OBJ(CXT, cxt, ul_debug("  firstsector independent on parent (freeing)"));
 			free(cxt->firstsector);
 		}
 	} else {
 		/* we close device only in primary context */
 		if (cxt->dev_fd > -1 && cxt->is_priv)
 			close(cxt->dev_fd);
-		DBG(CXT, ul_debugobj(cxt, "  freeing firstsector"));
+		DBG_OBJ(CXT, cxt, ul_debug("  freeing firstsector"));
 		free(cxt->firstsector);
 	}
 
@@ -652,13 +652,13 @@ static int fdisk_assign_fd(struct fdisk_context *cxt, int fd,
 	/* Don't report collision if there is already a valid partition table.
 	 * The bootbits are wiped when we create a *new* partition table only. */
 	if (fdisk_is_ptcollision(cxt) && fdisk_has_label(cxt)) {
-		DBG(CXT, ul_debugobj(cxt, "ignore old %s", cxt->collision));
+		DBG_OBJ(CXT, cxt, ul_debug("ignore old %s", cxt->collision));
 		cxt->pt_collision = 0;
 		free(cxt->collision);
 		cxt->collision = NULL;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s %s %s]",
+	DBG_OBJ(CXT, cxt, ul_debug("initialized for %s [%s %s %s]",
 			      fname,
 			      cxt->readonly ? "READ-ONLY" : "READ-WRITE",
 			      cxt->is_excl ? "EXCL" : "",
@@ -668,7 +668,7 @@ fail:
 	{
 		int rc = errno ? -errno : -EINVAL;
 		cxt->dev_fd = -1;
-		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
+		DBG_OBJ(CXT, cxt, ul_debug("failed to assign device [rc=%d]", rc));
 		return rc;
 	}
 }
@@ -704,7 +704,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 {
 	int fd, rc, flags = O_CLOEXEC;
 
-	DBG(CXT, ul_debugobj(cxt, "assigning device %s", fname));
+	DBG_OBJ(CXT, cxt, ul_debug("assigning device %s", fname));
 	assert(cxt);
 
 	if (readonly)
@@ -722,7 +722,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	if (fd < 0) {
 		rc = -errno;
-		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
+		DBG_OBJ(CXT, cxt, ul_debug("failed to assign device [rc=%d]", rc));
 		return rc;
 	}
 
@@ -751,7 +751,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 int fdisk_assign_device_by_fd(struct fdisk_context *cxt, int fd,
 			const char *fname, int readonly)
 {
-	DBG(CXT, ul_debugobj(cxt, "assign by fd"));
+	DBG_OBJ(CXT, cxt, ul_debug("assign by fd"));
 	return fdisk_assign_fd(cxt, fd, fname, readonly, 0, 0);
 }
 
@@ -779,7 +779,7 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 		return rc;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "de-assigning device %s", cxt->dev_path));
+	DBG_OBJ(CXT, cxt, ul_debug("de-assigning device %s", cxt->dev_path));
 
 	if (cxt->readonly && cxt->is_priv)
 		close(cxt->dev_fd);
@@ -828,7 +828,7 @@ int fdisk_reassign_device(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
-	DBG(CXT, ul_debugobj(cxt, "re-assigning device %s", cxt->dev_path));
+	DBG_OBJ(CXT, cxt, ul_debug("re-assigning device %s", cxt->dev_path));
 
 	devname = strdup(cxt->dev_path);
 	if (!devname)
@@ -870,7 +870,7 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 	if (!S_ISBLK(cxt->dev_st.st_mode))
 		return 0;
 
-	DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
+	DBG_OBJ(CXT, cxt, ul_debug("calling re-read ioctl"));
 	sync();
 #ifdef BLKRRPART
 	fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
@@ -934,7 +934,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 	size_t nparts, i, nadds = 0, nupds = 0, nrems = 0;
 	unsigned int ssf;
 
-	DBG(CXT, ul_debugobj(cxt, "rereading changes"));
+	DBG_OBJ(CXT, cxt, ul_debug("rereading changes"));
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
@@ -971,7 +971,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 
 	for (i = 0; i < nrems; i++) {
 		pa = rem[i];
-		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_DEL_PARTITION", pa->partno));
+		DBG_OBJ(PART, pa, ul_debug("#%zu calling BLKPG_DEL_PARTITION", pa->partno));
 		if (partx_del_partition(cxt->dev_fd, pa->partno + 1) != 0) {
 			fdisk_warn(cxt, _("Failed to remove partition %zu from system"), pa->partno + 1);
 			err++;
@@ -979,7 +979,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 	}
 	for (i = 0; i < nupds; i++) {
 		pa = upd[i];
-		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_RESIZE_PARTITION", pa->partno));
+		DBG_OBJ(PART, pa, ul_debug("#%zu calling BLKPG_RESIZE_PARTITION", pa->partno));
 		if (partx_resize_partition(cxt->dev_fd, pa->partno + 1,
 					   pa->start * ssf, pa->size * ssf) != 0) {
 			fdisk_warn(cxt, _("Failed to update system information about partition %zu"), pa->partno + 1);
@@ -992,7 +992,7 @@ int fdisk_reread_changes(struct fdisk_context *cxt, struct fdisk_table *org)
 		pa = add[i];
 		sz = pa->size * ssf;
 
-		DBG(PART, ul_debugobj(pa, "#%zu calling BLKPG_ADD_PARTITION", pa->partno));
+		DBG_OBJ(PART, pa, ul_debug("#%zu calling BLKPG_ADD_PARTITION", pa->partno));
 
 		if (fdisk_is_label(cxt, DOS) && fdisk_partition_is_container(pa))
 			/* Let's follow the Linux kernel and reduce
@@ -1043,7 +1043,7 @@ int fdisk_device_is_used(struct fdisk_context *cxt)
 	     cxt->is_excl ? 0 :
 	     cxt->is_priv ? 1 : 0;
 
-	DBG(CXT, ul_debugobj(cxt, "device used: %s [read-only=%d, excl=%d, priv:%d]",
+	DBG_OBJ(CXT, cxt, ul_debug("device used: %s [read-only=%d, excl=%d, priv:%d]",
 				rc ? "TRUE" : "FALSE", cxt->readonly,
 				cxt->is_excl, cxt->is_priv));
 	return rc;
@@ -1090,7 +1090,7 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 
 	cxt->refcount--;
 	if (cxt->refcount <= 0) {
-		DBG(CXT, ul_debugobj(cxt, "freeing context %p for %s", cxt, cxt->dev_path));
+		DBG_OBJ(CXT, cxt, ul_debug("freeing context %p for %s", cxt, cxt->dev_path));
 
 		reset_context(cxt);	/* this is sensitive to parent<->child relationship! */
 
@@ -1196,7 +1196,7 @@ int fdisk_set_unit(struct fdisk_context *cxt, const char *str)
 	else if (strcmp(str, "sector") == 0 || strcmp(str, "sectors") == 0)
 		cxt->display_in_cyl_units = 0;
 
-	DBG(CXT, ul_debugobj(cxt, "display unit: %s", fdisk_get_unit(cxt, 0)));
+	DBG_OBJ(CXT, cxt, ul_debug("display unit: %s", fdisk_get_unit(cxt, 0)));
 	return 0;
 }
 
@@ -1363,7 +1363,7 @@ fdisk_sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
 fdisk_sector_t fdisk_set_first_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	assert(cxt);
-	DBG(CXT, ul_debugobj(cxt, "setting first LBA from %ju to %ju",
+	DBG_OBJ(CXT, cxt, ul_debug("setting first LBA from %ju to %ju",
 			(uintmax_t) cxt->first_lba, (uintmax_t) lba));
 	cxt->first_lba = lba;
 	return 0;

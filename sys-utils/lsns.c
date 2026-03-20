@@ -68,17 +68,15 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define LSNS_NETNS_UNUSABLE -2
 
-#define DBG(m, x)       __UL_DBG(lsns, LSNS_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(lsns, LSNS_DEBUG_, m, x)
+#define DBG(m, x)		__UL_DBG(lsns, LSNS_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(lsns, LSNS_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(lsns, LSNS_DEBUG_, m, x)
 
 #define lsns_ioctl(fildes, request, ...) __extension__ ({ \
 	int ret = ioctl(fildes, request, ##__VA_ARGS__); \
 	if (ret == -1 && (errno == ENOTTY || errno == ENOSYS))	\
 		warnx("Unsupported ioctl %s", #request); \
 	ret; })
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lsns)
-#include "debugobj.h"
 
 #define EXIT_UNSUPPORTED_IOCTL 2
 
@@ -705,7 +703,7 @@ static int read_process(struct lsns *ls, struct path_cxt *pc)
 
 	INIT_LIST_HEAD(&p->processes);
 
-	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
+	DBG_OBJ(PROC, p, ul_debug("new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
 
 	read_opened_namespaces(ls, pc, p->pid);
@@ -791,7 +789,7 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, enum lsns_type type
 	if (!ns)
 		return NULL;
 
-	DBG(NS, ul_debugobj(ns, "new %s[%ju]", ns_names[type], (uintmax_t)ino));
+	DBG_OBJ(NS, ns, ul_debug("new %s[%ju]", ns_names[type], (uintmax_t)ino));
 
 	INIT_LIST_HEAD(&ns->processes);
 	INIT_LIST_HEAD(&ns->namespaces);
@@ -810,7 +808,7 @@ static int add_process_to_namespace(struct lsns *ls, struct lsns_namespace *ns, 
 {
 	struct list_head *p;
 
-	DBG(NS, ul_debugobj(ns, "add process [%p] pid=%d to %s[%ju]",
+	DBG_OBJ(NS, ns, ul_debug("add process [%p] pid=%d to %s[%ju]",
 		proc, proc->pid, ns_names[ns->type], (uintmax_t)ns->id));
 
 	list_for_each(p, &ls->processes) {

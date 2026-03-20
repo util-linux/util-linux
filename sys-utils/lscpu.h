@@ -34,11 +34,9 @@
 #define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lscpu);
-#define DBG(m, x)       __UL_DBG(lscpu, LSCPU_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(lscpu, LSCPU_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(lscpu)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(lscpu, LSCPU_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(lscpu, LSCPU_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(lscpu, LSCPU_DEBUG_, m, x)
 
 #define _PATH_SYS_SYSTEM	"/sys/devices/system"
 #define _PATH_SYS_HYP_FEATURES	"/sys/hypervisor/properties/features"

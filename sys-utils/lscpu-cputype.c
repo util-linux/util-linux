@@ -65,7 +65,7 @@ struct lscpu_cputype *lscpu_new_cputype(void)
 	ct->dispatching = -1;
 	ct->freqboost = -1;
 
-	DBG(TYPE, ul_debugobj(ct, "alloc"));
+	DBG_OBJ(TYPE, ct, ul_debug("alloc"));
 	return ct;
 }
 
@@ -73,7 +73,7 @@ void lscpu_ref_cputype(struct lscpu_cputype *ct)
 {
 	if (ct) {
 		ct->refcount++;
-		/*DBG(TYPE, ul_debugobj(ct, ">>> ref %d", ct->refcount));*/
+		/*DBG_OBJ(TYPE, ct, ul_debug(">>> ref %d", ct->refcount));*/
 	}
 }
 
@@ -82,10 +82,10 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 	if (!ct)
 		return;
 
-	/*DBG(TYPE, ul_debugobj(ct, ">>> unref %d", ct->refcount - 1));*/
+	/*DBG_OBJ(TYPE, ct, ul_debug(">>> unref %d", ct->refcount - 1));*/
 
 	if (--ct->refcount <= 0) {
-		DBG(TYPE, ul_debugobj(ct, "  freeing %s/%s", ct->vendor, ct->model));
+		DBG_OBJ(TYPE, ct, ul_debug("  freeing %s/%s", ct->vendor, ct->model));
 		lscpu_cputype_free_topology(ct);
 		free(ct->vendor);
 		free(ct->bios_vendor);
@@ -118,7 +118,7 @@ struct lscpu_cputype *lscpu_cputype_get_default(struct lscpu_cxt *cxt)
 
 struct lscpu_cputype *lscpu_add_cputype(struct lscpu_cxt *cxt, struct lscpu_cputype *ct)
 {
-	DBG(TYPE, ul_debugobj(ct, "add new"));
+	DBG_OBJ(TYPE, ct, ul_debug("add new"));
 	cxt->cputypes = xreallocarray(cxt->cputypes, cxt->ncputypes + 1,
 				      sizeof(struct lscpu_cputype *));
 	cxt->cputypes[cxt->ncputypes] = ct;
@@ -361,14 +361,14 @@ static void deduplicate_cputypes(struct lscpu_cxt *cxt)
 	for (u = 0, i = 1; i < cxt->ncputypes; i++) {
 		struct lscpu_cputype *ct = cxt->cputypes[i];
 
-		DBG(TYPE, ul_debugobj(ct, "compare with %p", cxt->cputypes[u]));
+		DBG_OBJ(TYPE, ct, ul_debug("compare with %p", cxt->cputypes[u]));
 
 		if (cmp_cputype(&cxt->cputypes[u], &ct) == 0) {
-			DBG(TYPE, ul_debugobj(ct, " duplicated"));
+			DBG_OBJ(TYPE, ct, ul_debug(" duplicated"));
 			replace_cpu_type(cxt, ct, cxt->cputypes[u]);
 			lscpu_unref_cputype(ct);
 		} else {
-			DBG(TYPE, ul_debugobj(ct, " uniq"));
+			DBG_OBJ(TYPE, ct, ul_debug(" uniq"));
 			u++;
 			if (u != i)
 				cxt->cputypes[u] = ct;
@@ -396,7 +396,7 @@ static void deduplicate_cputypes(struct lscpu_cxt *cxt)
 		struct lscpu_cputype *ct = cxt->cputypes[0],	/* subset ? */
 				     *mt = cxt->cputypes[1];	/* master ? */
 
-		DBG(TYPE, ul_debugobj(ct, "checking items in %p", mt));
+		DBG_OBJ(TYPE, ct, ul_debug("checking items in %p", mt));
 		for (i = 0; i < ARRAY_SIZE(items); i++) {
 			if (!is_nonnull_offset(ct, items[i]))
 				continue;
@@ -524,7 +524,7 @@ static int cpuinfo_parse_cache(struct lscpu_cxt *cxt, int keynum, char *data)
 	int level;
 	unsigned int line_size, associativity;
 
-	DBG(GATHER, ul_debugobj(cxt, " parse cpuinfo cache '%s'", data));
+	DBG_OBJ(GATHER, cxt, ul_debug(" parse cpuinfo cache '%s'", data));
 
 	p = strstr(data, "scope=") + 6;
 	/* Skip private caches, also present in sysfs */
@@ -594,7 +594,7 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 	assert(cxt->npossibles);	/* lscpu_create_cpus() required */
 	assert(cxt->cpus);
 
-	DBG(GATHER, ul_debugobj(cxt, "reading cpuinfo"));
+	DBG_OBJ(GATHER, cxt, ul_debug("reading cpuinfo"));
 
 	fp = ul_path_fopen(cxt->procfs, "r", "cpuinfo");
 	if (!fp)
@@ -794,7 +794,7 @@ struct lscpu_arch *lscpu_read_architecture(struct lscpu_cxt *cxt)
 			ar->bit32 = 1;
 	}
 
-	DBG(GATHER, ul_debugobj(ar, "arch: name=%s %s %s",
+	DBG_OBJ(GATHER, ar, ul_debug("arch: name=%s %s %s",
 				ar->name,
 				ar->bit64 ? "64-bit" : "",
 				ar->bit64 ? "32-bit" : ""));
@@ -814,7 +814,7 @@ int lscpu_read_cpulists(struct lscpu_cxt *cxt)
 	cpu_set_t *cpuset = NULL;
 
 	assert(cxt);
-	DBG(GATHER, ul_debugobj(cxt, "reading cpulists"));
+	DBG_OBJ(GATHER, cxt, ul_debug("reading cpulists"));
 
 	if (ul_path_read_s32(cxt->syscpu, &cxt->maxcpus, "kernel_max") == 0)
 		/* note that kernel_max is maximum index [NR_CPUS-1] */
@@ -867,7 +867,7 @@ int lscpu_read_archext(struct lscpu_cxt *cxt)
 	char buf[BUFSIZ];
 	struct lscpu_cputype *ct;
 
-	DBG(GATHER, ul_debugobj(cxt, "reading extra arch info"));
+	DBG_OBJ(GATHER, cxt, ul_debug("reading extra arch info"));
 
 	assert(cxt);
 	ct = lscpu_cputype_get_default(cxt);
@@ -934,7 +934,7 @@ int lscpu_read_vulnerabilities(struct lscpu_cxt *cxt)
 
 	assert(cxt);
 
-	DBG(GATHER, ul_debugobj(cxt, "reading vulnerabilities"));
+	DBG_OBJ(GATHER, cxt, ul_debug("reading vulnerabilities"));
 
 	dir = ul_path_opendir(cxt->syscpu, "vulnerabilities");
 	if (!dir)
@@ -1050,7 +1050,7 @@ int lscpu_read_numas(struct lscpu_cxt *cxt)
 		ul_path_readf_cpuset(sys, &cxt->nodemaps[i], cxt->maxcpus,
 				"node%d/cpumap", cxt->idx2nodenum[i]);
 done:
-	DBG(GATHER, ul_debugobj(cxt, "read %zu numas", cxt->nnodes));
+	DBG_OBJ(GATHER, cxt, ul_debug("read %zu numas", cxt->nnodes));
 
 	ul_unref_path(sys);
 	return 0;

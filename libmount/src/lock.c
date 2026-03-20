@@ -78,7 +78,7 @@ struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id __attribute__((_
 	ml->lockfile_fd = -1;
 	ml->lockfile = lo;
 
-	DBG(LOCKS, ul_debugobj(ml, "alloc: lockfile=%s", lo));
+	DBG_OBJ(LOCKS, ml, ul_debug("alloc: lockfile=%s", lo));
 	return ml;
 err:
 	free(lo);
@@ -101,7 +101,7 @@ void mnt_free_lock(struct libmnt_lock *ml)
 	if (!ml)
 		return;
 
-	DBG(LOCKS, ul_debugobj(ml, "free%s [refcount=%d]",
+	DBG_OBJ(LOCKS, ml, ul_debug("free%s [refcount=%d]",
 					ml->locked ? " !!! LOCKED !!!" : "",
 					ml->refcount));
 	free(ml->lockfile);
@@ -120,7 +120,7 @@ void mnt_ref_lock(struct libmnt_lock *ml)
 {
 	if (ml) {
 		ml->refcount++;
-		/*DBG(FS, ul_debugobj(fs, "ref=%d", ml->refcount));*/
+		/*DBG_OBJ(FS, fs, ul_debug("ref=%d", ml->refcount));*/
 	}
 }
 
@@ -135,7 +135,7 @@ void mnt_unref_lock(struct libmnt_lock *ml)
 {
 	if (ml) {
 		ml->refcount--;
-		/*DBG(FS, ul_debugobj(fs, "unref=%d", ml->refcount));*/
+		/*DBG_OBJ(FS, fs, ul_debug("unref=%d", ml->refcount));*/
 		if (ml->refcount <= 0)
 			mnt_free_lock(ml);
 	}
@@ -155,7 +155,7 @@ int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
 {
 	if (!ml)
 		return -EINVAL;
-	DBG(LOCKS, ul_debugobj(ml, "signals: %s", enable ? "BLOCKED" : "UNBLOCKED"));
+	DBG_OBJ(LOCKS, ml, ul_debug("signals: %s", enable ? "BLOCKED" : "UNBLOCKED"));
 	ml->sigblock = enable ? 1 : 0;
 	return 0;
 }
@@ -176,7 +176,7 @@ static void unlock_simplelock(struct libmnt_lock *ml)
 	assert(ml);
 
 	if (ml->lockfile_fd >= 0) {
-		DBG(LOCKS, ul_debugobj(ml, "%s: unflocking",
+		DBG_OBJ(LOCKS, ml, ul_debug("%s: unflocking",
 					mnt_lock_get_lockfile(ml)));
 		close(ml->lockfile_fd);
 	}
@@ -193,7 +193,7 @@ static int lock_simplelock(struct libmnt_lock *ml)
 
 	lfile = mnt_lock_get_lockfile(ml);
 
-	DBG(LOCKS, ul_debugobj(ml, "%s: locking", lfile));
+	DBG_OBJ(LOCKS, ml, ul_debug("%s: locking", lfile));
 
 	if (ml->sigblock) {
 		sigset_t sigs;
@@ -272,7 +272,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 	if (!ml)
 		return;
 
-	DBG(LOCKS, ul_debugobj(ml, "(%d) %s", getpid(),
+	DBG_OBJ(LOCKS, ml, ul_debug("(%d) %s", getpid(),
 			ml->locked ? "unlocking" : "cleaning"));
 
 	unlock_simplelock(ml);
@@ -281,7 +281,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 	ml->lockfile_fd = -1;
 
 	if (ml->sigblock) {
-		DBG(LOCKS, ul_debugobj(ml, "restoring sigmask"));
+		DBG_OBJ(LOCKS, ml, ul_debug("restoring sigmask"));
 		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
 	}
 }

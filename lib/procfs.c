@@ -32,11 +32,9 @@ UL_DEBUG_DEFINE_MASKNAMES(ulprocfs) = UL_DEBUG_EMPTY_MASKNAMES;
 #define ULPROCFS_DEBUG_INIT	(1 << 1)
 #define ULPROCFS_DEBUG_CXT	(1 << 2)
 
-#define DBG(m, x)       __UL_DBG(ulprocfs, ULPROCFS_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(ulprocfs, ULPROCFS_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(ulprocfs)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(ulprocfs, ULPROCFS_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(ulprocfs, ULPROCFS_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(ulprocfs, ULPROCFS_DEBUG_, m, x)
 
 void ul_procfs_init_debug(void)
 {
@@ -59,7 +57,7 @@ struct path_cxt *ul_new_procfs_path(pid_t pid, const char *prefix)
 		return NULL;
 	}
 
-	DBG(CXT, ul_debugobj(pc, "alloc"));
+	DBG_OBJ(CXT, pc, ul_debug("alloc"));
 	return pc;
 }
 
@@ -90,7 +88,7 @@ int procfs_process_init_path(struct path_cxt *pc, pid_t pid)
 	/* initialize procfs specific stuff */
 	prc = ul_path_get_dialect(pc);
 	if (!prc) {
-		DBG(CXT, ul_debugobj(pc, "alloc new procfs handler"));
+		DBG_OBJ(CXT, pc, ul_debug("alloc new procfs handler"));
 		prc = calloc(1, sizeof(struct procfs_process));
 		if (!prc)
 			return -ENOMEM;
@@ -98,7 +96,7 @@ int procfs_process_init_path(struct path_cxt *pc, pid_t pid)
 		ul_path_set_dialect(pc, prc, procfs_process_deinit_path);
 	}
 
-	DBG(CXT, ul_debugobj(pc, "init procfs stuff"));
+	DBG_OBJ(CXT, pc, ul_debug("init procfs stuff"));
 
 	prc->pid = pid;
 	return 0;
@@ -111,7 +109,7 @@ static void procfs_process_deinit_path(struct path_cxt *pc)
 	if (!pc)
 		return;
 
-	DBG(CXT, ul_debugobj(pc, "deinit"));
+	DBG_OBJ(CXT, pc, ul_debug("deinit"));
 
 	prc = ul_path_get_dialect(pc);
 	if (!prc)

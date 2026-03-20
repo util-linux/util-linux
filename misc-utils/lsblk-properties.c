@@ -70,7 +70,7 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 	if (ld->udev_requested)
 		return ld->properties;
 
-	DBG(DEV, ul_debugobj(ld, " properties by udev"));
+	DBG_OBJ(DEV, ld, ul_debug(" properties by udev"));
 
 	if (!udev)
 		udev = udev_new();	/* global handler */
@@ -81,7 +81,7 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 	if (!dev)
 		goto done;
 
-	DBG(DEV, ul_debugobj(ld, "%s: found udev properties", ld->name));
+	DBG_OBJ(DEV, ld, ul_debug("%s: found udev properties", ld->name));
 
 	if (ld->properties)
 		lsblk_device_free_properties(ld->properties);
@@ -174,7 +174,7 @@ static struct lsblk_devprop *get_properties_by_udev(struct lsblk_device *ld)
 done:
 	ld->udev_requested = 1;
 
-	DBG(DEV, ul_debugobj(ld, " from udev"));
+	DBG_OBJ(DEV, ld, ul_debug(" from udev"));
 	return ld->properties;
 }
 #endif /* HAVE_LIBUDEV */
@@ -222,7 +222,7 @@ static struct lsblk_devprop *get_properties_by_file(struct lsblk_device *ld)
 	if (ld->file_requested)
 		return ld->properties;
 
-	DBG(DEV, ul_debugobj(ld, " properties by file"));
+	DBG_OBJ(DEV, ld, ul_debug(" properties by file"));
 
 	if (ld->properties || ld->filename) {
 		lsblk_device_free_properties(ld->properties);
@@ -285,7 +285,7 @@ done:
 	ul_unref_path(pc);
 	ld->file_requested = 1;
 
-	DBG(DEV, ul_debugobj(ld, " from fake-file"));
+	DBG_OBJ(DEV, ld, ul_debug(" from fake-file"));
 	return ld->properties;
 }
 
@@ -302,7 +302,7 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 	if (getuid() != 0)
 		goto done;				/* no permissions to read from the device */
 
-	DBG(DEV, ul_debugobj(dev, " properties by blkid"));
+	DBG_OBJ(DEV, dev, ul_debug(" properties by blkid"));
 
 	pr = blkid_new_probe_from_filename(dev->filename);
 	if (!pr)
@@ -349,13 +349,13 @@ static struct lsblk_devprop *get_properties_by_blkid(struct lsblk_device *dev)
 		    !blkid_probe_lookup_value(pr, "PART_ENTRY_SCHEME", &data, NULL))
 			prop->pttype = xstrdup(data);
 
-		DBG(DEV, ul_debugobj(dev, "%s: found blkid properties", dev->name));
+		DBG_OBJ(DEV, dev, ul_debug("%s: found blkid properties", dev->name));
 	}
 
 done:
 	blkid_free_probe(pr);
 
-	DBG(DEV, ul_debugobj(dev, " from blkid"));
+	DBG_OBJ(DEV, dev, ul_debug(" from blkid"));
 	dev->blkid_requested = 1;
 	return dev->properties;
 }
@@ -393,7 +393,7 @@ struct lsblk_devprop *lsblk_device_get_properties(struct lsblk_device *dev)
 {
 	size_t i;
 
-	DBG(DEV, ul_debugobj(dev, "%s: properties requested", dev->filename));
+	DBG_OBJ(DEV, dev, ul_debug("%s: properties requested", dev->filename));
 
 	for (i = 0; i < __LSBLK_NMETHODS; i++) {
 		struct lsblk_devprop *p = NULL;

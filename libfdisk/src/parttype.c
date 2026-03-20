@@ -32,7 +32,7 @@ struct fdisk_parttype *fdisk_new_parttype(void)
 
 	t->refcount = 1;
 	t->flags = FDISK_PARTTYPE_ALLOCATED;
-	DBG(PARTTYPE, ul_debugobj(t, "alloc"));
+	DBG_OBJ(PARTTYPE, t, ul_debug("alloc"));
 	return t;
 }
 
@@ -62,7 +62,7 @@ void fdisk_unref_parttype(struct fdisk_parttype *t)
 
 	t->refcount--;
 	if (t->refcount <= 0) {
-		DBG(PARTTYPE, ul_debugobj(t, "free"));
+		DBG_OBJ(PARTTYPE, t, ul_debug("free"));
 		free(t->typestr);
 		free(t->name);
 		free(t);
@@ -337,26 +337,26 @@ static struct fdisk_parttype *parttype_from_data(
 	if (!lb->nparttypes)
 		return NULL;
 
-	DBG(LABEL, ul_debugobj(lb, " parsing '%s' data", str));
+	DBG_OBJ(LABEL, lb, ul_debug(" parsing '%s' data", str));
 	types = lb->parttypes;
 
 	if (types[0].typestr == NULL) {
 		unsigned int code;
 
-		DBG(LABEL, ul_debugobj(lb, " +hex"));
+		DBG_OBJ(LABEL, lb, ul_debug(" +hex"));
 
 		errno = 0;
 		code = strtol(str, &end, 16);
 
 		if (errno || *end != '\0') {
-			DBG(LABEL, ul_debugobj(lb, "  failed: %m"));
+			DBG_OBJ(LABEL, lb, ul_debug("  failed: %m"));
 			return NULL;
 		}
 		if (xcode)
 			*xcode = code;
 		ret = fdisk_label_get_parttype_from_code(lb, code);
 	} else {
-		DBG(LABEL, ul_debugobj(lb, " +string"));
+		DBG_OBJ(LABEL, lb, ul_debug(" +string"));
 
 		/* maybe specified by type string (e.g. UUID) */
 		ret = fdisk_label_get_parttype_from_string(lb, str);
@@ -376,7 +376,7 @@ static struct fdisk_parttype *parttype_from_data(
 	}
 
 	if (ret)
-		DBG(PARTTYPE, ul_debugobj(ret, " result '%s'", ret->name));
+		DBG_OBJ(PARTTYPE, ret, ul_debug(" result '%s'", ret->name));
 	return ret;
 }
 
@@ -386,7 +386,7 @@ static struct fdisk_parttype *parttype_from_shortcut(
 {
 	size_t i;
 
-	DBG(LABEL, ul_debugobj(lb, " parsing '%s' shortcut", str));
+	DBG_OBJ(LABEL, lb, ul_debug(" parsing '%s' shortcut", str));
 
 	for (i = 0; i < lb->nparttype_cuts; i++) {
 		const struct fdisk_shortcut *sc = &lb->parttype_cuts[i];
@@ -405,7 +405,7 @@ static struct fdisk_parttype *parttype_from_alias(
 {
 	size_t i;
 
-	DBG(LABEL, ul_debugobj(lb, " parsing '%s' alias", str));
+	DBG_OBJ(LABEL, lb, ul_debug(" parsing '%s' alias", str));
 
 	for (i = 0; i < lb->nparttype_cuts; i++) {
 		const struct fdisk_shortcut *sc = &lb->parttype_cuts[i];
@@ -424,7 +424,7 @@ static struct fdisk_parttype *parttype_from_name(
 {
 	size_t i;
 
-	DBG(LABEL, ul_debugobj(lb, " parsing '%s' name", str));
+	DBG_OBJ(LABEL, lb, ul_debug(" parsing '%s' name", str));
 
 	for (i = 0; i < lb->nparttypes; i++) {
 		const char *name = lb->parttypes[i].name;
@@ -464,7 +464,7 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
 	if (!lb || !lb->nparttypes)
 		return NULL;
 
-	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) type", str, lb->name));
+	DBG_OBJ(LABEL, lb, ul_debug("parsing '%s' (%s) type", str, lb->name));
 
 	if ((flags & FDISK_PARTTYPE_PARSE_DATA)
 	    && !(flags & FDISK_PARTTYPE_PARSE_DATALAST))
@@ -495,7 +495,7 @@ struct fdisk_parttype *fdisk_label_advparse_parttype(
 	}
 
 	if (res)
-		DBG(PARTTYPE, ul_debugobj(res, "returns parsed '%s' [%s] partition type",
+		DBG_OBJ(PARTTYPE, res, ul_debug("returns parsed '%s' [%s] partition type",
 				res->name, res->typestr ? : ""));
 	return res;
 }

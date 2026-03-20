@@ -58,11 +58,9 @@ UL_DEBUG_DEFINE_MASKNAMES(ulfileeq) = UL_DEBUG_EMPTY_MASKNAMES;
 #define ULFILEEQ_DEBUG_DATA	(1 << 3)
 #define ULFILEEQ_DEBUG_EQ	(1 << 4)
 
-#define DBG(m, x)       __UL_DBG(ulfileeq, ULFILEEQ_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(ulfileeq, ULFILEEQ_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(ulfileeq)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(ulfileeq, ULFILEEQ_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(ulfileeq, ULFILEEQ_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(ulfileeq, ULFILEEQ_DEBUG_, m, x)
 
 static void ul_fileeq_init_debug(void)
 {
@@ -112,7 +110,7 @@ static void deinit_crypto_api(struct ul_fileeq *eq)
 	if (!eq)
 		return;
 
-	DBG(CRYPTO, ul_debugobj(eq, "deinit"));
+	DBG_OBJ(CRYPTO, eq, ul_debug("deinit"));
 
 	if (eq->fd_cip >= 0)
 		close(eq->fd_cip);
@@ -135,7 +133,7 @@ static int init_crypto_api(struct ul_fileeq *eq)
 	assert(eq->fd_api == -1);
 	assert(eq->fd_cip == -1);
 
-	DBG(CRYPTO, ul_debugobj(eq, "init [%s]", eq->method->kname));
+	DBG_OBJ(CRYPTO, eq, ul_debug("init [%s]", eq->method->kname));
 
 	assert(sizeof(sa.salg_name) > strlen(eq->method->kname) + 1);
 	memcpy(&sa.salg_name, eq->method->kname, strlen(eq->method->kname) + 1);
@@ -158,7 +156,7 @@ int ul_fileeq_init(struct ul_fileeq *eq, const char *method)
 	size_t i;
 
 	ul_fileeq_init_debug();
-	DBG(EQ, ul_debugobj(eq, "init [%s]", method));
+	DBG_OBJ(EQ, eq, ul_debug("init [%s]", method));
 
 	memset(eq, 0, sizeof(*eq));
 	eq->fd_api = -1;
@@ -195,7 +193,7 @@ void ul_fileeq_deinit(struct ul_fileeq *eq)
 	if (!eq)
 		return;
 
-	DBG(EQ, ul_debugobj(eq, "deinit"));
+	DBG_OBJ(EQ, eq, ul_debug("deinit"));
 #ifdef USE_FILEEQ_CRYPTOAPI
 	deinit_crypto_api(eq);
 #endif
@@ -207,7 +205,7 @@ void ul_fileeq_data_close_file(struct ul_fileeq_data *data)
 	assert(data);
 
 	if (data->fd >= 0) {
-		DBG(DATA, ul_debugobj(data, "close"));
+		DBG_OBJ(DATA, data, ul_debug("close"));
 		close(data->fd);
 	}
 	data->fd = -1;
@@ -215,7 +213,7 @@ void ul_fileeq_data_close_file(struct ul_fileeq_data *data)
 
 void ul_fileeq_data_init(struct ul_fileeq_data *data)
 {
-	DBG(DATA, ul_debugobj(data, "init"));
+	DBG_OBJ(DATA, data, ul_debug("init"));
 	memset(data, 0, sizeof(*data));
 	data->fd = -1;
 }
@@ -224,7 +222,7 @@ void ul_fileeq_data_deinit(struct ul_fileeq_data *data)
 {
 	assert(data);
 
-	DBG(DATA, ul_debugobj(data, "deinit"));
+	DBG_OBJ(DATA, data, ul_debug("deinit"));
 	free(data->blocks);
 	data->blocks = NULL;
 	data->nblocks = 0;
@@ -245,7 +243,7 @@ void ul_fileeq_data_set_file(struct ul_fileeq_data *data, const char *name)
 	assert(data);
 	assert(name);
 
-	DBG(DATA, ul_debugobj(data, "set file: %s", name));
+	DBG_OBJ(DATA, data, ul_debug("set file: %s", name));
 	ul_fileeq_data_init(data);
 	data->name = name;
 }
@@ -298,7 +296,7 @@ bool ul_fileeq_set_size(struct ul_fileeq *eq, int64_t st_size,
 	eq->readsiz = readsiz;
 	eq->blocksmax = (filesiz + readsiz - 1) / readsiz;
 
-	DBG(EQ, ul_debugobj(eq, "set sizes: filesiz=%" PRIu64 ", blocksmax=%" PRIu64 ", readsiz=%zu",
+	DBG_OBJ(EQ, eq, ul_debug("set sizes: filesiz=%" PRIu64 ", blocksmax=%" PRIu64 ", readsiz=%zu",
 				eq->filesiz, eq->blocksmax, eq->readsiz));
 
 	reset_fileeq_bufs(eq);
@@ -342,7 +340,7 @@ static int get_fd(struct ul_fileeq *eq, struct ul_fileeq_data *data, off_t *off)
 
 
 	if (data->fd < 0) {
-		DBG(DATA, ul_debugobj(data, "open: %s", data->name));
+		DBG_OBJ(DATA, data, ul_debug("open: %s", data->name));
 		data->fd = open(data->name, O_RDONLY);
 		if (data->fd < 0)
 			return data->fd;
@@ -351,7 +349,7 @@ static int get_fd(struct ul_fileeq *eq, struct ul_fileeq_data *data, off_t *off)
 		ignore_result( posix_fadvise(data->fd, o, 0, POSIX_FADV_SEQUENTIAL) );
 #endif
 		if (o) {
-			DBG(DATA, ul_debugobj(data, "lseek off=%ju", (uintmax_t) o));
+			DBG_OBJ(DATA, data, ul_debug("lseek off=%ju", (uintmax_t) o));
 			lseek(data->fd, o, SEEK_SET);
 		}
 	}
@@ -390,7 +388,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	if (fd < 0)
 		return fd;
 
-	DBG(DATA, ul_debugobj(data, " read block off=%ju", (uintmax_t) off));
+	DBG_OBJ(DATA, data, ul_debug(" read block off=%ju", (uintmax_t) off));
 
 	*block = get_buffer(eq);
 	if (!*block)
@@ -398,7 +396,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 	rsz = read_all(data->fd, (char *) *block, eq->readsiz);
 	if (rsz < 0) {
-		DBG(DATA, ul_debugobj(data, "  read failed"));
+		DBG_OBJ(DATA, data, ul_debug("  read failed"));
 		return rsz;
 	}
 	off += rsz;
@@ -409,7 +407,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		ul_fileeq_data_close_file(data);
 	}
 
-	DBG(DATA, ul_debugobj(data, "  read sz=%zd", rsz));
+	DBG_OBJ(DATA, data, ul_debug("  read sz=%zd", rsz));
 	return rsz;
 }
 
@@ -424,14 +422,14 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 	/* return already cached if available */
 	if (n < get_cached_nblocks(data)) {
-		DBG(DATA, ul_debugobj(data, " digest cached"));
+		DBG_OBJ(DATA, data, ul_debug(" digest cached"));
 		assert(data->blocks);
 		*block = data->blocks + (n * eq->method->digsiz);
 		return eq->method->digsiz;
 	}
 
 	if (data->is_eof) {
-		DBG(DATA, ul_debugobj(data, " file EOF"));
+		DBG_OBJ(DATA, data, ul_debug(" file EOF"));
 		return 0;
 	}
 
@@ -443,19 +441,19 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	if (fd < 0)
 		return fd;
 
-	DBG(DATA, ul_debugobj(data, " read digest off=%ju", (uintmax_t) off));
+	DBG_OBJ(DATA, data, ul_debug(" read digest off=%ju", (uintmax_t) off));
 
 	sz = eq->method->digsiz;
 
 	if (!data->blocks) {
-		DBG(DATA, ul_debugobj(data, "  alloc cache %" PRIu64, eq->blocksmax * sz));
+		DBG_OBJ(DATA, data, ul_debug("  alloc cache %" PRIu64, eq->blocksmax * sz));
 		data->blocks = malloc(eq->blocksmax * sz);
 		if (!data->blocks)
 			return -ENOMEM;
 	}
 
 	rsz = sendfile(eq->fd_cip, data->fd, NULL, eq->readsiz);
-	DBG(DATA, ul_debugobj(data, "  sent %zd [%zu wanted] to cipher", rsz, eq->readsiz));
+	DBG_OBJ(DATA, data, ul_debug("  sent %zd [%zu wanted] to cipher", rsz, eq->readsiz));
 
 	if (rsz < 0)
 		return rsz;
@@ -472,7 +470,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		data->is_eof = 1;
 		ul_fileeq_data_close_file(data);
 	}
-	DBG(DATA, ul_debugobj(data, "  get %zdB digest", rsz));
+	DBG_OBJ(DATA, data, ul_debug("  get %zdB digest", rsz));
 	return rsz;
 }
 #endif
@@ -487,13 +485,13 @@ static ssize_t get_intro(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 		if (fd < 0)
 			return -1;
 		rsz = read_all(fd, (char *) data->intro, sizeof(data->intro));
-		DBG(DATA, ul_debugobj(data, " read %zd bytes [%zu wanted] intro", rsz, sizeof(data->intro)));
+		DBG_OBJ(DATA, data, ul_debug(" read %zd bytes [%zu wanted] intro", rsz, sizeof(data->intro)));
 		if (rsz < 0)
 			return -1;
 		data->nblocks = 1;
 	}
 
-	DBG(DATA, ul_debugobj(data, " return intro"));
+	DBG_OBJ(DATA, data, ul_debug(" return intro"));
 	*block = data->intro;
 	return sizeof(data->intro);
 }
@@ -527,7 +525,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 	int cmp;
 	uint64_t n = 0;
 
-	DBG(EQ, ul_debugobj(eq, "--> compare %s %s", a->name, b->name));
+	DBG_OBJ(EQ, eq, ul_debug("--> compare %s %s", a->name, b->name));
 
 	if (eq->method->id == UL_FILEEQ_MEMCMP) {
 		memcmp_reset(eq, a);
@@ -538,7 +536,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 		unsigned char *da, *db;
 		ssize_t ca, cb;
 
-		DBG(EQ, ul_debugobj(eq, "compare block #%" PRIu64, n));
+		DBG_OBJ(EQ, eq, ul_debug("compare block #%" PRIu64, n));
 
 		ca = get_cmp_data(eq, a, n, &da);
 		if (ca < 0)
@@ -552,7 +550,7 @@ int ul_fileeq(struct ul_fileeq *eq,
 
 		}
 		cmp = memcmp(da, db, ca);
-		DBG(EQ, ul_debugobj(eq, "#%" PRIu64 "=%s", n, cmp == 0 ? "match" : "not-match"));
+		DBG_OBJ(EQ, eq, ul_debug("#%" PRIu64 "=%s", n, cmp == 0 ? "match" : "not-match"));
 		n++;
 	} while (cmp == 0);
 
@@ -560,11 +558,11 @@ int ul_fileeq(struct ul_fileeq *eq,
 		if (!a->is_eof || !b->is_eof)
 			goto done; /* filesize changed? */
 
-		DBG(EQ, ul_debugobj(eq, "<-- MATCH"));
+		DBG_OBJ(EQ, eq, ul_debug("<-- MATCH"));
 		return 1;
 	}
 done:
-	DBG(EQ, ul_debugobj(eq, " <-- NOT-MATCH"));
+	DBG_OBJ(EQ, eq, ul_debug(" <-- NOT-MATCH"));
 	return 0;
 }
 

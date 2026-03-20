@@ -45,7 +45,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 
 	pa->refcount = 1;
 	init_partition(pa);
-	DBG(PART, ul_debugobj(pa, "alloc"));
+	DBG_OBJ(PART, pa, ul_debug("alloc"));
 	return pa;
 }
 
@@ -62,7 +62,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	if (!pa)
 		return;
 
-	DBG(PART, ul_debugobj(pa, "reset"));
+	DBG_OBJ(PART, pa, ul_debug("reset"));
 	ref = pa->refcount;
 
 	fdisk_unref_parttype(pa->type);
@@ -160,7 +160,7 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 	if (pa->refcount <= 0) {
 		list_del(&pa->parts);
 		fdisk_reset_partition(pa);
-		DBG(PART, ul_debugobj(pa, "free"));
+		DBG_OBJ(PART, pa, ul_debug("free"));
 		free(pa);
 	}
 }
@@ -746,7 +746,7 @@ int fdisk_partition_next_partno(
 	if (pa && pa->partno_follow_default) {
 		size_t i;
 
-		DBG(PART, ul_debugobj(pa, "next partno (follow default)"));
+		DBG_OBJ(PART, pa, ul_debug("next partno (follow default)"));
 
 		for (i = 0; i < cxt->label->nparts_max; i++) {
 			if (!fdisk_is_partition_used(cxt, i)) {
@@ -760,7 +760,7 @@ int fdisk_partition_next_partno(
 
 	if (pa && fdisk_partition_has_partno(pa)) {
 
-		DBG(PART, ul_debugobj(pa, "next partno (specified=%zu)", pa->partno));
+		DBG_OBJ(PART, pa, ul_debug("next partno (specified=%zu)", pa->partno));
 
 		if (pa->partno >= cxt->label->nparts_max ||
 		    fdisk_is_partition_used(cxt, pa->partno))
@@ -780,7 +780,7 @@ static int probe_partition_content(struct fdisk_context *cxt, struct fdisk_parti
 {
 	int rc = 1;	/* nothing */
 
-	DBG(PART, ul_debugobj(pa, "start probe #%zu partition [cxt %p] >>>", pa->partno, cxt));
+	DBG_OBJ(PART, pa, ul_debug("start probe #%zu partition [cxt %p] >>>", pa->partno, cxt));
 
 	/* zeroize the current setting */
 	strdup_to_struct_member(pa, fstype, NULL);
@@ -799,7 +799,7 @@ static int probe_partition_content(struct fdisk_context *cxt, struct fdisk_parti
 		if (!pr)
 			goto done;
 
-		DBG(PART, ul_debugobj(pa, "blkid prober: %p", pr));
+		DBG_OBJ(PART, pa, ul_debug("blkid prober: %p", pr));
 
 		blkid_probe_enable_superblocks(pr, 1);
 		blkid_probe_set_superblocks_flags(pr,
@@ -834,7 +834,7 @@ static int probe_partition_content(struct fdisk_context *cxt, struct fdisk_parti
 #endif /* HAVE_LIBBLKID */
 
 done:
-	DBG(PART, ul_debugobj(pa, "<<< end probe #%zu partition[cxt %p, rc=%d]", pa->partno, cxt, rc));
+	DBG_OBJ(PART, pa, ul_debug("<<< end probe #%zu partition[cxt %p, rc=%d]", pa->partno, cxt, rc));
 	return rc;
 }
 
@@ -1086,7 +1086,7 @@ static int resize_get_first_possible(
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	*start = 0;
-	DBG(TAB, ul_debugobj(tb, "checking first possible before start=%ju", (uintmax_t) cur->start));
+	DBG_OBJ(TAB, tb, ul_debug("checking first possible before start=%ju", (uintmax_t) cur->start));
 
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
@@ -1094,7 +1094,7 @@ static int resize_get_first_possible(
 		if (pa->start > cur->start || pa == cur)
 			break;
 
-		DBG(TAB, ul_debugobj(tb, " checking entry %p [partno=%zu start=%ju, end=%ju, size=%ju%s%s%s]",
+		DBG_OBJ(TAB, tb, ul_debug(" checking entry %p [partno=%zu start=%ju, end=%ju, size=%ju%s%s%s]",
 			pa,
 			fdisk_partition_get_partno(pa),
 			(uintmax_t) fdisk_partition_get_start(pa),
@@ -1106,32 +1106,32 @@ static int resize_get_first_possible(
 
 
 		if (!fdisk_partition_is_freespace(pa)) {
-			DBG(TAB, ul_debugobj(tb, "  ignored (no freespace)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignored (no freespace)"));
 			first = NULL;
 			continue;
 		}
 		if (!fdisk_partition_has_start(pa) || !fdisk_partition_has_size(pa)) {
-			DBG(TAB, ul_debugobj(tb, "  ignored (no start/size)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignored (no start/size)"));
 			first = NULL;
 			continue;
 		}
 		/* The current is nested, free space has to be nested within the same parent */
 		if (fdisk_partition_is_nested(cur)
 		    && pa->parent_partno != cur->parent_partno) {
-			DBG(TAB, ul_debugobj(tb, "  ignore (nested required)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignore (nested required)"));
 			first = NULL;
 			continue;
 		}
 		if (pa->start + pa->size <= cur->start) {
 			first = pa;
-			DBG(TAB, ul_debugobj(tb, "  entry usable"));
+			DBG_OBJ(TAB, tb, ul_debug("  entry usable"));
 		}
 	}
 
 	if (first)
 		*start = first->start;
 	else
-		DBG(PART, ul_debugobj(cur, "resize: nothing usable before %ju", (uintmax_t) cur->start));
+		DBG_OBJ(PART, cur, ul_debug("resize: nothing usable before %ju", (uintmax_t) cur->start));
 
 	return first ? 0 : -1;
 }
@@ -1158,12 +1158,12 @@ static int resize_get_last_possible(
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	*maxsz = 0;
-	DBG(TAB, ul_debugobj(tb, "checking last possible for start=%ju", (uintmax_t) start));
+	DBG_OBJ(TAB, tb, ul_debug("checking last possible for start=%ju", (uintmax_t) start));
 
 
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
 
-		DBG(TAB, ul_debugobj(tb, " checking entry %p [partno=%zu start=%ju, end=%ju, size=%ju%s%s%s]",
+		DBG_OBJ(TAB, tb, ul_debug(" checking entry %p [partno=%zu start=%ju, end=%ju, size=%ju%s%s%s]",
 			pa,
 			fdisk_partition_get_partno(pa),
 			(uintmax_t) fdisk_partition_get_start(pa),
@@ -1176,52 +1176,52 @@ static int resize_get_last_possible(
 		if (!fdisk_partition_has_start(pa) ||
 		    !fdisk_partition_has_size(pa) ||
 		    (fdisk_partition_is_container(pa) && pa != cur)) {
-			DBG(TAB, ul_debugobj(tb, "  ignored (no start/size or container)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignored (no start/size or container)"));
 			continue;
 		}
 
 		if (fdisk_partition_is_nested(pa)
 		    && fdisk_partition_is_container(cur)
 		    && pa->parent_partno == cur->partno) {
-			DBG(TAB, ul_debugobj(tb, "  ignore (nested child of the current partition)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignore (nested child of the current partition)"));
 			continue;
 		}
 
 		/* The current is nested, free space has to be nested within the same parent */
 		if (fdisk_partition_is_nested(cur)
 		    && pa->parent_partno != cur->parent_partno) {
-			DBG(TAB, ul_debugobj(tb, "  ignore (nested required)"));
+			DBG_OBJ(TAB, tb, ul_debug("  ignore (nested required)"));
 			continue;
 		}
 
 		if (!last) {
 			if (start >= pa->start &&  start < pa->start + pa->size) {
 				if (fdisk_partition_is_freespace(pa) || pa == cur) {
-					DBG(TAB, ul_debugobj(tb, "  accepted as last"));
+					DBG_OBJ(TAB, tb, ul_debug("  accepted as last"));
 					last = pa;
 				} else {
-					DBG(TAB, ul_debugobj(tb, "  failed to set last"));
+					DBG_OBJ(TAB, tb, ul_debug("  failed to set last"));
 					break;
 				}
 
 
 				*maxsz = pa->size - (start - pa->start);
-				DBG(TAB, ul_debugobj(tb, "  new max=%ju", (uintmax_t) *maxsz));
+				DBG_OBJ(TAB, tb, ul_debug("  new max=%ju", (uintmax_t) *maxsz));
 			}
 		} else if (!fdisk_partition_is_freespace(pa) && pa != cur) {
-			DBG(TAB, ul_debugobj(tb, "  no free space behind current"));
+			DBG_OBJ(TAB, tb, ul_debug("  no free space behind current"));
 			break;
 		} else {
 			last = pa;
 			*maxsz = pa->size - (start - pa->start);
-			DBG(TAB, ul_debugobj(tb, "  new max=%ju (last updated)", (uintmax_t) *maxsz));
+			DBG_OBJ(TAB, tb, ul_debug("  new max=%ju (last updated)", (uintmax_t) *maxsz));
 		}
 	}
 
 	if (last)
-		DBG(PART, ul_debugobj(cur, "resize: max size=%ju", (uintmax_t) *maxsz));
+		DBG_OBJ(PART, cur, ul_debug("resize: max size=%ju", (uintmax_t) *maxsz));
 	else
-		DBG(PART, ul_debugobj(cur, "resize: nothing usable after %ju", (uintmax_t) start));
+		DBG_OBJ(PART, cur, ul_debug("resize: nothing usable after %ju", (uintmax_t) start));
 
 	return last ? 0 : -1;
 }
@@ -1239,7 +1239,7 @@ static int recount_resize(
 	struct fdisk_table *tb = NULL;
 	int rc;
 
-	DBG(PART, ul_debugobj(tpl, ">>> resize requested"));
+	DBG_OBJ(PART, tpl, ul_debug(">>> resize requested"));
 
 	FDISK_INIT_UNDEF(start);
 	FDISK_INIT_UNDEF(size);
@@ -1261,7 +1261,7 @@ static int recount_resize(
 
 	fdisk_table_sort_partitions(tb, fdisk_partition_cmp_start);
 
-	DBG(PART, ul_debugobj(tpl, "resize partition partno=%zu in table:", partno));
+	DBG_OBJ(PART, tpl, ul_debug("resize partition partno=%zu in table:", partno));
 	ON_DBG(PART, fdisk_debug_print_table(tb));
 
 	cur = fdisk_table_get_partition_by_partno(tb, partno);
@@ -1280,7 +1280,7 @@ static int recount_resize(
 		} else
 			start += fdisk_partition_get_start(tpl);
 
-		DBG(PART, ul_debugobj(tpl, "resize: moving start %s relative, new start: %ju",
+		DBG_OBJ(PART, tpl, ul_debug("resize: moving start %s relative, new start: %ju",
 				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", (uintmax_t)start));
 
 	/* 1b) set new start - try freespace before the current partition */
@@ -1289,13 +1289,13 @@ static int recount_resize(
 		if (resize_get_first_possible(tb, cur, &start) != 0)
 			goto erange;
 
-		DBG(PART, ul_debugobj(tpl, "resize: moving start DOWN (first possible), new start: %ju",
+		DBG_OBJ(PART, tpl, ul_debug("resize: moving start DOWN (first possible), new start: %ju",
 				(uintmax_t)start));
 
 	/* 1c) set new start - absolute number */
 	} else if (fdisk_partition_has_start(tpl)) {
 		start = fdisk_partition_get_start(tpl);
-		DBG(PART, ul_debugobj(tpl, "resize: moving start to absolute offset: %ju",
+		DBG_OBJ(PART, tpl, ul_debug("resize: moving start to absolute offset: %ju",
 		                      (uintmax_t)start));
 	}
 
@@ -1304,24 +1304,24 @@ static int recount_resize(
 		struct fdisk_partition *area = area_by_offset(tb, cur, start);
 
 		if (area == cur)
-			DBG(PART, ul_debugobj(tpl, "resize: start points to the current partition"));
+			DBG_OBJ(PART, tpl, ul_debug("resize: start points to the current partition"));
 		else if (area && fdisk_partition_is_freespace(area))
-			DBG(PART, ul_debugobj(tpl, "resize: start points to freespace"));
+			DBG_OBJ(PART, tpl, ul_debug("resize: start points to freespace"));
 		else if (!area && start >= cxt->first_lba && start < cxt->first_lba + (cxt->grain / cxt->sector_size))
-			DBG(PART, ul_debugobj(tpl, "resize: start points before first partition"));
+			DBG_OBJ(PART, tpl, ul_debug("resize: start points before first partition"));
 		else {
-			DBG(PART, ul_debugobj(tpl, "resize: start verification failed"));
+			DBG_OBJ(PART, tpl, ul_debug("resize: start verification failed"));
 			goto erange;
 		}
 	} else {
 		/* no change, start points to the current partition */
-		DBG(PART, ul_debugobj(tpl, "resize: start unchanged"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: start unchanged"));
 		start = fdisk_partition_get_start(cur);
 	}
 
 	/* 3a) set new size -- reduce */
 	if (tpl->resize == FDISK_RESIZE_REDUCE && fdisk_partition_has_size(tpl)) {
-		DBG(PART, ul_debugobj(tpl, "resize: reduce"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: reduce"));
 		size = fdisk_partition_get_size(cur);
 		if (fdisk_partition_get_size(tpl) > size)
 			goto erange;
@@ -1329,19 +1329,19 @@ static int recount_resize(
 
 	/* 3b) set new size -- enlarge */
 	} else if (tpl->resize == FDISK_RESIZE_ENLARGE && fdisk_partition_has_size(tpl)) {
-		DBG(PART, ul_debugobj(tpl, "resize: enlarge"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: enlarge"));
 		size = fdisk_partition_get_size(cur);
 		size += fdisk_partition_get_size(tpl);
 
 	/* 3c) set new size -- no size specified, enlarge to all freespace */
 	} else if (tpl->resize == FDISK_RESIZE_ENLARGE) {
-		DBG(PART, ul_debugobj(tpl, "resize: enlarge to all possible"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: enlarge to all possible"));
 		if (resize_get_last_possible(tb, cur, start, &size))
 			goto erange;
 
 	/* 3d) set new size -- absolute number */
 	} else if (fdisk_partition_has_size(tpl)) {
-		DBG(PART, ul_debugobj(tpl, "resize: new absolute size"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: new absolute size"));
 		size = fdisk_partition_get_size(tpl);
 	}
 
@@ -1353,18 +1353,18 @@ static int recount_resize(
 
 		if (resize_get_last_possible(tb, cur, start, &maxsz))
 			goto erange;
-		DBG(PART, ul_debugobj(tpl, "resize: size=%ju, max=%ju",
+		DBG_OBJ(PART, tpl, ul_debug("resize: size=%ju, max=%ju",
 					(uintmax_t) xsize, (uintmax_t) maxsz));
 		if (xsize > maxsz)
 			goto erange;
 	}
 
 	if (FDISK_IS_UNDEF(size)) {
-		DBG(PART, ul_debugobj(tpl, "resize: size unchanged (undefined)"));
+		DBG_OBJ(PART, tpl, ul_debug("resize: size unchanged (undefined)"));
 	}
 
 
-	DBG(PART, ul_debugobj(tpl, "<<< resize: SUCCESS: start %ju->%ju; size %ju->%ju",
+	DBG_OBJ(PART, tpl, ul_debug("<<< resize: SUCCESS: start %ju->%ju; size %ju->%ju",
 			(uintmax_t) fdisk_partition_get_start(cur), (uintmax_t) start,
 			(uintmax_t) fdisk_partition_get_size(cur), (uintmax_t) size));
 	res->start = start;
@@ -1372,7 +1372,7 @@ static int recount_resize(
 	fdisk_unref_table(tb);
 	return 0;
 erange:
-	DBG(PART, ul_debugobj(tpl, "<<< resize: FAILED"));
+	DBG_OBJ(PART, tpl, ul_debug("<<< resize: FAILED"));
 	fdisk_warnx(cxt, _("Failed to resize partition #%zu."), partno + 1);
 	fdisk_unref_table(tb);
 	return -ERANGE;
@@ -1424,7 +1424,7 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 			goto done;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "setting partition %zu %p (start=%ju, end=%ju, size=%ju)",
+	DBG_OBJ(CXT, cxt, ul_debug("setting partition %zu %p (start=%ju, end=%ju, size=%ju)",
 		    partno, xpa,
 		    (uintmax_t) fdisk_partition_get_start(xpa),
 		    (uintmax_t) fdisk_partition_get_end(xpa),
@@ -1444,7 +1444,7 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 	if (!rc && wipe)
 		fdisk_wipe_partition(cxt, partno, TRUE);
 done:
-	DBG(CXT, ul_debugobj(cxt, "set_partition() rc=%d", rc));
+	DBG_OBJ(CXT, cxt, ul_debug("set_partition() rc=%d", rc));
 	if (xpa != pa)
 		fdisk_unref_partition(xpa);
 	return rc;
@@ -1532,24 +1532,24 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 
 	if (pa) {
 		pa->fs_probed = 0;
-		DBG(CXT, ul_debugobj(cxt, "adding new partition %p", pa));
+		DBG_OBJ(CXT, cxt, ul_debug("adding new partition %p", pa));
 		if (fdisk_partition_has_start(pa))
-			DBG(CXT, ul_debugobj(cxt, "     start: %ju", (uintmax_t) fdisk_partition_get_start(pa)));
+			DBG_OBJ(CXT, cxt, ul_debug("     start: %ju", (uintmax_t) fdisk_partition_get_start(pa)));
 		if (fdisk_partition_has_end(pa))
-			DBG(CXT, ul_debugobj(cxt, "       end: %ju", (uintmax_t) fdisk_partition_get_end(pa)));
+			DBG_OBJ(CXT, cxt, ul_debug("       end: %ju", (uintmax_t) fdisk_partition_get_end(pa)));
 		if (fdisk_partition_has_size(pa))
-			DBG(CXT, ul_debugobj(cxt, "      size: %ju", (uintmax_t) fdisk_partition_get_size(pa)));
+			DBG_OBJ(CXT, cxt, ul_debug("      size: %ju", (uintmax_t) fdisk_partition_get_size(pa)));
 
-		DBG(CXT, ul_debugobj(cxt,         "  defaults: start=%s, end=%s, partno=%s",
+		DBG_OBJ(CXT, cxt, ul_debug(        "  defaults: start=%s, end=%s, partno=%s",
 			    pa->start_follow_default ? "yes" : "no",
 			    pa->end_follow_default ? "yes" : "no",
 			    pa->partno_follow_default ? "yes" : "no"));
 	} else
-		DBG(CXT, ul_debugobj(cxt, "adding partition"));
+		DBG_OBJ(CXT, cxt, ul_debug("adding partition"));
 
 	rc = cxt->label->op->add_part(cxt, pa, partno);
 
-	DBG(CXT, ul_debugobj(cxt, "add partition done (rc=%d)", rc));
+	DBG_OBJ(CXT, cxt, ul_debug("add partition done (rc=%d)", rc));
 	return rc;
 }
 
@@ -1571,7 +1571,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
 
 	fdisk_wipe_partition(cxt, partno, 0);
 
-	DBG(CXT, ul_debugobj(cxt, "deleting %s partition number %zd",
+	DBG_OBJ(CXT, cxt, ul_debug("deleting %s partition number %zd",
 				cxt->label->name, partno));
 	return cxt->label->op->del_part(cxt, partno);
 }

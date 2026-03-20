@@ -37,11 +37,9 @@ UL_DEBUG_DEFINE_MASKNAMES(ulpath) = UL_DEBUG_EMPTY_MASKNAMES;
 #define ULPATH_DEBUG_INIT	(1 << 1)
 #define ULPATH_DEBUG_CXT	(1 << 2)
 
-#define DBG(m, x)       __UL_DBG(ulpath, ULPATH_DEBUG_, m, x)
-#define ON_DBG(m, x)    __UL_DBG_CALL(ulpath, ULPATH_DEBUG_, m, x)
-
-#define UL_DEBUG_CURRENT_MASK	UL_DEBUG_MASK(ulpath)
-#include "debugobj.h"
+#define DBG(m, x)		__UL_DBG(ulpath, ULPATH_DEBUG_, m, x)
+#define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(ulpath, ULPATH_DEBUG_, m, h, x)
+#define ON_DBG(m, x)		__UL_DBG_CALL(ulpath, ULPATH_DEBUG_, m, x)
 
 void ul_path_init_debug(void)
 {
@@ -57,7 +55,7 @@ struct path_cxt *ul_new_path(const char *dir, ...)
 	if (!pc)
 		return NULL;
 
-	DBG(CXT, ul_debugobj(pc, "alloc"));
+	DBG_OBJ(CXT, pc, ul_debug("alloc"));
 
 	pc->refcount = 1;
 	pc->dir_fd = -1;
@@ -93,7 +91,7 @@ void ul_unref_path(struct path_cxt *pc)
 	pc->refcount--;
 
 	if (pc->refcount <= 0) {
-		DBG(CXT, ul_debugobj(pc, "dealloc"));
+		DBG_OBJ(CXT, pc, ul_debug("dealloc"));
 		if (pc->dialect)
 			pc->free_dialect(pc);
 		ul_path_close_dirfd(pc);
@@ -117,7 +115,7 @@ int ul_path_set_prefix(struct path_cxt *pc, const char *prefix)
 
 	free(pc->prefix);
 	pc->prefix = p;
-	DBG(CXT, ul_debugobj(pc, "new prefix: '%s'", p));
+	DBG_OBJ(CXT, pc, ul_debug("new prefix: '%s'", p));
 	return 0;
 }
 
@@ -143,7 +141,7 @@ int ul_path_set_dir(struct path_cxt *pc, const char *dir)
 
 	free(pc->dir_path);
 	pc->dir_path = p;
-	DBG(CXT, ul_debugobj(pc, "new dir: '%s'", p));
+	DBG_OBJ(CXT, pc, ul_debug("new dir: '%s'", p));
 	return 0;
 }
 
@@ -156,7 +154,7 @@ int ul_path_set_dialect(struct path_cxt *pc, void *data, void free_data(struct p
 {
 	pc->dialect = data;
 	pc->free_dialect = free_data;
-	DBG(CXT, ul_debugobj(pc, "(re)set dialect"));
+	DBG_OBJ(CXT, pc, ul_debug("(re)set dialect"));
 	return 0;
 }
 
@@ -220,7 +218,7 @@ int ul_path_get_dirfd(struct path_cxt *pc)
 		if (!path)
 			return -errno;
 
-		DBG(CXT, ul_debugobj(pc, "opening dir: '%s'", path));
+		DBG_OBJ(CXT, pc, ul_debug("opening dir: '%s'", path));
 		pc->dir_fd = open(path, O_RDONLY|O_CLOEXEC);
 	}
 
@@ -233,7 +231,7 @@ void ul_path_close_dirfd(struct path_cxt *pc)
 	assert(pc);
 
 	if (pc->dir_fd >= 0) {
-		DBG(CXT, ul_debugobj(pc, "closing dir"));
+		DBG_OBJ(CXT, pc, ul_debug("closing dir"));
 		close(pc->dir_fd);
 		pc->dir_fd = -1;
 	}
@@ -325,7 +323,7 @@ int ul_path_access(struct path_cxt *pc, int mode, const char *path)
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			rc = faccessat(dir, path, mode, 0);
 
-		DBG(CXT, ul_debugobj(pc, "access: '%s' [rc=%d]", path, rc));
+		DBG_OBJ(CXT, pc, ul_debug("access: '%s' [rc=%d]", path, rc));
 	}
 	return rc;
 }
@@ -370,7 +368,7 @@ int ul_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *pa
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			rc = fstatat(dir, path, sb, 0);
 
-		DBG(CXT, ul_debugobj(pc, "stat '%s' [rc=%d]", path, rc));
+		DBG_OBJ(CXT, pc, ul_debug("stat '%s' [rc=%d]", path, rc));
 	}
 	return rc;
 }
@@ -477,7 +475,7 @@ int ul_path_open(struct path_cxt *pc, int flags, const char *path)
 		    && pc->redirect_on_enoent(pc, path, &dir) == 0)
 			fd = openat(dir, path, flags);
 
-		DBG(CXT, ul_debugobj(pc, "opening '%s'%s", path, fdx != fd ? " [redirected]" : ""));
+		DBG_OBJ(CXT, pc, ul_debug("opening '%s'%s", path, fdx != fd ? " [redirected]" : ""));
 	}
 	return fd;
 }
@@ -578,7 +576,7 @@ DIR *ul_path_opendir(struct path_cxt *pc, const char *path)
 	else if (pc->dir_path) {
 		int dirfd;
 
-		DBG(CXT, ul_debugobj(pc, "duplicate dir path"));
+		DBG_OBJ(CXT, pc, ul_debug("duplicate dir path"));
 		dirfd = ul_path_get_dirfd(pc);
 		if (dirfd >= 0)
 			fd = dup_fd_cloexec(dirfd, STDERR_FILENO + 1);

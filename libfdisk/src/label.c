@@ -41,10 +41,10 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 		if (!lb->op->probe)
 			continue;
 		if (lb->disabled) {
-			DBG(CXT, ul_debugobj(cxt, "%s: disabled -- ignore", lb->name));
+			DBG_OBJ(CXT, cxt, ul_debug("%s: disabled -- ignore", lb->name));
 			continue;
 		}
-		DBG(CXT, ul_debugobj(cxt, "probing for %s", lb->name));
+		DBG_OBJ(CXT, cxt, ul_debug("probing for %s", lb->name));
 
 		cxt->label = lb;
 		rc = lb->op->probe(cxt);
@@ -60,7 +60,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 		return 0;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "no label found"));
+	DBG_OBJ(CXT, cxt, ul_debug("no label found"));
 	return 1; /* not found */
 }
 
@@ -388,7 +388,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 			return rc;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "creating a new %s label", lb->name));
+	DBG_OBJ(CXT, cxt, ul_debug("creating a new %s label", lb->name));
 	return lb->op->create(cxt);
 }
 
@@ -424,7 +424,7 @@ int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
 	if (!cxt->label->op->locate)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, "locating %d chunk of %s.", n, cxt->label->name));
+	DBG_OBJ(CXT, cxt, ul_debug("locating %d chunk of %s.", n, cxt->label->name));
 	return cxt->label->op->locate(cxt, n, name, offset, size);
 }
 
@@ -444,7 +444,7 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 	if (!cxt || !cxt->label || !id)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "asking for disk %s ID", cxt->label->name));
+	DBG_OBJ(CXT, cxt, ul_debug("asking for disk %s ID", cxt->label->name));
 
 	rc = fdisk_get_disklabel_item(cxt, FDISK_LABELITEM_ID, &item);
 	if (rc == 0) {
@@ -476,7 +476,7 @@ int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_lab
 
 	fdisk_reset_labelitem(item);
 	item->id = id;
-	DBG(CXT, ul_debugobj(cxt, "asking for disk %s item %d", cxt->label->name, item->id));
+	DBG_OBJ(CXT, cxt, ul_debug("asking for disk %s item %d", cxt->label->name, item->id));
 
 	if (!cxt->label->op->get_item)
 		return -ENOSYS;
@@ -497,7 +497,7 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
 	if (!cxt->label->op->set_id)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, "setting %s disk ID", cxt->label->name));
+	DBG_OBJ(CXT, cxt, ul_debug("setting %s disk ID", cxt->label->name));
 	return cxt->label->op->set_id(cxt, NULL);
 }
 
@@ -517,7 +517,7 @@ int fdisk_set_disklabel_id_from_string(struct fdisk_context *cxt, const char *st
 	if (!cxt->label->op->set_id)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, "setting %s disk ID from '%s'", cxt->label->name, str));
+	DBG_OBJ(CXT, cxt, ul_debug("setting %s disk ID from '%s'", cxt->label->name, str));
 	return cxt->label->op->set_id(cxt, str);
 }
 
@@ -545,7 +545,7 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 			return -ENOMEM;
 		fdisk_partition_set_type(pa, t);
 
-		DBG(CXT, ul_debugobj(cxt, "partition: %zd: set type", partnum));
+		DBG_OBJ(CXT, cxt, ul_debug("partition: %zd: set type", partnum));
 		rc = cxt->label->op->set_part(cxt, partnum, pa);
 		fdisk_unref_partition(pa);
 		return rc;
@@ -576,7 +576,7 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
 
 	rc = cxt->label->op->part_toggle_flag(cxt, partnum, flag);
 
-	DBG(CXT, ul_debugobj(cxt, "partition: %zd: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
+	DBG_OBJ(CXT, cxt, ul_debug("partition: %zd: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
 	return rc;
 }
 

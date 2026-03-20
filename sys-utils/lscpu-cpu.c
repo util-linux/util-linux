@@ -24,7 +24,7 @@ struct lscpu_cpu *lscpu_new_cpu(int id)
 	cpu->address = -1;
 	cpu->configured = -1;
 
-	DBG(CPU, ul_debugobj(cpu, "alloc"));
+	DBG_OBJ(CPU, cpu, ul_debug("alloc"));
 	return cpu;
 }
 
@@ -40,7 +40,7 @@ void lscpu_unref_cpu(struct lscpu_cpu *cpu)
 		return;
 
 	if (--cpu->refcount <= 0) {
-		DBG(CPU, ul_debugobj(cpu, "  freeing #%d", cpu->logical_id));
+		DBG_OBJ(CPU, cpu, ul_debug("  freeing #%d", cpu->logical_id));
 		lscpu_unref_cputype(cpu->type);
 		cpu->type = NULL;
 		free(cpu->dynamic_mhz);
@@ -76,7 +76,7 @@ int lscpu_cpu_set_type(struct lscpu_cpu *cpu, struct lscpu_cputype *type)
 	if (cpu->type == type)
 		return 0;
 
-	DBG(CPU, ul_debugobj(cpu, " type %p -> %p", cpu->type, type));
+	DBG_OBJ(CPU, cpu, ul_debug(" type %p -> %p", cpu->type, type));
 	lscpu_unref_cputype(cpu->type);
 	cpu->type = type;
 	lscpu_ref_cputype(type);
