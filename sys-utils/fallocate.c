@@ -298,7 +298,7 @@ static void dig_holes(int fd, off_t file_off, off_t len)
 		if (file_end && end > file_end)
 			end = file_end;
 
-		if (off < 0 || end < 0)
+		if (off < 0 || end < 0 || off == end)
 			break;
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
