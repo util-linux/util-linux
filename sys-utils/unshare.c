@@ -326,21 +326,27 @@ static pid_t bind_ns_files_from_child(int *fd)
 static uid_t get_user(const char *s)
 {
 	struct passwd *pw;
+	uid_t uid;
 
 	pw = ul_getuserpw_str(s);
-	if (!pw)
-		errx(EXIT_FAILURE, _("failed to parse uid '%s'"), s);
-	return pw->pw_uid;
+	if (pw)
+		uid = pw->pw_uid;
+	else
+		uid = strtoul_or_err(s, _("failed to parse uid"));
+	return uid;
 }
 
 static gid_t get_group(const char *s)
 {
 	struct group *gr;
+	gid_t gid;
 
 	gr = ul_getgrp_str(s);
-	if (!gr)
-		errx(EXIT_FAILURE, _("failed to parse gid '%s'"), s);
-	return gr->gr_gid;
+	if (gr)
+		gid = gr->gr_gid;
+	else
+		gid = strtoul_or_err(s, _("failed to parse gid"));
+	return gid;
 }
 
 /**
