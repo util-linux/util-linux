@@ -5,7 +5,6 @@ build_pam_lastlog2 = not get_option('build-pam-lastlog2') \
 summary('pam_lastlog2', build_pam_lastlog2 ? 'enabled' : 'disabled', section : 'components')
 
 cc = meson.get_compiler('c')
-pkg = import('pkgconfig')
 lib_pam_lastlog2_sources = '''
   src/pam_lastlog2.c
 '''.split()
@@ -23,7 +22,7 @@ if build_pam_lastlog2
 
   libpam = cc.find_library('pam')
 
-  pam_lastlog2 = shared_module(
+  shared_module(
     'pam_lastlog2',
     lib_pam_lastlog2_sources,
     name_prefix : '',

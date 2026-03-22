@@ -350,7 +350,6 @@ else
   if get_option('nls').enabled()
     error('nls is not supported with meson before 0.59.0')
   endif
-  lib_intl = dependency('', required : false)
 endif
 
 lib_user = dependency(
