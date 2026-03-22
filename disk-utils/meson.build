@@ -53,6 +53,7 @@ mkfs_cramfs_sources = files(
   'cramfs.h',
   'cramfs_common.c',
 )
+mkfs_cramfs_manadocs = files('mkfs.cramfs.8.adoc')
 
 fsck_cramfs_sources = files(
   'fsck.cramfs.c',
