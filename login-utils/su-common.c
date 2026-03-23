@@ -633,6 +633,8 @@ static void create_watching_parent(struct su_context *su)
 	supam_cleanup(su, PAM_SUCCESS);
 
 	if (caught_signal) {
+		int sig;
+
 		if (su->child != (pid_t)-1) {
 			DBG(SIG, ul_debug("killing child"));
 			sleep(2);
@@ -647,7 +649,8 @@ static void create_watching_parent(struct su_context *su)
 		 * terminal settings (kzak -- Jun 2013).
 		 */
 		DBG(SIG, ul_debug("restore signals setting"));
-		switch (caught_signal) {
+		sig = caught_signal;
+		switch (sig) {
 		case SIGTERM:
 			sigaction(SIGTERM, &su->oldact[SIGTERM_IDX], NULL);
 			break;
@@ -660,11 +663,11 @@ static void create_watching_parent(struct su_context *su)
 		default:
 			/* just in case that signal stuff initialization failed and
 			 * caught_signal = true */
-			caught_signal = SIGKILL;
+			sig = SIGKILL;
 			break;
 		}
-		DBG(SIG, ul_debug("self-send %d signal", caught_signal));
-		kill(getpid(), caught_signal);
+		DBG(SIG, ul_debug("self-send %d signal", sig));
+		kill(getpid(), sig);
 	}
 
 	DBG(MISC, ul_debug("exiting [rc=%d]", status));
