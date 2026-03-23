@@ -163,40 +163,68 @@ char *xgetlogin(void)
 
 /*
  * Return a pointer to a `struct group` for a matching group name or GID.
+ *
+ * If @result is not NULL, it will always be set to the parsed GID on success
+ * or (gid_t) -1 on failure.
  */
-struct group *ul_getgrp_str(const char *str)
+struct group *ul_getgrp_str(const char *str, gid_t *result)
 {
         int rc;
-        uint64_t gid;
+        uint64_t num;
+        struct group *gr;
 
-        rc = ul_strtou64(str, &gid, 10);
+        if (result)
+                *result = (gid_t) -1;
+
+        rc = ul_strtou64(str, &num, 10);
         if (rc == -ERANGE)
                 return NULL;
-        if (rc == -EINVAL)
-                return getgrnam(str);
-        if (gid > MAX_OF_UINT_TYPE(gid_t))
+        if (rc == -EINVAL) {
+                errno = 0;
+                gr = getgrnam(str);
+                if (gr && result)
+                        *result = gr->gr_gid;
+                return gr;
+        }
+        if (num > MAX_OF_UINT_TYPE(gid_t))
                 return NULL;
 
-        return getgrgid((gid_t)gid);
+        if (result)
+                *result = (gid_t) num;
+        return getgrgid((gid_t) num);
 }
 
 /*
  * Return a pointer to a `struct passwd` for a matching username or UID.
+ *
+ * If @result is not NULL, it will always be set to the parsed UID on success
+ * or (uid_t) -1 on failure.
  */
-struct passwd *ul_getuserpw_str(const char *str)
+struct passwd *ul_getuserpw_str(const char *str, uid_t *result)
 {
         int rc;
-        uint64_t uid;
+        uint64_t num;
+        struct passwd *pw;
 
-        rc = ul_strtou64(str, &uid, 10);
+        if (result)
+                *result = (uid_t) -1;
+
+        rc = ul_strtou64(str, &num, 10);
         if (rc == -ERANGE)
                 return NULL;
-        if (rc == -EINVAL)
-                return getpwnam(str);
-        if (uid > MAX_OF_UINT_TYPE(uid_t))
+        if (rc == -EINVAL) {
+                errno = 0;
+                pw = getpwnam(str);
+                if (pw && result)
+                        *result = pw->pw_uid;
+                return pw;
+        }
+        if (num > MAX_OF_UINT_TYPE(uid_t))
                 return NULL;
 
-        return getpwuid((uid_t)uid);
+        if (result)
+                *result = (uid_t) num;
+        return getpwuid((uid_t) num);
 }
 
 #ifdef TEST_PROGRAM
