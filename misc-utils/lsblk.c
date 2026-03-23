@@ -2347,6 +2347,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>  output columns (see --list-columns)\n"), out);
 	fputs(_(" -p, --paths          print complete device path\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_("     --annotate[=<when>]\n"
+		"                      annotate columns with a tooltip (always|never|auto)\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
 	fputs(_(" -t, --topology       output info about topology\n"), out);
 	fputs(_(" -w, --width <num>    specifies output width as number of characters\n"), out);
@@ -2413,7 +2415,7 @@ int main(int argc, char *argv[])
 	};
 	struct lsblk_devtree *tr = NULL;
 	int c, status = EXIT_FAILURE, collist = 0;
-	char *outarg = NULL;
+	char *outarg = NULL, *annotate_opt_arg = NULL;
 	size_t i;
 	unsigned int width = 0;
 	int force_tree = 0, has_tree_col = 0;
@@ -2424,7 +2426,8 @@ int main(int argc, char *argv[])
 		OPT_COUNTER,
 		OPT_HIGHLIGHT,
 		OPT_PROPERTIES_BY,
-		OPT_HYPERLINK
+		OPT_HYPERLINK,
+		OPT_ANNOTATE,
 	};
 
 	static const struct option longopts[] = {
@@ -2468,6 +2471,7 @@ int main(int argc, char *argv[])
 		{ "ct",         required_argument, NULL, OPT_COUNTER },
 		{ "properties-by", required_argument, NULL, OPT_PROPERTIES_BY },
 		{ "list-columns", no_argument,     NULL, 'H' },
+		{ "annotate",	optional_argument, NULL, OPT_ANNOTATE },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -2689,6 +2693,9 @@ int main(int argc, char *argv[])
 			if (hyperlinkwanted(optarg))
 				lsblk->uri = xgethosturi(NULL);
 			break;
+		case OPT_ANNOTATE:
+			annotate_opt_arg = optarg;
+			break;
 		case 'H':
 			collist = 1;
 			break;
@@ -2706,6 +2713,9 @@ int main(int argc, char *argv[])
 
 	if (force_tree)
 		lsblk->flags |= LSBLK_TREE;
+
+	if (annotationwanted(annotate_opt_arg))
+		lsblk->annotate_headers = true;
 
 	check_sysdevblock();
 
@@ -2820,6 +2830,9 @@ int main(int argc, char *argv[])
 			scols_column_set_uri(cl, lsblk->uri);
 
 		set_column_type(ci, cl, fl);
+
+		if (lsblk->annotate_headers && ci->help)
+			scols_column_refer_annotation(cl, ci->help);
 	}
 
 	if (lsblk->filter)

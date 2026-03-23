@@ -64,6 +64,7 @@ _lsblk_module()
 	case $cur in
 		-*)
 			OPTS="--all
+				--annotate
 				--bytes
 				--nodeps
 				--discard
