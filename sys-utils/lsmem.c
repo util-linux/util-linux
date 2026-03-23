@@ -95,7 +95,8 @@ struct lsmem {
 				split_by_memmap_on_memory : 1,
 				split_by_config : 1,
 				have_zones : 1,
-				have_memconfig : 1;
+				have_memconfig : 1,
+				annotate_headers : 1;
 };
 
 
@@ -675,6 +676,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --output <list>  output columns\n"), out);
 	fputs(_("     --output-all     output all columns\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_("     --annotate[=<when>]\n"
+		"                      annotate columns with a tooltip (always|never|auto)\n"), out);
 	fputs(_(" -S, --split <list>   split ranges by specified columns\n"), out);
 	fputs(_(" -s, --sysroot <dir>  use the specified directory as system root\n"), out);
 	fputs(_("     --summary[=when] print summary information (never,always or only)\n"), out);
@@ -698,13 +701,14 @@ int main(int argc, char **argv)
 			.want_summary = 1
 		}, *lsmem = &_lsmem;
 
-	const char *outarg = NULL, *splitarg = NULL, *prefix = NULL;
+	const char *outarg = NULL, *splitarg = NULL, *prefix = NULL, *annotate_opt_arg = NULL;
 	int c;
 	size_t i;
 
 	enum {
 		LSMEM_OPT_SUMARRY = CHAR_MAX + 1,
-		OPT_OUTPUT_ALL
+		OPT_OUTPUT_ALL,
+		OPT_ANNOTATE,
 	};
 
 	static const struct option longopts[] = {
@@ -721,6 +725,7 @@ int main(int argc, char **argv)
 		{"split",       required_argument,      NULL, 'S'},
 		{"version",	no_argument,		NULL, 'V'},
 		{"summary",     optional_argument,	NULL, LSMEM_OPT_SUMARRY },
+		{ "annotate",	optional_argument, NULL, OPT_ANNOTATE },
 		{NULL,		0,			NULL, 0}
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
@@ -787,7 +792,9 @@ int main(int argc, char **argv)
 			} else
 				lsmem->want_table = 0;
 			break;
-
+		case OPT_ANNOTATE:
+			annotate_opt_arg = optarg;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -801,6 +808,9 @@ int main(int argc, char **argv)
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 	}
+
+	if (annotationwanted(annotate_opt_arg))
+		lsmem->annotate_headers = 1;
 
 	if (lsmem->want_table + lsmem->want_summary == 0)
 		errx(EXIT_FAILURE, _("options --{raw,json,pairs} and --summary=only are mutually exclusive"));
@@ -893,6 +903,9 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
+
+		if (lsmem->annotate_headers && ci->help)
+			scols_column_refer_annotation(cl, ci->help);
 	}
 
 	if (splitarg) {

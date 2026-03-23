@@ -97,6 +97,8 @@ Gather memory data for a Linux instance other than the instance from which the *
 *--summary*[**=**_when_]::
 This option controls summary lines output. The optional argument _when_ can be *never*, *always* or *only*. If the _when_ argument is omitted, it defaults to *only*. The summary output is suppressed for *--raw*, *--pairs*, and *--json*.
 
+include::man-common/annotate.adoc[]
+
 include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
