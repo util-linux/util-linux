@@ -496,7 +496,7 @@ static void chown_tty(struct login_context *cxt)
 
 	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 	if (grname && *grname) {
-		struct group *gr = ul_getgrp_str(grname);
+		struct group *gr = ul_getgrp_str(grname, NULL);
 		if (gr)
 			gid = gr->gr_gid;
 	}
@@ -659,7 +659,7 @@ static void log_audit(struct login_context *cxt, int status)
 	if (audit_fd == -1)
 		return;
 	if (!pwd && cxt->username)
-		pwd = ul_getuserpw_str(cxt->username);
+		pwd = ul_getuserpw_str(cxt->username, NULL);
 
 	ignore_result( audit_log_acct_message(audit_fd,
 					      AUDIT_USER_LOGIN,
