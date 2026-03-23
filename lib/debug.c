@@ -20,17 +20,12 @@ void ul_debug(const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-void ul_debugobj(const void *handler, int mask)
-{
-	if (handler && !(mask & __UL_DEBUG_FL_NOADDR))
-		fprintf(stderr, "[%p]: ", handler);
-}
-
 void ul_debug_prefix(const char *lib, const char *flag,
 		     const void *handler, int mask)
 {
 	fprintf(stderr, "%d: %s: %8s: ", getpid(), lib, flag);
-	ul_debugobj(handler, mask);
+	if (handler && !(mask & __UL_DEBUG_FL_NOADDR))
+		fprintf(stderr, "[%p]: ", handler);
 }
 
 int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],

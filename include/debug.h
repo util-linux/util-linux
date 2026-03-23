@@ -112,7 +112,6 @@ struct ul_debug_maskname {
 
 extern void ul_debug(const char *mesg, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
-extern void ul_debugobj(const void *handler, int mask);
 extern void ul_debug_prefix(const char *lib, const char *flag,
 			    const void *handler, int mask);
 extern int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],

@@ -1319,10 +1319,8 @@ static void device_to_scols(
 
 	DBG_OBJ(DEV, dev, ul_debug("add '%s' to scols", dev->name));
 	ON_DBG(DEV,
-		if (ul_path_isopen_dirfd(dev->sysfs)) {
-			ul_debugobj(dev, UL_DEBUG_MASK(lsblk));
-			ul_debug("%s ---> is open!", dev->name);
-		}
+		if (ul_path_isopen_dirfd(dev->sysfs))
+			DBG_OBJ(DEV, dev, ul_debug("%s ---> is open!", dev->name));
 	);
 
 	if (!parent && dev->wholedisk)
