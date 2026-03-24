@@ -1145,16 +1145,20 @@ static void fork_session(struct login_context *cxt)
 	 */
 	child_pid = fork();
 	if (child_pid < 0) {
+		int rc;
+
 		warn(_("fork failed"));
 
+		rc = pam_close_session(cxt->pamh, 0);
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
-		pam_end(cxt->pamh, pam_close_session(cxt->pamh, 0));
+		pam_end(cxt->pamh, rc);
 		sleepexit(EXIT_FAILURE);
 	}
 
 	if (child_pid) {
 		sigset_t oldset, ourset;
 		pid_t waiting;
+		int rc;
 
 		/*
 		 * parent - wait for child to finish, then clean up session
@@ -1203,8 +1207,9 @@ static void fork_session(struct login_context *cxt)
 
 		openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
+		rc = pam_close_session(cxt->pamh, 0);
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
-		pam_end(cxt->pamh, pam_close_session(cxt->pamh, 0));
+		pam_end(cxt->pamh, rc);
 		exit(EXIT_SUCCESS);
 	}
 
