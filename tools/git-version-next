@@ -94,9 +94,9 @@ esac
 
 # Get last tag (most recent by date) or use override
 if [ -n "$OVERRIDE_LAST_RELEASE" ]; then
-    UL_LAST_RELEASE="$OVERRIDE_LAST_RELEASE"
+    UL_RELEASE_LAST="$OVERRIDE_LAST_RELEASE"
 else
-    UL_LAST_RELEASE=$(git for-each-ref --sort='-creatordate' \
+    UL_RELEASE_LAST=$(git for-each-ref --sort='-creatordate' \
         --format='%(tag)' refs/tags \
         | grep '^v[0-9]' \
         | head -1)
@@ -104,9 +104,9 @@ fi
 
 # Get last vX.Y release (major releases only, no .Z or -rc suffixes) or use override
 if [ -n "$OVERRIDE_LAST_XY_RELEASE" ]; then
-    UL_LAST_XY_RELEASE="$OVERRIDE_LAST_XY_RELEASE"
+    UL_RELEASE_LAST_XY="$OVERRIDE_LAST_XY_RELEASE"
 else
-    UL_LAST_XY_RELEASE=$(git for-each-ref --sort='-creatordate' \
+    UL_RELEASE_LAST_XY=$(git for-each-ref --sort='-creatordate' \
         --format='%(tag)' 'refs/tags/v[0-9]*.[0-9]*[!-.]' \
         | grep '^v[0-9][0-9]*\.[0-9][0-9]*$' \
         | head -1)
@@ -114,7 +114,7 @@ fi
 
 # For --release-master, use the last major release as base, ignoring maintenance releases
 if [ "$RELEASE_TYPE" = "master" ] && [ -z "$OVERRIDE_LAST_RELEASE" ]; then
-    UL_LAST_RELEASE="$UL_LAST_XY_RELEASE"
+    UL_RELEASE_LAST="$UL_RELEASE_LAST_XY"
 fi
 
 # Safety check for --release-master: verify we're in a new branch without branch-specific tags
@@ -192,12 +192,12 @@ determine_next_version() {
             ;;
         v*.*.*:master)
             # Create new major release: increment Y from last X.Y release
-            if [ -z "$UL_LAST_XY_RELEASE" ]; then
+            if [ -z "$UL_RELEASE_LAST_XY" ]; then
                 echo "Error: Cannot determine last X.Y release for new major version" >&2
                 exit 1
             fi
-            local x_ver=$(echo "$UL_LAST_XY_RELEASE" | sed 's/^v\([0-9][0-9]*\)\..*/\1/')
-            local y_ver=$(echo "$UL_LAST_XY_RELEASE" | sed 's/^v[0-9][0-9]*\.\([0-9][0-9]*\)$/\1/')
+            local x_ver=$(echo "$UL_RELEASE_LAST_XY" | sed 's/^v\([0-9][0-9]*\)\..*/\1/')
+            local y_ver=$(echo "$UL_RELEASE_LAST_XY" | sed 's/^v[0-9][0-9]*\.\([0-9][0-9]*\)$/\1/')
             local new_version="v${x_ver}.$(increment_version $y_ver)"
             if [ "$rc_flag" = "yes" ]; then
                 echo "${new_version}-rc1"
@@ -248,29 +248,32 @@ determine_next_version() {
 }
 
 # Determine last final (non-RC) release
-if [[ "$UL_LAST_RELEASE" =~ -rc[0-9]+$ ]]; then
-    UL_LAST_FINAL_RELEASE=$(git for-each-ref --sort='-creatordate' \
+if [[ "$UL_RELEASE_LAST" =~ -rc[0-9]+$ ]]; then
+    UL_RELEASE_LAST_STABLE=$(git for-each-ref --sort='-creatordate' \
         --format='%(tag)' refs/tags \
-        | grep '^v[0-9]' \
-        | grep -v -- '-rc[0-9]*$' \
+        | grep -E '^v[0-9]+\.[0-9]+(\.[0-9]+)?$' \
         | head -1)
 else
-    UL_LAST_FINAL_RELEASE="$UL_LAST_RELEASE"
+    UL_RELEASE_LAST_STABLE="$UL_RELEASE_LAST"
 fi
 
 # Determine next version
-UL_NEXT_RELEASE=$(determine_next_version "$UL_LAST_RELEASE" "$RELEASE_TYPE" "$RC_REQUESTED")
+UL_RELEASE_NEXT=$(determine_next_version "$UL_RELEASE_LAST" "$RELEASE_TYPE" "$RC_REQUESTED")
 
 # Always provide the final release version (after code stabilization)
-if [[ "$UL_NEXT_RELEASE" =~ -rc[0-9]+$ ]]; then
-    UL_NEXT_FINAL_RELEASE=$(echo "$UL_NEXT_RELEASE" | sed 's/-rc[0-9]*$//')
+if [[ "$UL_RELEASE_NEXT" =~ -rc[0-9]+$ ]]; then
+    UL_RELEASE_NEXT_STABLE=$(echo "$UL_RELEASE_NEXT" | sed 's/-rc[0-9]*$//')
 else
-    UL_NEXT_FINAL_RELEASE="$UL_NEXT_RELEASE"
+    UL_RELEASE_NEXT_STABLE="$UL_RELEASE_NEXT"
 fi
 
+# Major version (vX.Y) of the next release
+UL_RELEASE_NEXT_XY=$(echo "$UL_RELEASE_NEXT_STABLE" | sed 's/^\(v[0-9][0-9]*\.[0-9][0-9]*\).*/\1/')
+
 # Output results
-echo "UL_LAST_RELEASE=$UL_LAST_RELEASE"
-echo "UL_LAST_FINAL_RELEASE=$UL_LAST_FINAL_RELEASE"
-echo "UL_LAST_XY_RELEASE=$UL_LAST_XY_RELEASE"
-echo "UL_NEXT_RELEASE=$UL_NEXT_RELEASE"
-echo "UL_NEXT_FINAL_RELEASE=$UL_NEXT_FINAL_RELEASE"
+echo "UL_RELEASE_LAST=$UL_RELEASE_LAST"
+echo "UL_RELEASE_LAST_STABLE=$UL_RELEASE_LAST_STABLE"
+echo "UL_RELEASE_LAST_XY=$UL_RELEASE_LAST_XY"
+echo "UL_RELEASE_NEXT=$UL_RELEASE_NEXT"
+echo "UL_RELEASE_NEXT_STABLE=$UL_RELEASE_NEXT_STABLE"
+echo "UL_RELEASE_NEXT_XY=$UL_RELEASE_NEXT_XY"
