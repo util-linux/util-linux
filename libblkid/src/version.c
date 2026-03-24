@@ -18,7 +18,7 @@
 
 #include "blkid.h"
 
-/* LIBBLKID_* defined in the global config.h */
+/* LIBBLKID_* defined in blkid.h */
 static const char *lib_version = LIBBLKID_VERSION;	/* release version */
 static const char *lib_date = LIBBLKID_DATE;
 
