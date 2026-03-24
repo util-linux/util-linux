@@ -448,7 +448,7 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("your user %d does not exist"),
 			     uid);
 	} else {
-		ctl.pw = ul_getuserpw_str(ctl.username);
+		ctl.pw = ul_getuserpw_str(ctl.username, NULL);
 		if (!ctl.pw)
 			errx(EXIT_FAILURE, _("user \"%s\" does not exist"),
 			     ctl.username);
