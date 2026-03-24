@@ -73,9 +73,11 @@ options.
 
 
 Changes between v2.41 and v2.42
--------------------------------
+*:
+    - use ul_default_shell() for interactive shell spawning (by Alessandro Ratti)
 
 agetty:
+    - guard netlink-related code with AGETTY_RELOAD (by Karel Zak, Samuel Thibault)
     - Fix reading /run/issue.d/ again (by Fabian Vogt)
     - Process all data from ul_nl_process() (by Stanislav Brabec)
     - Implement netlink based IP processing (by Stanislav Brabec)
@@ -92,6 +94,7 @@ AUTHORS:
     - update Zhenwei Pi email (by zhenwei pi)
 
 autotools:
+    - Remove the need for --disable-liblastlog2 (by Karel Zak)
     - use $PTHREAD_LIBS everywhere (by Karel Zak)
     - optionally add libpthread to uuid.pc (by Bernd Kuhls)
     - cleanup tests to use libcommon.la (by Karel Zak)
@@ -101,6 +104,8 @@ autotools:
     - remove tools/git-tp-sync-man (by Karel Zak)
 
 bash-completion:
+    - (unshare) remove embedded tabs from option strings (by Karel Zak)
+    - add improvements to unshare(1) completions (by Christian Goeschel Ndjomouo)
     - add getino completions (by Christian Goeschel Ndjomouo)
     - (lscpu) add --annotate option (by Christian Goeschel Ndjomouo)
     - (lslogins) fix typo in long option (by Christian Goeschel Ndjomouo)
@@ -210,6 +215,7 @@ build:
     - simplify checks for fallocate() and posix_fallocate() (by Thomas Weißschuh)
 
 build(deps):
+    - bump actions/upload-artifact from 6 to 7 (by dependabot[bot])
     - bump actions/cache from 4 to 5 (by dependabot[bot])
     - bump actions/upload-artifact from 5 to 6 (by dependabot[bot])
     - bump actions/checkout from 1 to 6 (by dependabot[bot])
@@ -219,6 +225,9 @@ build(deps):
     - bump actions/checkout from 1 to 5 (by dependabot[bot])
 
 build-sys:
+    - move shells.c to common (non-Linux) sources (by Karel Zak, Samuel Thibault)
+    - move netlink sources from libcommon to agetty (by Karel Zak, Samuel Thibault)
+    - update release dates (by Karel Zak)
     - add a target for tools/testcoverage.sh (by Christian Goeschel Ndjomouo)
     - (gcc) ignore -Wunused-but-set-variable for bison (by Christian Goeschel Ndjomouo)
     - make sure _PATH_SYSCONFDIR is defined (by Karel Zak)
@@ -245,6 +254,8 @@ chfn:
     - enable the use of the username or UID (by Christian Goeschel Ndjomouo)
 
 chmem:
+    - check ul_path_read_buffer() return value (by Karel Zak)
+    - fix segfault when parameter is just a dash (by Karel Zak)
     - do not word a configuration failure as an instruction to the user (by Benno Schulenberg)
     - improve messages (by Karel Zak)
     - add chmem documentation for dynamic (de)configuration of memory (by Sumanth Korikkar)
@@ -299,6 +310,7 @@ colrm:
     - make two error messages actually say that something is wrong (by Benno Schulenberg)
 
 column:
+    - Add notes about the role of the column header (by Karel Zak)
     - using switch-case replaces if-else (by WanBingjiang)
     - add JSON compact format output subtest. (by WanBingjiang)
     - add JSON LINES format output subtest. (by WanBingjiang)
@@ -325,6 +337,10 @@ column doc:
     - conditionally build {enosys,setpriv} if seccomp is present #3280 (by Thomas Devoogdt)
 
 copyfilerange:
+    - (man) correct the markup and improve the wordings (by Benno Schulenberg)
+    - simply report "too few arguments", not misleading messages (by Benno Schulenberg)
+    - wrap some overlong lines (in a tabsize-independent way) (by Benno Schulenberg)
+    - (usage) correct the markup and improve the wording (by Benno Schulenberg)
     - new command to call copy-file-range (by Dick Marinus)
 
 coresched:
@@ -337,6 +353,11 @@ disk-utils:
     - add attribute nonstring to bfs byte arrays (by Cristian Rodríguez)
 
 dmesg:
+    - rename is_time_fmt_set() to is_time_fmt() (by Karel Zak)
+    - warn on boot time failure instead of suppressing timestamps (by Karel Zak)
+    - add replace_time_fmt() and replace_delta_fmt() helpers (by Karel Zak)
+    - fix -d -t (--show-delta --notime) output regression (by Karel Zak)
+    - remove delta variable, use time format list consistently (by Karel Zak)
     - add bounds checking to parse_kmsg_timestamp() (by Karel Zak)
     - Gracefully handle EPIPE errors (by Tobias Stoeckmann)
     - Register pager_close as exit handler (by Tobias Stoeckmann)
@@ -353,6 +374,8 @@ dmesg:
     - use snprintf() instead of sprintf() (by Karel Zak)
 
 docs:
+    - getopt improve arg example in getopt-example (by Ben Song)
+    - add v2.42-ReleaseNotes (by Karel Zak)
     - lsns(8) add missing a comma in SEE ALSO section (by Masatake YAMATO)
     - write about EditorConfig (by Masatake YAMATO)
     - update mount options for 'ntfs3' (by Johannes Schneider)
@@ -377,6 +400,8 @@ editorconfig:
     - add .sh setting (by Karel Zak)
 
 eject:
+    - Fix OOB access with empty argument (by Tobias Stoeckmann)
+    - Reset SIGCHLD to default for wait (by Tobias Stoeckmann)
     - fix const qualifier warning in read_speed (by Karel Zak)
     - (man) add the missing SYNOPSIS header (by Benno Schulenberg)
 
@@ -395,6 +420,7 @@ fadvise:
     - add --fd to the help output (by Christian Goeschel Ndjomouo)
 
 fallocate:
+    - give up when SEEK_HOLE/DATA misbehaves (by David Timber)
     - refactor --report-holes and --dig-holes output (by Karel Zak)
     - add --report-holes (by syokensyo)
     - require posix_fallocate() from libc (by Thomas Weißschuh)
@@ -421,13 +447,18 @@ fdisk,partx:
     - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
 
 fincore:
+    - should add break here (by Weixie Cui)
     - The previous exit did not call munmap, resulting in a memory mapping leak. (by fortunate-lee)
     - close the ftsp to prevent fd leak (by syokensyo)
     - do not fall back to mincore if cachestat fails with EPERM (by Thomas Weißschuh)
     - add option to show a grand total (by Matteo Croce)
-    - add recursive directory scanning (by Matteo Croce)
+    - add recursive directory scanning (by Matteo Croce, Karel Zak)
+
+findfs:
+    - (man) improve the markup, the layout, and the wording (by Benno Schulenberg)
 
 findmnt:
+    - fix SIGSEGV when parsing empty file (by Karel Zak)
     - fix misleading warning messages for ntfs3 (by Karel Zak)
     - (usage) add a needed equals sign before an optional argument (by Benno Schulenberg)
     - add missing newline in --raw, --pair and --list output formats (by Christian Goeschel Ndjomouo)
@@ -446,6 +477,9 @@ flock:
     - fix incomplete -n option info in usage message (by Christian Goeschel Ndjomouo)
     - support locking with byte-range (by Masatake YAMATO)
 
+fsck:
+    - Fix stack overflow with many options (by Tobias Stoeckmann)
+
 fsck.cramfs:
     - fix off-by-one heap write in do_symlink() (by Karel Zak)
     - check buffer size for memcpy() (by Karel Zak)
@@ -459,6 +493,7 @@ getino:
     - new tool to print the unique pidfd or namespace inode number (by Christian Goeschel Ndjomouo)
 
 getopt:
+    - document whitespace as separator in --longoptions (by WanBingjiang)
     - (usage) make the description of -U fit within 80 columns (by Benno Schulenberg)
     - add member posixly_correct to struct getopt_control (by Christian Goeschel Ndjomouo)
     - add feature to ignore unknown options (by Christian Goeschel Ndjomouo)
@@ -469,6 +504,7 @@ github:
     - revert actions/checkout for ubuntu 18.04 (by Karel Zak)
 
 gitignore:
+    - replace CLAUDE.md with .claude/ directory (by Karel Zak)
     - Ignore tests/diff/ and test/output/ (by Jesse Rosenstock)
 
 hardlink:
@@ -627,6 +663,12 @@ lib:
     - add FSCONFIG_CMD_CREATE_EXCL (by Karel Zak)
 
 libblkid:
+    - fix stale comment in version.c (by Karel Zak)
+    - add LIBBLKID_VERSION to blkid.h, remove redundant config.h versions (by Karel Zak)
+    - add debug message for private DM device skip (by Karel Zak)
+    - check for private DM device before open (by Zdenek Kabelac)
+    - guard loop device code with __linux__ in cache (by Karel Zak, Samuel Thibault)
+    - (probe) Account for IO bias when retrieving buffer from parent (by Thomas Weißschuh)
     - fix integer overflows in HFS+ offset calculations (by Karel Zak)
     - fix integer overflow in linux_raid checksum size (by Karel Zak)
     - fix integer overflow in nvidia_raid size check (by Karel Zak)
@@ -693,6 +735,9 @@ lib/configs:
     - initialize FD to -1 (by Karel Zak)
     - improve readability (by Karel Zak)
 
+lib/debug:
+    - Move debug functions into c file (by Tobias Stoeckmann)
+
 lib/env, ...:
     - use getauxval(AT_SECURE) for SUID check (by Max Kellermann)
 
@@ -708,6 +753,7 @@ libfdisk:
     - avoid strcasecmp() for ASCII-only strings (by Karel Zak)
 
 lib/fileeq:
+    - Check arithmetic in ul_fileeq_set_size (by Tobias Stoeckmann)
     - Handle large files on 32 bit correctly (by Tobias Stoeckmann)
     - Prevent OOB with short read files (by Tobias Stoeckmann)
     - Extend debug message (by Tobias Stoeckmann)
@@ -718,6 +764,8 @@ lib/fileutils:
     - add is_dotdir_dirent() (by Karel Zak)
 
 liblastlog2:
+    - generate lastlog2.h from template (by Karel Zak)
+    - Install missing manual pages (by Tobias Stoeckmann)
     - refactor conditional assignments for better readability (by Karel Zak)
     - fix operator precedence in conditional assignments (by Karel Zak)
     - markup fixes for man pages (by Mario Blättermann)
@@ -735,6 +783,11 @@ lib, lscpu:
 
 lib/mbsalign:
     - use snprintf() instead of sprintf() (by Karel Zak)
+
+lib/meson:
+    - move caputils.c from lib_common to per-binary sources (by Karel Zak)
+    - remove unconditional procfs.c from lib_common_sources (by Karel Zak)
+    - remove duplicated source files from lib_common_sources (by Karel Zak)
 
 libmount:
     - move fstype_to_mounttype() to include/ (by Karel Zak)
@@ -791,6 +844,12 @@ lib/netlink:
     - set SOCK_CLOEXEC on netlink socket (by Karel Zak)
 
 lib/pager:
+    - Translate error message (by Tobias Stoeckmann)
+    - Always reset signals before exit (by Tobias Stoeckmann)
+    - Properly handle fork error return value (by Tobias Stoeckmann)
+    - Drop less workaround (by Tobias Stoeckmann)
+    - Add LV support (by Tobias Stoeckmann)
+    - Do not overwrite LESS environment var (by Tobias Stoeckmann)
     - Remove unused code (by Tobias Stoeckmann)
     - Use async-signal safe signal handler (by Tobias Stoeckmann)
     - Handle dup errors (by Tobias Stoeckmann)
@@ -831,6 +890,10 @@ lib/shells:
     - fix indentation (by Karel Zak)
 
 libsmartcols:
+    - enlarge columns with absolute width hint (by Karel Zak)
+    - improve truncation of column width (by Karel Zak)
+    - fix column width calculation (by Karel Zak)
+    - fix width= property parsing (by Karel Zak)
     - support JSON Lines format output (by WanBingjiang)
     - avoid cumulative width reduction during printing (by Alessandro Ratti)
     - small uri and annotation cleanup (by Karel Zak)
@@ -868,6 +931,7 @@ logger:
     - (man) improve --prio-prefix and --stderr description (by Karel Zak)
 
 login:
+    - Clean up PAM resources in correct order (by Tobias Stoeckmann)
     - improve comments for signal handling in fork_session() (by Karel Zak)
     - Fix signal race in child handling (by Tobias Stoeckmann)
     - use original FQDN for PAM_RHOST (by Karel Zak)
@@ -1013,7 +1077,7 @@ lsfd/mkfds-foreign-sockets:
     - skip when lacking sock_diag ability (by Chen Qi)
 
 lsfd,test_mkfds:
-    - make linux/vm_sockets_diag.h optional (by Masatake YAMATO)
+    - make linux/vm_sockets_diag.h optional (by Masatake YAMATO, Fabian Groffen)
 
 lsipc:
     - use snprintf() instead of sprintf() (by Karel Zak)
@@ -1044,6 +1108,7 @@ lslocks:
     - add support for LSLOCKS_COLUMNS environmental variable (by Christian Goeschel Ndjomouo)
 
 lslogins:
+    - fix broken GROUP column output (by Karel Zak)
     - (manpage) fix typo in option description (by Christian Goeschel Ndjomouo)
     - ignore special long options in CI CHECK (by Christian Goeschel Ndjomouo)
     - remove duplicate errno initialization (by Christian Goeschel Ndjomouo)
@@ -1056,6 +1121,9 @@ lslogins:
     - remove possible memory leaks [coverity scan] (by Karel Zak)
 
 lsmem:
+    - (man) correct the markup of column names, and improve some grammar (by Benno Schulenberg)
+    - correct the grammar of an error message (by Benno Schulenberg)
+    - apply --sysroot prefix to all sysfs paths (by Karel Zak)
     - fix missing zone info when memory blocks start at an index other than 0 (by Christian Goeschel Ndjomouo)
     - use xstrncpy() (by Karel Zak)
     - add doc for dynamic (de)configuration and memmap-on-memory support (by Sumanth Korikkar)
@@ -1079,6 +1147,8 @@ lsns:
     - (refactor) generalize the code for collecting netnsid information (by Masatake YAMATO)
 
 man:
+    - add ENVIRONMENT section for smartcols support in various man pages (by WanBingjiang)
+    - hide LIBSMARTCOLS_JSON in man pages that do not support --json (by WanBingjiang)
     - Fixed incorrect ipcrm options (by Prasanna Paithankar)
     - Replace RETURN VALUE with EXIT STATUS in section 1 (by Jesse Rosenstock)
 
@@ -1088,7 +1158,22 @@ man-common:
 man pages:
     - consolidate libsmartcols environment variables (by Karel Zak)
 
+mbsalign:
+    - cleanup escape sequences handling (by Karel Zak)
+    - add support for SCS escape sequences (by WanBingjiang)
+    - validate ESC character before processing escape sequences (by WanBingjiang)
+
 meson:
+    - remove unused HAVE_LIBFDISK and HAVE_LIBSMARTCOLS defines (by Karel Zak)
+    - remove unused HAVE_NCURSES config define (by Karel Zak)
+    - add hwclock-gplv3 option (by Karel Zak)
+    - add login-stat-mail option (by Karel Zak)
+    - add check for security_get_initial_context() (by Karel Zak)
+    - fix plymouth support macro name (by Karel Zak)
+    - use explicit values for curses/slang config defines (by Karel Zak)
+    - Fix build warnings (by Tobias Stoeckmann)
+    - Install missing manual pages (by Tobias Stoeckmann)
+    - define _GNU_SOURCE when testing for 'struct statx' (by Thomas Weißschuh)
     - fix non threaded toolchains (by Rosen Penev)
     - cleanup tests to use libcommon.la (by Karel Zak)
     - use curses dep for ncurses (by Rosen Penev)
@@ -1099,6 +1184,7 @@ meson:
     - fix manadocs for libsmartcols and libblkid (by Karel Zak)
     - fix po-man installation (by Karel Zak)
     - bring hexdump in line with others (by Christian Hesse)
+    - demote two libraries to library (by Rosen Penev)
 
 misc:
     - never include wchar.h (by Karel Zak)
@@ -1110,10 +1196,14 @@ mkfs.bfs:
     - fix memory leaks and weak code (by Karel Zak)
 
 mkfs.cramfs:
+    - Properly check mmap results (by Tobias Stoeckmann)
     - avoid uninitialized value [coverity scan] (by Karel Zak)
     - (man) mark arguments of -N and -l in bold, not italics (by Benno Schulenberg)
     - vertically align the option descriptions of the usage text (by Benno Schulenberg)
     - reduce the synopsis to the standard, succinct form (by Benno Schulenberg)
+
+mkfs.minix:
+    - Simplify SIGALRM handler (by Tobias Stoeckmann)
 
 more:
     - Use ul_strtou16() in a robust way (by Karel Zak)
@@ -1169,6 +1259,9 @@ nologin:
     - ignore well-known shell command-line options in CI CHECK (by Christian Goeschel Ndjomouo)
 
 nsenter:
+    - (man) correct the markup and improve the formatting (by Benno Schulenberg)
+    - (usage) improve the alignment of the option descriptions (by Benno Schulenberg)
+    - (usage) correct the formatting of eight option arguments (by Benno Schulenberg)
     - use USE_NAMESPACE_ID_SUPPORT macro for nsid feature (by Karel Zak)
     - fix minor issues with namespace ID support (by Karel Zak)
     - Support specifying namespace by ID (by Xiao Liang)
@@ -1183,11 +1276,15 @@ nsenter,unshare:
 pager:
     - remove stale pager_redirect() declaration (by Karel Zak)
 
+pam_lastlog2:
+    - add -lpam to Makemodule.am (by Karel Zak)
+
 partx:
     - fix const qualifier warning in get_max_partno (by Karel Zak)
     - mark the --list option as deprecated (by Christian Goeschel Ndjomouo)
 
 pg:
+    - Reset SIGCHLD to default (by Tobias Stoeckmann)
     - Fix compiler warning (by Tobias Stoeckmann)
 
 pidfd-utils:
@@ -1200,6 +1297,7 @@ pipesz:
     - (man) improve the markup and some wordings (by Benno Schulenberg)
 
 po:
+    - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
     - update LINGUAS list (by Karel Zak)
     - add ar.po (from translationproject.org) (by Zayed Al-Saidi)
@@ -1244,6 +1342,7 @@ po:
 po-man:
     - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
+    - merge changes (by Karel Zak)
     - add sv.po (from translationproject.org) (by Daniel Nylander)
     - add ar.po (from translationproject.org) (by Zayed Al-Saidi)
     - update uk.po (from translationproject.org) (by Yuri Chornoivan)
@@ -1264,13 +1363,14 @@ po-man:
     - fix typos in configuration (by Karel Zak)
 
 prlimit:
-    - raise a nicer error message when modifying NOFILE (by Karel Zak)
+    - raise a nicer error message when modifying NOFILE (by Karel Zak, krajpuro)
 
 procfs:
     - use F_TYPE_EQUAL() macro for statfs.f_type comparison (by cgoesche)
     - add a helper function to access /proc/$pid/personality (by Masatake YAMATO)
 
 pwdutils:
+    - extend ul_getuserpw_str() and ul_getgrp_str() to return ID (by Karel Zak)
     - fix grammar in comments (by Tobias Stoeckmann)
 
 readprofile:
@@ -1391,6 +1491,7 @@ taskset:
     - Accept 0 pid for current process (by Jesse Rosenstock)
 
 terminal-colors.d:
+    - (man) do not show 'type' as an optional part (by Benno Schulenberg)
     - (man) reduce two tables to succinct lists (by Benno Schulenberg)
     - support NO_COLOR (by Karel Zak)
 
@@ -1399,6 +1500,11 @@ test_mkfds:
     - remove local pidfd_open() fallback (by Karel Zak)
 
 tests:
+    - add dmesg -d -t and -t -d timestamp format tests (by Karel Zak)
+    - add SCS escape sequence test for column (by Karel Zak)
+    - update to reflect libsmartcols changes (by Karel Zak)
+    - add column strictwidth test (by Karel Zak)
+    - (copyfilerange) update expected output for changed wording (by Karel Zak)
     - (lsfd::*) revise the way to use "$?" (by Masatake YAMATO)
     - (lsns::*) revise the way to use "$?" (by Masatake YAMATO)
     - add tests for column --table-header-as-columns (by Karel Zak)
@@ -1496,6 +1602,9 @@ tests:
 tests/helpers/test_sigstate.c:
     - explicitly reset SIGINT to default action after trapping (by Hongxu Jia)
 
+tests/lsfd:
+    - skip executable mode tests when not running as root (by Thomas Weißschuh)
+
 tests/ts/kill/decode:
     - avoid using shell built-in kill command (by Chen Qi)
 
@@ -1510,6 +1619,8 @@ textual:
     - fix a mistruncated message, and fix a typo (by Benno Schulenberg)
 
 tools:
+    - git-version-next fix -devel tag and rename variables (by Karel Zak)
+    - add git-compare-backport script (by Karel Zak)
     - git-version-bump, accept X.Y-devel version on master branch (by Karel Zak)
     - (get-options.sh) refine regex for unsupported programs to avoid false positives (by Christian Goeschel Ndjomouo)
     - expand relative paths provided by $top_srcdir for robustness (by Christian Goeschel Ndjomouo)
@@ -1533,6 +1644,7 @@ tools/checkconfig:
     - strip C comments before macro extraction (by Karel Zak)
 
 tools/git-grouped-log:
+    - add co-author support (by Karel Zak)
     - sort output (by Karel Zak)
     - add script to generated git log (by Karel Zak)
 
@@ -1617,6 +1729,7 @@ various:
     - (man) list --help and --version last among the options (by Benno Schulenberg)
 
 waitpid:
+    - consistently write the abbreviation "PID" in all-uppercase (by Benno Schulenberg)
     - (manpage) document the support for the "PID:inode" addressing format (by Christian Goeschel Ndjomouo)
     - close fd after removal from epoll interest list (by Christian Goeschel Ndjomouo)
     - support 'PID:inode' process addressing format (by Christian Goeschel Ndjomouo)
@@ -1641,6 +1754,10 @@ zramctl:
     - wait for device being initialized and unlocked by udevd (by Yu Watanabe)
 
 Misc:
+    - The incorrect order of fcntl() parameters resulted in the inability to clear O_NONBLOCK (by Leefancy)
+    - Put file types in namei.1.adoc in a table structure (by Mario Blättermann)
+    - Convert code blocks into tables (by Mario Blättermann)
+    - Remove backticks from table in terminal-colors.d.5.adoc (by Mario Blättermann)
     - Fix formatting in getino.1.adoc (by Mario Blättermann)
     - avoid repetitive code (by Arvin Schnell)
     - always use array with name in json output (by Arvin Schnell)
@@ -1706,5 +1823,4 @@ Misc:
     - sys-utils/flock.c Fix a typo in flock.c (by Masanari Iida)
     - lib/fileeq.c Fix a typo in message. (by Masanari Iida)
     - Use ipc_stat::cgid for the column COL_CGID. (by Koutheir Attouchi)
-    - use ul_default_shell() for interactive shell spawning (by Alessandro Ratti)
 
