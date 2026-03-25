@@ -527,6 +527,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 	struct pte *pex, *pe;
 	struct dos_partition *p, *q;
 	struct fdisk_dos_label *l = self_label(cxt);
+	fdisk_sector_t ext_start, ext_end;
 
 	if (fdisk_is_listonly(cxt) &&
 	    !sysfs_devno_is_wholedisk(fdisk_get_devno(cxt))) {
@@ -549,9 +550,14 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		return;
 	}
 
+	ext_start = get_abs_partition_start(pex);
+	ext_end = get_abs_partition_end(pex);
+
 	DBG(LABEL, ul_debug("DOS: Reading extended %zu", ext));
 
 	while (IS_EXTENDED (p->sys_ind)) {
+		fdisk_sector_t next;
+
 		if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
 			/* This is not a Linux restriction, but
 			   this program uses arrays of size MAXIMUM_PARTS.
@@ -575,8 +581,17 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		if (!pe)
 			return;
 
-		if (read_pte(cxt, cxt->label->nparts_max, l->ext_offset +
-						dos_partition_get_start(p)))
+		next = l->ext_offset + dos_partition_get_start(p);
+		if (next < ext_start || next > ext_end) {
+			DBG(LABEL, ul_debug("DOS: EBR link %ju outside "
+				"extended partition <%ju-%ju> -- stop",
+				(uintmax_t) next,
+				(uintmax_t) ext_start,
+				(uintmax_t) ext_end));
+			break;
+		}
+
+		if (read_pte(cxt, cxt->label->nparts_max, next))
 			return;
 
 		if (!l->ext_offset)
