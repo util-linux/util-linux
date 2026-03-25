@@ -1933,7 +1933,7 @@ int __mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_f
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
-		int eq = mnt_fs_streq_srcpath(fs, src);
+		int eq = mnt_fs_match_source(fs, src, tb->cache);
 
 		if (!eq && devno && mnt_fs_get_devno(fs) == devno)
 			eq = 1;
