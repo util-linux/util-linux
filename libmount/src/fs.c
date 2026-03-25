@@ -1462,8 +1462,13 @@ int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src)
  * mnt_fs_get_id:
  * @fs: /proc/self/mountinfo entry
  *
- * This ID is "old" and used in mountinfo only. Since Linux v6.8 there is also unique
- * 64-bit ID, see mnt_fs_get_uniq_id().
+ * This is the classic mount ID. For tables parsed from /proc/self/mountinfo
+ * the ID is always available. For tables populated via listmount/statmount
+ * the ID is fetched on-demand from statmount() (requires statmount to be
+ * enabled for the filesystem or table, see mnt_table_refer_statmnt()).
+ *
+ * Since Linux v6.8 there is also a unique 64-bit ID, see
+ * mnt_fs_get_uniq_id().
  *
  * Returns: mount ID or negative number in case of error.
  */
@@ -1481,10 +1486,19 @@ int mnt_fs_get_id(struct libmnt_fs *fs)
  * mnt_fs_get_uniq_id:
  * @fs: filesystem instance
  *
- * This ID is provided by statmount() or statx(STATX_MNT_ID_UNIQUE) since Linux
- * kernel since v6.8.
+ * Returns the unique 64-bit mount ID (available since Linux v6.8).
  *
- * Returns: unique mount ID
+ * This function returns a non-zero value only when the ID has already been
+ * set — either from statmount() (for tables populated via
+ * mnt_table_fetch_listmount(), or when statmount is enabled for the
+ * filesystem/table, see mnt_table_refer_statmnt()), or from utab.
+ *
+ * For tables parsed from /proc/self/mountinfo this function returns 0 unless
+ * the ID has been explicitly set. To obtain the unique mount ID for a
+ * specific mountpoint use mnt_id_from_path() which calls
+ * statx(STATX_MNT_ID_UNIQUE).
+ *
+ * Returns: unique mount ID or 0
  *
  * Since: 2.41
  */
@@ -1501,10 +1515,10 @@ uint64_t mnt_fs_get_uniq_id(struct libmnt_fs *fs)
 /**
  * mnt_fs_set_uniq_id:
  * @fs: filesystem instance
- * @id: mount node ID
+ * @id: unique mount node ID
  *
- * This ID is provided by statmount() or statx(STATX_MNT_ID_UNIQUE) since Linux
- * kernel since v6.8.
+ * Sets the unique 64-bit mount ID (available since Linux v6.8). The ID can
+ * be obtained for example by mnt_id_from_path().
  *
  * Returns: 0 or negative number in case of error.
  *
