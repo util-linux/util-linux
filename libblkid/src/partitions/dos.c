@@ -46,6 +46,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 {
 	blkid_partlist ls = blkid_probe_get_partlist(pr);
 	uint32_t cur_start = ex_start, cur_size = ex_size;
+	uint64_t ex_end = (uint64_t) ex_start + ex_size;
 	const unsigned char *data;
 	int ct_nodata = 0;	/* count ext.partitions without data partitions */
 	int i;
@@ -88,23 +89,30 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		/* Parse data partition */
 		for (p = p0, i = 0; i < 4; i++, p++) {
 			uint32_t abs_start;
+			uint64_t abs;
 			blkid_partition par;
 
 			/* the start is relative to the parental ext.partition */
 			start = dos_partition_get_start(p) * ssf;
 			size = dos_partition_get_size(p) * ssf;
-			abs_start = cur_start + start;	/* absolute start */
 
 			if (!size || is_extended(p))
 				continue;
+
+			abs = (uint64_t) cur_start + start;
+
+			/* data partition must be within the extended area */
+			if (abs < ex_start || abs + size > ex_end) {
+				DBG(LOWPROBE, ul_debug("#%d: EBR data partition outside "
+					"extended -- ignore", i + 1));
+				continue;
+			}
+			abs_start = (uint32_t) abs;
+
 			if (i >= 2) {
-				/* extra checks to detect real data on
+				/* extra check to detect real data on
 				 * 3rd and 4th entries */
 				if (start + size > cur_size)
-					continue;
-				if (abs_start < ex_start)
-					continue;
-				if (abs_start + size > ex_start + ex_size)
 					continue;
 			}
 
@@ -142,8 +150,22 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		if (i == 4)
 			goto leave;
 
-		cur_start = ex_start + start;
-		cur_size = size;
+		{
+			uint64_t next = (uint64_t) ex_start + start;
+
+			if (next + size > ex_end) {
+				DBG(LOWPROBE, ul_debug("EBR link outside "
+					"extended area -- leave"));
+				goto leave;
+			}
+			if (next <= cur_start) {
+				DBG(LOWPROBE, ul_debug("EBR link does not "
+					"advance -- leave"));
+				goto leave;
+			}
+			cur_start = (uint32_t) next;
+			cur_size = size;
+		}
 	}
 leave:
 	return BLKID_PROBE_OK;
