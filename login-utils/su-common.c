@@ -156,7 +156,9 @@ struct su_context {
 			suppress_pam_info,	/* don't print PAM info messages (Last login, etc.). */
 			pam_has_session,	/* PAM session opened */
 			pam_has_cred,		/* PAM cred established */
+#ifdef USE_PTY
 			force_pty,		/* create pseudo-terminal */
+#endif
 			restricted;		/* false for root user */
 };
 
@@ -1087,7 +1089,9 @@ int su_main(int argc, char **argv, int mode)
 			break;
 
 		case 'T':
+#ifdef USE_PTY
 			su->force_pty = 0;
+#endif
 			break;
 
 		case 's':
