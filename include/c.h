@@ -38,7 +38,7 @@
 # define NAME_MAX PATH_MAX
 #endif
 
-#ifndef HAVE_SYS_AUXV_H
+#ifdef HAVE_SYS_AUXV_H
 # include <sys/auxv.h>
 #endif
 
