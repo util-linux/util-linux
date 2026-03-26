@@ -1617,17 +1617,20 @@ static char *remove_mountpoint_from_path(const char *path, const char *mnt)
 }
 
 #ifdef HAVE_BTRFS_SUPPORT
-static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char **root)
+static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs,
+			     char **root, struct libmnt_fs **rootfs)
 {
-	char *vol = NULL, *p;
+	char *vol = NULL, *p, *target;
 	size_t sz, volsz = 0;
+
+	assert(root);
+	assert(rootfs);
 
 	DBG(BTRFS, ul_debug("lookup for btrfs FS root"));
 	*root = NULL;
+	*rootfs = NULL;
 
 	if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz) == 0) {
-		char *target;
-		struct libmnt_fs *f;
 		char subvolidstr[sizeof(stringify_value(UINT64_MAX))];
 
 		DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
@@ -1641,28 +1644,57 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char
 			goto err;
 
 		DBG(BTRFS, ul_debug(" trying target=%s subvolid=%s", target, subvolidstr));
-		f = mnt_table_find_target_with_option(tb, target,
+		*rootfs = mnt_table_find_target_with_option(tb, target,
 					"subvolid", subvolidstr,
 					MNT_ITER_BACKWARD);
 		if (!tb->cache)
 			free(target);
-		if (!f)
+		if (!*rootfs)
 			goto not_found;
 
 		/* Instead of set of BACKREF queries constructing subvol path
 		 * corresponding to a particular subvolid, use the one in
 		 * mountinfo. Kernel keeps subvol path up to date.
 		 */
-		if (mnt_fs_get_option(f, "subvol", &vol, &volsz) != 0)
+		if (mnt_fs_get_option(*rootfs, "subvol", &vol, &volsz) != 0)
 			goto not_found;
 
-	} else if (mnt_fs_get_option(fs, "subvol", &vol, &volsz) != 0) {
-		/* If fstab entry does not contain "subvol", we have to
-		 * check, whether btrfs has default subvolume defined.
+	} else if (mnt_fs_get_option(fs, "subvol", &vol, &volsz) == 0) {
+		/* fstab entry contains "subvol=" (but no "subvolid=").
+		 * Find matching mountinfo entry to get the root FS
+		 * device (useful for btrfs RAID where the device in
+		 * mountinfo may differ from the fstab-resolved one).
+		 */
+		char subvol[PATH_MAX] = { '/' };
+		size_t off = (*vol == '/') ? 0 : 1;
+
+		DBG(BTRFS, ul_debug(" found subvol=%.*s, checking", (int) volsz, vol));
+
+		if (volsz + off >= sizeof(subvol))
+			goto err;
+		memcpy(subvol + off, vol, volsz);
+		subvol[volsz + off] = '\0';
+
+		target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
+		if (!target)
+			goto err;
+
+		DBG(BTRFS, ul_debug(" trying target=%s subvol=%s", target, subvol));
+		*rootfs = mnt_table_find_target_with_option(tb, target,
+					"subvol", subvol,
+					MNT_ITER_BACKWARD);
+		if (!tb->cache)
+			free(target);
+
+		/* not_found is not an error here, the subvol= value
+		 * from fstab is still usable as root */
+
+	} else {
+		/* If fstab entry does not contain "subvol" or "subvolid",
+		 * we have to check whether btrfs has default subvolume
+		 * defined.
 		 */
 		uint64_t default_id;
-		char *target;
-		struct libmnt_fs *f;
 		char default_id_str[sizeof(stringify_value(UINT64_MAX))];
 
 		DBG(BTRFS, ul_debug(" subvolid/subvol not found, checking default"));
@@ -1688,12 +1720,12 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char
 		DBG(BTRFS, ul_debug(" trying target=%s default subvolid=%s",
 					target, default_id_str));
 
-		f = mnt_table_find_target_with_option(tb, target,
+		*rootfs = mnt_table_find_target_with_option(tb, target,
 					"subvolid", default_id_str,
 					MNT_ITER_BACKWARD);
 		if (!tb->cache)
 			free(target);
-		if (!f)
+		if (!*rootfs)
 			goto not_found;
 
 		/* Instead of set of BACKREF queries constructing
@@ -1703,7 +1735,7 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char
 		DBG(BTRFS, ul_debug("setting FS root: btrfs default subvolid = %s",
 					default_id_str));
 
-		if (mnt_fs_get_option(f, "subvol", &vol, &volsz) != 0)
+		if (mnt_fs_get_option(*rootfs, "subvol", &vol, &volsz) != 0)
 			goto not_found;
 	}
 
@@ -1840,7 +1872,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	 */
 	else if (tb && fs->fstype &&
 		 (!strcmp(fs->fstype, "btrfs") || !strcmp(fs->fstype, "auto"))) {
-		if (get_btrfs_fs_root(tb, fs, &root) < 0)
+		if (get_btrfs_fs_root(tb, fs, &root, &src_fs) < 0)
 			goto err;
 	}
 #endif /* HAVE_BTRFS_SUPPORT */
@@ -2327,13 +2359,16 @@ static int test_is_mounted(struct libmnt_test *ts __attribute__((unused)),
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_cache *mpc = NULL;
+	const char *mountinfo = "/proc/self/mountinfo";
 
-	if (argc != 2)
+	if (argc < 2 || argc > 3)
 		return -1;
+	if (argc == 3)
+		mountinfo = argv[2];
 
-	tb = mnt_new_table_from_file("/proc/self/mountinfo");
+	tb = mnt_new_table_from_file(mountinfo);
 	if (!tb) {
-		fprintf(stderr, "failed to parse mountinfo\n");
+		fprintf(stderr, "failed to parse %s\n", mountinfo);
 		return -1;
 	}
 
@@ -2422,7 +2457,7 @@ int main(int argc, char *argv[])
 	{ "--find-fs",       test_find_idx, "<file> <target>" },
 	{ "--find-mountpoint", test_find_mountpoint, "<path>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
-	{ "--is-mounted",    test_is_mounted, "<fstab> check what from fstab is already mounted" },
+	{ "--is-mounted",    test_is_mounted, "<fstab> [<mountinfo>] check what from fstab is already mounted" },
 	{ NULL }
 	};
 
