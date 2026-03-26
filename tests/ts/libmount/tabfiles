@@ -82,4 +82,8 @@ ts_run $TESTPROG --find-fs "$TS_SELF/files/mountinfo" /home/kzak &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "is-mounted-btrfs"
+ts_run $TESTPROG --is-mounted "$TS_SELF/files/fstab_btrfs" "$TS_SELF/files/mountinfo_btrfs" &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize
