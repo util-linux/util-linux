@@ -1,0 +1,18 @@
+if BUILD_LSBLK
+bin_PROGRAMS += lsblk
+MANPAGES += lsblk-cmd/lsblk.8
+dist_noinst_DATA += lsblk-cmd/lsblk.8.adoc
+lsblk_SOURCES = \
+	lsblk-cmd/lsblk.c \
+	lsblk-cmd/lsblk-mnt.c \
+	lsblk-cmd/lsblk-properties.c \
+	lsblk-cmd/lsblk-devtree.c \
+	lsblk-cmd/lsblk.h
+lsblk_LDADD = $(LDADD) libblkid.la libmount.la libcommon.la \
+		libsmartcols.la libtcolors.la
+lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
+if HAVE_UDEV
+lsblk_LDADD += -ludev
+endif
+endif # BUILD_LSBLK
+

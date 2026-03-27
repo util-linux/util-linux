@@ -48,15 +48,6 @@ lslocks_sources = files(
 )
 lslocks_manadocs = files('lslocks.8.adoc')
 
-lsblk_sources = files(
-  'lsblk.c',
-  'lsblk-mnt.c',
-  'lsblk-properties.c',
-  'lsblk-devtree.c',
-  'lsblk.h',
-)
-lsblk_manadocs = files('lsblk.8.adoc')
-
 uuidgen_sources = files(
   'uuidgen.c',
 )
