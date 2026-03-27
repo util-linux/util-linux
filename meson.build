@@ -4128,7 +4128,6 @@ endif
 asciidoctor = find_program('asciidoctor', required : false)
 if asciidoctor.found()
   foreach adoc : manadocs
-    name = fs.name(adoc)
     page = fs.stem(adoc)
     section = page.split('.')[-1]
     mandirn = mandir / 'man' + section
