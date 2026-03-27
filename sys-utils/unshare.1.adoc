@@ -167,6 +167,9 @@ Set the offset of *CLOCK_MONOTONIC* which will be used in the entered time names
 *--boottime* _offset_::
 Set the offset of *CLOCK_BOOTTIME* which will be used in the entered time namespace. This option requires unsharing a time namespace with *--time*.
 
+*--clear-env**::
+Do not pass the environment variables of the calling process to the unshared process.
+
 include::man-common/help-version.adoc[]
 
 == NOTES
