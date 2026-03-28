@@ -131,12 +131,12 @@ ul_random_src_t ul_random_get_bytes(void *buf, size_t nbytes)
 		return GETRANDOM;
 
 	if (errno == ENOSYS)
-#endif
 	/*
 	 * We've been built against headers that support getrandom, but the
 	 * running kernel does not.  Fallback to reading from /dev/{u,}random
 	 * as before
 	 */
+#endif
 	{
 		int fd = random_get_fd(&src);
 
