@@ -73,13 +73,16 @@ static void crank_random(void)
 		rand();
 }
 
-static int random_get_fd(void)
+static int random_get_fd(ul_random_src_t *src)
 {
 	int fd;
 
+	*src = URANDOM;
 	fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-	if (fd == -1)
+	if (fd == -1) {
+		*src = RANDOM;
 		fd = open("/dev/random", O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+	}
 	crank_random();
 	return fd;
 }
@@ -97,10 +100,11 @@ static int random_get_fd(void)
  *
  * Returns 0 for good quality of random bytes or 1 for weak quality.
  */
-int ul_random_get_bytes(void *buf, size_t nbytes)
+ul_random_src_t ul_random_get_bytes(void *buf, size_t nbytes)
 {
 	unsigned char *cp = (unsigned char *)buf;
 	size_t i, n = nbytes;
+	ul_random_src_t src;
 	int lose_counter = 0;
 
 #ifdef HAVE_GETRANDOM
@@ -123,6 +127,8 @@ int ul_random_get_bytes(void *buf, size_t nbytes)
 		} else
 			break;
 	}
+	if (n == 0)
+		return GETRANDOM;
 
 	if (errno == ENOSYS)
 #endif
@@ -132,7 +138,7 @@ int ul_random_get_bytes(void *buf, size_t nbytes)
 	 * as before
 	 */
 	{
-		int fd = random_get_fd();
+		int fd = random_get_fd(&src);
 
 		lose_counter = 0;
 		if (fd >= 0) {
@@ -151,6 +157,8 @@ int ul_random_get_bytes(void *buf, size_t nbytes)
 
 			close(fd);
 		}
+		if (n == 0)
+			return src;
 	}
 	/*
 	 * We do this all the time, but this is the only source of
@@ -173,30 +181,35 @@ int ul_random_get_bytes(void *buf, size_t nbytes)
 	}
 #endif
 
-	return n != 0;
+	return WEAK;
 }
 
 
 /*
  * Tell source of randomness.
  */
-const char *random_tell_source(void)
+const char *ul_random_tell_source(ul_random_src_t src)
 {
-#ifdef HAVE_GETRANDOM
-	return _("getrandom() function");
-#else
-	size_t i;
-	static const char *const random_sources[] = {
-		"/dev/urandom",
-		"/dev/random"
-	};
+	char *s;
 
-	for (i = 0; i < ARRAY_SIZE(random_sources); i++) {
-		if (!access(random_sources[i], R_OK))
-			return random_sources[i];
-	}
+	switch (src) {
+#ifdef HAVE_GETRANDOM
+	case GETRANDOM:
+		s = _("getrandom() function");
+		break;
 #endif
-	return _("libc pseudo-random functions");
+	case RANDOM:
+		s = "/dev/random";
+		break;
+	case URANDOM:
+		s = "/dev/urandom";
+		break;
+	default:
+		s = _("libc pseudo-random functions");
+		break;
+	}
+
+	return s;
 }
 
 #ifdef TEST_PROGRAM_RANDUTILS
