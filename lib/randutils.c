@@ -41,6 +41,11 @@ static int getrandom(void *buf, size_t buflen, unsigned int flags)
 # define HAVE_GETRANDOM
 #endif
 
+#ifdef HAVE_SRANDOM
+#define srand(x)	srandom(x)
+#define rand()		random()
+#endif
+
 #if defined(__linux__) && defined(__NR_gettid) && defined(HAVE_JRAND48)
 #define DO_JRAND_MIX
 THREAD_LOCAL unsigned short ul_jrand_seed[3];
@@ -68,7 +73,7 @@ static void crank_random(void)
 		rand();
 }
 
-int random_get_fd(void)
+static int random_get_fd(void)
 {
 	int fd;
 
