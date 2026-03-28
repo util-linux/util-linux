@@ -1,0 +1,38 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="clear environment variables"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_UNSHARE"
+ts_check_test_command "$TS_HELPER_STRERROR"
+
+export UL_TEST_ENV=foo
+res="$("$TS_CMD_UNSHARE" --clear-env /bin/bash -c 'echo $UL_TEST_ENV' 2>&1)"
+unset -v UL_TEST_ENV
+
+if echo "$res" | grep -q "$($TS_HELPER_STRERROR EPERM)"; then
+        ts_skip "missing permissions"
+fi
+
+if [[ -n "$res" ]]; then
+        ts_failed "environment not cleared correctly: $res"
+fi
+
+ts_finalize
