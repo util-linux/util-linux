@@ -46,11 +46,6 @@ static int getrandom(void *buf, size_t buflen, unsigned int flags)
 THREAD_LOCAL unsigned short ul_jrand_seed[3];
 #endif
 
-int rand_get_number(int low_n, int high_n)
-{
-	return rand() % (high_n - low_n + 1) + low_n;
-}
-
 static void crank_random(void)
 {
 	int i;
