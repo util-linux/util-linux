@@ -127,6 +127,7 @@ TS_CMD_NAMEI=${TS_CMD_NAMEI-"${ts_commandsdir}namei"}
 TS_CMD_NSENTER=${TS_CMD_NSENTER-"${ts_commandsdir}nsenter"}
 TS_CMD_PARTX=${TS_CMD_PARTX-"${ts_commandsdir}partx"}
 TS_CMD_PIPESZ=${TS_CMD_PIPESZ-"${ts_commandsdir}pipesz"}
+TS_CMD_PRLIMIT=${TS_CMD_PRLIMIT-"${ts_commandsdir}prlimit"}
 TS_CMD_RENAME=${TS_CMD_RENAME-"${ts_commandsdir}rename"}
 TS_CMD_RUNUSER=${TS_CMD_RUNUSER-"${ts_commandsdir}runuser"}
 TS_CMD_REV=${TS_CMD_REV:-"${ts_commandsdir}rev"}
