@@ -30,7 +30,7 @@
 static int is_local_in_file(const char *user, const char *filename)
 {
 	int local = 0;
-	size_t match;
+	size_t idx;
 	int chin, skip;
 	FILE *f;
 
@@ -38,7 +38,7 @@ static int is_local_in_file(const char *user, const char *filename)
 	if (!f)
 		return -1;
 
-	match = 0;
+	idx = 0;
 	skip = 0;
 	while ((chin = fgetc(f)) != EOF) {
 		if (skip) {
@@ -46,11 +46,11 @@ static int is_local_in_file(const char *user, const char *filename)
 			if (chin == '\n') {
 				/* Start matching username at the next char. */
 				skip = 0;
-				match = 0;
+				idx = 0;
 			}
 		} else {
 			if (chin == ':') {
-				if (user[match] == '\0') {
+				if (user[idx] == '\0') {
 					/* Success. */
 					local = 1;
 					/* next line has no test coverage,
@@ -66,12 +66,12 @@ static int is_local_in_file(const char *user, const char *filename)
 				/* This line contains no colon; it's
 				 * malformed.  No skip since we are already
 				 * at the start of the next line.  */
-				match = 0U;
-			} else if (chin != user[match]) {
+				idx = 0;
+			} else if (chin != user[idx]) {
 				/* username does not match. */
 				skip = 1;
 			} else {
-				++match;
+				++idx;
 			}
 		}
 	}
