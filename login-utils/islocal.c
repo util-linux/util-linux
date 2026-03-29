@@ -34,22 +34,23 @@ static int is_local_in_file(const char *user, const char *filename)
 	int chin, skip;
 	FILE *f;
 
-	if (NULL == (f = fopen(filename, "r")))
+	f = fopen(filename, "r");
+	if (!f)
 		return -1;
 
-	match = 0u;
+	match = 0;
 	skip = 0;
 	while ((chin = fgetc(f)) != EOF) {
 		if (skip) {
 			/* Looking for the start of the next line. */
-			if ('\n' == chin) {
+			if (chin == '\n') {
 				/* Start matching username at the next char. */
 				skip = 0;
-				match = 0u;
+				match = 0;
 			}
 		} else {
-			if (':' == chin) {
-				if (0 == user[match]) {
+			if (chin == ':') {
+				if (user[match] == '\0') {
 					/* Success. */
 					local = 1;
 					/* next line has no test coverage,
@@ -61,11 +62,11 @@ static int is_local_in_file(const char *user, const char *filename)
 				 * is the wrong user.  Skip to the
 				 * next line.  */
 				skip = 1;
-			} else if ('\n' == chin) {
+			} else if (chin == '\n') {
 				/* This line contains no colon; it's
 				 * malformed.  No skip since we are already
 				 * at the start of the next line.  */
-				match = 0u;
+				match = 0U;
 			} else if (chin != user[match]) {
 				/* username does not match. */
 				skip = 1;
@@ -82,7 +83,8 @@ int is_local(const char *user)
 {
 	int rv;
 
-	if ((rv = is_local_in_file(user, _PATH_PASSWD)) < 0)
+	rv = is_local_in_file(user, _PATH_PASSWD);
+	if (rv < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_PASSWD);
 	return rv;
 }
