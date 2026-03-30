@@ -37,6 +37,10 @@
 # include <selinux/selinux.h>
 #endif
 
+#ifndef HAVE_ENVIRON_DECL
+extern char **environ;
+#endif
+
 #include "strutils.h"
 #include "nls.h"
 #include "c.h"
@@ -912,7 +916,11 @@ int main(int argc, char *argv[])
 		ls = env_list_from_fd(env_fd);
 		if (!ls && errno)
 			err(EXIT_FAILURE, _("failed to get environment variables"));
+#ifdef HAVE_CLEARENV
 		clearenv();
+#else
+		environ = NULL;
+#endif
 		if (ls && env_list_setenv(ls, 0) < 0)
 			err(EXIT_FAILURE, _("failed to set environment variables"));
 		env_list_free(ls);
