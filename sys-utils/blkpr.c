@@ -63,7 +63,7 @@ static const struct type_string pr_type[] = {
 		PR_WRITE_EXCLUSIVE_ALL_REGS, "write-exclusive-all-regs", N_(
 "    Only initiators with a registered key can write to the device. Any\n"
 "    initiator can read from the device.  All initiators with a registered\n"
-"    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+"    key are considered reservation holders.  Please reference the SPC spec\n"
 "    on the meaning of a reservation holder if you want to use this type."
 		)
 	}, {
