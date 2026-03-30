@@ -1588,8 +1588,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                          set an alternate path for lastlog2\n"), out);
 #endif
 	fputs(USAGE_SEPARATOR, out);
-	/* FIXME: Replace with USAGE_LIST_COLUMNS_OPTION() macro from include/c.h */
-	fputs(_(" -H, --list-columns       list the available columns\n"), out);
+	fprintf(out, USAGE_LIST_COLUMNS_OPTION(26));
 	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fprintf(out, USAGE_MAN_TAIL("lslogins(1)"));
