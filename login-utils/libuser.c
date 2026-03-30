@@ -28,7 +28,7 @@ static int auth_lu(const char *service_name, struct lu_context *ctx, uid_t uid,
 		if (setegid(getgid()) == -1)
 			err(EXIT_FAILURE, _("Couldn't drop group privileges"));
 		if (seteuid(getuid()) == -1)
-			err(EXIT_FAILURE, _("Couldn't drop group privileges"));
+			err(EXIT_FAILURE, _("Couldn't drop user privileges"));
 		return TRUE;
 	}
 
