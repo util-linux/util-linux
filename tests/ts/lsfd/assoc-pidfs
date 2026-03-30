@@ -20,6 +20,10 @@ TS_DESC="pidfs association"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+if ts_kernel_ver_lt 6 9; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_CMD_GETINO"
 ts_check_test_command "$TS_HELPER_MKFDS"
