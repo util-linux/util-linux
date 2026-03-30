@@ -310,11 +310,11 @@ write_entry(sqlite3 *db, const char *user,
 		retval = -1;
 		if (error) {
 			if (step == SQLITE_ERROR) {
-				if (asprintf (error, "Delete statement failed: %s",
+				if (asprintf (error, "Failed to write entry: %s",
 					      sqlite3_errmsg (db)) < 0)
 					retval = -ENOMEM;
 			} else {
-				if (asprintf (error, "Delete statement did not return SQLITE_DONE: %d",
+				if (asprintf (error, "Write entry did not return SQLITE_DONE: %d",
 					      step) < 0)
 					retval = -ENOMEM;
 			}
