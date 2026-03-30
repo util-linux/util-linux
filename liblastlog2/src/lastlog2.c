@@ -39,6 +39,23 @@
 #include "lastlog2P.h"
 #include "strutils.h"
 
+#define LASTLOG2_BUSY_TIMEOUT 3000
+
+static int
+set_busy_timeout(sqlite3 *db, const char *path, char **error)
+{
+	int ret = 0;
+
+	if (sqlite3_busy_timeout(db, LASTLOG2_BUSY_TIMEOUT) != SQLITE_OK) {
+		ret = -1;
+		if (error && asprintf(error, "Cannot set busy timeout (%s): %s",
+				     path, sqlite3_errmsg(db)) < 0)
+			ret = -ENOMEM;
+	}
+
+	return ret;
+}
+
 /* Sets the ll2 context/environment. */
 /* Returns the context or NULL if an error has happened. */
 extern struct ll2_context * ll2_new_context(const char *db_path)
@@ -87,6 +104,13 @@ open_database_ro(struct ll2_context *context, sqlite3 **db, char **error)
 				ret = -ENOMEM;
 
 		sqlite3_close(*db);
+		return ret;
+	}
+
+	ret = set_busy_timeout(*db, path, error);
+	if (ret != 0) {
+		sqlite3_close(*db);
+		return ret;
 	}
 
 	return ret;
@@ -110,6 +134,13 @@ open_database_rw(struct ll2_context *context,  sqlite3 **db, char **error)
 				ret = -ENOMEM;
 
 		sqlite3_close(*db);
+		return ret;
+	}
+
+	ret = set_busy_timeout(*db, path, error);
+	if (ret != 0) {
+		sqlite3_close(*db);
+		return ret;
 	}
 
 	return ret;
