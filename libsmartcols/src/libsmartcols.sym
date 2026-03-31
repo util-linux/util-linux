@@ -263,6 +263,9 @@ SMARTCOLS_2.42 {
 	scols_column_get_headercolor;
 	scols_column_refer_annotation;
 	scols_column_get_annotation;
-	scols_table_calculate;
 } SMARTCOLS_2.41;
+
+SMARTCOLS_2.43 {
+	scols_table_calculate;
+} SMARTCOLS_2.42;
 
