@@ -40,11 +40,12 @@ chrt - manipulate the real-time attributes of a process
 
 *chrt* [options] [_priority_] _command_ [_argument_...]
 
-*chrt --pid* [options] [_priority_] _PID_
+*chrt --pid* [options] [_priority_] _PID_[:_inode_]
 
 == DESCRIPTION
 
-*chrt* sets or retrieves the real-time scheduling attributes of an existing _PID_, or runs _command_ with the given attributes.
+*chrt* sets or retrieves the real-time scheduling attributes of an existing _PID_[:_inode_], or runs _command_ with the given attributes.
+The _inode_ uniquely identifies the process identity in the pidfs. To retrieve a process's inode number you can use the *getino*(1) utility.
 
 == POLICY OPTIONS
 
@@ -117,12 +118,12 @@ ____
 //TRANSLATORS: Keep {colon} untranslated
 You can also retrieve the real-time attributes of an existing task{colon}::
 ____
-*chrt --pid* _PID_
+*chrt --pid* _PID_[:_inode_]
 ____
 //TRANSLATORS: Keep {colon} untranslated
 Or set them{colon}::
 ____
-*chrt --pid* _policy-option priority PID_
+*chrt --pid* _policy-option_ _priority_ _PID_[:_inode_]
 ____
 For example, to set the scheduling policy to *SCHED_RR* (round-robin) and the priority to *30* for process *1234*{colon}::
 ____
@@ -130,11 +131,11 @@ ____
 ____
 Reset priorities to default for a process{colon}::
 ____
-*chrt --pid -o 0* _PID_
+*chrt --pid -o 0* _PID_[:_inode_]
 ____
 Set a custom slice of 1 ms for a *SCHED_OTHER* task (priority is optional for policies other than *SCHED_FIFO* and *SCHED_RR*){colon}::
 ____
-*chrt --pid -o -T 1000000* _PID_
+*chrt --pid -o -T 1000000* _PID_[:_inode_]
 ____
 See *sched*(7) for a detailed discussion of the different scheduler classes and how they interact.
 
@@ -158,7 +159,8 @@ mailto:kzak@redhat.com[Karel Zak]
 *nice*(1),
 *renice*(1),
 *taskset*(1),
-*sched*(7)
+*sched*(7),
+*getino*(1)
 
 See *sched_setscheduler*(2) for a description of the Linux scheduling scheme.
 
