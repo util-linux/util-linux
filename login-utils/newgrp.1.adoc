@@ -20,13 +20,14 @@ newgrp - log in to a new group
 
 == SYNOPSIS
 
-*newgrp* [_group_ [_command_]]
+*newgrp* [_group_|_GID_ [_command_]]
 
-*newgrp* [*-c* _command_] [_group_]
+*newgrp* [*-c* _command_] [_group_|_GID_]
 
 == DESCRIPTION
 
-*newgrp* changes the group identification of its caller, analogously to *login*(1). The same person remains logged in, and the current directory is unchanged, but calculations of access permissions to files are performed with respect to the new group ID.
+*newgrp* changes the group identification of its caller to the group specified either as a _name_ or _GID_, analogously to *login*(1).
+The same person remains logged in, and the current directory is unchanged, but calculations of access permissions to files are performed with respect to the new group ID.
 
 If no group is specified, the GID is changed to the login GID.
 

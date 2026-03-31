@@ -223,7 +223,7 @@ dist_noinst_DATA += login-utils/newgrp.1.adoc
 newgrp_SOURCES = login-utils/newgrp.c
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-newgrp_LDADD = $(LDADD)
+newgrp_LDADD = $(LDADD) libcommon.la
 if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
 endif

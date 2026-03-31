@@ -29,6 +29,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "xalloc.h"
+#include "pwdutils.h"
 
 static char *xgetpass(FILE *input, const char *prompt)
 {
@@ -172,7 +173,7 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s <group> [[-c] <command>]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s <group|GID> [[-c] <command>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Log in to a new group; optionally executing a shell command.\n"), out);
@@ -225,7 +226,7 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("setgid() failed"));
 	} else {
 		errno = 0;
-		if (!(gr_entry = getgrnam(argv[optind++]))) {
+		if (!(gr_entry = ul_getgrp_str(argv[optind++], NULL))) {
 			if (errno)
 				err(EXIT_FAILURE, _("no such group"));
 			else

@@ -1184,6 +1184,7 @@ exe = executable(
   'newgrp',
   'login-utils/newgrp.c',
   include_directories : includes,
+  link_with : [lib_common],
   dependencies : [lib_crypt],
   install_dir : usrbin_exec_dir,
   install_mode : 'rwsr-xr-x',
