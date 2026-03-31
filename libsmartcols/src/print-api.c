@@ -108,8 +108,13 @@ int scols_table_print_range_to_string(
  * set up a pager with "less --header" to freeze the header row and
  * first column.
  *
- * Note that scols_print_table() will skip recalculation if this
- * function has already been called.
+ * After this call, the table must not be modified (no new columns,
+ * no new data in existing columns, etc.) because the calculated state
+ * remains set until the table is printed.
+ *
+ * The calculation is valid only for the next scols_print_table() call
+ * (not scols_table_print_range()), and will be recalculated for every
+ * subsequent printing.
  *
  * Returns: 0, a negative value in case of an error.
  *
