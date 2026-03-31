@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "c.h"
+
 #define E(x) { #x, x }
 static struct {
 	const char *str;
@@ -34,7 +36,7 @@ int main(int argc, const char *argv[])
 		return -1;
 	}
 
-	for (i = 0; i < sizeof(errors)/sizeof(*errors); i++) {
+	for (i = 0; i < ARRAY_SIZE(errors); i++) {
 		if (strcmp(errors[i].str, argv[1]) != 0)
 			continue;
 		puts(strerror(errors[i].error));
