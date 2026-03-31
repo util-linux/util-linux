@@ -40,6 +40,12 @@ _mount_module()
 			COMPREPLY=( $(compgen -W "$NAMESPACE" -- $cur) )
 			return 0
 			;;
+		'--namespace-stage')
+			local STAGE_FLAGS
+			STAGE_FLAGS="all prepare attach"
+			COMPREPLY=( $(compgen -W "$STAGE_FLAGS" -- $cur) )
+			return 0
+			;;
 		'--options-mode')
 			COMPREPLY=( $(compgen -W "ignore append prepend replace" -- $cur) )
 			return 0
@@ -82,6 +88,7 @@ _mount_module()
 				--rw
 				--read-write
 				--namespace
+                                --namespace-stage
 				--label
 				--uuid
 				--bind
