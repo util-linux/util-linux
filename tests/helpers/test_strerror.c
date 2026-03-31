@@ -7,6 +7,7 @@
  * Copyright (C) 2019 Patrick Steinhardt <ps@pks.im
  */
 
+#include <asm-generic/errno-base.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,6 +22,7 @@ static struct {
 	E(ENOTTY),
 	E(EILSEQ),
 	E(EINVAL),
+	E(EPERM),
 };
 
 int main(int argc, const char *argv[])
