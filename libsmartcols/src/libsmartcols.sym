@@ -265,3 +265,7 @@ SMARTCOLS_2.42 {
 	scols_column_get_annotation;
 } SMARTCOLS_2.41;
 
+SMARTCOLS_2.43 {
+	scols_table_calculate;
+} SMARTCOLS_2.42;
+

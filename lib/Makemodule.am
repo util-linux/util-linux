@@ -196,6 +196,7 @@ test_procfs_LDADD = $(LDADD) libcommon.la
 
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PAGER
+test_pager_LDADD = $(LDADD) libcommon.la
 
 test_linux_version_SOURCES = lib/linux_version.c
 test_linux_version_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LINUXVERSION

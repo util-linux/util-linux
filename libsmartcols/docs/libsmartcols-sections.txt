@@ -244,6 +244,7 @@ scols_unref_table
 
 <SECTION>
 <FILE>table_print</FILE>
+scols_table_calculate
 scols_print_table
 scols_print_table_to_string
 scols_table_print_range
