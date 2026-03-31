@@ -32,6 +32,8 @@
 #include "closestream.h"
 #include "path.h"
 #include "pathnames.h"
+#include "pidutils.h"
+#include "pidfd-utils.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -156,11 +158,18 @@ static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
 	size_t i;
+	char *pid_arg = NULL;
+
+#ifdef USE_PIDFD_INO_SUPPORT
+	pid_arg = "PID[:inode]";
+#else
+	pid_arg = "PID";
+#endif
 
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-		_(" %s [options] [--<resource>=<limit>] [-p PID]\n"), program_invocation_short_name);
+		_(" %s [options] [--<resource>=<limit>] [-p %s]\n"), program_invocation_short_name, pid_arg);
 	fprintf(out,
 		_(" %s [options] [--<resource>=<limit>] COMMAND\n"), program_invocation_short_name);
 
@@ -505,9 +514,21 @@ static int add_prlim(char *ops, struct list_head *lims, size_t id)
 	return 0;
 }
 
+static int parse_pid_str(char *pidstr, pid_t *pidnum)
+{
+	int pfd = -1;
+	uint64_t pidfd_ino = 0;
+
+	ul_parse_pid_str_or_err(pidstr, pidnum, &pidfd_ino);
+	if (pidfd_ino)
+		pfd = ul_get_valid_pidfd_or_err(*pidnum, pidfd_ino);
+
+	return pfd;
+}
+
 int main(int argc, char **argv)
 {
-	int opt;
+	int opt, pid_fd = -1;
 	struct list_head lims;
 
 	enum {
@@ -612,7 +633,8 @@ int main(int argc, char **argv)
 		case 'p':
 			if (pid)
 				errx(EXIT_FAILURE, _("option --pid may be specified only once"));
-			pid = strtopid_or_err(optarg, _("invalid PID argument"));
+
+			pid_fd = parse_pid_str(optarg, &pid);
 			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
@@ -671,5 +693,7 @@ int main(int argc, char **argv)
 		errexec(argv[optind]);
 	}
 
+	if (pid_fd >= 0)
+		close(pid_fd);
 	return EXIT_SUCCESS;
 }

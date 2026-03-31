@@ -20,7 +20,7 @@ prlimit - get and set process resource limits
 
 == SYNOPSIS
 
-*prlimit* [options] [**--**_resource_[**=**_limits_]] [*--pid* _PID_]
+*prlimit* [options] [**--**_resource_[**=**_limits_]] [*--pid* _PID_[:_inode_]]
 
 *prlimit* [options] [**--**_resource_[**=**_limits_]] _command_ [_argument_...]
 
@@ -48,9 +48,9 @@ Do not print a header line.
 *-o*, *--output* _list_::
 Define the output columns to use. If no output arrangement is specified, then a default set is used. Use *--help* to get a list of all supported columns.
 
-*-p*, *--pid* _PID_::
-Specify the process ID.  Without this option (and without a _command_),
-the running process will be used.
+*-p*, *--pid* _PID_[:_inode_]::
+Specify the process ID. Without this option (and without a _command_), the running process will be used.
+The _inode_ uniquely identifies the process identity in the pidfs. To retrieve a process's inode number you can use the *getino*(1) utility.
 
 *--raw*::
 Use the raw output format.
@@ -138,7 +138,8 @@ mailto:dave@gnu.org[Davidlohr Bueso] - In memory of Dennis M. Ritchie.
 == SEE ALSO
 
 *ulimit*(1p),
-*prlimit*(2)
+*prlimit*(2),
+*getino*(1)
 
 include::man-common/bugreports.adoc[]
 
