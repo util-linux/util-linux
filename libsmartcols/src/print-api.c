@@ -113,7 +113,7 @@ int scols_table_print_range_to_string(
  *
  * Returns: 0, a negative value in case of an error.
  *
- * Since: 2.42
+ * Since: 2.43
  */
 int scols_table_calculate(struct libscols_table *tb)
 {
