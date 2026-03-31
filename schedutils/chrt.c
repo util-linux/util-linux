@@ -35,13 +35,16 @@
 #include "strutils.h"
 #include "procfs.h"
 #include "sched_attr.h"
-
+#include "pidutils.h"
+#include "pidfd-utils.h"
 
 /* control struct */
 struct chrt_ctl {
-	pid_t	pid;
-	int	policy;				/* SCHED_* */
-	int	priority;
+	pid_t		pid;
+	uint64_t 	pidfd_ino;
+	int		pidfd;
+	int		policy;				/* SCHED_* */
+	int		priority;
 
 	uint64_t runtime;			/* --sched-* options */
 	uint64_t deadline;
@@ -50,21 +53,30 @@ struct chrt_ctl {
 	unsigned int all_tasks : 1,		/* all threads of the PID */
 		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK or SCHED_FLAG_RESET_ON_FORK */
 		     altered : 1,		/* sched_set**() used */
-		     verbose : 1;		/* verbose output */
+		     verbose : 1,		/* verbose output */
+		     parse_pid : 1;		/* expect a PID as last command line argument */
 };
 
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
+	char *pid_arg = NULL;
+
+#ifdef USE_PIDFD_INO_SUPPORT
+	pid_arg = "PID[:inode]";
+#else
+	pid_arg = "PID";
+#endif
+
 
 	fputs(_("Show or change the real-time scheduling attributes of a process.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Set policy:\n"
+	fprintf(out, _("Set policy:\n"
 		" chrt [options] [<priority>] <command> [<argument>...]\n"
-		" chrt --pid <policy-option> [options] [<priority>] <PID>\n"), out);
+		" chrt --pid <policy-option> [options] [<priority>] <%s>\n"), pid_arg);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Get policy:\n"
-		" chrt --pid <PID>\n"), out);
+	fprintf(out, _("Get policy:\n"
+		" chrt --pid <%s>\n"), pid_arg);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Policy options:\n"), out);
@@ -397,8 +409,14 @@ static void set_sched(struct chrt_ctl *ctl)
 
 int main(int argc, char **argv)
 {
-	struct chrt_ctl _ctl = { .pid = -1, .policy = SCHED_RR }, *ctl = &_ctl;
-	int c;
+	struct chrt_ctl _ctl = {
+		.parse_pid = 0,
+		.pid = -1,
+		.pidfd_ino = 0,
+		.pidfd = -1,
+		.policy = SCHED_RR
+	}, *ctl = &_ctl;
+	int c, rc;
 	bool policy_given = false, need_prio = false;
 
 	static const struct option longopts[] = {
@@ -474,7 +492,7 @@ int main(int argc, char **argv)
 			policy_given = true;
 			break;
 		case 'p':
-			ctl->pid = 0;  /* indicate that a PID is expected */
+			ctl->parse_pid = 1;  /* indicate that a PID is expected */
 			break;
 		case 'r':
 			ctl->policy = SCHED_RR;
@@ -509,13 +527,18 @@ int main(int argc, char **argv)
 	}
 
 	/* If option --pid was given, parse the very last argument as a PID. */
-	if (ctl->pid == 0) {
+	if (ctl->parse_pid) {
 		if (need_prio && argc - optind < 2)
 			errx(EXIT_FAILURE, _("policy %s requires a priority argument"),
 						get_policy_name(ctl->policy));
 		errno = 0;
-		/* strtopid_or_err() is not suitable here, as 0 can be passed. */
-		ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
+
+		rc = ul_parse_pid_str(argv[argc - 1], &ctl->pid, &ctl->pidfd_ino);
+		if (rc && ctl->pid != 0)
+			err(EXIT_FAILURE, _("invalid PID argument"));
+
+		if (ctl->pidfd_ino > 0)
+			ctl->pidfd = ul_get_valid_pidfd_or_err(ctl->pid, ctl->pidfd_ino);
 
 		/* If no policy nor priority was given, show current settings. */
 		if (!policy_given && argc - optind == 1) {
@@ -531,7 +554,7 @@ int main(int argc, char **argv)
 		show_sched_info(ctl);
 
 	bool have_prio = need_prio ||
-		(ctl->pid == -1 ? (optind < argc && isdigit_string(argv[optind])) : (argc - optind > 1));
+		(!ctl->parse_pid ? (optind < argc && isdigit_string(argv[optind])) : (argc - optind > 1));
 
 	if (have_prio) {
 		errno = 0;
@@ -561,7 +584,7 @@ int main(int argc, char **argv)
 	if (ctl->deadline || ctl->period)
 		errx(EXIT_FAILURE, _("SCHED_DEADLINE is unsupported"));
 #endif
-	if (ctl->pid == -1)
+	if (!ctl->parse_pid)
 		ctl->pid = 0;
 	if (ctl->priority < sched_get_priority_min(ctl->policy) ||
 	    sched_get_priority_max(ctl->policy) < ctl->priority)
@@ -591,5 +614,7 @@ int main(int argc, char **argv)
 		errexec(argv[0]);
 	}
 
+	if (ctl->pidfd >= 0)
+		close(ctl->pidfd);
 	return EXIT_SUCCESS;
 }
