@@ -27,7 +27,6 @@
 #include "ttyutils.h"
 #include "pager.h"
 #include "env.h"
-#include "cctype.h"
 
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
 
@@ -358,23 +357,20 @@ void pager_close(void)
 }
 
 /* Check PAGER_ENABLE environment variable.
- * Returns 1 if "yes"/"1", 0 if "no"/"0",
- * or @default_val if unset or unrecognized.
+ * Returns 1 if enabled, 0 if disabled,
+ * or @default_val if unset or not a recognized boolean.
  * Ignored in privileged (SUID/SGID) contexts via safe_getenv().
  */
 int pager_is_enabled(int default_val)
 {
 	const char *s = safe_getenv("PAGER_ENABLE");
+	bool val;
 
 	if (!s)
 		return default_val;
-	if (c_strcasecmp(s, "yes") == 0 ||
-	    strcmp(s, "1") == 0)
-		return 1;
-	if (c_strcasecmp(s, "no") == 0 ||
-	    strcmp(s, "0") == 0)
-		return 0;
-	return default_val;
+	if (ul_strtobool(s, &val) != 0)
+		return default_val;
+	return (int) val;
 }
 
 #ifdef TEST_PROGRAM_PAGER
