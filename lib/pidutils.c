@@ -38,8 +38,11 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 	if (num == 0 && end == pidstr)
 		return -(errno = EINVAL);
 
-	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t)))
+	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t))) {
+		if (num == 0 && *end == '\0')
+			*pid_num = (pid_t) num;
 		return -(errno = ERANGE);
+	}
 
 	*pid_num = (pid_t) num;
 
