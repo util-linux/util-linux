@@ -81,9 +81,10 @@ done
 # Get current branch
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
-# Validate we're on a stable branch
+# Validate we're on a stable branch and extract version prefix
 case "$BRANCH" in
     stable/*)
+        BRANCH_VERSION=${BRANCH#stable/}
         ;;
     *)
         echo "Error: Not on a stable/* branch. Current branch: $BRANCH" >&2
@@ -92,29 +93,22 @@ case "$BRANCH" in
         ;;
 esac
 
-# Get last tag (most recent by date) or use override
+# Get last tag matching this branch's version prefix (e.g. v2.42*) or use override
 if [ -n "$OVERRIDE_LAST_RELEASE" ]; then
     UL_RELEASE_LAST="$OVERRIDE_LAST_RELEASE"
 else
-    UL_RELEASE_LAST=$(git for-each-ref --sort='-creatordate' \
-        --format='%(tag)' refs/tags \
-        | grep '^v[0-9]' \
+    UL_RELEASE_LAST=$(git tag --merged HEAD --sort='-creatordate' \
+        | grep "^${BRANCH_VERSION}" \
         | head -1)
 fi
 
-# Get last vX.Y release (major releases only, no .Z or -rc suffixes) or use override
+# The last X.Y release is the branch version with Y-1
 if [ -n "$OVERRIDE_LAST_XY_RELEASE" ]; then
     UL_RELEASE_LAST_XY="$OVERRIDE_LAST_XY_RELEASE"
 else
-    UL_RELEASE_LAST_XY=$(git for-each-ref --sort='-creatordate' \
-        --format='%(tag)' 'refs/tags/v[0-9]*.[0-9]*[!-.]' \
-        | grep '^v[0-9][0-9]*\.[0-9][0-9]*$' \
-        | head -1)
-fi
-
-# For --release-master, use the last major release as base, ignoring maintenance releases
-if [ "$RELEASE_TYPE" = "master" ] && [ -z "$OVERRIDE_LAST_RELEASE" ]; then
-    UL_RELEASE_LAST="$UL_RELEASE_LAST_XY"
+    local_x=$(echo "$BRANCH_VERSION" | sed 's/^v\([0-9][0-9]*\)\..*/\1/')
+    local_y=$(echo "$BRANCH_VERSION" | sed 's/^v[0-9][0-9]*\.\([0-9][0-9]*\)$/\1/')
+    UL_RELEASE_LAST_XY="v${local_x}.$(( local_y - 1 ))"
 fi
 
 # Safety check for --release-master: verify we're in a new branch without branch-specific tags
@@ -124,6 +118,7 @@ if [ "$RELEASE_TYPE" = "master" ]; then
     TAGS_MERGED_MASTER=$(git tag --merged master | grep '^v[0-9]' || true)
 
     # Tags specific to this branch are those merged into HEAD but not into master
+    # (RC tags are expected and allowed)
     BRANCH_SPECIFIC_TAGS=""
     if [ -n "$TAGS_MERGED_HEAD" ]; then
         for tag in $TAGS_MERGED_HEAD; do
@@ -131,13 +126,13 @@ if [ "$RELEASE_TYPE" = "master" ]; then
                 BRANCH_SPECIFIC_TAGS="$BRANCH_SPECIFIC_TAGS$tag"$'\n'
             fi
         done
-        BRANCH_SPECIFIC_TAGS=$(echo "$BRANCH_SPECIFIC_TAGS" | grep -v '^$' || true)
+        BRANCH_SPECIFIC_TAGS=$(echo "$BRANCH_SPECIFIC_TAGS" | grep -v '^$' | grep -v '\-rc[0-9]*$' || true)
     fi
 
     if [ -n "$BRANCH_SPECIFIC_TAGS" ] && [ -z "$OVERRIDE_LAST_RELEASE" ]; then
         TAG_COUNT=$(echo "$BRANCH_SPECIFIC_TAGS" | wc -l)
-        echo "Error: --release-master should only be used in a new stable branch without branch-specific tags" >&2
-        echo "Current branch '$BRANCH' has $TAG_COUNT branch-specific version tags:" >&2
+        echo "Error: --release-master should only be used before the first final release" >&2
+        echo "Current branch '$BRANCH' has $TAG_COUNT non-RC branch-specific tags:" >&2
         echo "$BRANCH_SPECIFIC_TAGS" | sed 's/^/  /' >&2
         echo "Use --release-update for maintenance releases in existing branches." >&2
         exit 1
@@ -249,10 +244,13 @@ determine_next_version() {
 
 # Determine last final (non-RC) release
 if [[ "$UL_RELEASE_LAST" =~ -rc[0-9]+$ ]]; then
-    UL_RELEASE_LAST_STABLE=$(git for-each-ref --sort='-creatordate' \
-        --format='%(tag)' refs/tags \
-        | grep -E '^v[0-9]+\.[0-9]+(\.[0-9]+)?$' \
+    UL_RELEASE_LAST_STABLE=$(git tag --merged HEAD --sort='-creatordate' \
+        | grep -E "^${BRANCH_VERSION}(\.[0-9]+)?$" \
         | head -1)
+    # Before the first final release, fall back to last X.Y
+    if [ -z "$UL_RELEASE_LAST_STABLE" ]; then
+        UL_RELEASE_LAST_STABLE="$UL_RELEASE_LAST_XY"
+    fi
 else
     UL_RELEASE_LAST_STABLE="$UL_RELEASE_LAST"
 fi
