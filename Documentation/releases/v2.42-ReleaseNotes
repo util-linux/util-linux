@@ -1,6 +1,22 @@
 util-linux 2.42 Release Notes
 =============================
 
+Security fixes:
+
+ CVE-2026-27456 - mount(8) TOCTOU symlink attack via loop device.
+   The SUID mount follows symlinks when resolving loop backing file
+   paths. On systems where non-root users are permitted to mount loop
+   devices (via 'user' option in fstab), this allows access to
+   arbitrary files.
+
+ CWE-190 - Integer overflow in libblkid parse_dos_extended().
+   A crafted MBR disk image can cause uint32_t wraparound in EBR
+   chain processing, causing reported partitions to not match the
+   on-disk layout. Tools like udisks may then register a partition
+   at logical sector 0.
+
+Release highlights:
+
 The NTFS mount type (kernel FS driver) can be changed by the compile option
 --with-ntfs-mounttype=, the default is ntfs3.
 
@@ -70,7 +86,6 @@ columns.
 
 setpriv(1) now supports landlock via --landlock-access and --landlock-rule
 options.
-
 
 Changes between v2.41 and v2.42
 *:
@@ -198,6 +213,7 @@ blkid:
     - correct an erroneous error message (by Benno Schulenberg)
 
 blkpr:
+    - fix a typo ("sp:ec" => "spec"), and drop an overemphatic comma (by Benno Schulenberg)
     - fix compilation [-Werror,-Wunused-function] (by Karel Zak)
     - Call gettext() for descriptions, clean up (by Karel Zak)
     - add read-reservation command (by Stefan Hajnoczi)
@@ -225,6 +241,7 @@ build(deps):
     - bump actions/checkout from 1 to 5 (by dependabot[bot])
 
 build-sys:
+    - update release dates (by Karel Zak)
     - move shells.c to common (non-Linux) sources (by Karel Zak, Samuel Thibault)
     - move netlink sources from libcommon to agetty (by Karel Zak, Samuel Thibault)
     - update release dates (by Karel Zak)
@@ -374,6 +391,7 @@ dmesg:
     - use snprintf() instead of sprintf() (by Karel Zak)
 
 docs:
+    - update v2.42-ReleaseNotes (by Karel Zak)
     - getopt improve arg example in getopt-example (by Ben Song)
     - add v2.42-ReleaseNotes (by Karel Zak)
     - lsns(8) add missing a comma in SEE ALSO section (by Masatake YAMATO)
@@ -553,6 +571,7 @@ include/cctype:
     - fix string comparison (by Karel Zak)
 
 include/c.h:
+    - fix inverted #ifdef for sys/auxv.h (by Karel Zak)
     - add MAX_OF_UINT_TYPE macro to get max num of an uint type (by Christian Goeschel Ndjomouo)
     - add USAGE_LIST_COLUMNS_OPTION() macro (by Christian Goeschel Ndjomouo)
 
@@ -663,6 +682,7 @@ lib:
     - add FSCONFIG_CMD_CREATE_EXCL (by Karel Zak)
 
 libblkid:
+    - dos validate EBR data and links within extended partition (by Karel Zak)
     - fix stale comment in version.c (by Karel Zak)
     - add LIBBLKID_VERSION to blkid.h, remove redundant config.h versions (by Karel Zak)
     - add debug message for private DM device skip (by Karel Zak)
@@ -742,6 +762,7 @@ lib/env, ...:
     - use getauxval(AT_SECURE) for SUID check (by Max Kellermann)
 
 libfdisk:
+    - dos validate EBR link within extended partition bounds (by Karel Zak)
     - remove duplicate code (by Karel Zak)
     - (dos) fix logical partition start (by Martin Jungblut Schreiner)
     - modernize ZFS GPT type description (by Martin Minkus)
@@ -764,6 +785,7 @@ lib/fileutils:
     - add is_dotdir_dirent() (by Karel Zak)
 
 liblastlog2:
+    - fix error message in write_entry (by WanBingjiang)
     - generate lastlog2.h from template (by Karel Zak)
     - Install missing manual pages (by Tobias Stoeckmann)
     - refactor conditional assignments for better readability (by Karel Zak)
@@ -790,6 +812,7 @@ lib/meson:
     - remove duplicated source files from lib_common_sources (by Karel Zak)
 
 libmount:
+    - improve mnt_fs_get_id/uniq_id documentation (by Karel Zak)
     - move fstype_to_mounttype() to include/ (by Karel Zak)
     - add option to override fs-type with mount-type (by Karel Zak)
     - read from udev, add --disable-libmount-udev-support (by Karel Zak)
@@ -963,6 +986,9 @@ login-utils/login:
 login-utils, sys-utils:
     - use _PATH_BSHELL consistently (by Alessandro Ratti)
 
+loopdev:
+    - add LOOPDEV_FL_NOFOLLOW to prevent symlink attacks (by Karel Zak)
+
 losetup:
     - snip --verbose from bash-completion, and 'v' from options string (by Benno Schulenberg)
     - (man) put the synopses in a better order, the name-giver first (by Benno Schulenberg)
@@ -1108,6 +1134,7 @@ lslocks:
     - add support for LSLOCKS_COLUMNS environmental variable (by Christian Goeschel Ndjomouo)
 
 lslogins:
+    - use the USAGE_LIST_COLUMNS_OPTION macro (by Christian Goeschel Ndjomouo)
     - fix broken GROUP column output (by Karel Zak)
     - (manpage) fix typo in option description (by Christian Goeschel Ndjomouo)
     - ignore special long options in CI CHECK (by Christian Goeschel Ndjomouo)
@@ -1164,6 +1191,7 @@ mbsalign:
     - validate ESC character before processing escape sequences (by WanBingjiang)
 
 meson:
+    - Remove unused variable (by Tobias Stoeckmann)
     - remove unused HAVE_LIBFDISK and HAVE_LIBSMARTCOLS defines (by Karel Zak)
     - remove unused HAVE_NCURSES config define (by Karel Zak)
     - add hwclock-gplv3 option (by Karel Zak)
@@ -1298,6 +1326,14 @@ pipesz:
 
 po:
     - merge changes (by Karel Zak)
+    - update uk.po (from translationproject.org) (by Yuri Chornoivan)
+    - update ro.po (from translationproject.org) (by Remus-Gabriel Chelu)
+    - update pt.po (from translationproject.org) (by Pedro Albuquerque)
+    - update ko.po (from translationproject.org) (by Seong-ho Cho)
+    - update fr.po (from translationproject.org) (by Frédéric Marchal)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update ar.po (from translationproject.org) (by Zayed Al-Saidi)
+    - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
     - update LINGUAS list (by Karel Zak)
     - add ar.po (from translationproject.org) (by Zayed Al-Saidi)
@@ -1340,6 +1376,9 @@ po:
     - upadte LINGUAS file (by Karel Zak)
 
 po-man:
+    - merge changes (by Karel Zak)
+    - update de.po (from translationproject.org) (by Mario Blättermann)
+    - update ar.po (from translationproject.org) (by Zayed Al-Saidi)
     - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
     - merge changes (by Karel Zak)
@@ -1454,6 +1493,7 @@ style:
     - fix coding style issues (by Christian Goeschel Ndjomouo)
 
 su:
+    - Fix signal race during shutdown (by Tobias Stoeckmann)
     - accept group name and GID in -g and -G options (by Christian Goeschel Ndjomouo)
     - pass arguments after <user> to shell (by cgoesche)
     - use logindefs_setenv_path() (by Karel Zak)
@@ -1500,6 +1540,7 @@ test_mkfds:
     - remove local pidfd_open() fallback (by Karel Zak)
 
 tests:
+    - improve lsfd test (by WanBingjiang)
     - add dmesg -d -t and -t -d timestamp format tests (by Karel Zak)
     - add SCS escape sequence test for column (by Karel Zak)
     - update to reflect libsmartcols changes (by Karel Zak)
@@ -1619,6 +1660,7 @@ textual:
     - fix a mistruncated message, and fix a typo (by Benno Schulenberg)
 
 tools:
+    - git-version-next filter tags by stable branch version (by Karel Zak)
     - git-version-next fix -devel tag and rename variables (by Karel Zak)
     - add git-compare-backport script (by Karel Zak)
     - git-version-bump, accept X.Y-devel version on master branch (by Karel Zak)
