@@ -34,6 +34,7 @@ _lsmem_module()
 			;;
 	esac
 	OPTS="
+		--annotate
 		--json
 		--pairs
 		--all
