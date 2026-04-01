@@ -89,24 +89,6 @@ lslocks_SOURCES = misc-utils/lslocks.c
 lslocks_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
 endif
 
-if BUILD_LSBLK
-bin_PROGRAMS += lsblk
-MANPAGES += misc-utils/lsblk.8
-dist_noinst_DATA += misc-utils/lsblk.8.adoc
-lsblk_SOURCES = \
-	misc-utils/lsblk.c \
-	misc-utils/lsblk-mnt.c \
-	misc-utils/lsblk-properties.c \
-	misc-utils/lsblk-devtree.c \
-	misc-utils/lsblk.h
-lsblk_LDADD = $(LDADD) libblkid.la libmount.la libcommon.la \
-		libsmartcols.la libtcolors.la
-lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
-if HAVE_UDEV
-lsblk_LDADD += -ludev
-endif
-endif # BUILD_LSBLK
-
 if BUILD_LIBLASTLOG2
 usrbin_exec_PROGRAMS += lastlog2
 MANPAGES += misc-utils/lastlog2.8

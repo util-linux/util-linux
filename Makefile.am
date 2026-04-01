@@ -117,6 +117,7 @@ include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 include lsfd-cmd/Makemodule.am
+include lsblk-cmd/Makemodule.am
 
 include pam_lastlog2/Makemodule.am
 include bash-completion/Makemodule.am
@@ -147,6 +148,7 @@ EXTRA_DIST += \
 	libuuid/meson.build \
 	login-utils/meson.build \
 	lsfd-cmd/meson.build \
+	lsblk-cmd/meson.build \
 	man-common/meson.build \
 	misc-utils/meson.build \
 	pam_lastlog2/man/meson.build \

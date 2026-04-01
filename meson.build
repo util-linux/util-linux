@@ -1047,6 +1047,7 @@ subdir('schedutils')
 subdir('text-utils')
 subdir('term-utils')
 subdir('lsfd-cmd')
+subdir('lsblk-cmd')
 subdir('po')
 
 includes = [dir_include,
