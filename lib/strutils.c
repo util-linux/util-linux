@@ -254,7 +254,7 @@ int isxdigit_strend(const char *str, const char **end)
 int ul_strtobool(const char *str, bool *result)
 {
 	static const char *bool_true[]  = { "1", "y", "t", "yes", "true", "on", "enable" };
-	static const char *bool_false[] = { "0", "no", "not", "false", "off", "disable" };
+	static const char *bool_false[] = { "0", "n", "f", "no", "false", "off", "disable", "not", };
 	size_t i;
 
 	if (!str || !result)
