@@ -576,15 +576,13 @@ static void continue_as_child(void)
 
 static int parse_pid_str(char *pidstr, pid_t *ns_target_pid)
 {
-	int rc, pfd;
+	int pfd = -1;
 	uint64_t pidfd_ino = 0;
 
-	rc = ul_parse_pid_str(pidstr, ns_target_pid, &pidfd_ino);
-	if (pidfd_ino) {
+	ul_parse_pid_str_or_err(pidstr, ns_target_pid, &pidfd_ino);
+	if (pidfd_ino)
 		pfd = ul_get_valid_pidfd_or_err(*ns_target_pid, pidfd_ino);
-		close(pfd);
-	}
-	return rc;
+	return pfd;
 }
 
 int main(int argc, char *argv[])
@@ -630,7 +628,7 @@ int main(int argc, char *argv[])
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	int c, rc, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
 	     do_join_cgroup = false, do_user_parent = false;
@@ -640,7 +638,7 @@ int main(int argc, char *argv[])
 	gid_t gid = 0;
 	int keepcaps = 0;
 	int sock_fd = -1;
-	int pid_fd = -1;
+	int pid_fd = -1, ns_pid_fd = -1;
 #ifdef HAVE_LIBSELINUX
 	bool selinux = 0;
 #endif
@@ -662,9 +660,9 @@ int main(int argc, char *argv[])
 			do_all = true;
 			break;
 		case 't':
-			rc = parse_pid_str(optarg, &namespace_target_pid);
-			if (rc)
-				errx(EXIT_FAILURE, _("invalid PID argument"));
+			if (namespace_target_pid)
+				errx(EXIT_FAILURE, _("option --target may be given only once"));
+			pid_fd = parse_pid_str(optarg, &namespace_target_pid);
 			break;
 		case 'm':
 			enable_namespace(CLONE_NEWNS, optarg);
@@ -795,9 +793,12 @@ int main(int argc, char *argv[])
 		 * For other cases such as sock_fd and user-parent, the global
 		 * pidfd needs to be optional.
 		 */
-		if (get_linux_version() > KERNEL_VERSION(5, 7, 0))
-			pid_fd = pidfd_open(namespace_target_pid, 0);
-		if (pid_fd < 0 && namespaces)
+		if (get_linux_version() > KERNEL_VERSION(5, 7, 0)) {
+			if (pid_fd < 0)
+				pid_fd = pidfd_open(namespace_target_pid, 0);
+			ns_pid_fd = pid_fd;
+		}
+		if (ns_pid_fd < 0 && namespaces)
 			open_namespaces(namespaces);	/* fallback */
 	}
 
@@ -850,11 +851,11 @@ int main(int argc, char *argv[])
 	 * namespace last and if we're privileging it then we enter the user
 	 * namespace first (because the initial setns will fail).
 	 */
-	enter_namespaces(pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
+	enter_namespaces(ns_pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
 
 	namespaces = get_namespaces();
 	if (namespaces)
-		enter_namespaces(pid_fd, namespaces, 0);		/* report errors */
+		enter_namespaces(ns_pid_fd, namespaces, 0);		/* report errors */
 
 	if (pid_fd >= 0)
 		close(pid_fd);
