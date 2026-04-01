@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.39-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-03-24 11:53+0100\n"
+"POT-Creation-Date: 2026-04-01 12:19+0200\n"
 "PO-Revision-Date: 2024-01-10 13:24+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <gnome-turk@gnome.org>\n"
@@ -334,7 +334,7 @@ msgid "Quit program without writing changes"
 msgstr "Değişiklikleri yazmadan uygulamadan çık"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2834 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "Tür"
@@ -924,7 +924,7 @@ msgid "Using default response %c."
 msgstr "Öntanımlı %c yanıtı kullanılıyor"
 
 #: disk-utils/fdisk.c:243 disk-utils/fdisk.c:317 disk-utils/fdisk.c:394
-#: libfdisk/src/dos.c:1480 libfdisk/src/gpt.c:2581
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2581
 msgid "Value out of range."
 msgstr "Değer erim dışında."
 
@@ -1151,7 +1151,7 @@ msgstr "aranamıyor"
 msgid "cannot read"
 msgstr "okunamıyor"
 
-#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 #: libfdisk/src/gpt.c:2501
 msgid "First sector"
 msgstr "İlk sektör"
@@ -1490,22 +1490,22 @@ msgstr ""
 msgid "Partition table entries are not in disk order."
 msgstr "Disk bölümleme tablosu girdileri disk sırasında değil."
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2828
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
 #: libfdisk/src/gpt.c:3254 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "Başlangıç"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2829
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
 #: libfdisk/src/gpt.c:3255 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "Son"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2830
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
 #: libfdisk/src/gpt.c:3256 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "Sektör"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2832
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
 #: libfdisk/src/gpt.c:3257 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "Boyut"
@@ -3242,7 +3242,7 @@ msgstr ""
 "                      birden fazla -V belirtilirse uygulama gerçekten çalışmayacak\n"
 
 #: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1496
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1251
+#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1254
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -7012,17 +7012,17 @@ msgstr "Disk bölümü %zd: geçersiz başlangıç sektörü 0."
 msgid "There is no *BSD partition on %s."
 msgstr "%s'de *BSD disk bölümü yok."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 msgid "First cylinder"
 msgstr "İlk silindir"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1451
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1466
 #, fuzzy
 #| msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Son silindir, +silindirler ya da +boyut{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1456 libfdisk/src/gpt.c:2558
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2558
 #, fuzzy
 #| msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
@@ -7073,7 +7073,7 @@ msgstr "İz/Silindir"
 msgid "Sectors/Cylinder"
 msgstr "Sektör/Silindir"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2831
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2846
 #: libfdisk/src/sgi.c:1167 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1137
 msgid "Cylinders"
 msgstr "Silindir"
@@ -7311,299 +7311,299 @@ msgstr "Gösterim birimi olarak silindirler artık kullanılmıyor."
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "Bu diskin boyutu %s'dir (%ju bayt). DOS disk bölümü tablo formatı %lu bayttan büyük %lu-bayt birimler için sürücülerde kullanılamaz. GUID disk bölümü tablo formatını (GPT) kullanın."
 
-#: libfdisk/src/dos.c:548
+#: libfdisk/src/dos.c:549
 msgid "Bad offset in primary extended partition."
 msgstr "Birincil genişletilmiş disk bölümünde kötü ofset."
 
-#: libfdisk/src/dos.c:562
+#: libfdisk/src/dos.c:568
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "#%zu sonrasındaki disk bölümleri atlanıyor. Bu disk bölüm tablosunu kaydettiğinizde silinecekler."
 
-#: libfdisk/src/dos.c:595
+#: libfdisk/src/dos.c:610
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "Disk bölümleme tablosu #%zu'da fazladan bağlantı işaretçisi."
 
-#: libfdisk/src/dos.c:603
+#: libfdisk/src/dos.c:618
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "Disk bölümleme tablosu %zu'da fazladan veri yaksayılıyor."
 
-#: libfdisk/src/dos.c:659
+#: libfdisk/src/dos.c:674
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "boş disk bölümü atlanıyor (%zu)"
 
-#: libfdisk/src/dos.c:719
+#: libfdisk/src/dos.c:734
 #, fuzzy, c-format
 #| msgid "Created a new DOS disklabel with disk identifier 0x%08x."
 msgid "Created a new DOS (MBR) disklabel with disk identifier 0x%08x."
 msgstr "Disk belirleyicisi 0x%08x ile yeni bir DOS disketiketi oluşturuldu."
 
-#: libfdisk/src/dos.c:742
+#: libfdisk/src/dos.c:757
 msgid "Enter the new disk identifier"
 msgstr "Yeni disk belirleyicisi gir"
 
-#: libfdisk/src/dos.c:751
+#: libfdisk/src/dos.c:766
 msgid "Incorrect value."
 msgstr "Yanlış değer."
 
-#: libfdisk/src/dos.c:764
+#: libfdisk/src/dos.c:779
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Dist tanımlıyıcı 0x%08x dan 0x%08x a değiştirildi."
 
-#: libfdisk/src/dos.c:960
+#: libfdisk/src/dos.c:975
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Fazladan genişletilmiş disk bölümü %zu yoksayılıyor"
 
-#: libfdisk/src/dos.c:974
+#: libfdisk/src/dos.c:989
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "EBR için geçersiz bayrak  0x%02x%02x (disk bölümü %zu için) w(yaz) ile düzeltilecek."
 
-#: libfdisk/src/dos.c:1045
+#: libfdisk/src/dos.c:1060
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Başlangıç sektörü %ju aralık dışında."
 
-#: libfdisk/src/dos.c:1291 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Disk bölümü %zu zaten tanımlı.  Yeniden eklemeden önce silin."
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/dos.c:1332 libfdisk/src/dos.c:1390
-#: libfdisk/src/dos.c:1422 libfdisk/src/gpt.c:2425
+#: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2425
 msgid "No free sectors available."
 msgstr "Kullanılabilir boş sektör yok."
 
-#: libfdisk/src/dos.c:1357
+#: libfdisk/src/dos.c:1372
 #, fuzzy, c-format
 #| msgid "Sector %llu is already allocated."
 msgid "Sector %ju is already allocated."
 msgstr "Sektör %llu zaten ayrıldı."
 
-#: libfdisk/src/dos.c:1577
+#: libfdisk/src/dos.c:1592
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Mantıksal disk bölümü %zu ekleniyor"
 
-#: libfdisk/src/dos.c:1609
+#: libfdisk/src/dos.c:1624
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Disk bölümü %zu: sektör 0'ı içeriyor"
 
-#: libfdisk/src/dos.c:1613
+#: libfdisk/src/dos.c:1628
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Disk bölümü %zu: kafa %d azami değer %d'den daha büyük"
 
-#: libfdisk/src/dos.c:1618
+#: libfdisk/src/dos.c:1633
 #, fuzzy, c-format
 #| msgid "Partition %zu: sector %d greater than maximum %llu"
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Disk bölümü %zu: sektör %d azami değer %llu'dan daha büyük"
 
-#: libfdisk/src/dos.c:1624
+#: libfdisk/src/dos.c:1639
 #, fuzzy, c-format
 #| msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Disk bölümü %zu: silindir %d azami değer %llu'dan daha büyük"
 
-#: libfdisk/src/dos.c:1631
+#: libfdisk/src/dos.c:1646
 #, fuzzy, c-format
 #| msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgid "Partition %zu: LBA sector %u disagrees with C/H/S calculated sector %u"
 msgstr "Disk bölümü %zu: önceki sektörler %u toplan %u ile uyuşmuyor"
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1705
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Disk bölümü %zu: farklı fiziksel/bantıksal başlangıçlar (Linux olmayan?): fiziksel=(%d, %d, %d), mantıksal=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1702
+#: libfdisk/src/dos.c:1717
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Disk bölümü %zu: farklı fiziksel/mantıksal bitişler: fiziksel=(%d, %d, %d), mantıksal=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1727
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Disk bölümü %zu: silindir aralığında sonlanmıyor."
 
-#: libfdisk/src/dos.c:1771
+#: libfdisk/src/dos.c:1786
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Disk bölümü %zu: kötü veri başlangıcı."
 
-#: libfdisk/src/dos.c:1787
+#: libfdisk/src/dos.c:1802
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Disk bölümü %zu: disk bölümü %zu ile çakışıyor."
 
-#: libfdisk/src/dos.c:1816
+#: libfdisk/src/dos.c:1831
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Disk bölümü %zu: boş."
 
-#: libfdisk/src/dos.c:1823
+#: libfdisk/src/dos.c:1838
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Mantıksal disk bölümü %zu: tamamen disk bölümü %zu'nun içinde değil."
 
-#: libfdisk/src/dos.c:1832 libfdisk/src/gpt.c:2322
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2322
 msgid "No errors detected."
 msgstr "Hiçbir hata tespit edilemedi."
 
-#: libfdisk/src/dos.c:1834
+#: libfdisk/src/dos.c:1849
 #, fuzzy, c-format
 #| msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "Toplam tahsis edilen sektör %llu olabilecek en büyük değer %llu 'dan fazla."
 
-#: libfdisk/src/dos.c:1837
+#: libfdisk/src/dos.c:1852
 #, fuzzy, c-format
 #| msgid "Remaining %lld unallocated %ld-byte sectors."
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "Tahsis edilmeyen %lld tane %ld-bayt sektör kaldı."
 
-#: libfdisk/src/dos.c:1841 libfdisk/src/gpt.c:2342
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2342
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d hata tespit edildi."
 msgstr[1] "%d hata tespit edildi."
 
-#: libfdisk/src/dos.c:1876
+#: libfdisk/src/dos.c:1891
 msgid "The maximum number of partitions has been created."
 msgstr "Azami sayıda disk bölümü oluşturuldu."
 
-#: libfdisk/src/dos.c:1909 libfdisk/src/dos.c:1924 libfdisk/src/dos.c:2377
+#: libfdisk/src/dos.c:1924 libfdisk/src/dos.c:1939 libfdisk/src/dos.c:2392
 msgid "Extended partition already exists."
 msgstr "Genişletilmiş disk bölümü zaten var."
 
-#: libfdisk/src/dos.c:1939
+#: libfdisk/src/dos.c:1954
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1999
+#: libfdisk/src/dos.c:2014
 msgid "All primary partitions are in use."
 msgstr "Tüm mantıksal bölümler kullanımda."
 
-#: libfdisk/src/dos.c:2001 libfdisk/src/dos.c:2013
+#: libfdisk/src/dos.c:2016 libfdisk/src/dos.c:2028
 msgid "All space for primary partitions is in use."
 msgstr "Birincil disk bölümleri için bütün boşluk kullanımda."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:2016
+#: libfdisk/src/dos.c:2031
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Daha fazla disk bölümü oluşturmak için önce birincil bir tanesini genişletilmiş bir bölümle değiştirin."
 
-#: libfdisk/src/dos.c:2037
+#: libfdisk/src/dos.c:2052
 msgid "Partition type"
 msgstr "Disk bölümü tipi"
 
-#: libfdisk/src/dos.c:2041
+#: libfdisk/src/dos.c:2056
 #, fuzzy, c-format
 #| msgid "%zu primary, %d extended, %zu free"
 msgid "%u primary, %d extended, %u free"
 msgstr "%zu birincil, %d genişletilmiş, %zu boş"
 
-#: libfdisk/src/dos.c:2046
+#: libfdisk/src/dos.c:2061
 msgid "primary"
 msgstr "birincil"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "extended"
 msgstr "genişletilmiş"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "container for logical partitions"
 msgstr "mantıksal disk bölümleri için konteyner"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "logical"
 msgstr "mantıksal"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "numbered from 5"
 msgstr "5'ten itibaren numaralandırıldı"
 
-#: libfdisk/src/dos.c:2089
+#: libfdisk/src/dos.c:2104
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Geçersiz disk bölümü tipi `%c'."
 
-#: libfdisk/src/dos.c:2107
+#: libfdisk/src/dos.c:2122
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Sektör yazılamıyor %jd: arama başarısız"
 
-#: libfdisk/src/dos.c:2267 libfdisk/src/gpt.c:1292
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1292
 msgid "Disk identifier"
 msgstr "Disk belirleyicisi"
 
-#: libfdisk/src/dos.c:2382
+#: libfdisk/src/dos.c:2397
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Tip 0 bir çok sisteme boş alan anlamına gelir. Tipi 0 olan disk bölümlerine sahip olmak muhtemelen akıllıca değil."
 
-#: libfdisk/src/dos.c:2387
+#: libfdisk/src/dos.c:2402
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Halihazırda mantıksal disk bölümlerince kullanılan genişletilmiş disk bölümünün tipi değiştirilemiyor. Önce mantıksal disk bölümlerini silin."
 
-#: libfdisk/src/dos.c:2709
+#: libfdisk/src/dos.c:2724
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Disk bölümü %zu: veri alanı yok."
 
-#: libfdisk/src/dos.c:2743
+#: libfdisk/src/dos.c:2758
 msgid "New beginning of data"
 msgstr "Yeni veri başlangıcı"
 
-#: libfdisk/src/dos.c:2760
+#: libfdisk/src/dos.c:2775
 msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
 msgstr ""
 
-#: libfdisk/src/dos.c:2806
+#: libfdisk/src/dos.c:2821
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Disk bölümü %zu: bir genişletilmiş disk bölümüdür."
 
-#: libfdisk/src/dos.c:2812
+#: libfdisk/src/dos.c:2827
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Disk bölümü %zu'de önyüklenebilir bayrağı artık etkin."
 
-#: libfdisk/src/dos.c:2813
+#: libfdisk/src/dos.c:2828
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Disk bölümü %zu'de önyüklenebilir bayrağı artık kapatıldı."
 
-#: libfdisk/src/dos.c:2826 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "Aygıt"
 
-#: libfdisk/src/dos.c:2827 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2842 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Açılış"
 
-#: libfdisk/src/dos.c:2833 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
+#: libfdisk/src/dos.c:2848 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
 msgid "Id"
 msgstr "ld"
 
-#: libfdisk/src/dos.c:2837
+#: libfdisk/src/dos.c:2852
 msgid "Start-C/H/S"
 msgstr "Başlangıç-C/H/S"
 
-#: libfdisk/src/dos.c:2838
+#: libfdisk/src/dos.c:2853
 msgid "End-C/H/S"
 msgstr "Bitiş-C/H/S"
 
-#: libfdisk/src/dos.c:2839 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "Öznitelikler"
 
@@ -8908,7 +8908,7 @@ msgid "e cannot set ID-mapping: %m"
 msgstr "%s kilitlenemedi"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:285
+#: libmount/src/hook_loopdev.c:286
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr ""
@@ -9590,8 +9590,8 @@ msgstr "TIOCSCTTY başarısız: %m"
 msgid "failed to set the environment variables"
 msgstr "Ortam değişkeni %s ayarlanamadı"
 
-#: login-utils/login.c:1278 login-utils/su-common.c:709
-#: login-utils/su-common.c:728
+#: login-utils/login.c:1278 login-utils/su-common.c:712
+#: login-utils/su-common.c:731
 #, fuzzy
 #| msgid "failed to set the %s environment variable"
 msgid "failed to set the PATH environment variable"
@@ -10084,17 +10084,11 @@ msgid ""
 "                          set an alternate path for lastlog2\n"
 msgstr "     --wtmp-file <yol>   wtmp için alternatif yol ayarla\n"
 
-#: login-utils/lslogins.c:1592
-#, fuzzy
-#| msgid "     --list-modes         list available modes\n"
-msgid " -H, --list-columns       list the available columns\n"
-msgstr "     --list-modes         kullanılabilir kipleri listele\n"
-
-#: login-utils/lslogins.c:1828
+#: login-utils/lslogins.c:1827
 msgid "failed to request selinux state"
 msgstr "selinux durumu istenemedi"
 
-#: login-utils/lslogins.c:1845 login-utils/lslogins.c:1850
+#: login-utils/lslogins.c:1844 login-utils/lslogins.c:1849
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Sadece bir kullanıcı belirtilebilir. Çoklu kullanıcı için -l kullanın."
 
@@ -10263,52 +10257,52 @@ msgstr ""
 "\n"
 "Oturum sonlandırılıyor, kabuk kapatılıyor..."
 
-#: login-utils/su-common.c:640
+#: login-utils/su-common.c:642
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...kapatıldı.\n"
 
-#: login-utils/su-common.c:717 sys-utils/nsenter.c:917
+#: login-utils/su-common.c:720 sys-utils/nsenter.c:917
 #, fuzzy
 #| msgid "failed to set the %s environment variable"
 msgid "failed to set environment variables"
 msgstr "Ortam değişkeni %s ayarlanamadı"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:759
 msgid "cannot set groups"
 msgstr "gruplar ayarlanamadı"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:765
 #, fuzzy, c-format
 #| msgid "failed to parse level '%s'"
 msgid "failed to establish user credentials: %s"
 msgstr "seviye '%s' ayrıştırılamadı"
 
-#: login-utils/su-common.c:772
+#: login-utils/su-common.c:775
 msgid "cannot set group id"
 msgstr "grup id'si ayarlanamadı"
 
-#: login-utils/su-common.c:774
+#: login-utils/su-common.c:777
 msgid "cannot set user id"
 msgstr "kullanıcı id'si ayarlanamadı"
 
-#: login-utils/su-common.c:840
+#: login-utils/su-common.c:843
 #, fuzzy
 #| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  ortam değişkenlerini sıfırlama\n"
 
-#: login-utils/su-common.c:841
+#: login-utils/su-common.c:844
 #, fuzzy
 #| msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -m, -p, --preserve-environment  ortam değişkenlerini sıfırlama\n"
 
-#: login-utils/su-common.c:844
+#: login-utils/su-common.c:847
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <group>             birincil grubu belirt\n"
 
-#: login-utils/su-common.c:845
+#: login-utils/su-common.c:848
 #, fuzzy
 #| msgid ""
 #| " -G, --supp-group <group>        specify a supplemental group\n"
@@ -10318,15 +10312,15 @@ msgstr ""
 " -G, --supp-group <group>        tamamlayıcı bir grup belirt\n"
 "\n"
 
-#: login-utils/su-common.c:848
+#: login-utils/su-common.c:851
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  kabuğu giriş kabuğu yap\n"
 
-#: login-utils/su-common.c:849
+#: login-utils/su-common.c:852
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <command>         kabuğa -c ile tek bir komut geçir\n"
 
-#: login-utils/su-common.c:850
+#: login-utils/su-common.c:853
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -10334,27 +10328,27 @@ msgstr ""
 " --session-command <command>     kabuğa -c ile tek bir komut geçir\n"
 "                                   ve yeni bir oturum oluşturma\n"
 
-#: login-utils/su-common.c:852
+#: login-utils/su-common.c:855
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      kabuğa -f parametresini geçirin (csh ya da tcsh için)\n"
 
-#: login-utils/su-common.c:853
+#: login-utils/su-common.c:856
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <kabuk>             /etc/shells izin veriyorsa kabuğu çalıştır\n"
 
-#: login-utils/su-common.c:854
+#: login-utils/su-common.c:857
 #, fuzzy
 #| msgid " -t, --table              create a table\n"
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -t, --table              bir tablo oluştur\n"
 
-#: login-utils/su-common.c:855
+#: login-utils/su-common.c:858
 #, fuzzy
 #| msgid " -t, --table              create a table\n"
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr " -t, --table              bir tablo oluştur\n"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, fuzzy, c-format
 #| msgid ""
 #| " %1$s [options] <dev> [[-N] <part>]\n"
@@ -10366,7 +10360,7 @@ msgstr ""
 " %1$s [seçenekler] <aygıt> [[-N] <bölüm>]\n"
 " %1$s [seçenekler] <komut>\n"
 
-#: login-utils/su-common.c:870
+#: login-utils/su-common.c:873
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -10383,18 +10377,18 @@ msgstr ""
 "verilmediyse, su(1)-uyumlu yapıya geri dön ve standart kabuğu çalıştır.\n"
 "Paramatreler -c, -f, -l ve -s, -u ile karşılıklı dışlayandır.\n"
 
-#: login-utils/su-common.c:875
+#: login-utils/su-common.c:878
 #, fuzzy
 #| msgid " -u, --user <user>             username\n"
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <user>             kullanıcı ismi\n"
 
-#: login-utils/su-common.c:886
+#: login-utils/su-common.c:889
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [seçenekler] [-] [<user> [<argument>...]]\n"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:893
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -10408,57 +10402,57 @@ msgstr ""
 "<user> için etkin kullanıcı ve grup kimliğini değiştir.\n"
 "Tek bir -, -l anlamına gelir. Eğer <user> verilmez ise root kullanıcısı varsayılır.\n"
 
-#: login-utils/su-common.c:966
+#: login-utils/su-common.c:969
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "%d'den fazla tamamlayıcı grup belirtilemez"
 msgstr[1] "%d'den fazla tamamlayıcı grup belirtilemez"
 
-#: login-utils/su-common.c:972
+#: login-utils/su-common.c:975
 #, c-format
 msgid "group %s does not exist"
 msgstr "grup %s yok"
 
-#: login-utils/su-common.c:1082
+#: login-utils/su-common.c:1085
 #, fuzzy
 #| msgid "--reload is unsupported on your system"
 msgid "--pty is not supported for your system"
 msgstr "--reload sisteminiz tarafından desteklenmiyor"
 
-#: login-utils/su-common.c:1120
+#: login-utils/su-common.c:1123
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment yoksayılıyor, --login ile karşılıklı dışlayanlar"
 
-#: login-utils/su-common.c:1134
+#: login-utils/su-common.c:1137
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "seçenekler --{shell,fast,command,session-command,login} ve --user karşılıklı dışlayandır"
 
-#: login-utils/su-common.c:1137
+#: login-utils/su-common.c:1140
 msgid "no command was specified"
 msgstr "herhangi bir komut belirtilmedi"
 
-#: login-utils/su-common.c:1149
+#: login-utils/su-common.c:1152
 msgid "only root can specify alternative groups"
 msgstr "sadece root kullanıcısı alternatif gruplar belirtebilir"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr ""
 
-#: login-utils/su-common.c:1195
+#: login-utils/su-common.c:1198
 #, c-format
 msgid "using restricted shell %s"
 msgstr "kısıtlı kabuk %s kullanılıyor"
 
-#: login-utils/su-common.c:1216
+#: login-utils/su-common.c:1219
 #, fuzzy
 #| msgid "failed to allocate script handler"
 msgid "failed to allocate pty handler"
 msgstr "betik işleyici tahsis edilemedi"
 
-#: login-utils/su-common.c:1242
+#: login-utils/su-common.c:1245
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "uyarı: %s dizinine girilemiyor"
@@ -17066,7 +17060,7 @@ msgstr ""
 msgid ""
 "    Only initiators with a registered key can write to the device. Any\n"
 "    initiator can read from the device.  All initiators with a registered\n"
-"    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+"    key are considered reservation holders.  Please reference the SPC spec\n"
 "    on the meaning of a reservation holder if you want to use this type."
 msgstr ""
 
@@ -29402,6 +29396,11 @@ msgstr "terminfo okunmaya çalışılıyor"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "uç birim `%s' bilinmiyor, `dump' öntanımlanıyor"
+
+#, fuzzy
+#~| msgid "     --list-modes         list available modes\n"
+#~ msgid " -H, --list-columns       list the available columns\n"
+#~ msgstr "     --list-modes         kullanılabilir kipleri listele\n"
 
 #, fuzzy
 #~| msgid " -a, --all            print all devices\n"

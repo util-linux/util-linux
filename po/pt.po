@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-03-24 12:20+0100\n"
+"POT-Creation-Date: 2026-04-01 12:19+0200\n"
 "PO-Revision-Date: 2026-04-01 06:53+0100\n"
 "Last-Translator: Pedro Albuquerque <pmra@protonmail.com>\n"
 "Language-Team: Portuguese <translation-team-pt@googlegroups.com>\n"
@@ -325,7 +325,7 @@ msgid "Quit program without writing changes"
 msgstr "Sair do programa sem escrever as alterações"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2834 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "Tipo"
@@ -910,7 +910,7 @@ msgid "Using default response %c."
 msgstr "A usar resposta predefinida %c."
 
 #: disk-utils/fdisk.c:243 disk-utils/fdisk.c:317 disk-utils/fdisk.c:394
-#: libfdisk/src/dos.c:1480 libfdisk/src/gpt.c:2581
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2581
 msgid "Value out of range."
 msgstr "Valor fora do intervalo."
 
@@ -1117,7 +1117,7 @@ msgstr "impossível ir para"
 msgid "cannot read"
 msgstr "impossível ler"
 
-#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 #: libfdisk/src/gpt.c:2501
 msgid "First sector"
 msgstr "Primeiro sector"
@@ -1430,22 +1430,22 @@ msgstr "A assinatura do sistema de ficheiros/RAID na partição %zu será apagad
 msgid "Partition table entries are not in disk order."
 msgstr "As entradas da tabela de partições não estão na ordem do disco."
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2828
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
 #: libfdisk/src/gpt.c:3254 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "Início"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2829
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
 #: libfdisk/src/gpt.c:3255 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "Fim"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2830
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
 #: libfdisk/src/gpt.c:3256 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "Sectores"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2832
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
 #: libfdisk/src/gpt.c:3257 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "Tamanho"
@@ -3136,7 +3136,7 @@ msgstr ""
 "                      especificar -V mais de uma vez provoca uma execução seca\n"
 
 #: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1496
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1251
+#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1254
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -6581,15 +6581,15 @@ msgstr "Partição %zd: tem sector inicial 0 inválido."
 msgid "There is no *BSD partition on %s."
 msgstr "Não há nenhuma partição *BSD em %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 msgid "First cylinder"
 msgstr "Primeiro cilindro"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1451
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1466
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Último cilindro, +/-cilindros ou +/-tamanho{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1456 libfdisk/src/gpt.c:2558
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2558
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Último sector, +/-sectores ou +/-tamanho{K,M,G,T,P}"
 
@@ -6638,7 +6638,7 @@ msgstr "Faixas/Cilindro"
 msgid "Sectors/Cylinder"
 msgstr "Sectores/Cilindro"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2831
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2846
 #: libfdisk/src/sgi.c:1167 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1137
 msgid "Cylinders"
 msgstr "Cilindros"
@@ -6865,291 +6865,291 @@ msgstr "Cilindros como unidades de exibição é obsoleto."
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "O tamanho deste disco é %s (%ju bytes). O formato da tabela de partições DOS não pode ser usado em unidades com volumes superiores a %lu bytes para sectores %lu-byte. Use o formato de tabela de partições GUID (GPT)."
 
-#: libfdisk/src/dos.c:548
+#: libfdisk/src/dos.c:549
 msgid "Bad offset in primary extended partition."
 msgstr "Mau desvio em partição primária estendida."
 
-#: libfdisk/src/dos.c:562
+#: libfdisk/src/dos.c:568
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "A omitir partições após %zu. Serão eliminadas se escrever esta tabela de partições."
 
-#: libfdisk/src/dos.c:595
+#: libfdisk/src/dos.c:610
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "Ponteiro de ligação extra na tabela de partições %zu."
 
-#: libfdisk/src/dos.c:603
+#: libfdisk/src/dos.c:618
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "A ignorar dados extra na tabela de partições %zu."
 
-#: libfdisk/src/dos.c:659
+#: libfdisk/src/dos.c:674
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "a omitir partição vazia (%zu)"
 
-#: libfdisk/src/dos.c:719
+#: libfdisk/src/dos.c:734
 #, c-format
 msgid "Created a new DOS (MBR) disklabel with disk identifier 0x%08x."
 msgstr "Criado um novo rótulo de disco DOS (MBR) com identificador de disco 0x%08x."
 
-#: libfdisk/src/dos.c:742
+#: libfdisk/src/dos.c:757
 msgid "Enter the new disk identifier"
 msgstr "Insira o novo identificador de disco"
 
-#: libfdisk/src/dos.c:751
+#: libfdisk/src/dos.c:766
 msgid "Incorrect value."
 msgstr "Valor incorrecto."
 
-#: libfdisk/src/dos.c:764
+#: libfdisk/src/dos.c:779
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Identificador de disco alterado de 0x%08x para 0x%08x."
 
-#: libfdisk/src/dos.c:960
+#: libfdisk/src/dos.c:975
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "A ignorar partição estendida extra %zu"
 
-#: libfdisk/src/dos.c:974
+#: libfdisk/src/dos.c:989
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Bandeira 0x%02x%02x de EBR (para a partição %zu) inválida será corrigida por w(rite)."
 
-#: libfdisk/src/dos.c:1045
+#: libfdisk/src/dos.c:1060
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Sector inicial %ju fora de alcance."
 
-#: libfdisk/src/dos.c:1291 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "A partição %zu já está definida. Elimine-a antes de a re-adicionar."
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/dos.c:1332 libfdisk/src/dos.c:1390
-#: libfdisk/src/dos.c:1422 libfdisk/src/gpt.c:2425
+#: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2425
 msgid "No free sectors available."
 msgstr "Não há sectores livres disponíveis."
 
-#: libfdisk/src/dos.c:1357
+#: libfdisk/src/dos.c:1372
 #, c-format
 msgid "Sector %ju is already allocated."
 msgstr "O sector %ju já está alocado."
 
-#: libfdisk/src/dos.c:1577
+#: libfdisk/src/dos.c:1592
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "A adicionar partição lógica %zu"
 
-#: libfdisk/src/dos.c:1609
+#: libfdisk/src/dos.c:1624
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partição %zu: contém o sector 0"
 
-#: libfdisk/src/dos.c:1613
+#: libfdisk/src/dos.c:1628
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partição %zu: cabeça %d maior que o máximo %d"
 
-#: libfdisk/src/dos.c:1618
+#: libfdisk/src/dos.c:1633
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Partição %zu: sector %d maior que o máximo %ju"
 
-#: libfdisk/src/dos.c:1624
+#: libfdisk/src/dos.c:1639
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Partição %zu: cilindro %d maior que o máximo %ju"
 
-#: libfdisk/src/dos.c:1631
+#: libfdisk/src/dos.c:1646
 #, c-format
 msgid "Partition %zu: LBA sector %u disagrees with C/H/S calculated sector %u"
 msgstr "Partição %zu: sector LBA %u em desacordo com sector C/H/S calculado %u"
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1705
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partição %zu: diferentes inícios físicos/lógicos (não-Linux?): fís.=(%d, %d, %d), lóg.=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1702
+#: libfdisk/src/dos.c:1717
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partição %zu: diferentes finais físicos/lógicos: fís.=(%d, %d, %d), lóg.=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1727
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Partição %zu: não acaba no limite do cilindro."
 
-#: libfdisk/src/dos.c:1771
+#: libfdisk/src/dos.c:1786
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Partição %zu: mau início de dados."
 
-#: libfdisk/src/dos.c:1787
+#: libfdisk/src/dos.c:1802
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Partição %zu: sobrepõe-se à partição %zu."
 
-#: libfdisk/src/dos.c:1816
+#: libfdisk/src/dos.c:1831
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Partição %zu: vazia."
 
-#: libfdisk/src/dos.c:1823
+#: libfdisk/src/dos.c:1838
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Partição lógica %zu: não inteiramente na partição %zu."
 
-#: libfdisk/src/dos.c:1832 libfdisk/src/gpt.c:2322
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2322
 msgid "No errors detected."
 msgstr "Sem erros detectados."
 
-#: libfdisk/src/dos.c:1834
+#: libfdisk/src/dos.c:1849
 #, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "Total de sectores alocados %ju maior que o máximo %ju."
 
-#: libfdisk/src/dos.c:1837
+#: libfdisk/src/dos.c:1852
 #, c-format
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "Restam %ju sectores não alocados de %ld-byte."
 
-#: libfdisk/src/dos.c:1841 libfdisk/src/gpt.c:2342
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2342
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d erro detectado."
 msgstr[1] "%d erros detectados."
 
-#: libfdisk/src/dos.c:1876
+#: libfdisk/src/dos.c:1891
 msgid "The maximum number of partitions has been created."
 msgstr "Foi criado o número máximo de partições."
 
-#: libfdisk/src/dos.c:1909 libfdisk/src/dos.c:1924 libfdisk/src/dos.c:2377
+#: libfdisk/src/dos.c:1924 libfdisk/src/dos.c:1939 libfdisk/src/dos.c:2392
 msgid "Extended partition already exists."
 msgstr "A partição estendida já existe."
 
-#: libfdisk/src/dos.c:1939
+#: libfdisk/src/dos.c:1954
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr "A partição estendida não existe. Falha ao adicionar a partição lógica."
 
-#: libfdisk/src/dos.c:1999
+#: libfdisk/src/dos.c:2014
 msgid "All primary partitions are in use."
 msgstr "Todas as partições primárias estão em uso."
 
-#: libfdisk/src/dos.c:2001 libfdisk/src/dos.c:2013
+#: libfdisk/src/dos.c:2016 libfdisk/src/dos.c:2028
 msgid "All space for primary partitions is in use."
 msgstr "Todo o espaço para partições primárias está em uso."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:2016
+#: libfdisk/src/dos.c:2031
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Para criar mais partições, substitua uma partição primária por uma estendida."
 
-#: libfdisk/src/dos.c:2037
+#: libfdisk/src/dos.c:2052
 msgid "Partition type"
 msgstr "Tipo de partição"
 
-#: libfdisk/src/dos.c:2041
+#: libfdisk/src/dos.c:2056
 #, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr "%u primária, %d estendida, %u livre"
 
-#: libfdisk/src/dos.c:2046
+#: libfdisk/src/dos.c:2061
 msgid "primary"
 msgstr "primária"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "extended"
 msgstr "estendida"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "container for logical partitions"
 msgstr "contentor para partições lógicas"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "logical"
 msgstr "lógica"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "numbered from 5"
 msgstr "numerada a partir de 5"
 
-#: libfdisk/src/dos.c:2089
+#: libfdisk/src/dos.c:2104
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Tipo de partição \"%c\" inválido."
 
-#: libfdisk/src/dos.c:2107
+#: libfdisk/src/dos.c:2122
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Impossível escrever o sector %jd: seek falhou"
 
-#: libfdisk/src/dos.c:2267 libfdisk/src/gpt.c:1292
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1292
 msgid "Disk identifier"
 msgstr "Identificador de disco"
 
-#: libfdisk/src/dos.c:2382
+#: libfdisk/src/dos.c:2397
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "O tipo 0 significa espaço livre para muitos sistemas. Ter partições de tipo 0 é imprudente."
 
-#: libfdisk/src/dos.c:2387
+#: libfdisk/src/dos.c:2402
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Impossível alterar o tipo da partição estendida, que já é usado por partições lógicas. Elimine as partições lógicas primeiro."
 
-#: libfdisk/src/dos.c:2709
+#: libfdisk/src/dos.c:2724
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partição %zu: sem área de dados."
 
-#: libfdisk/src/dos.c:2743
+#: libfdisk/src/dos.c:2758
 msgid "New beginning of data"
 msgstr "Novo início de dados"
 
-#: libfdisk/src/dos.c:2760
+#: libfdisk/src/dos.c:2775
 msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
 msgstr "O novo começo da partição sobrepõe-se à área do rótulo de disco. Tenha muito cuidado ao usar esta partição. Pode perder todas as partições no disco."
 
-#: libfdisk/src/dos.c:2806
+#: libfdisk/src/dos.c:2821
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Partição %zu: é uma partição estendida."
 
-#: libfdisk/src/dos.c:2812
+#: libfdisk/src/dos.c:2827
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "A bandeira de arranque na partição %zu está activa agora."
 
-#: libfdisk/src/dos.c:2813
+#: libfdisk/src/dos.c:2828
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "A bandeira de arranque na partição %zu está inactiva agora."
 
-#: libfdisk/src/dos.c:2826 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "Dispositivo"
 
-#: libfdisk/src/dos.c:2827 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2842 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Arranque"
 
-#: libfdisk/src/dos.c:2833 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
+#: libfdisk/src/dos.c:2848 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2837
+#: libfdisk/src/dos.c:2852
 msgid "Start-C/H/S"
 msgstr "Início-C/C/S"
 
-#: libfdisk/src/dos.c:2838
+#: libfdisk/src/dos.c:2853
 msgid "End-C/H/S"
 msgstr "Fim-C/C/S"
 
-#: libfdisk/src/dos.c:2839 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "Atrib"
 
@@ -8351,7 +8351,7 @@ msgid "e cannot set ID-mapping: %m"
 msgstr "e não pode definir ID-mapping: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:285
+#: libmount/src/hook_loopdev.c:286
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "e nó do dispositivo %s (%u:%u) está perdido"
@@ -8987,8 +8987,8 @@ msgstr "TIOCSCTTY falhou: %m"
 msgid "failed to set the environment variables"
 msgstr "falha ao definir as variáveis de ambiente"
 
-#: login-utils/login.c:1278 login-utils/su-common.c:709
-#: login-utils/su-common.c:728
+#: login-utils/login.c:1278 login-utils/su-common.c:712
+#: login-utils/su-common.c:731
 msgid "failed to set the PATH environment variable"
 msgstr "falha ao definir a variável de ambiente PATH"
 
@@ -9451,15 +9451,11 @@ msgstr ""
 "     --lastlog2-file <caminho>\n"
 "                          definir caminho alternativo para lastlog2\n"
 
-#: login-utils/lslogins.c:1592
-msgid " -H, --list-columns       list the available columns\n"
-msgstr " -H, --list-columns       lista as colunas disponíveis\n"
-
-#: login-utils/lslogins.c:1828
+#: login-utils/lslogins.c:1827
 msgid "failed to request selinux state"
 msgstr "falha ao pedir estado selinux"
 
-#: login-utils/lslogins.c:1845 login-utils/lslogins.c:1850
+#: login-utils/lslogins.c:1844 login-utils/lslogins.c:1849
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Só pode especificar um utilizador. Use -l para múltiplos utilizadores."
 
@@ -9608,57 +9604,57 @@ msgstr ""
 "\n"
 "Sessão terminada, a matar a shell..."
 
-#: login-utils/su-common.c:640
+#: login-utils/su-common.c:642
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...morta.\n"
 
-#: login-utils/su-common.c:717 sys-utils/nsenter.c:917
+#: login-utils/su-common.c:720 sys-utils/nsenter.c:917
 msgid "failed to set environment variables"
 msgstr "falha ao definir variáveis de ambiente"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:759
 msgid "cannot set groups"
 msgstr "impossível definir grupos"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:765
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "falha ao estabelecer credenciais do utilizador: %s"
 
-#: login-utils/su-common.c:772
+#: login-utils/su-common.c:775
 msgid "cannot set group id"
 msgstr "impossível definir id de grupo"
 
-#: login-utils/su-common.c:774
+#: login-utils/su-common.c:777
 msgid "cannot set user id"
 msgstr "impossível definir id de utilizador"
 
-#: login-utils/su-common.c:840
+#: login-utils/su-common.c:843
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment      não repor variáveis de ambiente\n"
 
-#: login-utils/su-common.c:841
+#: login-utils/su-common.c:844
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <lista> não repor as variáveis especificadas\n"
 
-#: login-utils/su-common.c:844
+#: login-utils/su-common.c:847
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <group>             especificar o grupo primário\n"
 
-#: login-utils/su-common.c:845
+#: login-utils/su-common.c:848
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grupo>        especificar um grupo suplementar\n"
 
-#: login-utils/su-common.c:848
+#: login-utils/su-common.c:851
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  tornar a shell numa shell de sessão\n"
 
-#: login-utils/su-common.c:849
+#: login-utils/su-common.c:852
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <comando>         passar um único comando à shell com -c\n"
 
-#: login-utils/su-common.c:850
+#: login-utils/su-common.c:853
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9666,23 +9662,23 @@ msgstr ""
 " --session-command <comando>     passar um único comando à shell com -c\n"
 "                                   e não criar uma nova sessão\n"
 
-#: login-utils/su-common.c:852
+#: login-utils/su-common.c:855
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      passar -f à shell (para csh ou tcsh)\n"
 
-#: login-utils/su-common.c:853
+#: login-utils/su-common.c:856
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             executar <shell> se /etc/shells o permitir\n"
 
-#: login-utils/su-common.c:854
+#: login-utils/su-common.c:857
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       criar um novo pseudo-terminal\n"
 
-#: login-utils/su-common.c:855
+#: login-utils/su-common.c:858
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr " -T, --no-pty                    não cria um pseudo-terminal (má segurança!)\n"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9691,7 +9687,7 @@ msgstr ""
 " %1$s [opções] -u <utilizador> [[--] <comando>]\n"
 " %1$s [opções] [-] [<utilizador> [<argumento>...]]\n"
 
-#: login-utils/su-common.c:870
+#: login-utils/su-common.c:873
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9701,16 +9697,16 @@ msgstr ""
 "Sem -u, voltar à semântica compatível com su(1) e executar a shell padrão.\n"
 "As opções -c, -f, -l, e -s são mutuamente exclusivas com -u.\n"
 
-#: login-utils/su-common.c:875
+#: login-utils/su-common.c:878
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <user>               utilizador\n"
 
-#: login-utils/su-common.c:886
+#: login-utils/su-common.c:889
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [opções] [-] [<utilizador> [<argumento>...]]\n"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:893
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9718,53 +9714,53 @@ msgstr ""
 "Alterar a ID de utilizador efectiva e a ID de grupo para a do <utilizador>.\n"
 "Um simples - implica -l. Se <utilizador> não for dado, é assumido root.\n"
 
-#: login-utils/su-common.c:966
+#: login-utils/su-common.c:969
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "impossível especificar mais de %d grupo suplementar"
 msgstr[1] "impossível especificar mais de %d grupos suplementares"
 
-#: login-utils/su-common.c:972
+#: login-utils/su-common.c:975
 #, c-format
 msgid "group %s does not exist"
 msgstr "o grupo %s não existe"
 
-#: login-utils/su-common.c:1082
+#: login-utils/su-common.c:1085
 msgid "--pty is not supported for your system"
 msgstr "--pty não é suportado no seu sistema"
 
-#: login-utils/su-common.c:1120
+#: login-utils/su-common.c:1123
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "a ignorar --preserve-environment, é mutuamente exclusiva com --login"
 
-#: login-utils/su-common.c:1134
+#: login-utils/su-common.c:1137
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "as opções --{shell,fast,command,session-command,login} e --user são mutuamente exclusivas"
 
-#: login-utils/su-common.c:1137
+#: login-utils/su-common.c:1140
 msgid "no command was specified"
 msgstr "não especificou um comando"
 
-#: login-utils/su-common.c:1149
+#: login-utils/su-common.c:1152
 msgid "only root can specify alternative groups"
 msgstr "só como root pode especificar grupos alternativos"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "o utilizador %s não existe ou a entrada não contém todos os campos requeridos"
 
-#: login-utils/su-common.c:1195
+#: login-utils/su-common.c:1198
 #, c-format
 msgid "using restricted shell %s"
 msgstr "a usar shell restrita %s"
 
-#: login-utils/su-common.c:1216
+#: login-utils/su-common.c:1219
 msgid "failed to allocate pty handler"
 msgstr "falha ao alocar o gestor do pty"
 
-#: login-utils/su-common.c:1242
+#: login-utils/su-common.c:1245
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "aviso: impossível mudar a pasta para %s"
@@ -15561,10 +15557,16 @@ msgid "    Only initiators with a registered key can access the device."
 msgstr "    Só iniciadores com chave registada podem aceder ao dispositivo."
 
 #: sys-utils/blkpr.c:64
+#, fuzzy
+#| msgid ""
+#| "    Only initiators with a registered key can write to the device. Any\n"
+#| "    initiator can read from the device.  All initiators with a registered\n"
+#| "    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+#| "    on the meaning of a reservation holder if you want to use this type."
 msgid ""
 "    Only initiators with a registered key can write to the device. Any\n"
 "    initiator can read from the device.  All initiators with a registered\n"
-"    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+"    key are considered reservation holders.  Please reference the SPC spec\n"
 "    on the meaning of a reservation holder if you want to use this type."
 msgstr ""
 "    Só iniciadores com chave registada podem escrever no dispositivo.\n"
@@ -27077,6 +27079,9 @@ msgstr "problema ao ler terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminal \"%s\" não é conhecido, a reverter para \"dumb\""
+
+#~ msgid " -H, --list-columns       list the available columns\n"
+#~ msgstr " -H, --list-columns       lista as colunas disponíveis\n"
 
 #, c-format
 #~ msgid " %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"

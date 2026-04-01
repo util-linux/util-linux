@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-03-24 12:20+0100\n"
+"POT-Creation-Date: 2026-04-01 12:19+0200\n"
 "PO-Revision-Date: 2026-03-28 01:34+0100\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
@@ -363,7 +363,7 @@ msgid "Quit program without writing changes"
 msgstr "Părăsește programul fără a scrie modificările"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2834 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3258 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "Tip"
@@ -962,7 +962,7 @@ msgid "Using default response %c."
 msgstr "Se utilizează răspunsul implicit %c."
 
 #: disk-utils/fdisk.c:243 disk-utils/fdisk.c:317 disk-utils/fdisk.c:394
-#: libfdisk/src/dos.c:1480 libfdisk/src/gpt.c:2581
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2581
 msgid "Value out of range."
 msgstr "Valoare în afara intervalului."
 
@@ -1172,7 +1172,7 @@ msgstr "nu se poate efectua examinarea"
 msgid "cannot read"
 msgstr "nu se poate citi"
 
-#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: disk-utils/fdisk.c:1024 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 #: libfdisk/src/gpt.c:2501
 msgid "First sector"
 msgstr "Primul sector"
@@ -1489,22 +1489,22 @@ msgstr "Semnătura sistemului de fișiere/RAID de pe partiția %zu va fi ștears
 msgid "Partition table entries are not in disk order."
 msgstr "Intrările din tabela de partiții nu sunt în ordinea de pe disc."
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2828
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
 #: libfdisk/src/gpt.c:3254 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "Începe"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2829
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
 #: libfdisk/src/gpt.c:3255 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "Termină"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2830
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
 #: libfdisk/src/gpt.c:3256 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "Sectoare"
 
-#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2832
+#: disk-utils/fdisk-list.c:253 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
 #: libfdisk/src/gpt.c:3257 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "Dim."
@@ -3230,7 +3230,7 @@ msgstr ""
 "                     multe ori, se va produce o execuție în gol\n"
 
 #: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1496
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1251
+#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1254
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -6758,15 +6758,15 @@ msgstr "Partiția %zd: are sectorul de început 0 nevalid."
 msgid "There is no *BSD partition on %s."
 msgstr "Nu există nicio partiție *BSD pe %s."
 
-#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1058
+#: libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
 msgid "First cylinder"
 msgstr "Primul cilindru"
 
-#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1451
+#: libfdisk/src/bsd.c:291 libfdisk/src/dos.c:1466
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Ultimul cilindru, +/-cilindri sau +/dimensiunea{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1456 libfdisk/src/gpt.c:2558
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2558
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "Ultimul sector, +/-sectoare sau +/-dimensiunea{K,M,G,T,P}"
 
@@ -6815,7 +6815,7 @@ msgstr "Piste/Cilindru"
 msgid "Sectors/Cylinder"
 msgstr "Sectoare/Cilindru"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2831
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1029 libfdisk/src/dos.c:2846
 #: libfdisk/src/sgi.c:1167 libfdisk/src/sun.c:203 libfdisk/src/sun.c:1137
 msgid "Cylinders"
 msgstr "Cilindri"
@@ -7044,159 +7044,159 @@ msgstr "Cilindrii ca unități de afișare sunt depreciați."
 msgid "The size of this disk is %s (%ju bytes). DOS partition table format cannot be used on drives for volumes larger than %lu bytes for %lu-byte sectors. Use GUID partition table format (GPT)."
 msgstr "Dimensiunea acestui disc este %s (%ju octeți). Formatul tabelului de partiții DOS nu poate fi utilizat pe unități pentru volume mai mari de %lu octeți pentru sectoare de %lu octeți. Folosiți formatul tabelului de partiții GUID (GPT)."
 
-#: libfdisk/src/dos.c:548
+#: libfdisk/src/dos.c:549
 msgid "Bad offset in primary extended partition."
 msgstr "Poziție greșită în partiția extinsă primară."
 
-#: libfdisk/src/dos.c:562
+#: libfdisk/src/dos.c:568
 #, c-format
 msgid "Omitting partitions after #%zu. They will be deleted if you save this partition table."
 msgstr "Se omit partițiile după nr %zu. Acestea vor fi șterse dacă salvați acest tabel de partiții."
 
-#: libfdisk/src/dos.c:595
+#: libfdisk/src/dos.c:610
 #, c-format
 msgid "Extra link pointer in partition table %zu."
 msgstr "Indicator de legătură extra în tabelul de partiții %zu."
 
-#: libfdisk/src/dos.c:603
+#: libfdisk/src/dos.c:618
 #, c-format
 msgid "Ignoring extra data in partition table %zu."
 msgstr "Se ignoră datele extra din tabelul de partiții %zu."
 
-#: libfdisk/src/dos.c:659
+#: libfdisk/src/dos.c:674
 #, c-format
 msgid "omitting empty partition (%zu)"
 msgstr "se omite partiția goală (%zu)"
 
-#: libfdisk/src/dos.c:719
+#: libfdisk/src/dos.c:734
 #, c-format
 msgid "Created a new DOS (MBR) disklabel with disk identifier 0x%08x."
 msgstr "S-a creat o nouă etichetă de disc DOS (MBR) cu identificatorul de disc 0x%08x."
 
-#: libfdisk/src/dos.c:742
+#: libfdisk/src/dos.c:757
 msgid "Enter the new disk identifier"
 msgstr "Introduceți noul identificator de disc"
 
-#: libfdisk/src/dos.c:751
+#: libfdisk/src/dos.c:766
 msgid "Incorrect value."
 msgstr "Valoare incorectă."
 
-#: libfdisk/src/dos.c:764
+#: libfdisk/src/dos.c:779
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Identificatorul discului a fost modificat de la 0x%08x la 0x%08x."
 
-#: libfdisk/src/dos.c:960
+#: libfdisk/src/dos.c:975
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Se ignoră partiția extra extinsă %zu"
 
-#: libfdisk/src/dos.c:974
+#: libfdisk/src/dos.c:989
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Identificatorul nevalid 0x%02x%02x din EBR (pentru partiția %zu) va fi corectat de «w(rite)», scriere."
 
-#: libfdisk/src/dos.c:1045
+#: libfdisk/src/dos.c:1060
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Sectorul de început %ju în afara intervalului."
 
-#: libfdisk/src/dos.c:1291 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2416 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Partiția %zu este deja definită.  Ștergeți-o înainte de a o adăuga din nou."
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/dos.c:1332 libfdisk/src/dos.c:1390
-#: libfdisk/src/dos.c:1422 libfdisk/src/gpt.c:2425
+#: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2425
 msgid "No free sectors available."
 msgstr "Nu există sectoare libere disponibile."
 
-#: libfdisk/src/dos.c:1357
+#: libfdisk/src/dos.c:1372
 #, c-format
 msgid "Sector %ju is already allocated."
 msgstr "Sectorul %ju este deja alocat."
 
-#: libfdisk/src/dos.c:1577
+#: libfdisk/src/dos.c:1592
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Se adaugă partiția logică %zu"
 
-#: libfdisk/src/dos.c:1609
+#: libfdisk/src/dos.c:1624
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Partiția %zu: conține sectorul 0"
 
-#: libfdisk/src/dos.c:1613
+#: libfdisk/src/dos.c:1628
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Partiția %zu: capul %d mai mare decât maximul %d"
 
-#: libfdisk/src/dos.c:1618
+#: libfdisk/src/dos.c:1633
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %ju"
 msgstr "Partiția %zu: sectorul %d mai mare decât maximul %ju"
 
-#: libfdisk/src/dos.c:1624
+#: libfdisk/src/dos.c:1639
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %ju"
 msgstr "Partiția %zu: cilindrul %d mai mare decât maximul %ju"
 
-#: libfdisk/src/dos.c:1631
+#: libfdisk/src/dos.c:1646
 #, c-format
 msgid "Partition %zu: LBA sector %u disagrees with C/H/S calculated sector %u"
 msgstr "Partiția %zu: sectorul LBA %u nu corespunde cu sectorul calculat de C/H/S %u"
 
-#: libfdisk/src/dos.c:1690
+#: libfdisk/src/dos.c:1705
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partiția %zu: începuturi fizice/logice diferite (non-Linux?): fizice=(%d, %d, %d), logice=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1702
+#: libfdisk/src/dos.c:1717
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Partiția %zu: sfârșituri fizice/logice diferite: fizice=(%d, %d, %d), logice=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1712
+#: libfdisk/src/dos.c:1727
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Partiție %zu: nu se termină la limita cilindrului."
 
-#: libfdisk/src/dos.c:1771
+#: libfdisk/src/dos.c:1786
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Partiția %zu: început de date greșit."
 
-#: libfdisk/src/dos.c:1787
+#: libfdisk/src/dos.c:1802
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Partiția %zu: se suprapune partiției %zu."
 
-#: libfdisk/src/dos.c:1816
+#: libfdisk/src/dos.c:1831
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Partiția %zu: goală."
 
-#: libfdisk/src/dos.c:1823
+#: libfdisk/src/dos.c:1838
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Partiția logică %zu: nu se află în întregime în partiția %zu."
 
-#: libfdisk/src/dos.c:1832 libfdisk/src/gpt.c:2322
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2322
 msgid "No errors detected."
 msgstr "Nu au fost detectate erori."
 
-#: libfdisk/src/dos.c:1834
+#: libfdisk/src/dos.c:1849
 #, c-format
 msgid "Total allocated sectors %ju greater than the maximum %ju."
 msgstr "Totalul sectoarelor alocate %ju mai mare decât %ju maxim."
 
-#: libfdisk/src/dos.c:1837
+#: libfdisk/src/dos.c:1852
 #, c-format
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "Sectoare rămase %ju nealocate %ld-octeți."
 
-#: libfdisk/src/dos.c:1841 libfdisk/src/gpt.c:2342
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2342
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -7204,132 +7204,132 @@ msgstr[0] "%d eroare detectată."
 msgstr[1] "%d erori detectate."
 msgstr[2] "%d de erori detectate."
 
-#: libfdisk/src/dos.c:1876
+#: libfdisk/src/dos.c:1891
 msgid "The maximum number of partitions has been created."
 msgstr "A fost creat numărul maxim de partiții."
 
-#: libfdisk/src/dos.c:1909 libfdisk/src/dos.c:1924 libfdisk/src/dos.c:2377
+#: libfdisk/src/dos.c:1924 libfdisk/src/dos.c:1939 libfdisk/src/dos.c:2392
 msgid "Extended partition already exists."
 msgstr "Partiția extinsă există deja."
 
-#: libfdisk/src/dos.c:1939
+#: libfdisk/src/dos.c:1954
 msgid "Extended partition does not exists. Failed to add logical partition."
 msgstr "Partiția extinsă nu există. Nu s-a reușit adăugarea partiției logice."
 
-#: libfdisk/src/dos.c:1999
+#: libfdisk/src/dos.c:2014
 msgid "All primary partitions are in use."
 msgstr "Toate partițiile primare sunt în uz."
 
-#: libfdisk/src/dos.c:2001 libfdisk/src/dos.c:2013
+#: libfdisk/src/dos.c:2016 libfdisk/src/dos.c:2028
 msgid "All space for primary partitions is in use."
 msgstr "Tot spațiul pentru partițiile primare este în uz."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
-#: libfdisk/src/dos.c:2016
+#: libfdisk/src/dos.c:2031
 msgid "To create more partitions, first replace a primary with an extended partition."
 msgstr "Pentru a crea mai multe partiții, înlocuiți mai întâi o partiție primară cu o partiție extinsă."
 
-#: libfdisk/src/dos.c:2037
+#: libfdisk/src/dos.c:2052
 msgid "Partition type"
 msgstr "Tip de partiție"
 
-#: libfdisk/src/dos.c:2041
+#: libfdisk/src/dos.c:2056
 #, c-format
 msgid "%u primary, %d extended, %u free"
 msgstr "%u primare, %d extinse, %u libere"
 
-#: libfdisk/src/dos.c:2046
+#: libfdisk/src/dos.c:2061
 msgid "primary"
 msgstr "primară"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "extended"
 msgstr "extinsă"
 
-#: libfdisk/src/dos.c:2048
+#: libfdisk/src/dos.c:2063
 msgid "container for logical partitions"
 msgstr "container pentru partiții logice"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "logical"
 msgstr "logică"
 
-#: libfdisk/src/dos.c:2050
+#: libfdisk/src/dos.c:2065
 msgid "numbered from 5"
 msgstr "numerotate de la 5"
 
-#: libfdisk/src/dos.c:2089
+#: libfdisk/src/dos.c:2104
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Tip de partiție nevalid „%c”."
 
-#: libfdisk/src/dos.c:2107
+#: libfdisk/src/dos.c:2122
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Nu se poate scrie sectorul %jd: examinarea a eșuat"
 
-#: libfdisk/src/dos.c:2267 libfdisk/src/gpt.c:1292
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1292
 msgid "Disk identifier"
 msgstr "Identificator de disc"
 
-#: libfdisk/src/dos.c:2382
+#: libfdisk/src/dos.c:2397
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Tipul 0 înseamnă spațiu liber pentru multe sisteme. Existența unor partiții de tip 0 nu este probabil înțeleaptă."
 
-#: libfdisk/src/dos.c:2387
+#: libfdisk/src/dos.c:2402
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Nu se poate schimba tipul partiției extinse, care este deja utilizată de partiții logice. Ștergeți mai întâi partițiile logice."
 
-#: libfdisk/src/dos.c:2709
+#: libfdisk/src/dos.c:2724
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partiția %zu: nu există o zonă de date."
 
-#: libfdisk/src/dos.c:2743
+#: libfdisk/src/dos.c:2758
 msgid "New beginning of data"
 msgstr "Nou început de date"
 
-#: libfdisk/src/dos.c:2760
+#: libfdisk/src/dos.c:2775
 msgid "The new beginning of the partition overlaps the disk label area. Be very careful when using the partition. You can lose all your partitions on the disk."
 msgstr "Noul început al partiției se suprapune peste zona de etichetare a discului. Fiți foarte atenți atunci când utilizați partiția. Puteți pierde toate partițiile de pe disc."
 
-#: libfdisk/src/dos.c:2806
+#: libfdisk/src/dos.c:2821
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Partiția %zu: este o partiție extinsă."
 
-#: libfdisk/src/dos.c:2812
+#: libfdisk/src/dos.c:2827
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Fanionul de pornire de pe partiția %zu este activat acum."
 
-#: libfdisk/src/dos.c:2813
+#: libfdisk/src/dos.c:2828
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Fanionul de pornire de pe partiția %zu este dezactivat acum."
 
-#: libfdisk/src/dos.c:2826 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3253 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "Dispozitiv"
 
-#: libfdisk/src/dos.c:2827 libfdisk/src/sun.c:40
+#: libfdisk/src/dos.c:2842 libfdisk/src/sun.c:40
 msgid "Boot"
 msgstr "Pornire"
 
-#: libfdisk/src/dos.c:2833 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
+#: libfdisk/src/dos.c:2848 libfdisk/src/sgi.c:1169 libfdisk/src/sun.c:1139
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:2837
+#: libfdisk/src/dos.c:2852
 msgid "Start-C/H/S"
 msgstr "Început-C/H/S"
 
-#: libfdisk/src/dos.c:2838
+#: libfdisk/src/dos.c:2853
 msgid "End-C/H/S"
 msgstr "Sfârșit-C/H/S"
 
-#: libfdisk/src/dos.c:2839 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "Atrib."
 
@@ -8530,7 +8530,7 @@ msgid "e cannot set ID-mapping: %m"
 msgstr "e nu poate stabili corespondența ID-ului: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:285
+#: libmount/src/hook_loopdev.c:286
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "e nodul dispozitivului %s (%u:%u) este pierdut"
@@ -9184,8 +9184,8 @@ msgstr "TIOCSCTTY a eșuat: %m"
 msgid "failed to set the environment variables"
 msgstr "nu s-au putut defini variabilele de mediu"
 
-#: login-utils/login.c:1278 login-utils/su-common.c:709
-#: login-utils/su-common.c:728
+#: login-utils/login.c:1278 login-utils/su-common.c:712
+#: login-utils/su-common.c:731
 msgid "failed to set the PATH environment variable"
 msgstr "nu s-a reușit definirea variabilei de mediu $PATH"
 
@@ -9672,15 +9672,11 @@ msgstr ""
 "     --lastlog2-file <ruta>\n"
 "                          stabilește o rută alternativă pentru lastlog2\n"
 
-#: login-utils/lslogins.c:1592
-msgid " -H, --list-columns       list the available columns\n"
-msgstr " -H, --list-columns       listează coloanele disponibile\n"
-
-#: login-utils/lslogins.c:1828
+#: login-utils/lslogins.c:1827
 msgid "failed to request selinux state"
 msgstr "nu s-a reușit să se solicite starea SELinux"
 
-#: login-utils/lslogins.c:1845 login-utils/lslogins.c:1850
+#: login-utils/lslogins.c:1844 login-utils/lslogins.c:1849
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Se poate specifica doar un singur utilizator. Utilizați opțiunea „-l”, pentru mai mulți utilizatori."
 
@@ -9835,57 +9831,57 @@ msgstr ""
 "\n"
 "Sesiune terminată, se omoară shell-ul..."
 
-#: login-utils/su-common.c:640
+#: login-utils/su-common.c:642
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...omorât.\n"
 
-#: login-utils/su-common.c:717 sys-utils/nsenter.c:917
+#: login-utils/su-common.c:720 sys-utils/nsenter.c:917
 msgid "failed to set environment variables"
 msgstr "nu s-a reușit să se definească variabilele de mediu"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:759
 msgid "cannot set groups"
 msgstr "nu se pot stabili grupurile"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:765
 #, c-format
 msgid "failed to establish user credentials: %s"
 msgstr "nu s-a reușit să se stabilească acreditările utilizatorului: %s"
 
-#: login-utils/su-common.c:772
+#: login-utils/su-common.c:775
 msgid "cannot set group id"
 msgstr "nu se poate stabili id-ul grupului"
 
-#: login-utils/su-common.c:774
+#: login-utils/su-common.c:777
 msgid "cannot set user id"
 msgstr "nu se poate stabili id-ul utilizatorului"
 
-#: login-utils/su-common.c:840
+#: login-utils/su-common.c:843
 msgid " -m, -p, --preserve-environment      do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment       nu reinițializează variabilele de mediu\n"
 
-#: login-utils/su-common.c:841
+#: login-utils/su-common.c:844
 msgid " -w, --whitelist-environment <list>  don't reset specified variables\n"
 msgstr " -w, --whitelist-environment <listă>  nu reinițializează variabilele specificate\n"
 
-#: login-utils/su-common.c:844
+#: login-utils/su-common.c:847
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <grup>              specifică grupul primar\n"
 
-#: login-utils/su-common.c:845
+#: login-utils/su-common.c:848
 msgid " -G, --supp-group <group>        specify a supplemental group\n"
 msgstr " -G, --supp-group <grup>         specifică un grup suplimentar\n"
 
-#: login-utils/su-common.c:848
+#: login-utils/su-common.c:851
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  face shell-ul un shell de autentificare\n"
 
-#: login-utils/su-common.c:849
+#: login-utils/su-common.c:852
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c, --command <comanda>         pasează o singură comandă către shell cu „-c”\n"
 
-#: login-utils/su-common.c:850
+#: login-utils/su-common.c:853
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -9893,27 +9889,27 @@ msgstr ""
 " --session-command <comanda>     pasează o singură comandă către shell cu „-c”\n"
 "                                 și nu creează o sesiune nouă\n"
 
-#: login-utils/su-common.c:852
+#: login-utils/su-common.c:855
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr ""
 " -f, --fast                      pasează opțiunea „-f” către shell (pentru csh\n"
 "                                 sau tcsh)\n"
 
-#: login-utils/su-common.c:853
+#: login-utils/su-common.c:856
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>             rulează <shell> dacă /etc/shells o permite\n"
 
-#: login-utils/su-common.c:854
+#: login-utils/su-common.c:857
 msgid " -P, --pty                       create a new pseudo-terminal\n"
 msgstr " -P, --pty                       creează un nou pseudo-terminal\n"
 
-#: login-utils/su-common.c:855
+#: login-utils/su-common.c:858
 msgid " -T, --no-pty                    do not create a new pseudo-terminal (bad security!)\n"
 msgstr ""
 " -T, --no-pty                    nu creează un nou pseudo-terminal (securitate\n"
 "                                 defectuoasă!)\n"
 
-#: login-utils/su-common.c:865
+#: login-utils/su-common.c:868
 #, c-format
 msgid ""
 " %1$s [options] -u <user> [[--] <command>]\n"
@@ -9922,7 +9918,7 @@ msgstr ""
 " %1$s [opțiuni] -u <utilizator> [[--] <comanda>]\n"
 " %1$s [opțiuni] [-] [<utilizator> [<argument>...]]\n"
 
-#: login-utils/su-common.c:870
+#: login-utils/su-common.c:873
 msgid ""
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
 "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
@@ -9933,16 +9929,16 @@ msgstr ""
 "cu su(1) și se execută shell-ul standard.\n"
 "Opțiunile „-c”, „-f”, „-l” și „-s” se exclud reciproc cu „-u”.\n"
 
-#: login-utils/su-common.c:875
+#: login-utils/su-common.c:878
 msgid " -u, --user <user>               username\n"
 msgstr " -u, --user <utilizator>         numele utilizatorului\n"
 
-#: login-utils/su-common.c:886
+#: login-utils/su-common.c:889
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [opțiuni] [-] [<utilizator> [<argument>...]]\n"
 
-#: login-utils/su-common.c:890
+#: login-utils/su-common.c:893
 msgid ""
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
@@ -9950,7 +9946,7 @@ msgstr ""
 "Schimbă ID-ul efectiv al utilizatorului și ID-ul grupului cu cel al <utilizatorului>.\n"
 "Un simplu - implică -l.  Dacă <utilizator> nu este dat, se presupune că este vorba de root.\n"
 
-#: login-utils/su-common.c:966
+#: login-utils/su-common.c:969
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
@@ -9958,46 +9954,46 @@ msgstr[0] "specificarea a mai mult de %d grup suplimentar nu este posibilă"
 msgstr[1] "specificarea a mai mult de %d grupuri suplimentare nu este posibilă"
 msgstr[2] "specificarea a mai mult de %d de grupuri suplimentare nu este posibilă"
 
-#: login-utils/su-common.c:972
+#: login-utils/su-common.c:975
 #, c-format
 msgid "group %s does not exist"
 msgstr "grupul %s nu există"
 
-#: login-utils/su-common.c:1082
+#: login-utils/su-common.c:1085
 msgid "--pty is not supported for your system"
 msgstr "opțiunea „--pty” nu este admisă de către sistemul dvs."
 
-#: login-utils/su-common.c:1120
+#: login-utils/su-common.c:1123
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "se ignoră opțiunea „--preserve-environment”, aceasta se exclude reciproc cu „--login”"
 
-#: login-utils/su-common.c:1134
+#: login-utils/su-common.c:1137
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "opțiunile --{shell, fast, command, session-command, login} și „--user” se exclud reciproc"
 
-#: login-utils/su-common.c:1137
+#: login-utils/su-common.c:1140
 msgid "no command was specified"
 msgstr "nu a fost specificată nicio comandă"
 
-#: login-utils/su-common.c:1149
+#: login-utils/su-common.c:1152
 msgid "only root can specify alternative groups"
 msgstr "numai root poate specifica grupuri alternative"
 
-#: login-utils/su-common.c:1160
+#: login-utils/su-common.c:1163
 #, c-format
 msgid "user %s does not exist or the user entry does not contain all the required fields"
 msgstr "utilizatorul %s nu există sau intrarea utilizatorului nu conține toate câmpurile necesare"
 
-#: login-utils/su-common.c:1195
+#: login-utils/su-common.c:1198
 #, c-format
 msgid "using restricted shell %s"
 msgstr "utilizând shell-ul restricționat %s"
 
-#: login-utils/su-common.c:1216
+#: login-utils/su-common.c:1219
 msgid "failed to allocate pty handler"
 msgstr "nu s-a reușit să se aloce gestionarul pty"
 
-#: login-utils/su-common.c:1242
+#: login-utils/su-common.c:1245
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "avertisment: nu se poate schimba directorul la %s"
@@ -16020,10 +16016,16 @@ msgid "    Only initiators with a registered key can access the device."
 msgstr "    Numai inițiatorii care dețin o cheie înregistrată pot accesa dispozitivul."
 
 #: sys-utils/blkpr.c:64
+#, fuzzy
+#| msgid ""
+#| "    Only initiators with a registered key can write to the device. Any\n"
+#| "    initiator can read from the device.  All initiators with a registered\n"
+#| "    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+#| "    on the meaning of a reservation holder if you want to use this type."
 msgid ""
 "    Only initiators with a registered key can write to the device. Any\n"
 "    initiator can read from the device.  All initiators with a registered\n"
-"    key are considered reservation holders.  Please, reference the SPC sp:ec\n"
+"    key are considered reservation holders.  Please reference the SPC spec\n"
 "    on the meaning of a reservation holder if you want to use this type."
 msgstr ""
 "    Numai inițiatorii care dețin o cheie înregistrată pot scrie pe dispozitiv.\n"
@@ -27304,6 +27306,9 @@ msgstr "probleme la citirea terminfo"
 #, c-format
 msgid "terminal `%s' is not known, defaulting to `dumb'"
 msgstr "terminalul „%s” nu este cunoscut, se trece la cel implicit, „dumb”"
+
+#~ msgid " -H, --list-columns       list the available columns\n"
+#~ msgstr " -H, --list-columns       listează coloanele disponibile\n"
 
 # R-GC, scrie:
 # acest mesaj și următoarele, pot fi
