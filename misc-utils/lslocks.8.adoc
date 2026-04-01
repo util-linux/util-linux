@@ -72,6 +72,16 @@ ____
  lslocks --filter 'TYPE != "POSIX" and MODE == "READ" and PATH =~ ".*\.qcow2"'
 ____
 
+*--pager*::
+Pipe output into a pager (by default *less*(1)). The pager freezes the
+header line so column names stay visible while scrolling.
+The *PAGER* environment variable overrides the default pager program.
+Mutually exclusive with *--json* and *--raw*.
+
+*--nopager*::
+Do not pipe output into a pager. Overrides the *PAGER_ENABLE* environment
+variable.
+
 *-r*, *--raw*::
 Use the raw output format.
 
@@ -131,6 +141,12 @@ See the NOTES below.
 
 LSLOCKS_COLUMNS=::
 Specifies a comma-separated list of output columns to print. All columns listed by *--list-columns* can be used.
+
+PAGER_ENABLE=::
+If set to a recognized boolean value (e.g. "yes", "true", "on", "1"), automatically pipe output through a pager.
+The *--pager* and *--nopager* command-line options override this variable.
+This is a project-independent variable; other tools may support it as well.
+Ignored in privileged (setuid/setgid) contexts.
 
 == NOTES
 
