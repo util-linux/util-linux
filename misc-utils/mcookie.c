@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 	unsigned char digest[UL_MD5LENGTH];
 	unsigned char buf[RAND_BYTES];
 	int c;
+	ul_random_src_t src;
 
 	static const struct option longopts[] = {
 		{"file", required_argument, NULL, 'f'},
@@ -189,12 +190,12 @@ int main(int argc, char **argv)
 	randomness_from_files(&ctl);
 	free(ctl.files);
 
-	ul_random_get_bytes(&buf, RAND_BYTES);
+	src = ul_random_get_bytes(&buf, RAND_BYTES);
 	ul_MD5Update(&ctl.ctx, buf, RAND_BYTES);
 	if (ctl.verbose)
 		fprintf(stderr, P_("Got %d byte from %s\n",
 				   "Got %d bytes from %s\n", RAND_BYTES),
-				RAND_BYTES, random_tell_source());
+				RAND_BYTES, ul_random_tell_source(src));
 
 	ul_MD5Final(digest, &ctl.ctx);
 	for (i = 0; i < UL_MD5LENGTH; i++)

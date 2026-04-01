@@ -759,7 +759,7 @@ int __uuid_generate_random(uuid_t out, int *num)
 		n = *num;
 
 	for (i = 0; i < n; i++) {
-		if (ul_random_get_bytes(buf, sizeof(buf)))
+		if (ul_random_get_bytes(buf, sizeof(buf)) == WEAK)
 			r = -1;
 		uuid_unpack(buf, &uu);
 
