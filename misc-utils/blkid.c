@@ -50,6 +50,7 @@
 
 #include "sysfs.h"
 #include "jsonwrt.h"
+#include "mbsalign.h"
 
 struct blkid_control {
 	int output;
@@ -64,7 +65,8 @@ struct blkid_control {
 		lowprobe_superblocks,
 		lowprobe_topology,
 		no_part_details,
-		raw_chars;
+		raw_chars,
+		ascii_print;
 };
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -79,6 +81,7 @@ static void __attribute__((__noreturn__)) usage(void)
 			"       [--output <format>] <dev> ...\n\n"), program_invocation_short_name);
 	fprintf(out, _(	" %s -i [--match-tag <tag>] [--output <format>] <dev> ...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(	" -a, --ascii                encode only non-printing ASCII characters (original behavior)\n"), out);
 	fputs(_(	" -c, --cache-file <file>    read from <file> instead of reading from the default\n"
 			"                              cache file (-c /dev/null means no cache)\n"), out);
 	fputs(_(	" -d, --no-encoding          don't encode non-printing characters\n"), out);
@@ -120,8 +123,7 @@ static void __attribute__((__noreturn__)) usage(void)
  *
  * If 'esc' is defined then escape all chars from esc by \.
  */
-static void safe_print(const struct blkid_control *ctl, const char *cp, int len,
-		       const char *esc)
+static void ascii_safe_print(const char *cp, int len, const char *esc)
 {
 	unsigned char	ch;
 
@@ -130,20 +132,62 @@ static void safe_print(const struct blkid_control *ctl, const char *cp, int len,
 
 	while (len--) {
 		ch = *cp++;
-		if (!ctl->raw_chars) {
-			if (ch >= 128) {
-				fputs("M-", stdout);
-				ch -= 128;
-			}
-			if ((ch < 32) || (ch == 0x7f)) {
-				fputc('^', stdout);
-				ch ^= 0x40; /* ^@, ^A, ^B; ^? for DEL */
 
-			} else if (esc && strchr(esc, ch))
-				fputc('\\', stdout);
+		if (ch >= 128) {
+			fputs("M-", stdout);
+			ch -= 128;
 		}
+		if ((ch < 32) || (ch == 0x7f)) {
+			fputc('^', stdout);
+			ch ^= 0x40; /* ^@, ^A, ^B; ^? for DEL */
+
+		} else if (esc && strchr(esc, ch))
+			fputc('\\', stdout);
+
 		fputc(ch, stdout);
 	}
+}
+
+/*
+ * This function does "safe" printing. By default, it will replace
+ * control and non-printable chars with \x?? hex sequence in @cp.
+ * 
+ * Optionally, it will convert non-printable ASCII characters using
+ * '^' and M- notation, when ctl->ascii_print == 1.
+ *
+ * If @esc is defined then escape all chars from esc by '\'.
+ * 
+ * @len describes the length of @cp.
+ */
+static void safe_print(const struct blkid_control *ctl, const char *cp, int len,
+		       const char *esc)
+{
+	size_t bufsz = 0, width;
+	char *buf = NULL;
+
+	if (len < 0)
+		len = strlen(cp);
+
+	if (!ctl->raw_chars) {
+		if (ctl->ascii_print) {
+			ascii_safe_print(cp, len, esc);
+			return;
+		}
+
+		bufsz = mbs_safe_encode_size(len) + 1;
+		if (bufsz == 1)
+			return;
+
+		buf = xmalloc(bufsz);
+		if (!buf)
+			return;
+		if(!mbs_safe_encode_to_buffer(cp, &width, buf, bufsz, NULL, esc))
+			return;
+
+		fputs(buf, stdout);
+		free(buf);
+	} else
+		fputs(cp, stdout);
 }
 
 static int pretty_print_word(const char *str, int max_len,
@@ -704,6 +748,7 @@ int main(int argc, char **argv)
 		{ "no-part-details",  no_argument,       NULL, 'D' },
 		{ "garbage-collect",  no_argument,	 NULL, 'g' },
 		{ "output",	      required_argument, NULL, 'o' },
+		{ "ascii",	      no_argument,	 NULL, 'a' },
 		{ "list-filesystems", no_argument,	 NULL, 'k' },
 		{ "match-tag",	      required_argument, NULL, 's' },
 		{ "match-token",      required_argument, NULL, 't' },
@@ -723,7 +768,8 @@ int main(int argc, char **argv)
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
-		{ 'n','u' },
+		{ 'a', 'd' },
+		{ 'n', 'u' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -736,11 +782,14 @@ int main(int argc, char **argv)
 	strutils_set_exitcode(BLKID_EXIT_OTHER);
 
 	while ((c = getopt_long (argc, argv,
-			    "c:DdgH:hilL:n:ko:O:ps:S:t:u:U:w:Vv", longopts, NULL)) != -1) {
+			    "ac:DdgH:hilL:n:ko:O:ps:S:t:u:U:w:Vv", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
+		case 'a':
+			ctl.ascii_print = 1;
+			break;
 		case 'c':
 			read = optarg;
 			break;
