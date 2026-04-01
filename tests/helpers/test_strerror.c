@@ -7,10 +7,13 @@
  * Copyright (C) 2019 Patrick Steinhardt <ps@pks.im
  */
 
+#include <asm-generic/errno-base.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "c.h"
 
 #define E(x) { #x, x }
 static struct {
@@ -21,6 +24,7 @@ static struct {
 	E(ENOTTY),
 	E(EILSEQ),
 	E(EINVAL),
+	E(EPERM),
 };
 
 int main(int argc, const char *argv[])
@@ -32,7 +36,7 @@ int main(int argc, const char *argv[])
 		return -1;
 	}
 
-	for (i = 0; i < sizeof(errors)/sizeof(*errors); i++) {
+	for (i = 0; i < ARRAY_SIZE(errors); i++) {
 		if (strcmp(errors[i].str, argv[1]) != 0)
 			continue;
 		puts(strerror(errors[i].error));

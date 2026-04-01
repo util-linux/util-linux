@@ -10,7 +10,7 @@ _unshare_module()
 
 	REQARGOPTS_SHORT="-l|-R|-w|-S|-G"
 
-	NOARGOPTS="--fork|--forward-signals|--map-root-user|--map-current-user|--map-auto|--map-subids|--keep-caps|--help|--version|${OPTARGOPTS//=/}"
+	NOARGOPTS="--clear-env|--fork|--forward-signals|--map-root-user|--map-current-user|--map-auto|--map-subids|--keep-caps|--help|--version|${OPTARGOPTS//=/}"
 
 	NOARGOPTS_SHORT="-r|-f|-c|-h|-V|-m|-u|-i|-n|-p|-U|-C|-T"
 

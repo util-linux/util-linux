@@ -49,6 +49,10 @@
 #include "strutils.h"
 #include "pwdutils.h"
 
+#ifndef HAVE_ENVIRON_DECL
+extern char **environ;
+#endif
+
 /* synchronize parent and child by pipe */
 #define PIPE_SYNC_BYTE	0x06
 
@@ -790,6 +794,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"), out);
 	fputs(_(" --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"), out);
+	fputs(_(" --clear-env               do not inherit environment variables from the calling process\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
@@ -817,6 +822,7 @@ int main(int argc, char *argv[])
 		OPT_MAPSUBIDS,
 		OPT_OWNER,
 		OPT_FORWARD_SIGNALS,
+		OPT_CLEAR_ENV,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -855,6 +861,7 @@ int main(int argc, char *argv[])
 		{ "monotonic",     required_argument, NULL, OPT_MONOTONIC   },
 		{ "boottime",      required_argument, NULL, OPT_BOOTTIME    },
 		{ "load-interp",   required_argument, NULL, 'l'		    },
+		{ "clear-env",   no_argument, NULL, OPT_CLEAR_ENV		    },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -888,6 +895,7 @@ int main(int argc, char *argv[])
 	int64_t boottime = 0;
 	int force_monotonic = 0;
 	int force_boottime = 0;
+	int clear_env = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1067,7 +1075,9 @@ int main(int argc, char *argv[])
 			}
 			newinterp = optarg;
 			break;
-
+		case OPT_CLEAR_ENV:
+			clear_env = 1;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -1320,6 +1330,13 @@ int main(int argc, char *argv[])
 
 	if (keepcaps && (unshare_flags & CLONE_NEWUSER))
 		cap_permitted_to_ambient();
+
+	if (clear_env)
+#ifdef HAVE_CLEARENV
+		clearenv();
+#else
+		environ = NULL;
+#endif
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
