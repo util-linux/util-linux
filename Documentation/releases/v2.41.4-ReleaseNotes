@@ -1,0 +1,40 @@
+util-linux 2.41.4 Release Notes
+===============================
+
+Security fixes:
+
+ CVE-2026-27456 - mount(8) TOCTOU symlink attack via loop device.
+   The SUID mount follows symlinks when resolving loop backing file
+   paths. On systems where non-root users are permitted to mount loop
+   devices (via 'user' option in fstab), this allows access to
+   arbitrary files.
+
+ CWE-190 - Integer overflow in libblkid parse_dos_extended().
+   A crafted MBR disk image can cause uint32_t wraparound in EBR
+   chain processing, causing reported partitions to not match the
+   on-disk layout. Tools like udisks may then register a partition
+   at logical sector 0.
+
+Changes:
+
+blkid:
+    - Drop const from blkid_partitions_get_name() (by Daan De Meyer)
+
+build-sys:
+    - (gcc) ignore -Wunused-but-set-variable for bison (by Christian Goeschel Ndjomouo)
+
+disk-utils:
+    - fix typo in fdisk.c (by Christian Kirbach)
+
+libblkid:
+    - dos: validate EBR data and links within extended partition (by Karel Zak)
+
+libfdisk:
+    - dos: validate EBR link within extended partition bounds (by Karel Zak)
+
+loopdev:
+    - add LOOPDEV_FL_NOFOLLOW to prevent symlink attacks (by Karel Zak)
+
+tools:
+    - update git-version-next from master (by Karel Zak)
+
