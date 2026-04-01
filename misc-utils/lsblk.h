@@ -77,6 +77,7 @@ struct lsblk {
 	bool dedup_hidden;	/* deduplication column not between output columns */
 	bool force_tree_order;	/* sort lines by parent->tree relation */
 	bool noempty;		/* hide empty devices */
+	bool annotate_headers;	/* annotate column headers */
 };
 
 extern struct lsblk *lsblk;     /* global handler */

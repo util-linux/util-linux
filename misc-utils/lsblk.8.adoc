@@ -202,6 +202,8 @@ Reads data from a file. This method is only used if the --sysroot option is spec
 *none*;;
 Does not probe. This method always stops probing.
 
+include::man-common/annotate.adoc[]
+
 include::man-common/help-version.adoc[]
 
 == EXIT STATUS
