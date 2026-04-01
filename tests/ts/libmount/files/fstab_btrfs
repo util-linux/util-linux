@@ -1,0 +1,10 @@
+/dev/sdc1 / btrfs compress=zstd,subvol=root 0 0
+/dev/sdc1 /mnt/a btrfs compress=zstd,subvolid=5 0 0
+/dev/sdc1 /var/lib/containers btrfs compress=zstd,subvol=containers 0 0
+/dev/sdc1 /var/lib/libvirt btrfs compress=zstd,subvolid=263 0 0
+/dev/sdc2 / btrfs compress=zstd,subvol=root 0 0
+/dev/sdc2 /mnt/a btrfs compress=zstd,subvolid=5 0 0
+/dev/sdc2 /var/lib/containers btrfs compress=zstd,subvol=containers 0 0
+/dev/sdc2 /var/lib/libvirt btrfs compress=zstd,subvolid=263 0 0
+/dev/sdc2 /var/tmp btrfs nodev,nosuid,noatime,compress=zstd,subvol=var_tmp 0 0
+/dev/sdc2 /var/cache btrfs nodev,nosuid,noatime,compress=zstd,subvol=var_cache 0 0

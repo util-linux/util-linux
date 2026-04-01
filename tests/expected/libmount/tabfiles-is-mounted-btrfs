@@ -1,0 +1,10 @@
+/dev/sdc1 already mounted on /
+/dev/sdc1 already mounted on /mnt/a
+/dev/sdc1 already mounted on /var/lib/containers
+/dev/sdc1 already mounted on /var/lib/libvirt
+/dev/sdc2 already mounted on /
+/dev/sdc2 already mounted on /mnt/a
+/dev/sdc2 already mounted on /var/lib/containers
+/dev/sdc2 already mounted on /var/lib/libvirt
+/dev/sdc2 already mounted on /var/tmp
+/dev/sdc2 already mounted on /var/cache

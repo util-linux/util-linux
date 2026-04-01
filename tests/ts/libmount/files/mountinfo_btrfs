@@ -1,0 +1,8 @@
+15 1 0:3 / /proc rw,relatime - proc proc rw
+16 1 0:15 / /sys rw,relatime - sysfs sysfs rw
+20 1 259:3 /root / rw,relatime - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=256,subvol=/root
+21 1 259:3 / /mnt/a rw,relatime - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=5,subvol=/
+22 1 259:3 /containers /var/lib/containers rw,relatime - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=262,subvol=/containers
+23 1 259:3 /vm /var/lib/libvirt rw,relatime - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=263,subvol=/vm
+24 1 259:3 /var_tmp /var/tmp rw,noatime,nosuid,nodev - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=264,subvol=/var_tmp
+25 1 259:3 /var_cache /var/cache rw,noatime,nosuid,nodev - btrfs /dev/sdc1 rw,compress=zstd:3,ssd,space_cache=v2,subvolid=265,subvol=/var_cache
