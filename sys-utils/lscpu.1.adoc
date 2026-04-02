@@ -121,6 +121,8 @@ Print the name for this specific core model. This requires passing
 
 include::man-common/annotate.adoc[]
 
+include::man-common/help-version.adoc[]
+
 == ENVIRONMENT
 
 LSCPU_COLUMNS=::
@@ -130,8 +132,6 @@ LSCPU_CACHES_COLUMNS=::
 Same as *LSCPU_COLUMNS* with the difference that columns only listed for the *-C* option can be used.
 
 include::man-common/env-smartcols.adoc[]
-
-include::man-common/help-version.adoc[]
 
 == COLUMNS
 
