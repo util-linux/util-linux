@@ -6,10 +6,16 @@
  */
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/vfs.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <err.h>
+
+// On Darwin VFS definitions are located in "sys/mount.h"
+#ifndef __APPLE__
+# include <sys/vfs.h>
+#else
+# include <sys/mount.h>
+#endif
 
 #include "c.h"
 #include "nls.h"
