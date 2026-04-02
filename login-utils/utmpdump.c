@@ -181,7 +181,7 @@ static int follow_by_inotify(FILE *in, const char *filename, FILE *out)
 
 	wd = inotify_add_watch(fd, filename, EVENTS);
 	if (wd == -1)
-		err(EXIT_FAILURE, _("%s: cannot add inotify watch."), filename);
+		err(EXIT_FAILURE, _("%s: cannot add inotify watch"), filename);
 
 	while (wd >= 0) {
 		errno = 0;
