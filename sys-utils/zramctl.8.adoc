@@ -88,6 +88,10 @@ include::man-common/help-version.adoc[]
 
 *zramctl* returns 0 on success, nonzero on failure.
 
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
+
 == FILES
 
 _/dev/zram[0..N]_::

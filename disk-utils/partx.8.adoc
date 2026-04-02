@@ -105,6 +105,8 @@ include::man-common/help-version.adoc[]
 LIBBLKID_DEBUG=all::
 enables libblkid debug output.
 
+include::man-common/env-smartcols.adoc[]
+
 == EXAMPLE
 
 partx --show /dev/sdb3::

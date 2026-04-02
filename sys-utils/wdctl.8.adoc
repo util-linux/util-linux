@@ -65,6 +65,10 @@ Same as *-I -T*.
 
 include::man-common/help-version.adoc[]
 
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
+
 == AUTHORS
 
 mailto:kzak@redhat.com[Karel Zak],
