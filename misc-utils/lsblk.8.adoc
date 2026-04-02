@@ -218,6 +218,8 @@ none of specified devices found
 64::
 some specified devices found, some not found
 
+include::man-common/colors.adoc[]
+
 == ENVIRONMENT
 
 *LSBLK_DEBUG*=all::
