@@ -64,6 +64,14 @@ Set the maximum delay between updates to _number_ of seconds. The argument is a 
 
 include::man-common/help-version.adoc[]
 
+== ENVIRONMENT
+
+*SCRIPTREPLAY_DEBUG*=all::
+enables scriptreplay debug output.
+
+*ULPTY_DEBUG*=all::
+enables pty debug output.
+
 == EXAMPLES
 
 ....

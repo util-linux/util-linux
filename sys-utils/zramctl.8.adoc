@@ -92,6 +92,12 @@ include::man-common/help-version.adoc[]
 
 include::man-common/env-smartcols.adoc[]
 
+*ULPATH_DEBUG*=all::
+enables path debug output.
+
+*ULSYSFS_DEBUG*=all::
+enables sysfs debug output.
+
 == FILES
 
 _/dev/zram[0..N]_::

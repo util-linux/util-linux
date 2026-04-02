@@ -236,6 +236,9 @@ include::man-common/env-smartcols.adoc[]
 *LSBLK_COLUMNS*=::
 specifies a comma-separated list of output columns to print. All columns listed by *--list-columns* can be used.
 
+*ULPATH_DEBUG*=all::
+enables *path* debug output.
+
 == NOTES
 
 For partitions, some information (e.g., queue attributes) is inherited from the parent device.

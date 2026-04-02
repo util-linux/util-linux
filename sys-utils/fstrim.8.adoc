@@ -84,6 +84,14 @@ some filesystem discards have succeeded, some failed
 
 The command *fstrim --all* returns 0 (all succeeded), 32 (all failed) or 64 (some failed, some succeeded).
 
+== ENVIRONMENT
+
+*LIBMOUNT_DEBUG*=all::
+enables libmount debug output.
+
+*ULPATH_DEBUG*=all::
+enables path debug output.
+
 == AUTHORS
 mailto:lczerner@redhat.com[Lukas Czerner],
 mailto:kzak@redhat.com[Karel Zak]

@@ -69,6 +69,11 @@ failure; incorrect invocation, permissions or any other generic error
 *2*::
 failure; since v2.39, the device does not support discard operation
 
+== ENVIRONMENT
+
+*LIBBLKID_DEBUG*=all::
+enables libblkid debug output.
+
 == AUTHORS
 
 mailto:lczerner@redhat.com[Lukas Czerner],

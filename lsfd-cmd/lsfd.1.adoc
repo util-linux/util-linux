@@ -124,6 +124,9 @@ include::man-common/help-version.adoc[]
 
 include::man-common/env-smartcols.adoc[]
 
+*LSFD_DEBUG*=all::
+enables lsfd debug output.
+
 == OUTPUT COLUMNS
 
 Each column has a type. Types are surround by < and >.

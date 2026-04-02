@@ -195,6 +195,14 @@ The following configuration items are relevant for *agetty*:
 
 Tell *agetty* that printing the hostname should be suppressed in the login: prompt. This is an alternative to the *--nohostname* command line option. The default value is _no_.
 
+== ENVIRONMENT
+
+*ULNETADDRQ_DEBUG*=all::
+enables netaddrq debug output.
+
+*ULNETLINK_DEBUG*=all::
+enables netlink debug output.
+
 == EXAMPLE
 
 This section shows examples for the process field of an entry in the _/etc/inittab_ file. You'll have to prepend appropriate values for the other fields. See *inittab*(5) for more details.
