@@ -177,6 +177,8 @@ enables *libmount* debug output.
 *LIBBLKID_DEBUG*=all::
 enables *libblkid* debug output.
 
+include::man-common/env-smartcols.adoc[]
+
 == FILES
 
 _/dev/sd??_::

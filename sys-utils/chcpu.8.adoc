@@ -69,6 +69,11 @@ failure
 *64*::
 partial success
 
+== ENVIRONMENT
+
+*ULPATH_DEBUG*=all::
+enables path debug output.
+
 == AUTHORS
 
 mailto:heiko.carstens@de.ibm.com[Heiko Carstens]

@@ -106,6 +106,9 @@ Specifies a comma-separated list of output columns to print. All columns listed 
 
 include::man-common/env-smartcols.adoc[]
 
+*ULPATH_DEBUG*=all::
+enables path debug output.
+
 == AUTHORS
 
 *lsmem* was originally written by Gerald Schaefer for s390-tools in Perl. The C version for util-linux was written by Clemens von Mann, Heiko Carstens and Karel Zak.

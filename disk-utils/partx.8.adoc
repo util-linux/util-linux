@@ -105,6 +105,11 @@ include::man-common/help-version.adoc[]
 LIBBLKID_DEBUG=all::
 enables libblkid debug output.
 
+include::man-common/env-smartcols.adoc[]
+
+*LOOPDEV_DEBUG*=all::
+enables loopdev debug output.
+
 == EXAMPLE
 
 partx --show /dev/sdb3::

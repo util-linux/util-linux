@@ -121,6 +121,8 @@ Print the name for this specific core model. This requires passing
 
 include::man-common/annotate.adoc[]
 
+include::man-common/help-version.adoc[]
+
 == ENVIRONMENT
 
 LSCPU_COLUMNS=::
@@ -129,9 +131,13 @@ Specifies a comma-separated list of output columns to print. All columns listed 
 LSCPU_CACHES_COLUMNS=::
 Same as *LSCPU_COLUMNS* with the difference that columns only listed for the *-C* option can be used.
 
+*LSCPU_DEBUG*=all::
+enables lscpu debug output.
+
 include::man-common/env-smartcols.adoc[]
 
-include::man-common/help-version.adoc[]
+*ULPATH_DEBUG*=all::
+enables path debug output.
 
 == COLUMNS
 

@@ -132,6 +132,14 @@ The requested command could not be executed
 127::
 The requested command was not found
 
+== ENVIRONMENT
+
+*SU_DEBUG*=all::
+enables su debug output.
+
+*ULPTY_DEBUG*=all::
+enables pty debug output.
+
 == FILES
 
 _/etc/pam.d/su_::

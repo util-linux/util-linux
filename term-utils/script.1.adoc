@@ -131,8 +131,14 @@ Upon receiving *SIGUSR1*, *script* immediately flushes the output files.
 
 The following environment variable is utilized by *script*:
 
+*SCRIPT_DEBUG*=all::
+enables script debug output.
+
 *SHELL*::
 If the variable *SHELL* exists, the shell forked by *script* will be that shell. If *SHELL* is not set, the Bourne shell is assumed. (Most shells set this variable automatically).
+
+*ULPTY_DEBUG*=all::
+enables pty debug output.
 
 == NOTES
 

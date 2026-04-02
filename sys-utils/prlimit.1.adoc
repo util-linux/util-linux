@@ -110,6 +110,10 @@ Maximum number of file locks held.
 *-y*, *--rttime*[**=**_limits_]::
 Timeout for real-time tasks.
 
+== ENVIRONMENT
+
+include::man-common/env-smartcols.adoc[]
+
 == NOTES
 
 The *prlimit*(2) system call is supported since Linux 2.6.36, older kernels will break this program.
