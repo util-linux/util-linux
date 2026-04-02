@@ -89,7 +89,7 @@ _umount_module()
 		COMPREPLY=( $( compgen -W '$( _umount_points_list )'  -- "$cur" ) )
 	else
 		compopt -o filenames
-		COMPREPLY=( $(compgen -o dirnames -- "$cur") )
+		COMPREPLY=( $(compgen -f -- "$cur") )
 		return 0
 	fi
 }
