@@ -64,20 +64,24 @@ static int get_env_int(const char *name)
 int get_terminal_dimension(int *cols, int *lines)
 {
 	int c = 0, l = 0;
+	int fd;
 
+	fd = get_terminal_stdfd();
+	if (fd >= 0) {
 #if defined(TIOCGWINSZ)
-	struct winsize	w_win;
-	if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &w_win) == 0) {
-		c = w_win.ws_col;
-		l = w_win.ws_row;
-	}
+		struct winsize	w_win;
+		if (ioctl(fd, TIOCGWINSZ, &w_win) == 0) {
+			c = w_win.ws_col;
+			l = w_win.ws_row;
+		}
 #elif defined(TIOCGSIZE)
-	struct ttysize	t_win;
-	if (ioctl (STDOUT_FILENO, TIOCGSIZE, &t_win) == 0) {
-		c = t_win.ts_cols;
-		l = t_win.ts_lines;
-	}
+		struct ttysize	t_win;
+		if (ioctl(fd, TIOCGSIZE, &t_win) == 0) {
+			c = t_win.ts_cols;
+			l = t_win.ts_lines;
+		}
 #endif
+	}
 	if (cols) {
 		if (c <= 0)
 			c = get_env_int("COLUMNS");
