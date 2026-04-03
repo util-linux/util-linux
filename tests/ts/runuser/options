@@ -1,0 +1,86 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="options"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_RUNUSER"
+
+
+ts_init_subtest "whitelist-environment"
+
+export UL_TEST_VAR=foo
+res="$("$TS_CMD_RUNUSER" root --whitelist-environment UL_TEST_VAR \
+            --command 'echo $UL_TEST_VAR' 2>>"TS_ERRLOG")"
+
+if [[ "$res" != "$UL_TEST_VAR" ]]; then
+    unset -v UL_TEST_VAR
+    ts_failed "failed to whitelist environment variable"
+fi
+
+unset -v UL_TEST_VAR
+
+ts_finalize_subtest
+
+
+ts_init_subtest "preserve-environment"
+
+export UL_TEST_VAR1=foo
+export UL_TEST_VAR2=bar
+
+res="$("$TS_CMD_RUNUSER" root --preserve-environment \
+            --command 'echo "$UL_TEST_VAR1:$UL_TEST_VAR2"' 2>>"TS_ERRLOG")"
+
+if [[ "$res" != "$UL_TEST_VAR1:$UL_TEST_VAR2" ]]; then
+    unset -v UL_TEST_VAR1 UL_TEST_VAR2
+    ts_failed "failed to preserve environment"
+fi
+
+unset -v UL_TEST_VAR1 UL_TEST_VAR2
+
+ts_finalize_subtest
+
+
+ts_init_subtest "pty"
+
+ts_check_prog "ps"
+
+# Get the path to this script's pseudo terminal
+script_pty="$(ps -p $$ -o tty=)"
+if [[ "$script_pty" == "?" || -z "$script_pty" ]]; then
+    ts_skip_subtest "can't find pty for test script"
+fi
+
+# Get the path to the newly created pseudo terminal
+runuser_pty="$("$TS_CMD_RUNUSER" --pty --command 'ps -p $$ -o tty=')"
+if [[ "$runuser_pty" == "?" || -z "$runuser_pty" ]]; then
+    ts_skip_subtest "can't find pty for runuser process"
+fi
+
+if [[ "$script_pty" == "$runuser_pty" ]]; then
+    ts_failed "failed to create pseudo terminal (both use /dev/pts/$script_pty)"
+fi
+
+ts_report_ok "script on $script_pty, runuser on $runuser_pty"
+ts_finalize_subtest
+
+
+ts_finalize
