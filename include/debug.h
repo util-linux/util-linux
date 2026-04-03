@@ -56,8 +56,9 @@ struct ul_debug_maskname {
  */
 
 #define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
-#define UL_DEBUG_DEFINE_MASKNAMES(lib) static const struct ul_debug_maskname lib ## _masknames[]
 #define UL_DEBUG_MASKNAMES(lib)	lib ## _masknames
+#define UL_DEBUG_DEFINE_MASKNAMES(lib) \
+	static const struct ul_debug_maskname UL_DEBUG_MASKNAMES(lib)[]
 
 #define UL_DEBUG_MASK(lib)         lib ## _debug_mask
 #define UL_DEBUG_DEFINE_MASK(lib)  unsigned UL_DEBUG_MASK(lib)
@@ -72,8 +73,8 @@ struct ul_debug_maskname {
 
 #define __UL_DBG_OBJ(lib, pref, flag, h, x) \
 	do { \
-		if ((pref ## flag) & lib ## _debug_mask) { \
-			ul_debug_prefix(# lib, # flag, h, lib ## _debug_mask); \
+		if ((pref ## flag) & UL_DEBUG_MASK(lib)) { \
+			ul_debug_prefix(# lib, # flag, h, UL_DEBUG_MASK(lib)); \
 			x; \
 		} \
 	} while (0)
@@ -83,34 +84,33 @@ struct ul_debug_maskname {
 
 #define __UL_DBG_CALL(lib, pref, flag, x) \
 	do { \
-		if ((pref ## flag) & lib ## _debug_mask) { \
+		if ((pref ## flag) & UL_DEBUG_MASK(lib)) { \
 			x; \
 		} \
 	} while (0)
 
 #define __UL_DBG_FLUSH(lib, pref) \
 	do { \
-		if (lib ## _debug_mask && \
-		    lib ## _debug_mask != pref ## INIT) { \
+		if (UL_DEBUG_MASK(lib) && UL_DEBUG_MASK(lib) != pref ## INIT) { \
 			fflush(stderr); \
 		} \
 	} while (0)
 
 #define __UL_INIT_DEBUG_FROM_STRING(lib, pref, mask, str) \
 	do { \
-		if (lib ## _debug_mask & pref ## INIT) \
-		; \
-		else if (!mask && str) { \
-			lib ## _debug_mask = ul_debug_parse_mask(lib ## _masknames, str); \
-		} else \
-			lib ## _debug_mask = mask; \
-		if (lib ## _debug_mask) { \
+		if (UL_DEBUG_MASK(lib) & pref ## INIT) \
+			; \
+		else if (!mask && str) \
+			UL_DEBUG_MASK(lib) = ul_debug_parse_mask(UL_DEBUG_MASKNAMES(lib), str); \
+		else \
+			UL_DEBUG_MASK(lib) = mask; \
+		if (UL_DEBUG_MASK(lib)) { \
 			if (is_privileged_execution()) { \
-				lib ## _debug_mask |= __UL_DEBUG_FL_NOADDR; \
+				UL_DEBUG_MASK(lib) |= __UL_DEBUG_FL_NOADDR; \
 				fprintf(stderr, "%d: %s: don't print memory addresses (SUID executable).\n", getpid(), # lib); \
 			} \
 		} \
-		lib ## _debug_mask |= pref ## INIT; \
+		UL_DEBUG_MASK(lib) |= pref ## INIT; \
 	} while (0)
 
 
