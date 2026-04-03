@@ -14,7 +14,7 @@
 #include "timer.h"
 
 /*
- * Note the timeout is used for the first signal, then the signal is send
+ * Note the timeout is used for the first signal, then the signal is sent
  * repeatedly in interval ~1% of the original timeout to avoid race in signal
  * handling -- for example you want to use timer to define timeout for a
  * syscall:
@@ -23,8 +23,8 @@
  *	 syscall()
  *	 cancel_timer()
  *
- * if the timeout is too short than it's possible that the signal is delivered
- * before application enter the syscall function. For this reason timer send
+ * if the timeout is too short then it's possible that the signal is delivered
+ * before application enters the syscall function. For this reason timer sends
  * the signal repeatedly.
  *
  * The applications need to ensure that they can tolerate multiple signal

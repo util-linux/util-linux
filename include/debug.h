@@ -9,21 +9,21 @@
 /*
  * util-linux debug macros
  *
- * The debug stuff is based on <name>_debug_mask that controls what outputs is
- * expected. The mask is usually initialized by <NAME>_DEBUG= env.variable
+ * The debug stuff is based on <name>_debug_mask that controls what output is
+ * expected. The mask is usually initialized by <NAME>_DEBUG= env.variable.
  *
  * After successful initialization the flag <PREFIX>_DEBUG_INIT is always set
  * to the mask (this flag is required). The <PREFIX> is usually library API
- * prefix (e.g. MNT_) or program name (e.g. CFDISK_)
+ * prefix (e.g. MNT_) or program name (e.g. CFDISK_).
  *
- * In the code is possible to use
+ * In the code it is possible to use
  *
  *	DBG(FOO, ul_debug("this is output for foo"));
  *
- * where for the FOO has to be defined <PREFIX>_DEBUG_FOO.
+ * where <PREFIX>_DEBUG_FOO has to be defined for FOO output.
  *
  * It's possible to initialize the mask by comma delimited strings with
- * subsystem names (e.g. "LIBMOUNT_DEBUG=options,tab"). In this case is
+ * subsystem names (e.g. "LIBMOUNT_DEBUG=options,tab"). In this case it is
  * necessary to define mask names array. This functionality is optional.
  *
  * It's strongly recommended to use UL_* macros to define/declare/use
