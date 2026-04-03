@@ -71,23 +71,21 @@ struct ul_debug_maskname {
 #define __UL_DEBUG_FL_NOADDR	(1 << 24)	/* Don't print object address */
 
 
-#define __UL_DBG_OBJ(lib, pref, flag, h, x) \
-	do { \
-		if ((pref ## flag) & UL_DEBUG_MASK(lib)) { \
-			ul_debug_prefix(# lib, # flag, h, UL_DEBUG_MASK(lib)); \
-			x; \
-		} \
-	} while (0)
-
-#define __UL_DBG(lib, pref, flag, x) \
-	__UL_DBG_OBJ(lib, pref, flag, NULL, x)
-
 #define __UL_DBG_CALL(lib, pref, flag, x) \
 	do { \
 		if ((pref ## flag) & UL_DEBUG_MASK(lib)) { \
 			x; \
 		} \
 	} while (0)
+
+#define __UL_DBG_OBJ(lib, pref, flag, h, x) \
+	__UL_DBG_CALL(lib, pref, flag, { \
+		ul_debug_prefix(# lib, # flag, h, UL_DEBUG_MASK(lib)); \
+		x; \
+	})
+
+#define __UL_DBG(lib, pref, flag, x) \
+	__UL_DBG_OBJ(lib, pref, flag, NULL, x)
 
 #define __UL_DBG_FLUSH(lib, pref) \
 	do { \
