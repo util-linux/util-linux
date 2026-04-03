@@ -186,8 +186,10 @@ struct group *ul_getgrp_str(const char *str, gid_t *result)
                         *result = gr->gr_gid;
                 return gr;
         }
-        if (num > MAX_OF_UINT_TYPE(gid_t))
+        if (num > MAX_OF_UINT_TYPE(gid_t)) {
+                errno = ERANGE;
                 return NULL;
+        }
 
         if (result)
                 *result = (gid_t) num;
@@ -219,8 +221,10 @@ struct passwd *ul_getuserpw_str(const char *str, uid_t *result)
                         *result = pw->pw_uid;
                 return pw;
         }
-        if (num > MAX_OF_UINT_TYPE(uid_t))
+        if (num > MAX_OF_UINT_TYPE(uid_t)) {
+                errno = ERANGE;
                 return NULL;
+        }
 
         if (result)
                 *result = (uid_t) num;
