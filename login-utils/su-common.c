@@ -408,8 +408,10 @@ static void supam_authenticate(struct su_context *su)
 		 * This is the only difference between runuser(1) and su(1). The command
 		 * runuser(1) does not required authentication, because user is root.
 		 */
-		if (su->restricted)
+		if (su->restricted) {
+			pam_end(su->pamh, PAM_ABORT);
 			errx(EXIT_FAILURE, _("may not be used by non-root users"));
+		}
 		return;
 	}
 
@@ -555,10 +557,14 @@ static void create_watching_parent(struct su_context *su)
 		ul_pty_slave_echo(su->pty, 1);
 
 		/* create pty */
-		if (ul_pty_setup(su->pty))
+		if (ul_pty_setup(su->pty)) {
+			supam_cleanup(su, PAM_ABORT);
 			err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
-		if (ul_pty_signals_setup(su->pty))
+		}
+		if (ul_pty_signals_setup(su->pty)) {
+			supam_cleanup(su, PAM_ABORT);
 			err(EXIT_FAILURE, _("failed to initialize signals handler"));
+		}
 	}
 #endif
 	fflush(stdout);			/* ??? */
@@ -763,9 +769,11 @@ static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 	endgrent();
 
 	rc = pam_setcred(su->pamh, PAM_ESTABLISH_CRED);
-	if (is_pam_failure(rc))
+	if (is_pam_failure(rc)) {
+		supam_cleanup(su, rc);
 		errx(EXIT_FAILURE, _("failed to establish user credentials: %s"),
 					pam_strerror(su->pamh, rc));
+	}
 	su->pam_has_cred = 1;
 }
 
@@ -1219,8 +1227,10 @@ int su_main(int argc, char **argv, int mode)
 		ON_DBG(PTY, ul_pty_init_debug(0xffff));
 
 		su->pty = ul_new_pty(su->isterm);
-		if (!su->pty)
+		if (!su->pty) {
+			supam_cleanup(su, PAM_ABORT);
 			err(EXIT_FAILURE, _("failed to allocate pty handler"));
+		}
 	}
 #endif
 	create_watching_parent(su);
