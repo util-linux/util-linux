@@ -1135,18 +1135,18 @@ int main(int argc, char *argv[])
 			if (sigaction(SIGINT, &sa, NULL) == -1)
 				err(EXIT_FAILURE, _("sigaction SIGINT failed"));
 
-		/* Save old mask for child to restore */
-		if (sigemptyset(&sigset) != 0 ||
-		    sigprocmask(SIG_SETMASK, NULL, &oldsigset) != 0)
-			err(EXIT_FAILURE, _("sigprocmask failed"));
-	} else {
-		/* Block signals to prevent "impatient parent" problem */
-		if (sigemptyset(&sigset) != 0 ||
-		    sigaddset(&sigset, SIGINT) != 0 ||
-		    sigaddset(&sigset, SIGTERM) != 0 ||
-		    sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
-			err(EXIT_FAILURE, _("sigprocmask block failed"));
-	}
+			/* Save old mask for child to restore */
+			if (sigemptyset(&sigset) != 0 ||
+			    sigprocmask(SIG_SETMASK, NULL, &oldsigset) != 0)
+				err(EXIT_FAILURE, _("sigprocmask failed"));
+		} else {
+			/* Block signals to prevent "impatient parent" problem */
+			if (sigemptyset(&sigset) != 0 ||
+			    sigaddset(&sigset, SIGINT) != 0 ||
+			    sigaddset(&sigset, SIGTERM) != 0 ||
+			    sigprocmask(SIG_BLOCK, &sigset, &oldsigset) != 0)
+				err(EXIT_FAILURE, _("sigprocmask block failed"));
+		}
 #ifdef HAVE_PIDFD_OPEN
 		if (kill_child_signo != 0) {
 			/* make a connection to the original process (parent) */
