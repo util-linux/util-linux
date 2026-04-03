@@ -996,6 +996,7 @@ int su_main(int argc, char **argv, int mode)
 
 	int optc;
 	char *command = NULL;
+	const char *short_optstr = NULL;
 	int request_same_session = 0;
 	char *shell = NULL;
 
@@ -1037,8 +1038,19 @@ int su_main(int argc, char **argv, int mode)
 	su_init_debug();
 	su->conv.appdata_ptr = (void *) su;
 
+	if (mode == RUNUSER_MODE)
+		short_optstr = "c:fg:G:lmpPTs:u:hVw:";
+	else if (mode == SU_MODE)
+		/* With the prefixed '+' getopt(3)'s scanning mode changes
+		 * and will make it so that we stop parsing options on the
+		 * first non-option argument, so we can pass the rest of
+		 * the arguments to the target command. This is the proper
+		 * behavior expected by su(1).
+		 */
+		short_optstr = "+c:fg:G:lmpPTs:u:hVw:";
+
 	while ((optc =
-		getopt_long(argc, argv, "+c:fg:G:lmpPTs:u:hVw:", longopts,
+		getopt_long(argc, argv, short_optstr, longopts,
 			    NULL)) != -1) {
 
 		err_exclusive_options(optc, longopts, excl, excl_st);
