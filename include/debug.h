@@ -56,7 +56,7 @@ struct ul_debug_maskname {
  */
 
 #define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
-#define UL_DEBUG_MASKNAMES(lib)	lib ## _masknames
+#define UL_DEBUG_MASKNAMES(lib)	lib ## _debug_masknames
 #define UL_DEBUG_DEFINE_MASKNAMES(lib) \
 	static const struct ul_debug_maskname UL_DEBUG_MASKNAMES(lib)[]
 
