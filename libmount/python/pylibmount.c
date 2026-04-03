@@ -21,7 +21,7 @@
 
 /* Libmount-specific Exception class */
 PyObject *LibmountError;
-int pylibmount_debug_mask;
+unsigned pylibmount_debug_mask;
 
 PyObject *UL_IncRef(void *killme)
 {

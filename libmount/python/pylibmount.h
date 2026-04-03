@@ -25,7 +25,7 @@
 				} \
 			} while (0)
 
-extern int pylibmount_debug_mask;
+extern unsigned pylibmount_debug_mask;
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 pymnt_debug(const char *mesg, ...)

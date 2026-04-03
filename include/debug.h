@@ -41,7 +41,7 @@
 
 struct ul_debug_maskname {
 	const char *name;
-	int mask;
+	unsigned mask;
 	const char *help;
 };
 #define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
@@ -49,7 +49,7 @@ struct ul_debug_maskname {
 #define UL_DEBUG_MASKNAMES(m)	m ## _masknames
 
 #define UL_DEBUG_MASK(m)         m ## _debug_mask
-#define UL_DEBUG_DEFINE_MASK(m)  int UL_DEBUG_MASK(m)
+#define UL_DEBUG_DEFINE_MASK(m)  unsigned UL_DEBUG_MASK(m)
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
 #define UL_DEBUG_ALL             0xFFFFFF
 
@@ -115,8 +115,8 @@ extern void ul_debug(const char *mesg, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 extern void ul_debug_prefix(const char *lib, const char *flag,
 			    const void *handler, int mask);
-extern int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
-			       const char *mask);
+extern unsigned ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
+				    const char *mask);
 extern void ul_debug_print_masks(const char *env,
 				 const struct ul_debug_maskname flagnames[]);
 
