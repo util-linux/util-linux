@@ -24,7 +24,6 @@
 #define LSBLK_DEBUG_DEV		(1 << 3)
 #define LSBLK_DEBUG_TREE	(1 << 4)
 #define LSBLK_DEBUG_DEP		(1 << 5)
-#define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lsblk);
 #define DBG(m, x)		__UL_DBG(lsblk, LSBLK_DEBUG_, m, x)

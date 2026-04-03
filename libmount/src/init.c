@@ -23,7 +23,7 @@
 UL_DEBUG_DEFINE_MASK(libmount);
 UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 {
-	{ "all", MNT_DEBUG_ALL,		"info about all subsystems" },
+	{ "all", UL_DEBUG_ALL,		"info about all subsystems" },
 	{ "cache", MNT_DEBUG_CACHE,	"paths and tags cache" },
 	{ "cxt", MNT_DEBUG_CXT,		"library context (handler)" },
 	{ "diff", MNT_DEBUG_DIFF,	"mountinfo changes tracking" },
@@ -46,7 +46,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 
 /**
  * mnt_init_debug:
- * @mask: debug mask (0xffff to enable full debugging)
+ * @mask: debug mask (UL_DEBUG_ALL to enable full debugging)
  *
  * If the @mask is not specified, then this function reads
  * the LIBMOUNT_DEBUG environment variable to get the mask.

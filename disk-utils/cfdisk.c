@@ -262,7 +262,6 @@ UL_DEBUG_DEFINE_MASKNAMES(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define CFDISK_DEBUG_MENU	(1 << 3)
 #define CFDISK_DEBUG_MISC	(1 << 4)
 #define CFDISK_DEBUG_TABLE	(1 << 5)
-#define CFDISK_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(cfdisk, CFDISK_DEBUG_, m, x)
 

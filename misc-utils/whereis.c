@@ -71,7 +71,6 @@ UL_DEBUG_DEFINE_MASKNAMES(whereis) = UL_DEBUG_EMPTY_MASKNAMES;
 #define WHEREIS_DEBUG_SEARCH	(1 << 5)
 #define WHEREIS_DEBUG_STATIC	(1 << 6)
 #define WHEREIS_DEBUG_LIST	(1 << 7)
-#define WHEREIS_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)		__UL_DBG(whereis, WHEREIS_DEBUG_, m, x)
 #define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(whereis, WHEREIS_DEBUG_, m, h, x)

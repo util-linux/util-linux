@@ -12,7 +12,7 @@
 UL_DEBUG_DEFINE_MASK(libfdisk);
 UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 {
-	{ "all",	LIBFDISK_DEBUG_ALL,	"info about all subsystems" },
+	{ "all",	UL_DEBUG_ALL,		"info about all subsystems" },
 	{ "ask",	LIBFDISK_DEBUG_ASK,	"fdisk dialogs" },
 	{ "help",	LIBFDISK_DEBUG_HELP,	"this help" },
 	{ "cxt",	LIBFDISK_DEBUG_CXT,	"library context (handler)" },
@@ -29,7 +29,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 
 /**
  * fdisk_init_debug:
- * @mask: debug mask (0xffff to enable full debugging)
+ * @mask: debug mask (UL_DEBUG_ALL to enable full debugging)
  *
  * If the @mask is not specified then this function reads
  * LIBFDISK_DEBUG environment variable to get the mask.

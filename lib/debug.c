@@ -57,12 +57,12 @@ int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
 				}
 			}
 			/* nothing else we can do by OR-ing the mask */
-			if (res == 0xffff)
+			if (res == UL_DEBUG_ALL)
 				break;
 		}
 		free(msbuf);
 	} else if (ptr && strcmp(ptr, "all") == 0)
-		res = 0xffff;
+		res = UL_DEBUG_ALL;
 
 	return res;
 }

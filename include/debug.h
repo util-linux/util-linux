@@ -51,9 +51,10 @@ struct ul_debug_maskname {
 #define UL_DEBUG_MASK(m)         m ## _debug_mask
 #define UL_DEBUG_DEFINE_MASK(m)  int UL_DEBUG_MASK(m)
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
+#define UL_DEBUG_ALL             0xFFFFFF
 
 /*
- * Internal mask flags (above 0xffffff)
+ * Internal mask flags (above UL_DEBUG_ALL)
  */
 #define __UL_DEBUG_FL_NOADDR	(1 << 24)	/* Don't print object address */
 

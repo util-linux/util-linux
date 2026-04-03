@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
 	struct blkid_config *conf;
 	char *filename = NULL;
 
-	blkid_init_debug(BLKID_DEBUG_ALL);
+	blkid_init_debug(UL_DEBUG_ALL);
 
 	if (argc == 2)
 		filename = argv[1];

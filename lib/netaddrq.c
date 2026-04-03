@@ -32,12 +32,10 @@ const int max_ifaces = 12;
 #define ULNETADDRQ_DEBUG_LIST	(1 << 3)
 #define ULNETADDRQ_DEBUG_BEST	(1 << 4)
 
-#define ULNETADDRQ_DEBUG_ALL	0x1F
-
 static UL_DEBUG_DEFINE_MASK(netaddrq);
 UL_DEBUG_DEFINE_MASKNAMES(netaddrq) =
 {
-	{ "all",   ULNETADDRQ_DEBUG_ALL,	"complete address processing" },
+	{ "all",   UL_DEBUG_ALL,		"complete address processing" },
 	{ "help",  ULNETADDRQ_DEBUG_HELP,	"this help" },
 	{ "addrq", ULNETADDRQ_DEBUG_ADDRQ,	"address rating" },
 	{ "list",  ULNETADDRQ_DEBUG_LIST,	"list processing" },

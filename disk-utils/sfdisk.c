@@ -65,7 +65,6 @@ UL_DEBUG_DEFINE_MASKNAMES(sfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define SFDISKPROG_DEBUG_PARSE	(1 << 2)
 #define SFDISKPROG_DEBUG_MISC	(1 << 3)
 #define SFDISKPROG_DEBUG_ASK	(1 << 4)
-#define SFDISKPROG_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(sfdisk, SFDISKPROG_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(sfdisk, SFDISKPROG_DEBUG_, m, x)

@@ -32,7 +32,6 @@
 #define FDISKPROG_DEBUG_MENU	(1 << 3)
 #define FDISKPROG_DEBUG_MISC	(1 << 4)
 #define FDISKPROG_DEBUG_ASK	(1 << 5)
-#define FDISKPROG_DEBUG_ALL	0xFFFF
 
 extern int pwipemode;
 extern struct fdisk_table *original_layout;

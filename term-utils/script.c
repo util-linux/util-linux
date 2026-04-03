@@ -80,7 +80,6 @@ UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
 #define SCRIPT_DEBUG_IO		(1 << 3)
 #define SCRIPT_DEBUG_SIGNAL	(1 << 4)
 #define SCRIPT_DEBUG_MISC	(1 << 5)
-#define SCRIPT_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(script, SCRIPT_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(script, SCRIPT_DEBUG_, m, x)

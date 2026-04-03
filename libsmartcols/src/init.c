@@ -20,7 +20,7 @@
 UL_DEBUG_DEFINE_MASK(libsmartcols);
 UL_DEBUG_DEFINE_MASKNAMES(libsmartcols) =
 {
-	{ "all", SCOLS_DEBUG_ALL,	"info about all subsystems" },
+	{ "all", UL_DEBUG_ALL,		"info about all subsystems" },
 	{ "buff", SCOLS_DEBUG_BUFF,	"output buffer utils" },
 	{ "cell", SCOLS_DEBUG_CELL,	"table cell utils" },
 	{ "col", SCOLS_DEBUG_COL,	"cols utils" },
@@ -35,7 +35,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libsmartcols) =
 
 /**
  * scols_init_debug:
- * @mask: debug mask (0xffff to enable full debugging)
+ * @mask: debug mask (UL_DEBUG_ALL to enable full debugging)
  *
  * If the @mask is not specified, then this function reads
  * the LIBSMARTCOLS_DEBUG environment variable to get the mask.
