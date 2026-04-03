@@ -44,14 +44,25 @@ struct ul_debug_maskname {
 	unsigned mask;
 	const char *help;
 };
-#define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
-#define UL_DEBUG_DEFINE_MASKNAMES(m) static const struct ul_debug_maskname m ## _masknames[]
-#define UL_DEBUG_MASKNAMES(m)	m ## _masknames
 
-#define UL_DEBUG_MASK(m)         m ## _debug_mask
-#define UL_DEBUG_DEFINE_MASK(m)  unsigned UL_DEBUG_MASK(m)
-#define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
-#define UL_DEBUG_ALL             0xFFFFFF
+/*
+ * Identifiers used within this header file:
+ *
+ * lib  - library name (e.g. libmount in libmount_debug_mask)
+ * pref - flag prefix (e.g. LIBMOUNT_DEBUG_ in LIBMOUNT_DEBUG_HELP)
+ * flag - flag postfix (e.g. HELP in LIBMOUNT_DEBUG_HELP)
+ * h    - handle of object to print
+ * x    - function to call
+ */
+
+#define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
+#define UL_DEBUG_DEFINE_MASKNAMES(lib) static const struct ul_debug_maskname lib ## _masknames[]
+#define UL_DEBUG_MASKNAMES(lib)	lib ## _masknames
+
+#define UL_DEBUG_MASK(lib)         lib ## _debug_mask
+#define UL_DEBUG_DEFINE_MASK(lib)  unsigned UL_DEBUG_MASK(lib)
+#define UL_DEBUG_DECLARE_MASK(lib) extern UL_DEBUG_DEFINE_MASK(lib)
+#define UL_DEBUG_ALL               0xFFFFFF
 
 /*
  * Internal mask flags (above UL_DEBUG_ALL)
@@ -59,30 +70,28 @@ struct ul_debug_maskname {
 #define __UL_DEBUG_FL_NOADDR	(1 << 24)	/* Don't print object address */
 
 
-/* l - library name, p - flag prefix, m - flag postfix, h - handle, x - function */
-#define __UL_DBG_OBJ(l, p, m, h, x) \
+#define __UL_DBG_OBJ(lib, pref, flag, h, x) \
 	do { \
-		if ((p ## m) & l ## _debug_mask) { \
-			ul_debug_prefix(# l, # m, h, l ## _debug_mask); \
+		if ((pref ## flag) & lib ## _debug_mask) { \
+			ul_debug_prefix(# lib, # flag, h, lib ## _debug_mask); \
 			x; \
 		} \
 	} while (0)
 
-/* l - library name, p - flag prefix, m - flag postfix, x - function */
-#define __UL_DBG(l, p, m, x) \
-	__UL_DBG_OBJ(l, p, m, NULL, x)
+#define __UL_DBG(lib, pref, flag, x) \
+	__UL_DBG_OBJ(lib, pref, flag, NULL, x)
 
-#define __UL_DBG_CALL(l, p, m, x) \
+#define __UL_DBG_CALL(lib, pref, flag, x) \
 	do { \
-		if ((p ## m) & l ## _debug_mask) { \
+		if ((pref ## flag) & lib ## _debug_mask) { \
 			x; \
 		} \
 	} while (0)
 
-#define __UL_DBG_FLUSH(l, p) \
+#define __UL_DBG_FLUSH(lib, pref) \
 	do { \
-		if (l ## _debug_mask && \
-		    l ## _debug_mask != p ## INIT) { \
+		if (lib ## _debug_mask && \
+		    lib ## _debug_mask != pref ## INIT) { \
 			fflush(stderr); \
 		} \
 	} while (0)
@@ -114,7 +123,7 @@ struct ul_debug_maskname {
 extern void ul_debug(const char *mesg, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 extern void ul_debug_prefix(const char *lib, const char *flag,
-			    const void *handler, int mask);
+			    const void *handle, int mask);
 extern unsigned ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
 				    const char *mask);
 extern void ul_debug_print_masks(const char *env,

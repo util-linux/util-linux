@@ -21,11 +21,11 @@ void ul_debug(const char *mesg, ...)
 }
 
 void ul_debug_prefix(const char *lib, const char *flag,
-		     const void *handler, int mask)
+		     const void *handle, int mask)
 {
 	fprintf(stderr, "%d: %s: %8s: ", getpid(), lib, flag);
-	if (handler && !(mask & __UL_DEBUG_FL_NOADDR))
-		fprintf(stderr, "[%p]: ", handler);
+	if (handle && !(mask & __UL_DEBUG_FL_NOADDR))
+		fprintf(stderr, "[%p]: ", handle);
 }
 
 unsigned ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
