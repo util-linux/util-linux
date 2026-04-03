@@ -22,6 +22,8 @@ ts_init "$*"
 
 ts_skip_nonroot
 
+ts_check_test_command "$TS_CMD_SU"
+
 username="$(whoami)"
 
 ts_init_subtest "command-option"
@@ -29,7 +31,7 @@ ts_init_subtest "command-option"
 ts_finalize_subtest
 
 ts_init_subtest "additional-args"
-"$TS_CMD_SU" --shell "/bin/bash" "$username" -c "echo \$SHELL" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+"$TS_CMD_SU" --shell "/bin/bash" "$username" --norc -c "echo \$SHELL" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_finalize
