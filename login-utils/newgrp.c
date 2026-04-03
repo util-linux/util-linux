@@ -218,15 +218,22 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 
-	if (!(pw_entry = getpwuid(getuid())))
-		err(EXIT_FAILURE, _("who are you?"));
+	errno = 0;
+	pw_entry = getpwuid(getuid());
+	if (!pw_entry) {
+		if (errno)
+			err(EXIT_FAILURE, _("failed to look up current user"));
+		else
+		 	errx(EXIT_FAILURE, _("who are you?"));
+	}
 
 	if (argc <= optind) {
 		if (setgid(pw_entry->pw_gid) < 0)
 			err(EXIT_FAILURE, _("setgid() failed"));
 	} else {
 		errno = 0;
-		if (!(gr_entry = ul_getgrp_str(argv[optind++], NULL))) {
+		gr_entry = ul_getgrp_str(argv[optind++], NULL);
+		if (!gr_entry) {
 			if (errno)
 				err(EXIT_FAILURE, _("no such group"));
 			else
