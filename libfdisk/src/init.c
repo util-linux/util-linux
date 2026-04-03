@@ -53,7 +53,7 @@ void fdisk_init_debug(int mask)
 
 		fdisk_get_library_version(&ver);
 
-		DBG(INIT, ul_debug("library debug mask: 0x%04x", libfdisk_debug_mask));
+		DBG(INIT, ul_debug("library debug mask: 0x%08x", libfdisk_debug_mask));
 		DBG(INIT, ul_debug("library version: %s", ver));
 	}
 

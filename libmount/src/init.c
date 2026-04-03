@@ -69,7 +69,7 @@ void mnt_init_debug(int mask)
 		mnt_get_library_version(&ver);
 		mnt_get_library_features(&features);
 
-		DBG(INIT, ul_debug("library debug mask: 0x%06x", libmount_debug_mask));
+		DBG(INIT, ul_debug("library debug mask: 0x%08x", libmount_debug_mask));
 		DBG(INIT, ul_debug("library version: %s", ver));
 		p = features;
 		while (p && *p)
