@@ -136,7 +136,7 @@ static PyObject *Fs_print_debug(FsObject *self)
 	if (mnt_fs_get_parent_id(self->fs))
 		PySys_WriteStdout("parent: %d\n", mnt_fs_get_parent_id(self->fs));
 	if (mnt_fs_get_devno(self->fs))
-		PySys_WriteStdout("devno:  %d:%d\n", major(mnt_fs_get_devno(self->fs)),
+		PySys_WriteStdout("devno:  %u:%u\n", major(mnt_fs_get_devno(self->fs)),
 						minor(mnt_fs_get_devno(self->fs)));
 	if (mnt_fs_get_tid(self->fs))
 		PySys_WriteStdout("tid:    %d\n", mnt_fs_get_tid(self->fs));

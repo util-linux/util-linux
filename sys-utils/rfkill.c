@@ -553,7 +553,7 @@ static int __rfkill_block(int fd, struct rfkill_id *id, uint8_t block, const cha
 	case RFKILL_IS_INDEX:
 		event.op = RFKILL_OP_CHANGE;
 		event.idx = id->index;
-		xasprintf(&message, "id %d", id->index);
+		xasprintf(&message, "id %"PRIu32, id->index);
 		break;
 	case RFKILL_IS_ALL:
 		message = xstrdup("all");

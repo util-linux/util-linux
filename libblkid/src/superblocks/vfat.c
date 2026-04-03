@@ -171,7 +171,7 @@ static int search_fat_label(blkid_probe pr, uint64_t offset, uint32_t entries, u
 
 		if ((ent->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
-			DBG(LOWPROBE, ul_debug("\tfound fs LABEL at entry %d", i));
+			DBG(LOWPROBE, ul_debug("\tfound fs LABEL at entry %"PRIu32, i));
 			memcpy(out, ent->name, 11);
 			if (out[0] == 0x05)
 				out[0] = 0xE5;

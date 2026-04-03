@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, _("Inodes: %ld (in %llu blocks)\n"),
 				inodes, ino_blocks);
 		fprintf(stderr, _("Blocks: %llu\n"), total_blocks);
-		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
+		fprintf(stderr, _("Inode end: %"PRIu32", Data end: %"PRIu32"\n"),
 			le32_to_cpu(sb.s_start) - 1, le32_to_cpu(sb.s_end));
 	}
 

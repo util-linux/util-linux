@@ -574,9 +574,9 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 	if (!cxt->io_size)
 		cxt->io_size = cxt->sector_size;
 
-	DBG_OBJ(CXT, cxt, ul_debug("result: log/phy sector size: %ld/%ld",
+	DBG_OBJ(CXT, cxt, ul_debug("result: log/phy sector size: %lu/%lu",
 			cxt->sector_size, cxt->phy_sector_size));
-	DBG_OBJ(CXT, cxt, ul_debug("result: fdisk/optimal/minimal io: %ld/%ld/%ld",
+	DBG_OBJ(CXT, cxt, ul_debug("result: fdisk/optimal/minimal io: %lu/%lu/%lu",
 		       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
 }

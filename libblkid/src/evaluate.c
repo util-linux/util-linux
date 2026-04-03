@@ -119,7 +119,7 @@ int blkid_send_uevent(const char *devname, const char *action)
 	if (stat(devname, &st) || !S_ISBLK(st.st_mode))
 		return -1;
 
-	snprintf(uevent, sizeof(uevent), "/sys/dev/block/%d:%d/uevent",
+	snprintf(uevent, sizeof(uevent), "/sys/dev/block/%u:%u/uevent",
 			major(st.st_rdev), minor(st.st_rdev));
 
 	f = fopen(uevent, "w" UL_CLOEXECSTR);

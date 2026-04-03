@@ -771,7 +771,7 @@ static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 
 static void change_identity(const struct passwd *pw)
 {
-	DBG(MISC, ul_debug("changing identity [GID=%d, UID=%d]", pw->pw_gid, pw->pw_uid));
+	DBG(MISC, ul_debug("changing identity [GID=%u, UID=%u]", pw->pw_gid, pw->pw_uid));
 
 	if (setgid(pw->pw_gid))
 		err(EXIT_FAILURE, _("cannot set group id"));

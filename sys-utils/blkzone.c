@@ -264,7 +264,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
 
 		if (ctl->verbose)
-			printf(_("Found %d zones from 0x%"PRIx64"\n"),
+			printf(_("Found %"PRIu32" zones from 0x%"PRIx64"\n"),
 				zi->nr_zones, ctl->offset);
 
 		if (!zi->nr_zones)

@@ -243,7 +243,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, "failed to get %s pwd entry", argv[1]);
 
 	printf("Username: %s\n", pwd->pw_name);
-	printf("UID:      %d\n", pwd->pw_uid);
+	printf("UID:      %u\n", pwd->pw_uid);
 	printf("HOME:     %s\n", pwd->pw_dir);
 	printf("GECO:     %s\n", pwd->pw_gecos);
 

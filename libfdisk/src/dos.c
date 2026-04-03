@@ -1625,18 +1625,18 @@ static int check(struct fdisk_context *cxt, size_t n,
 		nerrors++;
 	}
 	if (h >= cxt->geom.heads) {
-		fdisk_warnx(cxt, _("Partition %zu: head %d greater than "
-				   "maximum %d"), n, h + 1, cxt->geom.heads);
+		fdisk_warnx(cxt, _("Partition %zu: head %u greater than "
+				   "maximum %u"), n, h + 1, cxt->geom.heads);
 		nerrors++;
 	}
 	if (real_s >= cxt->geom.sectors) {
-		fdisk_warnx(cxt, _("Partition %zu: sector %d greater than "
+		fdisk_warnx(cxt, _("Partition %zu: sector %u greater than "
 				   "maximum %ju"), n, real_s + 1,
 				(uintmax_t) cxt->geom.sectors);
 		nerrors++;
 	}
 	if (real_c >= cxt->geom.cylinders) {
-		fdisk_warnx(cxt, _("Partition %zu: cylinder %d greater than "
+		fdisk_warnx(cxt, _("Partition %zu: cylinder %u greater than "
 				   "maximum %ju"),
 				n, real_c + 1,
 				(uintmax_t) cxt->geom.cylinders);
@@ -1704,7 +1704,7 @@ static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 	    && (pbc != lbc || pbh != lbh || pbs != lbs)) {
 		fdisk_warnx(cxt, _("Partition %zu: different physical/logical "
 			"beginnings (non-Linux?): "
-			"phys=(%d, %d, %d), logical=(%d, %d, %d)"),
+			"phys=(%u, %u, %u), logical=(%u, %u, %u)"),
 			partition + 1,
 			pbc, pbh, pbs,
 			lbc, lbh, lbs);
@@ -1715,7 +1715,7 @@ static int check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 	if (lec < 1024
 	    && (pec != lec || peh != leh || pes != les)) {
 		fdisk_warnx(cxt, _("Partition %zu: different physical/logical "
-			"endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"),
+			"endings: phys=(%u, %u, %u), logical=(%u, %u, %u)"),
 			partition + 1,
 			pec, peh, pes,
 			lec, leh, les);
@@ -1849,7 +1849,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			fdisk_info(cxt, _("Total allocated sectors %ju greater "
 				"than the maximum %ju."), (uintmax_t) total, (uintmax_t) n_sectors);
 		else if (total < n_sectors)
-			fdisk_info(cxt, _("Remaining %ju unallocated %ld-byte "
+			fdisk_info(cxt, _("Remaining %ju unallocated %lu-byte "
 				"sectors."), (uintmax_t) n_sectors - total, cxt->sector_size);
 	} else
 		fdisk_warnx(cxt,
@@ -2053,7 +2053,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_menu_set_default(ask, free_primary == 1
 						&& !l->ext_offset ? 'e' : 'p');
 		snprintf(hint, sizeof(hint),
-				_("%u primary, %d extended, %u free"),
+				_("%d primary, %d extended, %d free"),
 				4 - (l->ext_offset ? 1 : 0) - free_primary,
 				l->ext_offset ? 1 : 0,
 				free_primary);
@@ -2119,7 +2119,7 @@ static int write_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 
 	rc = seek_sector(cxt, secno);
 	if (rc != 0) {
-		fdisk_warn(cxt, _("Cannot write sector %jd: seek failed"),
+		fdisk_warn(cxt, _("Cannot write sector %ju: seek failed"),
 				(uintmax_t) secno);
 		return rc;
 	}
@@ -2683,8 +2683,8 @@ int fdisk_dos_fix_chs(struct fdisk_context *cxt)
 		if (obc != nbc || obh != nbh || obs != nbs ||
 		    oec != nec || oeh != neh || oes != nes) {
 			DBG(LABEL, ul_debug("DOS: changing %zu partition CHS "
-				"from (%d, %d, %d)-(%d, %d, %d) "
-				"to (%d, %d, %d)-(%d, %d, %d)",
+				"from (%u, %u, %u)-(%u, %u, %u) "
+				"to (%u, %u, %u)-(%u, %u, %u)",
 				i, obc, obh, obs, oec, oeh, oes,
 				nbc, nbh, nbs, nec, neh, nes));
 			p->bc = nbc & 0xff;

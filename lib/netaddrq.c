@@ -354,7 +354,7 @@ ul_netaddrq_bestaddr(struct ul_nl_data *nl,
 		if (t < threshold)
 		{
 			DBG_OBJ(BEST, *best,
-			    ul_debug("best iface %s, threshold %hhd",
+			    ul_debug("best iface %s, threshold %u",
 					ifaceq->ifname, t));
 			*best_ifaceq = ifaceq;
 			threshold = t;

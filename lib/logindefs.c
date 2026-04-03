@@ -615,7 +615,7 @@ int main(int argc, char *argv[])
 	if (strcmp(type, "str") == 0)
 		printf("$%s: '%s'\n", name, getlogindefs_str(name, "DEFAULT"));
 	else if (strcmp(type, "num") == 0)
-		printf("$%s: '%ld'\n", name, getlogindefs_num(name, 0));
+		printf("$%s: '%lu'\n", name, getlogindefs_num(name, 0));
 	else if (strcmp(type, "bool") == 0)
 		printf("$%s: '%s'\n", name,
 		       getlogindefs_bool(name, 0) ? "Y" : "N");

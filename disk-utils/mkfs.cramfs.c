@@ -603,7 +603,7 @@ do_compress(char *base, unsigned int offset, unsigned char const *name,
 		if (len > blksize*2) {
 			/* (I don't think this can happen with zlib.) */
 			printf(_("AIEEE: block \"compressed\" to > "
-				 "2*blocklength (%ld)\n"),
+				 "2*blocklength (%lu)\n"),
 			       len);
 			exit(MKFS_EX_ERROR);
 		}
@@ -887,7 +887,7 @@ int main(int argc, char **argv)
 	/* Write the superblock now that we can fill in all of the fields. */
 	write_superblock(root_entry, rom_image+opt_pad, offset);
 	if (verbose)
-		printf(_("Super block: %zd bytes\n"),
+		printf(_("Super block: %zu bytes\n"),
 		       sizeof(struct cramfs_super));
 
 	/* Put the checksum in. */
@@ -900,7 +900,7 @@ int main(int argc, char **argv)
 	if (fslen_ub < offset)
 		errx(MKFS_EX_ERROR,
 			_("not enough space allocated for ROM image "
-			  "(%lld allocated, %zu used)"),
+			  "(%lld allocated, %zd used)"),
 			(long long) fslen_ub, offset);
 
 	written = write(fd, rom_image, offset);
@@ -917,21 +917,21 @@ int main(int argc, char **argv)
 	if (warn_namelen)
 		/* Can't happen when reading from ext2fs. */
 		/* Bytes, not chars: think UTF8. */
-		warnx(_("warning: filenames truncated to %u bytes."), MAX_INPUT_NAMELEN);
+		warnx(_("warning: filenames truncated to %d bytes."), MAX_INPUT_NAMELEN);
 	if (warn_skip)
 		warnx(_("warning: files were skipped due to errors."));
 	if (warn_size)
-		warnx(_("warning: file sizes truncated to %luMB "
+		warnx(_("warning: file sizes truncated to %ldMB "
 			"(minus 1 byte)."), 1L << (CRAMFS_SIZE_WIDTH - 20));
 	if (warn_uid)
 		/* (not possible with current Linux versions) */
-		warnx(_("warning: uids truncated to %u bits.  "
+		warnx(_("warning: uids truncated to %d bits.  "
 			"(This may be a security concern.)"), CRAMFS_UID_WIDTH);
 	if (warn_gid)
-		warnx(_("warning: gids truncated to %u bits.  "
+		warnx(_("warning: gids truncated to %d bits.  "
 			"(This may be a security concern.)"), CRAMFS_GID_WIDTH);
 	if (warn_dev)
-		warnx(_("WARNING: device numbers truncated to %u bits.  "
+		warnx(_("WARNING: device numbers truncated to %d bits.  "
 			"This almost certainly means\n"
 			"that some device files will be wrong."),
 		      CRAMFS_OFFSET_WIDTH);

@@ -319,7 +319,7 @@ static int is_irrotational_disk(dev_t disk)
 
 
 	rc = snprintf(path, sizeof(path),
-			"/sys/dev/block/%d:%d/queue/rotational",
+			"/sys/dev/block/%u:%u/queue/rotational",
 			major(disk), minor(disk));
 
 	if (rc < 0 || (unsigned int) rc >= sizeof(path))

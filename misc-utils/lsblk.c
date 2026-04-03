@@ -816,7 +816,7 @@ static void process_mq(struct lsblk_device *dev, char **str)
 		return;
 	}
 
-	DBG_OBJ(DEV, dev, ul_debug("%s: has %d queues", dev->name, queues));
+	DBG_OBJ(DEV, dev, ul_debug("%s: has %u queues", dev->name, queues));
 	xasprintf(str, "%3u", queues);
 }
 
@@ -889,19 +889,19 @@ static char *device_get_data(
 		break;
 	case COL_MAJMIN:
 		if (is_parsable(lsblk))
-			xasprintf(&str, "%u:%u", dev->maj, dev->min);
+			xasprintf(&str, "%d:%d", dev->maj, dev->min);
 		else
-			xasprintf(&str, "%3u:%-3u", dev->maj, dev->min);
+			xasprintf(&str, "%3d:%-3d", dev->maj, dev->min);
 		if (rawdata)
 			*rawdata = makedev(dev->maj, dev->min);
 		break;
 	case COL_MAJ:
-		xasprintf(&str, "%u", dev->maj);
+		xasprintf(&str, "%d", dev->maj);
 		if (rawdata)
 			*rawdata = dev->maj;
 		break;
 	case COL_MIN:
-		xasprintf(&str, "%u", dev->min);
+		xasprintf(&str, "%d", dev->min);
 		if (rawdata)
 			*rawdata = dev->min;
 		break;
@@ -1811,7 +1811,7 @@ static int __process_one_device(struct lsblk_devtree *tr, char *devname, dev_t d
 		}
 		devno = st.st_rdev;
 	} else if (devno) {
-		DBG(DEV, ul_debug("%d:%d: reading alone device", major(devno), minor(devno)));
+		DBG(DEV, ul_debug("%u:%u: reading alone device", major(devno), minor(devno)));
 	} else {
 		assert(devno || devname);
 		return -EINVAL;

@@ -675,7 +675,7 @@ int strtimespec_relative(const struct timespec *ts, char *buf, size_t bufsz)
 
 	if (ts->tv_nsec) {
 		if (ts->tv_nsec % NSEC_PER_MSEC) {
-			rc = snprintf(buf, bufsz, "%*luns",
+			rc = snprintf(buf, bufsz, "%*ldns",
 				      parts ? 10 : 0, ts->tv_nsec);
 			if (rc < 0 || (size_t) rc > bufsz)
 				goto err;
@@ -755,7 +755,7 @@ static int run_unittest_timestamp(void)
 		}
 
 		if (result != t.expected) {
-			fprintf(stderr, "#%02zu %-25s: %"PRId64" != %"PRId64"\n",
+			fprintf(stderr, "#%02zu %-25s: %"PRIu64" != %"PRIu64"\n",
 				i, t.input, result, t.expected);
 			rc = EXIT_FAILURE;
 		}

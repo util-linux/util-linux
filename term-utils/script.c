@@ -485,7 +485,7 @@ static ssize_t log_write(struct script_control *ctl,
 
 		gettime_monotonic(&now);
 		timersub(&now, &log->oldtime, &delta);
-		ssz = fprintf(log->fp, "%"PRId64".%06"PRId64" %zd\n",
+		ssz = fprintf(log->fp, "%"PRId64".%06"PRId64" %zu\n",
 			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec, bytes);
 		if (ssz < 0)
 			return -errno;
@@ -498,7 +498,7 @@ static ssize_t log_write(struct script_control *ctl,
 
 		gettime_monotonic(&now);
 		timersub(&now, &log->oldtime, &delta);
-		ssz = fprintf(log->fp, "%c %"PRId64".%06"PRId64" %zd\n",
+		ssz = fprintf(log->fp, "%c %"PRId64".%06"PRId64" %zu\n",
 			stream->ident,
 			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec, bytes);
 		if (ssz < 0)

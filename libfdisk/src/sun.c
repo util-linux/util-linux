@@ -6,6 +6,7 @@
  *   Merged with fdisk for other architectures, aeb, June 1998.
  *   Arnaldo Carvalho de Melo <acme@conectiva.com.br> Mar 1999, Internationalization
  */
+#include <inttypes.h>
 #include <stdio.h>		/* stderr */
 #include <stdlib.h>		/* qsort */
 #include <string.h>		/* strstr */
@@ -150,7 +151,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		fdisk_apply_user_device_properties(cxt);
 
 	if (be32_to_cpu(sunlabel->vtoc.version) != SUN_VTOC_VERSION) {
-		fdisk_warnx(cxt, _("Detected sun disklabel with wrong version [%d]."),
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong version [%"PRIu32"]."),
 			be32_to_cpu(sunlabel->vtoc.version));
 		need_fixing = 1;
 	}
@@ -630,7 +631,7 @@ static int sun_add_partition(
 				    whole_disk = 1;
 				    break;
 				}
-				fdisk_warnx(cxt, _("Sector %d is already allocated"), first);
+				fdisk_warnx(cxt, _("Sector %u is already allocated"), first);
 			} else
 				break;
 		}

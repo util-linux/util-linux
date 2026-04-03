@@ -1140,7 +1140,7 @@ static int test_get(struct libmnt_test *ts __attribute__((unused)),
 	if (rc == 0) {
 		printf("found; name: %s", name);
 		if (sz) {
-			printf(", argument: size=%zd data=", sz);
+			printf(", argument: size=%zu data=", sz);
 			if (fwrite(val, 1, sz, stdout) != sz)
 				return -1;
 		}

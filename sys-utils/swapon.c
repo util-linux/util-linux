@@ -558,7 +558,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 				~permMask & 0666);
 
 	if (S_ISREG(st.st_mode) && st.st_uid != 0)
-		warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
+		warnx(_("%s: insecure file owner %u, 0 (root) suggested."),
 				dev->path, st.st_uid);
 
 	/* test for holes by LBT */
@@ -583,7 +583,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 	}
 
 	if (ctl->verbose)
-		warnx(_("%s: found signature [pagesize=%d, signature=%s]"),
+		warnx(_("%s: found signature [pagesize=%u, signature=%s]"),
 			dev->path,
 			dev->pagesize,
 			sig == SIG_SWAPSPACE ? "swap" :
@@ -594,7 +594,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 		int syspg = getpagesize();
 
 		if (ctl->verbose)
-			warnx(_("%s: pagesize=%d, swapsize=%llu, devsize=%llu"),
+			warnx(_("%s: pagesize=%u, swapsize=%llu, devsize=%llu"),
 				dev->path, dev->pagesize, swapsize, devsize);
 
 		if (swapsize > devsize) {

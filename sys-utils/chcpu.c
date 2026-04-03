@@ -80,23 +80,23 @@ static int cpu_enable(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, 
 		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (ul_path_accessf(sys, F_OK, "cpu%d", cpu) != 0) {
-			warnx(_("CPU %u does not exist"), cpu);
+			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (ul_path_accessf(sys, F_OK, "cpu%d/online", cpu) != 0) {
-			warnx(_("CPU %u is not hot pluggable"), cpu);
+			warnx(_("CPU %d is not hot pluggable"), cpu);
 			fails++;
 			continue;
 		}
 		if (ul_path_readf_s32(sys, &online, "cpu%d/online", cpu) == 0
 		    && online == 1
 		    && enable == 1) {
-			printf(_("CPU %u is already enabled\n"), cpu);
+			printf(_("CPU %d is already enabled\n"), cpu);
 			continue;
 		}
 		if (online == 0 && enable == 0) {
-			printf(_("CPU %u is already disabled\n"), cpu);
+			printf(_("CPU %d is already disabled\n"), cpu);
 			continue;
 		}
 		if (ul_path_accessf(sys, F_OK, "cpu%d/configure", cpu) == 0)
@@ -104,25 +104,25 @@ static int cpu_enable(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, 
 		if (enable) {
 			rc = ul_path_writef_string(sys, "1", "cpu%d/online", cpu);
 			if (rc != 0 && configured == 0) {
-				warn(_("CPU %u enable failed (CPU is deconfigured)"), cpu);
+				warn(_("CPU %d enable failed (CPU is deconfigured)"), cpu);
 				fails++;
 			} else if (rc != 0) {
-				warn(_("CPU %u enable failed"), cpu);
+				warn(_("CPU %d enable failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %u enabled\n"), cpu);
+				printf(_("CPU %d enabled\n"), cpu);
 		} else {
 			if (onlinecpus && num_online_cpus() == 1) {
-				warnx(_("CPU %u disable failed (last enabled CPU)"), cpu);
+				warnx(_("CPU %d disable failed (last enabled CPU)"), cpu);
 				fails++;
 				continue;
 			}
 			rc = ul_path_writef_string(sys, "0", "cpu%d/online", cpu);
 			if (rc != 0) {
-				warn(_("CPU %u disable failed"), cpu);
+				warn(_("CPU %d disable failed"), cpu);
 				fails++;
 			} else {
-				printf(_("CPU %u disabled\n"), cpu);
+				printf(_("CPU %d disabled\n"), cpu);
 				if (onlinecpus)
 					CPU_CLR_S(cpu, setsize, onlinecpus);
 			}
@@ -177,44 +177,44 @@ static int cpu_configure(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsiz
 		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
 			continue;
 		if (ul_path_accessf(sys, F_OK, "cpu%d", cpu) != 0) {
-			warnx(_("CPU %u does not exist"), cpu);
+			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (ul_path_accessf(sys, F_OK, "cpu%d/configure", cpu) != 0) {
-			warnx(_("CPU %u is not configurable"), cpu);
+			warnx(_("CPU %d is not configurable"), cpu);
 			fails++;
 			continue;
 		}
 		ul_path_readf_s32(sys, &current, "cpu%d/configure", cpu);
 		if (current == 1 && configure == 1) {
-			printf(_("CPU %u is already configured\n"), cpu);
+			printf(_("CPU %d is already configured\n"), cpu);
 			continue;
 		}
 		if (current == 0 && configure == 0) {
-			printf(_("CPU %u is already deconfigured\n"), cpu);
+			printf(_("CPU %d is already deconfigured\n"), cpu);
 			continue;
 		}
 		if (current == 1 && configure == 0 && onlinecpus &&
 		    is_cpu_online(cpu)) {
-			warnx(_("CPU %u deconfigure failed (CPU is enabled)"), cpu);
+			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
 		}
 		if (configure) {
 			rc = ul_path_writef_string(sys, "1", "cpu%d/configure", cpu);
 			if (rc != 0) {
-				warn(_("CPU %u configure failed"), cpu);
+				warn(_("CPU %d configure failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %u configured\n"), cpu);
+				printf(_("CPU %d configured\n"), cpu);
 		} else {
 			rc = ul_path_writef_string(sys, "0", "cpu%d/configure", cpu);
 			if (rc != 0) {
-				warn(_("CPU %u deconfigure failed"), cpu);
+				warn(_("CPU %d deconfigure failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %u deconfigured\n"), cpu);
+				printf(_("CPU %d deconfigured\n"), cpu);
 		}
 	}
 

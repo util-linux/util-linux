@@ -445,7 +445,7 @@ int main(int argc, char **argv)
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
 		if (!ctl.pw)
-			errx(EXIT_FAILURE, _("your user %d does not exist"),
+			errx(EXIT_FAILURE, _("your user %u does not exist"),
 			     uid);
 	} else {
 		ctl.pw = ul_getuserpw_str(ctl.username, NULL);

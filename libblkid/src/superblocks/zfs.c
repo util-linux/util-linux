@@ -219,7 +219,7 @@ static bool zfs_extract_guid_name(blkid_probe pr, void *buf, size_t size, bool f
 			goto cont;
 		}
 
-		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u",
+		DBG(LOWPROBE, ul_debug("left %zu nvp_size %"PRIu32,
 				       size, nvp_size));
 
 		/* nvpair fits in buffer and name fits in nvpair? */

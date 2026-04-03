@@ -4,6 +4,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -115,7 +116,7 @@ static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 
 	blkid_probe_set_uuid(pr, sb->uuid);
-	blkid_probe_sprintf_version(pr, "w%dr%d",
+	blkid_probe_sprintf_version(pr, "w%"PRIu32"r%"PRIu32,
 			le32_to_cpu(sb->fmt_version),
 			le32_to_cpu(sb->ro_compat_version));
 	blkid_probe_set_fssize(pr,

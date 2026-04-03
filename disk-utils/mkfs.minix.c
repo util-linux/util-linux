@@ -163,7 +163,7 @@ static inline time_t mkfs_minix_time(time_t *t)
 	const char *str = getenv("MKFS_MINIX_TEST_SECOND_SINCE_EPOCH");
 	uint64_t sec;
 
-	if (str && sscanf(str, "%"SCNd64, &sec) == 1)
+	if (str && sscanf(str, "%"SCNu64, &sec) == 1)
 		return sec;
 	return time(t);
 }

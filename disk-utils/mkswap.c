@@ -130,7 +130,7 @@ static void init_signature_page(struct mkswap_control *ctl)
 		if (ctl->user_pagesize < 0 || !is_power_of_2(ctl->user_pagesize) ||
 		    (size_t) ctl->user_pagesize < sizeof(struct swap_header_v1_2) + 10)
 			errx(EXIT_FAILURE,
-			     _("Bad user-specified page size %u"),
+			     _("Bad user-specified page size %d"),
 			       ctl->user_pagesize);
 		if (!ctl->quiet && ctl->user_pagesize != kernel_pagesize)
 			warnx(_("Using user-specified page size %d, "
@@ -763,7 +763,7 @@ int main(int argc, char **argv)
 			~permMask & 0666, ctl.devname);
 	if (!ctl.quiet
 	    && getuid() == 0 && S_ISREG(ctl.devstat.st_mode) && ctl.devstat.st_uid != 0)
-		warnx(_("%s: insecure file owner %d, fix with: chown 0:0 %s"),
+		warnx(_("%s: insecure file owner %u, fix with: chown 0:0 %s"),
 			ctl.devname, ctl.devstat.st_uid, ctl.devname);
 
 

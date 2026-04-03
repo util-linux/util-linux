@@ -411,7 +411,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			continue;
 		}
 
-		DBG(LOWPROBE, ul_debug("[%zd] %s:", i, id->name));
+		DBG(LOWPROBE, ul_debug("[%zu] %s:", i, id->name));
 
 		rc = blkid_probe_get_idmag(pr, id, &off, &mag);
 		if (rc < 0)

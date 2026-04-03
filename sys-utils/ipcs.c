@@ -272,10 +272,10 @@ static void do_shm (char format, int unit)
 		 * "swap performance = %ld attempts, %ld successes\n"
 		 */
 		printf (_("segments allocated %d\n"
-			  "pages allocated %ld\n"
-			  "pages resident  %ld\n"
-			  "pages swapped   %ld\n"
-			  "Swap performance: %ld attempts\t %ld successes\n"),
+			  "pages allocated %lu\n"
+			  "pages resident  %lu\n"
+			  "pages swapped   %lu\n"
+			  "Swap performance: %lu attempts\t %lu successes\n"),
 			shm_info->used_ids,
 			shm_info->shm_tot,
 			shm_info->shm_rss,
@@ -346,7 +346,7 @@ static void do_shm (char format, int unit)
 				printf ("%-10d %-10.10s", shmdsp->shm_perm.id, pw->pw_name);
 			else
 				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
-			printf (" %-10u %-10u\n",
+			printf (" %-10d %-10d\n",
 				shmdsp->shm_cprid, shmdsp->shm_lprid);
 			break;
 
@@ -612,7 +612,7 @@ static void print_shm(int shmid, int unit)
 	       shmdata->shm_perm.mode & 0777);
 	ipc_print_size(unit, unit == IPC_UNIT_HUMAN ? _("size=") : _("bytes="),
 		       shmdata->shm_segsz, "\t", 0);
-	printf(_("lpid=%u\tcpid=%u\tnattch=%jd\n"),
+	printf(_("lpid=%d\tcpid=%d\tnattch=%"PRIu64"\n"),
 	       shmdata->shm_lprid, shmdata->shm_cprid,
 	       shmdata->shm_nattch);
 	printf(_("att_time=%-26.24s\n"),
@@ -643,7 +643,7 @@ static void print_msg(int msgid, int unit)
 		       msgdata->q_cbytes, "\t", 0);
 	ipc_print_size(unit, unit == IPC_UNIT_HUMAN ? _("qsize=") : _("qbytes="),
 		       msgdata->q_qbytes, "\t", 0);
-	printf("qnum=%jd\tlspid=%d\tlrpid=%d\n",
+	printf("qnum=%"PRIu64"\tlspid=%d\tlrpid=%d\n",
 	       msgdata->q_qnum,
 	       msgdata->q_lspid, msgdata->q_lrpid);
 	printf(_("send_time=%-26.24s\n"),

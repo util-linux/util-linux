@@ -409,7 +409,7 @@ static struct map_range read_subid_range(char *filename, uid_t uid, int identity
 
 	pw = xgetpwuid(uid, &pwbuf);
 	if (!pw)
-		errx(EXIT_FAILURE, _("you (user %d) don't exist."), uid);
+		errx(EXIT_FAILURE, _("you (user %u) don't exist."), uid);
 
 	idmap = fopen(filename, "r");
 	if (!idmap)
@@ -612,7 +612,7 @@ map_ids_external(const char *idmapper, int ppid, struct map_range *chain)
 		length += 3;
 	argv = xcalloc(length, sizeof(*argv));
 	argv[i++] = xstrdup(idmapper);
-	xasprintf(&argv[i++], "%u", ppid);
+	xasprintf(&argv[i++], "%d", ppid);
 
 	for (struct map_range *map = chain; map; map = map->next) {
 		xasprintf(&argv[i++], "%u", map->inner);
@@ -640,7 +640,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
 	unsigned int length = 0;
 	char buffer[4096], *path;
 
-	xasprintf(&path, "/proc/%u/%s", ppid, type);
+	xasprintf(&path, "/proc/%d/%s", ppid, type);
 	for (struct map_range *map = chain; map; map = map->next) {
 		count = snprintf(buffer + length, sizeof(buffer) - length,
 				 "%u %u %u\n",

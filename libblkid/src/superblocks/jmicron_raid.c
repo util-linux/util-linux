@@ -95,7 +95,7 @@ static int probe_jmraid(blkid_probe pr,
 	if (jm->mode > 5)
 		return 1;
 
-	if (blkid_probe_sprintf_version(pr, "%u.%u",
+	if (blkid_probe_sprintf_version(pr, "%hu.%hu",
 			JM_MAJOR_VERSION(jm), JM_MINOR_VERSION(jm)) != 0)
 		return 1;
 	if (blkid_probe_set_magic(pr, off, sizeof(jm->signature),

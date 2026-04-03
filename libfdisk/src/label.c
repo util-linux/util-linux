@@ -545,7 +545,7 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 			return -ENOMEM;
 		fdisk_partition_set_type(pa, t);
 
-		DBG_OBJ(CXT, cxt, ul_debug("partition: %zd: set type", partnum));
+		DBG_OBJ(CXT, cxt, ul_debug("partition: %zu: set type", partnum));
 		rc = cxt->label->op->set_part(cxt, partnum, pa);
 		fdisk_unref_partition(pa);
 		return rc;
@@ -576,7 +576,7 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
 
 	rc = cxt->label->op->part_toggle_flag(cxt, partnum, flag);
 
-	DBG_OBJ(CXT, cxt, ul_debug("partition: %zd: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
+	DBG_OBJ(CXT, cxt, ul_debug("partition: %zu: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
 	return rc;
 }
 

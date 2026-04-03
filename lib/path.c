@@ -1270,11 +1270,11 @@ int main(int argc, char *argv[])
 
 		if (ul_path_read_s64(pc, &res, file) != 0)
 			err(EXIT_FAILURE, "read u64 failed");
-		printf("read:  %s: %" PRIu64 "\n", file, res);
+		printf("read:  %s: %" PRId64 "\n", file, res);
 
 		if (ul_path_readf_s64(pc, &res, "%s", file) != 0)
 			err(EXIT_FAILURE, "readf u64 failed");
-		printf("readf: %s: %" PRIu64 "\n", file, res);
+		printf("readf: %s: %" PRId64 "\n", file, res);
 
 	} else if (strcmp(command, "read-majmin") == 0) {
 		dev_t res;

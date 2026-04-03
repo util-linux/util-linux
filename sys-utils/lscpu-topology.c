@@ -454,7 +454,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 				"cpu%d/l1_icache_size", num) == 0)
 		return read_sparc_caches(cxt, cpu);
 
-	DBG_OBJ(CPU, cpu, ul_debug("#%d reading %zd caches", num, ncaches));
+	DBG_OBJ(CPU, cpu, ul_debug("#%d reading %zu caches", num, ncaches));
 
 	for (i = 0; i < ncaches; i++) {
 		struct lscpu_cache *ca;

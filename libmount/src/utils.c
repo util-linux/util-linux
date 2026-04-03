@@ -1636,7 +1636,7 @@ static int tests_stat(struct libmnt_test *ts __attribute__((unused)),
 		printf(" S_ISREG: %s\n", S_ISREG(st.st_mode) ? "y" : "n");
 		printf(" S_IFLNK: %s\n", S_ISLNK(st.st_mode) ? "y" : "n");
 
-		printf("   devno: %lu (%d:%d)\n", (unsigned long) st.st_dev,
+		printf("   devno: %lu (%u:%u)\n", (unsigned long) st.st_dev,
 					  major(st.st_dev), minor(st.st_dev));
 		printf("     ino: %lu\n", (unsigned long) st.st_ino);
 

@@ -78,12 +78,12 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_info(cxt, _("Disk model: %s"), fdisk_get_devmodel(cxt));
 
 	if (lb && (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt)))
-		fdisk_info(cxt, _("Geometry: %d heads, %ju sectors/track, %ju cylinders"),
+		fdisk_info(cxt, _("Geometry: %u heads, %ju sectors/track, %ju cylinders"),
 			       fdisk_get_geom_heads(cxt),
 			       (uintmax_t) fdisk_get_geom_sectors(cxt),
 			       (uintmax_t) fdisk_get_geom_cylinders(cxt));
 
-	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+	fdisk_info(cxt, _("Units: %s of %u * %lu = %lu bytes"),
 	       fdisk_get_unit(cxt, FDISK_PLURAL),
 	       fdisk_get_units_per_sector(cxt),
 	       fdisk_get_sector_size(cxt),
@@ -353,7 +353,7 @@ int list_freespace_get_table(struct fdisk_context *cxt,
 		color_disable();
 		free(strsz);
 
-		fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+		fdisk_info(cxt, _("Units: %s of %u * %lu = %lu bytes"),
 		       fdisk_get_unit(cxt, FDISK_PLURAL),
 		       fdisk_get_units_per_sector(cxt),
 		       fdisk_get_sector_size(cxt),
