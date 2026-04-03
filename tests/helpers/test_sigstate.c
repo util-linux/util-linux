@@ -60,7 +60,7 @@ int main(int argc _U_, char **argv _U_)
 	raise(SIGILL);
 
 #define sigignore(S) if (signal(S, SIG_IGN) == SIG_ERR) \
-		err(EXIT_FAILURE, "failed to make " #S "ignored")
+		err(EXIT_FAILURE, "failed to make " #S " ignored")
 
 	sigignore(SIGHUP);
 	sigignore(SIGQUIT);
