@@ -1094,6 +1094,7 @@ static void loginpam_session(struct login_context *cxt)
 
 	rc = pam_setcred(pamh, PAM_REINITIALIZE_CRED);
 	if (is_pam_failure(rc)) {
+		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
 		pam_close_session(pamh, 0);
 		loginpam_err(pamh, rc);
 	}
