@@ -195,7 +195,7 @@ static void write_tables(const struct fs_control *ctl)
 
 	if (lseek(ctl->device_fd, 0, SEEK_SET))
 		err(MKFS_EX_ERROR, _("%s: seek to boot block failed "
-				   " in write_tables"), ctl->device_name);
+				   "in write_tables"), ctl->device_name);
 	if (write_all(ctl->device_fd, boot_block_buffer, 512))
 		err(MKFS_EX_ERROR, _("%s: unable to clear boot sector"), ctl->device_name);
 	if (MINIX_BLOCK_SIZE != lseek(ctl->device_fd, MINIX_BLOCK_SIZE, SEEK_SET))

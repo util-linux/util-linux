@@ -850,7 +850,7 @@ int main(int argc, char *argv[])
 	if (optind == argc) {
 		dflt_device = get_default_device();
 		if (!dflt_device)
-			err(EXIT_FAILURE, _("No default device is available."));
+			err(EXIT_FAILURE, _("No default device is available"));
 	}
 
 	do {

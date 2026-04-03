@@ -26,7 +26,7 @@ int main(void)
 	}
 
 	if(freopen ("/dev/null", "r", stdin) == NULL)
-		err(EXIT_FAILURE, "stdin->null failed!");
+		err(EXIT_FAILURE, "stdin->null failed");
 
 	ul_MD5Final( digest, &ctx );
 
