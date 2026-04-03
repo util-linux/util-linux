@@ -35,7 +35,6 @@ UL_DEBUG_DEFINE_MASKNAMES(ulpty) = UL_DEBUG_EMPTY_MASKNAMES;
 #define ULPTY_DEBUG_SIG		(1 << 3)
 #define ULPTY_DEBUG_IO		(1 << 4)
 #define ULPTY_DEBUG_DONE	(1 << 5)
-#define ULPTY_DEBUG_ALL		0xFFFF
 
 #define DBG(m, x)		__UL_DBG(ulpty, ULPTY_DEBUG_, m, x)
 #define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(ulpty, ULPTY_DEBUG_, m, h, x)

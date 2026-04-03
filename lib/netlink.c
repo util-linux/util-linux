@@ -29,12 +29,10 @@
 #define ULNETLINK_DEBUG_NLMSG	(1 << 2)
 #define ULNETLINK_DEBUG_ADDR	(1 << 3)
 
-#define ULNETLINK_DEBUG_ALL	0x0F
-
 static UL_DEBUG_DEFINE_MASK(netlink);
 UL_DEBUG_DEFINE_MASKNAMES(netlink) =
 {
-	{ "all",   ULNETLINK_DEBUG_ALL,		"complete netlink debugging" },
+	{ "all",   UL_DEBUG_ALL,		"complete netlink debugging" },
 	{ "help",  ULNETLINK_DEBUG_HELP,	"this help" },
 	{ "nlmsg", ULNETLINK_DEBUG_NLMSG,	"netlink message debugging" },
 	{ "addr",  ULNETLINK_DEBUG_ADDR,	"netlink address processing" },

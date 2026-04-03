@@ -145,7 +145,7 @@ static void hwclock_init_debug(const char *str)
 {
 	__UL_INIT_DEBUG_FROM_STRING(hwclock, HWCLOCK_DEBUG_, 0, str);
 
-	DBG(INIT, ul_debug("hwclock debug mask: 0x%04x", hwclock_debug_mask));
+	DBG(INIT, ul_debug("hwclock debug mask: 0x%08x", hwclock_debug_mask));
 	DBG(INIT, ul_debug("hwclock version: %s", PACKAGE_STRING));
 }
 

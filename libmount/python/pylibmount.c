@@ -21,7 +21,7 @@
 
 /* Libmount-specific Exception class */
 PyObject *LibmountError;
-int pylibmount_debug_mask;
+unsigned pylibmount_debug_mask;
 
 PyObject *UL_IncRef(void *killme)
 {
@@ -232,7 +232,7 @@ PyMODINIT_FUNC initpylibmount(void)
 	}
 
 	if (pylibmount_debug_mask && pylibmount_debug_mask != PYMNT_DEBUG_INIT)
-		DBG(INIT, pymnt_debug("library debug mask: 0x%04x",
+		DBG(INIT, pymnt_debug("library debug mask: 0x%08x",
 					pylibmount_debug_mask));
 	mnt_init_debug(0);
 

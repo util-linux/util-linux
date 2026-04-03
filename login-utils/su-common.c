@@ -83,7 +83,6 @@ UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
 #define SU_DEBUG_MISC		(1 << 6)
 #define SU_DEBUG_SIG		(1 << 7)
 #define SU_DEBUG_PTY		(1 << 8)
-#define SU_DEBUG_ALL		0xFFFF
 
 #define DBG(m, x)       __UL_DBG(su, SU_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(su, SU_DEBUG_, m, x)

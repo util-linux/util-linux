@@ -21,17 +21,17 @@ void ul_debug(const char *mesg, ...)
 }
 
 void ul_debug_prefix(const char *lib, const char *flag,
-		     const void *handler, int mask)
+		     const void *handle, int mask)
 {
 	fprintf(stderr, "%d: %s: %8s: ", getpid(), lib, flag);
-	if (handler && !(mask & __UL_DEBUG_FL_NOADDR))
-		fprintf(stderr, "[%p]: ", handler);
+	if (handle && !(mask & __UL_DEBUG_FL_NOADDR))
+		fprintf(stderr, "[%p]: ", handle);
 }
 
-int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
-			const char *mask)
+unsigned ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
+			     const char *mask)
 {
-	int res;
+	unsigned res;
 	char *ptr;
 
 	/* let's check for a numeric mask first */
@@ -57,12 +57,12 @@ int ul_debug_parse_mask(const struct ul_debug_maskname flagnames[],
 				}
 			}
 			/* nothing else we can do by OR-ing the mask */
-			if (res == 0xffff)
+			if (res == UL_DEBUG_ALL)
 				break;
 		}
 		free(msbuf);
 	} else if (ptr && strcmp(ptr, "all") == 0)
-		res = 0xffff;
+		res = UL_DEBUG_ALL;
 
 	return res;
 }

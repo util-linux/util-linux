@@ -47,7 +47,6 @@ UL_DEBUG_DECLARE_MASK(lsfd);
 
 #define LSFD_DEBUG_INIT	     (1 << 1)
 #define LSFD_DEBUG_ENDPOINTS (1 << 2)
-#define LSFD_DEBUG_ALL       0xFFFF
 
 #define DBG(m, x)       __UL_DBG(lsfd, LSFD_DEBUG_, m, x)
 

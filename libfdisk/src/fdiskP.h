@@ -42,7 +42,6 @@
 #define LIBFDISK_DEBUG_WIPE	(1 << 10)
 #define LIBFDISK_DEBUG_ITEM	(1 << 11)
 #define LIBFDISK_DEBUG_GPT	(1 << 12)
-#define LIBFDISK_DEBUG_ALL	0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
 #define DBG(m, x)		__UL_DBG(libfdisk, LIBFDISK_DEBUG_, m, x)

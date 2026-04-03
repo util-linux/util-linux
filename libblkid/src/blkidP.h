@@ -349,7 +349,6 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_SAVE	(1 << 11)
 #define BLKID_DEBUG_TAG		(1 << 12)
 #define BLKID_DEBUG_BUFFER	(1 << 13)
-#define BLKID_DEBUG_ALL		0xFFFF		/* (1 << 16) aka FFFF is expected by API */
 
 UL_DEBUG_DECLARE_MASK(libblkid);
 #define DBG(m, x)		__UL_DBG(libblkid, BLKID_DEBUG_, m, x)

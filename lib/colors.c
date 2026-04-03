@@ -55,7 +55,6 @@ UL_DEBUG_DEFINE_MASKNAMES(termcolors) = UL_DEBUG_EMPTY_MASKNAMES;
 #define TERMCOLORS_DEBUG_INIT	(1 << 1)
 #define TERMCOLORS_DEBUG_CONF	(1 << 2)
 #define TERMCOLORS_DEBUG_SCHEME	(1 << 3)
-#define TERMCOLORS_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(termcolors, TERMCOLORS_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(termcolors, TERMCOLORS_DEBUG_, m, x)

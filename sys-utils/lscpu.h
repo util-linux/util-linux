@@ -31,7 +31,6 @@
 #define LSCPU_DEBUG_TYPE	(1 << 4)
 #define LSCPU_DEBUG_CPU		(1 << 5)
 #define LSCPU_DEBUG_VIRT	(1 << 6)
-#define LSBLK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(lscpu);
 #define DBG(m, x)		__UL_DBG(lscpu, LSCPU_DEBUG_, m, x)

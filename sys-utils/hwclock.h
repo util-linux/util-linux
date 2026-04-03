@@ -23,7 +23,6 @@
 #define HWCLOCK_DEBUG_INIT		(1 << 0)
 #define HWCLOCK_DEBUG_RANDOM_SLEEP	(1 << 1)
 #define HWCLOCK_DEBUG_DELTA_VS_TARGET	(1 << 2)
-#define HWCLOCK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(hwclock);
 #define DBG(m, x)	__UL_DBG(hwclock, HWCLOCK_DEBUG_, m, x)

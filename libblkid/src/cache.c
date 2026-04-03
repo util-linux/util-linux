@@ -209,7 +209,7 @@ int main(int argc, char** argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_init_debug(BLKID_DEBUG_ALL);
+	blkid_init_debug(UL_DEBUG_ALL);
 
 	if ((argc > 2)) {
 		fprintf(stderr, "Usage: %s [filename] \n", argv[0]);

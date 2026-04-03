@@ -36,7 +36,6 @@
 #define SCOLS_DEBUG_GROUP	(1 << 7)
 #define SCOLS_DEBUG_FLTR	(1 << 8)
 #define SCOLS_DEBUG_FPARAM	(1 << 9)
-#define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);
 #define DBG(m, x)		__UL_DBG(libsmartcols, SCOLS_DEBUG_, m, x)
