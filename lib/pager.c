@@ -120,21 +120,22 @@ static int start_command(struct child_process *cmd)
 static int wait_for_pager(void)
 {
 	pid_t waiting;
-	int status;
+	int ret, status;
 
 	do {
 		waiting = waitpid(pager_process.pid, &status, 0);
 	} while (waiting == -1 && errno == EINTR);
 
+	if (waiting == -1)
+		ret = -1;
+	else if (waiting == pager_process.pid && WIFEXITED(status))
+		ret = WEXITSTATUS(status);
+	else
+		ret = 1;
+
 	pager_process.pid = 0;
 
-	if (waiting == -1)
-		return -1;
-
-	if (waiting == pager_process.pid && WIFEXITED(status))
-		return WEXITSTATUS(status);
-
-	return 1;
+	return ret;
 }
 
 static void catch_signal(int signo)
