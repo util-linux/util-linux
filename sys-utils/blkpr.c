@@ -269,7 +269,7 @@ static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, in
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
-	switch (op) {
+	switch ((int64_t)op) {
 	case IOC_PR_REGISTER:
 		pr_reg.old_key = oldkey;
 		pr_reg.new_key = key;
