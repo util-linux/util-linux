@@ -965,6 +965,26 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	return 0;
 }
 #else
+struct number_buffer {
+	char buffer[16];
+	size_t pos;
+};
+
+/*
+ * Parses number in buffer, stores the result in val, and resets buffer.
+ *
+ * Calls err if number does not fit into val.
+ */
+static void
+number_parse(struct number_buffer *nb, unsigned int *val)
+{
+	if (nb->pos > 0) {
+		nb->buffer[nb->pos] = '\0';
+		*val = strtou32_or_err(nb->buffer, _("failed to parse number"));
+		nb->pos = 0;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	struct last_control ctl = {
@@ -975,6 +995,10 @@ int main(int argc, char **argv)
 		.fullnames_mode = false,
 	};
 	char **files = NULL;
+	struct number_buffer nb = {
+		.pos = 0
+	};
+	int numind;
 	size_t i, nfiles = 0;
 	int c;
 	usec_t p;
@@ -1016,8 +1040,10 @@ int main(int argc, char **argv)
 	 */
 	ctl.lastb = strcmp(program_invocation_short_name, "lastb") == 0 ? 1 : 0;
 	ctl.separator = ' ';
+	numind = optind;
 	while ((c = getopt_long(argc, argv,
 			 "hVf:n:RxadFit:p:s:T0123456789w", long_opts, NULL)) != -1) {
+		int digit = 0;
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -1077,7 +1103,11 @@ int main(int argc, char **argv)
 			break;
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':
-			ctl.maxrecs = 10 * ctl.maxrecs + c - '0';
+			digit = 1;
+			if (c == '0' && nb.pos == 1 && nb.buffer[0] == '0')
+				; /* keep only one leading zero */
+			else if (nb.pos < sizeof(nb.buffer) - 1)
+				nb.buffer[nb.pos++] = c;
 			break;
 		case OPT_TIME_FORMAT:
 			ctl.time_fmt = which_time_format(optarg);
@@ -1088,7 +1118,15 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+
+		/* parsed no digit or reached end of argument? */
+		if (!digit || numind != optind) {
+			number_parse(&nb, &ctl.maxrecs);
+			numind = optind;
+		}
 	}
+
+	number_parse(&nb, &ctl.maxrecs);
 
 	if (optind < argc)
 		ctl.show = argv + optind;
