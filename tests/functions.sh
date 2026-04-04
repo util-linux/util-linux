@@ -176,7 +176,7 @@ function ts_skip_capability {
 }
 
 function ts_skip_qemu_user {
-	if [ "$QEMU_USER" == "1" ]; then
+	if [ "$QEMU_USER" == "1" ] || grep -q 'qemu-' /proc/1/smaps >/dev/null 2>&1; then
 		ts_skip "running under qemu-user emulation"
 	fi
 }
