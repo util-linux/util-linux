@@ -1060,7 +1060,7 @@ int main(int argc, char **argv)
 			ctl.extended = 1;
 			break;
 		case 'n':
-			ctl.maxrecs = strtos32_or_err(optarg, _("failed to parse number"));
+			ctl.maxrecs = strtou32_or_err(optarg, _("failed to parse number"));
 			break;
 		case 'f':
 			if (!files)
