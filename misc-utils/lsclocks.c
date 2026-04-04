@@ -123,7 +123,7 @@ static const char *clock_type_name(enum CLOCK_TYPE type)
 	case CT_RTC:
 		return "rtc";
 	}
-	errx(EXIT_FAILURE, _("Unknown clock type %d"), type);
+	errx(EXIT_FAILURE, _("Unknown clock type %u"), type);
 }
 
 struct clockinfo {
@@ -251,7 +251,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 static void scols_line_format_timespec(struct libscols_line *ln, size_t n, const struct timespec *ts)
 {
-	scols_line_sprintf(ln, n, "%ju.%09" PRId32, (uintmax_t) ts->tv_sec, (uint32_t) ts->tv_nsec);
+	scols_line_sprintf(ln, n, "%ju.%09" PRIu32, (uintmax_t) ts->tv_sec, (uint32_t) ts->tv_nsec);
 }
 
 static clockid_t parse_clock(const char *name)
@@ -656,7 +656,7 @@ int main(int argc, char **argv)
 		rc = clock_gettime(clock, &now);
 		if (rc)
 			err(EXIT_FAILURE, _("failed to get time"));
-		printf("%ju.%09"PRId32"\n", (uintmax_t) now.tv_sec, (uint32_t) now.tv_nsec);
+		printf("%ju.%09"PRIu32"\n", (uintmax_t) now.tv_sec, (uint32_t) now.tv_nsec);
 		return EXIT_SUCCESS;
 	}
 

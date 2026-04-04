@@ -561,7 +561,7 @@ int main(int argc, char **argv)
 
 	if (ctl.verbose)
 		printf(_("alarm %"PRId64", sys_time %"PRId64", "
-			 "rtc_time %"PRId64", seconds %"PRIu64"\n"),
+			 "rtc_time %"PRId64", seconds %"PRId64"\n"),
 				(int64_t) alarm, (int64_t) ctl.sys_time,
 				(int64_t) ctl.rtc_time,
 				(int64_t) seconds);

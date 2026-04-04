@@ -143,7 +143,7 @@ uint64_t btrfs_get_default_subvol_id(const char *path)
 		DBG(BTRFS, ul_debug("root tree dir object id not found"));
 		goto out;
 	}
-	DBG(BTRFS, ul_debug("found %d root tree dir object id items", sk->nr_items));
+	DBG(BTRFS, ul_debug("found %"PRIu32" root tree dir object id items", sk->nr_items));
 
 	sh = (struct btrfs_ioctl_search_header *)args.buf;
 

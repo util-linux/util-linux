@@ -644,7 +644,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		}
 		if (!curr_user) {
 			DBG_OBJ(CXT, cxt, ul_debug("umount %s: cannot "
-				"convert %d to username", tgt, getuid()));
+				"convert %u to username", tgt, getuid()));
 			goto eperm;
 		}
 

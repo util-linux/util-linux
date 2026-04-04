@@ -5,6 +5,7 @@
  * Written by Karel Zak <kzak@redhat.com> [2011]
  */
 #include <ctype.h>
+#include <inttypes.h>
 #include <libgen.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -77,7 +78,7 @@ int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *pa
 		 + 3];
 
 	/* define path to devno stuff */
-	snprintf(buf, sizeof(buf), _PATH_SYS_DEVBLOCK "/%d:%d", major(devno), minor(devno));
+	snprintf(buf, sizeof(buf), _PATH_SYS_DEVBLOCK "/%u:%u", major(devno), minor(devno));
 	rc = ul_path_set_dir(pc, buf);
 	if (rc)
 		return rc;
@@ -1184,12 +1185,12 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, "failed to read devno");
 
 	printf("non-context:\n");
-	printf(" DEVNO:   %u (%d:%d)\n", (unsigned int) devno, major(devno), minor(devno));
+	printf(" DEVNO:   %u (%u:%u)\n", (unsigned int) devno, major(devno), minor(devno));
 	printf(" DEVNAME: %s\n", sysfs_devno_to_devname(devno, path, sizeof(path)));
 	printf(" DEVPATH: %s\n", sysfs_devno_to_devpath(devno, path, sizeof(path)));
 
 	sysfs_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
-	printf(" WHOLEDISK-DEVNO:   %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
+	printf(" WHOLEDISK-DEVNO:   %u (%u:%u)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
 	printf(" WHOLEDISK-DEVNAME: %s\n", diskname);
 
 	pc = ul_new_sysfs_path(devno, NULL, NULL);
@@ -1198,12 +1199,12 @@ int main(int argc, char *argv[])
 
 	printf("context based:\n");
 	devno = sysfs_blkdev_get_devno(pc);
-	printf(" DEVNO:   %u (%d:%d)\n", (unsigned int) devno, major(devno), minor(devno));
+	printf(" DEVNO:   %u (%u:%u)\n", (unsigned int) devno, major(devno), minor(devno));
 	printf(" DEVNAME: %s\n", sysfs_blkdev_get_name(pc, path, sizeof(path)));
 	printf(" DEVPATH: %s\n", sysfs_blkdev_get_path(pc, path, sizeof(path)));
 
 	sysfs_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
-	printf(" WHOLEDISK-DEVNO: %u (%d:%d)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
+	printf(" WHOLEDISK-DEVNO: %u (%u:%u)\n", (unsigned int) disk_devno, major(disk_devno), minor(disk_devno));
 	printf(" WHOLEDISK-DEVNAME: %s\n", diskname);
 
 	is_part = ul_path_access(pc, F_OK, "partition") == 0;
@@ -1225,14 +1226,14 @@ int main(int argc, char *argv[])
 		for (i = 1; i <= 5; i++) {
 			dev_t dev = sysfs_blkdev_partno_to_devno(pc, i);
 			if (dev)
-				printf("\t#%d %d:%d\n", i, major(dev), minor(dev));
+				printf("\t#%d %u:%u\n", i, major(dev), minor(dev));
 		}
 	}
 
 	if (ul_path_read_u64(pc, &u64, "size") != 0)
 		printf(" (!) read SIZE failed\n");
 	else
-		printf(" SIZE: %jd\n", u64);
+		printf(" SIZE: %"PRIu64"\n", u64);
 
 	if (ul_path_read_s32(pc, &i, "queue/hw_sector_size"))
 		printf(" (!) read SECTOR failed\n");

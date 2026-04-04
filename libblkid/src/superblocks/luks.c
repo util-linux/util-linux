@@ -81,7 +81,7 @@ static int luks_attributes(blkid_probe pr, struct luks2_phdr *header, uint64_t o
 		return BLKID_PROBE_NONE;
 
 	version = be16_to_cpu(header->version);
-	blkid_probe_sprintf_version(pr, "%u", version);
+	blkid_probe_sprintf_version(pr, "%d", version);
 
 	if (version == 1) {
 		header_v1 = (struct luks_phdr *)header;

@@ -425,7 +425,7 @@ blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
 	list_add_tail(&tab->t_tabs, &ls->l_tabs);
 
 	DBG(LOWPROBE, ul_debug("parts: create a new partition table "
-		       "(type=%s, offset=%"PRId64")", type, offset));
+		       "(type=%s, offset=%"PRIu64")", type, offset));
 	return tab;
 }
 
@@ -855,7 +855,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 
 		if (par->start + par->size > (pr->size >> 9)) {
 			DBG(LOWPROBE, ul_debug("partition #%d overflows "
-				"device (off=%" PRId64 " size=%" PRId64 ")",
+				"device (off=%" PRIu64 " size=%" PRIu64 ")",
 				par->partno, par->start, par->size));
 			goto done;
 		}

@@ -686,7 +686,7 @@ int is_loopdev(const char *device)
 		 */
 		char name[PATH_MAX], *cn, *p = NULL;
 
-		snprintf(name, sizeof(name), _PATH_SYS_DEVBLOCK "/%d:%d",
+		snprintf(name, sizeof(name), _PATH_SYS_DEVBLOCK "/%u:%u",
 				major(st.st_rdev), minor(st.st_rdev));
 		cn = ul_canonicalize_path(name);
 		if (cn)
@@ -1167,7 +1167,7 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 		return -EINVAL;
 	lc->config.info.lo_offset = offset;
 
-	DBG_OBJ(CXT, lc, ul_debug("set offset=%jd", offset));
+	DBG_OBJ(CXT, lc, ul_debug("set offset=%"PRIu64, offset));
 	return 0;
 }
 
@@ -1180,7 +1180,7 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 		return -EINVAL;
 	lc->config.info.lo_sizelimit = sizelimit;
 
-	DBG_OBJ(CXT, lc, ul_debug("set sizelimit=%jd", sizelimit));
+	DBG_OBJ(CXT, lc, ul_debug("set sizelimit=%"PRIu64, sizelimit));
 	return 0;
 }
 
@@ -1196,7 +1196,7 @@ int loopcxt_set_blocksize(struct loopdev_cxt *lc, uint64_t blocksize)
 		return -EINVAL;
 	lc->blocksize = blocksize;
 
-	DBG_OBJ(CXT, lc, ul_debug("set blocksize=%jd", blocksize));
+	DBG_OBJ(CXT, lc, ul_debug("set blocksize=%"PRIu64, blocksize));
 	return 0;
 }
 

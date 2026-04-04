@@ -292,11 +292,11 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			break;
 		case COL_OFFSET:
 			if (loopcxt_get_offset(lc, &x) == 0)
-				xasprintf(&np, "%jd", x);
+				xasprintf(&np, "%"PRIu64, x);
 			break;
 		case COL_SIZELIMIT:
 			if (loopcxt_get_sizelimit(lc, &x) == 0)
-				xasprintf(&np, "%jd", x);
+				xasprintf(&np, "%"PRIu64, x);
 			break;
 		case COL_BACK_MAJMIN:
 		{
@@ -361,7 +361,7 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			break;
 		case COL_LOGSEC:
 			if (loopcxt_get_blocksize(lc, &x) == 0)
-				xasprintf(&np, "%jd", x);
+				xasprintf(&np, "%"PRIu64, x);
 			break;
 		case COL_REF:
 			np = loopcxt_get_refname(lc);

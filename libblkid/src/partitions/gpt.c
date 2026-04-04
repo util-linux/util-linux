@@ -383,7 +383,7 @@ static int probe_gpt_pt(blkid_probe pr,
 		/* the partition has to inside usable range */
 		if (start < fu || start + size - 1 > lu) {
 			DBG(LOWPROBE, ul_debug(
-				"GPT entry[%d] overflows usable area - ignore",
+				"GPT entry[%"PRIu32"] overflows usable area - ignore",
 				i));
 			blkid_partlist_increment_partno(ls);
 			continue;

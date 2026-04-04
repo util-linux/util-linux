@@ -184,10 +184,10 @@ static void add_scols_line(struct irq_output *out,
 			xasprintf(&str, "%s", info->irq);
 			break;
 		case COL_TOTAL:
-			xasprintf(&str, "%ld", info->total);
+			xasprintf(&str, "%lu", info->total);
 			break;
 		case COL_DELTA:
-			xasprintf(&str, "%ld", info->delta);
+			xasprintf(&str, "%lu", info->delta);
 			break;
 		case COL_NAME:
 			xasprintf(&str, "%s", info->name);

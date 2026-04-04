@@ -121,7 +121,7 @@ char *fdisk_partname(const char *dev, size_t partno)
 	int w = 0;
 
 	if (!dev || !*dev) {
-		if (asprintf(&res, "%zd", partno) > 0)
+		if (asprintf(&res, "%zu", partno) > 0)
 			return res;
 		return NULL;
 	}

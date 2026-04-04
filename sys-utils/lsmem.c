@@ -277,7 +277,7 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 		}
 		case COL_SIZE:
 			if (lsmem->bytes)
-				xasprintf(&str, "%"PRId64, (uint64_t) blk->count * lsmem->block_size);
+				xasprintf(&str, "%"PRIu64, (uint64_t) blk->count * lsmem->block_size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER,
 						(uint64_t) blk->count * lsmem->block_size);
@@ -295,9 +295,9 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 			break;
 		case COL_BLOCK:
 			if (blk->count == 1)
-				xasprintf(&str, "%"PRId64, blk->index);
+				xasprintf(&str, "%"PRIu64, blk->index);
 			else
-				xasprintf(&str, "%"PRId64"-%"PRId64,
+				xasprintf(&str, "%"PRIu64"-%"PRIu64,
 					 blk->index, blk->index + blk->count - 1);
 			break;
 		case COL_NODE:
@@ -365,9 +365,9 @@ static void print_summary(struct lsmem *lsmem)
 	const char *prefix;
 
 	if (lsmem->bytes) {
-		printf("%-32s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
-		printf("%-32s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
-		printf("%-32s %15"PRId64"\n",_("Total offline memory:"), lsmem->mem_offline);
+		printf("%-32s %15"PRIu64"\n",_("Memory block size:"), lsmem->block_size);
+		printf("%-32s %15"PRIu64"\n",_("Total online memory:"), lsmem->mem_online);
+		printf("%-32s %15"PRIu64"\n",_("Total offline memory:"), lsmem->mem_offline);
 	} else {
 		char *p;
 

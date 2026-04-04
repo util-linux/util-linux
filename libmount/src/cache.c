@@ -240,7 +240,7 @@ static int cache_add_entry(struct libmnt_cache *cache, char *key,
 	e->flag = flag;
 	cache->nents++;
 
-	DBG_OBJ(CACHE, cache, ul_debug("add entry [%2zd] (%s): %s: %s",
+	DBG_OBJ(CACHE, cache, ul_debug("add entry [%2zu] (%s): %s: %s",
 			cache->nents,
 			(flag & MNT_CACHE_ISPATH) ? "path" : "tag",
 			value, key));
@@ -415,7 +415,7 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 	}
 
 done:
-	DBG_OBJ(CACHE, cache, ul_debug("\tread %zd tags [rc=%d]", ntags, rc));
+	DBG_OBJ(CACHE, cache, ul_debug("\tread %zu tags [rc=%d]", ntags, rc));
 	blkid_free_probe(pr);
 	free(cacheval);
 
@@ -468,7 +468,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 		free(tagval), tagval = NULL;
 	}
 
-	DBG_OBJ(CACHE, cache, ul_debug("\tread %zd tags [rc=%d]", ntags, rc));
+	DBG_OBJ(CACHE, cache, ul_debug("\tread %zu tags [rc=%d]", ntags, rc));
 	sd_device_unref(sd);
 	free(cacheval);
 	free(tagval);

@@ -648,15 +648,15 @@ read_tables(void) {
 	}
 	get_dirsize();
 	if (show) {
-		printf(_("%ld inodes\n"), inodes);
-		printf(_("%ld blocks\n"), zones);
+		printf(_("%lu inodes\n"), inodes);
+		printf(_("%lu blocks\n"), zones);
 		printf(_("Firstdatazone=%jd (%jd)\n"),
 			(intmax_t)first_zone, (intmax_t)norm_first_zone);
 		printf(_("Zonesize=%d\n"), MINIX_BLOCK_SIZE << get_zone_size());
 		printf(_("Maxsize=%zu\n"), get_max_size());
 		if (fs_version < 3)
 			printf(_("Filesystem state=%d\n"), Super.s_state);
-		printf(_("namelen=%zd\n\n"), namelen);
+		printf(_("namelen=%zu\n\n"), namelen);
 	}
 }
 
@@ -671,7 +671,7 @@ get_inode(unsigned int nr) {
 	if (!inode_count[nr]) {
 		if (!inode_in_use(nr)) {
 			get_current_name();
-			printf(_("Inode %d marked unused, "
+			printf(_("Inode %u marked unused, "
 				 "but used for file '%s'\n"), nr, current_name);
 			if (repair) {
 				if (ask(_("Mark in use"), 1))
@@ -721,7 +721,7 @@ get_inode2(unsigned int nr) {
 	if (!inode_count[nr]) {
 		if (!inode_in_use(nr)) {
 			get_current_name();
-			printf(_("Inode %d marked unused, "
+			printf(_("Inode %u marked unused, "
 				 "but used for file '%s'\n"), nr, current_name);
 			if (repair) {
 				if (ask(_("Mark in use"), 1))
@@ -1008,7 +1008,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	name_depth++;
 	if (list) {
 		if (verbose)
-			printf("%6d %07o %3d ", ino,
+			printf("%6u %07o %3d ", ino,
 			       inode->i_mode, inode->i_nlinks);
 		get_current_name();
 		printf("%s", current_name);
@@ -1398,13 +1398,13 @@ main(int argc, char **argv) {
 		for (inode = 1, free = 0; inode <= get_ninodes(); inode++)
 			if (!inode_in_use(inode))
 				free++;
-		printf(_("\n%6ld inodes used (%ld%%)\n"),
+		printf(_("\n%6lu inodes used (%lu%%)\n"),
 		       (get_ninodes() - free),
 		       100 * (get_ninodes() - free) / get_ninodes());
 		for (inode = get_first_zone(), free = 0; inode < get_nzones(); inode++)
 			if (!zone_in_use(inode))
 				free++;
-		printf(_("%6ld zones used (%ld%%)\n"), (get_nzones() - free),
+		printf(_("%6lu zones used (%lu%%)\n"), (get_nzones() - free),
 		       100 * (get_nzones() - free) / get_nzones());
 		printf(_("\n%6d regular files\n"
 			 "%6d directories\n"

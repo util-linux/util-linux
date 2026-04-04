@@ -6,6 +6,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -77,7 +78,7 @@ static int probe_solaris_pt(blkid_probe pr,
 
 	if (le32_to_cpu(l->v_version) != 1) {
 		DBG(LOWPROBE, ul_debug(
-			"WARNING: unsupported solaris x86 version %d, ignore",
+			"WARNING: unsupported solaris x86 version %"PRIu32", ignore",
 			le32_to_cpu(l->v_version)));
 		goto nothing;
 	}

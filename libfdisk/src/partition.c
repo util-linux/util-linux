@@ -1571,7 +1571,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
 
 	fdisk_wipe_partition(cxt, partno, 0);
 
-	DBG_OBJ(CXT, cxt, ul_debug("deleting %s partition number %zd",
+	DBG_OBJ(CXT, cxt, ul_debug("deleting %s partition number %zu",
 				cxt->label->name, partno));
 	return cxt->label->op->del_part(cxt, partno);
 }

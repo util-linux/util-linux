@@ -235,7 +235,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 		goto dflt;
 	parent++;
 
-	snprintf(path, sizeof(path), _PATH_SYS_DEVBLOCK "/%d:%d/",
+	snprintf(path, sizeof(path), _PATH_SYS_DEVBLOCK "/%u:%u/",
 			major(devno), minor(devno));
 
 	dir = opendir(path);
@@ -601,15 +601,15 @@ static int add_scols_line(struct libscols_table *table, blkid_partition par)
 			xasprintf(&str, "%d", blkid_partition_get_partno(par));
 			break;
 		case COL_START:
-			xasprintf(&str, "%ju", blkid_partition_get_start(par));
+			xasprintf(&str, "%"PRId64, blkid_partition_get_start(par));
 			break;
 		case COL_END:
-			xasprintf(&str, "%ju",
+			xasprintf(&str, "%"PRId64,
 					blkid_partition_get_start(par) +
 					blkid_partition_get_size(par) - 1);
 			break;
 		case COL_SECTORS:
-			xasprintf(&str, "%ju", blkid_partition_get_size(par));
+			xasprintf(&str, "%"PRId64, blkid_partition_get_size(par));
 			break;
 		case COL_SIZE:
 			if (partx_flags & FL_BYTES)

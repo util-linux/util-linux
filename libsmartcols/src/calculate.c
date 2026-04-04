@@ -12,7 +12,7 @@ static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 
 	st = &cl->wstat;
 
-	DBG_OBJ(COL, cl, ul_debug("#%zu %12s: width=%zd "
+	DBG_OBJ(COL, cl, ul_debug("#%zu %12s: width=%zu "
 				 "hint=%d max=%zu min=%zu "
 				 "0x04%x [%s%s%s]",
 
@@ -400,7 +400,7 @@ static int reduce_column(struct libscols_table *tb,
 		cl->flags |= SCOLS_FL_HIDDEN;
 
 	if (cl->width != org_width)
-		DBG_OBJ(COL, cl, ul_debug(" [%02zd] %s reduced %zu-->%zu",
+		DBG_OBJ(COL, cl, ul_debug(" [%02zu] %s reduced %zu-->%zu",
 					cl->seqnum,
 					cl->header.data, org_width, cl->width));
 
@@ -551,7 +551,7 @@ int __scols_calculate(struct libscols_table *tb, struct ul_buffer *buf)
 
 				if (!add)
 					continue;
-				DBG_OBJ(COL, cl, ul_debug("  add +%zd (%s)",
+				DBG_OBJ(COL, cl, ul_debug("  add +%zu (%s)",
 							add, cl->header.data));
 				cl->width += add;
 				width += add;

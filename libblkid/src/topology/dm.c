@@ -76,8 +76,8 @@ static int probe_dm_tp(blkid_probe pr,
 		if (drop_permissions() != 0)
 			 _exit(1);
 
-		snprintf(maj, sizeof(maj), "%d", major(devno));
-		snprintf(min, sizeof(min), "%d", minor(devno));
+		snprintf(maj, sizeof(maj), "%u", major(devno));
+		snprintf(min, sizeof(min), "%u", minor(devno));
 
 		dmargv[0] = cmd;
 		dmargv[1] = "table";

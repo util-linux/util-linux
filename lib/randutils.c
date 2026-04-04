@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 	printf("Multiple random calls:\n");
 	for (i = 0; i < n; i++) {
 		ul_random_get_bytes(&v, sizeof(v));
-		printf("#%02zu: %25"PRIu64"\n", i, v);
+		printf("#%02zu: %25"PRId64"\n", i, v);
 	}
 
 
@@ -227,7 +227,7 @@ int main(int argc, char *argv[])
 	ul_random_get_bytes(buf, bufsz);
 	for (i = 0; i < n; i++) {
 		vp = (int64_t *) (buf + (i * sizeof(*vp)));
-		printf("#%02zu: %25"PRIu64"\n", i, *vp);
+		printf("#%02zu: %25"PRId64"\n", i, *vp);
 	}
 
 	return EXIT_SUCCESS;

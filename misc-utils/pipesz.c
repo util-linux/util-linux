@@ -74,7 +74,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, stdout);
 	fputsln(_(" -g, --get          examine pipe buffers"), stdout);
 	fprintf(stdout,
-		_(" -s, --set <size>   the buffer size to be used (default: %u)\n"), opt_size);
+		_(" -s, --set <size>   the buffer size to be used (default: %d)\n"), opt_size);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputsln(_(" -f, --file <path>  act on a file"), stdout);

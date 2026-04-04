@@ -8,6 +8,7 @@
  *
  * Inspired by fdisk, partx, Linux kernel and libparted.
  */
+#include <inttypes.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -51,7 +52,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 	int ct_nodata = 0;	/* count ext.partitions without data partitions */
 	int i;
 
-	DBG(LOWPROBE, ul_debug("parse EBR [start=%d, size=%d]", ex_start/ssf, ex_size/ssf));
+	DBG(LOWPROBE, ul_debug("parse EBR [start=%"PRIu32", size=%"PRIu32"]", ex_start/ssf, ex_size/ssf));
 	if (ex_start == 0) {
 		DBG(LOWPROBE, ul_debug("Bad offset in primary extended partition -- ignore"));
 		return 0;

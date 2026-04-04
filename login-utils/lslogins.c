@@ -1417,7 +1417,7 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 	else
 		sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
 
-	xasprintf(&match, "_UID=%d", uid);
+	xasprintf(&match, "_UID=%u", uid);
 
 	sd_journal_add_match(j, match, 0);
 	sd_journal_seek_tail(j);

@@ -979,10 +979,10 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							  (time_t) p->q_rtime));
 				break;
 			case COL_LSPID:
-				rc = scols_line_sprintf(ln, n, "%u", p->q_lspid);
+				rc = scols_line_sprintf(ln, n, "%d", p->q_lspid);
 				break;
 			case COL_LRPID:
-				rc = scols_line_sprintf(ln, n, "%u", p->q_lrpid);
+				rc = scols_line_sprintf(ln, n, "%d", p->q_lrpid);
 				break;
 			}
 			if (rc != 0)
@@ -1294,10 +1294,10 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							  (time_t) p->shm_dtim));
 				break;
 			case COL_CPID:
-				rc = scols_line_sprintf(ln, n, "%u", p->shm_cprid);
+				rc = scols_line_sprintf(ln, n, "%d", p->shm_cprid);
 				break;
 			case COL_LPID:
-				rc = scols_line_sprintf(ln, n, "%u", p->shm_lprid);
+				rc = scols_line_sprintf(ln, n, "%d", p->shm_lprid);
 				break;
 			case COL_COMMAND:
 				arg = pid_get_cmdline(p->shm_cprid);

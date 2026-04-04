@@ -202,7 +202,7 @@ static void test_super(int *start)
 
 	/* What are valid superblock sizes? */
 	if (super.size < *start + sizeof(struct cramfs_super))
-		errx(FSCK_EX_UNCORRECTED, _("superblock size (%d) too small"),
+		errx(FSCK_EX_UNCORRECTED, _("superblock size (%"PRIu32") too small"),
 		     super.size);
 
 	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2) {
@@ -289,7 +289,7 @@ static void print_node(char type, struct cramfs_inode *i, char *name)
 
 	if (S_ISCHR(i->mode) || (S_ISBLK(i->mode)))
 		/* major/minor numbers can be as high as 2^12 or 4096 */
-		snprintf(info, 10, "%4d,%4d", major(i->size), minor(i->size));
+		snprintf(info, 10, "%4u,%4u", major(i->size), minor(i->size));
 	else
 		/* size be as high as 2^24 or 16777216 */
 		snprintf(info, 10, "%9d", i->size);
@@ -412,11 +412,11 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 		if (size >= blksize) {
 			if (out != blksize)
 				errx(FSCK_EX_UNCORRECTED,
-				     _("non-block (%ld) bytes"), out);
+				     _("non-block (%lu) bytes"), out);
 		} else {
 			if (out != size)
 				errx(FSCK_EX_UNCORRECTED,
-				     _("non-size (%ld vs %ld) bytes"), out,
+				     _("non-size (%lu vs %lu) bytes"), out,
 				     size);
 		}
 		size -= out;

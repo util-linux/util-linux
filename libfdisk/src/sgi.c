@@ -622,12 +622,12 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 
 		if (verbose && sgi_get_start_sector(cxt, Index[0]) != 0)
 			fdisk_info(cxt, _("The entire disk partition should "
-					  "start at block 0, not at block %d."),
+					  "start at block 0, not at block %u."),
 				   sgi_get_start_sector(cxt, Index[0]));
 
 		if (verbose && sgi_get_num_sectors(cxt, Index[0]) != lastblock)
 			DBG(LABEL, ul_debug(
-				"entire disk partition=%ds, but disk=%ds",
+				"entire disk partition=%us, but disk=%us",
 				sgi_get_num_sectors(cxt, Index[0]),
 				lastblock));
 		lastblock = sgi_get_num_sectors(cxt, Index[0]);
@@ -656,8 +656,8 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		if (start > sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
 				fdisk_info(cxt,
-					   P_("Partitions %d and %d overlap by %d sector.",
-					      "Partitions %d and %d overlap by %d sectors.",
+					   P_("Partitions %d and %d overlap by %u sector.",
+					      "Partitions %d and %d overlap by %u sectors.",
 					      start - sgi_get_start_sector(cxt, Index[i])),
 					   Index[i-1]+1, Index[i]+1,
 					   start - sgi_get_start_sector(cxt, Index[i]));
@@ -682,7 +682,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		if (cylsize && start % cylsize)
 			start += cylsize - (start % cylsize);
 
-		DBG(LABEL, ul_debug("%2d:%12d\t%12d\t%12d", Index[i],
+		DBG(LABEL, ul_debug("%2d:%12u\t%12u\t%12d", Index[i],
 				       sgi_get_start_sector(cxt, Index[i]),
 				       sgi_get_num_sectors(cxt, Index[i]),
 				       sgi_get_sysid(cxt, Index[i])));

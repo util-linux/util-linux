@@ -3127,7 +3127,7 @@ static void map_root_user(uid_t uid, uid_t gid)
 	int mapfd;
 	int r;
 
-	n = snprintf(buf, sizeof(buf), "0 %d 1", uid);
+	n = snprintf(buf, sizeof(buf), "0 %u 1", uid);
 	mapfd = open("/proc/self/uid_map", O_WRONLY);
 	if (mapfd < 0)
 		err(EXIT_FAILURE,
@@ -3154,7 +3154,7 @@ static void map_root_user(uid_t uid, uid_t gid)
 		     "failed to write to /proc/self/setgroups");
 	close(mapfd);
 
-	n = snprintf(buf, sizeof(buf), "0 %d 1", gid);
+	n = snprintf(buf, sizeof(buf), "0 %u 1", gid);
 	mapfd = open("/proc/self/gid_map", O_WRONLY);
 	if (mapfd < 0)
 		err(EXIT_FAILURE,

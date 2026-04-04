@@ -5,6 +5,7 @@
 #ifndef UTIL_LINUX_ISO_H
 #define UTIL_LINUX_ISO_H
 
+#include <inttypes.h>
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -56,7 +57,7 @@ static inline uint32_t isonum_733(const unsigned char *p, bool check_match)
 
 	if (check_match && le != be)
 		/* translation is useless */
-		warnx("733error: le=%d be=%d", le, be);
+		warnx("733error: le=%"PRIu32" be=%"PRIu32, le, be);
 	return(le);
 }
 

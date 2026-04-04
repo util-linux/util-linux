@@ -162,7 +162,7 @@ static int bsd_assign_dos_partition(struct fdisk_context *cxt)
 
 		ss = dos_partition_get_start(l->dos_part);
 		if (!ss) {
-			fdisk_warnx(cxt, _("Partition %zd: has invalid starting "
+			fdisk_warnx(cxt, _("Partition %zu: has invalid starting "
 					   "sector 0."), i + 1);
 			return -1;
 		}

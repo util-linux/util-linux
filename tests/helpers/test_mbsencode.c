@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 		size_t width;
 		char *res;
 		res = encode_fn(argv[i], &width);
-		printf("%zi %s\n", width, res);
+		printf("%zu %s\n", width, res);
 		free(res);
 	}
 
