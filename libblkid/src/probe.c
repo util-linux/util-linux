@@ -1808,6 +1808,8 @@ int blkid_do_safeprobe(blkid_probe pr)
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return BLKID_PROBE_NONE;
 
+	pr->flags |= BLKID_PROBE_FL_SAFEPROBE;
+
 	blkid_probe_start(pr);
 
 	for (i = 0; i < BLKID_NCHAINS; i++) {
