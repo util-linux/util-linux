@@ -1179,7 +1179,7 @@ const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
  * mnt_fs_get_vfs_options_all:
  * @fs: fstab/mtab entry pointer
  *
- * Returns: pointer to newlly allocated string (can be freed by free(3)) or
+ * Returns: pointer to newly allocated string (can be freed by free(3)) or
  * NULL in case of error.  The string contains all (including defaults) mount
  * options.
  */

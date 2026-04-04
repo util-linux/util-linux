@@ -380,7 +380,7 @@ static int probe_gpt_pt(blkid_probe pr,
 			blkid_partlist_increment_partno(ls);
 			continue;
 		}
-		/* the partition has to inside usable range */
+		/* the partition has to be inside usable range */
 		if (start < fu || start + size - 1 > lu) {
 			DBG(LOWPROBE, ul_debug(
 				"GPT entry[%d] overflows usable area - ignore",

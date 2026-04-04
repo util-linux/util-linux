@@ -599,8 +599,6 @@ static void create_watching_parent(struct su_context *su)
 
 	/* In the parent watch the child.  */
 
-	/* su without pam support does not have a helper that keeps
-	   sitting on any directory so let's go to /.  */
 	if (chdir("/") != 0)
 		warn(_("cannot change directory to %s"), "/");
 #ifdef USE_PTY

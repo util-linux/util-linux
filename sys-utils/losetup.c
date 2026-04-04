@@ -574,7 +574,7 @@ static int create_loop(struct loopdev_cxt *lc,
 	int hasdev = loopcxt_has_device(lc);
 	int rc = 0, ntries = 0;
 
-	/* losetup --find --noverlap file.img */
+	/* losetup --find --nooverlap file.img */
 	if (!hasdev && nooverlap) {
 		rc = loopcxt_find_overlap(lc, file, offset, sizelimit);
 		switch (rc) {
@@ -621,7 +621,7 @@ static int create_loop(struct loopdev_cxt *lc,
 	if (hasdev)
 		loopcxt_add_device(lc);
 
-	/* losetup --noverlap /dev/loopN file.img */
+	/* losetup --nooverlap /dev/loopN file.img */
 	if (hasdev && nooverlap) {
 		struct loopdev_cxt lc2;
 

@@ -435,7 +435,7 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 
 	if (ls->nparts + 1 > ls->nparts_max) {
 		/* Linux kernel has DISK_MAX_PARTS=256, but it's too much for
-		 * generic Linux machine -- let start with 32 partitions.
+		 * generic Linux machine -- let's start with 32 partitions.
 		 */
 		void *tmp = reallocarray(ls->parts, ls->nparts_max + 32,
 					 sizeof(struct blkid_struct_partition));
@@ -1458,7 +1458,7 @@ blkid_loff_t blkid_partition_get_start(blkid_partition par)
  *          rest of the partition has to be inaccessible for mkfs or mkswap
  *          programs, we need a small space for boot loaders only.
  *
- *          For some unknown reason this (safe) practice is not to used for
+ *          For some unknown reason this (safe) practice is not used for
  *          nested BSD, Solaris, ..., partition tables in Linux kernel.
  *
  * Returns: size of the partition (in 512-sectors).
