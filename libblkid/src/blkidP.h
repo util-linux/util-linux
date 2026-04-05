@@ -245,6 +245,7 @@ struct blkid_struct_probe
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
+#define BLKID_PROBE_FL_SAFEPROBE (1 << 8)	/* safeprobe (ignore secondary LUKS2 header) */
 
 extern blkid_probe blkid_clone_probe(blkid_probe parent);
 extern blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr);

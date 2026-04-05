@@ -126,16 +126,19 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag __attribute_
 		return luks_attributes(pr, header, 0);
 	}
 
-	/* No primary header, scan for known offsets of LUKS2 secondary header. */
-	for (i = 0; i < ARRAY_SIZE(secondary_offsets); i++) {
-		header = (struct luks2_phdr *) blkid_probe_get_buffer(pr,
-			  secondary_offsets[i], sizeof(struct luks2_phdr));
 
-		if (!header)
-			return errno ? -errno : BLKID_PROBE_NONE;
+	/* No primary header, scan for known offsets of LUKS2 secondary header unless this is a safeprobe */
+	if (!(pr->flags & BLKID_PROBE_FL_SAFEPROBE)) {
+		for (i = 0; i < ARRAY_SIZE(secondary_offsets); i++) {
+			header = (struct luks2_phdr *) blkid_probe_get_buffer(pr,
+				  secondary_offsets[i], sizeof(struct luks2_phdr));
 
-		if (luks_valid(header, LUKS_MAGIC_2, secondary_offsets[i]))
-			return luks_attributes(pr, header, secondary_offsets[i]);
+			if (!header)
+				return errno ? -errno : BLKID_PROBE_NONE;
+
+			if (luks_valid(header, LUKS_MAGIC_2, secondary_offsets[i]))
+				return luks_attributes(pr, header, secondary_offsets[i]);
+		}
 	}
 
 	return BLKID_PROBE_NONE;
