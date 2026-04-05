@@ -645,7 +645,7 @@ int main(int argc, char **argv)
 	for ( ; (ctl.arg = *argv) != NULL; argv++) {
 		errno = 0;
 
-		rc = ul_parse_pid_str(ctl.arg, &ctl.pid, &ctl.pidfd_ino);
+		rc = ul_parse_pid_str(ctl.arg, &ctl.pid, &ctl.pidfd_ino, UL_PID_ZERO | UL_PID_NEGATIVE);
 		if(errno == 0 && rc == 0) {
 			if (check_signal_handler(&ctl) <= 0)
 				continue;

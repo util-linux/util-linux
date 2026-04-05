@@ -238,7 +238,7 @@ int main(int argc, char **argv)
 
 	argv += optind - 1;
 	while (*++argv) {
-		rc = ul_parse_pid_str(*argv, &ctx.pid, &ctx.pidfd_ino);
+		rc = ul_parse_pid_str(*argv, &ctx.pid, &ctx.pidfd_ino, 0);
 		if (rc)
 			err(EXIT_FAILURE, _("invalid PID argument '%s'"), *argv);
 		print_inode(&ctx);

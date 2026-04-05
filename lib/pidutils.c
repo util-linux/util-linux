@@ -13,11 +13,14 @@
 #include "pidutils.h"
 
 /*
- * ul_parse_pid_str() - Parse a string and store the found pid and/or pidfd inode.
+ * ul_parse_pid_str() - Parse a string and store the found pid and pidfd inode.
  *
- * @pidstr:  string in format `pid:pidfd_inode` that is to be parsed
- * @pid_num: stores pid number
- * @pfd_ino: stores pidfd inode number
+ * @pidstr:  	string in format `pid[:pidfd_inode]` that is to be parsed
+ * @pid_num: 	stores pid number
+ * @pfd_ino: 	stores pidfd inode number
+ * @flags:	uncommon values that are accepted as PIDs
+ * 		(e.g.: zero = UL_PID_ZERO, negative = UL_PID_NEGATIVE)
+ *		the flag values can be ORed
  *
  * If @pfd_ino is not destined to be set, pass it as NULL.
  *
@@ -25,7 +28,7 @@
  *         On failure, a negative errno number is returned
  *         and errno is set to indicate the issue.
  */
-int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
+int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino, int flags)
 {
 	int rc;
 	char *end = NULL;
@@ -38,12 +41,18 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 	if (num == 0 && end == pidstr)
 		return -(errno = EINVAL);
 
-	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t)))
+	if (errno == ERANGE || num < SINT_MIN(pid_t) || num > SINT_MAX(pid_t))
+		return -(errno = ERANGE);
+
+	if (num == 0 && !(flags & UL_PID_ZERO))
+		return -(errno = ERANGE);
+
+	if (num < 0 && !(flags & UL_PID_NEGATIVE))
 		return -(errno = ERANGE);
 
 	*pid_num = (pid_t) num;
 
-	if (*end == ':' && pfd_ino) {
+	if (*end == ':' && pfd_ino && num > 0) {
 		rc = ul_strtou64(++end, pfd_ino, 10);
 		if (rc < 0)
 			return rc;
@@ -65,14 +74,17 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
  * @pidstr:  string in format `pid[:pidfd_inode]` that is to be parsed
  * @pid_num: stores pid number
  * @pfd_ino: stores pidfd inode number
+ * @flags:	uncommon values that are accepted as PIDs
+ * 		(e.g.: zero = UL_PID_ZERO, negative = UL_PID_NEGATIVE)
+ *		the flag values can be ORed
  *
  * If @pfd_ino is not destined to be set, pass it as NULL.
  *
  * On failure, err() is called with an error message to indicate the issue.
  */
-void ul_parse_pid_str_or_err(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
+void ul_parse_pid_str_or_err(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino, int flags)
 {
-	if (ul_parse_pid_str(pidstr, pid_num, pfd_ino) < 0) {
+	if (ul_parse_pid_str(pidstr, pid_num, pfd_ino, flags) < 0) {
 		err(EXIT_FAILURE, _("failed to parse PID argument '%s'"), pidstr);
 	}
 }

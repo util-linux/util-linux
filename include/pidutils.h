@@ -9,7 +9,10 @@
 
 #include <sys/types.h>
 
-extern int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino);
-extern void ul_parse_pid_str_or_err(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino);
+#define UL_PID_ZERO	(1 << 1)
+#define UL_PID_NEGATIVE	(1 << 2)
+
+extern int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino, int flags);
+extern void ul_parse_pid_str_or_err(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino, int flags);
 
 #endif /* UTIL_LINUX_PIDUTILS_H */

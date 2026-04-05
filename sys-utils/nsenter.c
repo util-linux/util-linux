@@ -582,7 +582,7 @@ static int parse_pid_str(char *pidstr, pid_t *ns_target_pid)
 	int rc, pfd;
 	uint64_t pidfd_ino = 0;
 
-	rc = ul_parse_pid_str(pidstr, ns_target_pid, &pidfd_ino);
+	rc = ul_parse_pid_str(pidstr, ns_target_pid, &pidfd_ino, 0);
 	if (pidfd_ino) {
 		pfd = ul_get_valid_pidfd_or_err(*ns_target_pid, pidfd_ino);
 		close(pfd);

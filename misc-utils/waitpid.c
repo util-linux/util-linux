@@ -63,7 +63,7 @@ static void parse_pids_or_err(struct process_info *pinfos, size_t n_strings, cha
 {
 	for (size_t i = 0; i < n_strings; i++) {
 		struct process_info *pi = &pinfos[i];
-		ul_parse_pid_str_or_err(strings[i], &pi->pid, &pi->pidfd_ino);
+		ul_parse_pid_str_or_err(strings[i], &pi->pid, &pi->pidfd_ino, 0);
 	}
 }
 
