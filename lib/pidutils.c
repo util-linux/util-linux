@@ -15,9 +15,9 @@
 /*
  * ul_parse_pid_str() - Parse a string and store the found pid and/or pidfd inode.
  *
- * @pidstr:  string in format `pid:pidfd_inode` that is to be parsed
- * @pid_num: stores pid number
- * @pfd_ino: stores pidfd inode number
+ * @pidstr:  	string in format `pid:pidfd_inode` that is to be parsed
+ * @pid_num: 	stores pid number
+ * @pfd_ino: 	stores pidfd inode number
  *
  * If @pfd_ino is not destined to be set, pass it as NULL.
  *
@@ -38,12 +38,12 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino)
 	if (num == 0 && end == pidstr)
 		return -(errno = EINVAL);
 
-	if (errno == ERANGE || (num <= 0 || num > SINT_MAX(pid_t)))
+	if (errno == ERANGE || num > SINT_MAX(pid_t))
 		return -(errno = ERANGE);
 
 	*pid_num = (pid_t) num;
 
-	if (*end == ':' && pfd_ino) {
+	if (*end == ':' && pfd_ino && num > 0) {
 		rc = ul_strtou64(++end, pfd_ino, 10);
 		if (rc < 0)
 			return rc;
