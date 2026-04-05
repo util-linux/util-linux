@@ -1,4 +1,7 @@
+#include <dirent.h>
+
 #include "c.h"
+#include "fileutils.h"
 #include "pathnames.h"
 #include "xalloc.h"
 #include "nls.h"
@@ -69,10 +72,67 @@ static void add_filesystem(struct lsblk_device *dev, struct libmnt_fs *fs)
 		dev->is_swap = 1;
 }
 
+static bool fs_btrfs_check(struct libmnt_fs *fs, const char *uuid)
+{
+	DIR *dir;
+	char path[PATH_MAX];
+	const char *prefix = lsblk->sysroot ? lsblk->sysroot : "";
+	const char *source;
+
+	assert(fs);
+
+	/* Get the device in the mountinfo entry */
+	source = strrchr(mnt_fs_get_source(fs), '/');
+	if (!source)
+		return false;
+	source += 1;
+
+	/* Test if this device is a member of the mountinfo device's filesystem
+	 * (technically vice versa, but the same principle applies) */
+	snprintf(path, sizeof(path), "%s/sys/fs/btrfs/%s/devices/%s",
+			prefix, uuid, source);
+	dir = opendir(path);
+	if (!dir)
+		return false;
+
+	closedir(dir);
+	return true;
+}
+
+static bool check_multidevice_filesystem(struct lsblk_devprop *prop,
+			struct libmnt_fs *fs)
+{
+	assert(fs);
+
+	if (!prop || !prop->fstype)
+		return false;
+
+	/* Check if it's part of a ZFS pool */
+	if (strcmp(prop->fstype, "zfs_member") == 0) {
+		return (
+			strcmp(mnt_fs_get_fstype(fs), "zfs") == 0 &&
+			prop->label &&
+			strcmp(mnt_fs_get_source(fs), prop->label) == 0
+		);
+	}
+
+	/* Check if it's a member of a Btrfs filesystem */
+	if (strcmp(prop->fstype, "btrfs") == 0) {
+		return (
+			strcmp(mnt_fs_get_fstype(fs), "btrfs") == 0 &&
+			prop->uuid &&
+			fs_btrfs_check(fs, prop->uuid)
+		);
+	}
+
+	return false;
+}
+
 struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t *n)
 {
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
+	struct lsblk_devprop *prop = NULL;
 	dev_t devno;
 
 	assert(dev);
@@ -103,13 +163,16 @@ struct libmnt_fs **lsblk_device_get_filesystems(struct lsblk_device *dev, size_t
 	}
 
 	devno = makedev(dev->maj, dev->min);
+	prop = lsblk_device_get_properties(dev);
 
-	/* All mountpoint where is used devno or device name
+	/* Attach all mountpoints that match devno or device name
+	 * or if the device has a multi-device filesystem mountpoint
 	 */
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	while (mnt_table_next_fs(mtab, itr, &fs) == 0) {
 		if (mnt_fs_get_devno(fs) != devno &&
-		    !mnt_fs_streq_srcpath(fs, dev->filename))
+		    !mnt_fs_streq_srcpath(fs, dev->filename) &&
+		    !check_multidevice_filesystem(prop, fs))
 			continue;
 		add_filesystem(dev, fs);
 	}
