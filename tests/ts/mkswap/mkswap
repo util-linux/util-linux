@@ -105,11 +105,11 @@ ts_init_subtest file-existing
 outimg="$TS_OUTDIR/existing.img"
 rm -f "$outimg"
 
-"$TS_CMD_MKSWAP" -q -U "$UUID" -F -s $((4096 * 10)) "$outimg" \
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 -F -s $((4096 * 10)) "$outimg" \
     >> "$TS_OUTPUT" 2>/dev/null \
     || ts_log "mkswap failed"
 
-"$TS_CMD_MKSWAP" -q -U "$UUID" -F -s $((4096 * 10)) "$outimg" \
+"$TS_CMD_MKSWAP" -q -U "$UUID" -p 4096 -F -s $((4096 * 10)) "$outimg" \
     >> "$TS_OUTPUT" 2>&1 \
     || ts_log "mkswap -F failed on existing file"
 
