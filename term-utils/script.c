@@ -1009,7 +1009,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 
 #ifdef HAVE_LIBUTEMPTER
-	utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
+	rc = utempter_add_record(ul_pty_get_childfd(ctl.pty), NULL);
+	if (!rc)
+		warn("failed to add utmp record");
 #endif
 
 	if (ul_pty_signals_setup(ctl.pty))

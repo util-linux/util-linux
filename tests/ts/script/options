@@ -23,10 +23,15 @@ export TZ="GMT"
 
 ts_check_test_command "$TS_HELPER_SCRIPT"
 
-if [ -f /usr/libexec/utempter/utempter ]; then
+if [ -f /usr/libexec/utempter/utempter ] && [ -x /usr/libexec/utempter/utempter ]; then
     {
         ls -l /usr/libexec/utempter/utempter
+        ls -ld /usr/libexec
+        groups
+        id
         "$TS_CMD_FINDMNT" -n -o TARGET,OPTIONS --target /usr/libexec/utempter/utempter
+        file /usr/libexec/utempter/utempter
+        /usr/libexec/utempter/utempter
     } >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 
