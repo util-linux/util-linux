@@ -26,7 +26,7 @@ ts_check_test_command "$TS_HELPER_SCRIPT"
 if [ -f /usr/libexec/utempter/utempter ]; then
     {
         ls -l /usr/libexec/utempter/utempter
-        "$TS_CMD_FINDMNT" findmnt -n -o TARGET,OPTIONS --target /usr/libexec/utempter/utempter
+        "$TS_CMD_FINDMNT" -n -o TARGET,OPTIONS --target /usr/libexec/utempter/utempter
     } >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 
