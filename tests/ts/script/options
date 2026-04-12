@@ -23,6 +23,13 @@ export TZ="GMT"
 
 ts_check_test_command "$TS_HELPER_SCRIPT"
 
+if [ -f /usr/libexec/utempter/utempter ]; then
+    {
+        ls -l /usr/libexec/utempter/utempter
+        "$TS_CMD_FINDMNT" findmnt -n -o TARGET,OPTIONS --target /usr/libexec/utempter/utempter
+    } >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+fi
+
 ts_init_subtest "append"
 $TS_HELPER_SCRIPT --command "echo append1" $TS_OUTPUT </dev/null >/dev/null 2>&1
 $TS_HELPER_SCRIPT --append --command "echo append2" $TS_OUTPUT </dev/null >/dev/null 2>&1
