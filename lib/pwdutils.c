@@ -179,10 +179,6 @@ struct group *ul_getgrp_str(const char *str, gid_t *result)
 		*result = (gid_t) -1;
 
 	rc = ul_strtou64(str, &num, 10);
-	if (rc == -ERANGE || num > MAX_OF_UINT_TYPE(gid_t)) {
-		errno = ERANGE;
-		return NULL;
-	}
 
 	/* maybe an actual name */
 	if (rc == -EINVAL) {
@@ -193,6 +189,12 @@ struct group *ul_getgrp_str(const char *str, gid_t *result)
 		else if (!gr && !errno)
 			errno = EINVAL;
 		return gr;
+	}
+	if (rc != 0)
+		return NULL;
+	if (num > MAX_OF_UINT_TYPE(gid_t)) {
+		errno = ERANGE;
+		return NULL;
 	}
 
 	if (result)
@@ -224,10 +226,6 @@ struct passwd *ul_getuserpw_str(const char *str, uid_t *result)
 		*result = (uid_t) -1;
 
 	rc = ul_strtou64(str, &num, 10);
-	if (rc == -ERANGE || num > MAX_OF_UINT_TYPE(uid_t)) {
-		errno = ERANGE;
-		return NULL;
-	}
 
 	/* maybe an actual name */
 	if (rc == -EINVAL) {
@@ -238,6 +236,12 @@ struct passwd *ul_getuserpw_str(const char *str, uid_t *result)
 		else if (!pw && !errno)
 			errno = EINVAL;
 		return pw;
+	}
+	if (rc != 0)
+		return NULL;
+	if (num > MAX_OF_UINT_TYPE(uid_t)) {
+		errno = ERANGE;
+		return NULL;
 	}
 
 	if (result)
