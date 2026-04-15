@@ -178,11 +178,28 @@ struct group *ul_getgrp_str(const char *str, gid_t *result)
 	if (result)
 		*result = (gid_t) -1;
 
+<<<<<<< Updated upstream
 	rc = ul_strtou64(str, &num, 10);
 	if (rc == -ERANGE || num > MAX_OF_UINT_TYPE(gid_t)) {
 		errno = ERANGE;
 		return NULL;
 	}
+=======
+        rc = ul_strtou64(str, &num, 10);
+        if (rc == -EINVAL) {
+                errno = 0;
+                gr = getgrnam(str);
+                if (gr && result)
+                        *result = gr->gr_gid;
+                return gr;
+        }
+        if (rc != 0)
+                return NULL;
+        if (num > MAX_OF_UINT_TYPE(gid_t)) {
+                errno = ERANGE;
+                return NULL;
+        }
+>>>>>>> Stashed changes
 
 	/* maybe an actual name */
 	if (rc == -EINVAL) {
@@ -223,11 +240,28 @@ struct passwd *ul_getuserpw_str(const char *str, uid_t *result)
 	if (result)
 		*result = (uid_t) -1;
 
+<<<<<<< Updated upstream
 	rc = ul_strtou64(str, &num, 10);
 	if (rc == -ERANGE || num > MAX_OF_UINT_TYPE(uid_t)) {
 		errno = ERANGE;
 		return NULL;
 	}
+=======
+        rc = ul_strtou64(str, &num, 10);
+        if (rc == -EINVAL) {
+                errno = 0;
+                pw = getpwnam(str);
+                if (pw && result)
+                        *result = pw->pw_uid;
+                return pw;
+        }
+        if (rc != 0)
+                return NULL;
+        if (num > MAX_OF_UINT_TYPE(uid_t)) {
+                errno = ERANGE;
+                return NULL;
+        }
+>>>>>>> Stashed changes
 
 	/* maybe an actual name */
 	if (rc == -EINVAL) {
