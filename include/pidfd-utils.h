@@ -7,9 +7,14 @@
 
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdint.h>
 
 #ifdef HAVE_SYS_PIDFD_H
 # include <sys/pidfd.h>
+#endif
+
+#ifndef P_PIDFD
+# define P_PIDFD 3
 #endif
 
 /*
@@ -108,6 +113,19 @@ int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino);
 #else
 int ul_get_valid_pidfd_or_err(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)));
 int ul_get_valid_pidfd(pid_t pid, uint64_t pidfd_ino __attribute__((__unused__)));
+#endif
+
+#if !defined(HAVE_PIDFD_SPAWNP)
+#include <spawn.h>
+static inline int pidfd_spawnp(int *pidfd __attribute__((unused)),
+				const char *file __attribute__((unused)),
+				const posix_spawn_file_actions_t *facts __attribute__((unused)),
+				const posix_spawnattr_t *attrp __attribute__((unused)),
+				char *const *argv __attribute__((unused)),
+				char *const *envp __attribute__((unused)))
+{
+		return ENOSYS;
+}
 #endif
 
 #endif /* UTIL_LINUX_PIDFD_UTILS */
