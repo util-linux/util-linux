@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
+#
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@usrlib_execdir@
+includedir=@includedir@
+
+Name: ptysession
+Description: Pseudo-terminal session library
+Version: @LIBPTYSESSION_VERSION@
+Cflags: -I${includedir}/libptysession
+Libs: -L${libdir} -lptysession
+

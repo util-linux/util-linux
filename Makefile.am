@@ -104,6 +104,7 @@ include include/Makemodule.am
 include lib/Makemodule.am
 include libuuid/Makemodule.am
 include liblastlog2/Makemodule.am
+include libptysession/Makemodule.am
 include libblkid/Makemodule.am
 include libmount/Makemodule.am
 include libsmartcols/Makemodule.am
