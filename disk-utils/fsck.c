@@ -29,7 +29,6 @@
  *
  * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com>
  */
-#define _XOPEN_SOURCE 600 /* for inclusion of sa_handler in Solaris */
 
 #include <sys/types.h>
 #include <sys/wait.h>
@@ -54,6 +53,7 @@
 
 #include "nls.h"
 #include "pathnames.h"
+#include "proc-spawn.h"
 #include "exitcodes.h"
 #include "c.h"
 #include "fileutils.h"
@@ -109,21 +109,17 @@ struct fsck_fs_data
  * Structure to allow exit codes to be stored
  */
 struct fsck_instance {
-	int	pid;
-	int	flags;		/* FLAG_{DONE|PROGRESS} */
-
-	int	lock;		/* flock()ed lockpath file descriptor or -1 */
-	char	*lockpath;	/* /run/fsck/<diskname>.lock or NULL */
-
-	int	exit_status;
+	proc_handle_t handle;
 	struct timeval start_time;
 	struct timeval end_time;
 	char *	prog;
 	char *	type;
-
-	struct rusage rusage;
 	struct libmnt_fs *fs;
 	struct fsck_instance *next;
+	char *	lockpath;
+	int	flags;		/* FLAG_{DONE|PROGRESS} */
+	int	lock;		/* flock()ed lockpath file descriptor or -1 */
+	int	exit_status;
 };
 
 #define FLAG_DONE 1
@@ -609,12 +605,12 @@ static void print_stats(struct fsck_instance *inst)
 				   " %"PRId64".%06"PRId64"\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
-			inst->rusage.ru_maxrss,
+			inst->handle.rusage.ru_maxrss,
 			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
-			(int64_t)inst->rusage.ru_utime.tv_sec,
-			(int64_t)inst->rusage.ru_utime.tv_usec,
-			(int64_t)inst->rusage.ru_stime.tv_sec,
-			(int64_t)inst->rusage.ru_stime.tv_usec);
+			(int64_t)inst->handle.rusage.ru_utime.tv_sec,
+			(int64_t)inst->handle.rusage.ru_utime.tv_usec,
+			(int64_t)inst->handle.rusage.ru_stime.tv_sec,
+			(int64_t)inst->handle.rusage.ru_stime.tv_usec);
 	else
 		fprintf(stdout, "%s: status %d, rss %ld, "
 				"real %"PRId64".%06"PRId64", "
@@ -622,14 +618,13 @@ static void print_stats(struct fsck_instance *inst)
 				"sys %"PRId64".%06"PRId64"\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
-			inst->rusage.ru_maxrss,
+			inst->handle.rusage.ru_maxrss,
 			(int64_t)delta.tv_sec, (int64_t)delta.tv_usec,
-			(int64_t)inst->rusage.ru_utime.tv_sec,
-			(int64_t)inst->rusage.ru_utime.tv_usec,
-			(int64_t)inst->rusage.ru_stime.tv_sec,
-			(int64_t)inst->rusage.ru_stime.tv_usec);
+			(int64_t)inst->handle.rusage.ru_utime.tv_sec,
+			(int64_t)inst->handle.rusage.ru_utime.tv_usec,
+			(int64_t)inst->handle.rusage.ru_stime.tv_sec,
+			(int64_t)inst->handle.rusage.ru_stime.tv_usec);
 }
-
 /*
  * Execute a particular fsck program, and link it into the list of
  * child processes we are waiting for.
@@ -640,9 +635,10 @@ static int execute(const char *progname, const char *progpath,
 	char *argv[80];
 	int  argc, i;
 	struct fsck_instance *inst, *p;
-	pid_t	pid;
+	int ret;
 
 	inst = xcalloc(1, sizeof(*inst));
+	inst->handle = PROC_HANDLE_INIT;
 
 	argv[0] = xstrdup(progname);
 	argc = 1;
@@ -688,24 +684,26 @@ static int execute(const char *progname, const char *progpath,
 	if (lockdisk)
 		lock_disk(inst);
 
-	/* Fork and execute the correct program. */
-	if (noexecute)
-		pid = -1;
-	else if ((pid = fork()) < 0) {
-		warn(_("fork failed"));
-		free_instance(inst);
-		return errno;
-	} else if (pid == 0) {
-		if (!interactive)
-			close(0);
-		execv(progpath, argv);
-		err(FSCK_EX_ERROR, _("%s: execute failed"), progpath);
+	if (!noexecute) {
+		proc_config_t cfg = {
+			.path = progpath,
+			.argv = argv,
+			.envp = NULL,
+			.stdin_mode = interactive ? PROC_STDIO_INHERIT : PROC_STDIO_DEVNULL,
+			.stdout_mode = PROC_STDIO_INHERIT,
+			.stderr_mode = PROC_STDIO_INHERIT,
+		};
+
+		ret = proc_spawn(&cfg, &inst->handle);
+		if (ret < 0) {
+			warn(_("%s: execute failed: %s"), progpath, strerror(-ret));
+			free_instance(inst);
+			return -ret;
+		}
 	}
 
 	for (i=0; i < argc; i++)
 		free(argv[i]);
-
-	inst->pid = pid;
 	inst->prog = xstrdup(progname);
 	inst->type = xstrdup(type);
 	gettime_monotonic(&inst->start_time);
@@ -735,10 +733,10 @@ static int kill_all(int signum)
 	for (inst = instance_list; inst; inst = inst->next) {
 		if (inst->flags & FLAG_DONE)
 			continue;
-		if (inst->pid <= 0)
+		if (!proc_handle_live(&inst->handle))
 			continue;
-		kill(inst->pid, signum);
-		n++;
+		if (proc_kill(&inst->handle, signum) == 0)
+			n++;
 	}
 	return n;
 }
@@ -749,11 +747,9 @@ static int kill_all(int signum)
  */
 static struct fsck_instance *wait_one(int flags)
 {
-	int	status = 0;
 	int	sig;
 	struct fsck_instance *inst, *inst2, *prev;
-	pid_t	pid;
-	struct rusage rusage;
+	proc_wait_result_t res;
 
 	if (!instance_list)
 		return NULL;
@@ -777,36 +773,51 @@ static struct fsck_instance *wait_one(int flags)
 	 */
 	inst = prev = NULL;
 
-	do {
-		pid = wait4(-1, &status, flags, &rusage);
+	for (;;) {
 		if (cancel_requested && !kill_sent) {
 			kill_all(SIGTERM);
 			kill_sent++;
 		}
-		if ((pid == 0) && (flags & WNOHANG))
-			return NULL;
-		if (pid < 0) {
-			if ((errno == EINTR) || (errno == EAGAIN))
-				continue;
-			if (errno == ECHILD) {
-				warnx(_("wait: no more child process?!?"));
-				return NULL;
-			}
-			warn(_("waitpid failed"));
-			continue;
-		}
-		for (prev = NULL, inst = instance_list;
-		     inst;
-		     prev = inst, inst = inst->next) {
-			if (inst->pid == pid)
-				break;
-		}
-	} while (!inst);
 
-	if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
-	else if (WIFSIGNALED(status)) {
-		sig = WTERMSIG(status);
+		for (prev = NULL, inst = instance_list; inst; prev = inst, inst = inst->next) {
+			if (inst->flags & FLAG_DONE)
+				continue;
+			if (!proc_handle_live(&inst->handle))
+				continue;
+
+			int ret = proc_wait(&inst->handle, flags, &res);
+			if (ret == 1) {
+				// Child reaped
+				goto process_result;
+			} else if (ret == 0 && (flags & WNOHANG)) {
+				// Not ready, continue checking others
+				continue;
+			} else if (ret < 0) {
+				if (ret == -EINTR || ret == -EAGAIN)
+					continue;
+				if (ret == -ECHILD) {
+					warnx(_("wait: no more child process?!?"));
+					return NULL;
+				}
+				warn(_("proc_wait failed"));
+				continue;
+			}
+		}
+
+		// If WNOHANG and none ready, return NULL
+		if (flags & WNOHANG)
+			return NULL;
+
+		// For blocking wait, sleep a bit and retry
+		usleep(10000); // 10ms
+	}
+
+process_result:
+	int status;
+	if (res.exited)
+		status = res.status;
+	else if (res.signaled) {
+		sig = res.status;
 		if (sig == SIGINT) {
 			status = FSCK_EX_UNCORRECTED;
 		} else {
@@ -816,15 +827,22 @@ static struct fsck_instance *wait_one(int flags)
 			status = FSCK_EX_ERROR;
 		}
 	} else {
-		warnx(_("%s %s: status is %x, should never happen."),
-		       inst->prog, fs_get_device(inst->fs), status);
+		warnx(_("%s %s: unexpected wait result."),
+		       inst->prog, fs_get_device(inst->fs));
 		status = FSCK_EX_ERROR;
 	}
 
 	inst->exit_status = status;
 	inst->flags |= FLAG_DONE;
 	gettime_monotonic(&inst->end_time);
-	memcpy(&inst->rusage, &rusage, sizeof(struct rusage));
+
+	if(proc_handle_live(&inst->handle)) {
+		int rc = proc_close(&inst->handle);
+		if(rc < 0) {
+			warnx(_("Failed to close process handles: %s"), strerror(-rc));
+			status = FSCK_EX_ERROR; // TODO : might not be
+		}
+	}
 
 	if (progress && (inst->flags & FLAG_PROGRESS) &&
 	    !progress_active()) {
@@ -844,11 +862,11 @@ static struct fsck_instance *wait_one(int flags)
 			if (inst2->start_time.tv_sec < time(NULL) + 2) {
 				if (fork() == 0) {
 					sleep(1);
-					kill(inst2->pid, SIGUSR1);
-					exit(FSCK_EX_OK);
+					proc_kill(&inst2->handle, SIGUSR1);
+					_exit(FSCK_EX_OK);
 				}
 			} else
-				kill(inst2->pid, SIGUSR1);
+				proc_kill(&inst2->handle, SIGUSR1);
 			inst2->flags |= FLAG_PROGRESS;
 			break;
 		}
@@ -947,7 +965,7 @@ static int fsck_device(struct libmnt_fs *fs, int interactive, int warn_notfound)
 	return 0;
 err:
 	warnx(_("error %d (%s) while executing fsck.%s for %s"),
-			retval, strerror(errno), type, fs_get_device(fs));
+			retval, strerror(-retval), type, fs_get_device(fs));
 	return FSCK_EX_ERROR;
 }
 
