@@ -661,6 +661,7 @@ funcs = '''
         pidfd_getfd
         pidfd_open
         pidfd_send_signal
+        pidfd_spawnp
         posix_fadvise
         posix_fallocate
         prctl

@@ -16,7 +16,9 @@ lib_common_sources = '''
 	match.c
 	mbsalign.c
 	mbsedit.c
-	pidutils.c
+    pidutils.c
+    pidfd-utils.c
+  proc-spawn.c
 	pwdutils.c
 	sha256.c
 	shells.c

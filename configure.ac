@@ -653,6 +653,7 @@ AC_CHECK_FUNCS([ \
 	pidfd_getfd \
 	pidfd_open \
 	pidfd_send_signal \
+	pidfd_spawnp \
 	posix_fadvise \
 	prctl \
 	qsort_r \
