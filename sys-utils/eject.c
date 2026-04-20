@@ -51,6 +51,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "proc-spawn.h"
 #include "sysfs.h"
 #include "monotonic.h"
 #include "fileutils.h"
@@ -656,39 +657,48 @@ static int eject_tape(int fd)
 
 
 /* umount a device. */
-static void umount_one(const struct eject_control *ctl, const char *name)
+static int umount_one(const struct eject_control *ctl, const char *name)
 {
-	int status;
-
 	if (!name)
-		return;
+		return -EINVAL;
 
 	verbose(ctl, _("%s: unmounting"), name);
 
-	switch (fork()) {
-	case 0: /* child */
-		if (drop_permissions() != 0)
-			err(EXIT_FAILURE, _("drop permissions failed"));
-		if (ctl->p_option)
-			execl("/bin/umount", "/bin/umount", name, "-n", (char *)NULL);
-		else
-			execl("/bin/umount", "/bin/umount", name, (char *)NULL);
 
-		errexec("/bin/umount");
+	char *umount_argv[4];
+	proc_wait_result_t pwrs;
+	PROC_AUTO(h);
+	int ret;
 
-	case -1:
-		warn( _("unable to fork"));
-		break;
-
-	default: /* parent */
-		if (wait(&status) == -1 || WIFEXITED(status) == 0)
-			errx(EXIT_FAILURE,
-			     _("unmount of `%s' did not exit normally"), name);
-
-		if (WEXITSTATUS(status) != 0)
-			errx(EXIT_FAILURE, _("unmount of `%s' failed"), name);
-		break;
+	umount_argv[0] = "/bin/umount";
+	umount_argv[1] = (char *) name;
+	if (ctl->p_option) {
+		umount_argv[2] = "-n";
+	} else {
+		umount_argv[2] = NULL;
 	}
+	umount_argv[3] = NULL;
+
+	proc_config_t cfg = {
+		.path        = "/bin/umount",
+		.argv        = umount_argv,
+		.spawnattr_flags = POSIX_SPAWN_RESETIDS,
+	};
+
+	ret = proc_spawn(&cfg, &h);
+	if (ret < 0) {
+		warn(_("unable to spawn umount"));
+		return ret;
+	}
+
+	ret = proc_wait(&h, 0, &pwrs);
+	if (ret < 0)
+		return ret;
+
+	if (!pwrs.exited || pwrs.status != 0)
+			return -EIO;
+
+	return 0;
 }
 
 /* Open a device file. */
