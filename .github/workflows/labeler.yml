@@ -4,12 +4,6 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review, closed]
 
-  pull_request:
-    paths:
-      - '.github/labeler.yml'
-      - '.github/workflows/labeler.yml'
-
-
 jobs:
   labeler:
     permissions:
