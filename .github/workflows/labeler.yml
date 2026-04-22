@@ -9,7 +9,12 @@ jobs:
       pull-requests: write
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/labeler@v6
+    - name: Checkout repository
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      if: github.event_name == 'pull_request'
+
+    - name: Label PR
+      uses: actions/labeler@v6
       with:
         configuration-path: .github/labeler.yml
         sync-labels: true

@@ -5,3 +5,8 @@ changed-files-labels-limit: 10
 github_actions:
   - changed-files:
     - any-glob-to-any-file: ['.github/*']
+
+NEEDS-REVIEW:
+  - changed-files:
+    - any-glob-to-any-file: '**'
+
