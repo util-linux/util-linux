@@ -1,6 +1,21 @@
 name: "Pull Request Labeler"
+
 on:
-- pull_request_target
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review, closed]
+    paths-ignore:
+      - '.github/labeler.yml'
+      - '.github/workflows/labeler.yml'
+  # Allow testing changes made to the labeler configuration
+  pull_request:
+    paths:
+      - '.github/labeler.yml'
+      - '.github/workflows/labeler.yml'
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
 
 jobs:
   labeler:
