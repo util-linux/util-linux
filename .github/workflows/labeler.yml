@@ -1,18 +1,30 @@
 name: "Pull Request Labeler"
 
 on:
-  - pull_request_target:
+  pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review, closed]
+    paths-ignore:
+      - '.github/labeler.yml'
+      - '.github/workflows/labeler.yml'
+
+  pull_request:
+    paths:
+      - '.github/labeler.yml'
+      - '.github/workflows/labeler.yml'
 
 jobs:
   labeler:
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
-    runs-on: ubuntu-latest
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v6
+      if: github.event_name == 'pull_request'
+      with:
+        persist-credentials: false
 
     - name: Label PR
       uses: actions/labeler@v6
