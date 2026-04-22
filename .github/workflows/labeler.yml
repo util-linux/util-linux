@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
-      if: github.event_name == 'pull_request'
+      uses: actions/checkout@v6
+      if: github.event_name == 'pull_request_target'
 
     - name: Label PR
       uses: actions/labeler@v6
