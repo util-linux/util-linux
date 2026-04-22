@@ -89,7 +89,10 @@ conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
 summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
 
 lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
-build_liblastlog2 = get_option('build-liblastlog2').require(lib_sqlite3.found()).allowed()
+build_liblastlog2 = get_option('build-liblastlog2') \
+                    .require(lib_sqlite3.found()) \
+                    .require(conf.get('HAVE_LASTLOG_H').to_string() == '1') \
+                    .allowed()
 conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
 summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
 
