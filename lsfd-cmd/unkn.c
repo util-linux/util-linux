@@ -1070,21 +1070,20 @@ static void anon_bpf_prog_free(struct unkn *unkn)
 
 static void anon_bpf_prog_get_more_info(struct anon_bpf_prog_data *prog_data)
 {
-	union bpf_attr attr = {
-		.prog_id = (int32_t)prog_data->id,
-		.next_id = 0,
-		.open_flags = 0,
-	};
+	int bpf_fd;
+	union bpf_attr attr;
 	struct bpf_prog_info info = { 0 };
-	union bpf_attr info_attr = {
-		.info.info_len = sizeof(info),
-		.info.info = (uint64_t)(uintptr_t)&info,
-	};
+	union bpf_attr info_attr;
 
-	int bpf_fd = syscall(SYS_bpf, BPF_PROG_GET_FD_BY_ID, &attr, sizeof(attr));
+	memset(&attr, 0, sizeof(attr));
+	attr.prog_id = (int32_t)prog_data->id;
+	bpf_fd = syscall(SYS_bpf, BPF_PROG_GET_FD_BY_ID, &attr, sizeof(attr));
 	if (bpf_fd < 0)
 		return;
 
+	memset(&info_attr, 0, sizeof(info_attr));
+	info_attr.info.info_len = sizeof(info);
+	info_attr.info.info = (uint64_t)(uintptr_t)&info;
 	info_attr.info.bpf_fd = bpf_fd;
 	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
 		memcpy(prog_data->name,
@@ -1261,21 +1260,20 @@ static void anon_bpf_map_free(struct unkn *unkn)
 
 static void anon_bpf_map_get_more_info(struct anon_bpf_map_data *map_data)
 {
-	union bpf_attr attr = {
-		.map_id = (int32_t)map_data->id,
-		.next_id = 0,
-		.open_flags = 0,
-	};
+	int bpf_fd;
+	union bpf_attr attr;
 	struct bpf_map_info info = { 0 };
-	union bpf_attr info_attr = {
-		.info.info_len = sizeof(info),
-		.info.info = (uint64_t)(uintptr_t)&info,
-	};
+	union bpf_attr info_attr;
 
-	int bpf_fd = syscall(SYS_bpf, BPF_MAP_GET_FD_BY_ID, &attr, sizeof(attr));
+	memset(&attr, 0, sizeof(attr));
+	attr.map_id = (int32_t)map_data->id;
+	bpf_fd = syscall(SYS_bpf, BPF_MAP_GET_FD_BY_ID, &attr, sizeof(attr));
 	if (bpf_fd < 0)
 		return;
 
+	memset(&info_attr, 0, sizeof(info_attr));
+	info_attr.info.info_len = sizeof(info);
+	info_attr.info.info = (uint64_t)(uintptr_t)&info;
 	info_attr.info.bpf_fd = bpf_fd;
 	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
 		memcpy(map_data->name,
