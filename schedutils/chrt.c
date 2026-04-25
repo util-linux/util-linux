@@ -510,9 +510,6 @@ int main(int argc, char **argv)
 
 	/* If option --pid was given, parse the very last argument as a PID. */
 	if (ctl->pid == 0) {
-		if (need_prio && argc - optind < 2)
-			errx(EXIT_FAILURE, _("policy %s requires a priority argument"),
-						get_policy_name(ctl->policy));
 		errno = 0;
 		/* strtopid_or_err() is not suitable here, as 0 can be passed. */
 		ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
@@ -530,13 +527,17 @@ int main(int argc, char **argv)
 	if (ctl->pid > -1 && ctl->verbose)
 		show_sched_info(ctl);
 
-	bool have_prio = need_prio ||
-		(ctl->pid == -1 ? (optind < argc && isdigit_string(argv[optind])) : (argc - optind > 1));
-
-	if (have_prio) {
+	if (argc - optind > 1 && (ctl->pid > -1 || isdigit_string(argv[optind]))) {
 		errno = 0;
 		ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
-	} else
+
+		optind++;
+	} else if (need_prio && ctl->pid == -1 && isdigit_string(argv[optind]))
+		errx(EXIT_FAILURE, _("no command or priority specified"));
+	else if (need_prio)
+		errx(EXIT_FAILURE, _("policy %s requires a priority argument"),
+					get_policy_name(ctl->policy));
+	else
 		ctl->priority = 0;
 
 	if (ctl->runtime && !supports_runtime_param(ctl->policy))
@@ -575,11 +576,6 @@ int main(int argc, char **argv)
 
 	if (!ctl->pid) {
 		argv += optind;
-
-		if (need_prio)
-			argv++;
-		else if (argv[0] && isdigit_string(argv[0]))
-			argv++;
 
 		if (argv[0] && strcmp(argv[0], "--") == 0)
 			argv++;
