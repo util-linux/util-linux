@@ -2131,7 +2131,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fallocate']
 endif
 
-opt = get_option('build-pivot_root').allowed()
+opt = get_option('build-pivot_root') \
+      .require(LINUX) \
+      .allowed()
 exe = executable(
   'pivot_root',
   pivot_root_sources,
