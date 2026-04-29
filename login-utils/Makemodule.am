@@ -43,7 +43,7 @@ if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
 if HAVE_SELINUX
-sulogin_LDADD += -lselinux
+sulogin_LDADD += $(SELINUX_LIBS)
 endif
 
 check_PROGRAMS += test_consoles
@@ -65,13 +65,13 @@ if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
 if HAVE_AUDIT
-login_LDADD += -laudit
+login_LDADD += $(AUDIT_LIBS)
 endif
 if HAVE_SELINUX
-login_LDADD += -lselinux
+login_LDADD += $(SELINUX_LIBS)
 endif
 if HAVE_ECONF
-login_LDADD += -leconf
+login_LDADD += $(ECONF_LIBS)
 endif
 endif # BUILD_LOGIN
 
@@ -138,7 +138,7 @@ if HAVE_SELINUX
 chfn_chsh_sources += \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
-chfn_chsh_ldadd += -lselinux
+chfn_chsh_ldadd += $(SELINUX_LIBS)
 endif
 
 chfn_SOURCES = \
@@ -149,7 +149,7 @@ chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 if HAVE_ECONF
-chfn_LDADD += -leconf
+chfn_LDADD += $(ECONF_LIBS)
 endif
 
 chsh_SOURCES = login-utils/chsh.c lib/shells.c $(chfn_chsh_sources)
@@ -157,7 +157,7 @@ chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
 chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 if HAVE_ECONF
-chsh_LDADD += -leconf
+chsh_LDADD += $(ECONF_LIBS)
 endif
 endif # BUILD_CHFN_CHSH
 
@@ -185,7 +185,7 @@ su_SOURCES += lib/pty-session.c \
 su_LDADD += -lutil $(REALTIME_LIBS)
 endif
 if HAVE_ECONF
-su_LDADD += -leconf
+su_LDADD += $(ECONF_LIBS)
 endif
 endif # BUILD_SU
 
@@ -211,7 +211,7 @@ runuser_SOURCES += lib/pty-session.c \
 runuser_LDADD += -lutil $(REALTIME_LIBS)
 endif
 if HAVE_ECONF
-runuser_LDADD += -leconf
+runuser_LDADD += $(ECONF_LIBS)
 endif
 endif # BUILD_RUNUSER
 
@@ -240,14 +240,14 @@ lslogins_SOURCES = \
 lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
-lslogins_LDADD += -lselinux
+lslogins_LDADD += $(SELINUX_LIBS)
 endif
 if HAVE_SYSTEMD
 lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif
 if HAVE_ECONF
-lslogins_LDADD += -leconf
+lslogins_LDADD += $(ECONF_LIBS)
 endif
 if BUILD_LIBLASTLOG2
 lslogins_CFLAGS += -I$(ul_liblastlog2_incdir)
@@ -266,7 +266,7 @@ vipw_SOURCES = \
 	login-utils/setpwnam.h
 vipw_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
-vipw_LDADD += -lselinux
+vipw_LDADD += $(SELINUX_LIBS)
 endif
 install-exec-hook-vipw::
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr

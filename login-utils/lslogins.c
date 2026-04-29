@@ -64,6 +64,7 @@
 #include "procfs.h"
 #include "timeutils.h"
 #include "column-list-table.h"
+#include "pwdutils.h"
 
 /* Types used for JSON and --list-columns */
 enum {
@@ -1039,20 +1040,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	return user;
 }
 
-static int str_to_uint(char *s, unsigned int *ul)
-{
-	char *end = NULL;
-
-	if (!s || !*s)
-		return -1;
-
-	errno = 0;
-	*ul = strtoul(s, &end, 0);
-	if (errno == 0 && end && !*end)
-		return 0;
-	return 1;
-}
-
 /* get a definitive list of users we want info about... */
 static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 {
@@ -1061,8 +1048,6 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 	struct group *grp;
 	struct passwd *pwd;
 	char ***ar;
-	uid_t uid;
-	gid_t gid;
 
 	ar = &ctl->ulist;
 	arsiz = &ctl->ulsiz;
@@ -1075,13 +1060,16 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 		while ((u = strtok(logins, ","))) {
 			logins = NULL;
 
-			/* user specified by UID? */
-			if (!str_to_uint(u, &uid)) {
-				pwd = getpwuid(uid);
-				if (!pwd)
-					continue;
-				u = pwd->pw_name;
+			pwd = ul_getuserpw_str(u, NULL);
+			if (!pwd) {
+				if (ctl->fail_on_unknown) {
+					warnx(_("cannot find '%s'"), u);
+					goto fail;
+				}
+				continue;
 			}
+			u = pwd->pw_name;
+
 			(*ar)[i++] = xstrdup(u);
 
 			if (i == *arsiz)
@@ -1097,12 +1085,7 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 			n = 0;
 			groups = NULL;
 
-			/* user specified by GID? */
-			if (!str_to_uint(g, &gid))
-				grp = getgrgid(gid);
-			else
-				grp = getgrnam(g);
-
+			grp = ul_getgrp_str(g, NULL);
 			if (!grp)
 				continue;
 
@@ -1117,6 +1100,11 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 	}
 	*arsiz = i;
 	return 0;
+
+fail:
+	free(*ar);
+	*ar = NULL;
+	return -1;
 }
 
 static void free_ctl(struct lslogins_control *ctl)
@@ -1185,6 +1173,7 @@ static int create_usertree(struct lslogins_control *ctl)
 				warnx(_("cannot find '%s'"), ctl->ulist[n]);
 				return -1;
 			}
+
 			if (rc || !user)
 				continue;
 			tsearch(user, &ctl->usertree, cmp_uid);
@@ -1881,8 +1870,10 @@ int main(int argc, char *argv[])
 	if (require_btmp())
 		parse_utmpx(path_btmp, &ctl->btmp_size, &ctl->btmp);
 
-	if (logins || groups)
-		get_ulist(ctl, logins, groups);
+	if ((logins || groups) && (get_ulist(ctl, logins, groups)) < 0) {
+		free_ctl(ctl);
+		return EXIT_FAILURE;
+	}
 
 	if (create_usertree(ctl))
 		return EXIT_FAILURE;

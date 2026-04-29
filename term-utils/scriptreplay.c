@@ -77,6 +77,7 @@ usage(void)
 	fputs(_(" space        toggles between pause and play\n"), out);
 	fputs(_(" up-arrow     increases playback speed with ten percent\n"), out);
 	fputs(_(" down-arrow   decreases playback speed with ten percent\n"), out);
+	fputs(_(" right-arrow  advances the playback by one step\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(EXIT_SUCCESS);

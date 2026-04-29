@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This file is part of util-linux.
 #
@@ -108,7 +108,7 @@ for api in flock fcntl ; do
 	ts_finalize_subtest
 
 	# fcntl locks are independent of flock locks, so we should be able to get an exclusive flock lock.
-	if [ "$api" = "fcntl" ] ; then
+	if [ "$(uname -s)" = "Linux" ] && [ "$api" = "fcntl" ] ; then
 		ts_init_subtest "fcntl-vs-flock"
 		do_lock "--nonblock --exclusive" 0 "flock vs fcntl"
 		ts_finalize_subtest

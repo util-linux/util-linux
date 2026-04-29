@@ -55,7 +55,7 @@ Examples of the **+**_number_[*smhd*] format are: *+5m*, *+6h*, *+2d*.
 The unit specifier may be longer: *+5min*, *+6hours*, *+2days*.
 
 *-d*, *--device* _device_::
-Use the specified _device_ instead of *rtc0* as realtime clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.
+Use the specified _device_ instead of *rtc0* as real-time clock. This option is only relevant if your system has more than one RTC. You may specify *rtc1*, *rtc2*, ... here.
 
 *-l*, *--local*::
 Assume that the hardware clock is set to local time, regardless of the contents of the _adjtime_ file.

@@ -57,12 +57,12 @@ Start the shell as a login shell with an environment similar to a real login:
 Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. The option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session.
+Create a pseudoterminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session.
 Please note security advice about TIOCSTI vulnerability below.
 +
-The entire session can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* _command_ *&*). If the pseudo-terminal is enabled, then *runuser* works as a proxy between the sessions (sync stdin and stdout).
+The entire session can also be moved to the background (e.g., *runuser --pty* *-u* _user_ *--* _command_ *&*). If the pseudoterminal is enabled, then *runuser* works as a proxy between the sessions (sync stdin and stdout).
 +
-This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | runuser --pty -u* _user_), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
+This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | runuser --pty -u* _user_), then the *ECHO* flag for the pseudoterminal is disabled to avoid messy output.
 
 *-s*, *--shell*=_shell_::
 Run the specified _shell_ instead of the default. The shell to run is selected according to the following rules, in order:
@@ -143,7 +143,7 @@ global logindef config file
 
 == SECURITY NOTES
 
-If *runuser* shares a terminal with the original session, it is potentially vulnerable to privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection. There are two built-in ways to prevent this: Either you can use *runuser* with the *-c* option, which starts a new session via *setsid*(2) without a controlling terminal. Or, if your use case requires a controlling terminal, for example an interactive session, you can instruct *runuser* to use a pseudo terminal with the *--pty* or *-P* option.
+If *runuser* shares a terminal with the original session, it is potentially vulnerable to privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection. There are two built-in ways to prevent this: Either you can use *runuser* with the *-c* option, which starts a new session via *setsid*(2) without a controlling terminal. Or, if your use case requires a controlling terminal, for example an interactive session, you can instruct *runuser* to use a pseudoterminal with the *--pty* or *-P* option.
 
 == HISTORY
 

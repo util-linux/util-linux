@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # SPDX-License-Identifier: EUPL-1.2
 #
 # This file is part of util-linux

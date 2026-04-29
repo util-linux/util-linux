@@ -48,6 +48,7 @@
 #include "signames.h"
 #include "strutils.h"
 #include "pwdutils.h"
+#include "env.h"
 
 #ifndef HAVE_ENVIRON_DECL
 extern char **environ;
@@ -743,6 +744,15 @@ static void load_interp(const char *binfmt_mnt, const char *interp)
 	close(dirfd);
 }
 
+static void set_whitelist_envs(struct ul_env_list **el)
+{
+	if (env_list_setenv(*el, 0) != 0)
+			err(EXIT_FAILURE, _("failed to set whitelisted environment variables"));
+
+	env_list_free(*el);
+	*el = NULL;
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -797,6 +807,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"), out);
 	fputs(_(" --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"), out);
 	fputs(_(" --clear-env               do not inherit environment variables from the calling process\n"), out);
+	fputs(_(" --whitelist-env <list>    clear environment except for specified variables\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
@@ -825,6 +836,7 @@ int main(int argc, char *argv[])
 		OPT_OWNER,
 		OPT_FORWARD_SIGNALS,
 		OPT_CLEAR_ENV,
+		OPT_WHITELIST_ENV,
 	};
 	static const struct option longopts[] = {
 		{ "help",          no_argument,       NULL, 'h'             },
@@ -864,6 +876,7 @@ int main(int argc, char *argv[])
 		{ "boottime",      required_argument, NULL, OPT_BOOTTIME    },
 		{ "load-interp",   required_argument, NULL, 'l'		    },
 		{ "clear-env",   no_argument, NULL, OPT_CLEAR_ENV		    },
+		{ "whitelist-env",   required_argument, NULL, OPT_WHITELIST_ENV	},
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -874,6 +887,7 @@ int main(int argc, char *argv[])
 	gid_t mapgroup = -1, ownergroup = -1;
 	struct map_range *usermap = NULL;
 	struct map_range *groupmap = NULL;
+	struct ul_env_list *env_whitelist = NULL; /* environment whitelist */
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
 	const char *binfmt_mnt = NULL;
@@ -1079,6 +1093,9 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_CLEAR_ENV:
 			clear_env = 1;
+			break;
+		case OPT_WHITELIST_ENV:
+			env_whitelist = env_list_add_getenvs(env_whitelist, optarg);
 			break;
 		case 'h':
 			usage();
@@ -1333,12 +1350,15 @@ int main(int argc, char *argv[])
 	if (keepcaps && (unshare_flags & CLONE_NEWUSER))
 		cap_permitted_to_ambient();
 
-	if (clear_env)
+	if (clear_env || env_whitelist)
 #ifdef HAVE_CLEARENV
 		clearenv();
 #else
 		environ = NULL;
 #endif
+
+	if (env_whitelist)
+		set_whitelist_envs(&env_whitelist);
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);

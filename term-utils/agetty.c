@@ -3094,6 +3094,79 @@ static void reload_agettys(void)
 #endif
 }
 
+static int cred_read_str(struct path_cxt *pc, const char *name,
+			 struct options *op, size_t offset)
+{
+	char *str = NULL, **dest;
+
+	if (ul_path_read_string(pc, &str, name) < 0)
+		return -1;
+
+	dest = (char **) ((char *) op + offset);
+	free(*dest);
+	*dest = str;
+	return 0;
+}
+
+static int cred_read_num(struct path_cxt *pc, const char *name,
+			 struct options *op, size_t offset, int type)
+{
+	char *str = NULL;
+	int rc;
+
+	if (ul_path_read_string(pc, &str, name) < 0)
+		return -1;
+
+	switch (type) {
+	case 'u':
+	{
+		uint32_t num;
+		rc = ul_strtou32(str, &num, 10);
+		if (rc == 0)
+			*((unsigned int *) ((char *) op + offset)) = num;
+		break;
+	}
+	case 'd':
+	{
+		int32_t num;
+		rc = ul_strtos32(str, &num, 10);
+		if (rc == 0)
+			*((int *) ((char *) op + offset)) = num;
+		break;
+	}
+	default:
+		rc = -EINVAL;
+		break;
+	}
+
+	if (rc)
+		log_warn(_("invalid '%s' credential value"), name);
+	free(str);
+	return rc;
+}
+
+static int cred_read_bool(struct path_cxt *pc, const char *name,
+			  int *flags, int flag, int invert)
+{
+	char *str = NULL;
+	bool res;
+	int rc;
+
+	if (ul_path_read_string(pc, &str, name) < 0)
+		return -1;
+
+	rc = ul_strtobool(str, &res);
+	if (rc)
+		log_warn(_("invalid '%s' credential value"), name);
+	else if (res != invert)
+		*flags |= flag;
+	else
+		*flags &= ~flag;
+
+	free(str);
+	return rc;
+}
+
 static void load_credentials(struct options *op)
 {
 	char *env;
@@ -3118,13 +3191,30 @@ static void load_credentials(struct options *op)
 	}
 
 	while ((d = xreaddir(dir))) {
-		char *str;
-
-		if (strcmp(d->d_name, "agetty.autologin") == 0) {
-			ul_path_read_string(pc, &str, d->d_name);
-			free(op->autolog);
-			op->autolog = str;
-		}
+		if (strcmp(d->d_name, "agetty.autologin") == 0)
+			cred_read_str(pc, d->d_name, op,
+				      offsetof(struct options, autolog));
+		else if (strcmp(d->d_name, "agetty.delay") == 0)
+			cred_read_num(pc, d->d_name, op,
+				      offsetof(struct options, delay), 'u');
+		else if (strcmp(d->d_name, "agetty.nice") == 0)
+			cred_read_num(pc, d->d_name, op,
+				      offsetof(struct options, nice), 'd');
+		else if (strcmp(d->d_name, "agetty.hangup") == 0)
+			cred_read_bool(pc, d->d_name,
+				       &op->flags, F_HANGUP, 0);
+		else if (strcmp(d->d_name, "agetty.noclear") == 0)
+			cred_read_bool(pc, d->d_name,
+				       &op->flags, F_NOCLEAR, 0);
+		else if (strcmp(d->d_name, "agetty.nohints") == 0)
+			cred_read_bool(pc, d->d_name,
+				       &op->flags, F_NOHINTS, 0);
+		else if (strcmp(d->d_name, "agetty.nohostname") == 0)
+			cred_read_bool(pc, d->d_name,
+				       &op->flags, F_NOHOSTNAME, 0);
+		else if (strcmp(d->d_name, "agetty.noissue") == 0)
+			cred_read_bool(pc, d->d_name,
+				       &op->flags, F_ISSUE, 1);
 	}
 	closedir(dir);
 }

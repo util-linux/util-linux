@@ -29,8 +29,8 @@ but other filenames may be specified, as the second parameter or with option
 
 If the third parameter or *--divisor* is specified, it is used as a speed-up multiplier. For example, a speed-up of 2 makes *scriptreplay* go twice as fast, and a speed-down of 0.1 makes it go ten times slower than the original session.
 
-During the replay, you can interactively speed up, slow down, or pause the
-playback using the Up, Down, and Space keys.
+During the replay, you can interactively speed up, slow down, pause or step through the
+playback using the Up, Down, Space and Right keys.
 
 == OPTIONS
 
@@ -102,6 +102,7 @@ The following keys control the playback of the script:
 - *Space*: Toggles pause and unpause. Press this key to pause the playback, and press it again to resume.
 - *Up Arrow*: Increases the playback speed. Each press of this key will make the script replay faster by x0.1.
 - *Down Arrow*: Decreases the playback speed. Each press of this key will slow down the script replay by x0.1.
+- *Right Arrow*: Advances the playback by one step. Each press of this key will immediately display the current step instead of waiting its specified delay.
 
 == AUTHORS
 

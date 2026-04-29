@@ -6,7 +6,7 @@ _unshare_module()
 
 	OPTARGOPTS="--mount=|--uts=|--ipc=|--net=|--pid=|--user=|--cgroup=|--time=|--kill-child=|--mount-proc=|--mount-binfmt="
 
-	REQARGOPTS="--owner|--propagation|--setgroups|--root|--wd|--load-interp|--map-group|--map-groups|--map-user|--map-users|--monotonic|--boottime|--setuid|--setgid"
+	REQARGOPTS="--owner|--propagation|--setgroups|--root|--wd|--load-interp|--map-group|--map-groups|--map-user|--map-users|--monotonic|--boottime|--setuid|--setgid|--whitelist-env"
 
 	REQARGOPTS_SHORT="-l|-R|-w|-S|-G"
 

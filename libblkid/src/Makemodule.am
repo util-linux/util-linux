@@ -120,7 +120,7 @@ endif
 
 libblkid_la_LIBADD = libcommon.la
 if HAVE_ECONF
-libblkid_la_LIBADD += -leconf
+libblkid_la_LIBADD += $(ECONF_LIBS)
 endif
 
 EXTRA_libblkid_la_DEPENDENCIES = \

@@ -91,6 +91,9 @@ Print the combined arguments as a binary mask value.
 Print the combined arguments as a hexadecimal mask value
 in 32-bit comma-separated groups.
 
+*-e*, *--expand*::
+Print the combined arguments as a list of individual bit IDs.
+
 *-l*, *--list*::
 Print the combined arguments as a list of bit IDs.
 Consecutive IDs are compressed to ranges.
@@ -121,6 +124,9 @@ Print the combined arguments as a hexadecimal mask value (default).
 
 ~$ bits --grouped-mask 2,22,74,79
 8400,00000000,00400004
+
+~$ bits --expand 1,3-5,7
+1,3,4,5,7
 
 ~$ bits --width 64 --list 2,22,74,79
 2,22

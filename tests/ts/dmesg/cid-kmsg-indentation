@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This file is part of util-linux.
 #
@@ -23,9 +23,9 @@ ts_check_test_command "$TS_HELPER_DMESG"
 export TZ="GMT"
 export DMESG_TEST_BOOTIME="1234567890.123456"
 
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 
 $TS_HELPER_DMESG --time-format=delta --kmsg-file $TS_SELF/cid-kmsg-newlines >> $TS_OUTPUT 2>> $TS_ERRLOG
 

@@ -58,7 +58,7 @@ endif
 if HAVE_CAP_NG
 check_PROGRAMS += test_cap
 test_cap_SOURCES = tests/helpers/test_cap.c
-test_cap_LDADD = -lcap-ng
+test_cap_LDADD = $(CAP_NG_LIBS)
 endif
 
 check_PROGRAMS += test_open_twice

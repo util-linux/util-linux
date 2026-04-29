@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "strutils.h"
+#include "pwdutils.h"
 
 #define TEST_SIGRECEIVE_FAILURE 0
 
@@ -63,14 +63,11 @@ int main(int argc, char **argv)
 		}
 
 	if (user) {
-		struct passwd *pw;
 		uid_t uid;
 
-		pw = getpwnam(user);
-		if (pw)
-			uid = pw->pw_uid;
-		else
-			uid = strtou32_or_err(user, "failed to parse uid");
+		ul_getuserpw_str(user, &uid);
+		if (uid == (uid_t)-1)
+			errx(TEST_SIGRECEIVE_FAILURE, "failed to parse uid: %s", user);
 		if (setuid(uid) < 0)
 			err(TEST_SIGRECEIVE_FAILURE, "setuid failed");
 	}

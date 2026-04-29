@@ -29,7 +29,10 @@ rename - rename files
 == OPTIONS
 
 *-s*, *--symlink*::
-Do not rename a symlink but change where it points.
+Do not rename a symbolic link but change where it points.
+
+*-c*, *--copy*::
+Copy files instead of renaming them. The original files remain unchanged. For regular files, the content is copied and permission bits (*S_IRWXU*|*S_IRWXG*|*S_IRWXO*) are preserved, but ownership, timestamps, and extended attributes are not. For symbolic links, a new link with the same target is created.
 
 *-v*, *--verbose*::
 Show which files were renamed, if any.
@@ -44,7 +47,7 @@ Replace all occurrences of _substring_ rather than only the first one.
 Replace the last occurrence of _substring_ rather than the first one.
 
 *-o*, *--no-overwrite*::
-Do not overwrite existing files. When *--symlink* is active, do not overwrite symlinks pointing to existing targets.
+Do not overwrite existing files. When *--symlink* is active, do not overwrite symbolic links pointing to existing targets.
 
 *-i*, *--interactive*::
 Ask before overwriting existing files.
@@ -53,7 +56,7 @@ include::man-common/help-version.adoc[]
 
 == WARNING
 
-The renaming has no safeguards by default or without any one of the options *--no-overwrite*, *--interactive* or *--no-act*. If the user has permission to rewrite file names, the command will perform the action without any questions. For example, the result can be quite drastic when the command is run as root in the _/lib_ directory. Always make a backup before running the command, unless you truly know what you are doing.
+The renaming has no safeguards by default or without any one of the options *--no-overwrite*, *--interactive* or *--no-act*. If the user has permission to rewrite filenames, the command will perform the action without any questions. For example, the result can be quite drastic when the command is run as root in the _/lib_ directory. Always make a backup before running the command, unless you truly know what you are doing.
 
 == EDGE CASES
 

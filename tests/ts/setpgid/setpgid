@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This file is part of util-linux.
 #
@@ -19,6 +19,7 @@ TS_DESC="setpgid"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SETPGID"
+[ -e /proc/self/stat ] || ts_skip "/proc/self/stat is missing"
 
 $TS_CMD_SETPGID echo "success" >> $TS_OUTPUT 2>> $TS_ERRLOG
 

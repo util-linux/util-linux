@@ -5,6 +5,10 @@ _lsmem_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'--annotate')
+			COMPREPLY=( $(compgen -W "always auto never" -- $cur) )
+			return 0
+			;;
 		'-o'|'--output')
 			local prefix realcur OUTPUT_ALL OUTPUT
 			realcur="${cur##*,}"
@@ -34,6 +38,7 @@ _lsmem_module()
 			;;
 	esac
 	OPTS="
+		--annotate
 		--json
 		--pairs
 		--all

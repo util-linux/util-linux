@@ -110,6 +110,7 @@ static size_t num_digits(size_t value)
 
 enum output_mode {
 	MODE_BINARY,
+	MODE_EXPAND,
 	MODE_GROUPED_MASK,
 	MODE_LIST,
 	MODE_MASK,
@@ -134,6 +135,7 @@ static void print_bits(cpu_set_t *bits, size_t width, enum output_mode mode)
 		case MODE_BINARY:
 			printf("0b0\n");
 			break;
+		case MODE_EXPAND:
 		case MODE_LIST:
 			break;
 		}
@@ -189,13 +191,14 @@ static void print_bits(cpu_set_t *bits, size_t width, enum output_mode mode)
 		printf("\n");
 		break;
 
+	case MODE_EXPAND:
 	case MODE_LIST:
-		/* Maximum number of digits (larger bit number) plus 1
-		 * to account for a separating comma, times the number of bits
-		 * set to 1. */
 		buf_size = (num_digits(width - 1) + 1) * CPU_COUNT_S(size, bits);
 		buf = xmalloc(buf_size);
-		cpulist_create(buf, buf_size, bits, size);
+		if (mode == MODE_EXPAND)
+			cpulist_flat_create(buf, buf_size, bits, size);
+		else
+			cpulist_create(buf, buf_size, bits, size);
 		printf("%s\n", buf);
 		break;
 	}
@@ -233,6 +236,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		  "                       comma separated groups"), stdout);
 	fputsln(_(" -b, --binary        display bits as a binary mask value"),
 		stdout);
+	fputsln(_(" -e, --expand        display bits as an expanded list of bit IDs"), stdout);
 	fputsln(_(" -l, --list          display bits as a compressed list of bit IDs"),
 		stdout);
 
@@ -249,7 +253,7 @@ int main(int argc, char **argv)
 	size_t alloc_size;
 	int c;
 
-#define FLAGS "Vhw:mgbl"
+#define FLAGS "Vhw:mgble"
 	static const struct option longopts[] = {
 		{ "version",      no_argument,       NULL, 'V' },
 		{ "help",         no_argument,       NULL, 'h' },
@@ -257,6 +261,7 @@ int main(int argc, char **argv)
 		{ "mask",         no_argument,       NULL, 'm' },
 		{ "grouped-mask", no_argument,       NULL, 'g' },
 		{ "binary",       no_argument,       NULL, 'b' },
+		{ "expand",       no_argument,       NULL, 'e' },
 		{ "list",         no_argument,       NULL, 'l' },
 		{ NULL,           0,                 NULL,  0  }
 	};
@@ -276,6 +281,9 @@ int main(int argc, char **argv)
 			break;
 		case 'b':
 			mode = MODE_BINARY;
+			break;
+		case 'e':
+			mode = MODE_EXPAND;
 			break;
 		case 'l':
 			mode = MODE_LIST;
@@ -300,14 +308,16 @@ int main(int argc, char **argv)
 	argv += optind;
 	if (argc == 0) {
 		/* no arguments provided, read lines from stdin */
-		char buf[LINE_MAX];
+		char *buf = NULL;
+		size_t bufsz = 0;
 
-		while (fgets(buf, sizeof(buf), stdin)) {
+		while (getline(&buf, &bufsz, stdin) != -1) {
 			/* strip LF, CR, CRLF, LFCR */
 			rtrim_whitespace((unsigned char *)buf);
 			if (ul_strv_push(&stdin_lines, xstrdup(buf)) < 0)
 				errx(EXIT_FAILURE, _("cannot allocate memory"));
 		}
+		free(buf);
 
 		argc = ul_strv_length(stdin_lines);
 		argv = stdin_lines;

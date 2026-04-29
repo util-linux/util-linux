@@ -332,7 +332,8 @@ static void clean_lock(void)
 
 static void __attribute__((__noreturn__)) sig_handler(int sig)
 {
-	errx(EXIT_FAILURE, "\n%d: catch signal: %s\n", getpid(), strsignal(sig));
+	ul_sig_printf("\n%d: caught signal %d\n", getpid(), sig);
+	_exit(EXIT_FAILURE);
 }
 
 static int test_lock(struct libmnt_test *ts __attribute__((unused)),

@@ -221,6 +221,38 @@ char *cpulist_create(char *str, size_t len,
 }
 
 /*
+ * cpulist_flat_create - Convert cpumask to flat comma-separated list
+ * Output: ONLY single CPUs, NO ranges (e.g. "0,1,2,3,4")
+ */
+char *cpulist_flat_create(char *str, size_t len,
+			    cpu_set_t *set, size_t setsize)
+{
+	char *ptr = str;
+	int entry_made = 0;
+	size_t max = cpuset_nbits(setsize);
+	size_t cpu;
+	int rlen;
+
+	for (cpu = 0; cpu < max; cpu++) {
+		if (!CPU_ISSET_S(cpu, setsize, set))
+			continue;
+
+		rlen = snprintf(ptr, len, "%zu,", cpu);
+		if (rlen < 0 || (size_t)rlen >= len)
+			return NULL;
+
+		ptr += rlen;
+		len -= rlen;
+		entry_made = 1;
+	}
+	ptr -= entry_made;
+	*ptr = '\0';
+
+	return str;
+}
+
+
+/*
  * Returns string with CPU mask.
  */
 char *cpumask_create(char *str, size_t len,

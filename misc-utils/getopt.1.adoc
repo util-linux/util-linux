@@ -83,7 +83,7 @@ Each parameter not starting with a '*-*', and not a required argument of a previ
 
 Output is generated for each element described in the previous section. Output is done in the same order as the elements are specified in the input, except for non-option parameters. Output can be done in _compatible_ (_unquoted_) mode, or in such way that whitespace and other special characters within arguments and non-option parameters are preserved (see *QUOTING*). When the output is processed in the shell script, it will seem to be composed of distinct elements that can be processed one by one (by using the shift command in most shell languages). This is imperfect in unquoted mode, as elements can be split at unexpected places if they contain whitespace or special characters.
 
-If there are problems parsing the parameters, for example because a required argument is not found or an option is not recognized, an error will be reported on stderr, there will be no output for the offending element, and a non-zero error status is returned.
+If there are problems parsing the parameters, for example because a required argument is not found or an option is not recognized, an error will be reported on stderr, there will be no output for the offending element, and a nonzero error status is returned.
 
 For a short option, a single '*-*' and the option character are generated as one parameter. If the option has an argument, the next parameter will be the argument. If the option takes an optional argument, but none was found, the next parameter will be generated but be empty in quoting mode, but no second parameter will be generated in unquoted (compatible) mode. Note that many other *getopt*(1) implementations do not support optional arguments.
 

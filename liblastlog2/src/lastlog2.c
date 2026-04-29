@@ -26,6 +26,7 @@
 */
 
 #include <pwd.h>
+#include <ctype.h>
 #include <errno.h>
 #include <time.h>
 #include <stdio.h>
@@ -38,6 +39,23 @@
 
 #include "lastlog2P.h"
 #include "strutils.h"
+
+#define LASTLOG2_BUSY_TIMEOUT 3000
+
+static int
+set_busy_timeout(sqlite3 *db, const char *path, char **error)
+{
+	int ret = 0;
+
+	if (sqlite3_busy_timeout(db, LASTLOG2_BUSY_TIMEOUT) != SQLITE_OK) {
+		ret = -1;
+		if (error && asprintf(error, "Cannot set busy timeout (%s): %s",
+				     path, sqlite3_errmsg(db)) < 0)
+			ret = -ENOMEM;
+	}
+
+	return ret;
+}
 
 /* Sets the ll2 context/environment. */
 /* Returns the context or NULL if an error has happened. */
@@ -87,6 +105,13 @@ open_database_ro(struct ll2_context *context, sqlite3 **db, char **error)
 				ret = -ENOMEM;
 
 		sqlite3_close(*db);
+		return ret;
+	}
+
+	ret = set_busy_timeout(*db, path, error);
+	if (ret != 0) {
+		sqlite3_close(*db);
+		return ret;
 	}
 
 	return ret;
@@ -110,6 +135,13 @@ open_database_rw(struct ll2_context *context,  sqlite3 **db, char **error)
 				ret = -ENOMEM;
 
 		sqlite3_close(*db);
+		return ret;
+	}
+
+	ret = set_busy_timeout(*db, path, error);
+	if (ret != 0) {
+		sqlite3_close(*db);
+		return ret;
 	}
 
 	return ret;
@@ -123,6 +155,7 @@ read_entry(sqlite3 *db, const char *user,
 	   char **pam_service, char **error)
 {
 	int retval = 0;
+	int step;
 	sqlite3_stmt *res = NULL;
 	static const char *sql = "SELECT Name,Time,TTY,RemoteHost,Service FROM Lastlog2 WHERE Name = ?";
 
@@ -144,7 +177,7 @@ read_entry(sqlite3 *db, const char *user,
 		goto out_read_entry;
 	}
 
-	int step = sqlite3_step(res);
+	step = sqlite3_step(res);
 
 	if (step == SQLITE_ROW) {
 		const unsigned char *luser = sqlite3_column_text(res, 0);
@@ -235,6 +268,7 @@ write_entry(sqlite3 *db, const char *user,
 	    const char *pam_service, char **error)
 {
 	int retval = 0;
+	int step;
 	char *err_msg = NULL;
 	sqlite3_stmt *res = NULL;
 	static const char *sql_table = "CREATE TABLE IF NOT EXISTS Lastlog2(Name TEXT PRIMARY KEY, Time INTEGER, TTY TEXT, RemoteHost TEXT, Service TEXT);";
@@ -304,7 +338,7 @@ write_entry(sqlite3 *db, const char *user,
 		goto out_ll2_read_entry;
 	}
 
-	int step = sqlite3_step(res);
+	step = sqlite3_step(res);
 
 	if (step != SQLITE_DONE) {
 		retval = -1;
@@ -445,6 +479,7 @@ static int
 remove_entry(sqlite3 *db, const char *user, char **error)
 {
 	int retval = 0;
+	int step;
 	sqlite3_stmt *res = NULL;
 	static const char *sql = "DELETE FROM Lastlog2 WHERE Name = ?";
 
@@ -466,7 +501,7 @@ remove_entry(sqlite3 *db, const char *user, char **error)
 		goto out_remove_entry;
 	}
 
-	int step = sqlite3_step(res);
+	step = sqlite3_step(res);
 
 	if (step != SQLITE_DONE) {
 		retval = -1;
@@ -626,6 +661,132 @@ out_import_lastlog:
 	sqlite3_close(db);
 done:
 	fclose(ll_fp);
+
+	return retval;
+}
+
+static const char *valid_journal_modes[] = {
+	"WAL", "DELETE", "TRUNCATE", "PERSIST", "MEMORY", "OFF", NULL
+};
+
+static int
+is_valid_journal_mode(const char *mode)
+{
+	for (size_t i = 0; valid_journal_modes[i]; i++)
+		if (strcasecmp(mode, valid_journal_modes[i]) == 0)
+			return 1;
+	return 0;
+}
+
+/* Set journal mode.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
+extern int
+ll2_set_journal_mode(struct ll2_context *context, const char *mode,
+		     char **error)
+{
+	sqlite3 *db;
+	sqlite3_stmt *res = NULL;
+	const unsigned char *actual;
+	char *sql = NULL;
+	int retval = 0;
+
+	if (!mode || !is_valid_journal_mode(mode)) {
+		if (error && asprintf(error, "Invalid journal mode: %s", mode ? mode : "(null)") < 0)
+			return -ENOMEM;
+		return -1;
+	}
+
+	retval = open_database_rw(context, &db, error);
+	if (retval != 0)
+		return retval;
+
+	if (asprintf(&sql, "PRAGMA journal_mode = %s;", mode) < 0) {
+		sqlite3_close(db);
+		return -ENOMEM;
+	}
+
+	if (sqlite3_prepare_v2(db, sql, -1, &res, 0) != SQLITE_OK) {
+		retval = -1;
+		if (error && asprintf(error, "Failed to set journal mode to %s: %s",
+				     mode, sqlite3_errmsg(db)) < 0)
+			retval = -ENOMEM;
+		goto out;
+	}
+
+	if (sqlite3_step(res) != SQLITE_ROW) {
+		retval = -1;
+		if (error && asprintf(error, "Failed to set journal mode to %s: %s",
+				     mode, sqlite3_errmsg(db)) < 0)
+			retval = -ENOMEM;
+		goto out;
+	}
+
+	/* Verify SQLite actually applied the requested mode */
+	actual = sqlite3_column_text(res, 0);
+	if (!actual || strcasecmp((const char *)actual, mode) != 0) {
+		retval = -1;
+		if (error && asprintf(error,
+				     "Journal mode not changed: requested %s, got %s",
+				     mode, actual ? (const char *)actual : "(null)") < 0)
+			retval = -ENOMEM;
+	}
+
+out:
+	if (res)
+		sqlite3_finalize(res);
+	free(sql);
+	sqlite3_close(db);
+
+	return retval;
+}
+
+/* Get current journal mode.
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
+extern int
+ll2_get_journal_mode(struct ll2_context *context, char **mode, char **error)
+{
+	sqlite3 *db;
+	sqlite3_stmt *res = NULL;
+	int retval = 0;
+	int step;
+	static const char *sql = "PRAGMA journal_mode;";
+
+	retval = open_database_ro(context, &db, error);
+	if (retval != 0)
+		return retval;
+
+	if (sqlite3_prepare_v2(db, sql, -1, &res, 0) != SQLITE_OK) {
+		retval = -1;
+		if (error && asprintf(error, "Failed to query journal mode: %s",
+				     sqlite3_errmsg(db)) < 0)
+				retval = -ENOMEM;
+		goto out;
+	}
+
+	step = sqlite3_step(res);
+	if (step == SQLITE_ROW) {
+		const unsigned char *mode_str = sqlite3_column_text(res, 0);
+		if (mode_str && mode) {
+			*mode = strdup((const char *)mode_str);
+			if (*mode == NULL) {
+				retval = -ENOMEM;
+			} else {
+				/* Convert to uppercase for consistency */
+				for (char *p = *mode; *p; p++)
+					*p = toupper((unsigned char)*p);
+			}
+		}
+	} else {
+		retval = -1;
+		if (error && asprintf(error, "Failed to get journal mode: %s",
+				     sqlite3_errmsg(db)) < 0)
+				retval = -ENOMEM;
+	}
+
+out:
+	if (res)
+		sqlite3_finalize(res);
+	sqlite3_close(db);
 
 	return retval;
 }

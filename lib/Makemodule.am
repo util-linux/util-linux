@@ -185,7 +185,7 @@ test_pty_SOURCES = lib/pty-session.c \
 		   include/pty-session.h \
 		   lib/monotonic.c
 test_pty_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PTY
-test_pty_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
+test_pty_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS) -lutil
 endif
 
 if LINUX
@@ -254,5 +254,5 @@ test_logindefs_SOURCES = lib/logindefs.c
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 test_logindefs_LDADD = $(LDADD) libcommon.la
 if HAVE_ECONF
-test_logindefs_LDADD += -leconf
+test_logindefs_LDADD += $(ECONF_LIBS)
 endif

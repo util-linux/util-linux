@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # This script makes a copy of relevant files from /sys.
 # The files are useful for lsmem(1) regression tests.

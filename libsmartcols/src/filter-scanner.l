@@ -1,4 +1,11 @@
 %{
+
+#if defined(__GNUC__) && !defined(__clang__)
+# pragma GCC diagnostic ignored "-Wsign-compare"
+#elif defined(__clang__)
+# pragma clang diagnostic ignored "-Wsign-compare"
+#endif
+
 #include "smartcolsP.h"
 #include "filter-parser.h"	/* define tokens (T_*) */
 

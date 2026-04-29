@@ -652,16 +652,9 @@ static int ui_end(void)
 	if (!ui_enabled)
 		return -EINVAL;
 
-#if defined(HAVE_SLCURSES_H) || defined(HAVE_SLANG_SLCURSES_H)
-	SLsmg_gotorc(ui_lines - 1, 0);
-	SLsmg_refresh();
-#else
-	mvcur(0, ui_cols - 1, ui_lines-1, 0);
-#endif
 	curs_set(1);
 	nl();
 	endwin();
-	printf("\n");
 	ui_enabled = 0;
 	return 0;
 }
@@ -2854,6 +2847,7 @@ int main(int argc, char *argv[])
 	free(cf->fields);
 
 	fdisk_unref_table(cf->table);
+	fdisk_unref_table(cf->original_layout);
 #ifdef HAVE_LIBMOUNT
 	mnt_unref_table(cf->fstab);
 	mnt_unref_table(cf->mtab);

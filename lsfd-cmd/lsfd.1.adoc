@@ -175,7 +175,7 @@ COMMAND <``string``>::
 Command of the process opening the file.
 
 DELETED <``boolean``>::
-Reachability from the file system.
+Reachability from the filesystem.
 
 DEV <``string``>::
 ID of the device containing the file.
@@ -268,7 +268,7 @@ KNAME <``string``>::
 //
 // Not only u but also p is decorated with underline.
 //
-Raw file name extracted from
+Raw filename extracted from
 from ``/proc/``_pid_``/fd/``_fd_ or ``/proc/``_pid_``/map_files/``_region_.
 
 KTHREAD <``boolean``>::
@@ -375,7 +375,7 @@ state=_SOCK.STATE_[ path=_UNIX.PATH_] type=_SOCK.TYPE_
 ____
 Note that `(deleted)` markers are removed from this column.
 Refer to _KNAME_, _DELETED_, or _XMODE_ to know the
-readability of the file from the file system.
+readability of the file from the filesystem.
 ____
 
 NETLINK.GROUPS <``number``>::
@@ -617,7 +617,7 @@ opened of mapped for writing. This is also in _MODE_.
 mapped for executing the code. This is also in _MODE_.
 +
 [-D]:::
-deleted from  the file system. See also _DELETED_.
+deleted from  the filesystem. See also _DELETED_.
 +
 [-Ll]:::
 locked or leased. _l_ represents a read, a shared lock or a read lease.
@@ -685,7 +685,7 @@ Do the same in an alternative way: ::
 # lsfd -Q 'ASSOC eq "exe"'
 ....
 
-Do the same but print only file names: ::
+Do the same but print only filenames: ::
 ....
 # lsfd -o NAME -Q 'ASSOC eq "exe"' | sort -u
 ....

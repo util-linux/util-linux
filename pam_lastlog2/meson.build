@@ -1,7 +1,7 @@
-build_pam_lastlog2 = not get_option('build-pam-lastlog2') \
+build_pam_lastlog2 = get_option('build-pam-lastlog2') \
     .require(build_liblastlog2) \
     .require(conf.get('HAVE_SECURITY_PAM_MODULES_H').to_string() == '1') \
-    .disabled()
+    .allowed()
 summary('pam_lastlog2', build_pam_lastlog2 ? 'enabled' : 'disabled', section : 'components')
 
 cc = meson.get_compiler('c')

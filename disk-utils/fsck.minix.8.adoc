@@ -59,7 +59,7 @@ Perform automatic repairs. This option implies *--repair* and serves to answer a
 Be verbose.
 
 *-s*, *--super*::
-Output super-block information.
+Output superblock information.
 
 *-m*, *--uncleared*::
 Activate MINIX-like "mode not cleared" warnings.

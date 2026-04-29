@@ -56,7 +56,7 @@ The third form uses an open file by its file descriptor _number_. See the exampl
 == OPTIONS
 
 *-c*, *--command* _command_::
-Pass a single _command_, without arguments, to the shell with *-c*.
+Pass a single _command_, without arguments, to the shell with *-c*. See *SHELL* in the *ENVIRONMENT* section.
 
 *-E*, *--conflict-exit-code* _number_::
 The exit status used when the *-n* option is in use, and the conflicting lock exists, or the *-w* option is in use, and the timeout is reached. The default value is *1*. The _number_ has to be in the range of 0 to 255.
@@ -104,11 +104,16 @@ The command uses <sysexits.h> exit status values for everything, except when usi
 
 When using the _command_ variant, and executing the child worked, then the exit status is that of the child command.
 
+== ENVIRONMENT
+
+*SHELL*::
+The shell used for *-c* _command_ execution. If *SHELL* is not set, _/bin/sh_ is used as the fallback. The user's passwd(5) shell is not consulted, as the command is executed non-interactively.
+
 == NOTES
 
 *flock* does not detect deadlock. See *flock*(2) for details.
 
-Some file systems (e. g. NFS and CIFS) have a limited implementation of *flock*(2) and flock may always fail. For details see *flock*(2), *nfs*(5) and *mount.cifs*(8). Depending on mount options, flock can always fail there.
+Some filesystems (e. g. NFS and CIFS) have a limited implementation of *flock*(2) and flock may always fail. For details see *flock*(2), *nfs*(5) and *mount.cifs*(8). Depending on mount options, flock can always fail there.
 
 == EXAMPLES
 

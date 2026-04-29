@@ -35,7 +35,7 @@ The high-level part of the library keeps information about block devices in a ca
 
 In situations where one is getting information about a single known device, it does not impact performance whether the cache is used or not (unless you are not able to read the block device directly).
 
-The high-level part of the library supports two methods to determine *LABEL/UUID*. It reads information directly from a block device or reads information from /dev/disk/by-* udev symlinks. The udev is preferred method by default.
+The high-level part of the library supports two methods to determine *LABEL/UUID*. It reads information directly from a block device or reads information from /dev/disk/by-* udev symbolic links. The udev is preferred method by default.
 
 If you are dealing with multiple devices, use of the cache is highly recommended (even if empty) as devices will be scanned at most one time and the on-disk cache will be updated if possible.
 
@@ -47,7 +47,7 @@ The standard location of the _/etc/blkid.conf_ config file can be overridden by 
 
 == TAGS
 
-All available tags are listed below. Not all tags are supported for all file systems. To enable a tag, set one of the following flags with *blkid_probe_set_superblocks_flags*():
+All available tags are listed below. Not all tags are supported for all filesystems. To enable a tag, set one of the following flags with *blkid_probe_set_superblocks_flags*():
 
 BLKID_SUBLKS_TYPE::
 
@@ -87,7 +87,7 @@ BLKID_SUBLKS_VERSION::
 
 BLKID_SUBLKS_MAGIC::
 
-- SBMAGIC - super block magic string
+- SBMAGIC - superblock magic string
 
 - SBMAGIC_OFFSET - offset of SBMAGIC
 
@@ -100,11 +100,11 @@ BLKID_SUBLKS_FSINFO::
 
 - FSLASTBLOCK - last fsblock/total number of fsblocks
 
-- FSBLOCKSIZE - file system block size
+- FSBLOCKSIZE - filesystem block size
 
 The following tags are always enabled::
 
-- BLOCK_SIZE - minimal block size accessible by file system
+- BLOCK_SIZE - minimal block size accessible by filesystem
 
 - MOUNT - cluster mount name (ocfs only)
 

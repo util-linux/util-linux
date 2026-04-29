@@ -328,7 +328,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (ms->ms_fat_length) {
 		/* the label may be an attribute in the root directory */
-		uint32_t root_start = (reserved + fat_size) * sector_size;
+		uint64_t root_start = ((uint64_t) reserved + fat_size) * sector_size;
 		uint32_t root_dir_entries = unaligned_le16(&vs->vs_dir_entries);
 
 		if (search_fat_label(pr, root_start, root_dir_entries, vol_label_buf))
@@ -366,7 +366,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			int count;
 
 			next_sect_off = (next - 2) * vs->vs_cluster_size;
-			next_off = (uint64_t)(start_data_sect + next_sect_off) *
+			next_off = ((uint64_t) start_data_sect + next_sect_off) *
 				sector_size;
 
 			count = buf_size / sizeof(struct vfat_dir_entry);

@@ -162,7 +162,7 @@ struct logical_vol_integ_descriptor_imp_use
 	uint16_t	max_udf_write_rev;
 } __attribute__ ((packed));
 
-#define UDF_LVIDIU_OFFSET(vd) (sizeof((vd).tag) + sizeof((vd).type.logical_vol_integ) + 2 * 4 * le32_to_cpu((vd).type.logical_vol_integ.num_partitions))
+#define UDF_LVIDIU_OFFSET(vd) (sizeof((vd).tag) + sizeof((vd).type.logical_vol_integ) + (uint64_t) 8 * le32_to_cpu((vd).type.logical_vol_integ.num_partitions))
 #define UDF_LVIDIU_LENGTH(vd) (le32_to_cpu((vd).type.logical_vol_integ.imp_use_length))
 
 static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring128 *volset_id)
@@ -349,15 +349,20 @@ real_blksz:
 	/* Use the actual block size from here on out */
 	bs = pbs[i];
 
-	/* get descriptor list address and block count */
+	/* get descriptor list address and block count;
+	 * UDF volume descriptor sequence is short (PVD, LVD, USD, IUVD, TD, etc.),
+	 * cap iteration to avoid DoS from crafted anchor length
+	 * (the kernel uses UDF_MAX_TD_NESTING=64 for a similar purpose) */
 	count = le32_to_cpu(vd->type.anchor.length) / bs;
+	if (count > 64)
+		count = 64;
 	loc = le32_to_cpu(vd->type.anchor.location);
 
 	/* pick the primary descriptor from the list and read UDF identifiers */
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr,
-					(uint64_t) (loc + b) * bs,
+					((uint64_t) loc + b) * bs,
 					sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;

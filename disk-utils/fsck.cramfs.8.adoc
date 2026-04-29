@@ -8,7 +8,7 @@
 
 == NAME
 
-fsck.cramfs - fsck compressed ROM file system
+fsck.cramfs - fsck compressed ROM filesystem
 
 == SYNOPSIS
 
@@ -16,7 +16,7 @@ fsck.cramfs - fsck compressed ROM file system
 
 == DESCRIPTION
 
-*fsck.cramfs* is used to check the cramfs file system.
+*fsck.cramfs* is used to check the cramfs filesystem.
 
 == OPTIONS
 
@@ -27,7 +27,7 @@ Enable verbose messaging.
 Use this blocksize, defaults to page size. Must be equal to what was set at creation time. Only used for *--extract*.
 
 *--extract*[**=**_directory_]::
-Test to uncompress the whole file system. Optionally extract contents of the _file_ to _directory_.
+Test to uncompress the whole filesystem. Optionally extract contents of the _file_ to _directory_.
 
 *-a*::
 This option is silently ignored.
@@ -42,7 +42,7 @@ include::man-common/help-version.adoc[]
 *0*::
 success
 *4*::
-file system was left uncorrected
+filesystem was left uncorrected
 *8*::
 operation error, such as unable to allocate memory
 *16*::

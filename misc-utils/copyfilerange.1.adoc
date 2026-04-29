@@ -71,7 +71,7 @@ copyfilerange original-file split-remainder 1M::
 
 copyfilerange split-first-mb join ::
 
-copyfilerange split-remainder join 1M::
+copyfilerange split-remainder join :1M:
 ....
 
 == SEE ALSO

@@ -103,14 +103,22 @@ if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
   lib__mount_deps += [lib_systemd]
 endif
 
+libmount_link_depends = []
+libmount_link_args = []
+
+if cc.has_link_argument('-Wl,--version-script=@0@'.format(libmount_sym_path))
+	libmount_link_depends += [libmount_sym]
+	libmount_link_args += ['-Wl,--version-script=@0@'.format(libmount_sym_path)]
+endif
+
 lib_mount = library(
   'mount',
   link_whole : lib__mount,
   include_directories : [dir_include,
                          dir_libmount],
-  link_depends : libmount_sym,
+  link_depends : libmount_link_depends,
   version : libmount_version,
-  link_args : ['-Wl,--version-script=@0@'.format(libmount_sym_path)],
+  link_args : libmount_link_args,
   link_with : [lib_common],
   dependencies : lib__mount_deps + blkid_dep,
   install : build_libmount)

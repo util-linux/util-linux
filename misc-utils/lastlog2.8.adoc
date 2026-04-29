@@ -55,6 +55,20 @@ Use _file_ as *lastlog2* database.
 Import data from an old lastlog file named _file_.
 Existing entries in the lastlog2 database will be overwritten.
 
+*-j*, *--journal* [_mode_]::
+Show the current SQLite journal mode, or set it to _mode_.
+Without an argument, displays the current journal mode.
+With an argument, sets the journal mode to the specified value.
++
+Supported modes: *WAL*, *DELETE*, *TRUNCATE*, *PERSIST*, *MEMORY*, *OFF*.
++
+*WAL* (Write-Ahead Logging) mode is recommended for high-concurrency scenarios
+as it allows readers and writers to operate concurrently without blocking each other.
+This significantly reduces database lock contention in environments with frequent
+SSH logins. The journal mode setting is persistent and only needs to be set once.
++
+See *sqlite3*(1) PRAGMA journal_mode for more details about journal modes.
+
 *-r*, *--rename* _newname_::
 Rename the user given with *-u* to this _newname_.
 This option can only be used together with *-u* (*--user*).
@@ -73,6 +87,23 @@ Print only last-login records more recent than _days_.
 Print (or modify) the last-login record of the user _login_.
 
 include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+Display the current journal mode:
+....
+lastlog2 -j
+....
+
+Enable WAL mode for better concurrency (recommended for high-traffic servers):
+....
+lastlog2 -j WAL
+....
+
+Switch back to the default DELETE mode:
+....
+lastlog2 -j DELETE
+....
 
 == FILES
 

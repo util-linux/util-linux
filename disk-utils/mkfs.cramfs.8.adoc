@@ -8,7 +8,7 @@
 
 == NAME
 
-mkfs.cramfs - make compressed ROM file system
+mkfs.cramfs - make compressed ROM filesystem
 
 == SYNOPSIS
 
@@ -16,19 +16,19 @@ mkfs.cramfs - make compressed ROM file system
 
 == DESCRIPTION
 
-Files on cramfs file systems are zlib-compressed one page at a time to allow random read access. The metadata is not compressed, but is expressed in a terse representation that is more space-efficient than conventional file systems.
+Files on cramfs filesystems are zlib-compressed one page at a time to allow random read access. The metadata is not compressed, but is expressed in a terse representation that is more space-efficient than conventional filesystems.
 
-The file system is intentionally read-only to simplify its design; random write access for compressed files is difficult to implement. cramfs ships with a utility (*mkcramfs*(8)) to pack files into new cramfs images.
+The filesystem is intentionally read-only to simplify its design; random write access for compressed files is difficult to implement. cramfs ships with a utility (*mkcramfs*(8)) to pack files into new cramfs images.
 
 File sizes are limited to less than 16 MB.
 
-Maximum file system size is a little under 272 MB. (The last file on the file system must begin before the 256 MB block, but can extend past it.)
+Maximum filesystem size is a little under 272 MB. (The last file on the filesystem must begin before the 256 MB block, but can extend past it.)
 
 == ARGUMENTS
 
 The _directory_ is simply the root of the directory tree that we want to generate a compressed filesystem out of.
 
-The _file_ will contain the cram file system, which later can be mounted.
+The _file_ will contain the cram filesystem, which later can be mounted.
 
 == OPTIONS
 
@@ -42,16 +42,16 @@ Treat all warnings as errors, which are reflected as command exit status.
 Use defined block size, which has to be divisible by page size.
 
 *-e* _edition_::
-Use defined file system edition number in superblock.
+Use defined filesystem edition number in superblock.
 
 *-N* *big*|*little*|*host*::
 Use the specified endianness. The default is *host*.
 
 *-i* _file_::
-Insert a _file_ to cramfs file system.
+Insert a _file_ to cramfs filesystem.
 
 *-n* _name_::
-Set name of the cramfs file system.
+Set name of the cramfs filesystem.
 
 *-p*::
 Pad by 512 bytes for boot code.

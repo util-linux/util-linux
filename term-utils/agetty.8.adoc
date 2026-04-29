@@ -35,7 +35,7 @@ This program does not use the _/etc/gettydefs_ (System V) or _/etc/gettytab_ (Su
 == ARGUMENTS
 
 _port_::
-A path name relative to the _/dev_ directory. If a "-" is specified, *agetty* assumes that its standard input is already connected to a tty port and that a connection to a remote user has already been established.
+A pathname relative to the _/dev_ directory. If a "-" is specified, *agetty* assumes that its standard input is already connected to a tty port and that a connection to a remote user has already been established.
 +
 Under System V, a "-" _port_ argument should be preceded by a "--".
 
@@ -349,6 +349,37 @@ _/etc/inittab_::
 
 If set, configures *agetty* to automatically log in the specified user without asking for a username or password, similarly to the *--autologin* option.
 
+*agetty.delay* (unsigned integer)::
+
+If set, configures *agetty* to sleep for a specified number of seconds before opening the tty. Similar to the *--delay* option.
+
+*agetty.hangup* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to do a virtual hangup of the specified terminal. Similar to the *--hangup* option.
+
+*agetty.nice* (signed integer)::
+
+If set, configures *agetty* to run the login program with the specified priority. Similar to the *--nice* option.
+
+*agetty.noclear* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not clear the screen before prompting for the login name. Similar to the *--noclear* option.
+
+*agetty.nohints* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not print hints about Num, Caps and Scroll Locks. Similar to the *--nohints* option.
+
+*agetty.nohostname* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to show no hostname. Similar to the *--nohostname* option.
+
+*agetty.noissue* (boolean)::
+
+If set to a positive boolean value, configures *agetty* to not show contents of _/etc/issue_ before writing the login prompt. Similar to the *--noissue* option.
+
+Boolean credentials accept the following positive values: "1", "y", "t", "yes", "true", "on", "enable",
+and negative values: "0", "n", "f", "no", "false", "off", "disable". The values are case insensitive.
+
 == BUGS
 
 The baud-rate detection feature (the *--extract-baud* option) requires that *agetty* be scheduled soon enough after completion of a dial-in call (within 30 ms with modems that talk at 2400 baud). For robustness, always use the *--extract-baud* option in combination with a multiple baud rate command-line argument, so that BREAK processing is enabled.
@@ -359,7 +390,7 @@ The baud-rate detection feature (the *--extract-baud* option) requires that the 
 
 == DIAGNOSTICS
 
-Depending on how the program was configured, all diagnostics are written to the console device or reported via the *syslog*(3) facility. Error messages are produced if the _port_ argument does not specify a terminal device; if there is no utmp entry for the current process (System V only); and so on.
+Depending on how the program was configured, all diagnostics are written to the console device or reported via the *syslog*(3) facility. Error messages are produced if the _port_ argument does not specify a terminal device; if there is no utmp entry for the calling process (System V only); and so on.
 
 == AUTHORS
 

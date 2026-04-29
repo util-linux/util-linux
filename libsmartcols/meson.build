@@ -42,14 +42,22 @@ lib_smartcols_sources = '''
 libsmartcols_sym = 'src/libsmartcols.sym'
 libsmartcols_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libsmartcols_sym)
 
+libsmartcols_link_depends = []
+libsmartcols_link_args = []
+
+if cc.has_link_argument('-Wl,--version-script=@0@'.format(libsmartcols_sym_path))
+	libsmartcols_link_depends += [libsmartcols_sym]
+	libsmartcols_link_args += ['-Wl,--version-script=@0@'.format(libsmartcols_sym_path)]
+endif
+
 lib_smartcols = both_libraries(
   'smartcols',
   list_h,
   lib_smartcols_sources,
   include_directories : [dir_include, dir_libsmartcols],
-  link_depends : libsmartcols_sym,
+  link_depends : libsmartcols_link_depends,
   version : libsmartcols_version,
-  link_args : ['-Wl,--version-script=@0@'.format(libsmartcols_sym_path)],
+  link_args : libsmartcols_link_args,
   link_with : lib_common,
   dependencies : build_libsmartcols ? [] : disabler(),
   install : build_libsmartcols)

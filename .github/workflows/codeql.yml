@@ -53,8 +53,11 @@ jobs:
         env:
           COMPILER: gcc
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v4
+      - name: Build
+        if: matrix.language == 'cpp'
+        run: |
+          meson setup build -Dtranslate-docs=disabled
+          ninja -C build
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4

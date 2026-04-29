@@ -1,0 +1,96 @@
+//po4a: entry man manual
+= ll2_get_journal_mode(3)
+:doctype: manpage
+:man manual: Programmer's Manual
+:man source: util-linux {release-version}
+:page-layout: base
+:lib: liblastlog2
+:firstversion: 2.43
+
+== NAME
+
+ll2_get_journal_mode - get current SQLite journal mode for lastlog2 database
+
+== SYNOPSIS
+
+*#include <lastlog2.h>*
+
+*int ll2_get_journal_mode(struct ll2_context *__context__, char **__mode__, char **__error__);*
+
+== DESCRIPTION
+
+The *ll2_get_journal_mode*() function retrieves the current SQLite journal mode
+for the lastlog2 database associated with _context_.
+
+If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,
+will be taken.
+
+The returned journal mode string is in uppercase (e.g., "WAL", "DELETE") for
+consistency with user input.
+
+Common journal modes include:
+
+* *WAL* - Write-Ahead Logging mode
+* *DELETE* - Default mode
+* *TRUNCATE* - Truncate mode
+* *PERSIST* - Persist mode
+* *MEMORY* - Memory mode
+* *OFF* - Journaling disabled
+
+--------------------------------------
+struct ll2_context *ctx;
+char *mode = NULL;
+char *error = NULL;
+
+ctx = ll2_new_context(NULL);
+if (!ctx) {
+    fprintf(stderr, "Failed to create context\n");
+    return 1;
+}
+
+if (ll2_get_journal_mode(ctx, &mode, &error) != 0) {
+    fprintf(stderr, "Failed to get journal mode: %s\n", error);
+    free(error);
+    ll2_unref_context(ctx);
+    return 1;
+}
+
+printf("Current journal mode: %s\n", mode);
+free(mode);
+ll2_unref_context(ctx);
+--------------------------------------
+
+== RETURN VALUE
+
+Returns 0 on success, -ENOMEM or -1 on other failure.
+_error_ contains an error string if the return value is -1.
+_error_ is not guaranteed to contain an error string, could also be NULL.
+_error_ should be freed by the caller.
+If successful, _mode_ will be set to a newly allocated string containing
+the current journal mode. The caller must free this string.
+
+== AUTHORS
+
+mailto:kukuk@suse.de[Thorsten Kukuk],
+mailto:wanbingjiang@webray.com.cn[WanBingjiang]
+
+== SEE ALSO
+
+*lastlog2*(3),
+*ll2_set_journal_mode*(3),
+*ll2_new_context*(3),
+*ll2_unref_context*(3),
+*ll2_read_all*(3),
+*ll2_write_entry*(3),
+*ll2_read_entry*(3),
+*ll2_remove_entry*(3),
+*ll2_update_login_time*(3),
+*ll2_import_lastlog*(3)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer-lib.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

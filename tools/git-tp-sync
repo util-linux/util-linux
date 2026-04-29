@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # SPDX-License-Identifier: GPL-2.0-or-later
 #
@@ -159,6 +159,19 @@ function update_project {
 				echo ""${PODIR}/LINGUAS" needs update"
 			else
 				git commit -m "$PODIR: update LINGUAS list" "${PODIR}/LINGUAS"
+			fi
+		fi
+	fi
+
+	if [ -f "${PODIR}/po4a.cfg" ]; then
+		LANGS_LINE=$(find $PODIR"/" -name '*.po' -type f -printf '%P\n' | sed 's/\.po//g' | sort | tr '\n' ' ' | sed 's/ $//')
+		sed -i "s/^\[po4a_langs\].*$/[po4a_langs] ${LANGS_LINE}/" "${PODIR}/po4a.cfg"
+
+		if [ "$(git ls-files -m "${PODIR}/po4a.cfg")" = "${PODIR}/po4a.cfg" ]; then
+			if [ "$DRYRUN" = "true" ]; then
+				echo "${PODIR}/po4a.cfg needs update"
+			else
+				git commit -m "$PODIR: update po4a.cfg language list" "${PODIR}/po4a.cfg"
 			fi
 		fi
 	fi

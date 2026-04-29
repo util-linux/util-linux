@@ -130,7 +130,7 @@ Display the limits of the RSS, and set the soft and hard limits for the number o
 Modify only the soft limit for the number of processes.
 
 *prlimit --pid $$ --nproc=unlimited*::
-Set for the current process both the soft and ceiling values for the number of processes to unlimited.
+Set for the calling process both the soft and ceiling values for the number of processes to unlimited.
 
 *prlimit --cpu=10 sort -u hugefile*::
 Set both the soft and hard CPU time limit to ten seconds and run *sort*(1).

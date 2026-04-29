@@ -89,7 +89,7 @@ Sets the terminal's rendering options to the default values.
 Writes a snapshot of the virtual console with the given number to the file specified with the *--file* option, overwriting its contents; the default is _screen.dump_. Without an argument, it dumps the current virtual console. This overrides *--append*.
 
 *--file* _filename_::
-Sets the snapshot file name for any *--dump* or *--append* options on the same command line. If this option is not present, the default is _screen.dump_ in the current directory. A path name that exceeds the system maximum will be truncated, see *PATH_MAX* from _linux/limits.h_ for the value.
+Sets the snapshot filename for any *--dump* or *--append* options on the same command line. If this option is not present, the default is _screen.dump_ in the current directory. A pathname that exceeds the system maximum will be truncated, see *PATH_MAX* from _linux/limits.h_ for the value.
 
 *--foreground* __8-color__|**default**::
 Sets the foreground text color.

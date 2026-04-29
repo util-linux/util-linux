@@ -16,7 +16,7 @@ unshare - run program in new namespaces
 
 == DESCRIPTION
 
-The *unshare* command creates new namespaces (as specified by the command-line options described below) and then executes the specified _program_. If _program_ is not given, then "${SHELL}" is run (default: _/bin/sh_).
+The *unshare* command creates new namespaces (as specified by the command-line options described below) and then executes the specified _program_. If _program_ is not given, then "${SHELL}" is run. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 By default, a new namespace persists only as long as it has member processes. A new namespace can be made persistent even when it has no member processes by bind mounting /proc/_pid_/ns/_type_ files to a filesystem path. A namespace that has been made persistent in this way can subsequently be entered with *nsenter*(1) even after the _program_ terminates (except PID namespaces where a permanently running init process is required). Once a persistent namespace is no longer needed, it can be unpersisted by using *umount*(8) to remove the bind mount. See the *EXAMPLES* section for more details.
 
@@ -170,7 +170,15 @@ Set the offset of *CLOCK_BOOTTIME* which will be used in the entered time namesp
 *--clear-env*::
 Do not pass the environment variables of the calling process to the unshared process.
 
+*--whitelist-env* _list_::
+Clear all environment variables except for those specified in the comma-separated _list_.
+
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+*SHELL*::
+The default shell to run when no _program_ is specified. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 == NOTES
 

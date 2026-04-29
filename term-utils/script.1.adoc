@@ -133,7 +133,7 @@ Upon receiving *SIGUSR1*, *script* immediately flushes the output files.
 Enable script debug output.
 
 *SHELL*::
-Override the default shell. If *SHELL* is not set, the Bourne shell is assumed. (Most shells set this variable automatically).
+Override the default shell. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 *ULPTY_DEBUG*=all::
 Enable pty debug output.

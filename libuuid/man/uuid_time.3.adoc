@@ -56,7 +56,7 @@ The *uuid_time*() function extracts the time at which the supplied time-based UU
 
 == RETURN VALUE
 
-The time at which the UUID was created, in seconds since January 1, 1970 GMT (the epoch), is returned (see *time*(2)). The time at which the UUID was created, in seconds and microseconds since the epoch, is also stored in the location pointed to by _ret_tv_ (see *gettimeofday*(2)).
+The time at which the UUID was created, in seconds since January 1, 1970 GMT (the Epoch), is returned (see *time*(2)). The time at which the UUID was created, in seconds and microseconds since the Epoch, is also stored in the location pointed to by _ret_tv_ (see *gettimeofday*(2)).
 
 == AUTHORS
 

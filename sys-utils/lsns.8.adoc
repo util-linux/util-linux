@@ -30,7 +30,7 @@ The default output is subject to change. So whenever possible, you should avoid 
 
 The *NSFS* column, printed when *net* is specified for the *--type* option, is special; it uses multi-line cells. Use the option *--nowrap* to switch to ","-separated single-line representation.
 
-Note that *lsns* reads information directly from the _/proc_ filesystem and for non-root users it may return incomplete information. The current _/proc_ filesystem may be unshared and affected by a PID namespace (see *unshare --mount-proc* for more details). *lsns* is not able to see persistent namespaces without processes where the namespace instance is held by a bind mount to /proc/_pid_/ns/_type_.
+Note that *lsns* reads information directly from the _/proc_ filesystem and for unprivileged users it may return incomplete information. The current _/proc_ filesystem may be unshared and affected by a PID namespace (see *unshare --mount-proc* for more details). *lsns* is not able to see persistent namespaces without processes where the namespace instance is held by a bind mount to /proc/_pid_/ns/_type_.
 
 == OPTIONS
 

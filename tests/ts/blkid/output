@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Copyright (C) 2024 Thomas Weißschuh <thomas.weissschuh@linutronix.de>

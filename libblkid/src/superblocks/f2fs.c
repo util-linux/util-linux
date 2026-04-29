@@ -109,7 +109,9 @@ static int probe_f2fs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_uuid(pr, sb->uuid);
 	blkid_probe_sprintf_version(pr, "%u.%u", vermaj, vermin);
-	if (le32_to_cpu(sb->log_blocksize) < 32){
+	/* kernel requires log_blocksize == PAGE_SHIFT (usually 12),
+	 * values above 16 (64K) would overflow 1U << shift */
+	if (le32_to_cpu(sb->log_blocksize) <= 16){
 		uint32_t blocksize = 1U << le32_to_cpu(sb->log_blocksize);
 		blkid_probe_set_fsblocksize(pr, blocksize);
 		blkid_probe_set_block_size(pr, blocksize);

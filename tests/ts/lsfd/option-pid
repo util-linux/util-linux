@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2021 Masatake YAMATO <yamato@redhat.com>
 #

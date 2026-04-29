@@ -111,7 +111,7 @@ Human readable filesystem identifier. See also *-L*.
 UUID=__uuid__::
 Filesystem universally unique identifier. The format of the UUID is usually a series of hex digits separated by hyphens. See also *-U*.
 +
-Note that *mount* uses UUIDs as strings. The UUIDs from the command line or from *fstab*(5) are not converted to internal binary representation. The string representation of the UUID should be based on lower case characters.
+Note that *mount* uses UUIDs as strings. The UUIDs from the command line or from *fstab*(5) are not converted to internal binary representation. The string representation of the UUID should be based on lowercase characters.
 
 PARTLABEL=__label__::
 Human readable partition identifier. This identifier is independent on filesystem and does not change by *mkfs* or *mkswap* operations. It's supported for example for GUID Partition Tables (GPT).
@@ -126,7 +126,7 @@ The command *lsblk --fs* provides an overview of filesystems, LABELs and UUIDs o
 
 Don't forget that there is no guarantee that UUIDs and labels are really unique, especially if you move, share or copy the device. Use *lsblk -o +UUID,PARTUUID* to verify that the UUIDs are really unique in your system.
 
-The recommended setup is to use tags (e.g. *UUID*=_uuid_) rather than _/dev/disk/by-{label,uuid,id,partuuid,partlabel}_ udev symlinks in the _/etc/fstab_ file. Tags are more readable, robust and portable. The *mount*(8) command internally uses udev symlinks, so the use of symlinks in _/etc/fstab_ has no advantage over tags. For more details see *libblkid*(3).
+The recommended setup is to use tags (e.g. *UUID*=_uuid_) rather than _/dev/disk/by-{label,uuid,id,partuuid,partlabel}_ udev symbolic links in the _/etc/fstab_ file. Tags are more readable, robust and portable. The *mount*(8) command internally uses udev symbolic links, so the use of symbolic links in _/etc/fstab_ has no advantage over tags. For more details see *libblkid*(3).
 
 The _proc_ filesystem is not associated with a special device, and when mounting it, an arbitrary keyword - for example, __proc__ - can be used instead of a device specification. (The customary choice _none_ is less fortunate: the error message 'none already mounted' from *mount* can be confusing.)
 
@@ -144,7 +144,7 @@ ____
 
 When mounting a filesystem mentioned in _fstab_ or _mtab_, it suffices to specify on the command line only the device, or only the mount point.
 
-The programs *mount* and *umount*(8) traditionally maintained a list of currently mounted filesystems in the file _/etc/mtab_. The support for regular classic _/etc/mtab_ is completely disabled at compile time by default, because on current Linux systems it is better to make _/etc/mtab_ a symlink to _/proc/mounts_ instead. The regular _mtab_ file maintained in userspace cannot reliably work with namespaces, containers and other advanced Linux features. If the regular _mtab_ support is enabled, then it's possible to use the file as well as the symlink.
+The programs *mount* and *umount*(8) traditionally maintained a list of currently mounted filesystems in the file _/etc/mtab_. The support for regular classic _/etc/mtab_ is completely disabled at compile time by default, because on current Linux systems it is better to make _/etc/mtab_ a symbolic link to _/proc/mounts_ instead. The regular _mtab_ file maintained in userspace cannot reliably work with namespaces, containers and other advanced Linux features. If the regular _mtab_ support is enabled, then it's possible to use the file as well as the symbolic link.
 
 If no arguments are given to *mount*, the list of mounted filesystems is printed.
 
@@ -162,7 +162,7 @@ ____
 *mount /dev/foo /dir*
 ____
 
-This default behaviour can be changed by using the *--options-source-force* command-line option to always read configuration from _fstab_. For non-root users *mount* always reads the _fstab_ configuration.
+This default behaviour can be changed by using the *--options-source-force* command-line option to always read configuration from _fstab_. For unprivileged users *mount* always reads the _fstab_ configuration.
 
 === Non-superuser mounts
 
@@ -180,9 +180,9 @@ ____
 *mount /cd*
 ____
 
-Note that *mount* is very strict about non-root users and all paths specified on command line are verified before _fstab_ is parsed or a helper program is executed. It's strongly recommended to use a valid mountpoint to specify filesystem, otherwise *mount* may fail. For example it's a bad idea to use NFS or CIFS source on command line.
+Note that *mount* is very strict about unprivileged users and all paths specified on command line are verified before _fstab_ is parsed or a helper program is executed. It's strongly recommended to use a valid mountpoint to specify filesystem, otherwise *mount* may fail. For example it's a bad idea to use NFS or CIFS source on command line.
 
-Since util-linux 2.35, *mount* does not exit when user permissions are inadequate according to libmount's internal security rules. Instead, it drops suid permissions and continues as regular non-root user. This behavior supports use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
+Since util-linux 2.35, *mount* does not exit when user permissions are inadequate according to libmount's internal security rules. Instead, it drops suid permissions and continues as regular unprivileged user. This behavior supports use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
 
 For more details, see *fstab*(5). Only the user that mounted a filesystem can unmount it again. If any user should be able to unmount it, then use *users* instead of *user* in the _fstab_ line. The *owner* option is similar to the *user* option, with the restriction that the user must be the owner of the special file. This may be useful e.g. for _/dev/fd_ if a login script makes the console user owner of this device. The *group* option is similar, with the restriction that the user must be a member of the group of the special file.
 
@@ -345,7 +345,7 @@ Note that *mount* does not pass this option to the **/sbin/mount.**__type__ help
 Ensures that the filesystem is mounted as a unique instance and that the
 filesystem superblock is not reused by the kernel. The filesystem may be reused
 later if mounted without the option. The option affects only the current mount
-and is allowed for non-root users as well.
+and is allowed for unprivileged users as well.
 +
 See also the **--onlyonce** option. The difference between *--onlyonce* and
 *--exclusive* is that "onlyonce" ensures the same source is not mounted on the
@@ -790,11 +790,11 @@ ____
 Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when *mount* is executed without suid permissions. The option is also supported as *x-mount.mkdir*, but this notation is deprecated since v2.30. See also *--mkdir* command line option.
 
 *X-mount.nocanonicalize*[**=**_type_]::
-Allows disabling of canonicalization for mount source and target paths. By default, the `mount` command resolves all paths to their absolute paths without symlinks. However, this behavior may not be desired in certain situations, such as when binding a mount over a symlink, or a symlink over a directory or another symlink. The optional argument _type_ can be either "source" or "target" (mountpoint). If no _type_ is specified, then canonicalization is disabled for both types. This mount option does not affect the conversion of source tags (e.g. *LABEL=* or *UUID=*) and _fstab_ processing.
+Allows disabling of canonicalization for mount source and target paths. By default, the `mount` command resolves all paths to their absolute paths without symbolic links. However, this behavior may not be desired in certain situations, such as when binding a mount over a symbolic link, or a symbolic link over a directory or another symbolic link. The optional argument _type_ can be either "source" or "target" (mountpoint). If no _type_ is specified, then canonicalization is disabled for both types. This mount option does not affect the conversion of source tags (e.g. *LABEL=* or *UUID=*) and _fstab_ processing.
 +
-The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify *open_tree*(2) syscall flags and does not allow the bind-mount over a symlink use case.
+The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify *open_tree*(2) syscall flags and does not allow the bind-mount over a symbolic link use case.
 +
-Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by non-root users, regardless of the X-mount.nocanonicalize setting.
+Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by unprivileged users, regardless of the X-mount.nocanonicalize setting.
 
 *X-mount.noloop*::
 Do not create and mount a loop device, even if the source of the mount is a regular file.
@@ -843,7 +843,7 @@ The user namespace will then be attached to the mount and the ID-mapping of the 
 For example, *X-mount.idmap=/proc/PID/ns/user* will attach the user namespace of the process PID to the mount.
 
 *nosymfollow*::
-Do not follow symlinks when resolving paths. Symlinks can still be created, and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still work properly.
+Do not follow symbolic links when resolving paths. Symbolic links can still be created, and *readlink*(1), *readlink*(2), *realpath*(1), and *realpath*(3) all still work properly.
 
 == FILESYSTEM-SPECIFIC MOUNT OPTIONS
 
@@ -879,7 +879,7 @@ Set the permission mask for ADFS 'owner' permissions and 'other' permissions, re
 === Mount options for affs
 
 **uid=**__value__ and **gid=**__value__::
-Set the owner and group of the root of the filesystem (default: uid=gid=0, but with option *uid* or *gid* without specified value, the UID and GID of the current process are taken).
+Set the owner and group of the root of the filesystem (default: uid=gid=0, but with option *uid* or *gid* without specified value, the UID and GID of the calling process are taken).
 
 **setuid=**__value__ and **setgid=**__value__::
 Set the owner and group of all files.
@@ -926,18 +926,18 @@ Sets the mode of the mountpoint.
 
 === Mount options for devpts
 
-The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/pts_. In order to acquire a pseudo terminal, a process opens _/dev/ptmx_; the number of the pseudo terminal is then made available to the process and the pseudo terminal slave can be accessed as _/dev/pts/_<number>.
+The devpts filesystem is a pseudo filesystem, traditionally mounted on _/dev/pts_. In order to acquire a pseudoterminal, a process opens _/dev/ptmx_; the number of the pseudoterminal is then made available to the process and the pseudoterminal slave can be accessed as _/dev/pts/_<number>.
 
 **uid=**__value__ and **gid=**__value__::
-This sets the owner or the group of newly created pseudo terminals to the specified values. When nothing is specified, they will be set to the UID and GID of the creating process. For example, if there is a tty group with GID 5, then *gid=5* will cause newly created pseudo terminals to belong to the tty group.
+This sets the owner or the group of newly created pseudoterminals to the specified values. When nothing is specified, they will be set to the UID and GID of the creating process. For example, if there is a tty group with GID 5, then *gid=5* will cause newly created pseudoterminals to belong to the tty group.
 
 **mode=**__value__::
-Set the mode of newly created pseudo terminals to the specified value. The default is 0600. A value of *mode=620* and *gid=5* makes "mesg y" the default on newly created pseudo terminals.
+Set the mode of newly created pseudoterminals to the specified value. The default is 0600. A value of *mode=620* and *gid=5* makes "mesg y" the default on newly created pseudoterminals.
 
 *newinstance*::
-Create a private instance of the devpts filesystem, such that indices of pseudo terminals allocated in this new instance are independent of indices created in other instances of devpts.
+Create a private instance of the devpts filesystem, such that indices of pseudoterminals allocated in this new instance are independent of indices created in other instances of devpts.
 +
-All mounts of devpts without this *newinstance* option share the same set of pseudo terminal indices (i.e., legacy mode). Each mount of devpts with the *newinstance* option has a private set of pseudo terminal indices.
+All mounts of devpts without this *newinstance* option share the same set of pseudoterminal indices (i.e., legacy mode). Each mount of devpts with the *newinstance* option has a private set of pseudoterminal indices.
 +
 This option is mainly used to support containers in the Linux kernel. It is implemented in Linux kernel versions starting with 2.6.29. Further, this mount option is valid only if *CONFIG_DEVPTS_MULTIPLE_INSTANCES* is enabled in the kernel configuration.
 +
@@ -963,7 +963,7 @@ Set blocksize (default 512). This option is obsolete.
 Set the owner and group of all files. (Default: the UID and GID of the current process.)
 
 **umask=**__value__::
-Set the umask (the bitmask of the permissions that are *not* present). The default is the umask of the current process. The value is given in octal.
+Set the umask (the bit mask of the permissions that are *not* present). The default is the umask of the current process. The value is given in octal.
 
 **dmask=**__value__::
 Set the umask applied to directories only. The default is the umask of the current process. The value is given in octal.
@@ -975,7 +975,7 @@ Set the umask applied to regular files only. The default is the umask of the cur
 This option controls the permission check of mtime/atime.  Possible values:
 
 *20*;;
-If the current process is in the group of the file's group ID,
+If the calling process is in the group of the file's group ID,
 you can change the timestamp.
 +
 *2*;;
@@ -985,7 +985,7 @@ Other users can change the timestamp.
 The default is set from the above *dmask* option. (If the directory
 is writable, *utime*(2) is also allowed.  That is: ~dmask & 022.)
  +
-Normally *utime*(2) checks that the current process is the owner of the
+Normally *utime*(2) checks that the calling process is the owner of the
 file, or that it has the *CAP_FOWNER* capability. But FAT filesystems
 don't have UID/GID on disk, so the normal check is too inflexible.
 With this option you can relax it.
@@ -994,7 +994,7 @@ With this option you can relax it.
 Three different levels of pickiness can be chosen:
 
 *r*[*elaxed*];;
-Upper and lower case are accepted and equivalent, long name parts are truncated (e.g. _verylongname.foobar_ becomes _verylong.foo_), leading and embedded spaces are accepted in each name part (name and extension).
+Uppercase and lowercase are accepted and equivalent, long name parts are truncated (e.g. _verylongname.foobar_ becomes _verylong.foo_), leading and embedded spaces are accepted in each name part (name and extension).
 
 *n*[*ormal*];;
 Like "relaxed", but many special characters (*, ?, <, spaces, etc.) are rejected. This is the default.
@@ -1045,7 +1045,7 @@ To maintain backward compatibility, *-o nfs* is also accepted, defaulting to *st
 This option disables the conversion of timestamps between local time (as used by Windows on FAT) and UTC (which Linux uses internally). This is particularly useful when mounting devices (like digital cameras) that are set to UTC in order to avoid the pitfalls of local time.
 
 **time_offset=**__minutes__::
-Set offset for conversion of timestamps from local time used by FAT to UTC. I.e., _minutes_ will be subtracted from each timestamp to convert it to UTC used internally by Linux. This is useful when the time zone set in the kernel via *settimeofday*(2) is not the time zone used by the filesystem. Note that this option still does not provide correct time stamps in all cases in presence of DST - time stamps in a different DST setting will be off by one hour.
+Set offset for conversion of timestamps from local time used by FAT to UTC. I.e., _minutes_ will be subtracted from each timestamp to convert it to UTC used internally by Linux. This is useful when the timezone set in the kernel via *settimeofday*(2) is not the timezone used by the filesystem. Note that this option still does not provide correct timestamps in all cases in presence of DST - timestamps in a different DST setting will be off by one hour.
 
 *quiet*::
 Turn on the _quiet_ flag. Attempts to chown or chmod files do not return errors, although they fail. Use with caution!
@@ -1096,10 +1096,10 @@ Don't complain about invalid mount options.
 Set the owner and group of all files. (Default: the UID and GID of the current process.)
 
 **umask=**__value__::
-Set the umask (the bitmask of the permissions that are *not* present). The default is the umask of the current process. The value is given in octal.
+Set the umask (the bit mask of the permissions that are *not* present). The default is the umask of the current process. The value is given in octal.
 
 *case=*{**lower**|*asis*}::
-Convert all files names to lower case, or leave them. (Default: *case=lower*.)
+Convert all files names to lowercase, or leave them. (Default: *case=lower*.)
 
 **conv=**__mode__::
 This option is obsolete and may fail or being ignored.
@@ -1111,7 +1111,7 @@ Do not abort mounting when certain consistency checks fail.
 
 ISO 9660 is a standard describing a filesystem structure to be used on CD-ROMs. (This filesystem type is also seen on some DVDs. See also the _udf_ filesystem.)
 
-Normal _iso9660_ filenames appear in an 8.3 format (i.e., DOS-like restrictions on filename length), and in addition all characters are in upper case. Also there is no field for file ownership, protection, number of links, provision for block/character devices, etc.
+Normal _iso9660_ filenames appear in an 8.3 format (i.e., DOS-like restrictions on filename length), and in addition all characters are in uppercase. Also there is no field for file ownership, protection, number of links, provision for block/character devices, etc.
 
 Rock Ridge is an extension to iso9660 that provides all of these UNIX-like features. Basically there are extensions to each directory record that supply all of the additional information, and when Rock Ridge is in use, the filesystem is indistinguishable from a normal UNIX filesystem (except that it is read-only, of course).
 
@@ -1122,13 +1122,13 @@ Disable the use of Rock Ridge extensions, even if available. Cf. *map*.
 Disable the use of Microsoft Joliet extensions, even if available. Cf. *map*.
 
 *check=*{*r*[*elaxed*]|*s*[*trict*]}::
-With *check=relaxed*, a filename is first converted to lower case before doing the lookup. This is probably only meaningful together with *norock* and *map=normal*. (Default: *check=strict*.)
+With *check=relaxed*, a filename is first converted to lowercase before doing the lookup. This is probably only meaningful together with *norock* and *map=normal*. (Default: *check=strict*.)
 
 **uid=**__value__ and **gid=**__value__::
 Give all files in the filesystem the indicated user or group id, possibly overriding the information found in the Rock Ridge extensions. (Default: *uid=0,gid=0*.)
 
 *map=*{*n*[*ormal*]|*o*[*ff*]|*a*[*corn*]}::
-For non-Rock Ridge volumes, normal name translation maps upper to lower case ASCII, drops a trailing ';1', and converts ';' to '.'. With *map=off* no name translation is done. See *norock*. (Default: *map=normal*.) *map=acorn* is like *map=normal* but also apply Acorn extensions if present.
+For non-Rock Ridge volumes, normal name translation maps upper to lowercase ASCII, drops a trailing ';1', and converts ';' to '.'. With *map=off* no name translation is done. See *norock*. (Default: *map=normal*.) *map=acorn* is like *map=normal* but also apply Acorn extensions if present.
 
 **mode=**__value__::
 For non-Rock Ridge volumes, give all files the indicated mode. (Default: read and execute permission for everybody.) Octal mode values require a leading 0.
@@ -1181,7 +1181,7 @@ These options are accepted but ignored.
 
 === Mount options for msdos
 
-See mount options for fat. If the _msdos_ filesystem detects an inconsistency, it reports an error and sets the file system read-only. The filesystem can be made writable again by remounting it.
+See mount options for fat. If the _msdos_ filesystem detects an inconsistency, it reports an error and sets the filesystem read-only. The filesystem can be made writable again by remounting it.
 
 === Mount options for ncpfs
 
@@ -1212,7 +1212,7 @@ Files with the Windows-specific SYSTEM (FILE_ATTRIBUTE_SYSTEM) attribute will be
 Updates the Windows-specific HIDDEN (FILE_ATTRIBUTE_HIDDEN) attribute when creating and moving or renaming files. Files whose names start with a dot will have the HIDDEN attribute set and files whose names do not start with a dot will have it unset.
 
 **windows_names**::
-Prevents the creation of files and directories with a name not allowed by Windows, either because it contains some not allowed character (which are the characters “ * / : < > ? \ | and those whose code is less than 0x20), because the name (with or without extension) is a reserved file name (CON, AUX, NUL, PRN, LPT1-9, COM1-9) or because the last character is a space or a dot. Existing such files can still be read and renamed.
+Prevents the creation of files and directories with a name not allowed by Windows, either because it contains some not allowed character (which are the characters “ * / : < > ? \ | and those whose code is less than 0x20), because the name (with or without extension) is a reserved filename (CON, AUX, NUL, PRN, LPT1-9, COM1-9) or because the last character is a space or a dot. Existing such files can still be read and renamed.
 
 **discard**::
 Enable support of the TRIM command for improved performance on delete operations, which is recommended for use with the solid-state drives (SSD).
@@ -1372,7 +1372,7 @@ Instructs version 3.6 reiserfs software to mount a version 3.5 filesystem, using
 Choose which hash function reiserfs will use to find files within directories.
 +
 *rupasov*;;
-A hash invented by Yury Yu. Rupasov. It is fast and preserves locality, mapping lexicographically close file names to close hash values. This option should not be used, as it causes a high probability of hash collisions.
+A hash invented by Yury Yu. Rupasov. It is fast and preserves locality, mapping lexicographically close filenames to close hash values. This option should not be used, as it causes a high probability of hash collisions.
 
 *tea*;;
 A Davis-Meyer function implemented by Jeremy Fitzhardinge. It uses hash permuting bits in the name. It gets high randomness and, therefore, low probability of hash collisions at some CPU cost. This may be used if *EHASHCOLLISION* errors are experienced with the r5 hash.
@@ -1602,16 +1602,16 @@ UTF8 is the filesystem safe 8-bit encoding of Unicode that is used by the consol
 Defines the behavior for creation and display of filenames which fit into 8.3 characters. If a long name for a file exists, it will always be the preferred one for display. There are four __mode__s:
 
 *lower*;;
-Force the short name to lower case upon display; store a long name when the short name is not all upper case.
+Force the short name to lowercase upon display; store a long name when the short name is not all uppercase.
 
 *win95*;;
-Force the short name to upper case upon display; store a long name when the short name is not all upper case.
+Force the short name to uppercase upon display; store a long name when the short name is not all uppercase.
 
 *winnt*;;
-Display the short name as is; store a long name when the short name is not all lower case or all upper case.
+Display the short name as is; store a long name when the short name is not all lowercase or all uppercase.
 
 *mixed*;;
-Display the short name as is; store a long name when the short name is not all upper case. This mode is the default since Linux 2.6.32.
+Display the short name as is; store a long name when the short name is not all uppercase. This mode is the default since Linux 2.6.32.
 
 === Mount options for usbfs
 
@@ -1776,13 +1776,13 @@ _/run/mount_::
 libmount private runtime directory
 
 _/etc/mtab_::
-table of mounted filesystems or symlink to _/proc/mounts_
+table of mounted filesystems or symbolic link to _/proc/mounts_
 
 _/etc/mtab~_::
-lock file (unused on systems with _mtab_ symlink)
+lock file (unused on systems with _mtab_ symbolic link)
 
 _/etc/mtab.tmp_::
-temporary file (unused on systems with _mtab_ symlink)
+temporary file (unused on systems with _mtab_ symbolic link)
 
 _/etc/filesystems_::
 a list of filesystem types to try
@@ -1799,7 +1799,7 @@ Some Linux filesystems don't support *-o sync* and *-o dirsync* (the ext2, ext3,
 
 The *-o remount* may not be able to change mount parameters (all _ext2fs_-specific parameters, except *sb*, are changeable with a remount, for example, but you can't change *gid* or *umask* for the _fatfs_).
 
-It is possible that the files _/etc/mtab_ and _/proc/mounts_ don't match on systems with a regular _mtab_ file. The first file is based only on the *mount* command options, but the content of the second file also depends on the kernel and others settings (e.g. on a remote NFS server -- in certain cases the *mount* command may report unreliable information about an NFS mount point and the _/proc/mount_ file usually contains more reliable information.) This is another reason to replace the _mtab_ file with a symlink to the _/proc/mounts_ file.
+It is possible that the files _/etc/mtab_ and _/proc/mounts_ don't match on systems with a regular _mtab_ file. The first file is based only on the *mount* command options, but the content of the second file also depends on the kernel and others settings (e.g. on a remote NFS server -- in certain cases the *mount* command may report unreliable information about an NFS mount point and the _/proc/mount_ file usually contains more reliable information.) This is another reason to replace the _mtab_ file with a symbolic link to the _/proc/mounts_ file.
 
 Checking files on NFS filesystems referenced by file descriptors (i.e. the *fcntl* and *ioctl* families of functions) may lead to inconsistent results due to the lack of a consistency check in the kernel even if the *noac* mount option is used.
 

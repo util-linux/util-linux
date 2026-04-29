@@ -54,7 +54,7 @@ include::man-common/help-version.adoc[]
 
 *nologin* is a per-account way to disable login (usually used for system accounts like http or ftp). *nologin* uses _/etc/nologin.txt_ as an optional source for a non-default message, the login access is always refused independently of the file.
 
-*pam_nologin*(8) PAM module usually prevents all non-root users from logging into the system. *pam_nologin*(8) functionality is controlled by _/var/run/nologin_ or the _/etc/nologin_ file.
+*pam_nologin*(8) PAM module usually prevents all unprivileged users from logging into the system. *pam_nologin*(8) functionality is controlled by _/var/run/nologin_ or the _/etc/nologin_ file.
 
 == HISTORY
 

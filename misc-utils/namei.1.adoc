@@ -63,7 +63,7 @@ Use the long listing format (same as *-m -o -v*).
 Show the mode bits of each file type in the style of *ls*(1), for example 'rwxr-xr-x'.
 
 *-n*, *--nosymlinks*::
-Don't follow symlinks.
+Don't follow symbolic links.
 
 *-o*, *--owners*::
 Show owner and group name of each file.

@@ -219,13 +219,17 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	struct stat sb;
 
 	/*
-	 * Check for private device-mapper devices (LVM internals, etc.)
+	 * Check for hidden device-mapper devices (LVM internals, etc.)
 	 * before open() to avoid bumping the kernel open count.  A racing
 	 * DM_DEVICE_REMOVE would otherwise see EBUSY.
+	 *
+	 * Use sysfs_devno_is_dm_hidden() rather than _dm_private() so that
+	 * Stratis devices remain accessible to tools like mkfs.xfs that
+	 * need to probe device geometry.
 	 */
 	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_dm_private(sb.st_rdev, NULL)) {
-		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
+	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL)) {
+		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
 		errno = EINVAL;
 		return NULL;
 	}

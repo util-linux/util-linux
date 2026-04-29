@@ -321,7 +321,7 @@ function ts_init_env {
 	CHARSET="UTF-8"
 	ASAN_OPTIONS="detect_leaks=0"
 	UBSAN_OPTIONS="print_stacktrace=1:print_summary=1:halt_on_error=1"
-	KERNEL_VERSION_XYZ=$(uname -r | awk -F- '{print $1}')
+	KERNEL_VERSION_XYZ=$(uname -r | awk -F'[-+]' '{print $1}')
 	KERNEL_VERSION_MAJOR=$(echo "$KERNEL_VERSION_XYZ" | awk -F. '{print $1}')
 	KERNEL_VERSION_MINOR=$(echo "$KERNEL_VERSION_XYZ" | awk -F. '{print $2}')
 	KERNEL_RELEASE=$(echo "$KERNEL_VERSION_XYZ" | awk -F. '{print $3}')

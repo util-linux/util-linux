@@ -199,7 +199,7 @@ jobs:
           - target: ath79
             subtarget: generic
             abi: musl
-          - target: bcm63xx
+          - target: loongarch64
             subtarget: generic
             abi: musl
           - target: mpc85xx
@@ -223,8 +223,8 @@ jobs:
         run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
       - name: OpenWrt environment
         run: |
-          OPENWRT_RELEASE=23.05.4
-          OPENWRT_SDK=openwrt-sdk-$OPENWRT_RELEASE-${{ matrix.target }}-${{ matrix.subtarget }}_gcc-12.3.0_${{ matrix.abi }}.Linux-x86_64
+          OPENWRT_RELEASE=25.12.2
+          OPENWRT_SDK=openwrt-sdk-$OPENWRT_RELEASE-${{ matrix.target }}-${{ matrix.subtarget }}_gcc-14.3.0_${{ matrix.abi }}.Linux-x86_64
           echo "COMPILER=$COMPILER" >> $GITHUB_ENV
           echo "OPENWRT_RELEASE=$OPENWRT_RELEASE" >> $GITHUB_ENV
           echo "OPENWRT_SDK=$OPENWRT_SDK" >> $GITHUB_ENV
@@ -238,8 +238,8 @@ jobs:
       - name: Download toolchain
         if: steps.cache-openwrt-sdk.outputs.cache-hit != 'true'
         run: |
-          curl -o ~/${{ env.OPENWRT_SDK }}.tar.xz -C - https://downloads.cdn.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${{ matrix.target }}/${{ matrix.subtarget }}/${{ env.OPENWRT_SDK }}.tar.xz
-          tar xf ~/${{ env.OPENWRT_SDK }}.tar.xz -C ~
+          curl -o ~/${{ env.OPENWRT_SDK }}.tar.zst -C - https://downloads.cdn.openwrt.org/releases/${{ env.OPENWRT_RELEASE }}/targets/${{ matrix.target }}/${{ matrix.subtarget }}/${{ env.OPENWRT_SDK }}.tar.zst
+          tar xf ~/${{ env.OPENWRT_SDK }}.tar.zst -C ~
       - name: Configure
         run: |
           source .github/workflows/openwrt-sdk-env.sh  ~/${{ env.OPENWRT_SDK }}

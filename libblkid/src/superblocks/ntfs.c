@@ -206,7 +206,8 @@ static int __probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag, int save_
 			unsigned int val_len = le32_to_cpu(attr->value_len);
 			unsigned char *val = ((uint8_t *) attr) + val_off;
 
-			if (attr_off + val_off + val_len <= mft_record_size)
+			if (val_off <= mft_record_size - attr_off &&
+			    val_len <= mft_record_size - attr_off - val_off)
 				blkid_probe_set_utf8label(pr, val, val_len,
 							  UL_ENCODE_UTF16LE);
 			break;

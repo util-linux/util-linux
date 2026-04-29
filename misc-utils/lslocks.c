@@ -50,6 +50,7 @@
 #include "procfs.h"
 #include "column-list-table.h"
 #include "fileutils.h"
+#include "pager.h"
 
 /* column IDs */
 enum {
@@ -138,6 +139,7 @@ struct lslocks {
 	int raw;
 	int json;
 	int bytes;
+	enum ul_pagermode pager_mode;
 
 	pid_t target_pid;
 
@@ -947,6 +949,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+	fputs(_("     --pager            pipe output into a pager\n"), out);
+	fputs(_("     --nopager          disable pager output\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_LIST_COLUMNS_OPTION(24));
@@ -1081,7 +1085,9 @@ int main(int argc, char *argv[])
 	struct libscols_filter *filter = NULL;
 	char *outarg = NULL;
 	enum {
-		OPT_OUTPUT_ALL = CHAR_MAX + 1
+		OPT_OUTPUT_ALL = CHAR_MAX + 1,
+		OPT_PAGER,
+		OPT_NO_PAGER,
 	};
 	static const struct option long_opts[] = {
 		{ "bytes",      no_argument,       NULL, 'b' },
@@ -1097,11 +1103,16 @@ int main(int argc, char *argv[])
 		{ "noinaccessible", no_argument, NULL, 'i' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "list-columns", no_argument,     NULL, 'H' },
+		{ "pager",      no_argument,       NULL, OPT_PAGER },
+		{ "nopager",    no_argument,       NULL, OPT_NO_PAGER },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'J','r' },
+		{ 'J', OPT_PAGER },
+		{ 'r', OPT_PAGER },
+		{ OPT_PAGER, OPT_NO_PAGER },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1127,6 +1138,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'J':
 			lslocks.json = 1;
+			lslocks.pager_mode = UL_PAGER_NEVER;
 			break;
 		case 'p':
 			lslocks.target_pid = strtopid_or_err(optarg, _("invalid PID argument"));
@@ -1143,6 +1155,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			lslocks.raw = 1;
+			lslocks.pager_mode = UL_PAGER_NEVER;
 			break;
 		case 'u':
 			disable_columns_truncate();
@@ -1150,6 +1163,12 @@ int main(int argc, char *argv[])
 
 		case 'H':
 			collist = 1;
+			break;
+		case OPT_PAGER:
+			lslocks.pager_mode = UL_PAGER_ALWAYS;
+			break;
+		case OPT_NO_PAGER:
+			lslocks.pager_mode = UL_PAGER_NEVER;
 			break;
 		case 'Q':
 			filter = new_filter(optarg);
@@ -1191,6 +1210,9 @@ int main(int argc, char *argv[])
 	if (filter)
 		init_scols_filter(table, filter, lslocks.bytes);
 
+	if (pager_is_enabled(lslocks.pager_mode))
+		pager_open_header(lslocks.no_headings ? 0 : 1, 0);
+
 	/* get_pids_locks() get locks related information from "lock:" fields
 	 * of /proc/$pid/fdinfo/$fd as fallback information.
 	 * get_proc_locks() used the fallback information if /proc/locks
@@ -1208,5 +1230,7 @@ int main(int argc, char *argv[])
 	scols_unref_table(table);
 
 	lslocks_free(&lslocks);
+
+	pager_close();
 	return rc;
 }

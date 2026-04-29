@@ -32,7 +32,7 @@ The *blkid* program is the command-line interface to working with the *libblkid*
 *It is recommended to use* *lsblk*(8) *command to get information about block devices, or lsblk --fs to get an overview of filesystems, or* *findmnt*(8) *to search in already mounted filesystems.*
 
 ____
-*lsblk*(8) provides more information, better control on output formatting, easy to use in scripts and it does not require root permissions to get actual information. *blkid* reads information directly from devices and for non-root users it returns cached unverified information. *blkid* is mostly designed for system services and to test *libblkid*(3) functionality.
+*lsblk*(8) provides more information, better control on output formatting, easy to use in scripts and it does not require root permissions to get actual information. *blkid* reads information directly from devices and for unprivileged users it returns cached unverified information. *blkid* is mostly designed for system services and to test *libblkid*(3) functionality.
 ____
 
 When _device_ is specified, tokens from only this device are displayed. It is possible to specify multiple _device_ arguments on the command line. If none is given, all partitions or unpartitioned devices which appear in _/proc/partitions_ are shown, if they are recognized.
@@ -74,7 +74,7 @@ Look up only one device that matches the search parameter specified with the *--
 This option forces *blkid* to use udev when used for LABEL or UUID tokens in *--match-token*. The goal is to provide output consistent with other utils (like *mount*(8), etc.) on systems where the same tag is used for multiple devices.
 
 *-L*, *--label* _label_::
-Look up the device that uses this filesystem _label_; this is equal to **--list-one --output device --match-token LABEL=**__label__. This lookup method is able to reliably use /dev/disk/by-label udev symlinks (dependent on a setting in _/etc/blkid.conf_). Avoid using the symlinks directly; it is not reliable to use the symlinks without verification. The *--label* option works on systems with and without udev.
+Look up the device that uses this filesystem _label_; this is equal to **--list-one --output device --match-token LABEL=**__label__. This lookup method is able to reliably use /dev/disk/by-label udev symbolic links (dependent on a setting in _/etc/blkid.conf_). Avoid using the symbolic links directly; it is not reliable to use the symbolic links without verification. The *--label* option works on systems with and without udev.
 +
 Unfortunately, the original *blkid*(8) from e2fsprogs uses the *-L* option as a synonym for *-o list*. For better portability, use **-l -o device -t LABEL=**__label__ and *-o list* in your scripts rather than the *-L* option.
 
@@ -164,13 +164,13 @@ If an ambivalent probing result was detected by low-level probing mode (*-p*), a
 The standard location of the _/etc/blkid.conf_ config file can be overridden by the environment variable *BLKID_CONF*. The following options control the libblkid library:
 
 _SEND_UEVENT=<yes|not>_::
-Sends uevent when _/dev/disk/by-{label,uuid,partuuid,partlabel}/_ symlink does not match with LABEL, UUID, PARTUUID or PARTLABEL on the device. Default is "yes".
+Sends uevent when _/dev/disk/by-{label,uuid,partuuid,partlabel}/_ symbolic link does not match with LABEL, UUID, PARTUUID or PARTLABEL on the device. Default is "yes".
 
 _CACHE_FILE=<path>_::
 Overrides the standard location of the cache file. This setting can be overridden by the environment variable *BLKID_FILE*. Default is _/run/blkid/blkid.tab_, or _/etc/blkid.tab_ on systems without a _/run_ directory.
 
 _EVALUATE=<methods>_::
-Defines LABEL and UUID evaluation method(s). Currently, the libblkid library supports the "udev" and "scan" methods. More than one method may be specified in a comma-separated list. Default is "udev,scan". The "udev" method uses udev _/dev/disk/by-*_ symlinks and the "scan" method scans all block devices from the _/proc/partitions_ file.
+Defines LABEL and UUID evaluation method(s). Currently, the libblkid library supports the "udev" and "scan" methods. More than one method may be specified in a comma-separated list. Default is "udev,scan". The "udev" method uses udev _/dev/disk/by-*_ symbolic links and the "scan" method scans all block devices from the _/proc/partitions_ file.
 
 == ENVIRONMENT
 

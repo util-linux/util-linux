@@ -600,7 +600,7 @@ static struct passwd *getrootpwent(int try_manually)
 	 * If the encrypted password is valid or not found, return.
 	 */
 	if (p == NULL) {
-		warnx(_("%s: no entry for root\n"), _PATH_PASSWD);
+		warnx(_("%s: no entry for root"), _PATH_PASSWD);
 		return &pwd;
 	}
 	if (valid(pwd.pw_passwd))

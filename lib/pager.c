@@ -26,6 +26,7 @@
 #include "strutils.h"
 #include "ttyutils.h"
 #include "pager.h"
+#include "env.h"
 
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
 
@@ -354,6 +355,40 @@ void pager_close(void)
 	memset(&pager_process, 0, sizeof(pager_process));
 	pager_caught_signal = 0;
 	pager_caught_sigpipe = 0;
+}
+
+/* Decide whether the pager should run for the given @mode.
+ *
+ * UL_PAGER_ALWAYS and UL_PAGER_NEVER reflect an explicit user choice
+ * (--pager / --nopager) and are honored unconditionally.
+ *
+ * UL_PAGER_AUTO consults the PAGER_ENABLE environment variable (accepted
+ * values parsed by ul_strtobool()). PAGER_ENABLE is ignored when stdout
+ * is not a terminal, so pipelines like `lslocks | grep foo` do not spawn
+ * a pager. The variable is also suppressed in privileged (SUID/SGID)
+ * contexts via safe_getenv().
+ */
+bool pager_is_enabled(enum ul_pagermode mode)
+{
+	switch (mode) {
+	case UL_PAGER_ALWAYS:
+		return true;
+	case UL_PAGER_NEVER:
+		return false;
+	case UL_PAGER_AUTO: {
+		const char *s;
+		bool val;
+
+		if (!isatty(STDOUT_FILENO))
+			return false;
+		s = safe_getenv("PAGER_ENABLE");
+		if (!s || ul_strtobool(s, &val) != 0)
+			return false;
+		return val;
+	}
+	default:
+		return false;
+	}
 }
 
 #ifdef TEST_PROGRAM_PAGER

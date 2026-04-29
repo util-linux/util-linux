@@ -24,7 +24,7 @@ raw - bind a Linux raw character device
 
 *raw* is used to bind a Linux raw character device to a block device. Any block device may be used: at the time of binding, the device driver does not even have to be accessible (it may be loaded on demand as a kernel module later).
 
-*raw* is used in two modes: it either sets raw device bindings, or it queries existing bindings. When setting a raw device, _/dev/raw/raw<N>_ is the device name of an existing raw device node in the filesystem. The block device to which it is to be bound can be specified either in terms of its _major_ and _minor_ device numbers, or as a path name _/dev/<blockdev>_ to an existing block device file.
+*raw* is used in two modes: it either sets raw device bindings, or it queries existing bindings. When setting a raw device, _/dev/raw/raw<N>_ is the device name of an existing raw device node in the filesystem. The block device to which it is to be bound can be specified either in terms of its _major_ and _minor_ device numbers, or as a pathname _/dev/<blockdev>_ to an existing block device file.
 
 The bindings already in existence can be queried with the *-q* option, which is used either with a raw device filename to query that one device, or with the *-a* option to query all bound raw devices.
 

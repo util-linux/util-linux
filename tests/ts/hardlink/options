@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2018 Ruediger Meier <ruediger.meier@ga-group.nl>
 #
@@ -46,6 +46,7 @@ summary_clean()
 		-e 's/^Duration:.*/Duration: [Redacted]/' \
 		-e 's/^Method:.*/Method: [Redacted]/' \
 		-e 's/^Compared:.*files/Compared: [Redacted] files/' \
+		-e '/^Compared:.*xattrs/d' \
 		$TS_OUTPUT
 }
 

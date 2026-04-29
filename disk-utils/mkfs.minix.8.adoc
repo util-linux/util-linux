@@ -38,7 +38,7 @@ The _device_ is usually of the following form:
 
 The device may be a block device or an image file of one, but this is not enforced. Expect not much fun on a character device :-).
 
-The _size-in-blocks_ parameter is the desired size of the file system, in blocks. It is present only for backwards compatibility. If omitted the size will be determined automatically. Only block counts strictly greater than 10 and strictly less than 65536 are allowed.
+The _size-in-blocks_ parameter is the desired size of the filesystem, in blocks. It is present only for backwards compatibility. If omitted the size will be determined automatically. Only block counts strictly greater than 10 and strictly less than 65536 are allowed.
 
 == OPTIONS
 
@@ -46,7 +46,7 @@ The _size-in-blocks_ parameter is the desired size of the file system, in blocks
 Check the device for bad blocks before creating the filesystem. If any are found, the count is printed.
 
 *-n*, *--namelength* _length_::
-Specify the maximum length of filenames. Currently, the only allowable values are 14 and 30 for file system versions 1 and 2. Version 3 allows only value 60. The default is 30.
+Specify the maximum length of filenames. Currently, the only allowable values are 14 and 30 for filesystem versions 1 and 2. Version 3 allows only value 60. The default is 30.
 
 *--lock*[**=**_mode_]::
 Use an exclusive BSD lock for the device or file that is operated upon.

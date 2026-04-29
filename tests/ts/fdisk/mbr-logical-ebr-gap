@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="MBR - reserve EBR gap"
 . "$TS_TOPDIR"/functions.sh

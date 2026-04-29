@@ -748,11 +748,14 @@ AS_IF([test "x$ul_cv_syscall_statmount" = xno ||
    ])
 
 
-AC_CHECK_FUNCS([isnan], [],
-	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
-	[AC_CHECK_LIB([m], [__isnan], [MATH_LIBS="-lm"])]
-)
+AC_CHECK_LIB([m], [floor], [MATH_LIBS="-lm"])
 AC_SUBST([MATH_LIBS])
+
+AC_CHECK_FUNCS([isnan], [],
+	[AC_CHECK_LIB([m], [isnan], [ISNAN_LIBS="-lm"])]
+	[AC_CHECK_LIB([m], [__isnan], [ISNAN_LIBS="-lm"])]
+)
+AC_SUBST([ISNAN_LIBS])
 
 
 dnl lib/mononotic.c may require -lrt
@@ -1090,29 +1093,41 @@ AC_ARG_WITH([audit],
   [], [with_audit=no]
 )
 
+have_audit=no
 AS_IF([test "x$with_audit" = xno], [
   AM_CONDITIONAL([HAVE_AUDIT], [false])
 ], [
-  UL_CHECK_LIB([audit], [audit_log_user_message])
+  PKG_CHECK_MODULES([AUDIT], [audit], [have_audit=yes], [have_audit=no])
   AS_CASE([$with_audit:$have_audit],
     [yes:no],
-      [AC_MSG_ERROR([Audit selected but libaudit not found (or does not support audit_log_user_message())])]
+      [AC_MSG_ERROR([Audit selected but libaudit not found])]
   )
+  AS_IF([test "x$have_audit" = xyes], [
+    AC_DEFINE([HAVE_LIBAUDIT], [1], [Define if audit is available])
+  ])
+  AM_CONDITIONAL([HAVE_AUDIT], [test "x$have_audit" = xyes])
 ])
+AC_SUBST([AUDIT_LIBS])
 
 AC_ARG_WITH([udev], AS_HELP_STRING([--without-udev], [compile without udev support]),
   [], [with_udev=auto]
 )
 
+have_udev=no
 AS_IF([test "x$with_udev" = xno], [
   AM_CONDITIONAL([HAVE_UDEV], [false])
 ], [
-  UL_CHECK_LIB([udev], [udev_new])
+  PKG_CHECK_MODULES([UDEV], [libudev], [have_udev=yes], [have_udev=no])
   AS_CASE([$with_udev:$have_udev],
     [yes:no],
       [AC_MSG_ERROR([udev selected but libudev not found])]
   )
+  AS_IF([test "x$have_udev" = xyes], [
+    AC_DEFINE([HAVE_LIBUDEV], [1], [Define if udev is available])
+  ])
+  AM_CONDITIONAL([HAVE_UDEV], [test "x$have_udev" = xyes])
 ])
+AC_SUBST([UDEV_LIBS])
 
 
 dnl wide-char ncurses
@@ -1667,12 +1682,14 @@ AC_ARG_WITH([cap_ng],
   AS_HELP_STRING([--without-cap-ng], [compile without libcap-ng]),
   [], [with_cap_ng=auto]
 )
+have_cap_ng=no
 AS_IF([test "x$with_cap_ng" = xno], [
   AM_CONDITIONAL([HAVE_CAP_NG], [false])
-  have_cap_ng=no
 ],[
-  UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
+  PKG_CHECK_MODULES([CAP_NG], [libcap-ng], [have_cap_ng=yes], [have_cap_ng=no])
+  AM_CONDITIONAL([HAVE_CAP_NG], [test "x$have_cap_ng" = xyes])
 ])
+AC_SUBST([CAP_NG_LIBS])
 
 
 AC_ARG_ENABLE([setpriv],
@@ -1739,9 +1756,11 @@ AC_ARG_WITH([libz],
   AS_HELP_STRING([--without-libz], [compile without libz]),
   [], [with_libz=auto]
 )
-AS_IF([test "x$with_libz" = xno], [have_z=no], [
-  AC_CHECK_LIB([z], [crc32], [have_z=yes], [have_z=no])
+have_z=no
+AS_IF([test "x$with_libz" = xno], [], [
+  PKG_CHECK_MODULES([Z], [zlib], [have_z=yes], [have_z=no])
 ])
+AC_SUBST([Z_LIBS])
 
 AC_ARG_WITH([libmagic],
   AS_HELP_STRING([--without-libmagic], [compile without libmagic]),

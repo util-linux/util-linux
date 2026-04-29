@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ## This script is potentially dangerous! Don't run it on
 ## arbitrary commands.

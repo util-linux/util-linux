@@ -16,7 +16,7 @@ nsenter - run program in different namespaces
 
 == DESCRIPTION
 
-The *nsenter* command executes _program_ in the namespace(s) that are specified in the command-line options (described below). If _program_ is not given, then "$\{SHELL}" is run (default: _/bin/sh_).
+The *nsenter* command executes _program_ in the namespace(s) that are specified in the command-line options (described below). If _program_ is not given, then "$\{SHELL}" is run. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 Enterable namespaces are:
 
@@ -157,6 +157,11 @@ Set the SELinux security context used for executing a new process according to t
 Add the initiated process to the cgroup of the target process.
 
 include::man-common/help-version.adoc[]
+
+== ENVIRONMENT
+
+*SHELL*::
+The default shell to run when no _program_ is specified. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 == NOTES
 

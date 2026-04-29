@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Copyright (C) 2007 Karel Zak <kzak@redhat.com>
@@ -28,7 +28,7 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_skip_nonroot
 
 cat > $MOUNTER <<\EOF
-#!/bin/bash
+#!/usr/bin/env bash
 # This util-linux regression test component
 # It's safe to remove me...
 #
@@ -62,7 +62,7 @@ ts_init_subtest "missing-options"
 grep -q 'nodev[[:space:]]*tmpfs' /proc/filesystems
 if [ "$?" == "0" ]; then
 cat > $MOUNTER <<EOF
-#!/bin/bash
+#!/usr/bin/env bash
 # This util-linux regression test component
 # It's safe to remove me...
 #

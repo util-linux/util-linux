@@ -1438,9 +1438,12 @@ done:
 	return rc;
 }
 #else /* BLKDISCARD */
-static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
+static int command_discard_free(struct sfdisk *sf,
+				int argc __attribute__((__unused__)),
+				char **argv __attribute__((__unused__)))
 {
 	fdisk_warnx(sf->cxt, _("Discard unsupported on your system."));
+	return 0;
 }
 #endif /* BLKDISCARD */
 

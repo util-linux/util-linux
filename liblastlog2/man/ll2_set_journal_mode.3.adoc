@@ -1,0 +1,96 @@
+//po4a: entry man manual
+= ll2_set_journal_mode(3)
+:doctype: manpage
+:man manual: Programmer's Manual
+:man source: util-linux {release-version}
+:page-layout: base
+:lib: liblastlog2
+:firstversion: 2.43
+
+== NAME
+
+ll2_set_journal_mode - set SQLite journal mode for lastlog2 database
+
+== SYNOPSIS
+
+*#include <lastlog2.h>*
+
+*int ll2_set_journal_mode(struct ll2_context *__context__, const char *__mode__, char **__error__);*
+
+== DESCRIPTION
+
+The *ll2_set_journal_mode*() function sets the SQLite journal mode for the
+lastlog2 database associated with _context_ to the specified _mode_.
+
+If _context_ is NULL, the default database, defined in _LL2_DEFAULT_DATABASE_,
+will be taken.
+
+The journal mode setting is persistent and will be retained across database
+connections.
+
+Common journal modes include:
+
+* *WAL* - Write-Ahead Logging mode (recommended for high concurrency)
+* *DELETE* - Default mode, deletes journal file after commit
+* *TRUNCATE* - Truncates journal file to zero length after commit
+* *PERSIST* - Keeps journal file after commit
+* *MEMORY* - Stores journal in memory
+* *OFF* - Disables journaling (not recommended)
+
+WAL (Write-Ahead Logging) mode is recommended for high-concurrency scenarios
+as it allows readers and writers to operate concurrently without blocking
+each other. This significantly reduces database lock contention in environments
+with frequent SSH logins.
+
+--------------------------------------
+struct ll2_context *ctx;
+char *error = NULL;
+
+ctx = ll2_new_context(NULL);
+if (!ctx) {
+    fprintf(stderr, "Failed to create context\n");
+    return 1;
+}
+
+if (ll2_set_journal_mode(ctx, "WAL", &error) != 0) {
+    fprintf(stderr, "Failed to set journal mode: %s\n", error);
+    free(error);
+    ll2_unref_context(ctx);
+    return 1;
+}
+
+ll2_unref_context(ctx);
+--------------------------------------
+
+== RETURN VALUE
+
+Returns 0 on success, -ENOMEM or -1 on other failure.
+_error_ contains an error string if the return value is -1.
+_error_ is not guaranteed to contain an error string, could also be NULL.
+_error_ should be freed by the caller.
+
+== AUTHORS
+
+mailto:kukuk@suse.de[Thorsten Kukuk],
+mailto:wanbingjiang@webray.com.cn[WanBingjiang]
+
+== SEE ALSO
+
+*lastlog2*(3),
+*ll2_get_journal_mode*(3),
+*ll2_new_context*(3),
+*ll2_unref_context*(3),
+*ll2_read_all*(3),
+*ll2_write_entry*(3),
+*ll2_read_entry*(3),
+*ll2_remove_entry*(3),
+*ll2_update_login_time*(3),
+*ll2_import_lastlog*(3)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer-lib.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]

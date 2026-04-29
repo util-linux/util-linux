@@ -277,7 +277,7 @@ print(struct hexdump_pr *pr, unsigned char *bp) {
 
 	switch(pr->flags) {
 	case F_ADDRESS:
-		printf(pr->fmt, address);
+		printf(pr->fmt, (long long) address);
 		break;
 	case F_BPAD:
 		printf(pr->fmt, "");

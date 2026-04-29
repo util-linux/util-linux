@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e		# exit on errors
 set -o pipefail	# exit if pipe writer fails

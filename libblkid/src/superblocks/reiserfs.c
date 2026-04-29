@@ -91,6 +91,10 @@ static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blocksize = rs4->rs4_blocksize * 256;
 
+	/* The blocksize must be at least 512 */
+	if (blocksize < 512)
+		return BLKID_PROBE_NONE;
+
 	if (*rs4->rs4_label)
 		blkid_probe_set_label(pr, rs4->rs4_label, sizeof(rs4->rs4_label));
 	blkid_probe_set_uuid(pr, rs4->rs4_uuid);

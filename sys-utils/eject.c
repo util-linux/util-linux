@@ -366,7 +366,7 @@ static void changer_select(const struct eject_control *ctl)
 	if (ioctl(ctl->fd, CDROMLOADFROMSLOT, ctl->c_arg) != 0)
 		err(EXIT_FAILURE, _("CD-ROM load from slot command failed"));
 #else
-	warnx(_("IDE/ATAPI CD-ROM changer not supported by this kernel\n") );
+	warnx(_("IDE/ATAPI CD-ROM changer not supported by this kernel") );
 #endif
 }
 
@@ -386,7 +386,7 @@ static void close_tray(int fd)
 	if (status != 0)
 		err(EXIT_FAILURE, _("CD-ROM tray close command failed"));
 #else
-	warnx(_("CD-ROM tray close command not supported by this kernel\n"));
+	warnx(_("CD-ROM tray close command not supported by this kernel"));
 #endif
 }
 

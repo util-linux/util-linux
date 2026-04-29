@@ -39,10 +39,10 @@ static int probe_ubi(blkid_probe pr, const struct blkid_idmag *mag)
 
 	hdr = blkid_probe_get_sb(pr, mag, struct ubi_ec_hdr);
 	if (!hdr)
-		return -1;
+		return errno ? -errno : BLKID_PROBE_NONE;
 
 	if (!ubi_verify_csum(pr, hdr))
-		return -1;
+		return BLKID_PROBE_NONE;
 
 	blkid_probe_sprintf_version(pr, "%u", hdr->version);
 	blkid_probe_sprintf_uuid(pr, (unsigned char *)&hdr->image_seq, 4, "%u",

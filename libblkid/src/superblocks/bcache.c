@@ -216,6 +216,8 @@ static int bcache_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 	csummed_size = offsetof(__typeof__(*bcs), d) +
 		sizeof(bcs->d[0]) * le16_to_cpu(bcs->keys);
 	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
+	if (!csummed)
+		return 0;
 	csum = ul_crc64_we(csummed + BCACHE_SB_CSUMMED_START,
 			   csummed_size - BCACHE_SB_CSUMMED_START);
 	return blkid_probe_verify_csum(pr, csum, le64_to_cpu(bcs->csum));

@@ -56,12 +56,12 @@ Note that a filesystem cannot be unmounted when it is 'busy' - for example, when
 All of the filesystems described in _/proc/self/mountinfo_ (or in deprecated _/etc/mtab_) are unmounted, except the proc, devfs, devpts, sysfs, rpc_pipefs and nfsd filesystems. This list of the filesystems may be replaced by *--types* umount option.
 
 *-A*, *--all-targets*::
-Unmount all mountpoints in the current mount namespace for the specified filesystem. The filesystem can be specified by one of the mountpoints or the device name (or UUID, etc.). When this option is used together with *--recursive*, then all nested mounts within the filesystem are recursively unmounted. This option is only supported on systems where _/etc/mtab_ is a symlink to _/proc/mounts_.
+Unmount all mountpoints in the current mount namespace for the specified filesystem. The filesystem can be specified by one of the mountpoints or the device name (or UUID, etc.). When this option is used together with *--recursive*, then all nested mounts within the filesystem are recursively unmounted. This option is only supported on systems where _/etc/mtab_ is a symbolic link to _/proc/mounts_.
 
 *-c*, *--no-canonicalize*::
 Do not canonicalize paths. The paths canonicalization is based on *stat*(2) and *readlink*(2) system calls. These system calls may hang in some cases (for example on NFS if server is not available). The option has to be used with canonical path to the mount point.
 +
-This option is silently ignored by *umount* for non-root users.
+This option is silently ignored by *umount* for unprivileged users.
 +
 For more details about this option see the *mount*(8) man page. Note that *umount* does not pass this option to the **/sbin/umount.**__type__ helpers.
 
@@ -74,7 +74,7 @@ Causes everything to be done except for the actual system call or umount helper 
 *-f*, *--force*::
 Force an unmount (in case of an unreachable NFS system).
 +
-Note that this option does not guarantee that umount command does not hang. It's strongly recommended to use absolute paths without symlinks to avoid unwanted *readlink*(2) and *stat*(2) system calls on unreachable NFS in *umount*.
+Note that this option does not guarantee that umount command does not hang. It's strongly recommended to use absolute paths without symbolic links to avoid unwanted *readlink*(2) and *stat*(2) system calls on unreachable NFS in *umount*.
 
 *-i*, *--internal-only*::
 Do not call the **/sbin/umount.**__filesystem__ helper even if it exists. By default such a helper program is called if it exists.
@@ -123,7 +123,7 @@ Normally, only the superuser can umount filesystems. However, when _fstab_ conta
 
 Since version 2.34 the *umount* command can be used to perform umount operation also for fuse filesystems if kernel mount table contains user's ID. In this case _fstab_ *user=* mount option is not required.
 
-Since version 2.35 *umount* command does not exit when user permissions are inadequate by internal *libmount* security rules. It drops suid permissions and continue as regular non-root user. This can be used to support use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
+Since version 2.35 *umount* command does not exit when user permissions are inadequate by internal *libmount* security rules. It drops suid permissions and continue as regular unprivileged user. This can be used to support use-cases where root permissions are not necessary (e.g., fuse filesystems, user namespaces, etc).
 
 == LOOP DEVICE
 
@@ -199,7 +199,7 @@ Override the default location of the _fstab_ file (ignored for *suid*).
 == FILES
 
 _/etc/mtab_::
-table of mounted filesystems (deprecated and usually replaced by symlink to _/proc/mounts_)
+table of mounted filesystems (deprecated and usually replaced by symbolic link to _/proc/mounts_)
 
 _/etc/fstab_::
 table of known filesystems

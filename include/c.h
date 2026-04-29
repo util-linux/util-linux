@@ -655,6 +655,10 @@ static inline int fputsln(const char *s, FILE *stream) {
 #define SINT_MIN(t) (-SINT_MAX(t) - (t)1)
 #define MAX_OF_UINT_TYPE(t) ~((t)0)
 
+#ifndef INVALID_UID
+# define INVALID_UID ((uid_t) -1)
+#endif
+
 #ifndef HAVE_REALLOCARRAY
 static inline void *reallocarray(void *ptr, size_t nmemb, size_t size)
 {

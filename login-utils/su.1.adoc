@@ -65,12 +65,12 @@ PAM) from this point of view. You need to use tools like *systemd-run*(1) or
 Preserve the entire environment, i.e., do not set *HOME*, *SHELL*, *USER* or *LOGNAME*. This option is ignored if the option *--login* is specified.
 
 *-P*, *--pty*::
-Create a pseudo-terminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session.
+Create a pseudoterminal for the session. The independent terminal provides better security as the user does not share a terminal with the original session.
 Please note security advice about TIOCSTI vulnerability below.
 +
-The entire session can also be moved to the background (e.g., *su --pty* **-** __user__ *-c* _application_ *&*). If the pseudo-terminal is enabled, then *su* works as a proxy between the sessions (sync stdin and stdout).
+The entire session can also be moved to the background (e.g., *su --pty* **-** __user__ *-c* _application_ *&*). If the pseudoterminal is enabled, then *su* works as a proxy between the sessions (sync stdin and stdout).
 +
-This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudo-terminal is disabled to avoid messy output.
+This feature is mostly designed for interactive sessions. If the standard input is not a terminal, but for example a pipe (e.g., *echo "date" | su --pty*), then the *ECHO* flag for the pseudoterminal is disabled to avoid messy output.
 
 *-s*, *--shell* __shell__::
 Run the specified _shell_ instead of the default. If the target user has a restricted shell (i.e., not listed in _/etc/shells_), the *--shell* option and the *SHELL* environment variables are ignored unless the calling user is root.
@@ -156,7 +156,7 @@ global logindef config file
 
 == SECURITY NOTES
 
-If *su* shares a terminal with the original session, it is potentially vulnerable to privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection. There are two built-in ways to prevent this: Either you can use *su* with the *-c* option, which starts a new session via *setsid*(2) without a controlling terminal. Or, if your use case requires a controlling terminal, for example an interactive session, you can instruct *su* to use a pseudo terminal with the *--pty* or *-P* option.
+If *su* shares a terminal with the original session, it is potentially vulnerable to privilege escalation through TIOCSTI/TIOCLINUX ioctl command injection. There are two built-in ways to prevent this: Either you can use *su* with the *-c* option, which starts a new session via *setsid*(2) without a controlling terminal. Or, if your use case requires a controlling terminal, for example an interactive session, you can instruct *su* to use a pseudoterminal with the *--pty* or *-P* option.
 
 For security reasons, *su* always logs failed log-in attempts to the _btmp_ file, but it does not write to the _lastlog_ file at all. This solution can be used to control *su* behavior by PAM configuration. If you want to use the *pam_lastlog*(8) module to print warning message about failed log-in attempts then *pam_lastlog*(8) has to be configured to update the _lastlog_ file as well. For example by:
 

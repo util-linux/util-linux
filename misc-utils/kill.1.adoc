@@ -33,7 +33,7 @@ The command *kill* sends the specified _signal_ to the specified processes or pr
 
 If no signal is specified, the *TERM* signal is sent. The default action for this signal is to terminate the process. This signal should be used in preference to the *KILL* signal (number 9), since a process may install a handler for the TERM signal in order to perform clean-up steps before terminating in an orderly fashion. If a process does not terminate after a *TERM* signal has been sent, then the *KILL* signal may be used; be aware that the latter signal cannot be caught, and so does not give the target process the opportunity to perform any clean-up before terminating.
 
-Most modern shells have a builtin *kill* command, with a usage rather similar to that of the command described here. The *--all*, *--pid*, and *--queue* options, and the possibility to specify processes by command name, are local extensions.
+Most modern shells have a built-in *kill* command, with a usage rather similar to that of the command described here. The *--all*, *--pid*, and *--queue* options, and the possibility to specify processes by command name, are local extensions.
 
 If _signal_ is 0, then no actual signal is sent, but error checking is still performed.
 
@@ -46,7 +46,7 @@ Each _PID_ can be expressed in one of the following ways:
 _n_;;
 where _n_ is larger than 0. The process with PID _n_ is signaled.
 *0*;;
-All processes in the current process group are signaled.
+All processes in the calling process group are signaled.
 *-1*;;
 All processes with a PID larger than 1 are signaled.
 **-**__n__;;
@@ -132,7 +132,7 @@ partial success (when more than one process specified)
 
 Although it is possible to specify the TID (thread ID, see *gettid*(2)) of one of the threads in a multithreaded process as the argument of *kill*, the signal is nevertheless directed to the process (i.e., the entire thread group). In other words, it is not possible to send a signal to an explicitly selected thread in a multithreaded process. The signal will be delivered to an arbitrarily selected thread in the target process that is not blocking the signal. For more details, see *signal*(7) and the description of *CLONE_THREAD* in *clone*(2).
 
-Various shells provide a builtin *kill* command that is preferred in relation to the *kill*(1) executable described by this manual. The easiest way to ensure one is executing the command described in this page is to use the full path when calling the command, for example: */bin/kill --version*
+Various shells provide a built-in *kill* command that is preferred in relation to the *kill*(1) executable described by this manual. The easiest way to ensure one is executing the command described in this page is to use the full path when calling the command, for example: */bin/kill --version*
 
 == AUTHORS
 

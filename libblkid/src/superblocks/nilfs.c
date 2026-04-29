@@ -79,7 +79,7 @@ static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb, int is_b
 		return 0;
 
 	if (is_bak && blkid_probe_is_wholedisk(pr) &&
-	    sb->s_dev_size != pr->size)
+	    le64_to_cpu(sb->s_dev_size) != (uint64_t) pr->size)
 		return 0;
 
 	bytes = le16_to_cpu(sb->s_bytes);
@@ -157,7 +157,9 @@ static int probe_nilfs2(blkid_probe pr,
 				(unsigned char *) &sb->s_magic))
 		return 1;
 
-	if (le32_to_cpu(sb->s_log_block_size) < 32){
+	/* kernel limits s_log_block_size to ilog2(NILFS_MAX_BLOCK_SIZE=65536) - 10 = 6,
+	 * values above 6 would overflow 1024U << shift */
+	if (le32_to_cpu(sb->s_log_block_size) <= 6){
 		blkid_probe_set_fsblocksize(pr, 1024U << le32_to_cpu(sb->s_log_block_size));
 		blkid_probe_set_block_size(pr, 1024U << le32_to_cpu(sb->s_log_block_size));
 	}

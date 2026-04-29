@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # A small example script for using the getopt(1) program.
 # This script will only work with bash(1).

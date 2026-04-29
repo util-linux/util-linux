@@ -146,8 +146,8 @@ static int exfs_verify_sb(const struct exfs_super_block *ondisk)
 	    sbp->sb_inodelog > EXFS_DINODE_MAX_LOG			||
 	    sbp->sb_inodesize != (1 << sbp->sb_inodelog)		||
 	    (sbp->sb_blocklog - sbp->sb_inodelog != sbp->sb_inopblog)	||
-	    (sbp->sb_rextsize * sbp->sb_blocksize > EXFS_MAX_RTEXTSIZE)	||
-	    (sbp->sb_rextsize * sbp->sb_blocksize < EXFS_MIN_RTEXTSIZE)	||
+	    ((uint64_t) sbp->sb_rextsize * sbp->sb_blocksize > EXFS_MAX_RTEXTSIZE)	||
+	    ((uint64_t) sbp->sb_rextsize * sbp->sb_blocksize < EXFS_MIN_RTEXTSIZE)	||
 	    (sbp->sb_imax_pct > 100 /* zero sb_imax_pct is valid */)	||
 	    sbp->sb_dblocks == 0					||
 	    sbp->sb_dblocks > EXFS_MAX_DBLOCKS(sbp)			||

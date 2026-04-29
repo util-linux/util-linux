@@ -11,3 +11,9 @@ LIBLASTLOG2_2_40 {
         ll2_import_lastlog;
   local: *;
 };
+
+LIBLASTLOG2_2_43 {
+  global:
+        ll2_set_journal_mode;
+        ll2_get_journal_mode;
+} LIBLASTLOG2_2_40;

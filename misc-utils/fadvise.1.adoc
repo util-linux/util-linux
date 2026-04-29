@@ -25,7 +25,7 @@ that is for predeclaring an access pattern for file data.
 
 *-d*, *--fd* _file-descriptor_::
 Apply the advice to the file specified with the file descriptor instead
-of open a file specified with a file name.
+of open a file specified with a filename.
 
 *-a*, *--advice* _advice_::
 See the command output with *--help* option for available values for

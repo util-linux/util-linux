@@ -42,6 +42,8 @@ _lslocks_module()
 		--notruncate
 		--list-columns
 		--filter
+		--pager
+		--nopager
 		--help
 		--version
 	"

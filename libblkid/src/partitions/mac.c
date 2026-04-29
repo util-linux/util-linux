@@ -134,8 +134,8 @@ static int probe_mac_pt(blkid_probe pr,
 
 	for (i = 0; i < nprts; ++i) {
 		blkid_partition par;
-		uint32_t start;
-		uint32_t size;
+		uint64_t start;
+		uint64_t size;
 
 		p = (struct mac_partition *) get_mac_block(pr, block_size, i + 1);
 		if (!p) {
@@ -160,8 +160,8 @@ static int probe_mac_pt(blkid_probe pr,
 		 * follows Linux kernel and all partitions are visible
 		 */
 
-		start = be32_to_cpu(p->start_block) * ssf;
-		size = be32_to_cpu(p->block_count) * ssf;
+		start = (uint64_t) be32_to_cpu(p->start_block) * ssf;
+		size = (uint64_t) be32_to_cpu(p->block_count) * ssf;
 
 		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)

@@ -89,6 +89,17 @@ extern int ll2_rename_user (struct ll2_context *context, const char *user,
 extern int ll2_import_lastlog (struct ll2_context *context,
 		               const char *lastlog_file, char **error);
 
+/* Set journal mode (e.g., "WAL", "DELETE").
+   Returns 0 on success, -ENOMEM or -1 on other failure. */
+extern int ll2_set_journal_mode (struct ll2_context *context,
+				 const char *mode, char **error);
+
+/* Get current journal mode.
+   Returns 0 on success, -ENOMEM or -1 on other failure.
+   Caller must free the returned mode string. */
+extern int ll2_get_journal_mode (struct ll2_context *context,
+				 char **mode, char **error);
+
 #ifdef __cplusplus
 }
 #endif

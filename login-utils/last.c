@@ -649,7 +649,7 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 		if (fscanf(f, "%u", &loginuid) != 1)
 			ret = 1;
 		fclose(f);
-		if (!ret && pw->pw_uid != loginuid)
+		if (!ret && loginuid != INVALID_UID && pw->pw_uid != loginuid)
 			return 1;
 	} else {
 		struct stat st;
@@ -657,11 +657,13 @@ static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 
 		mem2strcpy(utline, ut->ut_line, sizeof(ut->ut_line), sizeof(utline));
 
-		snprintf(path, sizeof(path), "/dev/%s", utline);
-		if (stat(path, &st))
-			return 1;
-		if (pw->pw_uid != st.st_uid)
-			return 1;
+		if (utline[0] != ':') {
+			snprintf(path, sizeof(path), "/dev/%s", utline);
+			if (stat(path, &st))
+				return 1;
+			if (pw->pw_uid != st.st_uid)
+				return 1;
+		}
 	}
 	return ret;
 }

@@ -635,7 +635,8 @@ static int file_xattrs_equal(const struct file *a, const struct file *b)
 	return ret;
 }
 #else /* !USE_XATTR */
-static int file_xattrs_equal(const struct file *a, const struct file *b)
+static int file_xattrs_equal(const struct file *a __attribute__((__unused__)),
+			     const struct file *b __attribute__((__unused__)))
 {
 	return TRUE;
 }
@@ -956,6 +957,25 @@ static int inserter(const char *fpath, const struct stat *sb,
  fail:
 	warn(_("cannot continue"));	/* probably ENOMEM */
 	return 0;
+}
+
+static int insert_file(const char *fpath)
+{
+	struct FTW ftw = {};
+	const char *base;
+	struct stat sb;
+	int rc;
+
+	rc = stat(fpath, &sb);
+	if (rc == -1) {
+		warn(_("cannot stat %s"), fpath);
+		return 0;
+	}
+
+	base = strrchr(fpath, '/');
+	ftw.base = base ? base - fpath + 1: 0;
+
+	return inserter(fpath, &sb, FTW_F, &ftw);
 }
 
 #ifdef USE_REFLINK
@@ -1522,8 +1542,10 @@ int main(int argc, char *argv[])
 		if (opts.prio_trees)
 			++curr_tree;
 
-		if (nftw(path, inserter, 20, ftw_flags) == -1)
-			warn(_("cannot process %s"), path);
+		if (nftw(path, inserter, 20, ftw_flags) == -1) {
+			if (errno != ENOTDIR || insert_file(path) != 0)
+				warn(_("cannot process %s"), path);
+		}
 
 		free(path);
 		rootbasesz = 0;

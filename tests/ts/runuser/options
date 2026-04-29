@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="options"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_RUNUSER"
+ts_check_test_command "$TS_HELPER_STRERROR"
+
+ts_init_subtest "whitelist-environment"
+export UL_TEST_VAR=foo
+
+"$TS_CMD_RUNUSER" root --login --shell /bin/sh \
+            --command 'echo ${UL_TEST_VAR:-CLEARED}' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+# This should print 'foo' to $TS_OUTPUT
+"$TS_CMD_RUNUSER" root --whitelist-environment UL_TEST_VAR --login \
+            --command 'echo $UL_TEST_VAR' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+unset -v UL_TEST_VAR
+
+if grep "$($TS_HELPER_STRERROR ENOTTY)" "$TS_ERRLOG"; then
+    ts_skip_subtest "failed to launch login session: ENOTTY"
+else
+    ts_finalize_subtest
+fi
+
+
+ts_init_subtest "preserve-environment"
+
+old_home="$HOME"
+export HOME=nowhere
+
+"$TS_CMD_RUNUSER" root --command 'echo $HOME' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+# Cleaning up whatever the root user home directory path is, usually it is
+# /root, but let's not assume this is true on all systems.
+sed -i -e 's|\/.*|<root home dir>|g' "$TS_OUTPUT"
+
+"$TS_CMD_RUNUSER" root --preserve-environment \
+                --command 'echo $HOME' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+export HOME="$old_home"
+unset -v old_home
+
+ts_finalize_subtest
+
+
+errmsg=""
+function compare_ptys() {
+    local ts_pty runuser_pty
+
+    ts_pid=$$
+    ts_pty="$(ps -p "$ts_pid" -o tty= 2>>"$TS_ERRLOG")"
+    if [[ "$ts_pty" == "?" || -z "$ts_pty" ]]; then
+        ts_pty="none"
+    fi
+
+    runuser_pty="$("$TS_CMD_RUNUSER" --pty --command 'ps -p $$ -o tty=')"
+    if [[ "$runuser_pty" == "?" || -z "$runuser_pty" ]]; then
+        runuser_pty="none"
+    fi
+
+    if [[ "$ts_pty" == "none" || "$runuser_pty" == "none" \
+            || ! "$ts_pty" =~ pts\/[0-9]* \
+            || ! "$runuser_pty" =~ pts\/[0-9]* ]]; then
+        
+        errmsg="no pseudo terminal found"
+        return 1
+    fi
+
+    if [[ "$ts_pty" == "$runuser_pty" ]]; then
+        errmsg="same pseudo terminal is used"
+        return 1
+    fi
+
+    return 0
+}
+
+ts_init_subtest "pty"
+
+ps --version >/dev/null
+
+if ! compare_ptys; then
+    ts_skip_subtest "$errmsg"
+    unset -v errmsg
+else
+    ts_finalize_subtest
+fi
+
+ts_finalize

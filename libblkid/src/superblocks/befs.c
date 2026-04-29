@@ -313,6 +313,10 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 
 		all_key_count = FS16_TO_CPU(bn->all_key_count, fs_le);
 		all_key_length = FS16_TO_CPU(bn->all_key_length, fs_le);
+
+		if (all_key_count == 0)
+			return -ENOENT; /* Corrupt? */
+
 		keylengths_offset =
 			(sizeof(struct bplustree_node) + all_key_length
 			 + sizeof(int64_t) - 1) & ~(sizeof(int64_t) - 1);
@@ -365,10 +369,14 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 				else
 					last = mid - 1;
 			}
-			if (cmp < 0)
-				node_pointer = FS64_TO_CPU(values[mid + 1],
+			if (cmp < 0) {
+				if (mid + 1U < all_key_count)
+					node_pointer = FS64_TO_CPU(values[mid + 1],
 									fs_le);
-			else
+				else
+					node_pointer = FS64_TO_CPU(bn->overflow_link,
+									fs_le);
+			} else
 				node_pointer = FS64_TO_CPU(values[mid], fs_le);
 		}
 	} while (++loop_detect < 100 &&
@@ -509,7 +517,9 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	    block_size != 1U << block_shift)
 		return BLKID_PROBE_NONE;
 
-	if (FS32_TO_CPU(bs->ag_shift, fs_le) > 64)
+	/* get_block_run() shifts uint64 left by ag_shift + block_shift,
+	 * so the combined value must stay below 64 to avoid UB */
+	if (FS32_TO_CPU(bs->ag_shift, fs_le) + block_shift >= 64)
 		return BLKID_PROBE_NONE;
 
 	ret = get_uuid(pr, bs, &volume_id, fs_le);

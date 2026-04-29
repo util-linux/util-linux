@@ -112,7 +112,7 @@ void emergency_do_mounts(void)
 	}
 
 	if (stat("/", &rt) != 0) {
-		warn("cannot get file status of root file system\n");
+		warn("cannot get file status of root file system");
 		return;
 	}
 
@@ -815,8 +815,10 @@ int main(int argc, char *argv[])
 		fd = STDIN_FILENO;
 	}
 
-	if (!name)
-		errx(EXIT_FAILURE, "usage: %s [<tty>]\n", program_invocation_short_name);
+	if (!name) {
+		fprintf(stderr, "usage: %s [<tty>]\n", program_invocation_short_name);
+		return EXIT_FAILURE;
+	}
 
 	INIT_LIST_HEAD(&consoles);
 	re = detect_consoles(name, fd, &consoles);

@@ -7,7 +7,7 @@ script_SOURCES = term-utils/script.c \
 		 include/pty-session.h \
 		 lib/monotonic.c
 script_CFLAGS = $(AM_CFLAGS) -Wno-format-y2k
-script_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
+script_LDADD = $(LDADD) libcommon.la $(ISNAN_LIBS) $(REALTIME_LIBS) -lutil
 if HAVE_UTEMPTER
 script_LDADD += -lutempter
 endif
@@ -25,7 +25,7 @@ dist_noinst_DATA += term-utils/scriptreplay.1.adoc
 scriptreplay_SOURCES = term-utils/scriptreplay.c \
 		       term-utils/script-playutils.c \
 		       term-utils/script-playutils.h
-scriptreplay_LDADD = $(LDADD) libcommon.la $(MATH_LIBS)
+scriptreplay_LDADD = $(LDADD) libcommon.la $(ISNAN_LIBS)
 endif # BUILD_SCRIPTREPLAY
 
 if BUILD_SCRIPTLIVE
@@ -38,7 +38,7 @@ scriptlive_SOURCES = term-utils/scriptlive.c \
 		       lib/pty-session.c \
 		       include/pty-session.h \
 		       lib/monotonic.c
-scriptlive_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
+scriptlive_LDADD = $(LDADD) libcommon.la $(ISNAN_LIBS) $(REALTIME_LIBS) -lutil
 endif # BUILD_SCRIPTLIVE
 
 
@@ -59,7 +59,7 @@ if BSD
 agetty_LDADD += -lutil
 endif
 if HAVE_ECONF
-agetty_LDADD += -leconf
+agetty_LDADD += $(ECONF_LIBS)
 endif
 if HAVE_SYSTEMD
 agetty_LDADD += $(SYSTEMD_LIBS)

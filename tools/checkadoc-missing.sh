@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2021 Karel Zak <kzak@redhat.com>
 # based on checkman.sh from Sami Kerola <kerolasa@iki.fi>

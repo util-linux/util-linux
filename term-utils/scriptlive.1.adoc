@@ -19,7 +19,7 @@ scriptlive - re-run session typescripts, using timing information
 
 This program re-runs a typescript, using stdin typescript and timing information to ensure that input happens in the same rhythm as it originally appeared when the script was recorded.
 
-The *session is executed* in a newly created pseudoterminal with the user's $SHELL (or defaults to _/bin/bash_).
+The *session is executed* in a newly created pseudoterminal with the user's $SHELL, the shell from the user's passwd(5) entry, or _/bin/sh_ as the fallback.
 
 *Be careful!* The typescript may contain arbitrary commands. It is
 recommended to use *"scriptreplay --stream in --log-in typescript"*
@@ -65,6 +65,9 @@ Set the maximum delay between updates to _number_ of seconds. The argument is a 
 include::man-common/help-version.adoc[]
 
 == ENVIRONMENT
+
+*SHELL*::
+Override the default shell. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 *SCRIPTREPLAY_DEBUG*=all::
 Enable scriptreplay debug output.

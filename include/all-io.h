@@ -114,7 +114,10 @@ static inline ssize_t read_all_alloc(int fd, char **buf)
 	}
 }
 
-static inline ssize_t sendfile_all(int out, int in, off_t *off, size_t count)
+static inline ssize_t sendfile_all(int out __attribute__((__unused__)),
+				   int in __attribute__((__unused__)),
+				   off_t *off __attribute__((__unused__)),
+				   size_t count __attribute__((__unused__)))
 {
 #if defined(HAVE_SENDFILE) && defined(__linux__)
 	ssize_t ret;

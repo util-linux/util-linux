@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This file is part of util-linux.
 #
@@ -25,21 +25,21 @@ export DMESG_TEST_BOOTIME="1234567890.123456"
 
 for I in {-1..8}; do
         echo "Display console level: $I" >> $TS_OUTPUT
-	$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l $I >> $TS_OUTPUT 2>/dev/null
+	$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level $I >> $TS_OUTPUT 2>/dev/null
 done
 
 echo "Display console level: err+" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l err+ >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level err+ >> $TS_OUTPUT 2>/dev/null
 echo "Display console level: emerg+" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l emerg+ >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level emerg+ >> $TS_OUTPUT 2>/dev/null
 echo "Display console level: +err" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l +err >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level +err >> $TS_OUTPUT 2>/dev/null
 echo "Display console level: +debug" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l +debug >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level +debug >> $TS_OUTPUT 2>/dev/null
 echo "Display console level: debug" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l debug >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level debug >> $TS_OUTPUT 2>/dev/null
 echo "Display console level: + (invalid)" >> $TS_OUTPUT
-$TS_HELPER_DMESG -K $TS_SELF/cid-kmsg-input -l + 2>> $TS_OUTPUT >/dev/null
+$TS_HELPER_DMESG --kmsg-file $TS_SELF/cid-kmsg-input --level + 2>> $TS_OUTPUT >/dev/null
 
 # dmesg kmsg output can have varying number of caller_id padding spaces
 # normalize caller_id padding by removing leading spaces

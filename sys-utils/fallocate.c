@@ -5,9 +5,6 @@
  * Written by Eric Sandeen <sandeen@redhat.com>
  *            Karel Zak <kzak@redhat.com>
  *
- * cvtnum routine taken from xfsprogs,
- * Copyright (c) 2003-2005 Silicon Graphics, Inc.
- *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation.
@@ -111,14 +108,18 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static loff_t cvtnum(char *s)
+static off_t cvtnum(char *s)
 {
 	uintmax_t x;
 
 	if (strtosize(s, &x))
 		return -1LL;
+	if (x > (uintmax_t) SINT_MAX(off_t)) {
+		errno = ERANGE;
+		return -1;
+	}
 
-	return x;
+	return (off_t) x;
 }
 
 static void xfallocate(int fd, int mode, off_t offset, off_t length)
@@ -370,8 +371,8 @@ int main(int argc, char **argv)
 	int	mode = 0;
 	int	dig = 0;
 	int	posix = 0;
-	loff_t	length = -2LL;
-	loff_t	offset = 0;
+	off_t	length = -1;
+	off_t	offset = 0;
 
 	static const struct option longopts[] = {
 	    { "help",           no_argument,       NULL, 'h' },
@@ -420,12 +421,16 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			length = cvtnum(optarg);
+			if (length < 0)
+				err(EXIT_FAILURE, _("invalid length"));
 			break;
 		case 'n':
 			mode |= FALLOC_FL_KEEP_SIZE;
 			break;
 		case 'o':
 			offset = cvtnum(optarg);
+			if (offset < 0)
+				err(EXIT_FAILURE, _("invalid offset"));
 			break;
 		case 'p':
 			mode |= FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
@@ -465,19 +470,19 @@ int main(int argc, char **argv)
 
 	if (dig || report) {
 		/* for --dig-holes and --report-holes the default is analyze all file */
-		if (length == -2LL)
-			length = 0;
 		if (length < 0)
-			errx(EXIT_FAILURE, _("invalid length"));
+			length = 0;
 	} else {
 		/* it's safer to require the range specification (--length --offset) */
-		if (length == -2LL)
+		if (length < 0)
 			errx(EXIT_FAILURE, _("no length argument specified"));
-		if (length <= 0)
+		if (length == 0)
 			errx(EXIT_FAILURE, _("invalid length"));
 	}
-	if (offset < 0)
-		errx(EXIT_FAILURE, _("invalid offset"));
+	if (length > SINT_MAX(off_t) - offset) {
+		errno = ERANGE;
+		err(EXIT_FAILURE, _("invalid range specified"));
+	}
 
 	/* O_CREAT makes sense only for the default fallocate(2) behavior
 	 * when mode is no specified and new space is allocated */
@@ -498,23 +503,23 @@ int main(int argc, char **argv)
 			char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, length);
 
 			if (mode & FALLOC_FL_PUNCH_HOLE)
-				fprintf(stdout, _("%s: %s (%ju bytes) hole created.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) hole created.\n"),
+								filename, str, (intmax_t) length);
 			else if (mode & FALLOC_FL_COLLAPSE_RANGE)
-				fprintf(stdout, _("%s: %s (%ju bytes) removed.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) removed.\n"),
+								filename, str, (intmax_t) length);
 			else if (mode & FALLOC_FL_INSERT_RANGE)
-				fprintf(stdout, _("%s: %s (%ju bytes) inserted.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) inserted.\n"),
+								filename, str, (intmax_t) length);
 			else if (mode & FALLOC_FL_ZERO_RANGE)
-				fprintf(stdout, _("%s: %s (%ju bytes) zeroed.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) zeroed.\n"),
+								filename, str, (intmax_t) length);
 			else if (mode & FALLOC_FL_WRITE_ZEROES)
-				fprintf(stdout, _("%s: %s (%ju bytes) written as zeroes.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) written as zeroes.\n"),
+								filename, str, (intmax_t) length);
 			else
-				fprintf(stdout, _("%s: %s (%ju bytes) allocated.\n"),
-								filename, str, length);
+				fprintf(stdout, _("%s: %s (%jd bytes) allocated.\n"),
+								filename, str, (intmax_t) length);
 			free(str);
 		}
 	}

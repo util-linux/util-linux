@@ -158,7 +158,7 @@ Go to kth next file. Defaults to 1.
 Go to kth previous file. Defaults to 1.
 
 *:f*::
-Display current file name and line number.
+Display current filename and line number.
 
 *.*::
 Repeat previous command.
@@ -194,7 +194,7 @@ Equivalent to MORESECURE.
 Disable exit-on-eof (see option *-e* for more details).
 
 *SHELL*::
-Override the default shell.
+Override the default shell. If *SHELL* is not set, the shell from the user's passwd(5) entry is used. If no shell is defined there either, _/bin/sh_ is used as the fallback.
 
 *TERM*::
 Specify the terminal type used by *more* to get the terminal characteristics necessary to manipulate the screen.

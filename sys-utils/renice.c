@@ -49,6 +49,8 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "strutils.h"
+#include "pwdutils.h"
 
 static const char *const idtype[] = {
 	[PRIO_PROCESS]	= N_("process ID"),
@@ -83,18 +85,18 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static int getprio(const int which, const int who, int *prio)
+static int getprio(const int which, const id_t who, int *prio)
 {
 	errno = 0;
 	*prio = getpriority(which, who);
 	if (*prio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype[which]);
+		warn(_("failed to get priority for %u (%s)"), (unsigned int)who, idtype[which]);
 		return -errno;
 	}
 	return 0;
 }
 
-static int donice(const int which, const int who, const int prio, const int relative)
+static int donice(const int which, const id_t who, const int prio, const int relative)
 {
 	int oldprio, newprio;
 
@@ -107,13 +109,13 @@ static int donice(const int which, const int who, const int prio, const int rela
 		newprio = oldprio + prio;
 
 	if (setpriority(which, who, newprio) < 0) {
-		warn(_("failed to set priority for %d (%s)"), who, idtype[which]);
+		warn(_("failed to set priority for %u (%s)"), (unsigned int)who, idtype[which]);
 		return 1;
 	}
 	if (getprio(which, who, &newprio) != 0)
 		return 1;
-	printf(_("%d (%s) old priority %d, new priority %d\n"),
-	       who, idtype[which], oldprio, newprio);
+	printf(_("%u (%s) old priority %d, new priority %d\n"),
+	       (unsigned int)who, idtype[which], oldprio, newprio);
 	return 0;
 }
 
@@ -124,9 +126,9 @@ static int donice(const int which, const int who, const int prio, const int rela
 int main(int argc, char **argv)
 {
 	int which = PRIO_PROCESS;
-	int who = 0, prio, errs = 0;
+	id_t who;
+	int prio, errs = 0;
 	int relative = 0;
-	char *endptr = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -176,11 +178,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	prio = strtol(*argv, &endptr, 10);
-	if (*endptr) {
-		warnx(_("invalid priority '%s'"), *argv);
-		errtryhelp(EXIT_FAILURE);
-	}
+	prio = strtos32_or_err(*argv, _("invalid priority value"));
 	argc--;
 	argv++;
 
@@ -198,26 +196,24 @@ int main(int argc, char **argv)
 			continue;
 		}
 		if (which == PRIO_USER) {
-			struct passwd *pwd = getpwnam(*argv);
-
-			if (pwd != NULL)
-				who = pwd->pw_uid;
-			else
-				who = strtol(*argv, &endptr, 10);
-			if (who < 0 || *endptr) {
+			uid_t uid;
+			ul_getuserpw_str(*argv, &uid);
+			if (uid == (uid_t)-1) {
 				warnx(_("unknown user %s"), *argv);
 				errs = 1;
 				continue;
 			}
+			who = uid;
 		} else {
-			who = strtol(*argv, &endptr, 10);
-			if (who < 0 || *endptr) {
+			uint32_t id;
+			if (ul_strtou32(*argv, &id, 10) != 0) {
 				/* TRANSLATORS: The first %s is one of the above
 				 * three ID names. Read: "bad value for %s: %s" */
 				warnx(_("bad %s value: %s"), idtype[which], *argv);
 				errs = 1;
 				continue;
 			}
+			who = id;
 		}
 		errs |= donice(which, who, prio, relative);
 	}

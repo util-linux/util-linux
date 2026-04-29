@@ -725,7 +725,7 @@ static void determine_device_blocks(struct fs_control *ctl, const struct stat *s
 		ctl->fs_blocks = dev_blocks;
 	else if (dev_blocks < ctl->fs_blocks)
 		errx(MKFS_EX_ERROR,
-		     _("%s: requested blocks (%llu) exceeds available (%llu) blocks\n"),
+		     _("%s: requested blocks (%llu) exceeds available (%llu) blocks"),
 		     ctl->device_name, ctl->fs_blocks, dev_blocks);
 	if (ctl->fs_blocks < 10)
 		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl->device_name);

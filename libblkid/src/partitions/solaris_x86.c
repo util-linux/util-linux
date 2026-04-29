@@ -103,8 +103,8 @@ static int probe_solaris_pt(blkid_probe pr,
 
 	for (i = 1, p = &l->v_slice[0];	i < nparts; i++, p++) {
 
-		uint32_t start = le32_to_cpu(p->s_start);
-		uint32_t size = le32_to_cpu(p->s_size);
+		uint64_t start = le32_to_cpu(p->s_start);
+		uint64_t size = le32_to_cpu(p->s_size);
 		blkid_partition par;
 
 		if (size == 0 || le16_to_cpu(p->s_tag) == SOLARIS_TAG_WHOLEDISK)

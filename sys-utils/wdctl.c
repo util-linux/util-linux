@@ -381,7 +381,7 @@ static int show_flags(struct wd_control *ctl, struct wd_device *wd, uint32_t wan
 	}
 
 	if (flags)
-		warnx(_("%s: unknown flags 0x%x\n"), wd->devpath, flags);
+		warnx(_("%s: unknown flags 0x%x"), wd->devpath, flags);
 
 	scols_print_table(table);
 	rc = 0;

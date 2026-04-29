@@ -60,7 +60,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 
 	while (1) {
 		const struct dos_partition *p, *p0;
-		uint32_t start = 0, size;
+		uint64_t start = 0, size;
 
 		if (++ct_nodata > 100)
 			return BLKID_PROBE_OK;
@@ -94,8 +94,8 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 			blkid_partition par;
 
 			/* the start is relative to the parental ext.partition */
-			start = dos_partition_get_start(p) * ssf;
-			size = dos_partition_get_size(p) * ssf;
+			start = (uint64_t) dos_partition_get_start(p) * ssf;
+			size = (uint64_t) dos_partition_get_size(p) * ssf;
 
 			if (!size || is_extended(p))
 				continue;
@@ -202,7 +202,8 @@ static int probe_dos_pt(blkid_probe pr,
 	blkid_partlist ls;
 	const struct dos_partition *p0, *p;
 	const unsigned char *data;
-	uint32_t start, size, id;
+	uint64_t start, size;
+	uint32_t id;
 	char idstr[UUID_STR_LEN];
 
 
@@ -302,8 +303,8 @@ static int probe_dos_pt(blkid_probe pr,
 	for (p = p0, i = 0; i < 4; i++, p++) {
 		blkid_partition par;
 
-		start = dos_partition_get_start(p) * ssf;
-		size = dos_partition_get_size(p) * ssf;
+		start = (uint64_t) dos_partition_get_start(p) * ssf;
+		size = (uint64_t) dos_partition_get_size(p) * ssf;
 
 		if (!size) {
 			/* Linux kernel ignores empty partitions, but partno for
@@ -327,8 +328,8 @@ static int probe_dos_pt(blkid_probe pr,
 
 	/* Parse logical partitions */
 	for (p = p0, i = 0; i < 4; i++, p++) {
-		start = dos_partition_get_start(p) * ssf;
-		size = dos_partition_get_size(p) * ssf;
+		start = (uint64_t) dos_partition_get_start(p) * ssf;
+		size = (uint64_t) dos_partition_get_size(p) * ssf;
 
 		if (!size)
 			continue;

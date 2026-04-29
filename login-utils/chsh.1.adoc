@@ -52,7 +52,7 @@ older versions used the now-deprecated *-v*).
 
 *chsh* will accept the full pathname of any executable file on the system.
 
-The default behavior for non-root users is to accept only shells listed in the _/etc/shells_ file, and issue a warning for root user. It can also be configured at compile-time to only issue a warning for all users.
+The default behavior for unprivileged users is to accept only shells listed in the _/etc/shells_ file, and issue a warning for root user. It can also be configured at compile-time to only issue a warning for all users.
 
 == EXIT STATUS
 

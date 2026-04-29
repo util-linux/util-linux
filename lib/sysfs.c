@@ -653,6 +653,48 @@ int sysfs_devno_to_wholedisk(dev_t devno, char *diskname,
 }
 
 /*
+ * Returns 1 if the device is a hidden device-mapper device -- i.e. a device
+ * that exists only as a building block for another DM target and should not
+ * be opened by user-space tools (blkid, mkfs, etc.) during udev processing.
+ *
+ * Unlike sysfs_devno_is_dm_private(), this does NOT flag Stratis devices.
+ * Stratis places its own UUID ("stratis-1-private*") in the DM uuid field,
+ * but its devices are legitimately opened by tools such as mkfs.xfs to
+ * obtain device geometry.
+ *
+ * The @uuid (if not NULL) returns DM device UUID, use free() to deallocate.
+ */
+int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid)
+{
+	struct path_cxt *pc = NULL;
+	char *id = NULL;
+	int rc = 0;
+
+	pc = ul_new_sysfs_path(devno, NULL, NULL);
+	if (!pc)
+		goto done;
+	if (ul_path_read_string(pc, &id, "dm/uuid") <= 0 || !id)
+		goto done;
+
+	/* Private LVM devices use "LVM-<uuid>-<name>" uuid format (important
+	 * is the "LVM" prefix and "-<name>" postfix).
+	 */
+	if (strncmp(id, "LVM-", 4) == 0) {
+		char *p = strrchr(id + 4, '-');
+
+		if (p && *(p + 1))
+			rc = 1;
+	}
+done:
+	ul_unref_path(pc);
+	if (uuid)
+		*uuid = id;
+	else
+		free(id);
+	return rc;
+}
+
+/*
  * Returns 1 if the device is private device mapper device. The @uuid
  * (if not NULL) returns DM device UUID, use free() to deallocate.
  */

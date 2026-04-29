@@ -96,7 +96,7 @@ static void __attribute__((__noreturn__)) usage(void)
 static volatile sig_atomic_t timeout_expired = 0;
 
 static void timeout_handler(int sig __attribute__((__unused__)),
-			    siginfo_t *info,
+			    siginfo_t *info __attribute__((__unused__)),
 			    void *context __attribute__((__unused__)))
 {
 #ifdef HAVE_TIMER_CREATE

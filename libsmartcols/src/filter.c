@@ -195,7 +195,6 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	if (!fltr->src)
 		return -errno;
 
-	yylex_init(&sc);
 	yylex_init_extra(fltr, &sc);
 	yyset_in(fltr->src, sc);
 

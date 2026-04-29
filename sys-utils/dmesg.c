@@ -1467,7 +1467,7 @@ static int init_kmsg(struct dmesg_control *ctl)
  * - last field is terminated by ';'
  *
  */
-#define LAST_KMSG_FIELD(s)	(!s || !*s || *(s - 1) == ';')
+#define LAST_KMSG_FIELD(s, begin)	(!s || !*s || (s > begin && *(s - 1) == ';'))
 
 static int parse_kmsg_record(struct dmesg_control *ctl,
 			     struct dmesg_record *rec,
@@ -1491,17 +1491,17 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 		p = parse_faclev(p, end, ',', &rec->facility, &rec->level);
 	else
 		p = skip_item(p, end, ",");
-	if (LAST_KMSG_FIELD(p))
+	if (LAST_KMSG_FIELD(p, buf))
 		goto mesg;
 
 	/* B) sequence number */
 	p = skip_item(p, end, ",;");
-	if (LAST_KMSG_FIELD(p))
+	if (LAST_KMSG_FIELD(p, buf))
 		goto mesg;
 
 	/* C) timestamp */
 	p = parse_kmsg_timestamp(p, end, &rec->tv);
-	if (LAST_KMSG_FIELD(p))
+	if (LAST_KMSG_FIELD(p, buf))
 		goto mesg;
 
 	/* D) optional fields (ignore) */
@@ -1594,10 +1594,11 @@ static int print_kmsg_file(struct dmesg_control *ctl, size_t sz)
 
 	while (sz > 0 && !ferror(stdout)) {
 		len = strnlen(ctl->mmap_buff, sz);
-		if (len > sizeof(str))
+		if (len >= sizeof(str))
 			errx(EXIT_FAILURE, _("record too large"));
 
 		memcpy(str, ctl->mmap_buff, len);
+		str[len] = '\0';
 
 		if (parse_kmsg_record(ctl, &rec, str, len) == 0)
 			print_record(ctl, &rec);

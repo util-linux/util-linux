@@ -516,7 +516,7 @@ static void rereadpt(int fd, const char *devname)
 
 static int do_wipe(struct wipe_control *ctl)
 {
-	int mode = O_RDWR, reread = 0, need_force = 0;
+	int mode = O_RDWR, reread __attribute__((__unused__)) = 0, need_force = 0;
 	blkid_probe pr;
 	char *backup = NULL;
 	struct wipe_desc *w;
@@ -666,7 +666,6 @@ main(int argc, char **argv)
 {
 	struct wipe_control ctl = { .devname = NULL };
 	int c;
-	size_t i;
 	char *outarg = NULL;
 	enum {
 		OPT_LOCK = CHAR_MAX + 1,
@@ -827,7 +826,7 @@ main(int argc, char **argv)
 		/* Re-read partition tables on whole-disk devices. This is
 		 * postponed until all is done to avoid conflicts.
 		 */
-		for (i = 0; i < ctl.nrereads; i++) {
+		for (size_t i = 0; i < ctl.nrereads; i++) {
 			char *devname = ctl.reread[i];
 			int fd = open(devname, O_RDONLY);
 

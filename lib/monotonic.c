@@ -15,7 +15,7 @@
 #include "c.h"
 #include "monotonic.h"
 
-int get_boot_time(struct timeval *boot_time)
+int get_boot_time(struct timeval *boot_time __attribute__((__unused__)))
 {
 #ifdef CLOCK_BOOTTIME
 	struct timespec hires_uptime = { 0 };

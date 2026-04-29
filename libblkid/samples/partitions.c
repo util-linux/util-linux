@@ -38,15 +38,15 @@ int main(int argc, char *argv[])
 	/* Binary interface */
 	ls = blkid_probe_get_partitions(pr);
 	if (!ls)
-		errx(EXIT_FAILURE, "%s: failed to read partitions\n", devname);
+		errx(EXIT_FAILURE, "%s: failed to read partitions", devname);
 
 	/*
 	 * Print info about the primary (root) partition table
 	 */
 	root_tab = blkid_partlist_get_table(ls);
 	if (!root_tab)
-		errx(EXIT_FAILURE, "%s: does not contains any "
-				 "known partition table\n", devname);
+		errx(EXIT_FAILURE, "%s: does not contain any "
+				 "known partition table", devname);
 
 	printf("size: %jd, sector size: %u, PT: %s, offset: %jd, id=%s\n---\n",
 		(intmax_t)blkid_probe_get_size(pr),

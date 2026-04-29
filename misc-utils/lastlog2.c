@@ -116,6 +116,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -C, --clear             clear record of a user (requires -u)\n"), output);
 	fputs(_(" -d, --database FILE     use FILE as lastlog2 database\n"), output);
 	fputs(_(" -i, --import FILE       import data from old lastlog file\n"), output);
+	fputs(_(" -j, --journal [MODE]    show current journal mode, or set it (WAL, DELETE, etc.)\n"), output);
 	fputs(_(" -r, --rename NEWNAME    rename existing user to NEWNAME (requires -u)\n"), output);
 	fputs(_(" -s, --service           display PAM service\n"), output);
 	fputs(_(" -S, --set               set lastlog record to current time (requires -u)\n"), output);
@@ -141,6 +142,7 @@ int main(int argc, char **argv)
 		{"database", required_argument, NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"import",   required_argument, NULL, 'i'},
+		{"journal",  optional_argument, NULL, 'j'},
 		{"rename",   required_argument, NULL, 'r'},
 		{"service",  no_argument,       NULL, 's'},
 		{"set",      no_argument,       NULL, 'S'},
@@ -152,17 +154,19 @@ int main(int argc, char **argv)
 	char *error = NULL;
 	int Cflg = 0;
 	int iflg = 0;
+	int jflg = 0;
 	int rflg = 0;
 	int Sflg = 0;
 	int uflg = 0;
 	const char *user = NULL;
 	const char *newname = NULL;
 	const char *lastlog_file = NULL;
+	const char *journal_mode = NULL;
 	struct ll2_context *db_context = NULL;
 
 	int c;
 
-	while ((c = getopt_long(argc, argv, "ab:Cd:hi:r:sSt:u:vV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ab:Cd:hi:j::r:sSt:u:vV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a': /* active; print lastlog excluding '**Never logged in**' users */
 			aflg = 1;
@@ -188,6 +192,15 @@ int main(int argc, char **argv)
 		case 'i': /* import <FILE>; Import data from old lastlog file */
 			lastlog_file = optarg;
 			iflg = 1;
+			break;
+		case 'j': /* journal [MODE]; Set or show journal mode */
+			jflg = 1;
+			if (optarg) {
+				journal_mode = optarg;
+			} else if (optind < argc && argv[optind][0] != '-') {
+				/* Check if next argument looks like a mode name */
+				journal_mode = argv[optind++];
+			}
 			break;
 		case 'r': /* rename <NEWNAME>; Rename existing user to NEWNAME (requires -u) */
 			rflg = 1;
@@ -222,8 +235,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if ((Cflg + Sflg + iflg) > 1)
-		errx(EXIT_FAILURE, _("Option -C, -i and -S cannot be used together"));
+	if ((Cflg + Sflg + iflg + jflg) > 1)
+		errx(EXIT_FAILURE, _("Option -C, -i, -j and -S cannot be used together"));
 
 	db_context = ll2_new_context(lastlog2_path);
 	if (!db_context)
@@ -234,6 +247,28 @@ int main(int argc, char **argv)
 		if (ll2_import_lastlog(db_context, lastlog_file, &error) != 0) {
 			warnx(_("Couldn't import entries from '%s'"), lastlog_file);
 			goto err;
+		}
+		goto done;
+	}
+
+	if (jflg) {
+		/* Journal mode operations */
+		if (journal_mode) {
+			/* Set journal mode */
+			if (ll2_set_journal_mode(db_context, journal_mode, &error) != 0) {
+				warnx(_("Couldn't set journal mode to '%s'"), journal_mode);
+				goto err;
+			}
+			printf(_("Journal mode set to '%s' successfully\n"), journal_mode);
+		} else {
+			/* Show current journal mode */
+			char *mode = NULL;
+			if (ll2_get_journal_mode(db_context, &mode, &error) != 0) {
+				warnx(_("Couldn't get journal mode"));
+				goto err;
+			}
+			printf(_("Current journal mode: %s\n"), mode);
+			free(mode);
 		}
 		goto done;
 	}
