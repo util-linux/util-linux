@@ -689,6 +689,9 @@ static inline int file_compare(const struct file *a, const struct file *b)
 	if (res == 0)
 		res = opts.keep_oldest ? CMP(b->st.st_mtime, a->st.st_mtime)
 		    : CMP(a->st.st_mtime, b->st.st_mtime);
+	if (res == 0)
+		res = opts.keep_oldest ? CMP(b->st.st_ctime, a->st.st_ctime)
+		    : CMP(a->st.st_ctime, b->st.st_ctime);
 
 	return res;
 }
