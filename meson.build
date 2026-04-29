@@ -143,6 +143,7 @@ headers = '''
         sys/disk.h
         sys/disklabel.h
         sys/endian.h
+        sys/epoll.h
         sys/file.h
         sys/io.h
         sys/ioccom.h
@@ -2277,7 +2278,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsirq']
 endif
 
-opt = get_option('build-irqtop').allowed()
+opt = get_option('build-irqtop') \
+      .require(conf.get('HAVE_SYS_EPOLL_H').to_string() == '1') \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'irqtop',
   irqtop_sources,
