@@ -2046,6 +2046,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['swapoff']
 endif
 
+opt = get_option('build-lscpu').allowed()
 exe = executable(
   'lscpu',
   lscpu_sources,
@@ -2054,8 +2055,9 @@ exe = executable(
                lib_smartcols],
   dependencies : [rtas_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += lscpu_manadocs
   bashcompletions += ['lscpu']
