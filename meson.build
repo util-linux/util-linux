@@ -2046,7 +2046,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['swapoff']
 endif
 
-opt = get_option('build-lscpu').allowed()
+opt = get_option('build-lscpu') \
+      .require(LINUX) \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'lscpu',
   lscpu_sources,
