@@ -2259,7 +2259,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['flock']
 endif
 
-opt = get_option('build-lsirq').allowed()
+opt = get_option('build-lsirq') \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'lsirq',
   lsirq_sources,
