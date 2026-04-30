@@ -666,7 +666,7 @@ static int umount_one(const struct eject_control *ctl, const char *name)
 
 
 	char *umount_argv[4];
-	proc_wait_result_t pwrs;
+	proc_wait_result_t pwrs = {};
 	PROC_AUTO(h);
 	int ret;
 

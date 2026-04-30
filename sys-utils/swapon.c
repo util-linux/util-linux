@@ -340,7 +340,7 @@ static int swap_reinitialize(struct swap_device *dev)
 {
 	char *cmd[7];
 	int idx = 0, ret;
-	proc_wait_result_t pwrs;
+	proc_wait_result_t pwrs = {};
 
 	assert(dev);
 	assert(dev->path);
