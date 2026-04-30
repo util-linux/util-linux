@@ -432,7 +432,7 @@ int proc_wait(proc_handle_t *h, int flags, proc_wait_result_t *res)
 {
     if (!h || !res) return -EINVAL;
 
-    struct rusage ru;
+    struct rusage ru = {};
     int r = do_waitid(h, flags, res, &ru);
     if (r == 1)
         h->rusage = ru;
