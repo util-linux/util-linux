@@ -749,7 +749,7 @@ static struct fsck_instance *wait_one(int flags)
 {
 	int	sig;
 	struct fsck_instance *inst, *inst2, *prev;
-	proc_wait_result_t res;
+	proc_wait_result_t res = {};
 	int status;
 
 	if (!instance_list)
