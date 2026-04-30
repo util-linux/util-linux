@@ -60,7 +60,7 @@ dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
 	login-utils/login.c \
 	lib/logindefs.c
-login_LDADD = $(LDADD) libcommon.la -lpam
+login_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
@@ -69,9 +69,6 @@ login_LDADD += -laudit
 endif
 if HAVE_SELINUX
 login_LDADD += -lselinux
-endif
-if HAVE_ECONF
-login_LDADD += -leconf
 endif
 endif # BUILD_LOGIN
 

@@ -86,6 +86,10 @@
 
 #include "logindefs.h"
 
+#if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
+# include "shells.h"
+#endif
+
 #define LOGIN_MAX_TRIES        3
 #define LOGIN_EXIT_TIMEOUT     5
 #define LOGIN_TIMEOUT          60

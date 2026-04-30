@@ -7,7 +7,7 @@ script_SOURCES = term-utils/script.c \
 		 include/pty-session.h \
 		 lib/monotonic.c
 script_CFLAGS = $(AM_CFLAGS) -Wno-format-y2k
-script_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
+script_LDADD = $(LDADD) libcommon.la libcommon_shells.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
 if HAVE_UTEMPTER
 script_LDADD += -lutempter
 endif
@@ -38,7 +38,7 @@ scriptlive_SOURCES = term-utils/scriptlive.c \
 		       lib/pty-session.c \
 		       include/pty-session.h \
 		       lib/monotonic.c
-scriptlive_LDADD = $(LDADD) libcommon.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
+scriptlive_LDADD = $(LDADD) libcommon.la libcommon_shells.la $(MATH_LIBS) $(REALTIME_LIBS) -lutil
 endif # BUILD_SCRIPTLIVE
 
 

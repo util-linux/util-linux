@@ -15,7 +15,7 @@
 #include "shells.h"
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
-static econf_file *open_etc_shells(void)
+econf_file *open_etc_shells(void)
 {
 	econf_err error;
 	econf_file *key_file = NULL;

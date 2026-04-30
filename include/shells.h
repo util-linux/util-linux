@@ -6,8 +6,16 @@
 
 #include <pwd.h>
 
+#if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
+# include <libeconf.h>
+#endif
+
 #define UL_SHELL_NOENV  (1 << 0)
 #define UL_SHELL_NOPWD  (1 << 1)
+
+#if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
+econf_file *open_etc_shells(void);
+#endif
 
 extern void print_shells(FILE *out, const char *format);
 extern int is_known_shell(const char *shell_name);

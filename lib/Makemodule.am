@@ -37,7 +37,6 @@ libcommon_la_SOURCES = \
 	lib/randutils.c \
 	lib/sha1.c \
 	lib/sha256.c \
-	lib/shells.c \
 	lib/signames.c \
 	lib/strutils.c \
 	lib/strv.c \
@@ -66,6 +65,16 @@ if HAVE_DIRFD
 libcommon_la_SOURCES += lib/path.c
 libcommon_la_SOURCES += lib/sysfs.c
 libcommon_la_SOURCES += lib/procfs.c
+endif
+endif
+
+EXTRA_LTLIBRARIES += libcommon_shells.la
+libcommon_shells_la_CFLAGS = $(AM_CFLAGS)
+libcommon_shells_la_SOURCES = \
+	lib/shells.c
+if HAVE_ECONF
+if USE_VENDORDIR
+libcommon_shells_la_LIBADD = $(ECONF_LIBS)
 endif
 endif
 
