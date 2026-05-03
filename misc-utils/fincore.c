@@ -77,6 +77,7 @@ static inline int cachestat(unsigned int fd,
 	return syscall(SYS_cachestat, fd, cstat_range, cstat, flags);
 }
 
+#define HAVE_CACHESTAT 1
 #endif // HAVE_CACHESTAT
 
 struct colinfo {
