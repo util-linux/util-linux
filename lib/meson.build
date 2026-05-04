@@ -20,7 +20,6 @@ lib_common_sources = '''
 	pidutils.c
 	pwdutils.c
 	sha256.c
-	shells.c
 	signames.c
 	timeutils.c
 	ttyutils.c
@@ -57,6 +56,13 @@ logindefs_c = static_library('logindefs',
   include_directories : dir_include,
   dependencies : lib_econf,
 )
+
+lib_common_shells = static_library('common_shells',
+  sources : ['shells.c'],
+  include_directories : dir_include,
+  dependencies : lib_econf,
+)
+
 selinux_utils_c = files('selinux-utils.c')
 
 caputils_c = files('caputils.c')
