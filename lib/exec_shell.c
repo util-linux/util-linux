@@ -26,7 +26,7 @@
 #include "xalloc.h"
 
 #include "exec_shell.h"
-#include "shells.h"
+#include "default_shell.h"
 
 void __attribute__((__noreturn__)) exec_shell(void)
 {

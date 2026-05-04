@@ -47,7 +47,7 @@
 #include "closestream.h"
 #include "monotonic.h"
 #include "timer.h"
-#include "shells.h"
+#include "default_shell.h"
 
 #ifndef F_OFD_GETLK
 #define F_OFD_GETLK	36

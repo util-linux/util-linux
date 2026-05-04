@@ -38,7 +38,7 @@
 #include "pty-session.h"
 #include "script-playutils.h"
 #include "monotonic.h"
-#include "shells.h"
+#include "default_shell.h"
 
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original scriptreplay.pl */

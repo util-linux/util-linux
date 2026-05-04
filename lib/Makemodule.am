@@ -22,6 +22,7 @@ libcommon_la_SOURCES = \
 	lib/crc64.c \
 	lib/c_strtod.c \
 	lib/debug.c \
+	lib/default_shell.c \
 	lib/encode.c \
 	lib/env.c \
 	lib/fileutils.c \

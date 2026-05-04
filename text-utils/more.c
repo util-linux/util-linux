@@ -89,7 +89,7 @@
 #include "widechar.h"
 #include "closestream.h"
 #include "env.h"
-#include "shells.h"
+#include "default_shell.h"
 
 #ifdef TEST_PROGRAM
 # define NON_INTERACTIVE_MORE 1

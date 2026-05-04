@@ -121,24 +121,3 @@ extern int is_known_shell(const char *shell_name)
 #endif
 	return ret;
 }
-
-const char *ul_default_shell(int flags, const struct passwd *pw)
-{
-	const char *shell = NULL;
-
-	if (!(flags & UL_SHELL_NOENV)) {
-		shell = getenv("SHELL");
-		if (shell && *shell)
-			return shell;
-	}
-	if (!(flags & UL_SHELL_NOPWD)) {
-		if (!pw)
-			pw = getpwuid(getuid());
-		if (pw)
-			shell = pw->pw_shell;
-		if (shell && *shell)
-			return shell;
-	}
-
-	return _PATH_BSHELL;
-}
