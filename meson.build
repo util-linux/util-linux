@@ -313,6 +313,12 @@ if lib_slang.found()
               'slang/slcurses.h']
 endif
 conf.set('HAVE_SLANG', lib_slang.found() ? 1 : false)
+if lib_slang.found()
+  foreach h : ['slang.h', 'slang/slang.h', 'slcurses.h', 'slang/slcurses.h']
+    have = cc.has_header(h)
+    conf.set('HAVE_' + h.underscorify().to_upper(), have ? 1 : false)
+  endforeach
+endif
 
 foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
   if curses_libs.found()
