@@ -98,7 +98,7 @@ MANPAGES += text-utils/more.1
 dist_noinst_DATA += text-utils/more.1.adoc
 more_SOURCES = text-utils/more.c
 more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
-more_LDADD = $(LDADD) $(MAGIC_LIBS) libcommon.la libcommon_shells.la
+more_LDADD = $(LDADD) $(MAGIC_LIBS) libcommon.la
 if HAVE_TINFO
 more_LDADD += $(TINFO_LIBS)
 more_LDADD += $(TINFO_CFLAGS)

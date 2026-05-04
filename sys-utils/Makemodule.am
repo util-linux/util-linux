@@ -20,7 +20,7 @@ usrbin_exec_PROGRAMS += flock
 MANPAGES += sys-utils/flock.1
 dist_noinst_DATA += sys-utils/flock.1.adoc
 flock_SOURCES = sys-utils/flock.c lib/monotonic.c lib/timer.c
-flock_LDADD = $(LDADD) libcommon.la libcommon_shells.la $(REALTIME_LIBS)
+flock_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 endif
 
 if BUILD_CHOOM
@@ -522,7 +522,7 @@ dist_noinst_DATA += sys-utils/unshare.1.adoc
 unshare_SOURCES = sys-utils/unshare.c \
 		  lib/caputils.c \
 		  lib/exec_shell.c
-unshare_LDADD = $(LDADD) libcommon.la libcommon_shells.la
+unshare_LDADD = $(LDADD) libcommon.la
 unshare_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 
 if HAVE_STATIC_UNSHARE
@@ -540,7 +540,7 @@ MANPAGES += sys-utils/nsenter.1
 dist_noinst_DATA += sys-utils/nsenter.1.adoc
 nsenter_SOURCES = sys-utils/nsenter.c lib/exec_shell.c \
 		  lib/caputils.c
-nsenter_LDADD = $(LDADD) libcommon.la libcommon_shells.la $(SELINUX_LIBS)
+nsenter_LDADD = $(LDADD) libcommon.la $(SELINUX_LIBS)
 
 if HAVE_STATIC_NSENTER
 usrbin_exec_PROGRAMS += nsenter.static
