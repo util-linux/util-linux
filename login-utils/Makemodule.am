@@ -58,9 +58,8 @@ bin_PROGRAMS += login
 MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
-	login-utils/login.c \
-	lib/logindefs.c
-login_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+	login-utils/login.c
+login_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
@@ -140,22 +139,16 @@ endif
 
 chfn_SOURCES = \
 	login-utils/chfn.c \
-	lib/logindefs.c \
 	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
-chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
-if HAVE_ECONF
-chfn_LDADD += -leconf
-endif
+chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la
 
-chsh_SOURCES = login-utils/chsh.c lib/shells.c $(chfn_chsh_sources)
+chsh_SOURCES = login-utils/chsh.c \
+	$(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
-chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
-if HAVE_ECONF
-chsh_LDADD += -leconf
-endif
+chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la libcommon_shells.la
 endif # BUILD_CHFN_CHSH
 
 
@@ -166,12 +159,10 @@ dist_noinst_DATA += login-utils/su.1.adoc
 su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h \
-	lib/logindefs.c \
-	lib/shells.c
+	login-utils/su-common.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la -lpam
+su_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
 if HAVE_LINUXPAM
 su_LDADD += -lpam_misc
 endif
@@ -180,9 +171,6 @@ su_SOURCES += lib/pty-session.c \
       include/pty-session.h \
       lib/monotonic.c
 su_LDADD += -lutil $(REALTIME_LIBS)
-endif
-if HAVE_ECONF
-su_LDADD += -leconf
 endif
 endif # BUILD_SU
 
@@ -194,10 +182,8 @@ dist_noinst_DATA += login-utils/runuser.1.adoc
 runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h \
-	lib/logindefs.c \
-	lib/shells.c
-runuser_LDADD = $(LDADD) libcommon.la -lpam
+	login-utils/su-common.h
+runuser_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
 endif
@@ -206,9 +192,6 @@ runuser_SOURCES += lib/pty-session.c \
 	include/pty-session.h \
 	lib/monotonic.c
 runuser_LDADD += -lutil $(REALTIME_LIBS)
-endif
-if HAVE_ECONF
-runuser_LDADD += -leconf
 endif
 endif # BUILD_RUNUSER
 
@@ -232,9 +215,8 @@ usrbin_exec_PROGRAMS += lslogins
 MANPAGES += login-utils/lslogins.1
 dist_noinst_DATA += login-utils/lslogins.1.adoc
 lslogins_SOURCES = \
-	login-utils/lslogins.c \
-	lib/logindefs.c
-lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
+	login-utils/lslogins.c
+lslogins_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
 lslogins_LDADD += -lselinux
@@ -242,9 +224,6 @@ endif
 if HAVE_SYSTEMD
 lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
-endif
-if HAVE_ECONF
-lslogins_LDADD += -leconf
 endif
 if BUILD_LIBLASTLOG2
 lslogins_CFLAGS += -I$(ul_liblastlog2_incdir)

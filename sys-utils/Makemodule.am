@@ -592,14 +592,10 @@ usrbin_exec_PROGRAMS += setpriv
 MANPAGES += sys-utils/setpriv.1
 dist_noinst_DATA += sys-utils/setpriv.1.adoc
 setpriv_SOURCES = sys-utils/setpriv.c \
-		  lib/caputils.c \
-		  lib/logindefs.c
+		  lib/caputils.c
 dist_noinst_HEADERS += sys-utils/setpriv-landlock.h
 if HAVE_LINUX_LANDLOCK_H
 setpriv_SOURCES += sys-utils/setpriv-landlock.c
 endif
-setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
-if HAVE_ECONF
-setpriv_LDADD += $(ECONF_LIBS)
-endif
+setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la libcommon_logindefs.la
 endif # BUILD_SETPRIV

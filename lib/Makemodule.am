@@ -68,6 +68,14 @@ libcommon_la_SOURCES += lib/procfs.c
 endif
 endif
 
+EXTRA_LTLIBRARIES += libcommon_logindefs.la
+libcommon_logindefs_la_CFLAGS = $(AM_CFLAGS)
+libcommon_logindefs_la_SOURCES = \
+	lib/logindefs.c
+if HAVE_ECONF
+libcommon_logindefs_la_LIBADD = $(ECONF_LIBS)
+endif
+
 EXTRA_LTLIBRARIES += libcommon_shells.la
 libcommon_shells_la_CFLAGS = $(AM_CFLAGS)
 libcommon_shells_la_SOURCES = \
