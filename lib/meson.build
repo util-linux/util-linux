@@ -51,7 +51,7 @@ pty_session_c = files('pty-session.c')
 ismounted_c = files('ismounted.c')
 exec_shell_c = files('exec_shell.c')
 fileeq_c = files('fileeq.c')
-logindefs_c = static_library('logindefs',
+lib_common_logindefs = static_library('common_logindefs',
   sources : ['logindefs.c'],
   include_directories : dir_include,
   dependencies : lib_econf,
