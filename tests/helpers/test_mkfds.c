@@ -1761,7 +1761,7 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 
 	ssd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (ssd < 0)
-		err(EXIT_FAILURE,
+		err(errno == EPROTONOSUPPORT? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
 		    "failed to make a udp socket for server");
 
 	if (setsockopt(ssd, SOL_SOCKET,
@@ -1786,7 +1786,7 @@ static void *make_udp_common(const struct factory *factory, struct fdesc fdescs[
 
 	csd = socket(family, SOCK_DGRAM, blite? IPPROTO_UDPLITE: 0);
 	if (csd < 0) {
-		err(EXIT_FAILURE,
+		err(errno == EPROTONOSUPPORT? EXIT_EPROTONOSUPPORT: EXIT_FAILURE,
 		    "failed to make a udp client socket");
 	}
 
