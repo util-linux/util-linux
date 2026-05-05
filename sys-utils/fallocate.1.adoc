@@ -61,6 +61,8 @@ See *--punch-hole* for a list of supported filesystems.
 
 *-i*, *--insert-range*::
 Insert a hole of _length_ bytes from _offset_, shifting existing data.
++
+Supported for XFS (since Linux 4.1) and ext4 (since Linux 4.2).
 
 *-l*, *--length* _length_::
 Specifies the length of the range, in bytes.
