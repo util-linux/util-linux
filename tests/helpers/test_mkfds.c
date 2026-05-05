@@ -2977,12 +2977,13 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 	const char *sname = ARG_STRING(name);
 
 	int bfd;
-	union bpf_attr attr = {
-		.map_type = imap_type_id,
-		.key_size = 4,
-		.value_size = 4,
-		.max_entries = 10,
-	};
+	union bpf_attr attr;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.map_type = imap_type_id;
+	attr.value_size = 4;
+	attr.key_size = 4;
+	attr.max_entries = 10;
 
 	strncpy(attr.map_name, sname, sizeof(attr.map_name) - 1);
 
