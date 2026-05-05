@@ -1073,10 +1073,7 @@ static void anon_bpf_prog_get_more_info(struct anon_bpf_prog_data *prog_data)
 	int bpf_fd;
 	union bpf_attr attr;
 	struct bpf_prog_info info = { 0 };
-	union bpf_attr info_attr = {
-		.info.info_len = sizeof(info),
-		.info.info = (uint64_t)(uintptr_t)&info,
-	};
+	union bpf_attr info_attr;
 
 	memset(&attr, 0, sizeof(attr));
 	attr.prog_id = (int32_t)prog_data->id;
@@ -1084,6 +1081,9 @@ static void anon_bpf_prog_get_more_info(struct anon_bpf_prog_data *prog_data)
 	if (bpf_fd < 0)
 		return;
 
+	memset(&info_attr, 0, sizeof(info_attr));
+	info_attr.info.info_len = sizeof(info);
+	info_attr.info.info = (uint64_t)(uintptr_t)&info;
 	info_attr.info.bpf_fd = bpf_fd;
 	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
 		memcpy(prog_data->name,
@@ -1263,10 +1263,7 @@ static void anon_bpf_map_get_more_info(struct anon_bpf_map_data *map_data)
 	int bpf_fd;
 	union bpf_attr attr;
 	struct bpf_map_info info = { 0 };
-	union bpf_attr info_attr = {
-		.info.info_len = sizeof(info),
-		.info.info = (uint64_t)(uintptr_t)&info,
-	};
+	union bpf_attr info_attr;
 
 	memset(&attr, 0, sizeof(attr));
 	attr.map_id = (int32_t)map_data->id;
@@ -1274,6 +1271,9 @@ static void anon_bpf_map_get_more_info(struct anon_bpf_map_data *map_data)
 	if (bpf_fd < 0)
 		return;
 
+	memset(&info_attr, 0, sizeof(info_attr));
+	info_attr.info.info_len = sizeof(info);
+	info_attr.info.info = (uint64_t)(uintptr_t)&info;
 	info_attr.info.bpf_fd = bpf_fd;
 	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &info_attr, offsetofend(union bpf_attr, info)) == 0) {
 		memcpy(map_data->name,
