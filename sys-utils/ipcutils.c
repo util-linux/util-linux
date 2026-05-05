@@ -95,8 +95,10 @@ int ipc_sem_get_limits(struct ipc_limits *lim)
 
 	if (rc != 4) {
 		struct seminfo seminfo = { .semmni = 0 };
-		union semun arg = { .array = (ushort *) &seminfo };
+		union semun arg;
 
+		memset(&arg, 0, sizeof(arg));
+		arg.array = (ushort *) &seminfo;
 		if (semctl(0, 0, IPC_INFO, arg) < 0)
 			return 1;
 		lim->semmni = seminfo.semmni;
@@ -337,8 +339,9 @@ static void get_sem_elements(struct sem_data *p)
 
 	for (i = 0; i < p->sem_nsems; i++) {
 		struct sem_elem *e = &p->elements[i];
-		union semun arg = { .val = 0 };
+		union semun arg;
 
+		memset(&arg, 0, sizeof(arg));
 		e->semval = semctl(p->sem_perm.id, i, GETVAL, arg);
 		if (e->semval < 0)
 			err(EXIT_FAILURE, _("%s failed"), "semctl(GETVAL)");
