@@ -1,0 +1,11 @@
+# --inet
+3  UDP-Lite state=close laddr=127.0.0.1:34567
+4  UDP-Lite state=established laddr=127.0.0.1:23456 raddr=127.0.0.1:34567
+3 UDPLITEv6 state=close laddr=[::1]:34567
+4 UDPLITEv6 state=established laddr=[::1]:23456 raddr=[::1]:34567
+# --inet=4
+3 UDP-Lite state=close laddr=127.0.0.1:34567
+4 UDP-Lite state=established laddr=127.0.0.1:23456 raddr=127.0.0.1:34567
+# --inet=6
+3 UDPLITEv6 state=close laddr=[::1]:34567
+4 UDPLITEv6 state=established laddr=[::1]:23456 raddr=[::1]:34567
