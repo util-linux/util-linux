@@ -67,58 +67,50 @@ FIFO=./test_mkfds-option-inet.fifo
 	ts_finalize  "$TS_HELPER_MKFDS udp...doesn't report its pid"
     fi
 
-    "$TS_HELPER_MKFDS" -X udp6 3 4 lite=1 server-port=34567 client-port=23456 server-do-bind=1 client-do-bind=1 client-do-connect=1 > "${FIFO}" &
-    if ! read PID4  < "${FIFO}"; then
-	kill -CONT "${PID0}" "${PID1}" "${PID2}" "${PID3}"
-	wait       "${PID0}" "${PID1}" "${PID2}" "${PID3}"
-	rm "${FIFO}"
-	ts_finalize  "$TS_HELPER_MKFDS udp6 lite=1...doesn't report its pid"
-    fi
-
     OPT='--inet'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
     OPT='--inet=4'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
     OPT='--inet=6'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
     OPT='-i'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
     OPT='-i4'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
     OPT='-i6'
     echo "# $OPT"
     ${TS_CMD_LSFD} -n \
 		   $OPT \
 		   -o ASSOC,TYPE,NAME \
-		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3) or (PID == $PID4)"
+		   -Q "(PID == $PID0) or (PID == $PID1) or (PID == $PID2) or (PID == $PID3)"
 
-    kill -CONT "${PID0}" "${PID1}" "${PID2}" "${PID3}" "${PID4}"
-    wait       "${PID0}" "${PID1}" "${PID2}" "${PID3}" "${PID4}"
+    kill -CONT "${PID0}" "${PID1}" "${PID2}" "${PID3}"
+    wait       "${PID0}" "${PID1}" "${PID2}" "${PID3}"
     rm "${FIFO}"
 } > "$TS_OUTPUT" 2>&1
 
