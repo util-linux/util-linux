@@ -50,7 +50,7 @@ partitions.
 Create a signature backup to the file _wipefs-<devname>-<offset>.bak_ in _$HOME_ or the directory specified as the optional argument. For more details see the *EXAMPLE* section.
 
 *-f*, *--force*::
-Force erasure, even if the filesystem is mounted. This is required in order to erase a partition-table signature on a block device.
+Force erasure, even if the filesystem is mounted. This is also required in order to erase a nested partition-table signature on a non-whole disk device.
 
 *-J*, *--json*::
 Use JSON output format.
