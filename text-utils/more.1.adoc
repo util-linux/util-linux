@@ -202,7 +202,7 @@ Run *more* in "secure" mode. See SECURITY for details.
 Equivalent to MORESECURE.
 
 *MORE_SHELL_LINES*::
-Specify the _number_ of lines per screenful. It has the same effect as the *-n* and *--lines* options. See in OPTIONS for details. Also, note that the environment variable's value will be overridden if any of these options are set.
+Specify the _number_ of lines the shell prompt occupies on the terminal screen. If this value is set, the _number_ of lines for the shell prompt is subtracted from the number of lines used to print a page on the screen. The value must be greater than zero and less than the current number of lines per screen; otherwise it is silently ignored. This is useful in situations where the printed page has to remain on the screen after exiting *more*(1) without scrolling up too much as the shell prints a new prompt.
 
 == HISTORY
 

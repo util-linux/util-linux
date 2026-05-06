@@ -2144,12 +2144,6 @@ int main(int argc, char **argv)
 	if (getenv("MORESECURE") || getenv("PAGERSECURE"))
 		ctl.is_secure = 1;
 
-	if ((s = getenv("MORE_SHELL_LINES")) && isdigit_string(s)) {
-		uint16_t x = 0;
-		if (ul_strtou16(s, (uint16_t *) &x, 10) == 0)
-			ctl.lines_per_screen = x;
-	}
-
 	if ((s = getenv("MORE")) != NULL)
 		env_argscan(&ctl, s);
 
@@ -2186,6 +2180,15 @@ int main(int argc, char **argv)
 	}
 	if (ctl.lines_per_screen == 0)
 		ctl.lines_per_screen = ctl.lines_per_page - 1;
+
+	if ((s = getenv("MORE_SHELL_LINES")) && isdigit_string(s)) {
+		uint16_t x = 0;
+		if (ul_strtou16(s, (uint16_t *) &x, 10) == 0
+		    && x > 0
+		    && x < (uint16_t) ctl.lines_per_screen)
+			ctl.lines_per_screen -= x;
+	}
+
 	left = ctl.lines_per_screen;
 	if (ctl.num_files > 1)
 		ctl.print_banner = 1;
