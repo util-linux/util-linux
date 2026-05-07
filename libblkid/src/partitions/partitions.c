@@ -199,7 +199,7 @@ struct blkid_struct_partlist {
 
 	int		nparts;		/* number of partitions */
 	int		nparts_max;	/* max.number of partitions */
-	blkid_partition	parts;		/* array of partitions */
+	blkid_partition	*parts;		/* array of pointers to partitions */
 
 	struct list_head l_tabs;	/* list of partition tables */
 };
@@ -358,13 +358,16 @@ static void reset_partlist(blkid_partlist ls)
 	free_parttables(ls);
 
 	if (ls->next_partno) {
-		/* already initialized - reset */
-		int tmp_nparts = ls->nparts_max;
-		blkid_partition tmp_parts = ls->parts;
+		/* already initialized - free individually allocated partitions */
+		int i, tmp_nparts_max = ls->nparts_max;
+		blkid_partition *tmp_parts = ls->parts;
+
+		for (i = 0; i < ls->nparts; i++)
+			free(ls->parts[i]);
 
 		memset(ls, 0, sizeof(struct blkid_struct_partlist));
 
-		ls->nparts_max = tmp_nparts;
+		ls->nparts_max = tmp_nparts_max;
 		ls->parts = tmp_parts;
 	}
 
@@ -399,6 +402,7 @@ static void partitions_free_data(blkid_probe pr __attribute__((__unused__)),
 				 void *data)
 {
 	blkid_partlist ls = (blkid_partlist) data;
+	int i;
 
 	if (!ls)
 		return;
@@ -406,6 +410,8 @@ static void partitions_free_data(blkid_probe pr __attribute__((__unused__)),
 	free_parttables(ls);
 
 	/* deallocate partitions and partlist */
+	for (i = 0; i < ls->nparts; i++)
+		free(ls->parts[i]);
 	free(ls->parts);
 	free(ls);
 }
@@ -439,15 +445,17 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 		 * generic Linux machine -- let's start with 32 partitions.
 		 */
 		void *tmp = reallocarray(ls->parts, ls->nparts_max + 32,
-					 sizeof(struct blkid_struct_partition));
+					 sizeof(blkid_partition));
 		if (!tmp)
 			return NULL;
 		ls->parts = tmp;
 		ls->nparts_max += 32;
 	}
 
-	par = &ls->parts[ls->nparts++];
-	memset(par, 0, sizeof(struct blkid_struct_partition));
+	par = calloc(1, sizeof(struct blkid_struct_partition));
+	if (!par)
+		return NULL;
+	ls->parts[ls->nparts++] = par;
 
 	ref_parttable(tab);
 	par->tab = tab;
@@ -852,7 +860,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 
 	/* check if the partition table fits into the device */
 	for (i = 0; i < nparts; i++) {
-		blkid_partition par = &ls->parts[i];
+		blkid_partition par = ls->parts[i];
 
 		if (par->start + par->size > (pr->size >> 9)) {
 			DBG(LOWPROBE, ul_debug("partition #%d overflows "
@@ -864,7 +872,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 
 	/* check if the requested area is covered by PT */
 	for (i = 0; i < nparts; i++) {
-		blkid_partition par = &ls->parts[i];
+		blkid_partition par = ls->parts[i];
 
 		if (start >= par->start && end <= par->start + par->size) {
 			rc = 1;
@@ -963,7 +971,7 @@ blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
 	if (n < 0 || n >= ls->nparts)
 		return NULL;
 
-	return &ls->parts[n];
+	return ls->parts[n];
 }
 
 blkid_partition blkid_partlist_get_partition_by_start(blkid_partlist ls, uint64_t start)
@@ -1075,7 +1083,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		 * and an entry in partition table.
 		 */
 		 for (i = 0; i < ls->nparts; i++) {
-			 blkid_partition par = &ls->parts[i];
+			 blkid_partition par = ls->parts[i];
 
 			 if (partno != blkid_partition_get_partno(par))
 				 continue;
@@ -1091,7 +1099,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	DBG(LOWPROBE, ul_debug("searching by offset/size"));
 
 	for (i = 0; i < ls->nparts; i++) {
-		blkid_partition par = &ls->parts[i];
+		blkid_partition par = ls->parts[i];
 
 		if ((uint64_t)blkid_partition_get_start(par) == start &&
 		    (uint64_t)blkid_partition_get_size(par) == size)
