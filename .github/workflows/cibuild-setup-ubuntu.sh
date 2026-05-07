@@ -18,7 +18,7 @@ PACKAGES=(
 	libudev-dev
 	gtk-doc-tools
 	mdadm
-	ntp
+	ntpsec
 	socat
 	asciidoctor
 	meson
