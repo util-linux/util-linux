@@ -20,9 +20,7 @@
  *  * memcmp method: always read data to userspace, nothing is cached, directly
  *  compare file contents; fast for small sets of small files.
  *
- *  * Linux crypto API: zero-copy method based on sendfile(), data blocks are
- *  sent to the kernel hash functions (sha1, ...), and only hash digest is read
- *  and cached in userspace. Fast for large set of (large) files.
+ *  * No other method is currently available.
  *
  *
  * No copyright is claimed.  This code is in the public domain; do with
@@ -37,14 +35,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-/* Linux crypto */
-#ifdef HAVE_LINUX_IF_ALG_H
-# include <sys/socket.h>
-# include <linux/if_alg.h>
-# include <sys/param.h>
-# include <sys/sendfile.h>
-#endif
-
 #include "c.h"
 #include "all-io.h"
 #include "fileeq.h"
@@ -54,9 +44,8 @@ static UL_DEBUG_DEFINE_MASK(ulfileeq);
 UL_DEBUG_DEFINE_MASKNAMES(ulfileeq) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define ULFILEEQ_DEBUG_INIT	(1 << 1)
-#define ULFILEEQ_DEBUG_CRYPTO	(1 << 2)
-#define ULFILEEQ_DEBUG_DATA	(1 << 3)
-#define ULFILEEQ_DEBUG_EQ	(1 << 4)
+#define ULFILEEQ_DEBUG_DATA	(1 << 2)
+#define ULFILEEQ_DEBUG_EQ	(1 << 3)
 
 #define DBG(m, x)		__UL_DBG(ulfileeq, ULFILEEQ_DEBUG_, m, x)
 #define DBG_OBJ(m, h, x)	__UL_DBG_OBJ(ulfileeq, ULFILEEQ_DEBUG_, m, h, x)
@@ -70,15 +59,11 @@ static void ul_fileeq_init_debug(void)
 }
 
 enum {
-	UL_FILEEQ_MEMCMP,
-	UL_FILEEQ_SHA1,
-	UL_FILEEQ_SHA256,
-	UL_FILEEQ_CRC32
+	UL_FILEEQ_MEMCMP
 };
 
 struct ul_fileeq_method {
 	const char *name;	/* name used by applications */
-	const char *kname;	/* name used by kernel crypto */
 	int id;
 	short digsiz;
 };
@@ -87,69 +72,7 @@ static const struct ul_fileeq_method ul_eq_methods[] = {
 	[UL_FILEEQ_MEMCMP] = {
 		.id = UL_FILEEQ_MEMCMP, .name = "memcmp"
 	},
-#ifdef USE_FILEEQ_CRYPTOAPI
-	[UL_FILEEQ_SHA1] = {
-		.id = UL_FILEEQ_SHA1, .name = "sha1",
-		.digsiz = 20, .kname = "sha1"
-	},
-	[UL_FILEEQ_SHA256] = {
-		.id = UL_FILEEQ_SHA256, .name = "sha256",
-		.digsiz = 32, .kname = "sha256"
-	},
-
-	[UL_FILEEQ_CRC32] = {
-		.id = UL_FILEEQ_CRC32, .name = "crc32",
-		.digsiz = 4, .kname = "crc32c"
-	}
-#endif
 };
-
-#ifdef USE_FILEEQ_CRYPTOAPI
-static void deinit_crypto_api(struct ul_fileeq *eq)
-{
-	if (!eq)
-		return;
-
-	DBG_OBJ(CRYPTO, eq, ul_debug("deinit"));
-
-	if (eq->fd_cip >= 0)
-		close(eq->fd_cip);
-	if (eq->fd_api >= 0)
-		close(eq->fd_api);
-
-	eq->fd_cip = eq->fd_api = -1;
-
-}
-
-static int init_crypto_api(struct ul_fileeq *eq)
-{
-	struct sockaddr_alg sa = {
-		.salg_family = AF_ALG,
-		.salg_type   = "hash",
-	};
-
-	assert(eq->method);
-	assert(eq->method->kname);
-	assert(eq->fd_api == -1);
-	assert(eq->fd_cip == -1);
-
-	DBG_OBJ(CRYPTO, eq, ul_debug("init [%s]", eq->method->kname));
-
-	assert(sizeof(sa.salg_name) > strlen(eq->method->kname) + 1);
-	memcpy(&sa.salg_name, eq->method->kname, strlen(eq->method->kname) + 1);
-
-	if ((eq->fd_api = socket(AF_ALG, SOCK_SEQPACKET, 0)) < 0)
-		goto fail;
-	if (bind(eq->fd_api, (struct sockaddr *) &sa, sizeof(sa)) != 0)
-		goto fail;
-	if ((eq->fd_cip = accept(eq->fd_api, NULL, 0)) < 0)
-		goto fail;
-	return 0;
-fail:
-	deinit_crypto_api(eq);
-	return -1;
-}
-#endif
 
 int ul_fileeq_init(struct ul_fileeq *eq, const char *method)
 {
@@ -173,11 +96,6 @@ int ul_fileeq_init(struct ul_fileeq *eq, const char *method)
 
 	if (!eq->method)
 		return -1;
-#ifdef USE_FILEEQ_CRYPTOAPI
-	if (eq->method->id != UL_FILEEQ_MEMCMP
-	    && init_crypto_api(eq) != 0)
-		return -1;
-#endif
 	return 0;
 }
 
@@ -194,9 +112,6 @@ void ul_fileeq_deinit(struct ul_fileeq *eq)
 		return;
 
 	DBG_OBJ(EQ, eq, ul_debug("deinit"));
-#ifdef USE_FILEEQ_CRYPTOAPI
-	deinit_crypto_api(eq);
-#endif
 	reset_fileeq_bufs(eq);
 }
 
@@ -411,70 +326,6 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	return rsz;
 }
 
-#ifdef USE_FILEEQ_CRYPTOAPI
-static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
-				uint64_t n, unsigned char **block)
-{
-	off_t off = 0;
-	ssize_t rsz;
-	size_t sz;
-	int fd;
-
-	/* return already cached if available */
-	if (n < get_cached_nblocks(data)) {
-		DBG_OBJ(DATA, data, ul_debug(" digest cached"));
-		assert(data->blocks);
-		*block = data->blocks + (n * eq->method->digsiz);
-		return eq->method->digsiz;
-	}
-
-	if (data->is_eof) {
-		DBG_OBJ(DATA, data, ul_debug(" file EOF"));
-		return 0;
-	}
-
-	if (n >= eq->blocksmax)
-		return -EINVAL;
-
-	/* read new block */
-	fd = get_fd(eq, data, &off);
-	if (fd < 0)
-		return fd;
-
-	DBG_OBJ(DATA, data, ul_debug(" read digest off=%ju", (uintmax_t) off));
-
-	sz = eq->method->digsiz;
-
-	if (!data->blocks) {
-		DBG_OBJ(DATA, data, ul_debug("  alloc cache %" PRIu64, eq->blocksmax * sz));
-		data->blocks = malloc(eq->blocksmax * sz);
-		if (!data->blocks)
-			return -ENOMEM;
-	}
-
-	rsz = sendfile(eq->fd_cip, data->fd, NULL, eq->readsiz);
-	DBG_OBJ(DATA, data, ul_debug("  sent %zd [%zu wanted] to cipher", rsz, eq->readsiz));
-
-	if (rsz < 0)
-		return rsz;
-
-	off += rsz;
-
-	/* get block digest (note 1st block is data->intro) */
-	*block = data->blocks + (n * eq->method->digsiz);
-	rsz = read_all(eq->fd_cip, (char *) *block, sz);
-
-	if (rsz > 0)
-		data->nblocks++;
-	if (rsz == 0 || (uint64_t) off >= eq->filesiz) {
-		data->is_eof = 1;
-		ul_fileeq_data_close_file(data);
-	}
-	DBG_OBJ(DATA, data, ul_debug("  get %zdB digest", rsz));
-	return rsz;
-}
-#endif
-
 static ssize_t get_intro(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 				unsigned char **block)
 {
@@ -510,11 +361,7 @@ static ssize_t get_cmp_data(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	default:
 		break;
 	}
-#ifdef USE_FILEEQ_CRYPTOAPI
-	return get_digest(eq, data, blockno, block);
-#else
 	return -1;
-#endif
 }
 
 #define CMP(a, b) ((a) > (b) ? 1 : ((a) < (b) ? -1 : 0))

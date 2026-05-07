@@ -117,7 +117,6 @@ headers = '''
         linux/fs.h
         linux/fiemap.h
         linux/gsmmux.h
-        linux/if_alg.h
         linux/landlock.h
         linux/lp.h
         linux/kcmp.h

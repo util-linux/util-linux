@@ -355,7 +355,6 @@ AC_CHECK_HEADERS([ \
 	linux/version.h \
 	linux/vm_sockets_diag.h \
 	linux/watchdog.h \
-	linux/if_alg.h \
 	locale.h \
 	mntent.h \
 	mqueue.h \

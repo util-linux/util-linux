@@ -205,11 +205,7 @@ static struct options {
 	size_t cache_size;
 } opts = {
 	/* default setting */
-#ifdef USE_FILEEQ_CRYPTOAPI
-	.method = "sha256",
-#else
 	.method = "memcmp",
-#endif
 	.respect_mode = TRUE,
 	.respect_owner = TRUE,
 	.respect_time = TRUE,
@@ -1427,9 +1423,6 @@ static int parse_options(int argc, char *argv[])
 			static const char *const features[] = {
 #ifdef USE_REFLINK
 				"reflink",
-#endif
-#ifdef USE_FILEEQ_CRYPTOAPI
-				"cryptoapi",
 #endif
 #ifdef USE_SKIP_SUBTREE
 				"ftw_skip_subtree",
