@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2023,2026 Masatake YAMATO <yamato@redhat.com>
 #
@@ -15,13 +15,16 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="UDP6 sockets"
+TS_DESC="UDPLITEv6 sockets"
 
 . "$TS_TOPDIR"/functions.sh
 
 ts_init "$*"
 
+. "$TS_SELF/lsfd-functions.bash"
+lsfd_check_udp_lite 6
+
 . "$TS_SELF/udp-common.bash"
-udp_common 6 0
+udp_common 6 1
 
 ts_finalize
