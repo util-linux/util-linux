@@ -65,7 +65,6 @@ enum {
 struct ul_fileeq_method {
 	const char *name;	/* name used by applications */
 	int id;
-	short digsiz;
 };
 
 static const struct ul_fileeq_method ul_eq_methods[] = {
@@ -164,10 +163,9 @@ void ul_fileeq_data_set_file(struct ul_fileeq_data *data, const char *name)
 }
 
 bool ul_fileeq_set_size(struct ul_fileeq *eq, int64_t st_size,
-			size_t readsiz, size_t memsiz)
+			size_t readsiz, size_t memsiz __attribute__((__unused__)))
 {
-	uint64_t filesiz, nreads, maxdigs;
-	size_t digsiz;
+	uint64_t filesiz;
 
 	assert(eq);
 	assert(st_size >= 0);
@@ -186,25 +184,7 @@ bool ul_fileeq_set_size(struct ul_fileeq *eq, int64_t st_size,
 		filesiz = (filesiz + readsiz) / readsiz * readsiz;
 		break;
 	default:
-		digsiz = eq->method->digsiz;
-		if (readsiz < digsiz)
-			readsiz = digsiz;
-		/* align file size */
-		filesiz = (filesiz + readsiz) / readsiz * readsiz;
-		/* calculate limits */
-		maxdigs = memsiz / digsiz;
-		if (maxdigs == 0)
-			maxdigs = 1;
-		else if (maxdigs > filesiz)
-			maxdigs = filesiz;
-		nreads = filesiz / readsiz;
-		/* enlarge readsize for large files */
-		if (nreads > maxdigs) {
-			uint64_t ceiling = filesiz + maxdigs - 1;
-			if (ceiling / maxdigs > SIZE_MAX)
-				return false;
-			readsiz = ceiling / maxdigs;
-		}
+		assert(eq->method->id == UL_FILEEQ_MEMCMP);	/* others are not implemented */
 		break;
 	}
 
