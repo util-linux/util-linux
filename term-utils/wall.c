@@ -377,8 +377,6 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		 * Which means that we may leave a non-blank character
 		 * in column 80, but that can't be helped.
 		 */
-		/* snprintf is not always available, but the sprintf's here
-		   will not overflow as long as %d takes at most 100 chars */
 		fprintf(fs, "\r%*s\r\n", TERM_WIDTH, " ");
 
 		snprintf(lbuf, lbuflen,
