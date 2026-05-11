@@ -30,6 +30,8 @@ ts_check_prog "bc"
 
 . "$TS_SELF"/functions.sh
 
+test -w /proc/sys/kernel/shmall || ts_skip "/proc/sys/kernel not writable"
+
 ts_lock "ipcslimits"
 
 ts_log "load original values"
