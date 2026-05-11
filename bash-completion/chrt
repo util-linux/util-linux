@@ -26,6 +26,7 @@ _chrt_module()
 				--max
 				--other
 				--pid
+				--reclaim-grub
 				--reset-on-fork
 				--rr
 				--sched-deadline

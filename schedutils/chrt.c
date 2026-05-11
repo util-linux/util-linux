@@ -46,6 +46,7 @@ struct chrt_ctl {
 	uint64_t runtime;			/* --sched-* options */
 	uint64_t deadline;
 	uint64_t period;
+	uint64_t sched_flags;			/* For sched_attr->sched_flags member */
 
 	unsigned int all_tasks : 1,		/* all threads of the PID */
 		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK or SCHED_FLAG_RESET_ON_FORK */
@@ -79,6 +80,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Scheduling options:\n"), out);
 	fputs(_(" -R, --reset-on-fork       set reset-on-fork flag\n"), out);
+	fputs(_(" -G, --reclaim-grub        set SCHED_FLAG_RECLAIM\n"), out);
 	fputs(_(" -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"), out);
 	fputs(_(" -P, --sched-period <ns>   period parameter for DEADLINE\n"), out);
 	fputs(_(" -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"), out);
@@ -359,6 +361,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	sa.sched_runtime  = ctl->runtime;
 	sa.sched_period   = ctl->period;
 	sa.sched_deadline = ctl->deadline;
+	sa.sched_flags    = ctl->sched_flags;
 
 # ifdef SCHED_FLAG_RESET_ON_FORK
 	/* Don't use SCHED_RESET_ON_FORK for sched_setattr()! */
@@ -417,6 +420,7 @@ int main(int argc, char **argv)
 		{ "sched-period",   required_argument, NULL, 'P' },
 		{ "sched-deadline", required_argument, NULL, 'D' },
 		{ "reset-on-fork",  no_argument,       NULL, 'R' },
+		{ "reclaim-grub",   no_argument,       NULL, 'G' },
 		{ "verbose",	no_argument, NULL, 'v' },
 		{ "version",	no_argument, NULL, 'V' },
 		{ NULL,		no_argument, NULL, 0 }
@@ -427,7 +431,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "+abdD:efiphmoP:T:rRvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abdD:efiphmoP:T:rRGvV", longopts, NULL)) != -1)
 	{
 		switch (c) {
 		case 'a':
@@ -459,6 +463,11 @@ int main(int argc, char **argv)
 			break;
 		case 'R':
 			ctl->reset_on_fork = 1;
+			break;
+		case 'G':
+#ifdef SCHED_FLAG_RECLAIM
+			ctl->sched_flags |= SCHED_FLAG_RECLAIM;
+#endif
 			break;
 		case 'i':
 #ifdef SCHED_IDLE
@@ -547,6 +556,12 @@ int main(int argc, char **argv)
 	if ((ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--sched-{deadline,period} options are "
 				     "supported for SCHED_DEADLINE only"));
+#ifndef HAVE_SCHED_SETATTR
+	if (ctl->sched_flags & SCHED_FLAG_RECLAIM)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_RECLAIM is unsupported"));
+#endif
+	if ((ctl->sched_flags & SCHED_FLAG_RECLAIM) && ctl->policy != SCHED_DEADLINE)
+		errx(EXIT_FAILURE, _("--reclaim-grub is only supported for SCHED_DEADLINE"));
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we

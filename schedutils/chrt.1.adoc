@@ -81,6 +81,9 @@ Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific). Note th
 *-D*, *--sched-deadline* _nanoseconds_::
 Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific).
 
+*-G*, *--reclaim-grub*::
+Enables GRUB (Greedy Reclamation of Unused Bandwidth) algorithm. Linux-specific, supported since 4.13.
+
 *-R*, *--reset-on-fork*::
 Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-specific, supported since 2.6.31.
 +
