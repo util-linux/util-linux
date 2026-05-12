@@ -57,6 +57,52 @@ $TS_HELPER_SCRIPT --return --append -c "exit 127" $TS_OUTPUT </dev/null >/dev/nu
 echo $? >> $TS_OUTPUT
 ts_finalize_subtest
 
+# basic "--" separator: outfile before --, command after --
+ts_init_subtest "dashdash-separator"
+$TS_HELPER_SCRIPT "$TS_OUTPUT" -- echo dashdash </dev/null >/dev/null 2>&1
+ts_finalize_subtest
+
+# "--" is consumed as required_argument value by --log-in (creates file
+# named "--"), second "--" is the real separator
+ts_init_subtest "dashdash-optarg-long"
+$TS_HELPER_SCRIPT --log-in -- --log-out "$TS_OUTPUT" -- echo dashdash-long </dev/null >/dev/null 2>&1
+rm -f -- --
+ts_finalize_subtest
+
+# same as above but with short option -I
+ts_init_subtest "dashdash-optarg-short"
+$TS_HELPER_SCRIPT -I -- -O "$TS_OUTPUT" -- echo dashdash-short </dev/null >/dev/null 2>&1
+rm -f -- --
+ts_finalize_subtest
+
+# first --log-in takes second --log-in as filename (creates file named
+# "--log-in"), --log-out takes $TS_OUTPUT, "--" is the separator
+ts_init_subtest "dashdash-optarg-chain"
+$TS_HELPER_SCRIPT --log-in --log-in --log-out "$TS_OUTPUT" -- echo dashdash-chain </dev/null >/dev/null 2>&1
+rm -f -- --log-in
+ts_finalize_subtest
+
+# --log-in takes first "--" as filename (creates file named "--"),
+# second "--" is the real separator
+ts_init_subtest "dashdash-optarg-odd"
+$TS_HELPER_SCRIPT -O "$TS_OUTPUT" --log-in -- -- echo dashdash-consumed </dev/null >/dev/null 2>&1
+rm -f -- --
+ts_finalize_subtest
+
+# first --log-in takes second --log-in as filename (creates file named
+# "--log-in"), "--" is the separator
+ts_init_subtest "dashdash-optarg-chain-even"
+$TS_HELPER_SCRIPT -O "$TS_OUTPUT" --log-in --log-in -- echo dashdash-chain-even </dev/null >/dev/null 2>&1
+rm -f -- --log-in
+ts_finalize_subtest
+
+# bundled short options: -B takes "c" as inline value (creates file named
+# "c"), "--" is the separator
+ts_init_subtest "dashdash-optarg-bundle"
+$TS_HELPER_SCRIPT -Bc -- echo dashdash-bundle </dev/null >/dev/null 2>&1
+mv c "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "size"
 $TS_HELPER_SCRIPT --output-limit 9 --command "echo 1:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1
 $TS_HELPER_SCRIPT -a --output-limit 9 --command "echo 2:1234567890" $TS_OUTPUT </dev/null >/dev/null 2>&1

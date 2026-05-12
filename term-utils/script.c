@@ -823,13 +823,11 @@ int main(int argc, char **argv)
 	 * and command parts. This allows getopt to permute arguments
 	 * before "--" (backward compatible with "script file -c cmd").
 	 */
-	for (ch = 1; ch < argc; ch++) {
-		if (strcmp(argv[ch], "--") == 0) {
-			cmd_argv = argv + ch + 1;
-			cmd_argc = argc - ch - 1;
-			argc = ch;
-			break;
-		}
+	ch = ul_find_argv_separator(argc, argv, longopts);
+	if (ch > 0) {
+		cmd_argv = argv + ch + 1;
+		cmd_argc = argc - ch - 1;
+		argc = ch;
 	}
 
 	while ((ch = getopt_long(argc, argv, "aB:c:eE:fI:O:o:qm:T:t::Vh", longopts, NULL)) != -1) {
