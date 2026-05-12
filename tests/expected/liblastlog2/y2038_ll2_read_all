@@ -1,0 +1,2 @@
+Cannot open database (y2038-ll2_read_all.db): unable to open database file
+Returning the correct errno: No such file or directory
