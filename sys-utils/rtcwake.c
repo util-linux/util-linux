@@ -174,7 +174,10 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 	 * precisely (+/- a second) as we can read them.
 	 */
 	if (ioctl(fd, RTC_RD_TIME, &rtc) < 0) {
-		warn(_("read rtc time failed"));
+		if (errno == EINVAL)
+			warn(_("read rtc time failed, RTC time may not be set"));
+		else
+			warn(_("read rtc time failed"));
 		return -1;
 	}
 
