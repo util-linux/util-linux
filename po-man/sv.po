@@ -9559,6 +9559,7 @@ msgstr "*last*(1), *w*(1), *who*(1), *utmp*(5)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1983, 1991 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -9569,11 +9570,7 @@ msgstr "*last*(1), *w*(1), *who*(1), *utmp*(5)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -12214,6 +12211,7 @@ msgstr "*libblkid*(3), *findfs*(8), *lsblk*(8), *wipefs*(8)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1989, 1990, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. This code is derived from software contributed to Berkeley by
@@ -12226,11 +12224,7 @@ msgstr "*libblkid*(3), *findfs*(8), *lsblk*(8), *wipefs*(8)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -14982,6 +14976,7 @@ msgstr "*liblastlog2*(3)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1983, 1990, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -14992,11 +14987,7 @@ msgstr "*liblastlog2*(3)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -15548,6 +15539,7 @@ msgstr "*journalctl*(1), *syslog*(3), *systemd.journal-fields*(7)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1990, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -15558,11 +15550,7 @@ msgstr "*journalctl*(1), *syslog*(3), *systemd.journal-fields*(7)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -17808,6 +17796,7 @@ msgstr "*waitpid*(2) *wait*(1P)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1990 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -17818,11 +17807,7 @@ msgstr "*waitpid*(2) *wait*(1P)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#.     This product includes software developed by the University of
-#.     California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -21867,6 +21852,7 @@ msgstr "*montering*(8)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1989, 1991 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -21877,11 +21863,7 @@ msgstr "*montering*(8)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -31255,6 +31237,7 @@ msgstr "   sudo readprofile -M 20\n"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1983, 1991, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -31265,11 +31248,7 @@ msgstr "   sudo readprofile -M 20\n"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -35490,6 +35469,7 @@ msgstr "Den ursprungliga *agetty* för seriella terminaler skrevs av mailto:wiet
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1987, 1990, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -35500,11 +35480,7 @@ msgstr "Den ursprungliga *agetty* för seriella terminaler skrevs av mailto:wiet
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -35630,6 +35606,7 @@ msgstr "*login*(1), *talk*(1), *write*(1), *wall*(1), *xterm*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1990 Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -35640,11 +35617,7 @@ msgstr "*login*(1), *talk*(1), *write*(1), *wall*(1), *xterm*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -36758,6 +36731,7 @@ msgstr "*stty*(1), *tput*(1), *tty*(4), *terminfo*(5)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1989, 1990 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -36768,11 +36742,7 @@ msgstr "*stty*(1), *tput*(1), *tty*(4), *terminfo*(5)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -36864,6 +36834,7 @@ msgstr "*mesg*(1), *talk*(1), *write*(1), *shutdown*(8)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1989, 1993
 #. 	The Regents of the University of California.  All rights reserved.
 #. This code is derived from software contributed to Berkeley by
@@ -36876,11 +36847,7 @@ msgstr "*mesg*(1), *talk*(1), *write*(1), *shutdown*(8)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. 	This product includes software developed by the University of
-#. 	California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -36966,6 +36933,7 @@ msgstr "*mesg*(1), *talk*(1), *who*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1990 The Regents of the University of California.
 #. All rights reserved.
 #. This code is derived from software contributed to Berkeley by
@@ -36978,11 +36946,7 @@ msgstr "*mesg*(1), *talk*(1), *who*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -37254,6 +37218,7 @@ msgstr "*expand*(1), *nroff*(1), *tbl*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1990, 1993
 #. The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -37264,11 +37229,7 @@ msgstr "*expand*(1), *nroff*(1), *tbl*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -37375,6 +37336,7 @@ msgstr "*col*(1), *more*(1), *nroff*(1), *troff*(1), *ul*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1990 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -37385,11 +37347,7 @@ msgstr "*col*(1), *more*(1), *nroff*(1), *troff*(1), *ul*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -37448,6 +37406,7 @@ msgstr "*awk*(1p), *column*(1), *expand*(1), *paste*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1989, 1990, 1993
 #. The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -37458,11 +37417,7 @@ msgstr "*awk*(1p), *column*(1), *expand*(1), *paste*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -38028,6 +37983,7 @@ msgstr "*colrm*(1), *ls*(1), *paste*(1), *sort*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1989, 1990, 1993
 #. The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -38038,11 +37994,7 @@ msgstr "*colrm*(1), *ls*(1), *paste*(1), *sort*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -38655,6 +38607,7 @@ msgstr "*read*(1p)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1988, 1990 The Regents of the University of California.
 #. Copyright (c) 1988 Mark Nudleman
 #. All rights reserved.
@@ -38666,11 +38619,7 @@ msgstr "*read*(1p)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#.    This product includes software developed by the University of
-#.    California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -39498,6 +39447,7 @@ msgstr "*cat*(1), *more*(1), *sh*(1p), *terminfo*(5), *locale*(7), *regex*(7), *
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1985, 1992 The Regents of the University of California.
 #. All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -39508,11 +39458,7 @@ msgstr "*cat*(1), *more*(1), *sh*(1p), *terminfo*(5), *locale*(7), *regex*(7), *
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
@@ -39572,6 +39518,7 @@ msgstr "*tac*(1)"
 #
 #
 #
+#. SPDX-License-Identifier: BSD-3-Clause
 #. Copyright (c) 1980, 1991, 1993
 #. The Regents of the University of California.  All rights reserved.
 #. Redistribution and use in source and binary forms, with or without
@@ -39582,11 +39529,7 @@ msgstr "*tac*(1)"
 #. 2. Redistributions in binary form must reproduce the above copyright
 #.    notice, this list of conditions and the following disclaimer in the
 #.    documentation and/or other materials provided with the distribution.
-#. 3. All advertising materials mentioning features or use of this software
-#.    must display the following acknowledgement:
-#. This product includes software developed by the University of
-#. California, Berkeley and its contributors.
-#. 4. Neither the name of the University nor the names of its contributors
+#. 3. Neither the name of the University nor the names of its contributors
 #.    may be used to endorse or promote products derived from this software
 #.    without specific prior written permission.
 #. THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
