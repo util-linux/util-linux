@@ -323,7 +323,9 @@ static void log_err(const char *, ...) __attribute__((__noreturn__))
 			       __attribute__((__format__(printf, 1, 2)));
 static void log_warn (const char *, ...)
 				__attribute__((__format__(printf, 1, 2)));
+#ifdef KDGKBLED
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
+#endif
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static void reload_agettys(void);
@@ -3022,6 +3024,7 @@ static void init_special_char(char* arg, struct options *op)
 	*q = '\0';
 }
 
+#ifdef KDGKBLED
 /*
  * Appends @str to @dest and if @dest is not empty then use @sep as a
  * separator. The maximal final length of the @dest is @len.
@@ -3054,6 +3057,7 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 
 	return dsz + ssz + sz;
 }
+#endif /* KDGKBLED */
 
 /*
  * Do not allow the user to pass an option as a user name

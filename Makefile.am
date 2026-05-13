@@ -112,6 +112,7 @@ include libfdisk/Makemodule.am
 include schedutils/Makemodule.am
 include text-utils/Makemodule.am
 include term-utils/Makemodule.am
+include agetty-cmd/Makemodule.am
 include login-utils/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
