@@ -36,6 +36,7 @@
 #include <sys/utsname.h>
 #include <syslog.h>
 
+#include "agetty.h"
 #include "strutils.h"
 #include "all-io.h"
 #include "nls.h"

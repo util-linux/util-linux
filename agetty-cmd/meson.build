@@ -1,5 +1,6 @@
 agetty_sources = files(
   'agetty.c',
+  'agetty.h',
 )
 
 if LINUX

@@ -1,0 +1,4 @@
+#ifndef UTIL_LINUX_AGETTY_H
+#define UTIL_LINUX_AGETTY_H
+
+#endif /* UTIL_LINUX_AGETTY_H */

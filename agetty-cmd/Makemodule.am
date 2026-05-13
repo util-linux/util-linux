@@ -3,7 +3,8 @@ sbin_PROGRAMS += agetty
 MANPAGES += term-utils/agetty.8
 dist_noinst_DATA += term-utils/agetty.8.adoc
 
-agetty_SOURCES = agetty-cmd/agetty.c
+agetty_SOURCES = agetty-cmd/agetty.c \
+		 agetty-cmd/agetty.h
 
 if USE_PLYMOUTH_SUPPORT
 agetty_SOURCES += lib/plymouth-ctrl.c
