@@ -150,7 +150,6 @@ static int check_utmp(const struct write_control *ctl)
 			goto utmp;
 
 		for (int i = 0; i < sessions; i++) {
-
 			char *name, *tty;
 
 			if (sd_session_get_username(sessions_list[i], &name) < 0)
@@ -160,8 +159,8 @@ static int check_utmp(const struct write_control *ctl)
 				continue;
 			}
 
-			if  (strcmp(ctl->dst_login, name) == 0 &&
-					strcmp(ctl->dst_tty_name, tty) == 0) {
+			if (strcmp(ctl->dst_login, name) == 0 &&
+			    strcmp(ctl->dst_tty_name, tty) == 0) {
 				free(name);
 				free(tty);
 				res = 0;
@@ -190,7 +189,7 @@ utmp:
 		mem2strcpy(line, u->ut_line, sizeof(u->ut_line), sizeof(line));
 
 		if (strcmp(ctl->dst_login, user) == 0 &&
-	    		strcmp(ctl->dst_tty_name, line) == 0) {
+		    strcmp(ctl->dst_tty_name, line) == 0) {
 			res = 0;
 			break;
 		}
@@ -231,12 +230,10 @@ static void search_utmp(struct write_control *ctl)
 
 			if (sd_session_get_username(sessions_list[i], &name) < 0)
 				continue;
-
-			if  (strcmp(ctl->dst_login, name) != 0) {
+			if (strcmp(ctl->dst_login, name) != 0) {
 				free(name);
 				continue;
 			}
-
 			if (sd_session_get_tty(sessions_list[i], &tty) < 0) {
 				free(name);
 				continue;
@@ -317,7 +314,6 @@ utmp:
 				ctl->dst_tty_name = ctl->dst_tty_path + 5;
 			}
 		}
-
 		endutxent();
 	}
 
