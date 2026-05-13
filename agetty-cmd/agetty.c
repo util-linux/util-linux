@@ -319,11 +319,6 @@ static void termio_final(struct options *op,
 static int caps_lock(char *s);
 static speed_t bcode(char *s);
 static void usage(void) __attribute__((__noreturn__));
-static void exit_slowly(int code) __attribute__((__noreturn__));
-static void log_err(const char *, ...) __attribute__((__noreturn__))
-			       __attribute__((__format__(printf, 1, 2)));
-static void log_warn (const char *, ...)
-				__attribute__((__format__(printf, 1, 2)));
 #ifdef KDGKBLED
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 #endif
@@ -554,22 +549,22 @@ int main(int argc, char **argv)
 
 	if (options.chroot) {
 		if (chroot(options.chroot) < 0)
-			log_err(_("%s: can't change root directory %s: %m"),
+			agetty_log_err(_("%s: can't change root directory %s: %m"),
 				options.tty, options.chroot);
 		if (chdir("/") < 0)
-			log_err(_("%s: can't change working directory %s: %m"),
+			agetty_log_err(_("%s: can't change working directory %s: %m"),
 				options.tty, "/");
 	}
 	if (options.chdir && chdir(options.chdir) < 0)
-		log_err(_("%s: can't change working directory %s: %m"),
+		agetty_log_err(_("%s: can't change working directory %s: %m"),
 			options.tty, options.chdir);
 	if (options.nice && nice(options.nice) < 0)
-		log_warn(_("%s: can't change process priority: %m"),
+		agetty_log_warn(_("%s: can't change process priority: %m"),
 			 options.tty);
 
 #ifdef DEBUGGING
 	if (close_stream(dbf) != 0)
-		log_err("write failed: %s", DEBUG_OUTPUT);
+		agetty_log_err("write failed: %s", DEBUG_OUTPUT);
 #endif
 
 	/* Let the login program take care of password validation. */
@@ -578,7 +573,7 @@ int main(int argc, char **argv)
 	free(options.osrelease);
 	free(options.autolog);
 
-	log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
+	agetty_log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
 
 /*
@@ -609,7 +604,7 @@ static char *replace_u(char *str, char *username)
 
 		tp = entry = malloc(sz + usz);
 		if (!tp)
-			log_err(_("failed to allocate memory: %m"));
+			agetty_log_err(_("failed to allocate memory: %m"));
 
 		if (p != str)
 			/* copy chars before \u */
@@ -777,7 +772,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			free(op->autolog);
 			op->autolog = strdup(optarg);
 			if (!op->autolog)
-				log_err(_("failed to allocate memory: %m"));
+				agetty_log_err(_("failed to allocate memory: %m"));
 			break;
 		case 'c':
 			op->flags |= F_KEEPCFLAGS;
@@ -824,7 +819,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 				else if (strcmp(optarg, "=auto") == 0)
 					op->clocal = CLOCAL_MODE_AUTO;
 				else
-					log_err(_("invalid argument of --local-line"));
+					agetty_log_err(_("invalid argument of --local-line"));
 			}
 			break;
 		case 'm':
@@ -905,7 +900,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 	debug("after getopt loop\n");
 
 	if (argc < optind + 1) {
-		log_warn(_("not enough arguments"));
+		agetty_log_warn(_("not enough arguments"));
 		errx(EXIT_FAILURE, _("not enough arguments"));
 	}
 
@@ -914,7 +909,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		/* Assume BSD style speed. */
 		parse_speeds(op, argv[optind++]);
 		if (argc < optind + 1) {
-			log_warn(_("not enough arguments"));
+			agetty_log_warn(_("not enough arguments"));
 			errx(EXIT_FAILURE, _("not enough arguments"));
 		}
 		op->tty = argv[optind++];
@@ -939,7 +934,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		if (fd >= 0)
 			op->tty = name;	/* set real device name */
 		else
-			log_warn(_("could not get terminal name: %d"), fd);
+			agetty_log_warn(_("could not get terminal name: %d"), fd);
 	}
 
 	/* On virtual console remember the line which is used for */
@@ -960,14 +955,14 @@ static void parse_speeds(struct options *op, char *arg)
 	char *str = strdup(arg);
 
 	if (!str)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 
 	debug("entered parse_speeds:\n");
 	for (cp = strtok(str, ","); cp != NULL; cp = strtok((char *)0, ",")) {
 		if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
-			log_err(_("bad speed: %s"), cp);
+			agetty_log_err(_("bad speed: %s"), cp);
 		if (op->numspeed >= MAX_SPEED)
-			log_err(_("too many alternate speeds"));
+			agetty_log_err(_("too many alternate speeds"));
 	}
 	debug("exiting parsespeeds\n");
 	free(str);
@@ -1074,11 +1069,11 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 
 		len = snprintf(buf, sizeof(buf), "/dev/%s", tty);
 		if (len < 0 || (size_t)len >= sizeof(buf))
-			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+			agetty_log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/* Open the tty as standard input. */
 		if ((fd = open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0)) < 0)
-			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+			agetty_log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/*
 		 * There is always a race between this reset and the call to
@@ -1088,22 +1083,22 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 		 */
 		if (fchown(fd, 0, gid) || fchmod(fd, (gid ? 0620 : 0600))) {
 			if (errno == EROFS)
-				log_warn("%s: %m", buf);
+				agetty_log_warn("%s: %m", buf);
 			else
-				log_err("%s: %m", buf);
+				agetty_log_err("%s: %m", buf);
 		}
 
 		/* Sanity checks... */
 		if (fstat(fd, &st) < 0)
-			log_err("%s: %m", buf);
+			agetty_log_err("%s: %m", buf);
 		if ((st.st_mode & S_IFMT) != S_IFCHR)
-			log_err(_("/dev/%s: not a character device"), tty);
+			agetty_log_err(_("/dev/%s: not a character device"), tty);
 		if (!isatty(fd))
-			log_err(_("/dev/%s: not a tty"), tty);
+			agetty_log_err(_("/dev/%s: not a tty"), tty);
 
 		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
 			if (ioctl(fd, TIOCSCTTY, 1) == -1)
-				log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
+				agetty_log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
 		}
 
 		close(STDIN_FILENO);
@@ -1125,17 +1120,17 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 			closed = 1;
 
 			if (vhangup())
-				log_err(_("/dev/%s: vhangup() failed: %m"), tty);
+				agetty_log_err(_("/dev/%s: vhangup() failed: %m"), tty);
 		} else
 			close(fd);
 
 		debug("open(2)\n");
 		if (open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0) != 0)
-			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+			agetty_log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		if (((tid = tcgetsid(STDIN_FILENO)) < 0) || (pid != tid)) {
 			if (ioctl(STDIN_FILENO, TIOCSCTTY, 1) == -1)
-				log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
+				agetty_log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
 		}
 
 	} else {
@@ -1146,12 +1141,12 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 		 */
 
 		if ((fcntl(STDIN_FILENO, F_GETFL, 0) & O_RDWR) != O_RDWR)
-			log_err(_("%s: not open for read/write"), tty);
+			agetty_log_err(_("%s: not open for read/write"), tty);
 
 	}
 
 	if (tcsetpgrp(STDIN_FILENO, pid))
-		log_warn(_("/dev/%s: cannot set process group: %m"), tty);
+		agetty_log_warn(_("/dev/%s: cannot set process group: %m"), tty);
 
 	/* Get rid of the present outputs. */
 	if (!closed) {
@@ -1165,7 +1160,7 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 
 	/* set up stdout and stderr */
 	if (dup(STDIN_FILENO) != 1 || dup(STDIN_FILENO) != 2)
-		log_err(_("%s: dup problem: %m"), tty);
+		agetty_log_err(_("%s: dup problem: %m"), tty);
 
 	/* make stdio unbuffered for slow modem lines */
 	setvbuf(stdout, NULL, _IONBF, 0);
@@ -1182,7 +1177,7 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 	 */
 	memset(tp, 0, sizeof(struct termios));
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
-		log_err(_("%s: failed to get terminal attributes: %m"), tty);
+		agetty_log_err(_("%s: failed to get terminal attributes: %m"), tty);
 
 #if defined(__FreeBSD_kernel__)
 	login_tty (0);
@@ -1209,10 +1204,10 @@ static void open_tty(const char *tty, struct termios *tp, struct options *op)
 	if (!op->term)
 		op->term = get_terminal_default_type(op->tty, !(op->flags & F_VCONSOLE));
 	if (!op->term)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 
 	if (setenv("TERM", op->term, 1) != 0)
-		log_err(_("failed to set the %s environment variable"), "TERM");
+		agetty_log_err(_("failed to set the %s environment variable"), "TERM");
 }
 
 /* Initialize termios settings. */
@@ -1385,7 +1380,7 @@ static void termio_init(struct options *op, struct termios *tp)
 	tcflush(STDIN_FILENO, TCIOFLUSH);
 
 	if (tcsetattr(STDIN_FILENO, TCSANOW, tp))
-		log_warn(_("setting terminal attributes failed: %m"));
+		agetty_log_warn(_("setting terminal attributes failed: %m"));
 
 	/* Go to blocking input even in local mode. */
 	fcntl(STDIN_FILENO, F_SETFL,
@@ -1414,7 +1409,7 @@ static void reset_vc(const struct options *op, struct termios *tp, int canon)
 #endif
 
 	if (tcsetattr(STDIN_FILENO, TCSADRAIN, tp))
-		log_warn(_("setting terminal attributes failed: %m"));
+		agetty_log_warn(_("setting terminal attributes failed: %m"));
 
 	/* Go to blocking input even in local mode. */
 	fcntl(STDIN_FILENO, F_SETFL,
@@ -1488,7 +1483,7 @@ static char *xgethostname(void)
 
 	name = malloc(sizeof(char) * sz);
 	if (!name)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 
 	if (gethostname(name, sz) != 0) {
 		free(name);
@@ -1506,7 +1501,7 @@ static char *xgetdomainname(void)
 
 	name = malloc(sizeof(char) * sz);
 	if (!name)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 
 	if (getdomainname(name, sz) != 0) {
 		free(name);
@@ -1533,7 +1528,7 @@ static char *read_os_release(struct options *op, const char *varname)
 		if (fd == -1) {
 			fd = open(_PATH_OS_RELEASE_USR, O_RDONLY);
 			if (fd == -1) {
-				log_warn(_("cannot open os-release file"));
+				agetty_log_warn(_("cannot open os-release file"));
 				return NULL;
 			}
 		}
@@ -1543,7 +1538,7 @@ static char *read_os_release(struct options *op, const char *varname)
 
 		op->osrelease = malloc(st.st_size + 1);
 		if (!op->osrelease)
-			log_err(_("failed to allocate memory: %m"));
+			agetty_log_err(_("failed to allocate memory: %m"));
 		if (read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
 			free(op->osrelease);
 			op->osrelease = NULL;
@@ -1553,7 +1548,7 @@ static char *read_os_release(struct options *op, const char *varname)
 	}
 	buf = strdup(op->osrelease);
 	if (!buf)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 	p = buf;
 
 	for (;;) {
@@ -1595,7 +1590,7 @@ static char *read_os_release(struct options *op, const char *varname)
 		free(ret);
 		ret = strdup(p);
 		if (!ret)
-			log_err(_("failed to allocate memory: %m"));
+			agetty_log_err(_("failed to allocate memory: %m"));
 		p = eol + 1;
 	}
 done:
@@ -1626,7 +1621,7 @@ static int wait_for_term_input(struct issue *ie, int fd)
 
 			close(reload_fd);
 		} else
-			log_warn(_("failed to create reload file: %s: %m"),
+			agetty_log_warn(_("failed to create reload file: %s: %m"),
 					AGETTY_RELOAD_FILENAME);
 	}
 
@@ -1928,7 +1923,7 @@ skip:
 		char *file;
 
 		if (!list)
-			log_err(_("failed to allocate memory: %m"));
+			agetty_log_err(_("failed to allocate memory: %m"));
 
 		for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
 			struct stat st;
@@ -2219,9 +2214,9 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				case ESRCH:
 				case EINVAL:
 				case ENOENT:
-					exit_slowly(EXIT_SUCCESS);
+					agetty_exit_slowly(EXIT_SUCCESS);
 				default:
-					log_err(_("%s: read: %m"), op->tty);
+					agetty_log_err(_("%s: read: %m"), op->tty);
 				}
 			}
 
@@ -2255,7 +2250,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				if (op->numspeed > 1 && !(op->flags & F_VCONSOLE))
 					return NULL;
 				if (readres == 0)
-					exit_slowly(EXIT_SUCCESS);
+					agetty_exit_slowly(EXIT_SUCCESS);
 				break;
 			case CR:
 			case NL:
@@ -2290,7 +2285,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 				exit(EXIT_SUCCESS);
 			default:
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
-					log_err(_("%s: input overrun"), op->tty);
+					agetty_log_err(_("%s: input overrun"), op->tty);
 				if ((tp->c_lflag & ECHO) == 0) {
 					/* Visualize escape sequence instead of its execution */
 					if (ascval == CTL('[')) {
@@ -2332,21 +2327,21 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 
 		len = mbstowcs((wchar_t *)0, logname, 0);
 		if (len < 0)
-			log_err(_("%s: invalid character conversion for login name"), op->tty);
+			agetty_log_err(_("%s: invalid character conversion for login name"), op->tty);
 
 		wcs = malloc((len + 1) * sizeof(wchar_t));
 		if (!wcs)
-			log_err(_("failed to allocate memory: %m"));
+			agetty_log_err(_("failed to allocate memory: %m"));
 
 		len = mbstowcs(wcs, logname, len + 1);
 		if (len < 0)
-			log_err(_("%s: invalid character conversion for login name"), op->tty);
+			agetty_log_err(_("%s: invalid character conversion for login name"), op->tty);
 
 		wcp = wcs;
 		while (*wcp) {
 			const wint_t wc = *wcp++;
 			if (!iswprint(wc))
-				log_err(_("%s: invalid character 0x%x in login name"), op->tty, wc);
+				agetty_log_err(_("%s: invalid character 0x%x in login name"), op->tty, wc);
 		}
 		free(wcs);
 	} else
@@ -2431,7 +2426,7 @@ static void termio_final(struct options *op, struct termios *tp, struct chardata
 
 	/* Finally, make the new settings effective. */
 	if (tcsetattr(STDIN_FILENO, TCSANOW, tp) < 0)
-		log_err(_("%s: failed to set terminal attributes: %m"), op->tty);
+		agetty_log_err(_("%s: failed to set terminal attributes: %m"), op->tty);
 }
 
 /*
@@ -2532,45 +2527,6 @@ static void list_speeds(void)
 		printf("%10ld\n", sp->speed);
 }
 
-/*
- * Helper function reports errors to syslog.
- * Will be used by log_err() and log_warn() therefore
- * it takes a format as well as va_list.
- */
-static void dolog(int priority
-		  , const char *fmt, va_list ap)
-{
-	openlog("agetty", LOG_PID, LOG_AUTHPRIV);
-	vsyslog(priority, fmt, ap);
-	closelog();
-}
-
-static void exit_slowly(int code)
-{
-	/* Be kind to init(8). */
-	sleep(10);
-	exit(code);
-}
-
-static void log_err(const char *fmt, ...)
-{
-	va_list ap;
-
-	va_start(ap, fmt);
-	dolog(LOG_ERR, fmt, ap);
-	va_end(ap);
-
-	exit_slowly(EXIT_FAILURE);
-}
-
-static void log_warn(const char *fmt, ...)
-{
-	va_list ap;
-
-	va_start(ap, fmt);
-	dolog(LOG_WARNING, fmt, ap);
-	va_end(ap);
-}
 
 #ifdef USE_NETLINK
 static void print_iface_best(struct issue *ie,
@@ -2990,7 +2946,7 @@ static void init_special_char(char* arg, struct options *op)
 
 	op->initstring = malloc(strlen(arg) + 1);
 	if (!op->initstring)
-		log_err(_("failed to allocate memory: %m"));
+		agetty_log_err(_("failed to allocate memory: %m"));
 
 	/*
 	 * Copy optarg into op->initstring decoding \ddd octal
@@ -3079,7 +3035,7 @@ static void check_username(const char* nm)
 	return;
 err:
 	errno = EPERM;
-	log_err(_("checkname failed: %m"));
+	agetty_log_err(_("checkname failed: %m"));
 }
 
 static void reload_agettys(void)
@@ -3145,7 +3101,7 @@ static int cred_read_num(struct path_cxt *pc, const char *name,
 	}
 
 	if (rc)
-		log_warn(_("invalid '%s' credential value"), name);
+		agetty_log_warn(_("invalid '%s' credential value"), name);
 	free(str);
 	return rc;
 }
@@ -3162,7 +3118,7 @@ static int cred_read_bool(struct path_cxt *pc, const char *name,
 
 	rc = ul_strtobool(str, &res);
 	if (rc)
-		log_warn(_("invalid '%s' credential value"), name);
+		agetty_log_warn(_("invalid '%s' credential value"), name);
 	else if (res != invert)
 		*flags |= flag;
 	else
@@ -3185,13 +3141,13 @@ static void load_credentials(struct options *op)
 
 	pc = ul_new_path("%s", env);
 	if (!pc) {
-		log_warn(_("failed to initialize path context"));
+		agetty_log_warn(_("failed to initialize path context"));
 		return;
 	}
 
 	dir = ul_path_opendir(pc, NULL);
 	if (!dir) {
-		log_warn(_("failed to open credentials directory"));
+		agetty_log_warn(_("failed to open credentials directory"));
 		return;
 	}
 
