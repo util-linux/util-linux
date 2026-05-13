@@ -4090,13 +4090,14 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+opt = conf.get('HAVE_SYS_PRCTL_H').to_string() == '1'
 exe = executable(
   'test_child_create',
   'tests/helpers/test_child_create.c',
   include_directories : includes,
   link_with : lib_common,
-  build_by_default: program_tests)
-if not is_disabler(exe)
+  build_by_default: opt and program_tests )
+if opt and not is_disabler(exe)
   exes += exe
 endif
 
