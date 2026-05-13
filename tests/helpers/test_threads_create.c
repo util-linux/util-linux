@@ -49,12 +49,20 @@ struct thread_ctl {
 
 static void* thread_func(void* arg)
 {
-	pid_t tid = syscall(SYS_gettid);
+	uint64_t tid;
+
+#if defined(__linux__)
+	tid = syscall(SYS_gettid);
+#elif defined(__APPLE__)
+	pthread_threadid_np(NULL, &tid);
+#else
+#error Unsupported operating system
+#endif
 	struct thread_ctl *tctl = (struct thread_ctl *)arg;
 	int id = tctl->thread_id + 2;
 	uint16_t sec = tctl->sleep_time;
 
-	printf("Thread %d: %d\n", id, tid);
+	printf("Thread %d: %"PRIu64"\n", id, tid);
 	sleep(sec);
 
 	free(arg);
