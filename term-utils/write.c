@@ -183,8 +183,14 @@ utmp:
 	setutxent();
 
 	while ((u = getutxent())) {
-		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) == 0 &&
-	    		strncmp(ctl->dst_tty_name, u->ut_line, sizeof(u->ut_line)) == 0) {
+		char user[sizeof(u->ut_user) + 1];
+		char line[sizeof(u->ut_line) + 1];
+
+		mem2strcpy(user, u->ut_user, sizeof(u->ut_user), sizeof(user));
+		mem2strcpy(line, u->ut_line, sizeof(u->ut_line), sizeof(line));
+
+		if (strcmp(ctl->dst_login, user) == 0 &&
+	    		strcmp(ctl->dst_tty_name, line) == 0) {
 			res = 0;
 			break;
 		}
@@ -274,23 +280,28 @@ static void search_utmp(struct write_control *ctl)
 utmp:
 #endif
 	{
+		char user[sizeof(u->ut_user) + 1];
+		char line[sizeof(u->ut_line) + 1];
 		char path[sizeof(u->ut_line) + 6];
 
 		utmpxname(_PATH_UTMP);
 		setutxent();
 
 		while ((u = getutxent())) {
-			if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) != 0)
+			mem2strcpy(user, u->ut_user, sizeof(u->ut_user), sizeof(user));
+			mem2strcpy(line, u->ut_line, sizeof(u->ut_line), sizeof(line));
+
+			if (strcmp(ctl->dst_login, user) != 0)
 				continue;
 			num_ttys++;
-			snprintf(path, sizeof(path), "/dev/%s", u->ut_line);
+			snprintf(path, sizeof(path), "/dev/%s", line);
 			if (check_tty(path, &tty_writeable, &tty_atime, 0))
 				/* bad term? skip */
 				continue;
 			if (ctl->src_uid && !tty_writeable)
 				/* skip ttys with msgs off */
 				continue;
-			if (memcmp(u->ut_line, ctl->src_tty_name, strlen(ctl->src_tty_name) + 1) == 0) {
+			if (strcmp(line, ctl->src_tty_name) == 0) {
 				user_is_me = 1;
 				/* don't write to yourself */
 				continue;
