@@ -5,6 +5,7 @@ dist_noinst_DATA += term-utils/agetty.8.adoc
 
 agetty_SOURCES = agetty-cmd/agetty.c \
 		 agetty-cmd/agetty.h \
+		 agetty-cmd/credentials.c \
 		 agetty-cmd/utils.c
 
 if USE_PLYMOUTH_SUPPORT
