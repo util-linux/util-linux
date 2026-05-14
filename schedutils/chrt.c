@@ -520,9 +520,7 @@ int main(int argc, char **argv)
 		case 'U':
 #ifdef SCHED_FLAG_UTIL_CLAMP_MIN
 			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MIN;
-			ctl->util_min = strtou32_or_err(optarg, _("invalid --clamp-min value"));
-			if (ctl->util_min > 1024)
-				errx(EXIT_FAILURE, _("--clamp-min value must be in range 0-1024"));
+			ctl->util_min = (uint32_t) str2unum_or_err(optarg, 10, _("--clamp-min value must be in range 0-1024"), 1024);
 #endif
 			break;
 		case 'X':
