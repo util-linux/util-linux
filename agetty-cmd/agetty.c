@@ -105,7 +105,6 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
 static void parse_args(int argc, char **argv, struct agetty_options *op);
-static void parse_speeds(struct agetty_options *op, char *arg);
 static int wait_for_term_input(struct agetty_issue *ie, int fd);
 static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 static char *get_logname(struct agetty_issue *ie, struct agetty_options *op,
@@ -692,7 +691,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 	/* Accept "tty", "baudrate tty", and "tty baudrate". */
 	if (is_speed(argv[optind])) {
 		/* Assume BSD style speed. */
-		parse_speeds(op, argv[optind++]);
+		agetty_parse_speeds(op, argv[optind++]);
 		if (argc < optind + 1) {
 			agetty_log_warn(_("not enough arguments"));
 			errx(EXIT_FAILURE, _("not enough arguments"));
@@ -703,7 +702,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		if (argc > optind) {
 			char *v = argv[optind];
 			if (is_speed(v)) {
-				parse_speeds(op, v);
+				agetty_parse_speeds(op, v);
 				optind++;
 			}
 		}
@@ -733,25 +732,6 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 	debug("exiting parseargs\n");
 }
 
-/* Parse alternate baud rates. */
-static void parse_speeds(struct agetty_options *op, char *arg)
-{
-	char *cp;
-	char *str = strdup(arg);
-
-	if (!str)
-		agetty_log_err(_("failed to allocate memory: %m"));
-
-	debug("entered parse_speeds:\n");
-	for (cp = strtok(str, ","); cp != NULL; cp = strtok((char *)0, ",")) {
-		if ((op->speeds[op->numspeed++] = agetty_bcode(cp)) <= 0)
-			agetty_log_err(_("bad speed: %s"), cp);
-		if (op->numspeed >= MAX_SPEED)
-			agetty_log_err(_("too many alternate speeds"));
-	}
-	debug("exiting parsespeeds\n");
-	free(str);
-}
 
 
 /* Show login prompt, optionally preceded by /etc/issue contents. */

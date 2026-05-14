@@ -156,6 +156,23 @@ void agetty_update_utmp(struct agetty_options *op, const char *fakehost)
 }
 #endif
 
+void agetty_parse_speeds(struct agetty_options *op, char *arg)
+{
+	char *cp;
+	char *str = strdup(arg);
+
+	if (!str)
+		agetty_log_err(_("failed to allocate memory: %m"));
+
+	for (cp = strtok(str, ","); cp != NULL; cp = strtok(NULL, ",")) {
+		if ((op->speeds[op->numspeed++] = agetty_bcode(cp)) <= 0)
+			agetty_log_err(_("bad speed: %s"), cp);
+		if (op->numspeed >= MAX_SPEED)
+			agetty_log_err(_("too many alternate speeds"));
+	}
+	free(str);
+}
+
 char *agetty_parse_initstring(const char *arg)
 {
 	char ch, *str, *p, *q;
