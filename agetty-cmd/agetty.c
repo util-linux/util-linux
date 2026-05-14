@@ -49,11 +49,11 @@
 #include "env.h"
 #include "path.h"
 #include "fileutils.h"
-#ifdef AGETTY_RELOAD
-# include "netaddrq.h"
-# if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
-#  define USE_NETLINK
-# endif
+#ifdef ISSUEDIR_SUPPORT
+# include "configs.h"
+# include <dirent.h>
+# define ISSUEDIR_EXT	"issue"
+# define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
 #endif
 
 #include "logindefs.h"
@@ -90,63 +90,19 @@
 #endif
 
 
-/*
- * Things you may want to modify.
- *
- * If ISSUE_SUPPORT is not defined, agetty will never display the contents of
- * the /etc/issue file. You will not want to spit out large "issue" files at
- * the wrong baud rate. Relevant for System V only.
- *
- * You may disagree with the default line-editing etc. characters defined
- * below. Note, however, that DEL cannot be used for interrupt generation
- * and for line editing at the same time.
- */
-
-/* Displayed before the login prompt. */
-#ifdef	SYSV_STYLE
-#  define ISSUE_SUPPORT
-#  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
-#    include "configs.h"
-#    include <dirent.h>
-#    define ISSUEDIR_SUPPORT
-#    define ISSUEDIR_EXT	"issue"
-#    define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
-#  endif
-#endif
-
 /* Login prompt. */
 #define LOGIN_PROMPT		"login: "
 
 /* Numbers of args for login(1) */
 #define LOGIN_ARGV_MAX	16
 
-/*
- * agetty --reload
- */
 #ifdef AGETTY_RELOAD
 # include <sys/inotify.h>
-# define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
-# define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
 #endif
 #ifdef USE_NETLINK
 static uint32_t netlink_groups;
 #endif
-
-struct issue {
-	FILE *output;
-	char *mem;
-	size_t mem_sz;
-
-#ifdef USE_NETLINK
-	struct ul_nl_data nl;
-#endif
-#ifdef AGETTY_RELOAD
-	char *mem_old;
-#endif
-	unsigned int do_tcsetattr : 1,
-		     do_tcrestore : 1;
-};
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -154,10 +110,10 @@ struct issue {
 static void init_special_char(char* arg, struct agetty_options *op);
 static void parse_args(int argc, char **argv, struct agetty_options *op);
 static void parse_speeds(struct agetty_options *op, char *arg);
-static void output_special_char (struct issue *ie, unsigned char c, struct agetty_options *op,
+static void output_special_char (struct agetty_issue *ie, unsigned char c, struct agetty_options *op,
 		struct termios *tp, FILE *fp);
-static void do_prompt(struct issue *ie, struct agetty_options *op, struct termios *tp);
-static char *get_logname(struct issue *ie, struct agetty_options *op,
+static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+static char *get_logname(struct agetty_issue *ie, struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
 static void usage(void) __attribute__((__noreturn__));
@@ -167,8 +123,8 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static void reload_agettys(void);
-static void print_issue_file(struct issue *ie, struct agetty_options *op, struct termios *tp);
-static void eval_issue_file(struct issue *ie, struct agetty_options *op, struct termios *tp);
+static void print_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+static void eval_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 static void show_issue(struct agetty_options *op);
 
 
@@ -193,7 +149,7 @@ int main(int argc, char **argv)
 		.login  =  _PATH_LOGIN,		/* default login program */
 		.tty    = "tty1"		/* default tty line */
 	};
-	struct issue issue = {
+	struct agetty_issue issue = {
 		.mem = NULL,
 #ifdef USE_NETLINK
 		.nl.fd = -1
@@ -893,7 +849,7 @@ done:
 }
 
 #ifdef AGETTY_RELOAD
-static int wait_for_term_input(struct issue *ie, int fd)
+static int wait_for_term_input(struct agetty_issue *ie, int fd)
 {
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
 	fd_set rfds;
@@ -992,11 +948,11 @@ static int issuedir_filter(const struct dirent *d)
 }
 
 
-static int issuefile_read_stream(struct issue *ie, FILE *f, struct agetty_options *op, struct termios *tp);
+static int issuefile_read_stream(struct agetty_issue *ie, FILE *f, struct agetty_options *op, struct termios *tp);
 
 /* returns: 0 on success, 1 cannot open, <0 on error
  */
-static int issuedir_read(struct issue *ie, const char *dirname,
+static int issuedir_read(struct agetty_issue *ie, const char *dirname,
 			 struct agetty_options *op, struct termios *tp)
 {
 	int dd, nfiles, i;
@@ -1032,7 +988,7 @@ done:
 }
 
 #else /* !ISSUEDIR_SUPPORT */
-static int issuedir_read(struct issue *ie __attribute__((__unused__)),
+static int issuedir_read(struct agetty_issue *ie __attribute__((__unused__)),
 			const char *dirname __attribute__((__unused__)),
 			struct agetty_options *op __attribute__((__unused__)),
 			struct termios *tp __attribute__((__unused__)))
@@ -1042,7 +998,7 @@ static int issuedir_read(struct issue *ie __attribute__((__unused__)),
 #endif /* ISSUEDIR_SUPPORT */
 
 #ifndef ISSUE_SUPPORT
-static void print_issue_file(struct issue *ie __attribute__((__unused__)),
+static void print_issue_file(struct agetty_issue *ie __attribute__((__unused__)),
 			     struct agetty_options *op,
 			     struct termios *tp __attribute__((__unused__)))
 {
@@ -1052,7 +1008,7 @@ static void print_issue_file(struct issue *ie __attribute__((__unused__)),
 	}
 }
 
-static void eval_issue_file(struct issue *ie __attribute__((__unused__)),
+static void eval_issue_file(struct agetty_issue *ie __attribute__((__unused__)),
 			    struct agetty_options *op __attribute__((__unused__)),
 			    struct termios *tp __attribute__((__unused__)))
 {
@@ -1065,7 +1021,7 @@ static void show_issue(struct agetty_options *op __attribute__((__unused__)))
 #else /* ISSUE_SUPPORT */
 
 static int issuefile_read_stream(
-		struct issue *ie, FILE *f,
+		struct agetty_issue *ie, FILE *f,
 		struct agetty_options *op, struct termios *tp)
 {
 	struct stat st;
@@ -1092,7 +1048,7 @@ static int issuefile_read_stream(
 }
 
 static int issuefile_read(
-		struct issue *ie, const char *filename,
+		struct agetty_issue *ie, const char *filename,
 		struct agetty_options *op, struct termios *tp)
 {
 	FILE *f = fopen(filename, "r" UL_CLOEXECSTR);
@@ -1107,7 +1063,7 @@ static int issuefile_read(
 
 
 #ifdef AGETTY_RELOAD
-static int issue_is_changed(struct issue *ie)
+static int issue_is_changed(struct agetty_issue *ie)
 {
 	if (ie->mem_old && ie->mem
 	    && strcmp(ie->mem_old, ie->mem) == 0) {
@@ -1122,7 +1078,7 @@ static int issue_is_changed(struct issue *ie)
 }
 #endif
 
-static void print_issue_file(struct issue *ie,
+static void print_issue_file(struct agetty_issue *ie,
 			     struct agetty_options *op,
 			     struct termios *tp)
 {
@@ -1163,7 +1119,7 @@ static void print_issue_file(struct issue *ie,
 #endif
 }
 
-static void eval_issue_file(struct issue *ie,
+static void eval_issue_file(struct agetty_issue *ie,
 			    struct agetty_options *op,
 			    struct termios *tp)
 {
@@ -1269,7 +1225,7 @@ done:
  */
 static void show_issue(struct agetty_options *op)
 {
-	struct issue ie = {
+	struct agetty_issue ie = {
 		.output = NULL,
 #ifdef USE_NETLINK
 		.nl.fd = -1
@@ -1293,7 +1249,7 @@ static void show_issue(struct agetty_options *op)
 #endif /* ISSUE_SUPPORT */
 
 /* Show login prompt, optionally preceded by /etc/issue contents. */
-static void do_prompt(struct issue *ie, struct agetty_options *op, struct termios *tp)
+static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp)
 {
 #ifdef AGETTY_RELOAD
 again:
@@ -1393,7 +1349,7 @@ again:
 
 
 /* Get user name, establish parity, speed, erase, kill & eol. */
-static char *get_logname(struct issue *ie, struct agetty_options *op, struct termios *tp, struct chardata *cp)
+static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp, struct chardata *cp)
 {
 	static char logname[BUFSIZ];
 	static int visual_widths[BUFSIZ];	/* visual char count for each stored byte */
@@ -1692,7 +1648,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 
 #ifdef USE_NETLINK
-static void print_iface_best(struct issue *ie,
+static void print_iface_best(struct agetty_issue *ie,
 			     const char *ifname,
 			     uint8_t ifa_family)
 {
@@ -1721,7 +1677,7 @@ static void print_iface_best(struct issue *ie,
 	}
 }
 
-static void print_addrq_bestofall(struct issue *ie,
+static void print_addrq_bestofall(struct agetty_issue *ie,
 				  uint8_t ifa_family)
 {
 	struct ul_netaddrq_iface *best_ifaceq;
@@ -1737,7 +1693,7 @@ static void print_addrq_bestofall(struct issue *ie,
 		fputs(best_ipp, ie->output);
 }
 
-static void dump_iface_good(struct issue *ie,
+static void dump_iface_good(struct agetty_issue *ie,
 			    struct ul_netaddrq_iface *ifaceq)
 {
 	struct ul_netaddrq_ip *best4[__ULNETLINK_RATING_MAX];
@@ -1823,7 +1779,7 @@ static void dump_iface_good(struct issue *ie,
 		fputs("\n", ie->output);
 }
 
-static void dump_iface_all(struct issue *ie,
+static void dump_iface_all(struct agetty_issue *ie,
 			   struct ul_netaddrq_iface *ifaceq)
 {
 	struct list_head *li;
@@ -1886,7 +1842,7 @@ static char *get_escape_argument(FILE *fd, char *buf, size_t bufsz)
 	return buf;
 }
 
-static void output_special_char(struct issue *ie,
+static void output_special_char(struct agetty_issue *ie,
 				unsigned char c,
 				struct agetty_options *op,
 				struct termios *tp,

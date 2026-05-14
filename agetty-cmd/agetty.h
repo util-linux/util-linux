@@ -18,6 +18,37 @@
 #  define SYSV_STYLE
 #endif
 
+#ifdef	SYSV_STYLE
+#  define ISSUE_SUPPORT
+#  if defined(HAVE_SCANDIRAT) && defined(HAVE_OPENAT)
+#    define ISSUEDIR_SUPPORT
+#  endif
+#endif
+
+#ifdef AGETTY_RELOAD
+# include "netaddrq.h"
+# if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
+#  define USE_NETLINK
+# endif
+# define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
+# define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
+#endif
+
+struct agetty_issue {
+	FILE *output;
+	char *mem;
+	size_t mem_sz;
+
+#ifdef USE_NETLINK
+	struct ul_nl_data nl;
+#endif
+#ifdef AGETTY_RELOAD
+	char *mem_old;
+#endif
+	unsigned int do_tcsetattr : 1,
+		     do_tcrestore : 1;
+};
+
 /* Storage for command-line options. */
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
 
