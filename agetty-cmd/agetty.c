@@ -56,8 +56,6 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 #endif
 
 
-/* Fake hostname for ut_host specified on command line. */
-static char *fakehost;
 
 #ifdef DEBUGGING
 # include "closestream.h"
@@ -261,7 +259,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 			op->flags |= F_RTSCTS;
 			break;
 		case 'H':
-			fakehost = optarg;
+			op->fakehost = optarg;
 			break;
 		case 'i':
 			op->flags &= ~F_ISSUE;
@@ -473,7 +471,7 @@ int main(int argc, char **argv)
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
-	agetty_update_utmp(&options, fakehost);
+	agetty_update_utmp(&options);
 #endif
 	if (options.delay)
 	    sleep(options.delay);
@@ -590,7 +588,7 @@ int main(int argc, char **argv)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	agetty_init_login_argv(login_argv, &login_argc, &options, fakehost);
+	agetty_init_login_argv(login_argv, &login_argc, &options);
 
 	if (options.chroot) {
 		if (chroot(options.chroot) < 0)

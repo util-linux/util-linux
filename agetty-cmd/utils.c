@@ -88,7 +88,7 @@ char *agetty_xgetdomainname(void)
 }
 
 #ifdef SYSV_STYLE
-void agetty_update_utmp(struct agetty_options *op, const char *fakehost)
+void agetty_update_utmp(struct agetty_options *op)
 {
 	struct utmpx ut;
 	time_t t;
@@ -145,8 +145,8 @@ void agetty_update_utmp(struct agetty_options *op, const char *fakehost)
 
 	str2memcpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
 	str2memcpy(ut.ut_line, line, sizeof(ut.ut_line));
-	if (fakehost)
-		str2memcpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
+	if (op->fakehost)
+		str2memcpy(ut.ut_host, op->fakehost, sizeof(ut.ut_host));
 	time(&t);
 	ut.ut_tv.tv_sec = t;
 	ut.ut_type = LOGIN_PROCESS;
@@ -300,7 +300,7 @@ err:
 }
 
 void agetty_init_login_argv(char *argv[], int *argc,
-			    struct agetty_options *op, const char *fakehost)
+			    struct agetty_options *op)
 {
 	*argc = 0;
 	argv[(*argc)++] = op->login;
@@ -312,9 +312,9 @@ void agetty_init_login_argv(char *argv[], int *argc,
 		login_options_to_argv(argv, argc, op->logopt, op->username);
 	} else {
 		if (op->flags & F_REMOTE) {
-			if (fakehost) {
+			if (op->fakehost) {
 				argv[(*argc)++] = "-h";
-				argv[(*argc)++] = (char *) fakehost;
+				argv[(*argc)++] = op->fakehost;
 			} else if (op->flags & F_NOHOSTNAME)
 				argv[(*argc)++] = "-H";
 		}

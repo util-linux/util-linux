@@ -76,6 +76,7 @@ struct agetty_options {
 	char *erasechars;		/* string with erase chars */
 	char *killchars;		/* string with kill chars */
 	char *username;			/* login name, given to /bin/login */
+	char *fakehost;			/* fake hostname for ut_host */
 	char *osrelease;		/* /etc/os-release data */
 	unsigned int delay;		/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
@@ -119,11 +120,11 @@ extern void agetty_load_credentials(struct agetty_options *op);
 
 extern char *agetty_xgethostname(void);
 extern char *agetty_xgetdomainname(void);
-extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
+extern void agetty_update_utmp(struct agetty_options *op);
 extern void agetty_parse_speeds(struct agetty_options *op, char *arg);
 extern char *agetty_parse_initstring(const char *arg);
 extern void agetty_init_login_argv(char *argv[], int *argc,
-				   struct agetty_options *op, const char *fakehost);
+				   struct agetty_options *op);
 
 enum {
 	CLOCAL_MODE_AUTO = 0,
