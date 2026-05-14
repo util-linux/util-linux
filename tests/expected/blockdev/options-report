@@ -1,0 +1,2 @@
+RO    RA   SSZ   BSZ        StartSec            Size   Device
+rw   256   512  4096               0        52428800   <device>
