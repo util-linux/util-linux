@@ -208,3 +208,119 @@ char *agetty_parse_initstring(const char *arg)
 	*q = '\0';
 	return str;
 }
+
+static char *replace_u(char *str, char *username)
+{
+	char *entry = NULL, *p = str;
+	size_t usz = username ? strlen(username) : 0;
+
+	while (*p) {
+		size_t sz;
+		char *tp, *old = entry;
+
+		if (memcmp(p, "\\u", 2) != 0) {
+			p++;
+			continue;
+		}
+		sz = strlen(str);
+
+		if (p == str && sz == 2) {
+			free(old);
+			return username;
+		}
+
+		tp = entry = malloc(sz + usz);
+		if (!tp)
+			agetty_log_err(_("failed to allocate memory: %m"));
+
+		if (p != str)
+			tp = mempcpy(tp, str, p - str);
+		if (usz)
+			tp = mempcpy(tp, username, usz);
+
+		if (*(p + 2))
+			memcpy(tp, p + 2, sz - (p - str) - 1);
+		else
+			*tp = '\0';
+
+		p = tp;
+		str = entry;
+		free(old);
+	}
+
+	return entry ? entry : str;
+}
+
+static void login_options_to_argv(char *argv[], int *argc,
+				  char *str, char *username)
+{
+	char *p;
+	int i = *argc;
+
+	while (str && isspace(*str))
+		str++;
+	p = str;
+
+	while (p && *p && i < LOGIN_ARGV_MAX) {
+		if (isspace(*p)) {
+			*p = '\0';
+			while (isspace(*++p))
+				;
+			if (*p) {
+				argv[i++] = replace_u(str, username);
+				str = p;
+			}
+		} else
+			p++;
+	}
+	if (str && *str && i < LOGIN_ARGV_MAX)
+		argv[i++] = replace_u(str, username);
+	*argc = i;
+}
+
+static void check_username(const char *nm)
+{
+	const char *p = nm;
+	if (!nm)
+		goto err;
+	if (strlen(nm) > 42)
+		goto err;
+	while (isspace(*p))
+		p++;
+	if (*p == '-')
+		goto err;
+	return;
+err:
+	errno = EPERM;
+	agetty_log_err(_("checkname failed: %m"));
+}
+
+void agetty_init_login_argv(char *argv[], int *argc,
+			    struct agetty_options *op, const char *fakehost)
+{
+	*argc = 0;
+	argv[(*argc)++] = op->login;
+
+	if (op->username)
+		check_username(op->username);
+
+	if (op->logopt) {
+		login_options_to_argv(argv, argc, op->logopt, op->username);
+	} else {
+		if (op->flags & F_REMOTE) {
+			if (fakehost) {
+				argv[(*argc)++] = "-h";
+				argv[(*argc)++] = (char *) fakehost;
+			} else if (op->flags & F_NOHOSTNAME)
+				argv[(*argc)++] = "-H";
+		}
+		if (op->username) {
+			if (op->autolog)
+				argv[(*argc)++] = "-f";
+			argv[(*argc)++] = "--";
+			argv[(*argc)++] = op->username;
+		}
+	}
+
+	argv[*argc] = NULL;
+}

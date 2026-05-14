@@ -50,6 +50,9 @@ struct agetty_issue {
 	bool do_tcrestore;
 };
 
+/* Numbers of args for login(1) */
+#define LOGIN_ARGV_MAX	16
+
 /* Storage for command-line options. */
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
 
@@ -115,6 +118,8 @@ extern char *agetty_xgetdomainname(void);
 extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
 extern void agetty_parse_speeds(struct agetty_options *op, char *arg);
 extern char *agetty_parse_initstring(const char *arg);
+extern void agetty_init_login_argv(char *argv[], int *argc,
+				   struct agetty_options *op, const char *fakehost);
 
 enum {
 	CLOCAL_MODE_AUTO = 0,

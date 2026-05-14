@@ -93,8 +93,6 @@
 /* Login prompt. */
 #define LOGIN_PROMPT		"login: "
 
-/* Numbers of args for login(1) */
-#define LOGIN_ARGV_MAX	16
 
 #ifdef AGETTY_RELOAD
 # include <sys/inotify.h>
@@ -114,8 +112,6 @@ static void usage(void) __attribute__((__noreturn__));
 #ifdef KDGKBLED
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 #endif
-static void check_username (const char* nm);
-static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 
 
 /* Fake hostname for ut_host specified on command line. */
@@ -180,8 +176,6 @@ int main(int argc, char **argv)
 
 	/* Parse command-line arguments. */
 	parse_args(argc, argv, &options);
-
-	login_argv[login_argc++] = options.login;	/* set login program name */
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
@@ -302,33 +296,7 @@ int main(int argc, char **argv)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	if (options.username)
-		check_username(options.username);
-
-	if (options.logopt) {
-		/*
-		 * The --login-options completely overwrites the default
-		 * way how agetty composes login(1) command line.
-		 */
-		login_options_to_argv(login_argv, &login_argc,
-				      options.logopt, options.username);
-	} else {
-		if (options.flags & F_REMOTE) {
-			if (fakehost) {
-				login_argv[login_argc++] = "-h";
-				login_argv[login_argc++] = fakehost;
-			} else if (options.flags & F_NOHOSTNAME)
-				login_argv[login_argc++] = "-H";
-		}
-		if (options.username) {
-			if (options.autolog)
-				login_argv[login_argc++] = "-f";
-			login_argv[login_argc++] = "--";
-			login_argv[login_argc++] = options.username;
-		}
-	}
-
-	login_argv[login_argc] = NULL;	/* last login argv */
+	agetty_init_login_argv(login_argv, &login_argc, &options, fakehost);
 
 	if (options.chroot) {
 		if (chroot(options.chroot) < 0)
@@ -359,83 +327,6 @@ int main(int argc, char **argv)
 	agetty_log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
 
-/*
- * Returns : @str if \u not found
- *         : @username if @str equal to "\u"
- *         : newly allocated string if \u mixed with something other
- */
-static char *replace_u(char *str, char *username)
-{
-	char *entry = NULL, *p = str;
-	size_t usz = username ? strlen(username) : 0;
-
-	while (*p) {
-		size_t sz;
-		char *tp, *old = entry;
-
-		if (memcmp(p, "\\u", 2) != 0) {
-			p++;
-			continue;	/* no \u */
-		}
-		sz = strlen(str);
-
-		if (p == str && sz == 2) {
-			/* 'str' contains only '\u' */
-			free(old);
-			return username;
-		}
-
-		tp = entry = malloc(sz + usz);
-		if (!tp)
-			agetty_log_err(_("failed to allocate memory: %m"));
-
-		if (p != str)
-			/* copy chars before \u */
-			tp = mempcpy(tp, str, p - str);
-		if (usz)
-			/* copy username */
-			tp = mempcpy(tp, username, usz);
-
-		if (*(p + 2))
-			/* copy chars after \u + \0 */
-			memcpy(tp, p + 2, sz - (p - str) - 1);
-		else
-			*tp = '\0';
-
-		p = tp;
-		str = entry;
-		free(old);
-	}
-
-	return entry ? entry : str;
-}
-
-static void login_options_to_argv(char *argv[], int *argc,
-				  char *str, char *username)
-{
-	char *p;
-	int i = *argc;
-
-	while (str && isspace(*str))
-		str++;
-	p = str;
-
-	while (p && *p && i < LOGIN_ARGV_MAX) {
-		if (isspace(*p)) {
-			*p = '\0';
-			while (isspace(*++p))
-				;
-			if (*p) {
-				argv[i++] = replace_u(str, username);
-				str = p;
-			}
-		} else
-			p++;
-	}
-	if (str && *str && i < LOGIN_ARGV_MAX)
-		argv[i++] = replace_u(str, username);
-	*argc = i;
-}
 
 static void output_version(void)
 {
@@ -1246,24 +1137,3 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 }
 #endif /* KDGKBLED */
 
-/*
- * Do not allow the user to pass an option as a user name
- * To be more safe: Use `--' to make sure the rest is
- * interpreted as non-options by the program, if it supports it.
- */
-static void check_username(const char* nm)
-{
-	const char *p = nm;
-	if (!nm)
-		goto err;
-	if (strlen(nm) > 42)
-		goto err;
-	while (isspace(*p))
-		p++;
-	if (*p == '-')
-		goto err;
-	return;
-err:
-	errno = EPERM;
-	agetty_log_err(_("checkname failed: %m"));
-}
