@@ -2,6 +2,7 @@ agetty_sources = files(
   'agetty.c',
   'agetty.h',
   'credentials.c',
+  'issuefile.c',
   'tty.c',
   'utils.c',
 )

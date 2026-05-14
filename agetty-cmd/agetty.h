@@ -140,4 +140,10 @@ extern void agetty_auto_baud(struct termios *tp);
 extern void agetty_next_speed(struct agetty_options *op, struct termios *tp);
 extern void agetty_erase_char(int visual_count, struct chardata *cp);
 
+extern void agetty_print_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+extern void agetty_eval_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+extern int agetty_issue_is_changed(struct agetty_issue *ie);
+extern void agetty_show_issue(struct agetty_options *op);
+extern void agetty_reload(void);
+
 #endif /* UTIL_LINUX_AGETTY_H */
