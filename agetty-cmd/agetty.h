@@ -3,6 +3,16 @@
 
 #include <stddef.h>
 #include <termios.h>
+#include <utmpx.h>
+
+/*
+ * Some heuristics to find out what environment we are in: if it is not
+ * System V, assume it is SunOS 4. The LOGIN_PROCESS is defined in System V
+ * utmp.h, which will select System V style getty.
+ */
+#ifdef LOGIN_PROCESS
+#  define SYSV_STYLE
+#endif
 
 /* Storage for command-line options. */
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
@@ -62,5 +72,9 @@ extern void agetty_log_warn(const char *, ...)
 				__attribute__((__format__(printf, 1, 2)));
 
 extern void agetty_load_credentials(struct agetty_options *op);
+
+extern char *agetty_xgethostname(void);
+extern char *agetty_xgetdomainname(void);
+extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
 
 #endif /* UTIL_LINUX_AGETTY_H */

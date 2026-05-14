@@ -89,14 +89,6 @@
 #  include <sys/kd.h>
 #endif
 
-/*
- * Some heuristics to find out what environment we are in: if it is not
- * System V, assume it is SunOS 4. The LOGIN_PROCESS is defined in System V
- * utmp.h, which will select System V style getty.
- */
-#ifdef LOGIN_PROCESS
-#  define SYSV_STYLE
-#endif
 
 /*
  * Things you may want to modify.
@@ -251,7 +243,6 @@ static const struct Speedtab speedtab[] = {
 static void init_special_char(char* arg, struct agetty_options *op);
 static void parse_args(int argc, char **argv, struct agetty_options *op);
 static void parse_speeds(struct agetty_options *op, char *arg);
-static void update_utmp(struct agetty_options *op);
 static void open_tty(const char *tty, struct termios *tp, struct agetty_options *op);
 static void termio_init(struct agetty_options *op, struct termios *tp);
 static void reset_vc(const struct agetty_options *op, struct termios *tp, int canon);
@@ -350,7 +341,7 @@ int main(int argc, char **argv)
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
-	update_utmp(&options);
+	agetty_update_utmp(&options, fakehost);
 #endif
 	if (options.delay)
 	    sleep(options.delay);
@@ -916,81 +907,6 @@ static void parse_speeds(struct agetty_options *op, char *arg)
 	free(str);
 }
 
-#ifdef	SYSV_STYLE
-
-/* Update our utmp entry. */
-static void update_utmp(struct agetty_options *op)
-{
-	struct utmpx ut;
-	time_t t;
-	pid_t pid = getpid();
-	pid_t sid = getsid(0);
-	const char *vcline = op->vcline;
-	const char *line = op->tty;
-	struct utmpx *utp;
-
-	/*
-	 * The utmp file holds miscellaneous information about things started by
-	 * /sbin/init and other system-related events. Our purpose is to update
-	 * the utmp entry for the current process, in particular the process type
-	 * and the tty line we are listening to. Return successfully only if the
-	 * utmp file can be opened for update, and if we are able to find our
-	 * entry in the utmp file.
-	 */
-	utmpxname(_PATH_UTMP);
-	setutxent();
-
-	/*
-	 * Find my pid in utmp.
-	 *
-	 * FIXME: Earlier (when was that?) code here tested only utp->ut_type !=
-	 * INIT_PROCESS, so maybe the >= here should be >.
-	 *
-	 * FIXME: The present code is taken from login.c, so if this is changed,
-	 * maybe login has to be changed as well (is this true?).
-	 */
-	while ((utp = getutxent()))
-		if (utp->ut_pid == pid
-				&& utp->ut_type >= INIT_PROCESS
-				&& utp->ut_type <= DEAD_PROCESS)
-			break;
-
-	if (utp) {
-		memcpy(&ut, utp, sizeof(ut));
-	} else {
-		/* Some inits do not initialize utmp. */
-		memset(&ut, 0, sizeof(ut));
-		if (vcline && *vcline)
-			/* Standard virtual console devices */
-			str2memcpy(ut.ut_id, vcline, sizeof(ut.ut_id));
-		else {
-			size_t len = strlen(line);
-			const char * ptr;
-			if (len >= sizeof(ut.ut_id))
-				ptr = line + len - sizeof(ut.ut_id);
-			else
-				ptr = line;
-			str2memcpy(ut.ut_id, ptr, sizeof(ut.ut_id));
-		}
-	}
-
-	str2memcpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
-	str2memcpy(ut.ut_line, line, sizeof(ut.ut_line));
-	if (fakehost)
-		str2memcpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
-	time(&t);
-	ut.ut_tv.tv_sec = t;
-	ut.ut_type = LOGIN_PROCESS;
-	ut.ut_pid = pid;
-	ut.ut_session = sid;
-
-	pututxline(&ut);
-	endutxent();
-
-	updwtmpx(_PATH_WTMP, &ut);
-}
-
-#endif				/* SYSV_STYLE */
 
 /* Set up tty as stdin, stdout & stderr. */
 static void open_tty(const char *tty, struct termios *tp, struct agetty_options *op)
@@ -1424,43 +1340,6 @@ static void auto_baud(struct termios *tp)
 	tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
 
-static char *xgethostname(void)
-{
-	char *name;
-	size_t sz = get_hostname_max() + 1;
-
-	name = malloc(sizeof(char) * sz);
-	if (!name)
-		agetty_log_err(_("failed to allocate memory: %m"));
-
-	if (gethostname(name, sz) != 0) {
-		free(name);
-		return NULL;
-	}
-	name[sz - 1] = '\0';
-	return name;
-}
-
-static char *xgetdomainname(void)
-{
-#ifdef HAVE_GETDOMAINNAME
-	char *name;
-	const size_t sz = get_hostname_max() + 1;
-
-	name = malloc(sizeof(char) * sz);
-	if (!name)
-		agetty_log_err(_("failed to allocate memory: %m"));
-
-	if (getdomainname(name, sz) != 0) {
-		free(name);
-		return NULL;
-	}
-	name[sz - 1] = '\0';
-	return name;
-#else
-	return NULL;
-#endif
-}
 
 
 static char *read_os_release(struct agetty_options *op, const char *varname)
@@ -2008,7 +1887,7 @@ again:
 	}
 #endif /* KDGKBLED */
 	if ((op->flags & F_NOHOSTNAME) == 0) {
-		char *hn = xgethostname();
+		char *hn = agetty_xgethostname();
 
 		if (hn) {
 			char *dot = strchr(hn, '.');
@@ -2717,7 +2596,7 @@ static void output_special_char(struct issue *ie,
 		break;
 	case 'o':
 	{
-		char *dom = xgetdomainname();
+		char *dom = agetty_xgetdomainname();
 
 		fputs(dom ? dom : "unknown_domain", ie->output);
 		free(dom);
@@ -2726,7 +2605,7 @@ static void output_special_char(struct issue *ie,
 	case 'O':
 	{
 		char *dom = NULL;
-		char *host = xgethostname();
+		char *host = agetty_xgethostname();
 		struct addrinfo hints, *info = NULL;
 
 		memset(&hints, 0, sizeof(hints));
