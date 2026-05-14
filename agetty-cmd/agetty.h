@@ -1,6 +1,7 @@
 #ifndef UTIL_LINUX_AGETTY_H
 #define UTIL_LINUX_AGETTY_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <termios.h>
@@ -45,8 +46,8 @@ struct agetty_issue {
 #ifdef AGETTY_RELOAD
 	char *mem_old;
 #endif
-	unsigned int do_tcsetattr : 1,
-		     do_tcrestore : 1;
+	bool do_tcsetattr;
+	bool do_tcrestore;
 };
 
 /* Storage for command-line options. */
