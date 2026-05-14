@@ -119,8 +119,6 @@ enum {
 	CLOCAL_MODE_NEVER
 };
 
-#define	FIRST_SPEED	0
-
 #ifdef DEBUGGING
 # define debug(s) do { fprintf(dbf,s); fflush(dbf); } while (0)
 extern FILE *dbf;

@@ -41,6 +41,8 @@ struct Speedtab {
 	speed_t code;
 };
 
+#define	FIRST_SPEED	0
+
 static const struct Speedtab speedtab[] = {
 	{50, B50},
 	{75, B75},
