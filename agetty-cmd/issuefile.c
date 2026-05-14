@@ -1,3 +1,7 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ */
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>

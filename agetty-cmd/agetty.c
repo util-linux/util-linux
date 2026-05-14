@@ -8,7 +8,8 @@
  * Adopt the mingetty features for a better support
  * of virtual consoles by Werner Fink <werner@suse.de>
  *
- * This program is freely distributable.
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
  */
 
 #include <stdio.h>

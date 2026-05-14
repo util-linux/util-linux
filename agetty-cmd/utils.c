@@ -1,3 +1,7 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ */
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
