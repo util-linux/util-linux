@@ -155,3 +155,39 @@ void agetty_update_utmp(struct agetty_options *op, const char *fakehost)
 	updwtmpx(_PATH_WTMP, &ut);
 }
 #endif
+
+char *agetty_parse_initstring(const char *arg)
+{
+	char ch, *str, *p, *q;
+	int i;
+
+	str = malloc(strlen(arg) + 1);
+	if (!str)
+		agetty_log_err(_("failed to allocate memory: %m"));
+
+	q = str;
+	p = (char *) arg;
+	while (*p) {
+		if (*p == '\\') {
+			p++;
+			if (*p == '\\') {
+				ch = '\\';
+				p++;
+			} else {
+				ch = 0;
+				for (i = 1; i <= 3; i++) {
+					if (*p >= '0' && *p <= '7') {
+						ch <<= 3;
+						ch += *p - '0';
+						p++;
+					} else
+						break;
+				}
+			}
+			*q++ = ch;
+		} else
+			*q++ = *p++;
+	}
+	*q = '\0';
+	return str;
+}

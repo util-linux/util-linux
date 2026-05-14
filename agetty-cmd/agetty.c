@@ -104,7 +104,6 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
-static void init_special_char(char* arg, struct agetty_options *op);
 static void parse_args(int argc, char **argv, struct agetty_options *op);
 static void parse_speeds(struct agetty_options *op, char *arg);
 static int wait_for_term_input(struct agetty_issue *ie, int fd);
@@ -585,7 +584,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 			op->flags &= ~F_ISSUE;
 			break;
 		case 'I':
-			init_special_char(optarg, op);
+			op->initstring = agetty_parse_initstring(optarg);
 			op->flags |= F_INITSTRING;
 			break;
 		case 'J':
@@ -1232,47 +1231,6 @@ static int wait_for_term_input(struct agetty_issue *ie, int fd)
 }
 #endif  /* AGETTY_RELOAD */
 
-static void init_special_char(char* arg, struct agetty_options *op)
-{
-	char ch, *p, *q;
-	int i;
-
-	op->initstring = malloc(strlen(arg) + 1);
-	if (!op->initstring)
-		agetty_log_err(_("failed to allocate memory: %m"));
-
-	/*
-	 * Copy optarg into op->initstring decoding \ddd octal
-	 * codes into chars.
-	 */
-	q = op->initstring;
-	p = arg;
-	while (*p) {
-		/* The \\ is converted to \ */
-		if (*p == '\\') {
-			p++;
-			if (*p == '\\') {
-				ch = '\\';
-				p++;
-			} else {
-				/* Handle \000 - \177. */
-				ch = 0;
-				for (i = 1; i <= 3; i++) {
-					if (*p >= '0' && *p <= '7') {
-						ch <<= 3;
-						ch += *p - '0';
-						p++;
-					} else {
-						break;
-					}
-				}
-			}
-			*q++ = ch;
-		} else
-			*q++ = *p++;
-	}
-	*q = '\0';
-}
 
 #ifdef KDGKBLED
 /*

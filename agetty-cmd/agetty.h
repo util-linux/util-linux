@@ -112,6 +112,7 @@ extern void agetty_load_credentials(struct agetty_options *op);
 extern char *agetty_xgethostname(void);
 extern char *agetty_xgetdomainname(void);
 extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
+extern char *agetty_parse_initstring(const char *arg);
 
 enum {
 	CLOCAL_MODE_AUTO = 0,
