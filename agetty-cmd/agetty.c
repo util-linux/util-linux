@@ -49,12 +49,6 @@
 #include "env.h"
 #include "path.h"
 #include "fileutils.h"
-#ifdef ISSUEDIR_SUPPORT
-# include "configs.h"
-# include <dirent.h>
-# define ISSUEDIR_EXT	"issue"
-# define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
-#endif
 
 #include "logindefs.h"
 
