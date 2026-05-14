@@ -162,62 +162,11 @@ struct issue {
  */
 #define	FIRST_SPEED	0
 
-/* Storage for command-line options. */
-#define	MAX_SPEED	10	/* max. nr. of baud rates */
-
-struct options {
-	int flags;			/* toggle switches, see below */
-	unsigned int timeout;			/* time-out period */
-	char *autolog;			/* login the user automatically */
-	char *chdir;			/* Chdir before the login */
-	char *chroot;			/* Chroot before the login */
-	char *login;			/* login program */
-	char *logopt;			/* options for login program */
-	const char *tty;		/* name of tty */
-	const char *vcline;		/* line of virtual console */
-	char *term;			/* terminal type */
-	char *initstring;		/* modem init string */
-	char *issue;			/* alternative issue file or directory */
-	char *erasechars;		/* string with erase chars */
-	char *killchars;		/* string with kill chars */
-	char *osrelease;		/* /etc/os-release data */
-	unsigned int delay;			/* Sleep seconds before prompt */
-	int nice;			/* Run login with this priority */
-	int numspeed;			/* number of baud rates to try */
-	int clocal;			/* CLOCAL_MODE_* */
-	int kbmode;			/* Keyboard mode if virtual console */
-	int tty_is_stdin;		/* is the tty the standard input stream */
-	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
-};
-
 enum {
 	CLOCAL_MODE_AUTO = 0,
 	CLOCAL_MODE_ALWAYS,
 	CLOCAL_MODE_NEVER
 };
-
-#define	F_PARSE		(1<<0)	/* process modem status messages */
-#define	F_ISSUE		(1<<1)	/* display /etc/issue or /etc/issue.d */
-#define	F_RTSCTS	(1<<2)	/* enable RTS/CTS flow control */
-
-#define F_INITSTRING    (1<<4)	/* initstring is set */
-#define F_WAITCRLF	(1<<5)	/* wait for CR or LF */
-
-#define F_NOPROMPT	(1<<7)	/* do not ask for login name! */
-#define F_LCUC		(1<<8)	/* support for *LCUC stty modes */
-#define F_KEEPSPEED	(1<<9)	/* follow baud rate from kernel */
-#define F_KEEPCFLAGS	(1<<10)	/* reuse c_cflags setup from kernel */
-#define F_EIGHTBITS	(1<<11)	/* Assume 8bit-clean tty */
-#define F_VCONSOLE	(1<<12)	/* This is a virtual console */
-#define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
-#define F_UTF8		(1<<14)	/* We can do UTF8 */
-#define F_LOGINPAUSE	(1<<15)	/* Wait for any key before dropping login prompt */
-#define F_NOCLEAR	(1<<16) /* Do not clear the screen before prompting */
-#define F_NONL		(1<<17) /* No newline before issue */
-#define F_NOHOSTNAME	(1<<18) /* Do not show the hostname */
-#define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
-#define F_NOHINTS	(1<<20) /* Don't print hints */
-#define F_REMOTE	(1<<21) /* Add '-h fakehost' to login(1) command line */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -299,22 +248,22 @@ static const struct Speedtab speedtab[] = {
 	{0, 0},
 };
 
-static void init_special_char(char* arg, struct options *op);
-static void parse_args(int argc, char **argv, struct options *op);
-static void parse_speeds(struct options *op, char *arg);
-static void update_utmp(struct options *op);
-static void open_tty(const char *tty, struct termios *tp, struct options *op);
-static void termio_init(struct options *op, struct termios *tp);
-static void reset_vc(const struct options *op, struct termios *tp, int canon);
+static void init_special_char(char* arg, struct agetty_options *op);
+static void parse_args(int argc, char **argv, struct agetty_options *op);
+static void parse_speeds(struct agetty_options *op, char *arg);
+static void update_utmp(struct agetty_options *op);
+static void open_tty(const char *tty, struct termios *tp, struct agetty_options *op);
+static void termio_init(struct agetty_options *op, struct termios *tp);
+static void reset_vc(const struct agetty_options *op, struct termios *tp, int canon);
 static void auto_baud(struct termios *tp);
 static void list_speeds(void);
-static void output_special_char (struct issue *ie, unsigned char c, struct options *op,
+static void output_special_char (struct issue *ie, unsigned char c, struct agetty_options *op,
 		struct termios *tp, FILE *fp);
-static void do_prompt(struct issue *ie, struct options *op, struct termios *tp);
-static void next_speed(struct options *op, struct termios *tp);
-static char *get_logname(struct issue *ie, struct options *op,
+static void do_prompt(struct issue *ie, struct agetty_options *op, struct termios *tp);
+static void next_speed(struct agetty_options *op, struct termios *tp);
+static char *get_logname(struct issue *ie, struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
-static void termio_final(struct options *op,
+static void termio_final(struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
 static speed_t bcode(char *s);
@@ -325,10 +274,10 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static void reload_agettys(void);
-static void print_issue_file(struct issue *ie, struct options *op, struct termios *tp);
-static void eval_issue_file(struct issue *ie, struct options *op, struct termios *tp);
-static void show_issue(struct options *op);
-static void load_credentials(struct options *op);
+static void print_issue_file(struct issue *ie, struct agetty_options *op, struct termios *tp);
+static void eval_issue_file(struct issue *ie, struct agetty_options *op, struct termios *tp);
+static void show_issue(struct agetty_options *op);
+static void load_credentials(struct agetty_options *op);
 
 
 /* Fake hostname for ut_host specified on command line. */
@@ -350,7 +299,7 @@ int main(int argc, char **argv)
 	char *username = NULL;			/* login name, given to /bin/login */
 	struct chardata chardata;		/* will be set by get_logname() */
 	struct termios termios;			/* terminal mode bits */
-	struct options options = {
+	struct agetty_options options = {
 		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
 		.login  =  _PATH_LOGIN,		/* default login program */
 		.tty    = "tty1"		/* default tty line */
@@ -704,7 +653,7 @@ static void output_version(void)
 #define is_speed(str) (strlen((str)) == strspn((str), "0123456789,"))
 
 /* Parse command-line arguments. */
-static void parse_args(int argc, char **argv, struct options *op)
+static void parse_args(int argc, char **argv, struct agetty_options *op)
 {
 	int c;
 	int opt_show_issue = 0;
@@ -949,7 +898,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 }
 
 /* Parse alternate baud rates. */
-static void parse_speeds(struct options *op, char *arg)
+static void parse_speeds(struct agetty_options *op, char *arg)
 {
 	char *cp;
 	char *str = strdup(arg);
@@ -971,7 +920,7 @@ static void parse_speeds(struct options *op, char *arg)
 #ifdef	SYSV_STYLE
 
 /* Update our utmp entry. */
-static void update_utmp(struct options *op)
+static void update_utmp(struct agetty_options *op)
 {
 	struct utmpx ut;
 	time_t t;
@@ -1045,7 +994,7 @@ static void update_utmp(struct options *op)
 #endif				/* SYSV_STYLE */
 
 /* Set up tty as stdin, stdout & stderr. */
-static void open_tty(const char *tty, struct termios *tp, struct options *op)
+static void open_tty(const char *tty, struct termios *tp, struct agetty_options *op)
 {
 	const pid_t pid = getpid();
 	int closed = 0;
@@ -1226,7 +1175,7 @@ static void termio_clear(int fd)
 }
 
 /* Initialize termios settings. */
-static void termio_init(struct options *op, struct termios *tp)
+static void termio_init(struct agetty_options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
 	struct winsize ws;
@@ -1390,7 +1339,7 @@ static void termio_init(struct options *op, struct termios *tp)
 }
 
 /* Reset virtual console on stdin to its defaults */
-static void reset_vc(const struct options *op, struct termios *tp, int canon)
+static void reset_vc(const struct agetty_options *op, struct termios *tp, int canon)
 {
 	int fl = 0;
 
@@ -1515,7 +1464,7 @@ static char *xgetdomainname(void)
 }
 
 
-static char *read_os_release(struct options *op, const char *varname)
+static char *read_os_release(struct agetty_options *op, const char *varname)
 {
 	int fd = -1;
 	struct stat st;
@@ -1700,12 +1649,12 @@ static int issuedir_filter(const struct dirent *d)
 }
 
 
-static int issuefile_read_stream(struct issue *ie, FILE *f, struct options *op, struct termios *tp);
+static int issuefile_read_stream(struct issue *ie, FILE *f, struct agetty_options *op, struct termios *tp);
 
 /* returns: 0 on success, 1 cannot open, <0 on error
  */
 static int issuedir_read(struct issue *ie, const char *dirname,
-			 struct options *op, struct termios *tp)
+			 struct agetty_options *op, struct termios *tp)
 {
 	int dd, nfiles, i;
 	struct dirent **namelist = NULL;
@@ -1742,7 +1691,7 @@ done:
 #else /* !ISSUEDIR_SUPPORT */
 static int issuedir_read(struct issue *ie __attribute__((__unused__)),
 			const char *dirname __attribute__((__unused__)),
-			struct options *op __attribute__((__unused__)),
+			struct agetty_options *op __attribute__((__unused__)),
 			struct termios *tp __attribute__((__unused__)))
 {
 	return 1;
@@ -1751,7 +1700,7 @@ static int issuedir_read(struct issue *ie __attribute__((__unused__)),
 
 #ifndef ISSUE_SUPPORT
 static void print_issue_file(struct issue *ie __attribute__((__unused__)),
-			     struct options *op,
+			     struct agetty_options *op,
 			     struct termios *tp __attribute__((__unused__)))
 {
 	if ((op->flags & F_NONL) == 0) {
@@ -1761,12 +1710,12 @@ static void print_issue_file(struct issue *ie __attribute__((__unused__)),
 }
 
 static void eval_issue_file(struct issue *ie __attribute__((__unused__)),
-			    struct options *op __attribute__((__unused__)),
+			    struct agetty_options *op __attribute__((__unused__)),
 			    struct termios *tp __attribute__((__unused__)))
 {
 }
 
-static void show_issue(struct options *op __attribute__((__unused__)))
+static void show_issue(struct agetty_options *op __attribute__((__unused__)))
 {
 }
 
@@ -1774,7 +1723,7 @@ static void show_issue(struct options *op __attribute__((__unused__)))
 
 static int issuefile_read_stream(
 		struct issue *ie, FILE *f,
-		struct options *op, struct termios *tp)
+		struct agetty_options *op, struct termios *tp)
 {
 	struct stat st;
 	int c;
@@ -1801,7 +1750,7 @@ static int issuefile_read_stream(
 
 static int issuefile_read(
 		struct issue *ie, const char *filename,
-		struct options *op, struct termios *tp)
+		struct agetty_options *op, struct termios *tp)
 {
 	FILE *f = fopen(filename, "r" UL_CLOEXECSTR);
 	int rc = 1;
@@ -1831,7 +1780,7 @@ static int issue_is_changed(struct issue *ie)
 #endif
 
 static void print_issue_file(struct issue *ie,
-			     struct options *op,
+			     struct agetty_options *op,
 			     struct termios *tp)
 {
 	int oflag = tp->c_oflag;	    /* Save current setting. */
@@ -1872,7 +1821,7 @@ static void print_issue_file(struct issue *ie,
 }
 
 static void eval_issue_file(struct issue *ie,
-			    struct options *op,
+			    struct agetty_options *op,
 			    struct termios *tp)
 {
 	if (!(op->flags & F_ISSUE))
@@ -1975,7 +1924,7 @@ done:
 /* This is --show-issue backend, executed by normal user on the current
  * terminal.
  */
-static void show_issue(struct options *op)
+static void show_issue(struct agetty_options *op)
 {
 	struct issue ie = {
 		.output = NULL,
@@ -2001,7 +1950,7 @@ static void show_issue(struct options *op)
 #endif /* ISSUE_SUPPORT */
 
 /* Show login prompt, optionally preceded by /etc/issue contents. */
-static void do_prompt(struct issue *ie, struct options *op, struct termios *tp)
+static void do_prompt(struct issue *ie, struct agetty_options *op, struct termios *tp)
 {
 #ifdef AGETTY_RELOAD
 again:
@@ -2098,7 +2047,7 @@ again:
 }
 
 /* Select next baud rate. */
-static void next_speed(struct options *op, struct termios *tp)
+static void next_speed(struct agetty_options *op, struct termios *tp)
 {
 	static int baud_index = -1;
 
@@ -2132,7 +2081,7 @@ static void erase_char(int visual_count, struct chardata *cp)
 }
 
 /* Get user name, establish parity, speed, erase, kill & eol. */
-static char *get_logname(struct issue *ie, struct options *op, struct termios *tp, struct chardata *cp)
+static char *get_logname(struct issue *ie, struct agetty_options *op, struct termios *tp, struct chardata *cp)
 {
 	static char logname[BUFSIZ];
 	static int visual_widths[BUFSIZ];	/* visual char count for each stored byte */
@@ -2358,7 +2307,7 @@ static char *get_logname(struct issue *ie, struct options *op, struct termios *t
 }
 
 /* Set the final tty mode bits. */
-static void termio_final(struct options *op, struct termios *tp, struct chardata *cp)
+static void termio_final(struct agetty_options *op, struct termios *tp, struct chardata *cp)
 {
 	/* General terminal-independent stuff. */
 
@@ -2725,7 +2674,7 @@ static char *get_escape_argument(FILE *fd, char *buf, size_t bufsz)
 
 static void output_special_char(struct issue *ie,
 				unsigned char c,
-				struct options *op,
+				struct agetty_options *op,
 				struct termios *tp,
 				FILE *fp)
 {
@@ -2939,7 +2888,7 @@ static void output_special_char(struct issue *ie,
 	}
 }
 
-static void init_special_char(char* arg, struct options *op)
+static void init_special_char(char* arg, struct agetty_options *op)
 {
 	char ch, *p, *q;
 	int i;
@@ -3056,7 +3005,7 @@ static void reload_agettys(void)
 }
 
 static int cred_read_str(struct path_cxt *pc, const char *name,
-			 struct options *op, size_t offset)
+			 struct agetty_options *op, size_t offset)
 {
 	char *str = NULL, **dest;
 
@@ -3070,7 +3019,7 @@ static int cred_read_str(struct path_cxt *pc, const char *name,
 }
 
 static int cred_read_num(struct path_cxt *pc, const char *name,
-			 struct options *op, size_t offset, int type)
+			 struct agetty_options *op, size_t offset, int type)
 {
 	char *str = NULL;
 	int rc;
@@ -3128,7 +3077,7 @@ static int cred_read_bool(struct path_cxt *pc, const char *name,
 	return rc;
 }
 
-static void load_credentials(struct options *op)
+static void load_credentials(struct agetty_options *op)
 {
 	char *env;
 	DIR *dir;
@@ -3154,13 +3103,13 @@ static void load_credentials(struct options *op)
 	while ((d = xreaddir(dir))) {
 		if (strcmp(d->d_name, "agetty.autologin") == 0)
 			cred_read_str(pc, d->d_name, op,
-				      offsetof(struct options, autolog));
+				      offsetof(struct agetty_options, autolog));
 		else if (strcmp(d->d_name, "agetty.delay") == 0)
 			cred_read_num(pc, d->d_name, op,
-				      offsetof(struct options, delay), 'u');
+				      offsetof(struct agetty_options, delay), 'u');
 		else if (strcmp(d->d_name, "agetty.nice") == 0)
 			cred_read_num(pc, d->d_name, op,
-				      offsetof(struct options, nice), 'd');
+				      offsetof(struct agetty_options, nice), 'd');
 		else if (strcmp(d->d_name, "agetty.hangup") == 0)
 			cred_read_bool(pc, d->d_name,
 				       &op->flags, F_HANGUP, 0);

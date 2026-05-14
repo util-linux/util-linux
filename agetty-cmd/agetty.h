@@ -1,6 +1,60 @@
 #ifndef UTIL_LINUX_AGETTY_H
 #define UTIL_LINUX_AGETTY_H
 
+#include <stddef.h>
+#include <termios.h>
+
+/* Storage for command-line options. */
+#define	MAX_SPEED	10	/* max. nr. of baud rates */
+
+struct agetty_options {
+	int flags;			/* toggle switches, see below */
+	unsigned int timeout;		/* time-out period */
+	char *autolog;			/* login the user automatically */
+	char *chdir;			/* Chdir before the login */
+	char *chroot;			/* Chroot before the login */
+	char *login;			/* login program */
+	char *logopt;			/* options for login program */
+	const char *tty;		/* name of tty */
+	const char *vcline;		/* line of virtual console */
+	char *term;			/* terminal type */
+	char *initstring;		/* modem init string */
+	char *issue;			/* alternative issue file or directory */
+	char *erasechars;		/* string with erase chars */
+	char *killchars;		/* string with kill chars */
+	char *osrelease;		/* /etc/os-release data */
+	unsigned int delay;		/* Sleep seconds before prompt */
+	int nice;			/* Run login with this priority */
+	int numspeed;			/* number of baud rates to try */
+	int clocal;			/* CLOCAL_MODE_* */
+	int kbmode;			/* Keyboard mode if virtual console */
+	int tty_is_stdin;		/* is the tty the standard input stream */
+	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
+};
+
+#define	F_PARSE		(1<<0)	/* process modem status messages */
+#define	F_ISSUE		(1<<1)	/* display /etc/issue or /etc/issue.d */
+#define	F_RTSCTS	(1<<2)	/* enable RTS/CTS flow control */
+
+#define F_INITSTRING    (1<<4)	/* initstring is set */
+#define F_WAITCRLF	(1<<5)	/* wait for CR or LF */
+
+#define F_NOPROMPT	(1<<7)	/* do not ask for login name! */
+#define F_LCUC		(1<<8)	/* support for *LCUC stty modes */
+#define F_KEEPSPEED	(1<<9)	/* follow baud rate from kernel */
+#define F_KEEPCFLAGS	(1<<10)	/* reuse c_cflags setup from kernel */
+#define F_EIGHTBITS	(1<<11)	/* Assume 8bit-clean tty */
+#define F_VCONSOLE	(1<<12)	/* This is a virtual console */
+#define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
+#define F_UTF8		(1<<14)	/* We can do UTF8 */
+#define F_LOGINPAUSE	(1<<15)	/* Wait for any key before dropping login prompt */
+#define F_NOCLEAR	(1<<16) /* Do not clear the screen before prompting */
+#define F_NONL		(1<<17) /* No newline before issue */
+#define F_NOHOSTNAME	(1<<18) /* Do not show the hostname */
+#define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
+#define F_NOHINTS	(1<<20) /* Don't print hints */
+#define F_REMOTE	(1<<21) /* Add '-h fakehost' to login(1) command line */
+
 extern void agetty_exit_slowly(int code) __attribute__((__noreturn__));
 extern void agetty_log_err(const char *, ...) __attribute__((__noreturn__))
 				       __attribute__((__format__(printf, 1, 2)));
