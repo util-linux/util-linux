@@ -148,12 +148,6 @@ struct issue {
 		     do_tcrestore : 1;
 };
 
-/*
- * When multiple baud rates are specified on the command line, the first one
- * we will try is the first one specified.
- */
-#define	FIRST_SPEED	0
-
 enum {
 	CLOCAL_MODE_AUTO = 0,
 	CLOCAL_MODE_ALWAYS,
@@ -163,83 +157,6 @@ enum {
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
-struct Speedtab {
-	long speed;
-	speed_t code;
-};
-
-static const struct Speedtab speedtab[] = {
-	{50, B50},
-	{75, B75},
-	{110, B110},
-	{134, B134},
-	{150, B150},
-	{200, B200},
-	{300, B300},
-	{600, B600},
-	{1200, B1200},
-	{1800, B1800},
-	{2400, B2400},
-	{4800, B4800},
-	{9600, B9600},
-#ifdef B19200
-	{19200, B19200},
-#elif defined(EXTA)
-	{19200, EXTA},
-#endif
-#ifdef B38400
-	{38400, B38400},
-#elif defined(EXTB)
-	{38400, EXTB},
-#endif
-#ifdef B57600
-	{57600, B57600},
-#endif
-#ifdef B115200
-	{115200, B115200},
-#endif
-#ifdef B230400
-	{230400, B230400},
-#endif
-#ifdef B460800
-	{460800, B460800},
-#endif
-#ifdef B500000
-	{500000, B500000},
-#endif
-#ifdef B576000
-	{576000, B576000},
-#endif
-#ifdef B921600
-	{921600, B921600},
-#endif
-#ifdef B1000000
-	{1000000, B1000000},
-#endif
-#ifdef B1152000
-	{1152000, B1152000},
-#endif
-#ifdef B1500000
-	{1500000, B1500000},
-#endif
-#ifdef B2000000
-	{2000000, B2000000},
-#endif
-#ifdef B2500000
-	{2500000, B2500000},
-#endif
-#ifdef B3000000
-	{3000000, B3000000},
-#endif
-#ifdef B3500000
-	{3500000, B3500000},
-#endif
-#ifdef B4000000
-	{4000000, B4000000},
-#endif
-	{0, 0},
-};
-
 static void init_special_char(char* arg, struct agetty_options *op);
 static void parse_args(int argc, char **argv, struct agetty_options *op);
 static void parse_speeds(struct agetty_options *op, char *arg);
@@ -247,7 +164,6 @@ static void open_tty(const char *tty, struct termios *tp, struct agetty_options 
 static void termio_init(struct agetty_options *op, struct termios *tp);
 static void reset_vc(const struct agetty_options *op, struct termios *tp, int canon);
 static void auto_baud(struct termios *tp);
-static void list_speeds(void);
 static void output_special_char (struct issue *ie, unsigned char c, struct agetty_options *op,
 		struct termios *tp, FILE *fp);
 static void do_prompt(struct issue *ie, struct agetty_options *op, struct termios *tp);
@@ -257,7 +173,6 @@ static char *get_logname(struct issue *ie, struct agetty_options *op,
 static void termio_final(struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
-static speed_t bcode(char *s);
 static void usage(void) __attribute__((__noreturn__));
 #ifdef KDGKBLED
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
@@ -361,7 +276,7 @@ int main(int argc, char **argv)
 
 	/* Default is to follow the current line speed and then default to 9600 */
 	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
-		options.speeds[options.numspeed++] = bcode("9600");
+		options.speeds[options.numspeed++] = agetty_bcode("9600");
 		options.flags |= F_KEEPSPEED;
 	}
 
@@ -816,7 +731,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 			reload_agettys();
 			exit(EXIT_SUCCESS);
 		case LIST_SPEEDS_OPTION:
-			list_speeds();
+			agetty_list_speeds();
 			exit(EXIT_SUCCESS);
 		case ISSUE_SHOW_OPTION:
 			opt_show_issue = 1;
@@ -898,7 +813,7 @@ static void parse_speeds(struct agetty_options *op, char *arg)
 
 	debug("entered parse_speeds:\n");
 	for (cp = strtok(str, ","); cp != NULL; cp = strtok((char *)0, ",")) {
-		if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
+		if ((op->speeds[op->numspeed++] = agetty_bcode(cp)) <= 0)
 			agetty_log_err(_("bad speed: %s"), cp);
 		if (op->numspeed >= MAX_SPEED)
 			agetty_log_err(_("too many alternate speeds"));
@@ -1326,7 +1241,7 @@ static void auto_baud(struct termios *tp)
 		buf[nread] = '\0';
 		for (bp = buf; bp < buf + nread; bp++)
 			if (c_isascii(*bp) && isdigit(*bp)) {
-				if ((speed = bcode(bp))) {
+				if ((speed = agetty_bcode(bp))) {
 					cfsetispeed(tp, speed);
 					cfsetospeed(tp, speed);
 				}
@@ -2274,25 +2189,6 @@ static int caps_lock(char *s)
 	return capslock;
 }
 
-/* Convert speed string to speed code; return 0 on failure. */
-static speed_t bcode(char *s)
-{
-	const struct Speedtab *sp;
-	char *end = NULL;
-	long speed;
-
-	errno = 0;
-	speed = strtol(s, &end, 10);
-
-	if (errno || !end || end == s)
-		return 0;
-
-	for (sp = speedtab; sp->speed; sp++)
-		if (sp->speed == speed)
-			return sp->code;
-	return 0;
-}
-
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -2344,14 +2240,6 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
 
 	exit(EXIT_SUCCESS);
-}
-
-static void list_speeds(void)
-{
-	const struct Speedtab *sp;
-
-	for (sp = speedtab; sp->speed; sp++)
-		printf("%10ld\n", sp->speed);
 }
 
 
@@ -2649,18 +2537,8 @@ static void output_special_char(struct issue *ie,
 		fprintf (ie->output, "%s", op->tty);
 		break;
 	case 'b':
-	{
-		const speed_t speed = cfgetispeed(tp);
-		int i;
-
-		for (i = 0; speedtab[i].speed; i++) {
-			if (speedtab[i].code == speed) {
-				fprintf(ie->output, "%ld", speedtab[i].speed);
-				break;
-			}
-		}
+		agetty_fprint_speed(ie->output, cfgetispeed(tp));
 		break;
-	}
 	case 'S':
 	{
 		char *var = NULL, varname[64];

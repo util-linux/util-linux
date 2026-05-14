@@ -2,6 +2,7 @@
 #define UTIL_LINUX_AGETTY_H
 
 #include <stddef.h>
+#include <stdio.h>
 #include <termios.h>
 #include <utmpx.h>
 
@@ -76,5 +77,11 @@ extern void agetty_load_credentials(struct agetty_options *op);
 extern char *agetty_xgethostname(void);
 extern char *agetty_xgetdomainname(void);
 extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
+
+#define	FIRST_SPEED	0
+
+extern speed_t agetty_bcode(char *s);
+extern void agetty_list_speeds(void);
+extern void agetty_fprint_speed(FILE *out, speed_t speed);
 
 #endif /* UTIL_LINUX_AGETTY_H */
