@@ -12,77 +12,26 @@
  * it what you wish.
  */
 
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <getopt.h>
+#include <netdb.h>
+#include <signal.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <termios.h>
-#include <signal.h>
-#include <errno.h>
 #include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <utmpx.h>
-#include <getopt.h>
-#include <time.h>
-#include <sys/socket.h>
-#include <langinfo.h>
-#include <grp.h>
-#include <pwd.h>
-#include <netdb.h>
-#include <sys/utsname.h>
-#include <syslog.h>
+#include <termios.h>
 
 #include "agetty.h"
-#include "strutils.h"
 #include "all-io.h"
+#include "c.h"
+#include "logindefs.h"
 #include "nls.h"
 #include "pathnames.h"
-#include "c.h"
-#include "cctype.h"
+#include "strutils.h"
 #include "widechar.h"
-#include "ttyutils.h"
-#include "color-names.h"
-#include "env.h"
-#include "path.h"
-#include "fileutils.h"
-
-#include "logindefs.h"
-
-#ifdef USE_PLYMOUTH_SUPPORT
-# include "plymouth-ctrl.h"
-#endif
-
-#ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
-#endif
-
-#ifdef HAVE_GETTTYNAM
-# include <ttyent.h>
-#endif
-
-#if defined(__FreeBSD_kernel__)
-# include <pty.h>
-# ifdef HAVE_UTMP_H
-#  include <utmp.h>
-# endif
-# ifdef HAVE_LIBUTIL_H
-#  include <libutil.h>
-# endif
-#endif
-
-#ifdef USE_SYSTEMD
-# include <systemd/sd-daemon.h>
-# include <systemd/sd-login.h>
-#endif
-
-#ifdef __linux__
-#  include <sys/kd.h>
-#endif
 
 
 /* Login prompt. */
