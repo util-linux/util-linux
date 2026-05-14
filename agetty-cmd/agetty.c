@@ -131,7 +131,6 @@ FILE *dbf;
 
 int main(int argc, char **argv)
 {
-	char *username = NULL;			/* login name, given to /bin/login */
 	struct chardata chardata;		/* will be set by get_logname() */
 	struct termios termios;			/* terminal mode bits */
 	struct agetty_options options = {
@@ -258,7 +257,7 @@ int main(int argc, char **argv)
 
 	if (options.autolog) {
 		debug("doing auto login\n");
-		username = options.autolog;
+		options.username = options.autolog;
 	}
 
 	if (options.flags & F_NOPROMPT) {	/* --skip-login */
@@ -280,7 +279,7 @@ int main(int argc, char **argv)
 		} else {
 			/* Read the login name. */
 			debug("reading login name\n");
-			while ((username =
+			while ((options.username =
 				get_logname(&issue, &options, &termios, &chardata)) == NULL)
 				if ((options.flags & F_VCONSOLE) == 0 && options.numspeed)
 					agetty_next_speed(&options, &termios);
@@ -303,8 +302,8 @@ int main(int argc, char **argv)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	if (username)
-		check_username(username);
+	if (options.username)
+		check_username(options.username);
 
 	if (options.logopt) {
 		/*
@@ -312,7 +311,7 @@ int main(int argc, char **argv)
 		 * way how agetty composes login(1) command line.
 		 */
 		login_options_to_argv(login_argv, &login_argc,
-				      options.logopt, username);
+				      options.logopt, options.username);
 	} else {
 		if (options.flags & F_REMOTE) {
 			if (fakehost) {
@@ -321,11 +320,11 @@ int main(int argc, char **argv)
 			} else if (options.flags & F_NOHOSTNAME)
 				login_argv[login_argc++] = "-H";
 		}
-		if (username) {
+		if (options.username) {
 			if (options.autolog)
 				login_argv[login_argc++] = "-f";
 			login_argv[login_argc++] = "--";
-			login_argv[login_argc++] = username;
+			login_argv[login_argc++] = options.username;
 		}
 	}
 

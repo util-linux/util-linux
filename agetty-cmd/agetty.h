@@ -68,6 +68,7 @@ struct agetty_options {
 	char *issue;			/* alternative issue file or directory */
 	char *erasechars;		/* string with erase chars */
 	char *killchars;		/* string with kill chars */
+	char *username;			/* login name, given to /bin/login */
 	char *osrelease;		/* /etc/os-release data */
 	unsigned int delay;		/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
