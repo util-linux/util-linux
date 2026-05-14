@@ -51,6 +51,9 @@ struct chrt_ctl {
 	uint64_t period;
 	uint64_t sched_flags;			/* For sched_attr->sched_flags member */
 
+	uint32_t util_min;			/* --clamp-min value */
+	uint32_t util_max;			/* --clamp-max value */
+
 	unsigned int all_tasks : 1,		/* all threads of the PID */
 		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK or SCHED_FLAG_RESET_ON_FORK */
 		     altered : 1,		/* sched_set**() used */
@@ -97,6 +100,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"), out);
 	fputs(_(" -P, --sched-period <ns>   period parameter for DEADLINE\n"), out);
 	fputs(_(" -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"), out);
+	fputs(_(" -U, --clamp-min <value>   set SCHED_FLAG_UTIL_CLAMP_MIN (0-1024)\n"), out);
+	fputs(_(" -X, --clamp-max <value>   set SCHED_FLAG_UTIL_CLAMP_MAX (0-1024)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Other options:\n"), out);
@@ -392,6 +397,8 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 	sa.sched_period   = ctl->period;
 	sa.sched_deadline = ctl->deadline;
 	sa.sched_flags    = ctl->sched_flags;
+	sa.sched_util_min = ctl->util_min;
+	sa.sched_util_max = ctl->util_max;
 
 # ifdef SCHED_FLAG_RESET_ON_FORK
 	/* Don't use SCHED_RESET_ON_FORK for sched_setattr()! */
@@ -440,6 +447,8 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "all-tasks",  no_argument, NULL, 'a' },
 		{ "batch",	no_argument, NULL, 'b' },
+		{ "clamp-min",  required_argument, NULL, 'U' },
+		{ "clamp-max",  required_argument, NULL, 'X' },
 		{ "deadline",   no_argument, NULL, 'd' },
 		{ "deadline-overrun", no_argument, NULL, 'O' },
 		{ "ext",	no_argument, NULL, 'e' },
@@ -465,7 +474,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while((c = getopt_long(argc, argv, "+abdD:efiphmoOP:T:rRGvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abdD:efiphmoOP:T:rRU:X:GvV", longopts, NULL)) != -1)
 	{
 		switch (c) {
 		case 'a':
@@ -506,6 +515,22 @@ int main(int argc, char **argv)
 		case 'O':
 #ifdef SCHED_FLAG_DL_OVERRUN
 			ctl->sched_flags |= SCHED_FLAG_DL_OVERRUN;
+#endif
+			break;
+		case 'U':
+#ifdef SCHED_FLAG_UTIL_CLAMP_MIN
+			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MIN;
+			ctl->util_min = strtou32_or_err(optarg, _("invalid --clamp-min value"));
+			if (ctl->util_min > 1024)
+				errx(EXIT_FAILURE, _("--clamp-min value must be in range 0-1024"));
+#endif
+			break;
+		case 'X':
+#ifdef SCHED_FLAG_UTIL_CLAMP_MAX
+			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MAX;
+			ctl->util_max = strtou32_or_err(optarg, _("invalid --clamp-max value"));
+			if (ctl->util_max > 1024)
+				errx(EXIT_FAILURE, _("--clamp-max value must be in range 0-1024"));
 #endif
 			break;
 		case 'i':
@@ -612,6 +637,17 @@ int main(int argc, char **argv)
 	if ((ctl->sched_flags & SCHED_FLAG_DL_OVERRUN) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--deadline-overrun is only supported for SCHED_DEADLINE"));
 # endif
+
+#ifndef HAVE_SCHED_SETATTR
+# ifdef SCHED_FLAG_UTIL_CLAMP_MIN
+	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MIN is unsupported"));
+# endif
+# ifdef SCHED_FLAG_UTIL_CLAMP_MAX
+	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MAX is unsupported"));
+# endif
+#endif
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we

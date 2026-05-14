@@ -18,6 +18,8 @@ _chrt_module()
 			OPTS="
 				--all-tasks
 				--batch
+				--clamp-max
+				--clamp-min
 				--deadline
 				--deadline-overrun
 				--ext
