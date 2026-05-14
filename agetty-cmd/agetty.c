@@ -189,7 +189,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		LIST_SPEEDS_OPTION,
 		ISSUE_SHOW_OPTION,
 	};
-	const struct option longopts[] = {
+	static const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 NULL,  '8'  },
 		{  "autologin",	     required_argument,	 NULL,  'a'  },
 		{  "noreset",	     no_argument,	 NULL,  'c'  },
