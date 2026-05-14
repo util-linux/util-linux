@@ -46,13 +46,11 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
-static void parse_args(int argc, char **argv, struct agetty_options *op);
 static int wait_for_term_input(struct agetty_issue *ie, int fd);
 static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 static char *get_logname(struct agetty_issue *ie, struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
-static void usage(void) __attribute__((__noreturn__));
 #ifdef KDGKBLED
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 #endif
@@ -68,209 +66,6 @@ static char *fakehost;
 # endif
 FILE *dbf;
 #endif
-
-int main(int argc, char **argv)
-{
-	struct chardata chardata;		/* will be set by get_logname() */
-	struct termios termios;			/* terminal mode bits */
-	struct agetty_options options = {
-		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
-		.login  =  _PATH_LOGIN,		/* default login program */
-		.tty    = "tty1"		/* default tty line */
-	};
-	struct agetty_issue issue = {
-		.mem = NULL,
-#ifdef USE_NETLINK
-		.nl.fd = -1
-#endif
-	};
-	char *login_argv[LOGIN_ARGV_MAX + 1];
-	int login_argc = 0;
-	struct sigaction sa, sa_hup, sa_quit, sa_int;
-	sigset_t set;
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-
-	/* In case vhangup(2) has to called */
-	sa.sa_handler = SIG_IGN;
-	sa.sa_flags = SA_RESTART;
-	sigemptyset (&sa.sa_mask);
-	sigaction(SIGHUP, &sa, &sa_hup);
-	sigaction(SIGQUIT, &sa, &sa_quit);
-	sigaction(SIGINT, &sa, &sa_int);
-
-#ifdef DEBUGGING
-	{
-		int i;
-
-		dbf = fopen(DEBUG_OUTPUT, "w");
-		for (i = 1; i < argc; i++) {
-			if (i > 1)
-				debug(" ");
-			debug(argv[i]);
-		}
-		debug("\n");
-	}
-#endif				/* DEBUGGING */
-
-	/* Load systemd credentials. */
-	agetty_load_credentials(&options);
-
-	/* Parse command-line arguments. */
-	parse_args(argc, argv, &options);
-
-	/* Update the utmp file. */
-#ifdef	SYSV_STYLE
-	agetty_update_utmp(&options, fakehost);
-#endif
-	if (options.delay)
-	    sleep(options.delay);
-
-	debug("calling open_tty\n");
-
-	/* Open the tty as standard { input, output, error }. */
-	agetty_open_tty(options.tty, &termios, &options);
-
-	/* Unmask SIGHUP if inherited */
-	sigemptyset(&set);
-	sigaddset(&set, SIGHUP);
-	sigprocmask(SIG_UNBLOCK, &set, NULL);
-	sigaction(SIGHUP, &sa_hup, NULL);
-
-	tcsetpgrp(STDIN_FILENO, getpid());
-
-	/* Default is to follow the current line speed and then default to 9600 */
-	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
-		options.speeds[options.numspeed++] = agetty_bcode("9600");
-		options.flags |= F_KEEPSPEED;
-	}
-
-	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
-	debug("calling termio_init\n");
-	agetty_termio_init(&options, &termios);
-
-	/* Write the modem init string and DO NOT flush the buffers. */
-	if (options.flags & F_INITSTRING &&
-	    options.initstring && *options.initstring != '\0') {
-		debug("writing init string\n");
-		write_all(STDOUT_FILENO, options.initstring,
-			   strlen(options.initstring));
-	}
-
-	if (options.flags & F_VCONSOLE || options.clocal != CLOCAL_MODE_ALWAYS)
-		/* Go to blocking mode unless -L is specified, this change
-		 * affects stdout, stdin and stderr as all the file descriptors
-		 * are created by dup().   */
-		fcntl(STDOUT_FILENO, F_SETFL,
-		      fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
-
-	/* Optionally detect the baud rate from the modem status message. */
-	debug("before autobaud\n");
-	if (serial_tty_option(&options, F_PARSE))
-		agetty_auto_baud(&termios);
-
-	/* Set the optional timer. */
-	if (options.timeout)
-		alarm(options.timeout);
-
-	/* Optionally wait for CR or LF before writing /etc/issue */
-	if (serial_tty_option(&options, F_WAITCRLF)) {
-		char ch;
-
-		debug("waiting for cr-lf\n");
-		while (read(STDIN_FILENO, &ch, 1) == 1) {
-			/* Strip "parity bit". */
-			ch &= 0x7f;
-#ifdef DEBUGGING
-			fprintf(dbf, "read %c\n", ch);
-#endif
-			if (ch == '\n' || ch == '\r')
-				break;
-		}
-	}
-
-	INIT_CHARDATA(&chardata);
-
-	if (options.autolog) {
-		debug("doing auto login\n");
-		options.username = options.autolog;
-	}
-
-	if (options.flags & F_NOPROMPT) {	/* --skip-login */
-		agetty_eval_issue_file(&issue, &options, &termios);
-		agetty_print_issue_file(&issue, &options, &termios);
-
-	} else {				/* regular (auto)login */
-		if ((options.flags & F_NOHOSTNAME) == 0 &&
-		    getlogindefs_bool("LOGIN_PLAIN_PROMPT", 0) == 1)
-			/* /etc/login.defs enables --nohostname too */
-			options.flags |= F_NOHOSTNAME;
-
-		if (options.autolog) {
-			/* Autologin prompt */
-			agetty_eval_issue_file(&issue, &options, &termios);
-			do_prompt(&issue, &options, &termios);
-			printf(_("%s%s (automatic login)\n"), LOGIN_PROMPT,
-					options.autolog);
-		} else {
-			/* Read the login name. */
-			debug("reading login name\n");
-			while ((options.username =
-				get_logname(&issue, &options, &termios, &chardata)) == NULL)
-				if ((options.flags & F_VCONSOLE) == 0 && options.numspeed)
-					agetty_next_speed(&options, &termios);
-		}
-	}
-
-	/* Disable timer. */
-	if (options.timeout)
-		alarm(0);
-
-	/* Finalize the termios settings. */
-	if ((options.flags & F_VCONSOLE) == 0)
-		agetty_termio_final(&options, &termios, &chardata);
-	else
-		agetty_reset_vc(&options, &termios, 1);
-
-	/* Now the newline character should be properly written. */
-	write_all(STDOUT_FILENO, "\r\n", 2);
-
-	sigaction(SIGQUIT, &sa_quit, NULL);
-	sigaction(SIGINT, &sa_int, NULL);
-
-	agetty_init_login_argv(login_argv, &login_argc, &options, fakehost);
-
-	if (options.chroot) {
-		if (chroot(options.chroot) < 0)
-			agetty_log_err(_("%s: can't change root directory %s: %m"),
-				options.tty, options.chroot);
-		if (chdir("/") < 0)
-			agetty_log_err(_("%s: can't change working directory %s: %m"),
-				options.tty, "/");
-	}
-	if (options.chdir && chdir(options.chdir) < 0)
-		agetty_log_err(_("%s: can't change working directory %s: %m"),
-			options.tty, options.chdir);
-	if (options.nice && nice(options.nice) < 0)
-		agetty_log_warn(_("%s: can't change process priority: %m"),
-			 options.tty);
-
-#ifdef DEBUGGING
-	if (close_stream(dbf) != 0)
-		agetty_log_err("write failed: %s", DEBUG_OUTPUT);
-#endif
-
-	/* Let the login program take care of password validation. */
-	execv(options.login, login_argv);
-
-	free(options.osrelease);
-	free(options.autolog);
-
-	agetty_log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
-}
-
 
 static void output_version(void)
 {
@@ -322,6 +117,61 @@ static void output_version(void)
 #define is_speed(str) (strlen((str)) == strspn((str), "0123456789,"))
 
 /* Parse command-line arguments. */
+
+static void __attribute__((__noreturn__)) usage(void)
+{
+	FILE *out = stdout;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
+		       " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Open a terminal and set its mode.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -8, --8bits                assume 8-bit tty\n"), out);
+	fputs(_(" -a, --autologin <user>     login the specified user automatically\n"), out);
+	fputs(_(" -c, --noreset              do not reset control mode\n"), out);
+	fputs(_(" -E, --remote               use -r <hostname> for login(1)\n"), out);
+	fputs(_(" -f, --issue-file <list>    display issue files or directories\n"), out);
+	fputs(_("     --show-issue           display issue file and exit\n"), out);
+	fputs(_(" -h, --flow-control         enable hardware flow control\n"), out);
+	fputs(_(" -H, --host <hostname>      specify login host\n"), out);
+	fputs(_(" -i, --noissue              do not display issue file\n"), out);
+	fputs(_(" -I, --init-string <string> set init string\n"), out);
+	fputs(_(" -J, --noclear              do not clear the screen before prompt\n"), out);
+	fputs(_(" -l, --login-program <file> specify login program\n"), out);
+	fputs(_(" -L, --local-line[=<mode>]  control the local line flag\n"), out);
+	fputs(_(" -m, --extract-baud         extract baud rate during connect\n"), out);
+	fputs(_(" -n, --skip-login           do not prompt for login\n"), out);
+	fputs(_(" -N, --nonewline            do not print a newline before issue\n"), out);
+	fputs(_(" -o, --login-options <opts> options that are passed to login\n"), out);
+	fputs(_(" -p, --login-pause          wait for any key before the login\n"), out);
+	fputs(_(" -r, --chroot <dir>         change root to the directory\n"), out);
+	fputs(_(" -R, --hangup               do virtually hangup on the tty\n"), out);
+	fputs(_(" -s, --keep-baud            try to keep baud rate after break\n"), out);
+	fputs(_(" -t, --timeout <number>     login process timeout\n"), out);
+	fputs(_(" -U, --detect-case          detect uppercase terminal\n"), out);
+	fputs(_(" -w, --wait-cr              wait carriage-return\n"), out);
+	fputs(_("     --nohints              do not print hints\n"), out);
+	fputs(_("     --nohostname           no hostname at all will be shown\n"), out);
+	fputs(_("     --long-hostname        show full qualified hostname\n"), out);
+	fputs(_("     --erase-chars <string> additional backspace chars\n"), out);
+	fputs(_("     --kill-chars <string>  additional kill chars\n"), out);
+	fputs(_("     --chdir <directory>    chdir before the login\n"), out);
+	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
+	fputs(_("     --nice <number>        run login with this priority\n"), out);
+	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
+	fputs(_("     --list-speeds          display supported baud rates\n"), out);
+	fprintf(out, "     --help                 %s\n", USAGE_OPTSTR_HELP);
+	fprintf(out, "     --version              %s\n", USAGE_OPTSTR_VERSION);
+	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
+
+	exit(EXIT_SUCCESS);
+}
+
+
 static void parse_args(int argc, char **argv, struct agetty_options *op)
 {
 	int c;
@@ -567,8 +417,211 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 }
 
 
-
 /* Show login prompt, optionally preceded by /etc/issue contents. */
+
+int main(int argc, char **argv)
+{
+	struct chardata chardata;		/* will be set by get_logname() */
+	struct termios termios;			/* terminal mode bits */
+	struct agetty_options options = {
+		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
+		.login  =  _PATH_LOGIN,		/* default login program */
+		.tty    = "tty1"		/* default tty line */
+	};
+	struct agetty_issue issue = {
+		.mem = NULL,
+#ifdef USE_NETLINK
+		.nl.fd = -1
+#endif
+	};
+	char *login_argv[LOGIN_ARGV_MAX + 1];
+	int login_argc = 0;
+	struct sigaction sa, sa_hup, sa_quit, sa_int;
+	sigset_t set;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	/* In case vhangup(2) has to called */
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset (&sa.sa_mask);
+	sigaction(SIGHUP, &sa, &sa_hup);
+	sigaction(SIGQUIT, &sa, &sa_quit);
+	sigaction(SIGINT, &sa, &sa_int);
+
+#ifdef DEBUGGING
+	{
+		int i;
+
+		dbf = fopen(DEBUG_OUTPUT, "w");
+		for (i = 1; i < argc; i++) {
+			if (i > 1)
+				debug(" ");
+			debug(argv[i]);
+		}
+		debug("\n");
+	}
+#endif				/* DEBUGGING */
+
+	/* Load systemd credentials. */
+	agetty_load_credentials(&options);
+
+	/* Parse command-line arguments. */
+	parse_args(argc, argv, &options);
+
+	/* Update the utmp file. */
+#ifdef	SYSV_STYLE
+	agetty_update_utmp(&options, fakehost);
+#endif
+	if (options.delay)
+	    sleep(options.delay);
+
+	debug("calling open_tty\n");
+
+	/* Open the tty as standard { input, output, error }. */
+	agetty_open_tty(options.tty, &termios, &options);
+
+	/* Unmask SIGHUP if inherited */
+	sigemptyset(&set);
+	sigaddset(&set, SIGHUP);
+	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	sigaction(SIGHUP, &sa_hup, NULL);
+
+	tcsetpgrp(STDIN_FILENO, getpid());
+
+	/* Default is to follow the current line speed and then default to 9600 */
+	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
+		options.speeds[options.numspeed++] = agetty_bcode("9600");
+		options.flags |= F_KEEPSPEED;
+	}
+
+	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
+	debug("calling termio_init\n");
+	agetty_termio_init(&options, &termios);
+
+	/* Write the modem init string and DO NOT flush the buffers. */
+	if (options.flags & F_INITSTRING &&
+	    options.initstring && *options.initstring != '\0') {
+		debug("writing init string\n");
+		write_all(STDOUT_FILENO, options.initstring,
+			   strlen(options.initstring));
+	}
+
+	if (options.flags & F_VCONSOLE || options.clocal != CLOCAL_MODE_ALWAYS)
+		/* Go to blocking mode unless -L is specified, this change
+		 * affects stdout, stdin and stderr as all the file descriptors
+		 * are created by dup().   */
+		fcntl(STDOUT_FILENO, F_SETFL,
+		      fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
+
+	/* Optionally detect the baud rate from the modem status message. */
+	debug("before autobaud\n");
+	if (serial_tty_option(&options, F_PARSE))
+		agetty_auto_baud(&termios);
+
+	/* Set the optional timer. */
+	if (options.timeout)
+		alarm(options.timeout);
+
+	/* Optionally wait for CR or LF before writing /etc/issue */
+	if (serial_tty_option(&options, F_WAITCRLF)) {
+		char ch;
+
+		debug("waiting for cr-lf\n");
+		while (read(STDIN_FILENO, &ch, 1) == 1) {
+			/* Strip "parity bit". */
+			ch &= 0x7f;
+#ifdef DEBUGGING
+			fprintf(dbf, "read %c\n", ch);
+#endif
+			if (ch == '\n' || ch == '\r')
+				break;
+		}
+	}
+
+	INIT_CHARDATA(&chardata);
+
+	if (options.autolog) {
+		debug("doing auto login\n");
+		options.username = options.autolog;
+	}
+
+	if (options.flags & F_NOPROMPT) {	/* --skip-login */
+		agetty_eval_issue_file(&issue, &options, &termios);
+		agetty_print_issue_file(&issue, &options, &termios);
+
+	} else {				/* regular (auto)login */
+		if ((options.flags & F_NOHOSTNAME) == 0 &&
+		    getlogindefs_bool("LOGIN_PLAIN_PROMPT", 0) == 1)
+			/* /etc/login.defs enables --nohostname too */
+			options.flags |= F_NOHOSTNAME;
+
+		if (options.autolog) {
+			/* Autologin prompt */
+			agetty_eval_issue_file(&issue, &options, &termios);
+			do_prompt(&issue, &options, &termios);
+			printf(_("%s%s (automatic login)\n"), LOGIN_PROMPT,
+					options.autolog);
+		} else {
+			/* Read the login name. */
+			debug("reading login name\n");
+			while ((options.username =
+				get_logname(&issue, &options, &termios, &chardata)) == NULL)
+				if ((options.flags & F_VCONSOLE) == 0 && options.numspeed)
+					agetty_next_speed(&options, &termios);
+		}
+	}
+
+	/* Disable timer. */
+	if (options.timeout)
+		alarm(0);
+
+	/* Finalize the termios settings. */
+	if ((options.flags & F_VCONSOLE) == 0)
+		agetty_termio_final(&options, &termios, &chardata);
+	else
+		agetty_reset_vc(&options, &termios, 1);
+
+	/* Now the newline character should be properly written. */
+	write_all(STDOUT_FILENO, "\r\n", 2);
+
+	sigaction(SIGQUIT, &sa_quit, NULL);
+	sigaction(SIGINT, &sa_int, NULL);
+
+	agetty_init_login_argv(login_argv, &login_argc, &options, fakehost);
+
+	if (options.chroot) {
+		if (chroot(options.chroot) < 0)
+			agetty_log_err(_("%s: can't change root directory %s: %m"),
+				options.tty, options.chroot);
+		if (chdir("/") < 0)
+			agetty_log_err(_("%s: can't change working directory %s: %m"),
+				options.tty, "/");
+	}
+	if (options.chdir && chdir(options.chdir) < 0)
+		agetty_log_err(_("%s: can't change working directory %s: %m"),
+			options.tty, options.chdir);
+	if (options.nice && nice(options.nice) < 0)
+		agetty_log_warn(_("%s: can't change process priority: %m"),
+			 options.tty);
+
+#ifdef DEBUGGING
+	if (close_stream(dbf) != 0)
+		agetty_log_err("write failed: %s", DEBUG_OUTPUT);
+#endif
+
+	/* Let the login program take care of password validation. */
+	execv(options.login, login_argv);
+
+	free(options.osrelease);
+	free(options.autolog);
+
+	agetty_log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
+}
+
+
 static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp)
 {
 #ifdef AGETTY_RELOAD
@@ -912,60 +965,6 @@ static int caps_lock(char *s)
 	}
 	return capslock;
 }
-
-static void __attribute__((__noreturn__)) usage(void)
-{
-	FILE *out = stdout;
-
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
-		       " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"), program_invocation_short_name);
-
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Open a terminal and set its mode.\n"), out);
-
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -8, --8bits                assume 8-bit tty\n"), out);
-	fputs(_(" -a, --autologin <user>     login the specified user automatically\n"), out);
-	fputs(_(" -c, --noreset              do not reset control mode\n"), out);
-	fputs(_(" -E, --remote               use -r <hostname> for login(1)\n"), out);
-	fputs(_(" -f, --issue-file <list>    display issue files or directories\n"), out);
-	fputs(_("     --show-issue           display issue file and exit\n"), out);
-	fputs(_(" -h, --flow-control         enable hardware flow control\n"), out);
-	fputs(_(" -H, --host <hostname>      specify login host\n"), out);
-	fputs(_(" -i, --noissue              do not display issue file\n"), out);
-	fputs(_(" -I, --init-string <string> set init string\n"), out);
-	fputs(_(" -J, --noclear              do not clear the screen before prompt\n"), out);
-	fputs(_(" -l, --login-program <file> specify login program\n"), out);
-	fputs(_(" -L, --local-line[=<mode>]  control the local line flag\n"), out);
-	fputs(_(" -m, --extract-baud         extract baud rate during connect\n"), out);
-	fputs(_(" -n, --skip-login           do not prompt for login\n"), out);
-	fputs(_(" -N, --nonewline            do not print a newline before issue\n"), out);
-	fputs(_(" -o, --login-options <opts> options that are passed to login\n"), out);
-	fputs(_(" -p, --login-pause          wait for any key before the login\n"), out);
-	fputs(_(" -r, --chroot <dir>         change root to the directory\n"), out);
-	fputs(_(" -R, --hangup               do virtually hangup on the tty\n"), out);
-	fputs(_(" -s, --keep-baud            try to keep baud rate after break\n"), out);
-	fputs(_(" -t, --timeout <number>     login process timeout\n"), out);
-	fputs(_(" -U, --detect-case          detect uppercase terminal\n"), out);
-	fputs(_(" -w, --wait-cr              wait carriage-return\n"), out);
-	fputs(_("     --nohints              do not print hints\n"), out);
-	fputs(_("     --nohostname           no hostname at all will be shown\n"), out);
-	fputs(_("     --long-hostname        show full qualified hostname\n"), out);
-	fputs(_("     --erase-chars <string> additional backspace chars\n"), out);
-	fputs(_("     --kill-chars <string>  additional kill chars\n"), out);
-	fputs(_("     --chdir <directory>    chdir before the login\n"), out);
-	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
-	fputs(_("     --nice <number>        run login with this priority\n"), out);
-	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
-	fputs(_("     --list-speeds          display supported baud rates\n"), out);
-	fprintf(out, "     --help                 %s\n", USAGE_OPTSTR_HELP);
-	fprintf(out, "     --version              %s\n", USAGE_OPTSTR_VERSION);
-	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
-
-	exit(EXIT_SUCCESS);
-}
-
 
 
 #ifdef AGETTY_RELOAD
