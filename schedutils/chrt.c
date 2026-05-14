@@ -526,9 +526,7 @@ int main(int argc, char **argv)
 		case 'X':
 #ifdef SCHED_FLAG_UTIL_CLAMP_MAX
 			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MAX;
-			ctl->util_max = strtou32_or_err(optarg, _("invalid --clamp-max value"));
-			if (ctl->util_max > 1024)
-				errx(EXIT_FAILURE, _("--clamp-max value must be in range 0-1024"));
+			ctl->util_max = (uint32_t) str2unum_or_err(optarg, 10, _("--clamp-max value must be in range 0-1024"), 1024);
 #endif
 			break;
 		case 'i':
