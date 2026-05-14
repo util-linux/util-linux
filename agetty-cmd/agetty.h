@@ -4,7 +4,10 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <termios.h>
+#include <unistd.h>
 #include <utmpx.h>
+
+#include "ttyutils.h"
 
 /*
  * Some heuristics to find out what environment we are in: if it is not
@@ -78,10 +81,32 @@ extern char *agetty_xgethostname(void);
 extern char *agetty_xgetdomainname(void);
 extern void agetty_update_utmp(struct agetty_options *op, const char *fakehost);
 
+enum {
+	CLOCAL_MODE_AUTO = 0,
+	CLOCAL_MODE_ALWAYS,
+	CLOCAL_MODE_NEVER
+};
+
 #define	FIRST_SPEED	0
+
+#ifdef DEBUGGING
+# define debug(s) do { fprintf(dbf,s); fflush(dbf); } while (0)
+extern FILE *dbf;
+#else
+# define debug(s) do { ; } while (0)
+#endif
 
 extern speed_t agetty_bcode(char *s);
 extern void agetty_list_speeds(void);
 extern void agetty_fprint_speed(FILE *out, speed_t speed);
+
+extern void agetty_termio_clear(int fd);
+extern void agetty_reset_vc(const struct agetty_options *op, struct termios *tp, int canon);
+extern void agetty_open_tty(const char *tty, struct termios *tp, struct agetty_options *op);
+extern void agetty_termio_init(struct agetty_options *op, struct termios *tp);
+extern void agetty_termio_final(struct agetty_options *op, struct termios *tp, struct chardata *cp);
+extern void agetty_auto_baud(struct termios *tp);
+extern void agetty_next_speed(struct agetty_options *op, struct termios *tp);
+extern void agetty_erase_char(int visual_count, struct chardata *cp);
 
 #endif /* UTIL_LINUX_AGETTY_H */
