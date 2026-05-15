@@ -30,7 +30,7 @@
 
 /* operation flags that determine for what to get the inode, i.e. pidfs, namespace... */
 enum {
-	GETINO_PIDFS = 1,
+	GETINO_PIDFS = -1,
 	GETINO_CGROUP_NAMESPACE,
 	GETINO_IPC_NAMESPACE,
 	GETINO_NET_NAMESPACE,
@@ -41,7 +41,7 @@ enum {
 	GETINO_UTS_NAMESPACE,
 };
 
-#define IS_NAMESPACE_OP(op) ((op > GETINO_PIDFS && op <= GETINO_UTS_NAMESPACE) ? 1 : 0)
+#define IS_NAMESPACE_OP(op) ((op > GETINO_PIDFS && op <= GETINO_UTS_NAMESPACE))
 struct getino_context {
 	int		op_flag;	/* controls for what to get the inode, i.e. GETINO_* */
 	pid_t		pid;		/* PID provided on the command line */
