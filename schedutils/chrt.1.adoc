@@ -89,10 +89,10 @@ Enables GRUB (Greedy Reclamation of Unused Bandwidth) algorithm. Linux-specific,
 Set *SCHED_FLAG_DL_OVERRUN* to receive *SIGXCPU* when a *SCHED_DEADLINE* task exceeds its runtime budget within a period. Without this flag the task is silently throttled until the next period. Linux-specific, supported since 4.16.
 
 *-U*, *--clamp-min* _value_::
-Set *SCHED_FLAG_UTIL_CLAMP_MIN* to define the minimum utilization hint for the task (range 0-1024, where 1024 represents 100% of maximum CPU capacity). Tells the scheduler to place the task on a cpu with enough capacity. Linux-specific, supported since 5.3.
+Set *SCHED_FLAG_UTIL_CLAMP_MIN* to define the minimum utilization hint for the task (range 0-1024, where 1024 represents 100% of maximum CPU capacity), or *-1* to reset to the system default. Resetting requires kernel >= 5.11, otherwise the syscall will fail with *EINVAL*. Tells the scheduler to place the task on a cpu with enough capacity. Linux-specific, supported since 5.3.
 
 *-X*, *--clamp-max* _value_::
-Set *SCHED_FLAG_UTIL_CLAMP_MAX* to define the maximum utilization cap for the task (range 0-1024). Tells the scheduler not to boost CPU frequency unnecessarily for this task. Linux-specific, supported since 5.3.
+Set *SCHED_FLAG_UTIL_CLAMP_MAX* to define the maximum utilization cap for the task (range 0-1024), or *-1* to reset to the system default. Resetting requires kernel >= 5.11, otherwise the syscall will fail with *EINVAL*. Tells the scheduler not to boost CPU frequency unnecessarily for this task. Linux-specific, supported since 5.3.
 
 *-R*, *--reset-on-fork*::
 Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-specific, supported since 2.6.31.

@@ -37,6 +37,7 @@
 #include "sched_attr.h"
 #include "pidutils.h"
 #include "pidfd-utils.h"
+#include "linux_version.h"
 
 /* control struct */
 struct chrt_ctl {
@@ -100,8 +101,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"), out);
 	fputs(_(" -P, --sched-period <ns>   period parameter for DEADLINE\n"), out);
 	fputs(_(" -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"), out);
-	fputs(_(" -U, --clamp-min <value>   set SCHED_FLAG_UTIL_CLAMP_MIN (0-1024)\n"), out);
-	fputs(_(" -X, --clamp-max <value>   set SCHED_FLAG_UTIL_CLAMP_MAX (0-1024)\n"), out);
+	fputs(_(" -U, --clamp-min <value>   set SCHED_FLAG_UTIL_CLAMP_MIN (0-1024 or -1 to reset)\n"), out);
+	fputs(_(" -X, --clamp-max <value>   set SCHED_FLAG_UTIL_CLAMP_MAX (0-1024 or -1 to reset)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Other options:\n"), out);
@@ -382,6 +383,7 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_attr sa = { .size = sizeof(struct sched_attr) };
+	int ret;
 
 	/* old API is good enough for non-deadline */
 	if (!supports_runtime_param(ctl->policy))
@@ -406,7 +408,12 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 		sa.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 # endif
 	errno = 0;
-	return sched_setattr(pid, &sa, 0);
+	ret = sched_setattr(pid, &sa, 0);
+	if (ret == -1 && errno == EINVAL
+		&& (ctl->util_min == UINT32_MAX || ctl->util_max == UINT32_MAX)
+		&& get_linux_version() < KERNEL_VERSION(5, 11, 0))
+			warnx(_("--clamp-min and --clamp-max reset may be unsupported on Linux < 5.11"));
+	return ret;
 }
 #endif /* HAVE_SCHED_SETATTR */
 
@@ -520,13 +527,21 @@ int main(int argc, char **argv)
 		case 'U':
 #ifdef SCHED_FLAG_UTIL_CLAMP_MIN
 			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MIN;
-			ctl->util_min = (uint32_t) str2unum_or_err(optarg, 10, _("--clamp-min value must be in range 0-1024"), 1024);
+			if (strcmp(optarg, "-1") == 0)
+				ctl->util_min = UINT32_MAX;
+			else
+				ctl->util_min = (uint32_t) str2unum_or_err(optarg, 10,
+					_("--clamp-min value must be in range 0-1024 or -1 to reset"), 1024);
 #endif
 			break;
 		case 'X':
 #ifdef SCHED_FLAG_UTIL_CLAMP_MAX
 			ctl->sched_flags |= SCHED_FLAG_UTIL_CLAMP_MAX;
-			ctl->util_max = (uint32_t) str2unum_or_err(optarg, 10, _("--clamp-max value must be in range 0-1024"), 1024);
+			if (strcmp(optarg, "-1") == 0)
+				ctl->util_max = UINT32_MAX;
+			else
+				ctl->util_max = (uint32_t) str2unum_or_err(optarg, 10,
+					_("--clamp-max value must be in range 0-1024 or -1 to reset"), 1024);
 #endif
 			break;
 		case 'i':
