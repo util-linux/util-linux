@@ -228,6 +228,7 @@ int main(int argc, char **argv)
 	close_stdout_atexit();
 
 	/* check for --help or --version */
+	opterr = 0;	/* suppress getopt error for first scan, restored below */
 	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
@@ -237,6 +238,7 @@ int main(int argc, char **argv)
 		}
 	}
 
+	opterr = 1;	/* re-enable getopt error messages */
 	/* gather normal options */
 	optind = 1;
 	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
