@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="x86_64_16g"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_CHMEM"
+ts_check_test_command "$TS_CMD_LSMEM"
+ts_check_prog "bzip2"
+ts_check_prog "tar"
+
+_PATH_SYS_MEM="/sys/devices/system/memory"
+
+DUMP_NAME="x86_64_16g"
+DUMP_FILENAME="$TS_SELF/sysfs-dumps/$DUMP_NAME.tar.bz2"
+DUMP_DIR="$TS_OUTDIR/sysfs-dumps"
+
+mkdir -p "$DUMP_DIR"
+tar -C "$DUMP_DIR" -jxf "$DUMP_FILENAME"
+
+do_chmem() {
+        "$TS_CMD_CHMEM" --sysroot "${DUMP_DIR}/${DUMP_NAME}" "${@}" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+}
+
+# The tests below are primarily testing the reads and writes
+# performed by chmem(8). Whether the performed actions have an
+# effect on the memory block settings, can only be tested on a
+# running Linux system. chmem(8) simply interacts with the kernel
+# ABI through the sysfs, i.e. reads or writes to the provided interfaces.
+
+ts_init_subtest "enable-disable-blocks"
+
+do_chmem --disable --blocks 0
+path_mem_state="${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/memory0/state"
+cat "$path_mem_state" >>"$TS_OUTPUT"
+true >"$path_mem_state"
+printf "\n" >>"$TS_OUTPUT"
+
+do_chmem --enable --blocks 0
+cat "$path_mem_state" >>"$TS_OUTPUT"
+printf "\n" >>"$TS_OUTPUT"
+
+ts_finalize_subtest
+
+
+ts_init_subtest "enable-disable-zone"
+
+# We will enable memory block 4 (memory4) on the Movable zone,
+# so let us make sure that it is disabled first.
+
+# In this subtest we will use a hexadecimal address range
+index="4"
+range_str="$("$TS_CMD_LSMEM" --sysroot "${DUMP_DIR}/${DUMP_NAME}" \
+                --all --output=BLOCK,RANGE --raw 2>>"$TS_ERRLOG" \
+                | sed -n "s/\(^$index\) \(.*\)/\2/p" 2>>"$TS_ERRLOG" \
+        )"
+mem_block="memory${index}"
+
+# We need to enable the "Movable" zone on this block first
+# otherwise chmem will complain about a zone mismatch
+echo "Movable" >"${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/valid_zones"
+
+
+do_chmem --verbose --disable "$range_str"
+path_mem_state="${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/state"
+cat "$path_mem_state" >>"$TS_OUTPUT"
+true >"$path_mem_state"
+printf "\n" >>"$TS_OUTPUT"
+
+do_chmem --verbose --enable --zone "Movable" "$range_str"
+cat "$path_mem_state" >>"$TS_OUTPUT"
+printf "\n" >>"$TS_OUTPUT"
+
+# Should report that it is already enabled
+do_chmem --verbose --enable "$range_str"
+true >"$path_mem_state"
+printf "\n" >>"$TS_OUTPUT"
+
+# Should report a zone mismatch
+do_chmem --verbose --enable --zone "Normal" "$range_str"
+cat "$path_mem_state" >>"$TS_OUTPUT"
+printf "\n" >>"$TS_OUTPUT"
+
+ts_finalize_subtest
+
+
+ts_finalize
