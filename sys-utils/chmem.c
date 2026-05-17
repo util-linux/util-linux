@@ -419,10 +419,9 @@ static int chmem_onoff_range(struct chmem_desc *desc, int enable, int zone_id)
 		idxtostr(desc, index, str, sizeof(str));
 		if (ul_path_readf_buffer(desc->sysmem, line, sizeof(line), "%s/state", name) > 0) {
 			if (strncmp(onoff, line, 6) == 0) {
-				if (desc->verbose && enable)
-					fprintf(stdout, _("%s already enabled\n"), str);
-				else if (desc->verbose && !enable)
-					fprintf(stdout, _("%s already disabled\n"), str);
+				if (desc->verbose)
+					printf(enable ? _("%s already enabled\n") :
+							_("%s already disabled\n"), str);
 				todo--;
 				continue;
 			}
@@ -463,15 +462,11 @@ static int chmem_onoff_range(struct chmem_desc *desc, int enable, int zone_id)
 
 		rc = ul_path_writef_string(desc->sysmem, onoff, "%s/state", name);
 		if (rc != 0) {
-			if (enable)
-				warn(_("%s enable failed"), str);
-			else
-				warn(_("%s disable failed"), str);
+			warn(enable ? _("%s enable failed") :
+					_("%s disable failed"), str);
 		} else if (desc->verbose) {
-			if (enable)
-				fprintf(stdout, _("%s enabled\n"), str);
-			else
-				fprintf(stdout, _("%s disabled\n"), str);
+			printf(enable ? _("%s enabled\n") :
+					_("%s disabled\n"), str);
 		}
 		if (!rc && !enable && desc->have_memconfig) {
 			/* Deconfigure memory block */
@@ -494,9 +489,13 @@ static int filter(const struct dirent *de)
 
 static void read_conf(struct chmem_desc *desc)
 {
+	char absdir[PATH_MAX];
+
 	if (!desc->have_memconfig)
 		return;
-	desc->memconfig_ndirs = scandir(_PATH_SYS_MEMCONFIG, &desc->memconfig_dirs,
+
+	ul_path_get_abspath(desc->sysmemconfig, absdir, sizeof(absdir), NULL);
+	desc->memconfig_ndirs = scandir(absdir, &desc->memconfig_dirs,
 					filter, versionsort);
 	if (desc->memconfig_ndirs <= 0)
 		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMCONFIG);
@@ -505,8 +504,11 @@ static void read_conf(struct chmem_desc *desc)
 static void read_info(struct chmem_desc *desc)
 {
 	char line[128];
+	char absdir[PATH_MAX];
 
-	desc->ndirs = scandir(_PATH_SYS_MEMORY, &desc->dirs, filter, versionsort);
+	ul_path_get_abspath(desc->sysmem, absdir, sizeof(absdir), NULL);
+
+	desc->ndirs = scandir(absdir, &desc->dirs, filter, versionsort);
 	if (desc->ndirs <= 0)
 		goto fail;
 	if (ul_path_read_buffer(desc->sysmem, line, sizeof(line), "block_size_bytes") < 0)
@@ -593,15 +595,16 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Set a particular size or range of memory online or offline.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -e, --enable       enable memory\n"), out);
-	fputs(_(" -d, --disable      disable memory\n"), out);
-	fputs(_(" -b, --blocks       use memory blocks\n"), out);
-	fputs(_(" -z, --zone <name>  select memory zone (see below)\n"), out);
-	fputs(_(" -c, --configure    configure range\n"), out);
-	fputs(_(" -g, --deconfigure  deconfigure range\n"), out);
-	fputs(_(" -m, --memmap-on-memory select memmap-on-memory\n"), out);
-	fputs(_(" -v, --verbose      verbose output\n"), out);
-	fprintf(out, USAGE_HELP_OPTIONS(20));
+	fputs(_(" -e, --enable             enable memory\n"), out);
+	fputs(_(" -d, --disable            disable memory\n"), out);
+	fputs(_(" -b, --blocks             use memory blocks\n"), out);
+	fputs(_(" -z, --zone <name>        select memory zone (see below)\n"), out);
+	fputs(_(" -c, --configure          configure range\n"), out);
+	fputs(_(" -g, --deconfigure        deconfigure range\n"), out);
+	fputs(_(" -m, --memmap-on-memory   select memmap-on-memory\n"), out);
+	fputs(_(" -s, --sysroot <dir>      use the specified directory as system root\n"), out);
+	fputs(_(" -v, --verbose            verbose output\n"), out);
+	fprintf(out, USAGE_HELP_OPTIONS(26));
 
 	fputs(_("\nSupported zones:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(zone_names); i++)
@@ -660,9 +663,11 @@ static int chmem_size(struct chmem_desc *desc, int cmd, int zone_id)
 
 int main(int argc, char **argv)
 {
-	struct chmem_desc _desc = { 0 }, *desc = &_desc;
+	struct chmem_desc _desc = {
+		.memmap_on_memory = -1,
+	}, *desc = &_desc;
 	int cmd = CMD_NONE, zone_id = -1;
-	char *zone = NULL;
+	char *zone = NULL, *sysroot = NULL;
 	int c, rc;
 
 	static const struct option longopts[] = {
@@ -676,6 +681,7 @@ int main(int argc, char **argv)
 		{"configure",	no_argument,		NULL, 'c'},
 		{"deconfigure", no_argument,		NULL, 'g'},
 		{"memmap-on-memory", required_argument,	NULL, 'm'},
+		{"sysroot", required_argument,	NULL, 's'},
 		{NULL,		0,			NULL, 0}
 	};
 
@@ -691,19 +697,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	ul_path_init_debug();
-	desc->memmap_on_memory = -1;
-	desc->sysmem = ul_new_path(_PATH_SYS_MEMORY);
-	if (!desc->sysmem)
-		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
-	desc->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
-	if (!desc->sysmemconfig)
-		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMCONFIG);
-	if (ul_path_access(desc->sysmemconfig, F_OK, "memory0") == 0)
-		desc->have_memconfig = 1;
-	read_info(desc);
-
-	while ((c = getopt_long(argc, argv, "bcdeghm:vVz:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "bcdeghm:s:vVz:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -732,6 +726,9 @@ int main(int argc, char **argv)
 		case 'm':
 			desc->memmap_on_memory = atoi(optarg);
 			break;
+		case 's':
+			sysroot = optarg;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -746,8 +743,26 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	parse_parameter(desc, argv[optind]);
+	ul_path_init_debug();
 
+	desc->sysmem = ul_new_path(_PATH_SYS_MEMORY);
+	if (!desc->sysmem)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMORY);
+	if (sysroot && ul_path_set_prefix(desc->sysmem, sysroot) != 0)
+		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
+	if (!ul_path_is_accessible(desc->sysmem))
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_MEMORY);
+
+	desc->sysmemconfig = ul_new_path(_PATH_SYS_MEMCONFIG);
+	if (!desc->sysmemconfig)
+		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMCONFIG);
+	if (sysroot && ul_path_set_prefix(desc->sysmemconfig, sysroot) != 0)
+		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
+	if (ul_path_access(desc->sysmemconfig, F_OK, "memory0") == 0)
+		desc->have_memconfig = 1;
+
+	read_info(desc);
+	parse_parameter(desc, argv[optind]);
 
 	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
 	if (ul_path_access(desc->sysmem, F_OK, "memory0/valid_zones") == 0)

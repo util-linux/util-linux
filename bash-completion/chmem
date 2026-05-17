@@ -5,6 +5,10 @@ _chmem_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-s'|'--sysroot')
+			COMPREPLY=( $(compgen -d -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -20,6 +24,7 @@ _chmem_module()
 				--blocks
 				--verbose
 				--zone
+				--sysroot
 				--help
 				--version
 			"

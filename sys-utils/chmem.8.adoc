@@ -68,6 +68,9 @@ Set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory to be deconfigured.
 *-m*, *--memmap-on-memory*::
 Select memmap-on-memory for the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory. This option is valid only with *--configure*.
 
+*-s*, *--sysroot* _directory_::
+Configure memory blocks for a Linux instance other than the instance from which the *chmem* command is issued. The specified _directory_ is the system root of the Linux instance to be configured.
+
 *-z*, *--zone*::
 Select the memory _ZONE_ where to set the specified _RANGE_, _SIZE_, or _BLOCKRANGE_ of memory online or offline. By default, memory will be set online to the zone Movable, if possible.
 
