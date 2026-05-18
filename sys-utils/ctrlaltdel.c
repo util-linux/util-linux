@@ -58,7 +58,7 @@ static int get_cad(void)
 		break;
 	default:
 		printf("%s hard\n", _("implicit"));
-		warnx(_("unexpected value in %s: %ju"), _PATH_PROC_CTRL_ALT_DEL, val);
+		warnx(_("unexpected value in %s: %ju"), _PATH_PROC_CTRL_ALT_DEL, (uintmax_t)val);
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;

@@ -267,6 +267,8 @@ option('build-prlimit', type : 'feature',
        description : 'build prlimit')
 option('build-fincore', type : 'feature',
        description : 'build fincore')
+option('build-lscpu', type : 'feature',
+       description : 'build lscpu')
 
 # static programs
 

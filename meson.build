@@ -143,6 +143,7 @@ headers = '''
         sys/disk.h
         sys/disklabel.h
         sys/endian.h
+        sys/epoll.h
         sys/file.h
         sys/io.h
         sys/ioccom.h
@@ -2046,6 +2047,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['swapoff']
 endif
 
+opt = get_option('build-lscpu') \
+      .require(LINUX) \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'lscpu',
   lscpu_sources,
@@ -2054,8 +2059,9 @@ exe = executable(
                lib_smartcols],
   dependencies : [rtas_libs],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += lscpu_manadocs
   bashcompletions += ['lscpu']
@@ -2126,7 +2132,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['fallocate']
 endif
 
-opt = get_option('build-pivot_root').allowed()
+opt = get_option('build-pivot_root') \
+      .require(LINUX) \
+      .allowed()
 exe = executable(
   'pivot_root',
   pivot_root_sources,
@@ -2252,7 +2260,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['flock']
 endif
 
-opt = get_option('build-lsirq').allowed()
+opt = get_option('build-lsirq') \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'lsirq',
   lsirq_sources,
@@ -2268,7 +2278,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsirq']
 endif
 
-opt = get_option('build-irqtop').allowed()
+opt = get_option('build-irqtop') \
+      .require(conf.get('HAVE_SYS_EPOLL_H').to_string() == '1') \
+      .require(conf.get('HAVE_CPU_SET_T').to_string() == '1') \
+      .allowed()
 exe = executable(
   'irqtop',
   irqtop_sources,
@@ -2286,7 +2299,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['irqtop']
 endif
 
-opt = get_option('build-ipcs').allowed()
+opt = get_option('build-ipcs') \
+      .require(LINUX) \
+      .allowed()
 exe = executable(
   'lsipc',
   lsipc_sources,
@@ -4075,13 +4090,14 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+opt = conf.get('HAVE_SYS_PRCTL_H').to_string() == '1'
 exe = executable(
   'test_child_create',
   'tests/helpers/test_child_create.c',
   include_directories : includes,
   link_with : lib_common,
-  build_by_default: program_tests)
-if not is_disabler(exe)
+  build_by_default: opt and program_tests )
+if opt and not is_disabler(exe)
   exes += exe
 endif
 

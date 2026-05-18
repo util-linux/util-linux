@@ -254,3 +254,31 @@ jobs:
           if [[ "$OPENWRT_TARGET" = "x86" ]]; then
               .github/workflows/cibuild.sh CHECK
           fi
+
+  build-macos:
+    name: build macos
+    runs-on: macos-latest
+    concurrency:
+      group: ${{ github.workflow }}-macos-${{ github.ref }}
+      cancel-in-progress: true
+    env:
+      COMPILER: none
+      HOMEBREWPATH: "/opt/homebrew/bin:/opt/homebrew/opt/bison/bin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/opt/gnu-sed/libexec/gnubin"
+    steps:
+      - name: Prepare
+        run: |
+          brew install meson coreutils bison findutils gnu-sed bash
+      - name: Repository checkout
+        uses: actions/checkout@v6
+      - name: Configure
+        run: |
+          PATH="$HOMEBREWPATH:$PATH"
+          .github/workflows/cibuild.sh MESONCONF
+      - name: Make
+        run: |
+          PATH="$HOMEBREWPATH:$PATH"
+          .github/workflows/cibuild.sh MESONBUILD
+      - name: Check
+        run: |
+          PATH="$HOMEBREWPATH:$PATH"
+          .github/workflows/cibuild.sh CHECK
