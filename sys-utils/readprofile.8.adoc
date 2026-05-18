@@ -22,6 +22,8 @@ This manpage documents version 2.0 of the program.
 
 The *readprofile* command uses the _/proc/profile_ information to print ascii data on standard output. The output is organized in three columns: the first is the number of clock ticks, the second is the name of the C function in the kernel where those many ticks occurred, and the third is the normalized `load' of the procedure, calculated as a ratio between the number of ticks and the length of the procedure. The output is filled with blanks to ease readability.
 
+This utility is a diagnostic tool and is not designed or intended for use in security-sensitive contexts (e.g., setuid, setgid, sudo, or similar privilege-elevation scenarios). It is installed without any special permissions.
+
 == OPTIONS
 
 *-a*, *--all*::
@@ -46,7 +48,7 @@ On some architectures it is possible to alter the frequency at which the kernel 
 Specify a different profiling buffer, which by default is _/proc/profile_. Using a different pro-file is useful if you want to `freeze' the kernel profiling at some time and read it later. The _/proc/profile_ file can be copied using *cat*(1) or *cp*(1). There is no more support for compressed profile buffers, like in *readprofile-1.1*, because the program needs to know the size of the buffer in advance.
 
 *-r*, *--reset*::
-Reset the profiling buffer. This can only be invoked by root, because _/proc/profile_ is readable by everybody but writable only by the superuser. However, you can make *readprofile* set-user-ID 0, in order to reset the buffer without gaining privileges.
+Reset the profiling buffer. This can only be invoked by root, because _/proc/profile_ is readable by everybody but writable only by the superuser.
 
 *-s, --counters*::
 Print individual counters within functions.
@@ -112,7 +114,7 @@ Browse a 'frozen' profile buffer for a non current kernel:
 Request profiling at 2kHz per CPU, and reset the profiling buffer:
 
 ....
-   sudo readprofile -M 20
+   readprofile -M 20
 ....
 
 include::man-common/bugreports.adoc[]
