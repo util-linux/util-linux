@@ -1,7 +1,9 @@
+if BUILD_LIBSMARTCOLS
 if !OSS_FUZZ
 check_PROGRAMS += test_scols_termreduce
 test_scols_termreduce_SOURCES = tests/helpers/test_scols_termreduce.c
 test_scols_termreduce_LDADD = $(LDADD) libsmartcols.la
+endif
 endif
 
 check_PROGRAMS += test_mbsencode
