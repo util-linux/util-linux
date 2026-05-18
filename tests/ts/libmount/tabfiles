@@ -83,6 +83,7 @@ sed -i -e 's/fs: 0x.*/fs:/g' "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "is-mounted-btrfs"
+grep -q '#define HAVE_BTRFS_SUPPORT' ${top_builddir}/config.h || ts_skip_subtest "no btrfs support"
 ts_run $TESTPROG --is-mounted "$TS_SELF/files/fstab_btrfs" "$TS_SELF/files/mountinfo_btrfs" &> "$TS_OUTPUT"
 ts_finalize_subtest
 
