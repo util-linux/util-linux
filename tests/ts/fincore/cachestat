@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="cachestat"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FINCORE"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+ts_check_prog "jq"
+ts_check_prog "sed"
+
+# The cachestat system call was introduced in kernel version 6.5
+if ts_kernel_ver_lt 6 5; then
+	ts_skip "this test requires Linux version >= 6.5"
+fi
+
+
+PAGESIZE="$($TS_HELPER_SYSINFO pagesize)"
+
+TEST_FILE="${TS_OUTDIR}/${TS_TESTNAME}.data"
+BLKSIZE="$(stat --file-system --format=%s "$TS_OUTDIR")"
+
+{
+    printf '%*s' "$BLKSIZE" '' | tr ' ' '\252'
+    printf '%*s' "$BLKSIZE" '' | tr ' ' '\377'
+    printf '%*s' "$BLKSIZE" '' | tr ' ' '\125'
+} >"$TEST_FILE"
+sync "$TEST_FILE"
+
+# Dirty the file page cache
+# This should allocate an entire IO Block of size $BLKSIZE
+printf "%*s" 20 '' | tr ' ' '\273' >> "$TEST_FILE"
+
+"$TS_CMD_FINCORE" --json --output-all --cachestat --bytes "$TEST_FILE" \
+        | jq '.fincore[] | { total_size: .size, dirty_size: .dirty }' \
+        >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+# Validate the output
+{
+    # We have written 3 full IO Blocks plus the 20 dirty bytes
+    sed -i -e "s@\(\"total_size\":[[:space:]]*\)\($((3 * BLKSIZE + 20))\)@\1<validated>@" "$TS_OUTPUT"
+    # The dirty write should have allocated a full memory page size
+    sed -i -e "s@\(\"dirty_size\":[[:space:]]*\)\($PAGESIZE\)@\1<validated>@" "$TS_OUTPUT"
+} 2>>"$TS_ERRLOG"
+
+rm -f "$TEST_FILE"
+ts_finalize
