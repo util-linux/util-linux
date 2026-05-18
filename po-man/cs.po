@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-man 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-03-24 11:52+0100\n"
+"POT-Creation-Date: 2026-05-18 12:12+0200\n"
 "PO-Revision-Date: 2022-03-19 16:33+01:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -96,7 +96,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man-common/colors.adoc:17 ../lib/terminal-colors.d.5.adoc:48
+#: ../man-common/colors.adoc:17 ../lib/terminal-colors.d.5.adoc:47
 msgid ""
 "The user-specific _$XDG_CONFIG_HOME/terminal-colors.d_ or _$HOME/.config/"
 "terminal-colors.d_ overrides the global setting."
@@ -401,10 +401,12 @@ msgstr ""
 #: ../text-utils/rev.1.adoc:45 ../text-utils/ul.1.adoc:45
 #: ../text-utils/bits.1.adoc:23 ../liblastlog2/man/lastlog2.3.adoc:10
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:10
+#: ../liblastlog2/man/ll2_new_context.3.adoc:10
 #: ../liblastlog2/man/ll2_read_all.3.adoc:10
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:10
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:10
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:10
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:10
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:10
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:10
 #: ../pam_lastlog2/man/pam_lastlog2.8.adoc:10
@@ -492,10 +494,12 @@ msgstr ""
 #: ../text-utils/ul.1.adoc:49 ../text-utils/bits.1.adoc:27
 #: ../liblastlog2/man/lastlog2.3.adoc:14
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:14
+#: ../liblastlog2/man/ll2_new_context.3.adoc:14
 #: ../liblastlog2/man/ll2_read_all.3.adoc:14
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:14
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:14
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:14
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:14
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:14
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:14
 #: ../pam_lastlog2/man/pam_lastlog2.8.adoc:14
@@ -583,10 +587,12 @@ msgstr ""
 #: ../text-utils/rev.1.adoc:53 ../text-utils/ul.1.adoc:53
 #: ../text-utils/bits.1.adoc:31 ../liblastlog2/man/lastlog2.3.adoc:18
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:22
+#: ../liblastlog2/man/ll2_new_context.3.adoc:20
 #: ../liblastlog2/man/ll2_read_all.3.adoc:23
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:22
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:21
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:21
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:20
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:22
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:23
 #: ../pam_lastlog2/man/pam_lastlog2.8.adoc:18
@@ -687,20 +693,20 @@ msgstr ""
 #: ../misc-utils/getino.1.adoc:83 ../misc-utils/getopt.1.adoc:154
 #: ../misc-utils/kill.1.adoc:143 ../misc-utils/lastlog2.8.adoc:87
 #: ../misc-utils/logger.1.adoc:254 ../misc-utils/look.1.adoc:105
-#: ../misc-utils/lsblk.8.adoc:248 ../misc-utils/lsclocks.1.adoc:118
+#: ../misc-utils/lsblk.8.adoc:250 ../misc-utils/lsclocks.1.adoc:118
 #: ../misc-utils/lslocks.8.adoc:157 ../misc-utils/mcookie.1.adoc:56
 #: ../misc-utils/namei.1.adoc:93 ../misc-utils/pipesz.1.adoc:99
 #: ../misc-utils/rename.1.adoc:112 ../misc-utils/uuidd.8.adoc:98
 #: ../misc-utils/uuidgen.1.adoc:77 ../misc-utils/uuidparse.1.adoc:75
 #: ../misc-utils/waitpid.1.adoc:61 ../misc-utils/wipefs.8.adoc:116
-#: ../schedutils/chrt.1.adoc:156 ../schedutils/coresched.1.adoc:117
+#: ../schedutils/chrt.1.adoc:157 ../schedutils/coresched.1.adoc:117
 #: ../schedutils/ionice.1.adoc:91 ../schedutils/taskset.1.adoc:154
 #: ../schedutils/uclampset.1.adoc:131 ../sys-utils/adjtime_config.5.adoc:54
 #: ../sys-utils/blkdiscard.8.adoc:77 ../sys-utils/blkzone.8.adoc:106
 #: ../sys-utils/blkpr.8.adoc:50 ../sys-utils/chcpu.8.adoc:80
 #: ../sys-utils/chmem.8.adoc:118 ../sys-utils/choom.1.adoc:53
 #: ../sys-utils/ctrlaltdel.8.adoc:49 ../sys-utils/dmesg.1.adoc:200
-#: ../sys-utils/eject.1.adoc:121 ../sys-utils/fallocate.1.adoc:108
+#: ../sys-utils/eject.1.adoc:121 ../sys-utils/fallocate.1.adoc:110
 #: ../sys-utils/flock.1.adoc:144 ../sys-utils/fsfreeze.8.adoc:53
 #: ../sys-utils/fstab.5.adoc:147 ../sys-utils/fstrim.8.adoc:91
 #: ../sys-utils/hwclock.8.adoc:393 ../sys-utils/ipcmk.1.adoc:64
@@ -717,7 +723,7 @@ msgstr ""
 #: ../sys-utils/switch_root.8.adoc:47 ../sys-utils/umount.8.adoc:211
 #: ../sys-utils/unshare.1.adoc:301 ../sys-utils/zramctl.8.adoc:115
 #: ../term-utils/mesg.1.adoc:115 ../term-utils/script.1.adoc:164
-#: ../term-utils/scriptlive.1.adoc:92 ../term-utils/scriptreplay.1.adoc:120
+#: ../term-utils/scriptlive.1.adoc:92 ../term-utils/scriptreplay.1.adoc:121
 #: ../term-utils/setterm.1.adoc:183 ../term-utils/wall.1.adoc:83
 #: ../term-utils/write.1.adoc:84 ../text-utils/col.1.adoc:129
 #: ../text-utils/colcrt.1.adoc:94 ../text-utils/colrm.1.adoc:69
@@ -726,10 +732,12 @@ msgstr ""
 #: ../text-utils/rev.1.adoc:66 ../text-utils/ul.1.adoc:82
 #: ../liblastlog2/man/lastlog2.3.adoc:32
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:47
+#: ../liblastlog2/man/ll2_new_context.3.adoc:44
 #: ../liblastlog2/man/ll2_read_all.3.adoc:56
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:54
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:45
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:48
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:40
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:49
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:52
 #: ../pam_lastlog2/man/pam_lastlog2.8.adoc:68
@@ -822,7 +830,7 @@ msgstr ""
 #: ../misc-utils/uuidd.8.adoc:27 ../misc-utils/uuidgen.1.adoc:31
 #: ../misc-utils/uuidparse.1.adoc:51 ../misc-utils/waitpid.1.adoc:28
 #: ../misc-utils/whereis.1.adoc:73 ../misc-utils/wipefs.8.adoc:41
-#: ../schedutils/chrt.1.adoc:94 ../schedutils/coresched.1.adoc:51
+#: ../schedutils/chrt.1.adoc:95 ../schedutils/coresched.1.adoc:51
 #: ../schedutils/ionice.1.adoc:46 ../schedutils/taskset.1.adoc:70
 #: ../schedutils/uclampset.1.adoc:68 ../sys-utils/blkdiscard.8.adoc:29
 #: ../sys-utils/blkzone.8.adoc:80 ../sys-utils/blkpr.8.adoc:24
@@ -838,7 +846,7 @@ msgstr ""
 #: ../sys-utils/lsipc.1.adoc:24 ../sys-utils/lsirq.1.adoc:24
 #: ../sys-utils/lsmem.1.adoc:65 ../sys-utils/lsns.8.adoc:35
 #: ../sys-utils/mountpoint.1.adoc:23 ../sys-utils/nsenter.1.adoc:49
-#: ../sys-utils/pivot_root.8.adoc:33 ../sys-utils/readprofile.8.adoc:25
+#: ../sys-utils/pivot_root.8.adoc:33 ../sys-utils/readprofile.8.adoc:27
 #: ../sys-utils/renice.1.adoc:61 ../sys-utils/rfkill.8.adoc:26
 #: ../sys-utils/rtcwake.8.adoc:31 ../sys-utils/setarch.8.adoc:32
 #: ../sys-utils/setpgid.1.adoc:29 ../sys-utils/setpriv.1.adoc:23
@@ -1203,18 +1211,18 @@ msgstr ""
 #: ../misc-utils/findfs.8.adoc:73 ../misc-utils/findmnt.8.adoc:256
 #: ../misc-utils/getino.1.adoc:79 ../misc-utils/kill.1.adoc:136
 #: ../misc-utils/lastlog2.8.adoc:83 ../misc-utils/logger.1.adoc:250
-#: ../misc-utils/lsblk.8.adoc:243 ../misc-utils/lsclocks.1.adoc:114
+#: ../misc-utils/lsblk.8.adoc:245 ../misc-utils/lsclocks.1.adoc:114
 #: ../misc-utils/lslocks.8.adoc:152 ../misc-utils/namei.1.adoc:87
 #: ../misc-utils/pipesz.1.adoc:95 ../misc-utils/uuidgen.1.adoc:73
 #: ../misc-utils/uuidparse.1.adoc:71 ../misc-utils/waitpid.1.adoc:57
-#: ../misc-utils/wipefs.8.adoc:112 ../schedutils/chrt.1.adoc:151
+#: ../misc-utils/wipefs.8.adoc:112 ../schedutils/chrt.1.adoc:152
 #: ../schedutils/coresched.1.adoc:109 ../schedutils/ionice.1.adoc:86
 #: ../schedutils/taskset.1.adoc:145 ../schedutils/uclampset.1.adoc:127
 #: ../sys-utils/blkdiscard.8.adoc:72 ../sys-utils/blkzone.8.adoc:101
 #: ../sys-utils/blkpr.8.adoc:46 ../sys-utils/chcpu.8.adoc:72
 #: ../sys-utils/choom.1.adoc:49 ../sys-utils/ctrlaltdel.8.adoc:45
 #: ../sys-utils/dmesg.1.adoc:194 ../sys-utils/eject.1.adoc:117
-#: ../sys-utils/fallocate.1.adoc:103 ../sys-utils/flock.1.adoc:135
+#: ../sys-utils/fallocate.1.adoc:105 ../sys-utils/flock.1.adoc:135
 #: ../sys-utils/fsfreeze.8.adoc:49 ../sys-utils/fstrim.8.adoc:87
 #: ../sys-utils/hwclock.8.adoc:403 ../sys-utils/ipcmk.1.adoc:59
 #: ../sys-utils/ipcs.1.adoc:86 ../sys-utils/irqtop.1.adoc:82
@@ -1229,14 +1237,16 @@ msgstr ""
 #: ../sys-utils/setsid.1.adoc:38 ../sys-utils/switch_root.8.adoc:41
 #: ../sys-utils/unshare.1.adoc:296 ../sys-utils/wdctl.8.adoc:68
 #: ../sys-utils/zramctl.8.adoc:110 ../term-utils/agetty.8.adoc:356
-#: ../term-utils/scriptlive.1.adoc:79 ../term-utils/scriptreplay.1.adoc:101
+#: ../term-utils/scriptlive.1.adoc:79 ../term-utils/scriptreplay.1.adoc:102
 #: ../text-utils/more.1.adoc:211 ../text-utils/bits.1.adoc:129
 #: ../liblastlog2/man/lastlog2.3.adoc:28
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:43
+#: ../liblastlog2/man/ll2_new_context.3.adoc:40
 #: ../liblastlog2/man/ll2_read_all.3.adoc:52
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:50
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:41
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:44
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:36
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:45
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:48
 #, no-wrap
@@ -1648,18 +1658,18 @@ msgstr ""
 #: ../disk-utils/fsck.8.adoc:130 ../disk-utils/mkfs.minix.8.adoc:77
 #: ../disk-utils/mkswap.8.adoc:102 ../disk-utils/partx.8.adoc:103
 #: ../disk-utils/sfdisk.8.adoc:436 ../disk-utils/swaplabel.8.adoc:41
-#: ../lib/terminal-colors.d.5.adoc:191 ../login-utils/lslogins.1.adoc:149
+#: ../lib/terminal-colors.d.5.adoc:190 ../login-utils/lslogins.1.adoc:149
 #: ../login-utils/sulogin.8.adoc:67 ../login-utils/vipw.8.adoc:63
 #: ../lsfd-cmd/lsfd.1.adoc:123 ../misc-utils/blkid.8.adoc:175
 #: ../misc-utils/fincore.1.adoc:67 ../misc-utils/findfs.8.adoc:68
 #: ../misc-utils/findmnt.8.adoc:217 ../misc-utils/getopt.1.adoc:136
 #: ../misc-utils/hardlink.1.adoc:156 ../misc-utils/look.1.adoc:81
-#: ../misc-utils/lsblk.8.adoc:221 ../misc-utils/lsclocks.1.adoc:72
+#: ../misc-utils/lsblk.8.adoc:223 ../misc-utils/lsclocks.1.adoc:72
 #: ../misc-utils/lslocks.8.adoc:83 ../misc-utils/lslocks.8.adoc:130
 #: ../misc-utils/uuidparse.1.adoc:67 ../misc-utils/whereis.1.adoc:114
 #: ../misc-utils/wipefs.8.adoc:91 ../sys-utils/hwclock.8.adoc:372
 #: ../sys-utils/irqtop.1.adoc:61 ../sys-utils/losetup.8.adoc:154
-#: ../sys-utils/lscpu.1.adoc:124 ../sys-utils/lsipc.1.adoc:101
+#: ../sys-utils/lscpu.1.adoc:126 ../sys-utils/lsipc.1.adoc:101
 #: ../sys-utils/lsirq.1.adoc:55 ../sys-utils/lsmem.1.adoc:102
 #: ../sys-utils/lsns.8.adoc:103 ../sys-utils/mount.8.adoc:1751
 #: ../sys-utils/mountpoint.1.adoc:55 ../sys-utils/rfkill.8.adoc:45
@@ -1697,7 +1707,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../disk-utils/cfdisk.8.adoc:137 ../disk-utils/fdisk.8.adoc:207
-#: ../disk-utils/sfdisk.8.adoc:442 ../misc-utils/lsblk.8.adoc:226
+#: ../disk-utils/sfdisk.8.adoc:442 ../misc-utils/lsblk.8.adoc:228
 #: ../sys-utils/mount.8.adoc:1762 ../sys-utils/swapon.8.adoc:177
 #, no-wrap
 msgid "*LIBBLKID_DEBUG*=all"
@@ -1922,9 +1932,9 @@ msgstr ""
 #: ../login-utils/lslogins.1.adoc:132 ../login-utils/nologin.8.adoc:53
 #: ../login-utils/utmpdump.1.adoc:52 ../misc-utils/cal.1.adoc:155
 #: ../misc-utils/copyfilerange.1.adoc:49 ../misc-utils/getino.1.adoc:75
-#: ../misc-utils/kill.1.adoc:130 ../misc-utils/lsblk.8.adoc:237
+#: ../misc-utils/kill.1.adoc:130 ../misc-utils/lsblk.8.adoc:239
 #: ../misc-utils/lslocks.8.adoc:135 ../misc-utils/pipesz.1.adoc:83
-#: ../schedutils/chrt.1.adoc:145 ../schedutils/coresched.1.adoc:105
+#: ../schedutils/chrt.1.adoc:146 ../schedutils/coresched.1.adoc:105
 #: ../schedutils/ionice.1.adoc:68 ../schedutils/uclampset.1.adoc:115
 #: ../sys-utils/choom.1.adoc:35 ../sys-utils/eject.1.adoc:101
 #: ../sys-utils/flock.1.adoc:107 ../sys-utils/fsfreeze.8.adoc:45
@@ -3322,7 +3332,7 @@ msgid "enables libmount debug output."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/fsck.8.adoc:152 ../lib/terminal-colors.d.5.adoc:201
+#: ../disk-utils/fsck.8.adoc:152 ../lib/terminal-colors.d.5.adoc:200
 #: ../login-utils/last.1.adoc:131 ../login-utils/login.1.adoc:152
 #: ../login-utils/newgrp.1.adoc:42 ../login-utils/runuser.1.adoc:123
 #: ../login-utils/su.1.adoc:135 ../misc-utils/lastlog2.8.adoc:77
@@ -3330,7 +3340,7 @@ msgstr ""
 #: ../sys-utils/adjtime_config.5.adoc:50 ../sys-utils/ctrlaltdel.8.adoc:41
 #: ../sys-utils/fstab.5.adoc:130 ../sys-utils/hwclock.8.adoc:380
 #: ../sys-utils/losetup.8.adoc:161 ../sys-utils/mount.8.adoc:1768
-#: ../sys-utils/readprofile.8.adoc:59 ../sys-utils/renice.1.adoc:87
+#: ../sys-utils/readprofile.8.adoc:61 ../sys-utils/renice.1.adoc:87
 #: ../sys-utils/rtcwake.8.adoc:117 ../sys-utils/swapon.8.adoc:180
 #: ../sys-utils/tunelp.8.adoc:61 ../sys-utils/umount.8.adoc:196
 #: ../sys-utils/zramctl.8.adoc:91 ../term-utils/agetty.8.adoc:319
@@ -3398,12 +3408,12 @@ msgstr ""
 #: ../misc-utils/copyfilerange.1.adoc:37 ../misc-utils/hardlink.1.adoc:128
 #: ../misc-utils/mcookie.1.adoc:41 ../misc-utils/pipesz.1.adoc:64
 #: ../misc-utils/rename.1.adoc:34 ../misc-utils/waitpid.1.adoc:30
-#: ../schedutils/chrt.1.adoc:105 ../schedutils/coresched.1.adoc:65
+#: ../schedutils/chrt.1.adoc:106 ../schedutils/coresched.1.adoc:65
 #: ../schedutils/uclampset.1.adoc:88 ../sys-utils/blkdiscard.8.adoc:54
 #: ../sys-utils/blkzone.8.adoc:96 ../sys-utils/chmem.8.adoc:74
-#: ../sys-utils/eject.1.adoc:86 ../sys-utils/fallocate.1.adoc:79
+#: ../sys-utils/eject.1.adoc:86 ../sys-utils/fallocate.1.adoc:81
 #: ../sys-utils/hwclock.8.adoc:188 ../sys-utils/ipcrm.1.adoc:72
-#: ../sys-utils/mount.8.adoc:489 ../sys-utils/readprofile.8.adoc:54
+#: ../sys-utils/mount.8.adoc:489 ../sys-utils/readprofile.8.adoc:56
 #: ../sys-utils/rtcwake.8.adoc:108 ../sys-utils/setarch.8.adoc:48
 #: ../sys-utils/swapon.8.adoc:92 ../sys-utils/umount.8.adoc:112
 #: ../term-utils/mesg.1.adoc:90
@@ -3564,10 +3574,10 @@ msgstr ""
 #: ../disk-utils/fsck.minix.8.adoc:38
 #, no-wrap
 msgid ""
-"|/dev/hda[1-63] |IDE disk 1\n"
-"|/dev/hdb[1-63] |IDE disk 2\n"
-"|/dev/sda[1-15] |SCSI disk 1\n"
-"|/dev/sdb[1-15] |SCSI disk 2\n"
+"| /dev/hda[1-63] | IDE disk 1\n"
+"| /dev/hdb[1-63] | IDE disk 2\n"
+"| /dev/sda[1-15] | SCSI disk 1\n"
+"| /dev/sdb[1-15] | SCSI disk 2\n"
 msgstr ""
 
 #. type: delimited block _
@@ -3924,7 +3934,7 @@ msgstr ""
 #: ../misc-utils/hardlink.1.adoc:161 ../misc-utils/mcookie.1.adoc:52
 #: ../misc-utils/namei.1.adoc:83 ../misc-utils/pipesz.1.adoc:91
 #: ../sys-utils/lscpu.1.adoc:144 ../sys-utils/mount.8.adoc:1794
-#: ../sys-utils/readprofile.8.adoc:70 ../term-utils/agetty.8.adoc:344
+#: ../sys-utils/readprofile.8.adoc:72 ../term-utils/agetty.8.adoc:344
 #: ../term-utils/script.1.adoc:158 ../term-utils/setterm.1.adoc:179
 #: ../text-utils/colcrt.1.adoc:72 ../text-utils/column.1.adoc:266
 #: ../text-utils/ul.1.adoc:78
@@ -4659,7 +4669,7 @@ msgstr ""
 #. type: Labeled list
 #: ../disk-utils/mkswap.8.adoc:88 ../misc-utils/fadvise.1.adoc:34
 #: ../misc-utils/wipefs.8.adoc:75 ../sys-utils/blkdiscard.8.adoc:36
-#: ../sys-utils/fallocate.1.adoc:71 ../sys-utils/losetup.8.adoc:77
+#: ../sys-utils/fallocate.1.adoc:73 ../sys-utils/losetup.8.adoc:77
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-o*, *--offset* _offset_"
@@ -5107,11 +5117,11 @@ msgid "Verbose mode."
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/partx.8.adoc:108 ../lib/terminal-colors.d.5.adoc:209
-#: ../misc-utils/uuidd.8.adoc:84 ../sys-utils/losetup.8.adoc:169
-#: ../sys-utils/pivot_root.8.adoc:37 ../sys-utils/readprofile.8.adoc:80
-#: ../sys-utils/renice.1.adoc:111 ../sys-utils/rfkill.8.adoc:69
-#: ../sys-utils/zramctl.8.adoc:96 ../term-utils/agetty.8.adoc:198
+#: ../disk-utils/partx.8.adoc:108 ../misc-utils/uuidd.8.adoc:84
+#: ../sys-utils/losetup.8.adoc:169 ../sys-utils/pivot_root.8.adoc:37
+#: ../sys-utils/readprofile.8.adoc:82 ../sys-utils/renice.1.adoc:111
+#: ../sys-utils/rfkill.8.adoc:69 ../sys-utils/zramctl.8.adoc:96
+#: ../term-utils/agetty.8.adoc:198
 #, no-wrap
 msgid "EXAMPLE"
 msgstr ""
@@ -5334,7 +5344,7 @@ msgstr ""
 #: ../misc-utils/wipefs.8.adoc:43 ../sys-utils/ipcs.1.adoc:45
 #: ../sys-utils/losetup.8.adoc:56 ../sys-utils/lscpu.1.adoc:37
 #: ../sys-utils/lsmem.1.adoc:67 ../sys-utils/mount.8.adoc:309
-#: ../sys-utils/nsenter.1.adoc:55 ../sys-utils/readprofile.8.adoc:27
+#: ../sys-utils/nsenter.1.adoc:55 ../sys-utils/readprofile.8.adoc:29
 #: ../sys-utils/swapon.8.adoc:31 ../sys-utils/umount.8.adoc:55
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
@@ -6879,21 +6889,21 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../disk-utils/sfdisk.8.adoc:455 ../misc-utils/copyfilerange.1.adoc:57
-#: ../misc-utils/enosys.1.adoc:48 ../misc-utils/findmnt.8.adoc:230
-#: ../misc-utils/getopt.1.adoc:131 ../misc-utils/logger.1.adoc:241
-#: ../misc-utils/look.1.adoc:98 ../misc-utils/pipesz.1.adoc:69
-#: ../misc-utils/rename.1.adoc:89 ../misc-utils/uuidgen.1.adoc:69
-#: ../misc-utils/whereis.1.adoc:119 ../misc-utils/wipefs.8.adoc:101
-#: ../schedutils/chrt.1.adoc:110 ../schedutils/coresched.1.adoc:70
-#: ../schedutils/ionice.1.adoc:72 ../schedutils/taskset.1.adoc:138
-#: ../sys-utils/chmem.8.adoc:92 ../sys-utils/flock.1.adoc:113
-#: ../sys-utils/prlimit.1.adoc:117 ../sys-utils/setarch.8.adoc:86
-#: ../sys-utils/setpriv.1.adoc:142 ../sys-utils/unshare.1.adoc:176
-#: ../term-utils/scriptlive.1.adoc:67 ../term-utils/scriptreplay.1.adoc:81
-#: ../text-utils/colcrt.1.adoc:85 ../text-utils/column.1.adoc:290
-#: ../text-utils/hexdump.1.adoc:230 ../text-utils/bits.1.adoc:101
-#: ../pam_lastlog2/man/pam_lastlog2.8.adoc:56
+#: ../disk-utils/sfdisk.8.adoc:455 ../lib/terminal-colors.d.5.adoc:208
+#: ../misc-utils/copyfilerange.1.adoc:57 ../misc-utils/enosys.1.adoc:48
+#: ../misc-utils/findmnt.8.adoc:230 ../misc-utils/getopt.1.adoc:131
+#: ../misc-utils/logger.1.adoc:241 ../misc-utils/look.1.adoc:98
+#: ../misc-utils/pipesz.1.adoc:69 ../misc-utils/rename.1.adoc:89
+#: ../misc-utils/uuidgen.1.adoc:69 ../misc-utils/whereis.1.adoc:119
+#: ../misc-utils/wipefs.8.adoc:101 ../schedutils/chrt.1.adoc:111
+#: ../schedutils/coresched.1.adoc:70 ../schedutils/ionice.1.adoc:72
+#: ../schedutils/taskset.1.adoc:138 ../sys-utils/chmem.8.adoc:92
+#: ../sys-utils/flock.1.adoc:113 ../sys-utils/prlimit.1.adoc:117
+#: ../sys-utils/setarch.8.adoc:86 ../sys-utils/setpriv.1.adoc:142
+#: ../sys-utils/unshare.1.adoc:176 ../term-utils/scriptlive.1.adoc:67
+#: ../term-utils/scriptreplay.1.adoc:81 ../text-utils/colcrt.1.adoc:85
+#: ../text-utils/column.1.adoc:290 ../text-utils/hexdump.1.adoc:230
+#: ../text-utils/bits.1.adoc:101 ../pam_lastlog2/man/pam_lastlog2.8.adoc:56
 #, no-wrap
 msgid "EXAMPLES"
 msgstr ""
@@ -7102,7 +7112,8 @@ msgstr ""
 #: ../lib/terminal-colors.d.5.adoc:25
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
-msgid "/etc/terminal-colors.d/_[[name][@term].][type]_"
+msgid ""
+"*/etc/terminal-colors.d/*++[++_name_**.**|++[++_name_]**@**_term_**.**]_type_"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
@@ -7138,7 +7149,7 @@ msgstr ""
 msgid "*disable*"
 msgstr ""
 
-#. type: Plain text
+#. type: delimited block _
 #: ../lib/terminal-colors.d.5.adoc:38
 msgid ""
 "Turns off output colorization for all compatible utilities. See also the "
@@ -7146,31 +7157,31 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:39
+#: ../lib/terminal-colors.d.5.adoc:38
 #, no-wrap
 msgid "*enable*"
 msgstr ""
 
-#. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:41
+#. type: delimited block _
+#: ../lib/terminal-colors.d.5.adoc:40
 msgid "Turns on output colorization; any matching *disable* files are ignored."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:42
+#: ../lib/terminal-colors.d.5.adoc:40
 #, no-wrap
 msgid "*scheme*"
 msgstr ""
 
-#. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:44
+#. type: delimited block _
+#: ../lib/terminal-colors.d.5.adoc:42
 msgid ""
 "Specifies colors used for output. The file format may be specific to the "
 "utility, the default format is described below."
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:46
+#: ../lib/terminal-colors.d.5.adoc:45
 msgid ""
 "If there are more files that match for a utility, then the file with the "
 "more specific filename wins. For example, the filename _@xterm.scheme_ has "
@@ -7179,23 +7190,23 @@ msgid ""
 msgstr ""
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:49
+#: ../lib/terminal-colors.d.5.adoc:48
 #, no-wrap
 msgid "DEFAULT SCHEME FILES FORMAT"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:52
+#: ../lib/terminal-colors.d.5.adoc:51
 msgid "The following statement is recognized:"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:54
+#: ../lib/terminal-colors.d.5.adoc:53
 msgid "_name color-sequence_"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:59
+#: ../lib/terminal-colors.d.5.adoc:58
 msgid ""
 "The _name_ is a logical name for the color sequence (for example: *error*).  "
 "The names are specific to the utilities. For more details always see the "
@@ -7203,41 +7214,41 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:61
+#: ../lib/terminal-colors.d.5.adoc:60
 msgid ""
-"The _color-sequence_ is a color name, ASCII color sequences, or escape "
-"sequences."
+"The _color-sequence_ can be a color name, an ANSI color sequence, or an "
+"escape sequence."
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:62
+#: ../lib/terminal-colors.d.5.adoc:61
 #, no-wrap
 msgid "Color names"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:65
+#: ../lib/terminal-colors.d.5.adoc:64
 msgid ""
-"black, blink, blue, bold, brown, cyan, darkgray, gray, green, halfbright, "
-"lightblue, lightcyan, lightgray, lightgreen, lightmagenta, lightred, "
-"magenta, red, reset, reverse, and yellow."
+"Valid color names are: black, blink, blue, bold, brown, cyan, darkgray, "
+"gray, green, halfbright, lightblue, lightcyan, lightgray, lightgreen, "
+"lightmagenta, lightred, magenta, red, reset, reverse, and yellow."
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:66
+#: ../lib/terminal-colors.d.5.adoc:65
 #, no-wrap
 msgid "ANSI color sequences"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:69
+#: ../lib/terminal-colors.d.5.adoc:68
 msgid ""
-"The color sequences are composed of sequences of numbers separated by "
+"An ANSI color sequence is composed of sequences of numbers separated by "
 "semicolons. The most common codes are:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:131
+#: ../lib/terminal-colors.d.5.adoc:130
 #, no-wrap
 msgid ""
 "|0\n"
@@ -7302,35 +7313,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:135
+#: ../lib/terminal-colors.d.5.adoc:134
 msgid ""
 "For example, to use a red background for alert messages in the output of "
 "*dmesg*(1), use:"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:137
+#: ../lib/terminal-colors.d.5.adoc:136
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
 msgid "`` *echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme*``"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:138
+#: ../lib/terminal-colors.d.5.adoc:137
 #, no-wrap
 msgid "Escape sequences"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:143
+#: ../lib/terminal-colors.d.5.adoc:142
 msgid ""
-"An escape sequence is necessary to enter a space, backslash, caret, or any "
+"An escape sequence is needed to enter a space, backslash, caret, or any "
 "control character anywhere in a string, as well as a hash mark as the first "
 "character. These C-style backslash-escapes can be used:"
 msgstr ""
 
 #. type: Table
-#: ../lib/terminal-colors.d.5.adoc:184
+#: ../lib/terminal-colors.d.5.adoc:183
 #, no-wrap
 msgid ""
 "|*\\a*\n"
@@ -7374,40 +7385,40 @@ msgid ""
 msgstr ""
 
 #. type: Title ===
-#: ../lib/terminal-colors.d.5.adoc:186
+#: ../lib/terminal-colors.d.5.adoc:185
 #, fuzzy, no-wrap
 #| msgid "*comment*"
 msgid "Comments"
 msgstr "*comment*"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:190
+#: ../lib/terminal-colors.d.5.adoc:189
 msgid ""
 "Lines where the first non-blank character is a *#* (hash) are ignored.  Any "
 "other use of the hash character is not interpreted as introducing a comment."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:193
+#: ../lib/terminal-colors.d.5.adoc:192
 #, no-wrap
 msgid "*TERMINAL_COLORS_DEBUG*=all"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:195 ../misc-utils/whereis.1.adoc:118
+#: ../lib/terminal-colors.d.5.adoc:194 ../misc-utils/whereis.1.adoc:118
 #: ../sys-utils/losetup.8.adoc:158
 msgid "enables debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../lib/terminal-colors.d.5.adoc:196
+#: ../lib/terminal-colors.d.5.adoc:195
 #, fuzzy, no-wrap
 #| msgid "COLORS"
 msgid "*NO_COLOR*"
 msgstr "BARVY"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:200
+#: ../lib/terminal-colors.d.5.adoc:199
 msgid ""
 "if defined, this disables output colorization unless explicitly enabled by a "
 "command-line option. See https://no-color.org/ for more details. Supported "
@@ -7415,62 +7426,64 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:204
+#: ../lib/terminal-colors.d.5.adoc:203
 msgid "_$XDG_CONFIG_HOME/terminal-colors.d_"
 msgstr ""
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:206
+#: ../lib/terminal-colors.d.5.adoc:205
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
 msgid "_$HOME/.config/terminal-colors.d_"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:208
+#: ../lib/terminal-colors.d.5.adoc:207
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
 msgid "_/etc/terminal-colors.d_"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:212
+#: ../lib/terminal-colors.d.5.adoc:211
 msgid "Disable colors for all compatible utilities:"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:215 ../lib/terminal-colors.d.5.adoc:227
+#: ../lib/terminal-colors.d.5.adoc:213
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
 msgid "*touch /etc/terminal-colors.d/disable*"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:218
+#: ../lib/terminal-colors.d.5.adoc:216
 msgid "Disable colors for all compatible utils on a vt100 terminal:"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:221
+#: ../lib/terminal-colors.d.5.adoc:218
 #, fuzzy
 #| msgid "_/etc/terminal-colors.d/disable_"
 msgid "*touch /etc/terminal-colors.d/@vt100.disable*"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:224
+#: ../lib/terminal-colors.d.5.adoc:221
 msgid "Disable colors for all compatible utils except *dmesg*(1):"
 msgstr ""
 
 #. type: delimited block _
-#: ../lib/terminal-colors.d.5.adoc:229
-#, fuzzy
+#: ../lib/terminal-colors.d.5.adoc:224
+#, fuzzy, no-wrap
 #| msgid "_/etc/terminal-colors.d/disable_"
-msgid "*touch /etc/terminal-colors.d/dmesg.enable*"
+msgid ""
+"*touch /etc/terminal-colors.d/disable*\n"
+"*touch /etc/terminal-colors.d/dmesg.enable*"
 msgstr "_/etc/terminal-colors.d/disable_"
 
 #. type: Title ==
-#: ../lib/terminal-colors.d.5.adoc:231 ../misc-utils/getopt.1.adoc:115
+#: ../lib/terminal-colors.d.5.adoc:226 ../misc-utils/getopt.1.adoc:115
 #: ../term-utils/setterm.1.adoc:175
 #, fuzzy, no-wrap
 #| msgid "AVAILABILITY"
@@ -7478,10 +7491,10 @@ msgid "COMPATIBILITY"
 msgstr "TIRÁŽ"
 
 #. type: Plain text
-#: ../lib/terminal-colors.d.5.adoc:234
+#: ../lib/terminal-colors.d.5.adoc:229
 msgid ""
 "The *terminal-colors.d* functionality is currently supported by all util-"
-"linux utilities which provides colorized output. For more details always see "
+"linux utilities which provide colorized output. For more details always see "
 "the *COLORS* section in the man page for the utility."
 msgstr ""
 
@@ -7499,10 +7512,12 @@ msgstr ""
 #: ../libuuid/man/uuid_time.3.adoc:37 ../libuuid/man/uuid_unparse.3.adoc:37
 #: ../liblastlog2/man/lastlog2.3.adoc:4
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:4
+#: ../liblastlog2/man/ll2_new_context.3.adoc:4
 #: ../liblastlog2/man/ll2_read_all.3.adoc:4
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:4
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:4
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:4
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:4
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:4
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:4
 msgid "Programmer's Manual"
@@ -8193,6 +8208,7 @@ msgstr ""
 #: ../libuuid/man/uuid_generate.3.adoc:74 ../libuuid/man/uuid_parse.3.adoc:60
 #: ../libuuid/man/uuid_time.3.adoc:57
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:36
+#: ../liblastlog2/man/ll2_new_context.3.adoc:33
 #: ../liblastlog2/man/ll2_read_all.3.adoc:43
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:39
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:34
@@ -10818,7 +10834,7 @@ msgstr ""
 "whitelist-environment*"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:53 ../login-utils/su.1.adoc:61
+#: ../login-utils/runuser.1.adoc:53
 msgid ""
 "initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, "
 "and *PATH*"
@@ -10826,12 +10842,12 @@ msgstr ""
 "inicializuje proměnné prostředí *HOME*, *SHELL*, *USER*, *LOGNAME* a *PATH*"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:54 ../login-utils/su.1.adoc:62
+#: ../login-utils/runuser.1.adoc:54
 msgid "changes to the target user's home directory"
 msgstr "přejde do domovského adresáře cílového uživatele"
 
 #. type: Plain text
-#: ../login-utils/runuser.1.adoc:55 ../login-utils/su.1.adoc:63
+#: ../login-utils/runuser.1.adoc:55
 msgid ""
 "sets argv[0] of the shell to '*-*' in order to make the shell a login shell"
 msgstr ""
@@ -11425,11 +11441,41 @@ msgstr ""
 #| "clears all the environment variables except *TERM* and variables "
 #| "specified by *--whitelist-environment*"
 msgid ""
-"clears all the environment variables except *TERM*, *COLORTERM*, *NO_COLOR* "
+"clear all the environment variables except *TERM*, *COLORTERM*, *NO_COLOR* "
 "and variables specified by *--whitelist-environment*"
 msgstr ""
 "vyčistí všechny proměnné prostředí kromě *TERM* a proměnných zadaných v *--"
 "whitelist-environment*"
+
+#. type: Plain text
+#: ../login-utils/su.1.adoc:61
+#, fuzzy
+#| msgid ""
+#| "initializes the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, "
+#| "and *PATH*"
+msgid ""
+"initialize the environment variables *HOME*, *SHELL*, *USER*, *LOGNAME*, and "
+"*PATH*"
+msgstr ""
+"inicializuje proměnné prostředí *HOME*, *SHELL*, *USER*, *LOGNAME* a *PATH*"
+
+#. type: Plain text
+#: ../login-utils/su.1.adoc:62
+#, fuzzy
+#| msgid "changes to the target user's home directory"
+msgid "change to the target user's home directory"
+msgstr "přejde do domovského adresáře cílového uživatele"
+
+#. type: Plain text
+#: ../login-utils/su.1.adoc:63
+#, fuzzy
+#| msgid ""
+#| "sets argv[0] of the shell to '*-*' in order to make the shell a login "
+#| "shell"
+msgid ""
+"set argv[0] of the shell to '*-*' in order to make the shell a login shell"
+msgstr ""
+"nastaví argv[0] shellu na '*-*', aby se shell stal shellem přihlašovacím"
 
 #. type: Plain text
 #: ../login-utils/su.1.adoc:66
@@ -14450,7 +14496,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/blkid.8.adoc:65 ../sys-utils/readprofile.8.adoc:33
+#: ../misc-utils/blkid.8.adoc:65 ../sys-utils/readprofile.8.adoc:35
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-i*, *--info*"
@@ -15565,7 +15611,7 @@ msgstr ""
 #. type: delimited block .
 #: ../misc-utils/copyfilerange.1.adoc:75
 #, no-wrap
-msgid "copyfilerange split-remainder join 1M::\n"
+msgid "copyfilerange split-remainder join :1M:\n"
 msgstr ""
 
 #. type: Plain text
@@ -15849,7 +15895,7 @@ msgstr ""
 
 #. type: Labeled list
 #: ../misc-utils/fadvise.1.adoc:38 ../sys-utils/blkdiscard.8.adoc:39
-#: ../sys-utils/fallocate.1.adoc:65
+#: ../sys-utils/fallocate.1.adoc:67
 #, no-wrap
 msgid "*-l*, *--length* _length_"
 msgstr ""
@@ -16886,7 +16932,7 @@ msgid "overrides the default location of the _mtab_ file"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/findmnt.8.adoc:225 ../misc-utils/lsblk.8.adoc:229
+#: ../misc-utils/findmnt.8.adoc:225 ../misc-utils/lsblk.8.adoc:231
 #: ../sys-utils/mount.8.adoc:1759 ../sys-utils/mountpoint.1.adoc:57
 #: ../sys-utils/swapon.8.adoc:174 ../sys-utils/umount.8.adoc:193
 #, no-wrap
@@ -18464,7 +18510,7 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/kill.1.adoc:86 ../schedutils/chrt.1.adoc:102
+#: ../misc-utils/kill.1.adoc:86 ../schedutils/chrt.1.adoc:103
 #: ../schedutils/taskset.1.adoc:78 ../schedutils/uclampset.1.adoc:79
 #: ../sys-utils/ipcs.1.adoc:58 ../sys-utils/renice.1.adoc:79
 #, fuzzy, no-wrap
@@ -20293,48 +20339,48 @@ msgid "some specified devices found, some not found"
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:223
+#: ../misc-utils/lsblk.8.adoc:225
 #, no-wrap
 msgid "*LSBLK_DEBUG*=all"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:225
+#: ../misc-utils/lsblk.8.adoc:227
 msgid "enables *lsblk* debug output."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:228 ../sys-utils/swapon.8.adoc:179
+#: ../misc-utils/lsblk.8.adoc:230 ../sys-utils/swapon.8.adoc:179
 msgid "enables *libblkid* debug output."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:231 ../sys-utils/swapon.8.adoc:176
+#: ../misc-utils/lsblk.8.adoc:233 ../sys-utils/swapon.8.adoc:176
 msgid "enables *libmount* debug output."
 msgstr ""
 
 #. type: Labeled list
-#: ../misc-utils/lsblk.8.adoc:234
+#: ../misc-utils/lsblk.8.adoc:236
 #, no-wrap
 msgid "*LSBLK_COLUMNS*="
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:236
+#: ../misc-utils/lsblk.8.adoc:238
 msgid ""
 "specifies a comma-separated list of output columns to print. All columns "
 "listed by *--list-columns* can be used."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:240
+#: ../misc-utils/lsblk.8.adoc:242
 msgid ""
 "For partitions, some information (e.g., queue attributes) is inherited from "
 "the parent device."
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:242
+#: ../misc-utils/lsblk.8.adoc:244
 msgid ""
 "The *lsblk* command needs to be able to look up each block device by major:"
 "minor numbers, which is done by using _/sys/dev/block_. This sysfs block "
@@ -20344,13 +20390,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:247
+#: ../misc-utils/lsblk.8.adoc:249
 msgid ""
 "mailto:gmazyland@gmail.com[Milan Broz], mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 
 #. type: Plain text
-#: ../misc-utils/lsblk.8.adoc:254
+#: ../misc-utils/lsblk.8.adoc:256
 #, fuzzy
 #| msgid ""
 #| "*setpriv*(1),\n"
@@ -22684,8 +22730,8 @@ msgstr ""
 #. type: Plain text
 #: ../misc-utils/wipefs.8.adoc:54
 msgid ""
-"Force erasure, even if the filesystem is mounted. This is required in order "
-"to erase a partition-table signature on a block device."
+"Force erasure, even if the filesystem is mounted. This is also required in "
+"order to erase a nested partition-table signature on a non-whole disk device."
 msgstr ""
 
 #. type: Labeled list
@@ -22941,27 +22987,31 @@ msgid "*-e*, *--ext*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:71
+#: ../schedutils/chrt.1.adoc:72
 msgid ""
 "Set scheduling policy to *SCHED_EXT* (BPF program-defined scheduling). Linux-"
 "specific, supported since 6.12. Since util-linux v2.42, the priority "
-"argument is optional; if specified, it must be set to zero."
+"argument is optional; if specified, it must be set to zero.  Note that for "
+"the policy to be recognized, the following kernel configuration options need "
+"to be enabled: *CONFIG_BPF*, *CONFIG_SCHED_CLASS_EXT*, *CONFIG_BPF_SYSCALL*, "
+"*CONFIG_BPF_JIT*, *CONFIG_DEBUG_INFO_BTF*, *CONFIG_BPF_JIT_ALWAYS_ON* and "
+"*CONFIG_BPF_JIT_DEFAULT_ON*."
 msgstr ""
 
 #. type: Title ==
-#: ../schedutils/chrt.1.adoc:72
+#: ../schedutils/chrt.1.adoc:73
 #, no-wrap
 msgid "SCHEDULING OPTIONS"
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:74
+#: ../schedutils/chrt.1.adoc:75
 #, no-wrap
 msgid "*-T*, *--sched-runtime* _nanoseconds_"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:76
+#: ../schedutils/chrt.1.adoc:77
 msgid ""
 "Specifies runtime parameter for *SCHED_DEADLINE* and custom slice length for "
 "*SCHED_OTHER* and *SCHED_BATCH* policies (Linux-specific). Note that custom "
@@ -22969,46 +23019,46 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:77
+#: ../schedutils/chrt.1.adoc:78
 #, no-wrap
 msgid "*-P*, *--sched-period* _nanoseconds_"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:79
+#: ../schedutils/chrt.1.adoc:80
 msgid ""
 "Specifies period parameter for *SCHED_DEADLINE* policy (Linux-specific). "
 "Note that the kernel's lower limit is 100 microseconds."
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:80
+#: ../schedutils/chrt.1.adoc:81
 #, no-wrap
 msgid "*-D*, *--sched-deadline* _nanoseconds_"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:82
+#: ../schedutils/chrt.1.adoc:83
 msgid ""
 "Specifies deadline parameter for *SCHED_DEADLINE* policy (Linux-specific)."
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:83 ../schedutils/uclampset.1.adoc:85
+#: ../schedutils/chrt.1.adoc:84 ../schedutils/uclampset.1.adoc:85
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*-R*, *--reset-on-fork*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:85
+#: ../schedutils/chrt.1.adoc:86
 msgid ""
 "Use *SCHED_RESET_ON_FORK* or *SCHED_FLAG_RESET_ON_FORK* flag. Linux-"
 "specific, supported since 2.6.31."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:87
+#: ../schedutils/chrt.1.adoc:88
 msgid ""
 "Each thread has a _reset-on-fork_ scheduling flag. When this flag is set, "
 "children created by *fork*(2) do not inherit privileged scheduling policies. "
@@ -23018,28 +23068,28 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:89
+#: ../schedutils/chrt.1.adoc:90
 msgid ""
 "More precisely, if the _reset-on-fork_ flag is set, the following rules "
 "apply for subsequently created children:"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:91
+#: ../schedutils/chrt.1.adoc:92
 msgid ""
 "If the calling thread has a scheduling policy of *SCHED_FIFO* or *SCHED_RR*, "
 "the policy is reset to *SCHED_OTHER* in child processes."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:93
+#: ../schedutils/chrt.1.adoc:94
 msgid ""
 "If the calling process has a negative nice value, the nice value is reset to "
 "zero in child processes."
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:96 ../schedutils/taskset.1.adoc:72
+#: ../schedutils/chrt.1.adoc:97 ../schedutils/taskset.1.adoc:72
 #: ../schedutils/uclampset.1.adoc:76
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
@@ -23047,43 +23097,43 @@ msgid "*-a*, *--all-tasks*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:98
+#: ../schedutils/chrt.1.adoc:99
 msgid ""
 "Set or retrieve the scheduling attributes of all the tasks (threads) for a "
 "given PID."
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:99
+#: ../schedutils/chrt.1.adoc:100
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-m*, *--max*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:101
+#: ../schedutils/chrt.1.adoc:102
 msgid "Show minimum and maximum valid priorities, then exit."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:104 ../schedutils/uclampset.1.adoc:81
+#: ../schedutils/chrt.1.adoc:105 ../schedutils/uclampset.1.adoc:81
 msgid "Operate on an existing PID and do not launch a new task."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:107 ../schedutils/uclampset.1.adoc:90
+#: ../schedutils/chrt.1.adoc:108 ../schedutils/uclampset.1.adoc:90
 msgid "Show status information."
 msgstr ""
 
 #. TRANSLATORS: Keep {colon} untranslated.
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:113 ../schedutils/uclampset.1.adoc:96
+#: ../schedutils/chrt.1.adoc:114 ../schedutils/uclampset.1.adoc:96
 #, no-wrap
 msgid "The default behavior is to run a new command{colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:116
+#: ../schedutils/chrt.1.adoc:117
 #, fuzzy
 #| msgid "*su* [options] [*-*] [_user_ [_argument_...]]\n"
 msgid "*chrt* _priority_ _command_ [_arguments_]"
@@ -23091,13 +23141,13 @@ msgstr "*su* [přepínače] [*-*] [_uživatel_ [_argument_…]]\n"
 
 #. TRANSLATORS: Keep {colon} untranslated
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:118
+#: ../schedutils/chrt.1.adoc:119
 #, no-wrap
 msgid "You can also retrieve the real-time attributes of an existing task{colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:121
+#: ../schedutils/chrt.1.adoc:122
 #, fuzzy
 #| msgid "*-P*, *--pty*"
 msgid "*chrt --pid* _PID_"
@@ -23105,76 +23155,76 @@ msgstr "*-P*, *--pty*"
 
 #. TRANSLATORS: Keep {colon} untranslated.
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:123 ../schedutils/uclampset.1.adoc:104
+#: ../schedutils/chrt.1.adoc:124 ../schedutils/uclampset.1.adoc:104
 #, no-wrap
 msgid "Or set them{colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:126
+#: ../schedutils/chrt.1.adoc:127
 #, fuzzy
 #| msgid "*-P*, *--pty*"
 msgid "*chrt --pid* _policy-option priority PID_"
 msgstr "*-P*, *--pty*"
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:127
+#: ../schedutils/chrt.1.adoc:128
 #, no-wrap
 msgid "For example, to set the scheduling policy to *SCHED_RR* (round-robin) and the priority to *30* for process *1234*{colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:130
+#: ../schedutils/chrt.1.adoc:131
 msgid "*chrt --pid -r 30 1234*"
 msgstr ""
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:131
+#: ../schedutils/chrt.1.adoc:132
 #, no-wrap
 msgid "Reset priorities to default for a process{colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:134
+#: ../schedutils/chrt.1.adoc:135
 #, fuzzy
 #| msgid "*-P*, *--pty*"
 msgid "*chrt --pid -o 0* _PID_"
 msgstr "*-P*, *--pty*"
 
 #. type: Labeled list
-#: ../schedutils/chrt.1.adoc:135
+#: ../schedutils/chrt.1.adoc:136
 #, no-wrap
 msgid "Set a custom slice of 1 ms for a *SCHED_OTHER* task (priority is optional for policies other than *SCHED_FIFO* and *SCHED_RR*){colon}"
 msgstr ""
 
 #. type: delimited block _
-#: ../schedutils/chrt.1.adoc:138
+#: ../schedutils/chrt.1.adoc:139
 msgid "*chrt --pid -o -T 1000000* _PID_"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:140
+#: ../schedutils/chrt.1.adoc:141
 msgid ""
 "See *sched*(7) for a detailed discussion of the different scheduler classes "
 "and how they interact."
 msgstr ""
 
 #. type: Title ==
-#: ../schedutils/chrt.1.adoc:141 ../schedutils/coresched.1.adoc:95
+#: ../schedutils/chrt.1.adoc:142 ../schedutils/coresched.1.adoc:95
 #: ../schedutils/taskset.1.adoc:106 ../schedutils/uclampset.1.adoc:111
 #, no-wrap
 msgid "PERMISSIONS"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:144 ../schedutils/uclampset.1.adoc:114
+#: ../schedutils/chrt.1.adoc:145 ../schedutils/uclampset.1.adoc:114
 msgid ""
 "A user must possess *CAP_SYS_NICE* to change the scheduling attributes of a "
 "process. Any user can retrieve the scheduling information."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:148
+#: ../schedutils/chrt.1.adoc:149
 msgid ""
 "Only *SCHED_FIFO*, *SCHED_OTHER* and *SCHED_RR* are part of POSIX 1003.1b "
 "Process Scheduling. The other scheduling attributes may be ignored on some "
@@ -23182,17 +23232,17 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:150
+#: ../schedutils/chrt.1.adoc:151
 msgid "Linux' default scheduling policy is *SCHED_OTHER*."
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:155
+#: ../schedutils/chrt.1.adoc:156
 msgid "mailto:rml@tech9.net[Robert Love], mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:162 ../schedutils/uclampset.1.adoc:137
+#: ../schedutils/chrt.1.adoc:163 ../schedutils/uclampset.1.adoc:137
 #, fuzzy
 #| msgid ""
 #| "*mesg*(1),\n"
@@ -23205,7 +23255,7 @@ msgstr ""
 "*who*(1)\n"
 
 #. type: Plain text
-#: ../schedutils/chrt.1.adoc:164
+#: ../schedutils/chrt.1.adoc:165
 msgid ""
 "See *sched_setscheduler*(2) for a description of the Linux scheduling scheme."
 msgstr ""
@@ -23522,7 +23572,7 @@ msgstr ""
 #: ../schedutils/coresched.1.adoc:113 ../schedutils/taskset.1.adoc:149
 #: ../sys-utils/chcpu.8.adoc:76 ../sys-utils/flock.1.adoc:139
 #: ../sys-utils/rtcwake.8.adoc:129 ../term-utils/scriptlive.1.adoc:83
-#: ../term-utils/scriptreplay.1.adoc:105
+#: ../term-utils/scriptreplay.1.adoc:106
 #, no-wrap
 msgid "COPYRIGHT"
 msgstr ""
@@ -27011,38 +27061,43 @@ msgid "Insert a hole of _length_ bytes from _offset_, shifting existing data."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:67
+#: ../sys-utils/fallocate.1.adoc:66
+msgid "Supported for XFS (since Linux 4.1) and ext4 (since Linux 4.2)."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/fallocate.1.adoc:69
 msgid "Specifies the length of the range, in bytes."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fallocate.1.adoc:68
+#: ../sys-utils/fallocate.1.adoc:70
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-n*, *--keep-size*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:70
+#: ../sys-utils/fallocate.1.adoc:72
 msgid ""
 "Do not modify the apparent length of the file. This may effectively allocate "
 "blocks past EOF, which can be removed with a truncate."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:73
+#: ../sys-utils/fallocate.1.adoc:75
 msgid "Specifies the beginning offset of the range, in bytes."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fallocate.1.adoc:74
+#: ../sys-utils/fallocate.1.adoc:76
 #, fuzzy, no-wrap
 #| msgid "*-h*, *--help*"
 msgid "*-p*, *--punch-hole*"
 msgstr "*-h*, *--help*"
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:76
+#: ../sys-utils/fallocate.1.adoc:78
 msgid ""
 "Deallocates space (i.e., creates a hole) in the byte range starting at "
 "_offset_ and continuing for _length_ bytes. Within the specified range, "
@@ -27054,26 +27109,26 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:78
+#: ../sys-utils/fallocate.1.adoc:80
 msgid ""
 "Supported for XFS (since Linux 2.6.38), ext4 (since Linux 3.0), Btrfs (since "
 "Linux 3.7), tmpfs (since Linux 3.5) and gfs2 (since Linux 4.16)."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:81
+#: ../sys-utils/fallocate.1.adoc:83
 msgid "Enable verbose mode."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fallocate.1.adoc:82
+#: ../sys-utils/fallocate.1.adoc:84
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-w*, *--write-zeroes*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:84
+#: ../sys-utils/fallocate.1.adoc:86
 msgid ""
 "Zeroes space in the byte range starting at _offset_ and continuing for "
 "_length_ bytes. Within the specified range, written blocks are preallocated "
@@ -27083,7 +27138,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:86
+#: ../sys-utils/fallocate.1.adoc:88
 msgid ""
 "Zeroing is done within the filesystem. The filesystem may use a hardware-"
 "accelerated zeroing command or may submit regular writes. The behavior "
@@ -27091,21 +27146,21 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:88
+#: ../sys-utils/fallocate.1.adoc:90
 msgid ""
 "Option *--keep-size* cannot be specified for the write-zeroes operation "
 "because allocating written blocks beyond the inode size is not permitted."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fallocate.1.adoc:89
+#: ../sys-utils/fallocate.1.adoc:91
 #, fuzzy, no-wrap
 #| msgid "*-P*, *--pty*"
 msgid "*-x*, *--posix*"
 msgstr "*-P*, *--pty*"
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:91
+#: ../sys-utils/fallocate.1.adoc:93
 msgid ""
 "Enable POSIX operation mode. In that mode allocation operation always "
 "completes, but it may take longer time when fast allocation is not supported "
@@ -27113,14 +27168,14 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/fallocate.1.adoc:92
+#: ../sys-utils/fallocate.1.adoc:94
 #, fuzzy, no-wrap
 #| msgid "*-V*, *--version*"
 msgid "*-z*, *--zero-range*"
 msgstr "*-V*, *--version*"
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:94
+#: ../sys-utils/fallocate.1.adoc:96
 msgid ""
 "Zeroes space in the byte range starting at _offset_ and continuing for "
 "_length_ bytes. Within the specified range, blocks are preallocated for the "
@@ -27129,7 +27184,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:96
+#: ../sys-utils/fallocate.1.adoc:98
 msgid ""
 "Zeroing is done within the filesystem preferably by converting the range "
 "into unwritten extents. This approach means that the specified range will "
@@ -27139,25 +27194,25 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:98
+#: ../sys-utils/fallocate.1.adoc:100
 msgid ""
 "Option *--keep-size* can be specified to prevent file length modification."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:100
+#: ../sys-utils/fallocate.1.adoc:102
 msgid ""
 "Available since Linux 3.14 for ext4 (only for extent-based files) and XFS."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:107
+#: ../sys-utils/fallocate.1.adoc:109
 msgid ""
 "mailto:sandeen@redhat.com[Eric Sandeen], mailto:kzak@redhat.com[Karel Zak]"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/fallocate.1.adoc:113
+#: ../sys-utils/fallocate.1.adoc:115
 msgid "*truncate*(1), *fallocate*(2), *posix_fallocate*(3)"
 msgstr ""
 
@@ -31927,26 +31982,26 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/lscpu.1.adoc:126
+#: ../sys-utils/lscpu.1.adoc:128
 #, no-wrap
 msgid "LSCPU_COLUMNS="
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lscpu.1.adoc:128
+#: ../sys-utils/lscpu.1.adoc:130
 msgid ""
 "Specifies a comma-separated list of output columns to print. All columns "
 "listed by *--list-columns* for the options *-e* and *-p* can be used."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/lscpu.1.adoc:129
+#: ../sys-utils/lscpu.1.adoc:131
 #, no-wrap
 msgid "LSCPU_CACHES_COLUMNS="
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/lscpu.1.adoc:131
+#: ../sys-utils/lscpu.1.adoc:133
 msgid ""
 "Same as *LSCPU_COLUMNS* with the difference that columns only listed for the "
 "*-C* option can be used."
@@ -40199,26 +40254,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:29
+#: ../sys-utils/readprofile.8.adoc:26
+msgid ""
+"This utility is a diagnostic tool and is not designed or intended for use in "
+"security-sensitive contexts (e.g., setuid, setgid, sudo, or similar "
+"privilege-elevation scenarios). It is installed without any special "
+"permissions."
+msgstr ""
+
+#. type: Plain text
+#: ../sys-utils/readprofile.8.adoc:31
 msgid ""
 "Print all symbols in the mapfile. By default the procedures with reported "
 "ticks are not printed."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:30
+#: ../sys-utils/readprofile.8.adoc:32
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-b*, *--histbin*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:32
+#: ../sys-utils/readprofile.8.adoc:34
 msgid "Print individual histogram-bin counts."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:35
+#: ../sys-utils/readprofile.8.adoc:37
 msgid ""
 "Info. This makes *readprofile* only print the profiling step used by the "
 "kernel. The profiling step is the resolution of the profiling buffer, and is "
@@ -40228,13 +40292,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:36
+#: ../sys-utils/readprofile.8.adoc:38
 #, no-wrap
 msgid "*-m*, *--mapfile* _mapfile_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:38
+#: ../sys-utils/readprofile.8.adoc:40
 msgid ""
 "Specify a mapfile, which by default is _/boot/System.map_. You should "
 "specify the map file on cmdline if your current kernel isn't the last one "
@@ -40243,25 +40307,25 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:39
+#: ../sys-utils/readprofile.8.adoc:41
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-n*, *--no-auto*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:41
+#: ../sys-utils/readprofile.8.adoc:43
 msgid "Disable automatic byte order detection."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:42
+#: ../sys-utils/readprofile.8.adoc:44
 #, no-wrap
 msgid "*-M*, *--multiplier* _multiplier_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:44
+#: ../sys-utils/readprofile.8.adoc:46
 msgid ""
 "On some architectures it is possible to alter the frequency at which the "
 "kernel delivers profiling interrupts to each CPU. This option allows you to "
@@ -40271,13 +40335,13 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:45
+#: ../sys-utils/readprofile.8.adoc:47
 #, no-wrap
 msgid "*-p*, *--profile* _pro-file_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:47
+#: ../sys-utils/readprofile.8.adoc:49
 msgid ""
 "Specify a different profiling buffer, which by default is _/proc/profile_. "
 "Using a different pro-file is useful if you want to `freeze' the kernel "
@@ -40288,34 +40352,32 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:48 ../sys-utils/tunelp.8.adoc:53
+#: ../sys-utils/readprofile.8.adoc:50 ../sys-utils/tunelp.8.adoc:53
 #, fuzzy, no-wrap
 #| msgid "*-f*, *--fast*"
 msgid "*-r*, *--reset*"
 msgstr "*-f*, *--fast*"
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:50
+#: ../sys-utils/readprofile.8.adoc:52
 msgid ""
 "Reset the profiling buffer. This can only be invoked by root, because _/proc/"
-"profile_ is readable by everybody but writable only by the superuser. "
-"However, you can make *readprofile* set-user-ID 0, in order to reset the "
-"buffer without gaining privileges."
+"profile_ is readable by everybody but writable only by the superuser."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:51
+#: ../sys-utils/readprofile.8.adoc:53
 #, no-wrap
 msgid "*-s, --counters*"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:53
+#: ../sys-utils/readprofile.8.adoc:55
 msgid "Print individual counters within functions."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:56
+#: ../sys-utils/readprofile.8.adoc:58
 msgid ""
 "Verbose. The output is organized in four columns and filled with blanks. The "
 "first column is the RAM address of a kernel function, the second is the name "
@@ -40324,54 +40386,54 @@ msgid ""
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:61
+#: ../sys-utils/readprofile.8.adoc:63
 #, no-wrap
 msgid "_/proc/profile_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:63
+#: ../sys-utils/readprofile.8.adoc:65
 msgid "A binary snapshot of the profiling buffer."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:64
+#: ../sys-utils/readprofile.8.adoc:66
 #, no-wrap
 msgid "_/usr/src/linux/System.map_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:66
+#: ../sys-utils/readprofile.8.adoc:68
 msgid "The symbol table for the kernel."
 msgstr ""
 
 #. type: Labeled list
-#: ../sys-utils/readprofile.8.adoc:67
+#: ../sys-utils/readprofile.8.adoc:69
 #, no-wrap
 msgid "_/usr/src/linux/*_"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:69
+#: ../sys-utils/readprofile.8.adoc:71
 msgid "The program being profiled :-)"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:73
+#: ../sys-utils/readprofile.8.adoc:75
 msgid ""
 "*readprofile* only works with a 1.3.x or newer kernel, because _/proc/"
 "profile_ changed in the step from 1.2 to 1.3."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:75
+#: ../sys-utils/readprofile.8.adoc:77
 msgid ""
 "This program only works with ELF kernels. The change for a.out kernels is "
 "trivial, and left as an exercise to the a.out user."
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:77
+#: ../sys-utils/readprofile.8.adoc:79
 msgid ""
 "To enable profiling, the kernel must be rebooted, because no profiling "
 "module is available, and it wouldn't be easy to build. To enable profiling, "
@@ -40380,7 +40442,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:79
+#: ../sys-utils/readprofile.8.adoc:81
 msgid ""
 "Profiling is disabled when interrupts are inhibited. This means that many "
 "profiling ticks happen when interrupts are re-enabled. Watch out for "
@@ -40388,69 +40450,69 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:83
+#: ../sys-utils/readprofile.8.adoc:85
 msgid "Browse the profiling buffer ordering by clock ticks:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:86
+#: ../sys-utils/readprofile.8.adoc:88
 #, no-wrap
 msgid "   readprofile | sort -nr | less\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:89
+#: ../sys-utils/readprofile.8.adoc:91
 msgid "Print the 20 most loaded procedures:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:92
+#: ../sys-utils/readprofile.8.adoc:94
 #, no-wrap
 msgid "   readprofile | sort -nr +2 | head -20\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:95
+#: ../sys-utils/readprofile.8.adoc:97
 msgid "Print only filesystem profile:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:98
+#: ../sys-utils/readprofile.8.adoc:100
 #, no-wrap
 msgid "   readprofile | grep _ext2\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:101
+#: ../sys-utils/readprofile.8.adoc:103
 msgid "Look at all the kernel information, with ram addresses:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:104
+#: ../sys-utils/readprofile.8.adoc:106
 #, no-wrap
 msgid "   readprofile -av | less\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:107
+#: ../sys-utils/readprofile.8.adoc:109
 msgid "Browse a 'frozen' profile buffer for a non current kernel:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:110
+#: ../sys-utils/readprofile.8.adoc:112
 #, no-wrap
 msgid "   readprofile -p ~/profile.freeze -m /zImage.map.gz\n"
 msgstr ""
 
 #. type: Plain text
-#: ../sys-utils/readprofile.8.adoc:113
+#: ../sys-utils/readprofile.8.adoc:115
 msgid "Request profiling at 2kHz per CPU, and reset the profiling buffer:"
 msgstr ""
 
 #. type: delimited block .
-#: ../sys-utils/readprofile.8.adoc:116
+#: ../sys-utils/readprofile.8.adoc:118
 #, no-wrap
-msgid "   sudo readprofile -M 20\n"
+msgid "   readprofile -M 20\n"
 msgstr ""
 
 #
@@ -46791,14 +46853,14 @@ msgid "Copyright {copyright} 2019 Karel Zak"
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:89 ../term-utils/scriptreplay.1.adoc:117
+#: ../term-utils/scriptlive.1.adoc:89 ../term-utils/scriptreplay.1.adoc:118
 msgid ""
 "This is free software; see the source for copying conditions. There is NO "
 "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptlive.1.adoc:91 ../term-utils/scriptreplay.1.adoc:119
+#: ../term-utils/scriptlive.1.adoc:91 ../term-utils/scriptreplay.1.adoc:120
 msgid "Released under the GNU General Public License version 2 or later."
 msgstr ""
 
@@ -46870,8 +46932,8 @@ msgstr ""
 #. type: Plain text
 #: ../term-utils/scriptreplay.1.adoc:34
 msgid ""
-"During the replay, you can interactively speed up, slow down, or pause the "
-"playback using the Up, Down, and Space keys."
+"During the replay, you can interactively speed up, slow down, pause or step "
+"through the playback using the Up, Down, Space and Right keys."
 msgstr ""
 
 #. type: Plain text
@@ -46988,7 +47050,15 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:104
+#: ../term-utils/scriptreplay.1.adoc:101
+msgid ""
+"*Right Arrow*: Advances the playback by one step. Each press of this key "
+"will immediately display the current step instead of waiting its specified "
+"delay."
+msgstr ""
+
+#. type: Plain text
+#: ../term-utils/scriptreplay.1.adoc:105
 msgid ""
 "The original *scriptreplay* program was written by mailto:joey@kitenet."
 "net[Joey Hess]. The program was re-written in C by mailto:jay@gnu.org[James "
@@ -46997,19 +47067,19 @@ msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:109
+#: ../term-utils/scriptreplay.1.adoc:110
 msgid "Copyright {copyright} 2008 James Youngman"
 msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:112
+#: ../term-utils/scriptreplay.1.adoc:113
 msgid "Copyright {copyright} 2008-2019 Karel Zak"
 msgstr ""
 
 #. TRANSLATORS: Keep {copyright} untranslated.
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:115
+#: ../term-utils/scriptreplay.1.adoc:116
 msgid "Copyright {copyright} 2024 Jonathan Ketchker"
 msgstr ""
 
@@ -47018,7 +47088,7 @@ msgstr ""
 #
 #
 #. type: Plain text
-#: ../term-utils/scriptreplay.1.adoc:124
+#: ../term-utils/scriptreplay.1.adoc:125
 #, fuzzy
 #| msgid "write(1)"
 msgid "*script*(1), *scriptlive*(1)"
@@ -50427,10 +50497,13 @@ msgstr ""
 #. type: Plain text
 #: ../text-utils/more.1.adoc:206
 msgid ""
-"Specify the _number_ of lines per screenful. It has the same effect as the *-"
-"n* and *--lines* options. See in OPTIONS for details. Also, note that the "
-"environment variable's value will be overridden if any of these options are "
-"set."
+"Specify the _number_ of lines the shell prompt occupies on the terminal "
+"screen. If this value is set, the _number_ of lines for the shell prompt is "
+"subtracted from the number of lines used to print a page on the screen. The "
+"value must be greater than zero and less than the current number of lines "
+"per screen; otherwise it is silently ignored. This is useful in situations "
+"where the printed page has to remain on the screen after exiting *more*(1) "
+"without scrolling up too much as the shell prints a new prompt."
 msgstr ""
 
 #. type: Plain text
@@ -51320,9 +51393,11 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/lastlog2.3.adoc:17
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:17
+#: ../liblastlog2/man/ll2_new_context.3.adoc:17
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:17
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:17
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:17
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:17
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:17
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:17
 msgid "*#include <lastlog2.h>*"
@@ -51349,10 +51424,12 @@ msgstr ""
 #. type: Plain text
 #: ../liblastlog2/man/lastlog2.3.adoc:31
 #: ../liblastlog2/man/ll2_import_lastlog.3.adoc:46
+#: ../liblastlog2/man/ll2_new_context.3.adoc:43
 #: ../liblastlog2/man/ll2_read_all.3.adoc:55
 #: ../liblastlog2/man/ll2_read_entry.3.adoc:53
 #: ../liblastlog2/man/ll2_remove_entry.3.adoc:44
 #: ../liblastlog2/man/ll2_rename_user.3.adoc:47
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:39
 #: ../liblastlog2/man/ll2_update_login_time.3.adoc:48
 #: ../liblastlog2/man/ll2_write_entry.3.adoc:51
 msgid "mailto:kukuk@suse.de[Thorsten Kukuk]"
@@ -51428,6 +51505,56 @@ msgid ""
 "*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_update_login_time*(3), *ll2_rename_user*(3), *ll2_remove_entry*(3)"
+msgstr ""
+
+#. type: Title =
+#: ../liblastlog2/man/ll2_new_context.3.adoc:2
+#, no-wrap
+msgid "ll2_new_context(3)"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_new_context.3.adoc:13
+msgid ""
+"ll2_new_context - Allocates context which defines the lastlog2 environment."
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_new_context.3.adoc:19
+msgid "*ll2_context * ll2_new_context(const char *__db_path__);"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_new_context.3.adoc:25
+msgid ""
+"Defines lastlog2 context e.g. database file, which will be used for any "
+"other lastlog2 call. If _db_path_ is NULL, the default path defined in "
+"_LL2_DEFAULT_DATABASE_ will be taken."
+msgstr ""
+
+#. type: delimited block -
+#: ../liblastlog2/man/ll2_new_context.3.adoc:30
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:29
+#, no-wrap
+msgid ""
+"const   char *db_path = \"/var/lib/lastlog/lastlog2.db\";\n"
+"ll2_context *context = ll2_new_context(db_path);\n"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_new_context.3.adoc:39
+msgid ""
+"Returns context which will be used for all other lastlog2 library calls.  "
+"This context should be released with _ll2_unref_context_ when it is not "
+"needed anymore.  Returns NULL on an error."
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_new_context.3.adoc:54
+msgid ""
+"*lastlog2*(3), *ll2_unref_context*(3), *ll2_read_all*(3), "
+"*ll2_write_entry*(3), *ll2_read_entry*(3), *ll2_remove_entry*(3), "
+"*ll2_update_login_time*(3), *ll2_import_lastlog*(3)"
 msgstr ""
 
 #. type: Title =
@@ -51668,6 +51795,47 @@ msgid ""
 "*lastlog2*(3), *ll2_new_context*(3), *ll2_unref_context*(3), "
 "*ll2_read_all*(3), *ll2_write_entry*(3), *ll2_read_entry*(3), "
 "*ll2_remove_entry*(3), *ll2_update_login_time*(3), *ll2_import_lastlog*(3)"
+msgstr ""
+
+#. type: Title =
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:2
+#, no-wrap
+msgid "ll2_unref_context(3)"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:13
+msgid "ll2_unref_context - Frees lastlog2 context."
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:19
+msgid "*context * ll2_unref_context(ll2_context *context);"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:24
+msgid "Frees lastlog2 context, which has been allocated by _ll2_new_context_."
+msgstr ""
+
+#. type: delimited block -
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:31
+#, no-wrap
+msgid "/* other lastlog2 calls..... */\n"
+msgstr ""
+
+#. type: delimited block -
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:33
+#, no-wrap
+msgid "ll2_unref_context(context);\n"
+msgstr ""
+
+#. type: Plain text
+#: ../liblastlog2/man/ll2_unref_context.3.adoc:50
+msgid ""
+"*lastlog2*(3), *ll2_new_context*(3), *ll2_read_all*(3), "
+"*ll2_write_entry*(3), *ll2_read_entry*(3), *ll2_remove_entry*(3), "
+"*ll2_update_login_time*(3), *ll2_import_lastlog*(3)"
 msgstr ""
 
 #. type: Title =
