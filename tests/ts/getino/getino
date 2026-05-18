@@ -64,90 +64,54 @@ if [ -n "$res" ]; then
 fi
 ts_finalize_subtest
 
+
+function do_ns_check() {
+  local ns_name="$1"
+  local unshare_opts="$2"
+  local ts_ns_ino unshare_ns_ino
+
+  if [ -r /proc/self/ns/"${ns_name}" ]; then
+    ts_ns_ino=$("$TS_CMD_GETINO" --"${ns_name}"ns $$ 2>>"$TS_ERRLOG")
+    #shellcheck disable=SC2086
+    unshare_ns_ino=$("$TS_CMD_UNSHARE" $unshare_opts bash -c \
+                                    "$TS_CMD_GETINO --${ns_name}ns \$\$" 2>>"$TS_ERRLOG")
+
+    if (( ts_ns_ino == unshare_ns_ino )); then
+      ts_failed_subtest "${ns_name} namespace unchanged (NS ID: $ts_ns_ino)"
+    fi
+  else
+    ts_skip_subtest "no ${ns_name} namespace support"
+  fi
+}
+
 "$TS_CMD_GETINO" --ipcns $$ > /dev/null 2>&1 || ts_skip "namespace ioctl not supported"
 
 ts_init_subtest "ipcns"
-if [ -r /proc/self/ns/ipc ]; then
-  ts_ipc_ns=$("$TS_CMD_GETINO" --ipcns $$ 2>>"$TS_ERRLOG")
-  unshare_ipc_ns=$("$TS_CMD_UNSHARE" --ipc bash -c "$TS_CMD_GETINO --ipcns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_ipc_ns == unshare_ipc_ns )); then
-    ts_failed_subtest "IPC namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no IPC namespace support"
-fi
+do_ns_check "ipc" "--ipc"
 ts_finalize_subtest
 
 ts_init_subtest "netns"
-if [ -r /proc/self/ns/net ]; then
-  ts_net_ns=$("$TS_CMD_GETINO" --netns $$ 2>>"$TS_ERRLOG")
-  unshare_net_ns=$("$TS_CMD_UNSHARE" --net bash -c "$TS_CMD_GETINO --netns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_net_ns == unshare_net_ns )); then
-    ts_failed_subtest "network namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no network namespace support"
-fi
+do_ns_check "net" "--net"
 ts_finalize_subtest
 
 ts_init_subtest "mntns"
-if [ -r /proc/self/ns/mnt ]; then
-  ts_mnt_ns=$("$TS_CMD_GETINO" --mntns $$ 2>>"$TS_ERRLOG")
-  unshare_mnt_ns=$("$TS_CMD_UNSHARE" --mount bash -c "$TS_CMD_GETINO --mntns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_mnt_ns == unshare_mnt_ns )); then
-    ts_failed_subtest "mount namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no mount namespace support"
-fi
+do_ns_check "mnt" "--mount"
 ts_finalize_subtest
 
 ts_init_subtest "utsns"
-if [ -r /proc/self/ns/uts ]; then
-  ts_uts_ns=$("$TS_CMD_GETINO" --utsns $$ 2>>"$TS_ERRLOG")
-  unshare_uts_ns=$("$TS_CMD_UNSHARE" --uts bash -c "$TS_CMD_GETINO --utsns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_uts_ns == unshare_uts_ns )); then
-    ts_failed_subtest "UTS namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no UTS namespace support"
-fi
+do_ns_check "uts" "--uts"
 ts_finalize_subtest
 
 ts_init_subtest "timens"
-if [ -r /proc/self/ns/time ]; then
-  ts_time_ns=$("$TS_CMD_GETINO" --timens $$ 2>>"$TS_ERRLOG")
-  unshare_time_ns=$("$TS_CMD_UNSHARE" --time bash -c "$TS_CMD_GETINO --timens \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_time_ns == unshare_time_ns )); then
-    ts_failed_subtest "time namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no time namespace support"
-fi
+do_ns_check "time" "--time"
 ts_finalize_subtest
 
 ts_init_subtest "pidns"
-if [ -r /proc/self/ns/pid ]; then
-  ts_pid_ns=$("$TS_CMD_GETINO" --pidns $$ 2>>"$TS_ERRLOG")
-  unshare_pid_ns=$("$TS_CMD_UNSHARE" --pid --fork bash -c "$TS_CMD_GETINO --pidns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_pid_ns == unshare_pid_ns )); then
-    ts_failed_subtest "pid namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no PID namespace support"
-fi
+do_ns_check "pid" "--pid --fork"
 ts_finalize_subtest
 
 ts_init_subtest "cgroupns"
-if [ -r /proc/self/ns/cgroup ]; then
-  ts_cgroup_ns=$("$TS_CMD_GETINO" --cgroupns $$ 2>>"$TS_ERRLOG")
-  unshare_cgroup_ns=$("$TS_CMD_UNSHARE" --cgroup bash -c "$TS_CMD_GETINO --cgroupns \$\$" 2>>"$TS_ERRLOG")
-  if (( ts_cgroup_ns == unshare_cgroup_ns )); then
-    ts_failed_subtest "cgroup namespace unchanged"
-  fi
-else
-  ts_skip_subtest "no cgroup namespace support"
-fi
+do_ns_check "cgroup" "--cgroup"
 ts_finalize_subtest
 
 ts_init_subtest "userns"
