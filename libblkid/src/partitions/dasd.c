@@ -17,32 +17,29 @@
 #include <inttypes.h>
 
 #include "pt-dasd.h"
+#include "strutils.h"
 #include "partitions.h"
 
 static void dasd_get_volser(const char *volid, char *volser)
 {
-	int i = 0;
+	int i;
 
 	for (i = 0; i < DASD_VOLSER_LENGTH; i++)
 		volser[i] = dasd_ebcdic_to_ascii[(unsigned char) volid[i]];
 	volser[DASD_VOLSER_LENGTH] = '\0';
 
-	/* trim trailing spaces */
-	for (i = DASD_VOLSER_LENGTH - 1; volser[i] == ' '; i--)
-		volser[i] = '\0';
+	rtrim_whitespace((unsigned char *) volser);
 }
 
 static void dasd_get_dsnam(const struct dasd_format1_label *f1, char *dsnam)
 {
-	size_t i = 0;
+	size_t i;
 
 	for (i = 0; i < sizeof(f1->DS1DSNAM); i++)
 		dsnam[i] = dasd_ebcdic_to_ascii[(unsigned char) f1->DS1DSNAM[i]];
 	dsnam[sizeof(f1->DS1DSNAM)] = '\0';
 
-	/* trim trailing spaces */
-	for (i = sizeof(f1->DS1DSNAM) - 1; i != 0 && dsnam[i] == ' '; i--)
-		dsnam[i] = '\0';
+	rtrim_whitespace((unsigned char *) dsnam);
 }
 
 /*
