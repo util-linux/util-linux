@@ -61,6 +61,7 @@ ts_log "generate data"
 rm -rf "$IMAGE_SRC"
 mkdir -m 755 -p $IMAGE_SRC
 
+umask_saved=$(umask)
 umask 133
 
 for d in `seq 0 110`; do
@@ -71,6 +72,8 @@ for d in `seq 0 110`; do
 		printf "data in %03d-%03d" $d $f >> $FILENAME
 	done
 done
+
+umask "$umask_saved"
 
 chgrp -R 0 "$IMAGE_SRC"
 
