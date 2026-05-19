@@ -139,7 +139,7 @@ function lsfd_check_sockdiag
 	    "$ENOENT")
 		ts_skip "sockdiag netlink socket is not available";;
 	    *)
-		ts_failed$suffix "failed to create a sockdiag netlink socket $family ($err): $msg";;
+		ts_failed "failed to create a sockdiag netlink socket $family ($err): $msg";;
 	esac
 
 	return 1

@@ -194,7 +194,7 @@ function ts_runs_on_qemu {
 	return
 }
 
-function ts_failed_subtest {
+function ts_failed {
 	local msg="FAILED"
 	local ret=1
 
@@ -211,12 +211,11 @@ function ts_failed_subtest {
 		ts_report " $msg ($1)"
 	fi
 
-	return $ret
-}
+	if [ -z "$TS_SUBNAME" ]; then
+		exit $ret
+	fi
 
-function ts_failed {
-	ts_failed_subtest "$1"
-	exit $?
+	return $ret
 }
 
 function ts_report_ok {
@@ -652,7 +651,7 @@ function ts_finalize_subtest {
 	else
 		ts_gen_diff
 		if [ $? -eq 1 ]; then
-			ts_failed_subtest "$1"
+			ts_failed "$1"
 			res=1
 		else
 			ts_report_ok "$(tt_gen_mem_report "$1")"

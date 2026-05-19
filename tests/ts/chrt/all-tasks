@@ -72,7 +72,7 @@ function search_tids() {
 ts_init_subtest "get-attributes"
 
 if ! start_threads_create 5 5; then
-    ts_failed_subtest "failed to start threads helper program"
+    ts_failed "failed to start threads helper program"
 else
     chrt_output="$("$TS_CMD_CHRT" --all-tasks --pid "$HELPER_PID" 2>>"$TS_ERRLOG"\
                     | sed -E 's/pid ([0-9]*).*/\1/g' | sort | uniq)"
@@ -101,7 +101,7 @@ ts_init_subtest "set-attributes"
 
 PRIORITY=33
 if ! start_threads_create 5 5; then
-    ts_failed_subtest "failed to start threads helper program"
+    ts_failed "failed to start threads helper program"
 else
     # Set the real-time scheduling attributes for all tasks
     "$TS_CMD_CHRT" --all-tasks --fifo --pid "$PRIORITY" "$HELPER_PID" 2>>"$TS_ERRLOG"
