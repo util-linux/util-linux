@@ -34,7 +34,7 @@ ts_check_prog "touch"
 ts_check_prog "mkfifo"
 ts_check_prog "sed"
 
-grep -q '#define HAVE_LINUX_NET_NAMESPACE_H' ${top_builddir}/config.h || ts_skip "no netns support"
+ts_skip_config HAVE_LINUX_NET_NAMESPACE_H "no netns support"
 
 if [ "$($TS_HELPER_SYSINFO ns-gettype-ok)" == "0" ]; then
     ts_skip "NS_GET_NSTYPE ioctl cmd not available"

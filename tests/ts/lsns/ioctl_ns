@@ -22,7 +22,7 @@ TS_DESC="ownership and hierarchy"
 ts_init "$*"
 
 # ts_skip_nonroot
-grep -q '#define HAVE_LINUX_NSFS_H' ${top_builddir}/config.h || ts_skip "no ioctl_ns support"
+ts_skip_config HAVE_LINUX_NSFS_H "no ioctl_ns support"
 
 [ -r /proc/self/ns/user ] || ts_skip "no USER namespace kernel support"
 [ -r /proc/self/ns/pid ] || ts_skip "no PID namespace kernel support"

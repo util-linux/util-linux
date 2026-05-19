@@ -56,29 +56,20 @@ $TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "invalid-ascii"
-if [ "$HAVE_WIDECHAR" = true ]; then
-	$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
-else
-	ts_skip 'No widechar support'
-fi
+ts_skip_config HAVE_WIDECHAR 'No widechar support'
+$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "safe-utf8"
-if [ "$HAVE_WIDECHAR" = true ]; then
-	LC_ALL=C.UTF-8 \
-	$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
-else
-	ts_skip 'No widechar support'
-fi
+ts_skip_config HAVE_WIDECHAR 'No widechar support'
+LC_ALL=C.UTF-8 \
+$TS_HELPER_MBSENCODE --safe "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "invalid-utf8"
-if [ "$HAVE_WIDECHAR" = true ]; then
-	LC_ALL=C.UTF-8 \
-	$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
-else
-	ts_skip 'No widechar support'
-fi
+ts_skip_config HAVE_WIDECHAR 'No widechar support'
+LC_ALL=C.UTF-8 \
+$TS_HELPER_MBSENCODE --invalid "${STRINGS[@]}" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_finalize
