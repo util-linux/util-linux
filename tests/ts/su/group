@@ -52,7 +52,7 @@ ts_init_subtest "primary-login"
                         | grep -o "$grp_name" \
                         | uniq >> "$TS_OUTPUT"
 
-grep -q 'Authentication failure' "$TS_ERRLOG" && ts_skip_subtest "authentication failure"
+grep -q 'Authentication failure' "$TS_ERRLOG" && ts_skip "authentication failure"
 ts_finalize_subtest
 
 ts_init_subtest "supplemental-no-login"
@@ -68,7 +68,7 @@ ts_init_subtest "supplemental-login"
                         | grep -o "$grp_name" \
                         | uniq >> "$TS_OUTPUT"
 
-grep -q 'Authentication failure' "$TS_ERRLOG" && ts_skip_subtest "authentication failure"
+grep -q 'Authentication failure' "$TS_ERRLOG" && ts_skip "authentication failure"
 ts_finalize_subtest
 
 ts_init_subtest "group-id"

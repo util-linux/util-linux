@@ -153,8 +153,12 @@ function ts_report_skip {
 function ts_skip {
 	ts_report_skip "$1"
 
-	ts_cleanup_on_exit
-	exit 0
+	if [ -n "$TS_SUBNAME" ]; then
+		TS_SUBSKIPPED="yes"
+	else
+		ts_cleanup_on_exit
+		exit 0
+	fi
 }
 
 function ts_skip_nonroot {
@@ -661,11 +665,6 @@ function ts_finalize_subtest {
 	ts_init_core_env
 
 	return $res
-}
-
-function ts_skip_subtest {
-	TS_SUBSKIPPED="yes"
-	ts_report_skip "$1"
 }
 
 # Specify the kernel version X.Y.Z you wish to compare against like:

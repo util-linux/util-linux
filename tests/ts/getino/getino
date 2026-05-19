@@ -80,7 +80,7 @@ function do_ns_check() {
       ts_failed_subtest "${ns_name} namespace unchanged (NS ID: $ts_ns_ino)"
     fi
   else
-    ts_skip_subtest "no ${ns_name} namespace support"
+    ts_skip "no ${ns_name} namespace support"
   fi
 }
 
@@ -123,12 +123,12 @@ if [ -r /proc/self/ns/user ]; then
                         bash -c "$TS_CMD_GETINO --userns \$\$" 2>>"$TS_ERRLOG")
 
   if grep "$("$TS_HELPER_STRERROR" EACCES)" "$TS_ERRLOG" &>/dev/null; then
-    ts_skip_subtest "missing permissions to obtain user namespace"
+    ts_skip "missing permissions to obtain user namespace"
   else
     (( ts_user_ns == unshare_user_ns )) && ts_failed_subtest "user namespace unchanged"
   fi
 else
-  ts_skip_subtest "no user namespace support"
+  ts_skip "no user namespace support"
 fi
 ts_finalize_subtest
 

@@ -24,7 +24,7 @@ ts_check_test_command "$TS_CMD_SETPRIV"
 ts_check_test_command "$TS_HELPER_CANONICALIZE"
 
 grep -q 'nodev[[:space:]]*tmpfs' /proc/filesystems || \
-	ts_skip_subtest "tmpfs unsupported"
+	ts_skip "tmpfs unsupported"
 
 mkdir -p $TS_MOUNTPOINT &>  /dev/null
 $TS_CMD_MOUNT -t tmpfs tmpfs $TS_MOUNTPOINT >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
@@ -68,7 +68,7 @@ if id $uid &>/dev/null; then
 			-- $TESTPROG ${BASE}/root-sym/foo \
 		| sed "s:${BASE}::g" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 else
-	ts_skip_subtest "nobody user is missing"
+	ts_skip "nobody user is missing"
 fi
 ts_finalize_subtest
 

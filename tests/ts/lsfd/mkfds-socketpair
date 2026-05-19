@@ -70,7 +70,7 @@ mkfds_socketpair_stream_endpoint()
 {
     ts_init_subtest "STREAM-ENDPOINT"
     if [ "$QEMU_USER" == "1" ]; then
-	ts_skip_subtest "running under qemu-user emulation"
+	ts_skip "running under qemu-user emulation"
 	ts_finalize_subtest
 	return
     fi
@@ -93,7 +93,7 @@ mkfds_socketpair_stream_shutdown_state()
 {
     ts_init_subtest "STREAM-SHUTDOWN-STATE"
     if [ "$QEMU_USER" == "1" ]; then
-	ts_skip_subtest "running under qemu-user emulation"
+	ts_skip "running under qemu-user emulation"
 	ts_finalize_subtest
 	return
     fi
@@ -116,7 +116,7 @@ mkfds_socketpair_stream_endpoint_halfclose()
 {
     ts_init_subtest "STREAM-ENDPOINT-halfclose"
     if [ "$QEMU_USER" == "1" ]; then
-	ts_skip_subtest "running under qemu-user emulation"
+	ts_skip "running under qemu-user emulation"
 	ts_finalize_subtest
 	return
     fi

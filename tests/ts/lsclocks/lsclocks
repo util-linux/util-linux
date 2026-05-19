@@ -48,7 +48,7 @@ if [ -c /dev/ptp0 ] && [ -r /dev/ptp0 ]; then
 	"$TS_CMD_LSCLOCKS" $NO_DISCOVER --dynamic-clock /dev/ptp0 --output TYPE,ID,CLOCK,NAME \
 		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 else
-	ts_skip_subtest "/dev/ptp0 not usable"
+	ts_skip "/dev/ptp0 not usable"
 fi
 ts_finalize_subtest
 
@@ -58,7 +58,7 @@ if [ -c /dev/rtc0 ] && [ -r /dev/rtc0 ]; then
 	"$TS_CMD_LSCLOCKS" $NO_DISCOVER --rtc /dev/rtc0 --output TYPE,ID,CLOCK,NAME \
 		| tail -1 > "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 else
-	ts_skip_subtest "/dev/rtc0 not usable"
+	ts_skip "/dev/rtc0 not usable"
 fi
 ts_finalize_subtest
 

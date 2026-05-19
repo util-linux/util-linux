@@ -124,7 +124,7 @@ cdev_tun_test()
 
     ts_init_subtest "$tname"-devnetns
     if [[ -z "${devnetns_available}" ]]; then
-	ts_skip_subtest "no method to access devnetns on this platform"
+	ts_skip "no method to access devnetns on this platform"
     else
 	{
 	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o TUN.DEVNETNS -Q "${EXPR}")

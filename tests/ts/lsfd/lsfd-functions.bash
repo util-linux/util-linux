@@ -133,11 +133,11 @@ function lsfd_check_sockdiag
 	    0)
 		return 0;;
 	    "$EPROTONOSUPPORT")
-		ts_skip$suffix "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
+		ts_skip "NETLINK_SOCK_DIAG protocol is not supported in socket(2)";;
 	    "$EACCES")
-		ts_skip$suffix "sending a msg via a sockdiag netlink socket is not permitted";;
+		ts_skip "sending a msg via a sockdiag netlink socket is not permitted";;
 	    "$ENOENT")
-		ts_skip$suffix "sockdiag netlink socket is not available";;
+		ts_skip "sockdiag netlink socket is not available";;
 	    *)
 		ts_failed$suffix "failed to create a sockdiag netlink socket $family ($err): $msg";;
 	esac

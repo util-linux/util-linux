@@ -119,7 +119,7 @@ ts_init_subtest "canonicalization"
 TEST_LINK="$TS_OUTDIR/fakelink"
 
 if ! ln -s / "$TEST_LINK"; then
-    ts_skip_subtest "failed to create symbolic link to root filesystem"
+    ts_skip "failed to create symbolic link to root filesystem"
 else
     # This return the right mount target
     $TS_CMD_FINDMNT --output TARGET --canonicalize "$TEST_LINK" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"

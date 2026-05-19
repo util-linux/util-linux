@@ -69,7 +69,7 @@ for C in ro-regular-file pidfd socketpair; do
     RC=$?
 
     if [ "$C-$RC" == "pidfd-$TS_EXIT_NOTSUPP" ]; then
-	ts_skip_subtest "pidfd_open(2) is not available"
+	ts_skip "pidfd_open(2) is not available"
 	ts_finalize_subtest
 	continue
     fi

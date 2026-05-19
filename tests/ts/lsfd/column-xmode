@@ -86,9 +86,9 @@ ts_finalize_subtest
 EXPR='(ASSOC == "mem") and (INODE == '"$INO"') and (MODE != "r--") and (MODE != "rw-") and (MODE != "rwx")'
 ts_init_subtest "MODE-x-bit"
 if [ "$QEMU_USER" == "1" ]; then
-    ts_skip_subtest "running under qemu-user emulation"
+    ts_skip "running under qemu-user emulation"
 elif [ "$UID" != "0" ]; then
-    ts_skip_subtest "no root permissions"
+    ts_skip "no root permissions"
 else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
@@ -104,9 +104,9 @@ ts_finalize_subtest
 
 ts_init_subtest "XMODE-x-bit"
 if [ "$QEMU_USER" == "1" ]; then
-    ts_skip_subtest "running under qemu-user emulation"
+    ts_skip "running under qemu-user emulation"
 elif [ "$UID" != "0" ]; then
-    ts_skip_subtest "no root permissions"
+    ts_skip "no root permissions"
 else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
@@ -150,7 +150,7 @@ for m in flock-sh posix-r- ofd-r-; do
     wait "${MKFDS_PID}"
     RC=$?
     if [ "$RC" == "$TS_EXIT_NOTSUPP" ]; then
-	ts_skip_subtest	"$m lock is not available"
+	ts_skip	"$m lock is not available"
 	ts_finalize_subtest
 	continue
     fi
@@ -187,7 +187,7 @@ for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
     wait "${MKFDS_PID}"
     RC=$?
     if [ "$RC" == "$TS_EXIT_NOTSUPP" ]; then
-	ts_skip_subtest	"$m lock is not available"
+	ts_skip	"$m lock is not available"
 	ts_finalize_subtest
 	continue
     fi

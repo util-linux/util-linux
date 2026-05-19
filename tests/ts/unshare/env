@@ -30,7 +30,7 @@ export UL_TEST_ENV=foo
 unset -v UL_TEST_ENV
 
 if grep -q "$($TS_HELPER_STRERROR EPERM)" "$TS_OUTPUT" "$TS_ERRLOG"; then
-        ts_skip_subtest "missing permissions"
+        ts_skip "missing permissions"
 fi
 ts_finalize_subtest
 
@@ -41,7 +41,7 @@ export UL_TEST_ENV2=bar
 "$TS_CMD_UNSHARE" --whitelist-env UL_TEST_ENV1 /bin/bash -c 'echo "${UL_TEST_ENV1}${UL_TEST_ENV2}"' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 
 if grep -q "$($TS_HELPER_STRERROR EPERM)" "$TS_OUTPUT" "$TS_ERRLOG"; then
-        ts_skip_subtest "missing permissions"
+        ts_skip "missing permissions"
 fi
 ts_finalize_subtest
 

@@ -88,10 +88,10 @@ EOF
 		unset LIBMOUNT_UTAB
 		rm -f $MOUNTER
 	else
-		ts_skip_subtest "tmpfs not mounted"
+		ts_skip "tmpfs not mounted"
 	fi
 else
-	ts_skip_subtest "tmpfs unsupported"
+	ts_skip "tmpfs unsupported"
 fi
 ts_finalize_subtest
 

@@ -102,7 +102,7 @@ for t in stream dgram seqpacket; do
 	RC=$?
     } > "$TS_OUTPUT" 2>&1
     if [ "$RC" == "$EPERM" ]; then
-	ts_skip_subtest "unshare(2) is not permitted on this platform"
+	ts_skip "unshare(2) is not permitted on this platform"
 	ts_finalize_subtest
 	continue
     fi

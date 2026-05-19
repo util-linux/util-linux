@@ -31,7 +31,7 @@ function do_chrt {
 function skip_policy {
 	$TS_CMD_CHRT --max | grep $1 | grep 'priority' &> /dev/null
 	if [ $? == 1 ]; then
-		ts_skip_subtest "unsupported"
+		ts_skip "unsupported"
 		ts_finalize_subtest
 		return 1
 	fi

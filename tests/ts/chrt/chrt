@@ -31,7 +31,7 @@ function do_chrt {
 function skip_policy {
 	$TS_CMD_CHRT --max | grep $1 | grep 'priority' &> /dev/null
 	if [ $? == 1 ]; then
-		ts_skip_subtest "unsupported"
+		ts_skip "unsupported"
 		ts_finalize_subtest
 		return 1
 	fi
@@ -40,7 +40,7 @@ function skip_policy {
 
 function skip_kernel_lt {
 	if ts_kernel_ver_lt $1 $2 $3; then
-		ts_skip_subtest "kernel version must be >= $1.$2.$3"
+		ts_skip "kernel version must be >= $1.$2.$3"
 		ts_finalize_subtest
 		return 1
 	fi
@@ -51,7 +51,7 @@ function skip_kernel_lt {
 function skip_kernel_ge {
 	ts_kernel_ver_lt $1 $2 $3
 	if [ $? == 1 ]; then
-		ts_skip_subtest "kernel version must be < $1.$2.$3"
+		ts_skip "kernel version must be < $1.$2.$3"
 		ts_finalize_subtest
 		return 1
 	fi

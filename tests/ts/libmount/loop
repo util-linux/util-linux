@@ -84,7 +84,7 @@ ts_finalize_subtest
 ts_init_subtest "o-loop-val"
 if [ "$TS_PARALLEL" = "yes" ]; then
 	# There is a race in $LODEV is usage
-	ts_skip_subtest "no-reentrant"
+	ts_skip "no-reentrant"
 else
 	[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 	LODEV=$( $TS_CMD_LOSETUP --find 2>> "$TS_OUTPUT" )
