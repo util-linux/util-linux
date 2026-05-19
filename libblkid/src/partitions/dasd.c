@@ -248,7 +248,13 @@ static int probe_dasd_pt_ldl(blkid_probe pr, blkid_partlist ls,
 		}
 		size_512 = (blocks - 3) * blocksize / 512;
 	} else {
-		size_512 = blkid_probe_get_size(pr) / 512 - start_512;
+		uint64_t dev_512 = blkid_probe_get_size(pr) / 512;
+
+		if (dev_512 <= start_512) {
+			DBG(LOWPROBE, ul_debug("DASD LDL: device too small"));
+			return BLKID_PROBE_NONE;
+		}
+		size_512 = dev_512 - start_512;
 	}
 
 	DBG(LOWPROBE, ul_debug("DASD LDL: start=%"PRIu64" size=%"PRIu64" blocksize=%u",
