@@ -20,24 +20,25 @@
 #include "strutils.h"
 #include "partitions.h"
 
-static void dasd_get_volser(const char *volid, char *volser)
+static void dasd_get_volser(const char *volid, char *volser, size_t volsersz)
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < DASD_VOLSER_LENGTH; i++)
+	for (i = 0; i < DASD_VOLSER_LENGTH && i < volsersz - 1; i++)
 		volser[i] = dasd_ebcdic_to_ascii[(unsigned char) volid[i]];
-	volser[DASD_VOLSER_LENGTH] = '\0';
+	volser[i] = '\0';
 
 	rtrim_whitespace((unsigned char *) volser);
 }
 
-static void dasd_get_dsnam(const struct dasd_format1_label *f1, char *dsnam)
+static void dasd_get_dsnam(const struct dasd_format1_label *f1,
+			   char *dsnam, size_t dsnamsz)
 {
 	size_t i;
 
-	for (i = 0; i < sizeof(f1->DS1DSNAM); i++)
+	for (i = 0; i < sizeof(f1->DS1DSNAM) && i < dsnamsz - 1; i++)
 		dsnam[i] = dasd_ebcdic_to_ascii[(unsigned char) f1->DS1DSNAM[i]];
-	dsnam[sizeof(f1->DS1DSNAM)] = '\0';
+	dsnam[i] = '\0';
 
 	rtrim_whitespace((unsigned char *) dsnam);
 }
@@ -62,32 +63,38 @@ static uint16_t dasd_cchh_get_hh(const struct dasd_cchh *p)
 	return be16_to_cpu(p->hh) & 0x000F;
 }
 
-static bool is_dasd_cdl_label(const unsigned char *buf)
+static bool is_dasd_cdl_label(const unsigned char *buf, size_t bufsz)
 {
-	return memcmp(buf + 4, DASD_VOL1_MAGIC, 4) == 0;
+	if (bufsz < sizeof(DASD_VOL1_MAGIC) - 1 + offsetof(struct dasd_volume_label_cdl, vollbl))
+		return false;
+	return memcmp(buf + offsetof(struct dasd_volume_label_cdl, vollbl),
+		      DASD_VOL1_MAGIC, sizeof(DASD_VOL1_MAGIC) - 1) == 0;
 }
 
-static bool is_dasd_ldl_label(const unsigned char *buf)
+static bool is_dasd_ldl_label(const unsigned char *buf, size_t bufsz)
 {
-	return memcmp(buf, DASD_LNX1_MAGIC, 4) == 0 ||
-	       memcmp(buf, DASD_CMS1_MAGIC, 4) == 0;
+	if (bufsz < sizeof(DASD_LNX1_MAGIC) - 1)
+		return false;
+	return memcmp(buf, DASD_LNX1_MAGIC, sizeof(DASD_LNX1_MAGIC) - 1) == 0 ||
+	       memcmp(buf, DASD_CMS1_MAGIC, sizeof(DASD_CMS1_MAGIC) - 1) == 0;
 }
 
 /*
  * Format 4: 44-byte key field filled with 0x04 + DS4IDFMT (0xf4)
  */
-static bool is_dasd_f4_label(const unsigned char *buf)
+static bool is_dasd_f4_label(const unsigned char *buf, size_t bufsz)
 {
-	int i = 0;
+	size_t i;
+
+	if (bufsz < DASD_F4_KEYCD_LENGTH + 1)
+		return false;
 
 	for (i = 0; i < DASD_F4_KEYCD_LENGTH; i++) {
 		if (buf[i] != DASD_F4_KEYCD_BYTE)
 			return false;
 	}
-	if (buf[DASD_F4_KEYCD_LENGTH] != DASD_FMT_ID_F4)
-		return false;
 
-	return true;
+	return buf[DASD_F4_KEYCD_LENGTH] == DASD_FMT_ID_F4;
 }
 
 /*
@@ -118,7 +125,7 @@ static int probe_dasd_pt_cdl(blkid_probe pr, blkid_partlist ls,
 			sizeof(struct dasd_format4_label));
 		if (!buf)
 			return errno ? -errno : BLKID_PROBE_NONE;
-		if (is_dasd_f4_label(buf)) {
+		if (is_dasd_f4_label(buf, sizeof(struct dasd_format4_label))) {
 			blk_per_trk = blk;
 			break;
 		}
@@ -199,7 +206,7 @@ static int probe_dasd_pt_cdl(blkid_probe pr, blkid_partlist ls,
 		if (!par)
 			return -ENOMEM;
 
-		dasd_get_dsnam(f1, dsnam);
+		dasd_get_dsnam(f1, dsnam, sizeof(dsnam));
 
 		/* split dsnam into name and type at the last '.' */
 		last_dot = strrchr(dsnam, '.');
@@ -280,10 +287,10 @@ static int probe_dasd_pt(blkid_probe pr,
 		return errno ? -errno : BLKID_PROBE_NONE;
 
 	/* CDL -- "VOL1" at byte 4 */
-	if (is_dasd_cdl_label(buf))
+	if (is_dasd_cdl_label(buf, sizeof(struct dasd_volume_label_ldl)))
 		is_cdl = true;
 	/* LDL -- "LNX1" or "CMS1" at byte 0 */
-	else if (is_dasd_ldl_label(buf))
+	else if (is_dasd_ldl_label(buf, sizeof(struct dasd_volume_label_ldl)))
 		is_ldl = true;
 
 	/*
@@ -304,12 +311,12 @@ static int probe_dasd_pt(blkid_probe pr,
 				continue;
 			}
 
-			if (is_dasd_cdl_label(buf)) {
+			if (is_dasd_cdl_label(buf, sizeof(struct dasd_volume_label_ldl))) {
 				is_cdl = true;
 				blocksize = dasd_blocksizes[i];
 				break;
 			}
-			if (is_dasd_ldl_label(buf)) {
+			if (is_dasd_ldl_label(buf, sizeof(struct dasd_volume_label_ldl))) {
 				is_ldl = true;
 				blocksize = dasd_blocksizes[i];
 				break;
@@ -332,7 +339,7 @@ static int probe_dasd_pt(blkid_probe pr,
 				4, (const unsigned char *) DASD_VOL1_MAGIC))
 			return BLKID_PROBE_NONE;
 
-		dasd_get_volser(cdl->volid, volser);
+		dasd_get_volser(cdl->volid, volser, sizeof(volser));
 	} else {
 		ldl = (const struct dasd_volume_label_ldl *) buf;
 		magic = memcmp(buf, DASD_LNX1_MAGIC, 4) == 0 ? DASD_LNX1_MAGIC : DASD_CMS1_MAGIC;
@@ -343,7 +350,7 @@ static int probe_dasd_pt(blkid_probe pr,
 				4, (const unsigned char *) magic))
 			return BLKID_PROBE_NONE;
 
-		dasd_get_volser(ldl->volid, volser);
+		dasd_get_volser(ldl->volid, volser, sizeof(volser));
 	}
 
 	blkid_partitions_strcpy_ptuuid(pr, volser);
