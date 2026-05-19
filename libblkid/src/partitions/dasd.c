@@ -282,7 +282,6 @@ static int probe_dasd_pt(blkid_probe pr,
 	const struct dasd_volume_label_cdl *cdl = NULL;
 	const struct dasd_volume_label_ldl *ldl = NULL;
 	const char *magic;
-	int rc;
 	size_t i = 0;
 
 	blocksize = blkid_probe_get_sectorsize(pr);
@@ -375,11 +374,9 @@ static int probe_dasd_pt(blkid_probe pr,
 	blkid_parttable_set_id(tab, (unsigned char *) volser);
 
 	if (is_cdl)
-		rc = probe_dasd_pt_cdl(pr, ls, tab, blocksize);
-	else
-		rc = probe_dasd_pt_ldl(pr, ls, tab, ldl, blocksize);
+		return probe_dasd_pt_cdl(pr, ls, tab, blocksize);
 
-	return rc;
+	return probe_dasd_pt_ldl(pr, ls, tab, ldl, blocksize);
 }
 
 const struct blkid_idinfo dasd_pt_idinfo =
