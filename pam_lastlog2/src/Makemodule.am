@@ -11,7 +11,7 @@ pam_lastlog2_la_CFLAGS = \
 	 $(SOLIB_CFLAGS) \
 	 -I$(ul_liblastlog2_incdir)
 
-pam_lastlog2_la_LIBADD = liblastlog2.la
+pam_lastlog2_la_LIBADD = liblastlog2.la -lpam
 
 pam_lastlog2_la_LDFLAGS = $(SOLIB_LDFLAGS) -module -avoid-version -shared
 if HAVE_VSCRIPT
