@@ -61,6 +61,7 @@ dist_noinst_HEADERS += \
 	include/plymouth-ctrl.h \
 	include/procfs.h \
 	include/pt-bsd.h \
+	include/pt-dasd.h \
 	include/pt-mbr.h \
 	include/pt-mbr-partnames.h \
 	include/pt-gpt-partnames.h \
