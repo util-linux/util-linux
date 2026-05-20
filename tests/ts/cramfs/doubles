@@ -39,10 +39,13 @@ ts_log "create mountpoint dir"
 rm -rf "$IMAGE_SRC"
 mkdir -m 755 -p $IMAGE_SRC
 
+umask_saved=$(umask)
 umask 133
 
 echo hello > $IMAGE_SRC/a
 echo hello > $IMAGE_SRC/b
+
+umask "$umask_saved"
 
 # sudo may use whatever group
 chgrp -R 0 "$IMAGE_SRC"
