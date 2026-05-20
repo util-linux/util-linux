@@ -120,7 +120,9 @@ extern void agetty_load_credentials(struct agetty_options *op);
 
 extern char *agetty_xgethostname(void);
 extern char *agetty_xgetdomainname(void);
+#ifdef SYSV_STYLE
 extern void agetty_update_utmp(struct agetty_options *op);
+#endif
 extern void agetty_parse_speeds(struct agetty_options *op, char *arg);
 extern char *agetty_parse_initstring(const char *arg);
 extern void agetty_init_login_argv(char *argv[], int *argc,
@@ -154,8 +156,10 @@ extern void agetty_erase_char(int visual_count, struct chardata *cp);
 
 extern void agetty_print_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 extern void agetty_eval_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
-extern int agetty_issue_is_changed(struct agetty_issue *ie);
 extern void agetty_show_issue(struct agetty_options *op);
+#ifdef AGETTY_RELOAD
+extern int agetty_issue_is_changed(struct agetty_issue *ie);
 extern void agetty_reload(void);
+#endif
 
 #endif /* UTIL_LINUX_AGETTY_H */
