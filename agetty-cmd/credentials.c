@@ -109,7 +109,7 @@ void agetty_load_credentials(struct agetty_options *op)
 	dir = ul_path_opendir(pc, NULL);
 	if (!dir) {
 		agetty_log_warn(_("failed to open credentials directory"));
-		return;
+		goto out;
 	}
 
 	while ((d = xreaddir(dir))) {
@@ -139,4 +139,6 @@ void agetty_load_credentials(struct agetty_options *op)
 				       &op->flags, F_ISSUE, 1);
 	}
 	closedir(dir);
+out:
+	ul_unref_path(pc);
 }
