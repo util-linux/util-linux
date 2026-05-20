@@ -106,11 +106,9 @@ function lsfd_check_mkfds_factory
 function lsfd_check_sockdiag
 {
 	local is_subtest
-	local suffix=
 
 	case "$1" in
 	    (--subtest)
-		suffix=_subtest
 		is_subtest=1
 		shift
 		;;
