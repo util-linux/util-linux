@@ -282,17 +282,6 @@ static const struct id_part ampere_part[] = {
     { -1, "unknown" },
 };
 
-static const struct id_part ft_part[] = {
-    { 0x303, "FTC310" },
-    { 0x660, "FTC660" },
-    { 0x661, "FTC661" },
-    { 0x662, "FTC662" },
-    { 0x663, "FTC663" },
-    { 0x664, "FTC664" },
-    { 0x862, "FTC862" },
-    { -1, "unknown" },
-};
-
 static const struct id_part ms_part[] = {
     { 0xd49, "Azure-Cobalt-100" },
     { -1, "unknown" },
@@ -326,7 +315,6 @@ static const struct hw_impl hw_implementer[] = {
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { 0x6d, ms_part,      "Microsoft" },
-    { 0x70, ft_part,      "Phytium" },
     { 0xc0, ampere_part,  "Ampere" },
     { -1,   unknown_part, "unknown" },
 };
