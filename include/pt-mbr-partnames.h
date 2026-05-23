@@ -89,6 +89,7 @@
 					   Concurrent DOS or CTOS */
 	{0xde, N_("Dell Utility")},	/* Dell PowerEdge Server utilities */
 	{0xdf, N_("BootIt")},		/* BootIt EMBRM */
+	{0xe0, N_("NX emuMMC")},	/* Nintendo Switch emuMMC */
 	{0xe1, N_("DOS access")},	/* DOS access or SpeedStor 12-bit FAT
 					   extended partition */
 	{0xe3, N_("DOS R/O")},		/* DOS R/O or SpeedStor */

@@ -192,6 +192,7 @@ enum {
 	MBR_CPM_CTOS_PARTITION		= 0xdb, /* CP/M or Concurrent CP/M or Concurrent DOS or CTOS */
 	MBR_DELL_UTILITY_PARTITION	= 0xde, /* Dell PowerEdge Server utilities */
 	MBR_BOOTIT_PARTITION		= 0xdf, /* BootIt EMBRM */
+	MBR_NX_EMUMMC_PARTITION		= 0xe0, /* Nintendo Switch emuMMC */
 	MBR_DOS_ACCESS_PARTITION	= 0xe1, /* DOS access or SpeedStor 12-bit FAT extended partition */
 	MBR_DOS_RO_PARTITION		= 0xe3, /* DOS R/O or SpeedStor */
 	MBR_SPEEDSTOR_EXTENDED_PARTITION = 0xe4, /* SpeedStor 16-bit FAT extended partition < 1024 cyl. */
