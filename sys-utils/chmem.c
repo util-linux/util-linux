@@ -84,6 +84,23 @@ static const char *const zone_names[] = {
 	[ZONE_DEVICE]	= "Device",
 };
 
+
+static int have_mem_blk_zones(struct path_cxt *pctx, const char *dirname)
+{
+	int rc = 0;
+	char *path = NULL;
+
+	if (!pctx || !dirname)
+		return -EINVAL;
+
+	path = ul_strconcat(dirname, "/valid_zones");
+	if (ul_path_access(pctx, F_OK, path) == 0)
+		rc = 1;
+
+	free(path);
+	return rc;
+}
+
 /*
  * name must be null-terminated
  */
@@ -667,7 +684,7 @@ int main(int argc, char **argv)
 		.memmap_on_memory = -1,
 	}, *desc = &_desc;
 	int cmd = CMD_NONE, zone_id = -1;
-	char *zone = NULL, *sysroot = NULL;
+	char *zone = NULL, *sysroot = NULL, *first_memblk_dirname = NULL;
 	int c, rc;
 
 	static const struct option longopts[] = {
@@ -758,14 +775,17 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("failed to initialize %s handler"), _PATH_SYS_MEMCONFIG);
 	if (sysroot && ul_path_set_prefix(desc->sysmemconfig, sysroot) != 0)
 		err(EXIT_FAILURE, _("invalid argument to --sysroot"));
-	if (ul_path_access(desc->sysmemconfig, F_OK, "memory0") == 0)
-		desc->have_memconfig = 1;
 
 	read_info(desc);
 	parse_parameter(desc, argv[optind]);
 
+	first_memblk_dirname = desc->dirs[0]->d_name;
+
+	if (ul_path_access(desc->sysmemconfig, F_OK, first_memblk_dirname) == 0)
+		desc->have_memconfig = 1;
+
 	/* The valid_zones sysfs attribute was introduced with kernel 3.18 */
-	if (ul_path_access(desc->sysmem, F_OK, "memory0/valid_zones") == 0)
+	if (have_mem_blk_zones(desc->sysmem, first_memblk_dirname) > 0)
 		desc->have_zones = 1;
 	else if (zone)
 		warnx(_("zone ignored, no valid_zones sysfs attribute present"));
