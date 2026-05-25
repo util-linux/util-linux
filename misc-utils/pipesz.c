@@ -227,18 +227,6 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	/* check for --help or --version */
-	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
-		switch (c) {
-		case 'h':
-			usage();
-		case 'V':
-			print_version(EXIT_SUCCESS);
-		}
-	}
-
-	/* gather normal options */
-	optind = 1;
 	while ((c = getopt_long(argc, argv, shortopts, longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -276,6 +264,11 @@ int main(int argc, char **argv)
 		case 'v':
 			opt_verbose = TRUE;
 			break;
+
+		case 'V':
+			print_version(EXIT_SUCCESS);
+		case 'h':
+			usage();
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
