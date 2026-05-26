@@ -34,19 +34,19 @@ enum {
 };
 
 enum {
-	GETINO_CGROUP_NAMESPACE,
-	GETINO_IPC_NAMESPACE,
-	GETINO_NET_NAMESPACE,
-	GETINO_MNT_NAMESPACE,
-	GETINO_PID_NAMESPACE,
-	GETINO_TIME_NAMESPACE,
-	GETINO_USER_NAMESPACE,
-	GETINO_UTS_NAMESPACE,
+	GETINO_NS_CGROUP,
+	GETINO_NS_IPC,
+	GETINO_NS_NET,
+	GETINO_NS_MNT,
+	GETINO_NS_PID,
+	GETINO_NS_TIME,
+	GETINO_NS_USER,
+	GETINO_NS_UTS,
 };
 
 struct getino_context {
 	int		op;		/* basic operation: GETINO_OP_* */
-	int		ns_type;	/* namespace type: GETINO_*_NAMESPACE */
+	int		ns_type;	/* namespace type: GETINO_NS_* */
 	pid_t		pid;		/* PID provided on the command line */
 	uint64_t	pidfd_ino;	/* pidfd inode provided on the command line (PID:inode) */
 	bool		print_pid;	/* print the pid and inode, colon-separated */
@@ -58,14 +58,14 @@ struct ns_desc {
 };
 
 static struct ns_desc ns_info[] = {
-	[GETINO_CGROUP_NAMESPACE] = { .name = "cgroup", .ioctl = PIDFD_GET_CGROUP_NAMESPACE },
-	[GETINO_IPC_NAMESPACE] = { .name = "ipc", .ioctl = PIDFD_GET_IPC_NAMESPACE },
-	[GETINO_NET_NAMESPACE] = { .name = "network", .ioctl = PIDFD_GET_NET_NAMESPACE },
-	[GETINO_MNT_NAMESPACE] = { .name = "mount", .ioctl = PIDFD_GET_MNT_NAMESPACE },
-	[GETINO_PID_NAMESPACE] = { .name = "pid", .ioctl = PIDFD_GET_PID_NAMESPACE },
-	[GETINO_TIME_NAMESPACE] = { .name = "time", .ioctl = PIDFD_GET_TIME_NAMESPACE },
-	[GETINO_USER_NAMESPACE] = { .name = "user", .ioctl = PIDFD_GET_USER_NAMESPACE },
-	[GETINO_UTS_NAMESPACE] = { .name = "uts", .ioctl = PIDFD_GET_UTS_NAMESPACE },
+	[GETINO_NS_CGROUP] = { .name = "cgroup", .ioctl = PIDFD_GET_CGROUP_NAMESPACE },
+	[GETINO_NS_IPC] = { .name = "ipc", .ioctl = PIDFD_GET_IPC_NAMESPACE },
+	[GETINO_NS_NET] = { .name = "network", .ioctl = PIDFD_GET_NET_NAMESPACE },
+	[GETINO_NS_MNT] = { .name = "mount", .ioctl = PIDFD_GET_MNT_NAMESPACE },
+	[GETINO_NS_PID] = { .name = "pid", .ioctl = PIDFD_GET_PID_NAMESPACE },
+	[GETINO_NS_TIME] = { .name = "time", .ioctl = PIDFD_GET_TIME_NAMESPACE },
+	[GETINO_NS_USER] = { .name = "user", .ioctl = PIDFD_GET_USER_NAMESPACE },
+	[GETINO_NS_UTS] = { .name = "uts", .ioctl = PIDFD_GET_UTS_NAMESPACE },
 };
 
 static int get_ns_fd(struct getino_context *ctx, int pidfd)
@@ -191,28 +191,28 @@ int main(int argc, char **argv)
 			ctx.ns_type = -1;
 			break;
 		case OPT_CGROUPNS:
-			ctx.ns_type = GETINO_CGROUP_NAMESPACE;
+			ctx.ns_type = GETINO_NS_CGROUP;
 			break;
 		case OPT_IPCNS:
-			ctx.ns_type = GETINO_IPC_NAMESPACE;
+			ctx.ns_type = GETINO_NS_IPC;
 			break;
 		case OPT_NETNS:
-			ctx.ns_type = GETINO_NET_NAMESPACE;
+			ctx.ns_type = GETINO_NS_NET;
 			break;
 		case OPT_MNTNS:
-			ctx.ns_type = GETINO_MNT_NAMESPACE;
+			ctx.ns_type = GETINO_NS_MNT;
 			break;
 		case OPT_PIDNS:
-			ctx.ns_type = GETINO_PID_NAMESPACE;
+			ctx.ns_type = GETINO_NS_PID;
 			break;
 		case OPT_TIMENS:
-			ctx.ns_type = GETINO_TIME_NAMESPACE;
+			ctx.ns_type = GETINO_NS_TIME;
 			break;
 		case OPT_USERNS:
-			ctx.ns_type = GETINO_USER_NAMESPACE;
+			ctx.ns_type = GETINO_NS_USER;
 			break;
 		case OPT_UTSNS:
-			ctx.ns_type = GETINO_UTS_NAMESPACE;
+			ctx.ns_type = GETINO_NS_UTS;
 			break;
 		case 'p':
       			ctx.print_pid = true;
