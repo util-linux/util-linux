@@ -22,6 +22,8 @@
 #ifndef UTIL_LINUX_LOGINDEFS_H
 #define UTIL_LINUX_LOGINDEFS_H
 
+#include <pwd.h>
+
 extern void logindefs_load_file(const char *filename);
 extern void logindefs_set_loader(void (*loader)(void *data), void *data);
 extern int getlogindefs_bool(const char *name, int dflt);
