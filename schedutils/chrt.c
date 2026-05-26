@@ -624,37 +624,19 @@ int main(int argc, char **argv)
 	if (ctl->runtime && !supports_runtime_param(ctl->policy))
 		errx(EXIT_FAILURE, _("--sched-runtime option is supported for %s"),
 				     get_supported_runtime_param_policies());
-#ifdef SCHED_DEADLINE
+#ifdef HAVE_SCHED_SETATTR
+# ifdef SCHED_DEADLINE
 	if ((ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--sched-{deadline,period} options are "
 				     "supported for SCHED_DEADLINE only"));
-# ifdef SCHED_FLAG_RECLAIM
-#  ifndef HAVE_SCHED_SETATTR
-	if (ctl->sched_flags & SCHED_FLAG_RECLAIM)
-		errx(EXIT_FAILURE, _("SCHED_FLAG_RECLAIM is unsupported"));
-#  endif
+#  ifdef SCHED_FLAG_RECLAIM
 	if ((ctl->sched_flags & SCHED_FLAG_RECLAIM) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--reclaim-grub is only supported for SCHED_DEADLINE"));
-# endif
-# ifdef SCHED_FLAG_DL_OVERRUN
-#  ifndef HAVE_SCHED_SETATTR
-	if (ctl->sched_flags & SCHED_FLAG_DL_OVERRUN)
-		errx(EXIT_FAILURE, _("SCHED_FLAG_DL_OVERRUN is unsupported"));
 #  endif
+#  ifdef SCHED_FLAG_DL_OVERRUN
 	if ((ctl->sched_flags & SCHED_FLAG_DL_OVERRUN) && ctl->policy != SCHED_DEADLINE)
 		errx(EXIT_FAILURE, _("--deadline-overrun is only supported for SCHED_DEADLINE"));
-# endif
-
-# ifndef HAVE_SCHED_SETATTR
-#  ifdef SCHED_FLAG_UTIL_CLAMP_MIN
-	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
-		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MIN is unsupported"));
 #  endif
-#  ifdef SCHED_FLAG_UTIL_CLAMP_MAX
-	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
-		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MAX is unsupported"));
-#  endif
-# endif
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we
@@ -666,10 +648,27 @@ int main(int argc, char **argv)
 		if (ctl->runtime == 0)
 			ctl->runtime = ctl->deadline;
 	}
-#else /* !SCHED_DEADLINE */
+# endif /* SCHED_DEADLINE */
+#else /* !HAVE_SCHED_SETATTR */
 	if (ctl->deadline || ctl->period)
 		errx(EXIT_FAILURE, _("SCHED_DEADLINE is unsupported"));
-#endif /* SCHED_DEADLINE */
+# ifdef SCHED_FLAG_RECLAIM
+	if (ctl->sched_flags & SCHED_FLAG_RECLAIM)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_RECLAIM is unsupported"));
+# endif
+# ifdef SCHED_FLAG_DL_OVERRUN
+	if (ctl->sched_flags & SCHED_FLAG_DL_OVERRUN)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_DL_OVERRUN is unsupported"));
+# endif
+# ifdef SCHED_FLAG_UTIL_CLAMP_MIN
+	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MIN is unsupported"));
+# endif
+# ifdef SCHED_FLAG_UTIL_CLAMP_MAX
+	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
+		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MAX is unsupported"));
+# endif
+#endif /* HAVE_SCHED_SETATTR */
 	if (ctl->priority < sched_get_priority_min(ctl->policy) ||
 			sched_get_priority_max(ctl->policy) < ctl->priority)
 		errx(EXIT_FAILURE,
