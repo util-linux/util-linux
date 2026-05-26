@@ -350,6 +350,7 @@ static void show_min_max(void)
 	}
 }
 
+#ifndef HAVE_SCHED_SETATTR
 static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_param sp = { .sched_priority = ctl->priority };
@@ -373,7 +374,6 @@ static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 }
 
 
-#ifndef HAVE_SCHED_SETATTR
 static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	return set_sched_one_by_setscheduler(ctl, pid);
@@ -384,10 +384,6 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_attr sa = { .size = sizeof(struct sched_attr) };
 	int ret;
-
-	/* old API is good enough for non-deadline */
-	if (!supports_runtime_param(ctl->policy))
-		return set_sched_one_by_setscheduler(ctl, pid);
 
 	/* not changed by chrt, follow the current setting */
 	sa.sched_nice = getpriority(PRIO_PROCESS, pid);
