@@ -710,7 +710,8 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	if (res->my_lba == GPT_PRIMARY_PARTITION_TABLE_LBA)
 		res->partition_entry_lba = cpu_to_le64(2ULL);
 	else {
-		uint64_t esz = (uint64_t) le32_to_cpu(src->npartition_entries) * sizeof(struct gpt_entry);
+		uint64_t esz = (uint64_t) le32_to_cpu(src->npartition_entries)
+				* le32_to_cpu(src->sizeof_partition_entry);
 		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
 
 		res->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1ULL - esects);
@@ -1195,6 +1196,10 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 		goto invalid;
 
 	if (!gpt_check_header_crc(header, NULL))
+		goto invalid;
+
+	/* entry size must be large enough to hold struct gpt_entry */
+	if (le32_to_cpu(header->sizeof_partition_entry) < sizeof(struct gpt_entry))
 		goto invalid;
 
 	/* read and verify entries */
@@ -3162,7 +3167,8 @@ static int gpt_reorder(struct fdisk_context *cxt)
 	if (!mess)
 		return 1;
 
-	qsort(gpt->ents, nparts, sizeof(struct gpt_entry),
+	qsort(gpt->ents, nparts,
+			le32_to_cpu(gpt->pheader->sizeof_partition_entry),
 			gpt_entry_cmp_start);
 
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
