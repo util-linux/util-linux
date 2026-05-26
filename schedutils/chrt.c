@@ -174,11 +174,11 @@ static bool supports_runtime_param(int policy)
 static const char *get_supported_runtime_param_policies(void)
 {
 #if defined(SCHED_BATCH)
-#if defined(SCHED_DEADLINE)
+# if defined(SCHED_DEADLINE)
 	return _("SCHED_OTHER, SCHED_BATCH and SCHED_DEADLINE");
-#else
+# else
 	return _("SCHED_OTHER and SCHED_BATCH");
-#endif /* SCHED_DEADLINE */
+# endif /* SCHED_DEADLINE */
 #elif defined(SCHED_DEADLINE)
 	return _("SCHED_OTHER and SCHED_DEADLINE");
 #else
@@ -232,10 +232,10 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 		reset_on_fork = sa.sched_flags & SCHED_FLAG_RESET_ON_FORK;
 # endif
 		runtime = sa.sched_runtime;
-#ifdef SCHED_DEADLINE
+# ifdef SCHED_DEADLINE
 		deadline = sa.sched_deadline;
 		period = sa.sched_period;
-#endif
+# endif
 	}
 
 	/*
@@ -243,7 +243,7 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 	 */
 fallback:
 	if (errno == ENOSYS)
-#endif
+#endif /* HAVE_SCHED_SETATTR */
 	{
 		struct sched_param sp;
 
@@ -255,10 +255,10 @@ fallback:
 			err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
 		else
 			prio = sp.sched_priority;
-# ifdef SCHED_RESET_ON_FORK
+#ifdef SCHED_RESET_ON_FORK
 		if (policy & SCHED_RESET_ON_FORK)
 			reset_on_fork = 1;
-# endif
+#endif
 	}
 
 	if (ctl->altered)
@@ -362,15 +362,15 @@ static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 		policy |= SCHED_RESET_ON_FORK;
 # endif
 
-#if defined (__linux__) && defined(SYS_sched_setscheduler)
+# if defined (__linux__) && defined(SYS_sched_setscheduler)
 	/* musl libc returns ENOSYS for its sched_setscheduler library
 	 * function, because the sched_setscheduler Linux kernel system call
 	 * does not conform to Posix; so we use the system call directly
 	 */
 	return syscall(SYS_sched_setscheduler, pid, policy, &sp);
-#else
+# else
 	return sched_setscheduler(pid, policy, &sp);
-#endif
+# endif
 }
 
 
@@ -645,16 +645,16 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("--deadline-overrun is only supported for SCHED_DEADLINE"));
 # endif
 
-#ifndef HAVE_SCHED_SETATTR
-# ifdef SCHED_FLAG_UTIL_CLAMP_MIN
+# ifndef HAVE_SCHED_SETATTR
+#  ifdef SCHED_FLAG_UTIL_CLAMP_MIN
 	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN)
 		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MIN is unsupported"));
-# endif
-# ifdef SCHED_FLAG_UTIL_CLAMP_MAX
+#  endif
+#  ifdef SCHED_FLAG_UTIL_CLAMP_MAX
 	if (ctl->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX)
 		errx(EXIT_FAILURE, _("SCHED_FLAG_UTIL_CLAMP_MAX is unsupported"));
+#  endif
 # endif
-#endif
 	if (ctl->policy == SCHED_DEADLINE) {
 		/* The basic rule is runtime <= deadline <= period, so we can
 		 * make deadline and runtime optional on command line. Note we
