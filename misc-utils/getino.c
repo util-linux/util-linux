@@ -53,19 +53,19 @@ struct getino_context {
 };
 
 struct ns_desc {
-	const char * const 	name;
+	const char * const	name;
 	unsigned int		ioctl;
 };
 
 static struct ns_desc ns_info[] = {
-	[GETINO_NS_CGROUP] = { .name = "cgroup", .ioctl = PIDFD_GET_CGROUP_NAMESPACE },
-	[GETINO_NS_IPC] = { .name = "ipc", .ioctl = PIDFD_GET_IPC_NAMESPACE },
-	[GETINO_NS_NET] = { .name = "network", .ioctl = PIDFD_GET_NET_NAMESPACE },
-	[GETINO_NS_MNT] = { .name = "mount", .ioctl = PIDFD_GET_MNT_NAMESPACE },
-	[GETINO_NS_PID] = { .name = "pid", .ioctl = PIDFD_GET_PID_NAMESPACE },
-	[GETINO_NS_TIME] = { .name = "time", .ioctl = PIDFD_GET_TIME_NAMESPACE },
-	[GETINO_NS_USER] = { .name = "user", .ioctl = PIDFD_GET_USER_NAMESPACE },
-	[GETINO_NS_UTS] = { .name = "uts", .ioctl = PIDFD_GET_UTS_NAMESPACE },
+	[GETINO_NS_CGROUP]	= { .name = "cgroup",	.ioctl = PIDFD_GET_CGROUP_NAMESPACE },
+	[GETINO_NS_IPC]		= { .name = "ipc",	.ioctl = PIDFD_GET_IPC_NAMESPACE },
+	[GETINO_NS_NET]		= { .name = "network",	.ioctl = PIDFD_GET_NET_NAMESPACE },
+	[GETINO_NS_MNT]		= { .name = "mount",	.ioctl = PIDFD_GET_MNT_NAMESPACE },
+	[GETINO_NS_PID]		= { .name = "pid",	.ioctl = PIDFD_GET_PID_NAMESPACE },
+	[GETINO_NS_TIME]	= { .name = "time",	.ioctl = PIDFD_GET_TIME_NAMESPACE },
+	[GETINO_NS_USER]	= { .name = "user",	.ioctl = PIDFD_GET_USER_NAMESPACE },
+	[GETINO_NS_UTS]		= { .name = "uts",	.ioctl = PIDFD_GET_UTS_NAMESPACE },
 };
 
 static int get_ns_fd(struct getino_context *ctx, int pidfd)
@@ -153,18 +153,18 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{ "pidfs",                  	no_argument,       NULL, OPT_PIDFS	},
-		{ "cgroupns",                  	no_argument,       NULL, OPT_CGROUPNS	},
-		{ "ipcns",                  	no_argument,       NULL, OPT_IPCNS      },
-		{ "netns",                  	no_argument,       NULL, OPT_NETNS      },
-		{ "mntns",                  	no_argument,       NULL, OPT_MNTNS      },
-		{ "pidns",                  	no_argument,       NULL, OPT_PIDNS      },
-		{ "timens",                  	no_argument,       NULL, OPT_TIMENS     },
-		{ "userns",                  	no_argument,       NULL, OPT_USERNS     },
-		{ "utsns",                  	no_argument,       NULL, OPT_UTSNS      },
-		{ "print-pid",                  no_argument,       NULL, 'p'          	},
-		{ "version",                    no_argument,       NULL, 'V'          	},
-		{ "help",                       no_argument,       NULL, 'h'          	},
+		{ "pidfs",	no_argument, NULL, OPT_PIDFS },
+		{ "cgroupns",	no_argument, NULL, OPT_CGROUPNS },
+		{ "ipcns",	no_argument, NULL, OPT_IPCNS },
+		{ "netns",	no_argument, NULL, OPT_NETNS },
+		{ "mntns",	no_argument, NULL, OPT_MNTNS },
+		{ "pidns",	no_argument, NULL, OPT_PIDNS },
+		{ "timens",	no_argument, NULL, OPT_TIMENS },
+		{ "userns",	no_argument, NULL, OPT_USERNS },
+		{ "utsns",	no_argument, NULL, OPT_UTSNS },
+		{ "print-pid",	no_argument, NULL, 'p' },
+		{ "version",	no_argument, NULL, 'V' },
+		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -215,8 +215,8 @@ int main(int argc, char **argv)
 			ctx.ns_type = GETINO_NS_UTS;
 			break;
 		case 'p':
-      			ctx.print_pid = true;
-      			break;
+			ctx.print_pid = true;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
