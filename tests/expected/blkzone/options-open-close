@@ -1,0 +1,2 @@
+  start: 0x000008000, len 0x004000, cap 0x004000, wptr 0x000000 reset:0 non-seq:0, zcond: 3(oe) [type: 2(SEQ_WRITE_REQUIRED)]
+ successful close of zones in range from 32768, to 49152
