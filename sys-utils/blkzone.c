@@ -382,7 +382,7 @@ static int blkzone_action(struct blkzone_control *ctl)
 		err(EXIT_FAILURE, _("%s: %s ioctl failed"),
 		    ctl->devname, ctl->command->ioctl_name);
 	else if (ctl->verbose)
-		printf(_("%s: successful %s of zones in range from %ju, to %ju"),
+		printf(_("%s: successful %s of zones in range from %ju, to %ju\n"),
 			ctl->devname,
 			ctl->command->name,
 			(uintmax_t) ctl->offset,
