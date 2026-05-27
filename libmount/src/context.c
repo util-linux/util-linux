@@ -1970,9 +1970,15 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -MNT_ERR_NOSOURCE;
 
 	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)
+			 && !mnt_context_is_restricted(cxt)
 			 && !mnt_context_is_xnocanonicalize(cxt, "source")) {
 		/*
 		 * Source is PATH (canonicalize)
+		 *
+		 * CVE-2026-27456 follow-up: in restricted mode the source
+		 * path was already canonicalized in user context by
+		 * sanitize_paths(); a second realpath() here as root would
+		 * reopen the TOCTOU window that hook_loopdev tries to close.
 		 */
 		path = mnt_resolve_path(src, cache);
 		if (path && strcmp(path, src) != 0)
