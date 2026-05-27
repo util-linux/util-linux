@@ -1412,16 +1412,21 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	if (lc->config.info.lo_flags & LO_FLAGS_DIRECT_IO)
 		flags |= O_DIRECT;
 	if (lc->flags & LOOPDEV_FL_NOFOLLOW)
-		flags |= O_NOFOLLOW;
+		file_fd = ul_open_no_symlinks(lc->filename, mode | flags, 0);
+	else
+		file_fd = open(lc->filename, mode | flags);
 
-	if ((file_fd = open(lc->filename, mode | flags)) < 0) {
-		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
-			file_fd = open(lc->filename, (mode = O_RDONLY) | flags);
-
-		if (file_fd < 0) {
-			DBG(SETUP, ul_debugobj(lc, "open backing file failed: %m"));
-			return -errno;
-		}
+	if (file_fd < 0 && mode != O_RDONLY
+	    && (errno == EROFS || errno == EACCES)) {
+		mode = O_RDONLY;
+		if (lc->flags & LOOPDEV_FL_NOFOLLOW)
+			file_fd = ul_open_no_symlinks(lc->filename, mode | flags, 0);
+		else
+			file_fd = open(lc->filename, mode | flags);
+	}
+	if (file_fd < 0) {
+		DBG(SETUP, ul_debugobj(lc, "open backing file failed: %m"));
+		return -errno;
 	}
 	DBG(SETUP, ul_debugobj(lc, "backing file open: OK"));
 
