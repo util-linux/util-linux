@@ -11,7 +11,14 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#include <sys/syscall.h>
 #include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#ifdef HAVE_LINUX_OPENAT2_H
+# include <linux/openat2.h>
+#endif
 
 #include "c.h"
 #include "all-io.h"
@@ -342,4 +349,21 @@ char *ul_basename(char *path)
 		++p;
 
 	return p;
+}
+
+int ul_open_no_symlinks(const char *path, int flags, mode_t mode)
+{
+#if defined(SYS_openat2) && defined(RESOLVE_NO_SYMLINKS)
+	struct open_how how = {
+		.flags = (__u64) flags,
+		.mode = (__u64) mode,
+		.resolve = RESOLVE_NO_SYMLINKS,
+	};
+	int fd = syscall(SYS_openat2, AT_FDCWD, path, &how, sizeof(how));
+
+	/* only fall back to O_NOFOLLOW if the syscall is unavailable */
+	if (fd >= 0 || errno != ENOSYS)
+		return fd;
+#endif
+	return open(path, flags | O_NOFOLLOW, mode);
 }
