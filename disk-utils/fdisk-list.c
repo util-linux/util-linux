@@ -184,6 +184,7 @@ void list_disklabel(struct fdisk_context *cxt)
 			if (fdisk_partition_to_string(pa, cxt, ids[i], &data))
 				continue;
 			if (scols_line_refer_data(ln, i, data)) {
+				free(data);
 				fdisk_warn(cxt, _("failed to add output data"));
 				goto done;
 			}
@@ -320,6 +321,7 @@ int list_freespace_get_table(struct fdisk_context *cxt,
 			if (fdisk_partition_to_string(pa, cxt, colids[i], &data))
 				continue;
 			if (scols_line_refer_data(ln, col, data)) {
+				free(data);
 				fdisk_warn(cxt, _("failed to add output data"));
 				rc = -ENOMEM;
 				goto done;
