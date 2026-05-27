@@ -940,8 +940,11 @@ int print_partition_info(struct fdisk_context *cxt)
 		rc = fdisk_partition_to_string(pa, cxt, id, &data);
 		if (rc < 0)
 			goto clean_data;
-		if (!data || !*data)
+		if (!data || !*data) {
+			free(data);
 			continue;
+
+		}
 		fdisk_info(cxt, "%15s: %s", fdisk_field_get_name(fd), data);
 		free(data);
 	}
