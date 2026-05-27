@@ -345,6 +345,12 @@ static int hook_mount_pre(
 	}
 #endif
 
+	if (mnt_context_target_fd_required(cxt)) {
+		DBG(HOOK, ul_debugobj(hs,
+			"subdir mount refused for non-root user (kernel < 6.15)"));
+		return -ENOTSUP;
+	}
+
 	/* create unhared temporary target */
 	hsd->org_target = strdup(mnt_fs_get_target(cxt->fs));
 	if (!hsd->org_target)
