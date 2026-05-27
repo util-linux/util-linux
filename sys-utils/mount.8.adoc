@@ -188,6 +188,8 @@ For more details, see *fstab*(5). Only the user that mounted a filesystem can un
 
 The *user* mount option is accepted if no username is specified. If used in the format *user=someone*, the option is silently ignored and visible only for external mount helpers (/sbin/mount.<type>) for compatibility with some network filesystems.
 
+WARNING: When using the legacy *mount*(2) syscall (on older kernels without the new mount API), the mount target path is resolved by the kernel at syscall time. This means there is an inherent time-of-check-to-time-of-use (TOCTOU) window between the permission verification and the actual mount operation. If an ancestor directory of the mount target is writable by the unprivileged user, a path component could be swapped to redirect the mount to an unintended location. The new mount API (available since Linux 5.2) eliminates this issue by using file-descriptor-based target resolution. Administrators should ensure that mount target paths for *user* mounts do not traverse directories writable by unprivileged users.
+
 === Bind mount operation
 
 Remount part of the file hierarchy somewhere else. The call is:
