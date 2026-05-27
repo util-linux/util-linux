@@ -758,7 +758,7 @@ Allows disabling of canonicalization for mount source and target paths. By defau
 +
 The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify open_tree syscall flags and does not allow the bind-mount over a symlink use case.
 +
-Note that *mount*(8) still sanitizes and canonicalizes the source and target paths specified on the command line by non-root users, regardless of the X-mount.nocanonicalize setting.
+Note that *mount*(8) ignores this option for unprivileged (non-root) users. Paths are always canonicalized in restricted mode to ensure safe target resolution.
 
 *X-mount.noloop*::
 Do not create and mount a loop device, even if the source of the mount is a regular file.
