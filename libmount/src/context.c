@@ -414,9 +414,33 @@ int mnt_context_reopen_target_fd(struct libmnt_context *cxt)
 
 	if (!mnt_context_target_fd_required(cxt))
 		return 0;
+
+	DBG(CXT, ul_debugobj(cxt,"reopen target fd"));
+
 	mnt_context_close_target_fd(cxt);
 	if (mnt_context_get_target_fd(cxt) < 0)
 		return -errno;
+
+	/* verify the mount landed on the expected target;
+	 * cxt->fs->id is set from fd_tree in hook_create_mount() */
+	if (cxt->fs && cxt->fs->id > 0) {
+		int id = 0;
+
+		if (mnt_id_from_fd(cxt->fd_target, NULL, &id) == 0
+		    && id != cxt->fs->id) {
+			const char *tgt = mnt_fs_get_target(cxt->fs);
+
+			DBG(CXT, ul_debugobj(cxt,
+				"target mount ID mismatch (expected %d, got %d), umounting",
+				cxt->fs->id, id));
+			if (tgt)
+				umount2(tgt, MNT_DETACH);
+			mnt_context_close_target_fd(cxt);
+			return -EPERM;
+		}
+		DBG(CXT, ul_debugobj(cxt,"target mount ID verified (%d)", id));
+	}
+
 	return 0;
 }
 
@@ -427,9 +451,12 @@ int mnt_context_get_target_fd(struct libmnt_context *cxt)
 	if (cxt->fd_target < 0) {
 		const char *target = mnt_fs_get_target(cxt->fs);
 
-		if (target)
+		if (target) {
 			cxt->fd_target = ul_open_no_symlinks(target,
 						O_PATH | O_CLOEXEC, 0);
+			DBG(CXT, ul_debugobj(cxt,"open target fd=%d [%s]",
+						cxt->fd_target, target));
+		}
 	}
 	return cxt->fd_target;
 }
