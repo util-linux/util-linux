@@ -61,6 +61,8 @@ static inline int is_same_inode(const int fd, const struct stat *st)
 	return 1;
 }
 
+extern int ul_open_no_symlinks(const char *path, int flags, mode_t mode);
+
 extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern unsigned int get_fd_tabsize(void);
 
