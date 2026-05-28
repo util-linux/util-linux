@@ -31,7 +31,7 @@ for dump in $(find "$TS_SELF"/dumps/ -maxdepth 1 -name "*.tar.xz" | sort); do
 	dumpdir="$TS_OUTDIR/dumps"
 
 	mkdir -p $dumpdir
-	tar -C $dumpdir --xz -xf $dump
+	tar --no-same-owner -C $dumpdir --xz -xf $dump
 
 	#
 	# Read *.cols from the tarball, but the expected output is not used

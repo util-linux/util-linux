@@ -32,7 +32,7 @@ SRCDIR="$TS_OUTDIR/testdir1"
 create_srcdir()
 {
 	rm -rf "$SRCDIR"
-	tar -C "$TS_OUTDIR" -xJf "$TS_SELF/testdir1.tar.xz"
+	tar --no-same-owner -C "$TS_OUTDIR" -xJf "$TS_SELF/testdir1.tar.xz"
 }
 
 show_srcdir()

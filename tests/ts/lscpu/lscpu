@@ -33,7 +33,7 @@ for dump in $(find "$TS_SELF"/dumps/ -maxdepth 1 -name "*.tar.gz" | sort); do
 	ts_init_subtest $name
 	mkdir -p $dumpdir
 
-	tar -C $dumpdir -zxf $dump
+	tar --no-same-owner -C $dumpdir -zxf $dump
 
 	# Architecture information is not applicable with -s.
 	"${TS_CMD_LSCPU}" --sysroot "${dumpdir}/${name}" | \

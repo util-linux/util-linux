@@ -20,8 +20,6 @@ TS_DESC="x86_64_16g"
 . "$TS_TOPDIR/functions.sh"
 ts_init "$*"
 
-ts_skip_nonroot
-
 ts_check_test_command "$TS_CMD_CHMEM"
 ts_check_test_command "$TS_CMD_LSMEM"
 ts_check_prog "bzip2"
@@ -34,7 +32,7 @@ DUMP_FILENAME="$TS_SELF/sysfs-dumps/$DUMP_NAME.tar.bz2"
 DUMP_DIR="$TS_OUTDIR/sysfs-dumps"
 
 mkdir -p "$DUMP_DIR"
-tar -C "$DUMP_DIR" -jxf "$DUMP_FILENAME"
+tar --no-same-owner -C "$DUMP_DIR" -jxf "$DUMP_FILENAME"
 
 do_chmem() {
         "$TS_CMD_CHMEM" --sysroot "${DUMP_DIR}/${DUMP_NAME}" "${@}" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
@@ -76,6 +74,7 @@ mem_block="memory${index}"
 
 # We need to enable the "Movable" zone on this block first
 # otherwise chmem will complain about a zone mismatch
+chmod u+w "${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/valid_zones"
 echo "Movable" >"${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/valid_zones"
 
 
