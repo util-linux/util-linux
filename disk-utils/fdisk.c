@@ -942,7 +942,6 @@ int print_partition_info(struct fdisk_context *cxt)
 		if (!data || !*data) {
 			free(data);
 			continue;
-
 		}
 		fdisk_info(cxt, "%15s: %s", fdisk_field_get_name(fd), data);
 		free(data);
