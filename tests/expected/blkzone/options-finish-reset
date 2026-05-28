@@ -1,0 +1,3 @@
+  start: 0x00000c000, len 0x004000, cap 0x004000, wptr N/A reset:0 non-seq:0, zcond:14(fu) [type: 2(SEQ_WRITE_REQUIRED)]
+---------
+  start: 0x00000c000, len 0x004000, cap 0x004000, wptr 0x000000 reset:0 non-seq:0, zcond: 1(em) [type: 2(SEQ_WRITE_REQUIRED)]
