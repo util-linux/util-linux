@@ -75,6 +75,8 @@
 #define DMESG_CALLER_PREFIX "caller="
 #define DMESG_CALLER_PREFIXSZ (sizeof(DMESG_CALLER_PREFIX)-1)
 
+#define PRINTK_MESSAGE_MAX 2048
+
 /*
  * Color scheme
  */
@@ -211,12 +213,14 @@ struct dmesg_control {
 	int		kmsg;		/* /dev/kmsg file descriptor */
 	ssize_t		kmsg_first_read;/* initial read() return code */
 	/*
-	 * the kernel will give EINVAL if we do read() on /proc/kmsg with
-	 * length insufficient for the next message. messages may be up to
-	 * PRINTK_MESSAGE_MAX, which is defined as 2048, so we must be
-	 * able to buffer at least that much in one call
+	 * The kernel will give -EINVAL if we do read() on /proc/kmsg with
+	 * length insufficient for the next message. Messages may be up to
+	 * PRINTK_MESSAGE_MAX, which is defined as 2048, so the read() must
+	 * use a size of at least that. We pass into read(), the size of
+	 * kmsg_buf - 1. Therefore, kmsg_buf must have a size of at least
+	 * PRINTK_MESSAGE_MAX + 1 bytes long.
 	 */
-	char		kmsg_buf[2048]; /* buffer to read kmsg data */
+	char		kmsg_buf[PRINTK_MESSAGE_MAX + 1]; /* kmsg data buffer */
 
 	usec_t		since;		/* filter records by time */
 	usec_t		until;		/* filter records by time */
