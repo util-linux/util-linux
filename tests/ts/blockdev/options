@@ -1,0 +1,183 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="options"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_BLOCKDEV"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
+ts_skip_nonroot
+
+RUNS_ON_QEMU="$(ts_runs_on_qemu)"
+
+DEV_SIZE_MEBIBYTES="50"
+DEV_SECTOR_SIZE=512
+PHYSBLK_EXP=3
+PAGE_SIZE=$("$TS_HELPER_SYSINFO" pagesize)
+
+# https://sg.danny.cz/sg/scsi_debug.html#__RefHeading___Toc121_3679520260
+ts_scsi_debug_init dev_size_mb="$DEV_SIZE_MEBIBYTES"    \
+                    sector_size="$DEV_SECTOR_SIZE"      \
+                    physblk_exp=$PHYSBLK_EXP            \
+                    opt_blks=$(( 4 * 2**PHYSBLK_EXP ))  \
+                    ptype=0 lowest_aligned=15
+DEV="$TS_DEVICE"
+
+ts_init_subtest "report"
+"$TS_CMD_BLOCKDEV" --report "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+sed -i -e 's|/dev.*|<device>|g' "$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getsz"
+"$TS_CMD_BLOCKDEV" --getsz "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getsize64"
+"$TS_CMD_BLOCKDEV" --getsize64 "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getmaxsect"
+# --getmaxsect (BLKSECTGET) queries the SCSI disks 'max_sectors' queue limit,
+# which is defined by going through various validations in the kernel, that
+# culminate to a default value of (4MiB / sector size) for the SCSI fake device.
+#
+# This value can be changed in /sys/block/<disk>/queue/max_sectors_kb, but
+# is extraneous for this test, as we are not writing kernel code tests :)
+#
+# Normally, we should see blockdev return ((4 * 1024^2) / $DEV_SECTOR_SIZE )
+# for this option.
+"$TS_CMD_BLOCKDEV" --getmaxsect "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getss"
+"$TS_CMD_BLOCKDEV" --getss "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getbsz"
+"$TS_CMD_BLOCKDEV" --getbsz "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getpbsz"
+"$TS_CMD_BLOCKDEV" --getpbsz "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getalignoff"
+# In our case we have 2^3 logical blocks as specified by the physblk_exp=3
+# scsi_debug parameter, which means that the physical block size is
+# 8 x $DEV_SECTOR_SIZE. This also means we have 8 logical blocks per
+# physical blocks, and if we want to shift the Lowest Aligned LBA alignment
+# offset known by the kernel to something other than 0 (default), we can simply
+# set the 'lowest_aligned' parameter to an integer that is not a multiple of 8.
+#
+# In our case we set it to 'lowest_aligned=15', and as the kernel only cares about
+# the alignment offset relative to a physical block, i.e. how many logical blocks
+# away from the last physical block boundary, our alignment offset will be
+# ( 15 % 8 ) * $DEV_SECTOR_SIZE
+"$TS_CMD_BLOCKDEV" --getalignoff "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getiomin"
+# The minimum I/O size defaults to the physical block size unless
+# explicitly overridden.
+"$TS_CMD_BLOCKDEV" --getiomin "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "getioopt"
+# The SCSI mid-level sets the disks io_opt queue limit to
+# Optimal Transfer Length * 512, where the former is the scsi_debug 'opt_blks'
+# parameter we set further above. The resulting bytes have to be a multiple of
+# the physical block size otherwise it will be set to 0. This is why we use the
+# 'physblk_exp' to calculate a value for 'opt_blks', as the physical block size
+# is 512 * 2^physblk_exp, so we will always yield something that aligns well.
+#
+# In this case, we want 4 physical blocks for the optimal I/O size, hence why we
+# do 'opt_blks=$(( 4 * 2**PHYSBLK_EXP ))'.
+"$TS_CMD_BLOCKDEV" --getioopt "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+
+ts_init_subtest "set-ro-and-rw"
+
+if "$TS_CMD_BLOCKDEV" --setro "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"; then
+    "$TS_CMD_BLOCKDEV" --getro "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    if "$TS_CMD_BLOCKDEV" --setrw "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"; then
+        "$TS_CMD_BLOCKDEV" --getro "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    else
+        ts_failed "failed to set device read-write"
+    fi
+else
+    ts_failed "failed to set device read-only"
+fi
+
+ts_finalize_subtest
+
+
+readahead_subts() {
+    local name="$1"
+    local ret old new
+    local get_opt="get${name}"
+    local set_opt="set${name}"
+
+    ts_init_subtest "set${name}"
+
+    old="$("$TS_CMD_BLOCKDEV" --"$get_opt" "$DEV" 2>>"$TS_ERRLOG")"
+    # Increment by two pages expressed in 512-byte sectors
+    new="$(( old + ( PAGE_SIZE / 512 ) * 2 ))"
+
+    if "$TS_CMD_BLOCKDEV" --"$set_opt" "$new" "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"; then
+        ret="$("$TS_CMD_BLOCKDEV" --"$get_opt" "$DEV" 2>>"$TS_ERRLOG")"
+
+        if (( new == ret )); then
+            # Reset it to the previous readahead setting
+            "$TS_CMD_BLOCKDEV" --"$set_opt" "$old" "$DEV" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+        else
+            ts_logerr "unexpected readahead value: $ret"
+            ts_logerr "(new: $new old: $old PAGESIZE: $PAGE_SIZE)"
+        fi
+    else
+        if [ "$RUNS_ON_QEMU" == "1" ] && [ "$name" == "fra" ]; then
+            ts_skip "ioctl command BLKFRA{GET,SET} not supported on QEMU"
+        else
+            ts_logerr "failed to set readahead value: $new"
+            ts_logerr "(old: $old PAGESIZE: $PAGE_SIZE)"
+        fi
+    fi
+
+    ts_finalize_subtest
+
+}
+
+# BLKFRASET (--setfra) and BLKRASET (--setra) are synonymous in the kernel
+# but let's stay consistent and test both still.
+readahead_subts "ra"
+readahead_subts "fra"
+
+
+ts_finalize

@@ -78,6 +78,7 @@ TS_CMD_DELPART=${TS_CMD_DELPART:-"${ts_commandsdir}delpart"}
 TS_CMD_BITS=${TS_CMD_BITS-"${ts_commandsdir}bits"}
 TS_CMD_BLKDISCARD=${TS_CMD_BLKDISCARD-"${ts_commandsdir}blkdiscard"}
 TS_CMD_BLKID=${TS_CMD_BLKID-"${ts_commandsdir}blkid"}
+TS_CMD_BLOCKDEV=${TS_CMD_BLOCKDEV-"${ts_commandsdir}blockdev"}
 TS_CMD_BLKZONE=${TS_CMD_BLKZONE-"${ts_commandsdir}blkzone"}
 TS_CMD_CAL=${TS_CMD_CAL-"${ts_commandsdir}cal"}
 TS_CMD_CHMEM=${TS_CMD_CHMEM:-"${ts_commandsdir}chmem"}
