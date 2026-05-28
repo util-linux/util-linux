@@ -230,7 +230,7 @@ static const char *color_cond(struct hexdump_pr *pr, unsigned char *bp, int bcnt
 		/* no offset or offset outside this print unit */
 		if (offt < 0)
 			offt = address;
-		if (offt < address || offt + clr->range > address + bcnt)
+		if (offt < address || offt + (off_t) clr->range > address + bcnt)
 			continue;
 
 		/* match a string */
@@ -243,13 +243,13 @@ static const char *color_cond(struct hexdump_pr *pr, unsigned char *bp, int bcnt
 				match = 1;
 		/* match a value */
 		} else if (clr->val != -1) {
-			int val = 0;
+			int64_t val = 0;
 			/* addresses are not part of the input, so we can't
 			 * compare with the contents of bp */
 			if (pr->flags == F_ADDRESS) {
 				if (clr->val == address)
 					match = 1;
-			} else {
+			} else if (clr->range <= sizeof(val)) {
 				memcpy(&val, bp + offt - address, clr->range);
 				if (val == clr->val)
 					match = 1;
