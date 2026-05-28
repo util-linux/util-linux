@@ -84,21 +84,11 @@ static const char *const zone_names[] = {
 	[ZONE_DEVICE]	= "Device",
 };
 
-
 static int have_mem_blk_zones(struct path_cxt *pctx, const char *dirname)
 {
-	int rc = 0;
-	char *path = NULL;
-
 	if (!pctx || !dirname)
 		return -EINVAL;
-
-	path = ul_strconcat(dirname, "/valid_zones");
-	if (ul_path_access(pctx, F_OK, path) == 0)
-		rc = 1;
-
-	free(path);
-	return rc;
+	return ul_path_accessf(pctx, F_OK, "%s/valid_zones", dirname) == 0;
 }
 
 /*
