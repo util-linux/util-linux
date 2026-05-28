@@ -28,64 +28,55 @@
 #include "optutils.h"
 #include "pidutils.h"
 
-/* operation flags that determine for what to get the inode, i.e. pidfs, namespace... */
 enum {
-	GETINO_PIDFS = 1,
-	GETINO_CGROUP_NAMESPACE,
-	GETINO_IPC_NAMESPACE,
-	GETINO_NET_NAMESPACE,
-	GETINO_MNT_NAMESPACE,
-	GETINO_PID_NAMESPACE,
-	GETINO_TIME_NAMESPACE,
-	GETINO_USER_NAMESPACE,
-	GETINO_UTS_NAMESPACE,
+	GETINO_OP_PIDFS,
+	GETINO_OP_NAMESPACE,
 };
 
-#define IS_NAMESPACE_OP(op) ((op > GETINO_PIDFS && op <= GETINO_UTS_NAMESPACE) ? 1 : 0)
+enum {
+	GETINO_NS_CGROUP,
+	GETINO_NS_IPC,
+	GETINO_NS_NET,
+	GETINO_NS_MNT,
+	GETINO_NS_PID,
+	GETINO_NS_TIME,
+	GETINO_NS_USER,
+	GETINO_NS_UTS,
+};
+
 struct getino_context {
-	int		op_flag;	/* controls for what to get the inode, i.e. GETINO_* */
+	int		op;		/* basic operation: GETINO_OP_* */
+	int		ns_type;	/* namespace type: GETINO_NS_* */
 	pid_t		pid;		/* PID provided on the command line */
 	uint64_t	pidfd_ino;	/* pidfd inode provided on the command line (PID:inode) */
-	unsigned int	pidfd_ioctl;	/* pidfs ioctl command for namespace fd */
 	bool		print_pid;	/* print the pid and inode, colon-separated */
 };
 
 struct ns_desc {
-	const char * const 	name;
+	const char * const	name;
 	unsigned int		ioctl;
 };
 
 static struct ns_desc ns_info[] = {
-	[GETINO_CGROUP_NAMESPACE] = { .name = "cgroup", .ioctl = PIDFD_GET_CGROUP_NAMESPACE },
-	[GETINO_IPC_NAMESPACE] = { .name = "ipc", .ioctl = PIDFD_GET_IPC_NAMESPACE },
-	[GETINO_NET_NAMESPACE] = { .name = "network", .ioctl = PIDFD_GET_NET_NAMESPACE },
-	[GETINO_MNT_NAMESPACE] = { .name = "mount", .ioctl = PIDFD_GET_MNT_NAMESPACE },
-	[GETINO_PID_NAMESPACE] = { .name = "pid", .ioctl = PIDFD_GET_PID_NAMESPACE },
-	[GETINO_TIME_NAMESPACE] = { .name = "time", .ioctl = PIDFD_GET_TIME_NAMESPACE },
-	[GETINO_USER_NAMESPACE] = { .name = "user", .ioctl = PIDFD_GET_USER_NAMESPACE },
-	[GETINO_UTS_NAMESPACE] = { .name = "uts", .ioctl = PIDFD_GET_UTS_NAMESPACE },
+	[GETINO_NS_CGROUP]	= { .name = "cgroup",	.ioctl = PIDFD_GET_CGROUP_NAMESPACE },
+	[GETINO_NS_IPC]		= { .name = "ipc",	.ioctl = PIDFD_GET_IPC_NAMESPACE },
+	[GETINO_NS_NET]		= { .name = "network",	.ioctl = PIDFD_GET_NET_NAMESPACE },
+	[GETINO_NS_MNT]		= { .name = "mount",	.ioctl = PIDFD_GET_MNT_NAMESPACE },
+	[GETINO_NS_PID]		= { .name = "pid",	.ioctl = PIDFD_GET_PID_NAMESPACE },
+	[GETINO_NS_TIME]	= { .name = "time",	.ioctl = PIDFD_GET_TIME_NAMESPACE },
+	[GETINO_NS_USER]	= { .name = "user",	.ioctl = PIDFD_GET_USER_NAMESPACE },
+	[GETINO_NS_UTS]		= { .name = "uts",	.ioctl = PIDFD_GET_UTS_NAMESPACE },
 };
 
-static int get_pidfd_ns_ioctl(struct getino_context *ctx)
+static int get_ns_fd(struct getino_context *ctx, int pidfd)
 {
-	if(!IS_NAMESPACE_OP(ctx->op_flag))
-		return -1;
+	struct ns_desc *ns = &ns_info[ctx->ns_type];
+	int nsfd;
 
-	return ns_info[ctx->op_flag].ioctl;
-}
-
-static int pidfd_get_nsfd_or_err(struct getino_context *ctx, int pidfd)
-{
-	int nsfd, pidfd_ioctl;
-
-	pidfd_ioctl = get_pidfd_ns_ioctl(ctx);
-	if (pidfd_ioctl < 0)
-		errx(EXIT_FAILURE, _("no appropriate ioctl for the desired namespace"));
-
-	nsfd = ioctl(pidfd, pidfd_ioctl, 0);
+	nsfd = ioctl(pidfd, ns->ioctl, 0);
 	if (nsfd < 0)
 		err(EXIT_FAILURE, _("failed to determine %s namespace for process %d"),
-			ns_info[ctx->op_flag].name, ctx->pid);
+			ns->name, ctx->pid);
 	return nsfd;
 }
 
@@ -96,20 +87,23 @@ static void print_inode(struct getino_context *ctx)
 
 	pidfd = ul_get_valid_pidfd_or_err(ctx->pid, ctx->pidfd_ino);
 
-	if (IS_NAMESPACE_OP(ctx->op_flag)) {
-		target_fd = pidfd_get_nsfd_or_err(ctx, pidfd);
+	switch (ctx->op) {
+	case GETINO_OP_NAMESPACE:
+		target_fd = get_ns_fd(ctx, pidfd);
 		close(pidfd);
-	} else {
+		break;
+	case GETINO_OP_PIDFS:
+	default:
 		target_fd = pidfd;
+		break;
 	}
 
 	ino = pidfd_get_inode(target_fd);
 
-	if (ctx->print_pid) {
-		printf("%d:%"PRIu64"\n", ctx->pid, ino);
-	} else {
-		printf("%"PRIu64"\n", ino);
-	}
+	if (ctx->print_pid)
+		printf("%d:%" PRIu64 "\n", ctx->pid, ino);
+	else
+		printf("%" PRIu64 "\n", ino);
 	close(target_fd);
 }
 
@@ -142,8 +136,8 @@ int main(int argc, char **argv)
 {
 	int c, rc = 0;
 	struct getino_context ctx = {
-		.print_pid = false,
-		.op_flag = GETINO_PIDFS,
+		.op = GETINO_OP_PIDFS,
+		.ns_type = -1,
 	};
 
 	enum {
@@ -159,18 +153,18 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{ "pidfs",                  	no_argument,       NULL, OPT_PIDFS	},
-		{ "cgroupns",                  	no_argument,       NULL, OPT_CGROUPNS	},
-		{ "ipcns",                  	no_argument,       NULL, OPT_IPCNS      },
-		{ "netns",                  	no_argument,       NULL, OPT_NETNS      },
-		{ "mntns",                  	no_argument,       NULL, OPT_MNTNS      },
-		{ "pidns",                  	no_argument,       NULL, OPT_PIDNS      },
-		{ "timens",                  	no_argument,       NULL, OPT_TIMENS     },
-		{ "userns",                  	no_argument,       NULL, OPT_USERNS     },
-		{ "utsns",                  	no_argument,       NULL, OPT_UTSNS      },
-		{ "print-pid",                  no_argument,       NULL, 'p'          	},
-		{ "version",                    no_argument,       NULL, 'V'          	},
-		{ "help",                       no_argument,       NULL, 'h'          	},
+		{ "pidfs",	no_argument, NULL, OPT_PIDFS },
+		{ "cgroupns",	no_argument, NULL, OPT_CGROUPNS },
+		{ "ipcns",	no_argument, NULL, OPT_IPCNS },
+		{ "netns",	no_argument, NULL, OPT_NETNS },
+		{ "mntns",	no_argument, NULL, OPT_MNTNS },
+		{ "pidns",	no_argument, NULL, OPT_PIDNS },
+		{ "timens",	no_argument, NULL, OPT_TIMENS },
+		{ "userns",	no_argument, NULL, OPT_USERNS },
+		{ "utsns",	no_argument, NULL, OPT_UTSNS },
+		{ "print-pid",	no_argument, NULL, 'p' },
+		{ "version",	no_argument, NULL, 'V' },
+		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -193,35 +187,36 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case OPT_PIDFS:
-			ctx.op_flag = GETINO_PIDFS;
+			ctx.op = GETINO_OP_PIDFS;
+			ctx.ns_type = -1;
 			break;
 		case OPT_CGROUPNS:
-			ctx.op_flag = GETINO_CGROUP_NAMESPACE;
+			ctx.ns_type = GETINO_NS_CGROUP;
 			break;
 		case OPT_IPCNS:
-			ctx.op_flag = GETINO_IPC_NAMESPACE;
+			ctx.ns_type = GETINO_NS_IPC;
 			break;
 		case OPT_NETNS:
-			ctx.op_flag = GETINO_NET_NAMESPACE;
+			ctx.ns_type = GETINO_NS_NET;
 			break;
 		case OPT_MNTNS:
-			ctx.op_flag = GETINO_MNT_NAMESPACE;
+			ctx.ns_type = GETINO_NS_MNT;
 			break;
 		case OPT_PIDNS:
-			ctx.op_flag = GETINO_PID_NAMESPACE;
+			ctx.ns_type = GETINO_NS_PID;
 			break;
 		case OPT_TIMENS:
-			ctx.op_flag = GETINO_TIME_NAMESPACE;
+			ctx.ns_type = GETINO_NS_TIME;
 			break;
 		case OPT_USERNS:
-			ctx.op_flag = GETINO_USER_NAMESPACE;
+			ctx.ns_type = GETINO_NS_USER;
 			break;
 		case OPT_UTSNS:
-			ctx.op_flag = GETINO_UTS_NAMESPACE;
+			ctx.ns_type = GETINO_NS_UTS;
 			break;
 		case 'p':
-      			ctx.print_pid = true;
-      			break;
+			ctx.print_pid = true;
+			break;
 		case 'V':
 			print_version(EXIT_SUCCESS);
 		case 'h':
@@ -230,6 +225,9 @@ int main(int argc, char **argv)
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	if (ctx.ns_type >= 0)
+		ctx.op = GETINO_OP_NAMESPACE;
 
 	if (argc - optind < 1) {
 		warnx(_("no process specified"));
