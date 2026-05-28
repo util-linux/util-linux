@@ -590,8 +590,13 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 
 		if (sig_die)
 			break;
-		if (sig_resize)
+		if (sig_resize) {
 			ui_menu_resize(cf);
+			if (key == ERR)
+				continue;
+		}
+		if (key == ERR)
+			break;
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
@@ -2039,8 +2044,13 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 
 		if (sig_die)
 			break;
-		if (sig_resize)
+		if (sig_resize) {
 			ui_menu_resize(cf);
+			if (key == ERR)
+				continue;
+		}
+		if (key == ERR)
+			break;
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
@@ -2199,8 +2209,13 @@ static int ui_create_label(struct cfdisk *cf)
 
 		if (sig_die)
 			break;
-		if (sig_resize)
+		if (sig_resize) {
 			ui_menu_resize(cf);
+			if (key == ERR)
+				continue;
+		}
+		if (key == ERR)
+			break;
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 		switch (key) {
