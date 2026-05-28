@@ -1,0 +1,233 @@
+
+---
+
+$ lsmem --split=STATE,REMOVABLE
+RANGE                                  SIZE  STATE REMOVABLE     BLOCK
+0x0000010000000000-0x00000103e7ffffff 15.6G online       yes 8192-8316
+0x00000103f8000000-0x00000103ffffffff  128M online       yes      8319
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem --output RANGE,SIZE --split none
+RANGE                                  SIZE
+0x0000010000000000-0x00000103e7ffffff 15.6G
+0x00000103f8000000-0x00000103ffffffff  128M
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem --output RANGE,SIZE,STATE --split STATE
+RANGE                                  SIZE  STATE
+0x0000010000000000-0x00000103e7ffffff 15.6G online
+0x00000103f8000000-0x00000103ffffffff  128M online
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem --all --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES
+RANGE                                 SIZE  STATE REMOVABLE BLOCK NODE ZONES
+0x0000010000000000-0x0000010007ffffff 128M online       yes  8192    0   DMA
+0x0000010008000000-0x000001000fffffff 128M online       yes  8193    0   DMA
+0x0000010010000000-0x0000010017ffffff 128M online       yes  8194    0   DMA
+0x0000010018000000-0x000001001fffffff 128M online       yes  8195    0   DMA
+0x0000010020000000-0x0000010027ffffff 128M online       yes  8196    0   DMA
+0x0000010028000000-0x000001002fffffff 128M online       yes  8197    0   DMA
+0x0000010030000000-0x0000010037ffffff 128M online       yes  8198    0   DMA
+0x0000010038000000-0x000001003fffffff 128M online       yes  8199    0   DMA
+0x0000010040000000-0x0000010047ffffff 128M online       yes  8200    0   DMA
+0x0000010048000000-0x000001004fffffff 128M online       yes  8201    0   DMA
+0x0000010050000000-0x0000010057ffffff 128M online       yes  8202    0   DMA
+0x0000010058000000-0x000001005fffffff 128M online       yes  8203    0   DMA
+0x0000010060000000-0x0000010067ffffff 128M online       yes  8204    0   DMA
+0x0000010068000000-0x000001006fffffff 128M online       yes  8205    0   DMA
+0x0000010070000000-0x0000010077ffffff 128M online       yes  8206    0   DMA
+0x0000010078000000-0x000001007fffffff 128M online       yes  8207    0   DMA
+0x0000010080000000-0x0000010087ffffff 128M online       yes  8208    0   DMA
+0x0000010088000000-0x000001008fffffff 128M online       yes  8209    0   DMA
+0x0000010090000000-0x0000010097ffffff 128M online       yes  8210    0   DMA
+0x0000010098000000-0x000001009fffffff 128M online       yes  8211    0   DMA
+0x00000100a0000000-0x00000100a7ffffff 128M online       yes  8212    0   DMA
+0x00000100a8000000-0x00000100afffffff 128M online       yes  8213    0   DMA
+0x00000100b0000000-0x00000100b7ffffff 128M online       yes  8214    0   DMA
+0x00000100b8000000-0x00000100bfffffff 128M online       yes  8215    0   DMA
+0x00000100c0000000-0x00000100c7ffffff 128M online       yes  8216    0   DMA
+0x00000100c8000000-0x00000100cfffffff 128M online       yes  8217    0   DMA
+0x00000100d0000000-0x00000100d7ffffff 128M online       yes  8218    0   DMA
+0x00000100d8000000-0x00000100dfffffff 128M online       yes  8219    0   DMA
+0x00000100e0000000-0x00000100e7ffffff 128M online       yes  8220    0   DMA
+0x00000100e8000000-0x00000100efffffff 128M online       yes  8221    0   DMA
+0x00000100f0000000-0x00000100f7ffffff 128M online       yes  8222    0   DMA
+0x00000100f8000000-0x00000100ffffffff 128M online       yes  8223    0   DMA
+0x0000010100000000-0x0000010107ffffff 128M online       yes  8224    0   DMA
+0x0000010108000000-0x000001010fffffff 128M online       yes  8225    0   DMA
+0x0000010110000000-0x0000010117ffffff 128M online       yes  8226    0   DMA
+0x0000010118000000-0x000001011fffffff 128M online       yes  8227    0   DMA
+0x0000010120000000-0x0000010127ffffff 128M online       yes  8228    0   DMA
+0x0000010128000000-0x000001012fffffff 128M online       yes  8229    0   DMA
+0x0000010130000000-0x0000010137ffffff 128M online       yes  8230    0   DMA
+0x0000010138000000-0x000001013fffffff 128M online       yes  8231    0   DMA
+0x0000010140000000-0x0000010147ffffff 128M online       yes  8232    0   DMA
+0x0000010148000000-0x000001014fffffff 128M online       yes  8233    0   DMA
+0x0000010150000000-0x0000010157ffffff 128M online       yes  8234    0   DMA
+0x0000010158000000-0x000001015fffffff 128M online       yes  8235    0   DMA
+0x0000010160000000-0x0000010167ffffff 128M online       yes  8236    0   DMA
+0x0000010168000000-0x000001016fffffff 128M online       yes  8237    0   DMA
+0x0000010170000000-0x0000010177ffffff 128M online       yes  8238    0   DMA
+0x0000010178000000-0x000001017fffffff 128M online       yes  8239    0   DMA
+0x0000010180000000-0x0000010187ffffff 128M online       yes  8240    0   DMA
+0x0000010188000000-0x000001018fffffff 128M online       yes  8241    0   DMA
+0x0000010190000000-0x0000010197ffffff 128M online       yes  8242    0   DMA
+0x0000010198000000-0x000001019fffffff 128M online       yes  8243    0   DMA
+0x00000101a0000000-0x00000101a7ffffff 128M online       yes  8244    0   DMA
+0x00000101a8000000-0x00000101afffffff 128M online       yes  8245    0   DMA
+0x00000101b0000000-0x00000101b7ffffff 128M online       yes  8246    0   DMA
+0x00000101b8000000-0x00000101bfffffff 128M online       yes  8247    0   DMA
+0x00000101c0000000-0x00000101c7ffffff 128M online       yes  8248    0   DMA
+0x00000101c8000000-0x00000101cfffffff 128M online       yes  8249    0   DMA
+0x00000101d0000000-0x00000101d7ffffff 128M online       yes  8250    0   DMA
+0x00000101d8000000-0x00000101dfffffff 128M online       yes  8251    0   DMA
+0x00000101e0000000-0x00000101e7ffffff 128M online       yes  8252    0   DMA
+0x00000101e8000000-0x00000101efffffff 128M online       yes  8253    0   DMA
+0x00000101f0000000-0x00000101f7ffffff 128M online       yes  8254    0   DMA
+0x00000101f8000000-0x00000101ffffffff 128M online       yes  8255    0   DMA
+0x0000010200000000-0x0000010207ffffff 128M online       yes  8256    0   DMA
+0x0000010208000000-0x000001020fffffff 128M online       yes  8257    0   DMA
+0x0000010210000000-0x0000010217ffffff 128M online       yes  8258    0   DMA
+0x0000010218000000-0x000001021fffffff 128M online       yes  8259    0   DMA
+0x0000010220000000-0x0000010227ffffff 128M online       yes  8260    0   DMA
+0x0000010228000000-0x000001022fffffff 128M online       yes  8261    0   DMA
+0x0000010230000000-0x0000010237ffffff 128M online       yes  8262    0   DMA
+0x0000010238000000-0x000001023fffffff 128M online       yes  8263    0   DMA
+0x0000010240000000-0x0000010247ffffff 128M online       yes  8264    0   DMA
+0x0000010248000000-0x000001024fffffff 128M online       yes  8265    0   DMA
+0x0000010250000000-0x0000010257ffffff 128M online       yes  8266    0   DMA
+0x0000010258000000-0x000001025fffffff 128M online       yes  8267    0   DMA
+0x0000010260000000-0x0000010267ffffff 128M online       yes  8268    0   DMA
+0x0000010268000000-0x000001026fffffff 128M online       yes  8269    0   DMA
+0x0000010270000000-0x0000010277ffffff 128M online       yes  8270    0   DMA
+0x0000010278000000-0x000001027fffffff 128M online       yes  8271    0   DMA
+0x0000010280000000-0x0000010287ffffff 128M online       yes  8272    0   DMA
+0x0000010288000000-0x000001028fffffff 128M online       yes  8273    0   DMA
+0x0000010290000000-0x0000010297ffffff 128M online       yes  8274    0   DMA
+0x0000010298000000-0x000001029fffffff 128M online       yes  8275    0   DMA
+0x00000102a0000000-0x00000102a7ffffff 128M online       yes  8276    0   DMA
+0x00000102a8000000-0x00000102afffffff 128M online       yes  8277    0   DMA
+0x00000102b0000000-0x00000102b7ffffff 128M online       yes  8278    0   DMA
+0x00000102b8000000-0x00000102bfffffff 128M online       yes  8279    0   DMA
+0x00000102c0000000-0x00000102c7ffffff 128M online       yes  8280    0   DMA
+0x00000102c8000000-0x00000102cfffffff 128M online       yes  8281    0   DMA
+0x00000102d0000000-0x00000102d7ffffff 128M online       yes  8282    0   DMA
+0x00000102d8000000-0x00000102dfffffff 128M online       yes  8283    0   DMA
+0x00000102e0000000-0x00000102e7ffffff 128M online       yes  8284    0   DMA
+0x00000102e8000000-0x00000102efffffff 128M online       yes  8285    0   DMA
+0x00000102f0000000-0x00000102f7ffffff 128M online       yes  8286    0   DMA
+0x00000102f8000000-0x00000102ffffffff 128M online       yes  8287    0   DMA
+0x0000010300000000-0x0000010307ffffff 128M online       yes  8288    0   DMA
+0x0000010308000000-0x000001030fffffff 128M online       yes  8289    0   DMA
+0x0000010310000000-0x0000010317ffffff 128M online       yes  8290    0   DMA
+0x0000010318000000-0x000001031fffffff 128M online       yes  8291    0   DMA
+0x0000010320000000-0x0000010327ffffff 128M online       yes  8292    0   DMA
+0x0000010328000000-0x000001032fffffff 128M online       yes  8293    0   DMA
+0x0000010330000000-0x0000010337ffffff 128M online       yes  8294    0   DMA
+0x0000010338000000-0x000001033fffffff 128M online       yes  8295    0   DMA
+0x0000010340000000-0x0000010347ffffff 128M online       yes  8296    0   DMA
+0x0000010348000000-0x000001034fffffff 128M online       yes  8297    0   DMA
+0x0000010350000000-0x0000010357ffffff 128M online       yes  8298    0   DMA
+0x0000010358000000-0x000001035fffffff 128M online       yes  8299    0   DMA
+0x0000010360000000-0x0000010367ffffff 128M online       yes  8300    0   DMA
+0x0000010368000000-0x000001036fffffff 128M online       yes  8301    0   DMA
+0x0000010370000000-0x0000010377ffffff 128M online       yes  8302    0   DMA
+0x0000010378000000-0x000001037fffffff 128M online       yes  8303    0   DMA
+0x0000010380000000-0x0000010387ffffff 128M online       yes  8304    0   DMA
+0x0000010388000000-0x000001038fffffff 128M online       yes  8305    0   DMA
+0x0000010390000000-0x0000010397ffffff 128M online       yes  8306    0   DMA
+0x0000010398000000-0x000001039fffffff 128M online       yes  8307    0   DMA
+0x00000103a0000000-0x00000103a7ffffff 128M online       yes  8308    0   DMA
+0x00000103a8000000-0x00000103afffffff 128M online       yes  8309    0   DMA
+0x00000103b0000000-0x00000103b7ffffff 128M online       yes  8310    0   DMA
+0x00000103b8000000-0x00000103bfffffff 128M online       yes  8311    0   DMA
+0x00000103c0000000-0x00000103c7ffffff 128M online       yes  8312    0   DMA
+0x00000103c8000000-0x00000103cfffffff 128M online       yes  8313    0   DMA
+0x00000103d0000000-0x00000103d7ffffff 128M online       yes  8314    0   DMA
+0x00000103d8000000-0x00000103dfffffff 128M online       yes  8315    0   DMA
+0x00000103e0000000-0x00000103e7ffffff 128M online       yes  8316    0   DMA
+0x00000103f8000000-0x00000103ffffffff 128M online       yes  8319    0   DMA
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem --raw --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES
+RANGE SIZE STATE REMOVABLE BLOCK NODE ZONES
+0x0000010000000000-0x00000103e7ffffff 15.6G online yes 8192-8316 0 DMA
+0x00000103f8000000-0x00000103ffffffff 128M online yes 8319 0 DMA
+
+---
+
+$ lsmem --json --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES --split RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE,ZONES
+{
+   "memory": [
+      {
+         "range": "0x0000010000000000-0x00000103e7ffffff",
+         "size": "15.6G",
+         "state": "online",
+         "removable": true,
+         "block": "8192-8316",
+         "node": 0,
+         "zones": "DMA"
+      },{
+         "range": "0x00000103f8000000-0x00000103ffffffff",
+         "size": "128M",
+         "state": "online",
+         "removable": true,
+         "block": "8319",
+         "node": 0,
+         "zones": "DMA"
+      }
+   ]
+}
+
+---
+
+$ lsmem -o +ZONES
+RANGE                                  SIZE  STATE REMOVABLE     BLOCK ZONES
+0x0000010000000000-0x00000103e7ffffff 15.6G online       yes 8192-8316   DMA
+0x00000103f8000000-0x00000103ffffffff  128M online       yes      8319   DMA
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem --output-all
+RANGE                                  SIZE  STATE REMOVABLE     BLOCK NODE ZONES
+0x0000010000000000-0x00000103e7ffffff 15.6G online       yes 8192-8316    0   DMA
+0x00000103f8000000-0x00000103ffffffff  128M online       yes      8319    0   DMA
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
+
+---
+
+$ lsmem 
+RANGE                                  SIZE  STATE REMOVABLE     BLOCK
+0x0000010000000000-0x00000103e7ffffff 15.6G online       yes 8192-8316
+0x00000103f8000000-0x00000103ffffffff  128M online       yes      8319
+
+Memory block size:                128M
+Total online memory:             15.8G
+Total offline memory:               0B
