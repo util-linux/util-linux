@@ -264,4 +264,13 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	&> "$TS_OUTPUT" <<< "@@@@"
 ts_finalize_subtest
 
+# 8-byte value match (verifies int64_t color condition)
+ts_init_subtest "8b_hex-1"
+TS_EXPECTED+=$BE_EXT
+printf '\x41\x42\x43\x44\x45\x46\x47\x48' | \
+$TS_CMD_HEXDUMP $OPTS $ADDRFMT \
+	-e '1/8 "%016x_L[red:0x4847464544434241]\n"' \
+	&> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize

@@ -512,9 +512,9 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 				errno = 0;
 				end = NULL;
 				if (cfmt[1] == 'x' || cfmt[1] == 'X')
-					hcnext->val = strtoul(cfmt + 2, &end, 16);
+					hcnext->val = strtoll(cfmt + 2, &end, 16);
 				else
-					hcnext->val = strtoul(cfmt, &end, 8);
+					hcnext->val = strtoll(cfmt, &end, 8);
 				if (errno || end == cfmt)
 					badfmt(fmt);
 				cfmt = end;
@@ -561,16 +561,15 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 				++cfmt;
 				errno = 0;
 
-				hcnext->range =
-				  strtoul(cfmt, &cfmt, 10) - hcnext->offt + 1;
+				unsigned long end_offt = strtoul(cfmt, &cfmt, 10);
 				if (errno)
 					badfmt(fmt);
-				/* offset range must be between 0 and format byte count */
-				if (hcnext->range < 0)
+				if (end_offt < (unsigned long) hcnext->offt)
 					badcnt("_L");
+				hcnext->range = end_offt - hcnext->offt + 1;
 				/* the offset extends over several print units, clone
 				 * the condition, link it in and adjust the address/offset */
-				while (hcnext->range > bcnt) {
+				while (hcnext->range > (size_t) bcnt) {
 					hc = xcalloc(1, sizeof(struct hexdump_clr));
 					memcpy(hc, hcnext, sizeof(struct hexdump_clr));
 
@@ -588,7 +587,7 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 			hcnext->offt = (off_t)-1;
 
 		/* check if the string we're looking for is the same length as the range */
-		if (hcnext->str && (int)strlen(hcnext->str) != hcnext->range)
+		if (hcnext->str && strlen(hcnext->str) != hcnext->range)
 			badcnt("_L");
 
 		/* link in another condition */
