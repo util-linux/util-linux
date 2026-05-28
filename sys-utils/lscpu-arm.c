@@ -327,7 +327,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { 0x6d, ms_part,      "Microsoft" },
-    { 0x70, ft_part,      "Phytium" },
+    { 0x70, ft_part,      "Phytium",  HW_IMPL_NOOVERWRITE },
     { 0xc0, ampere_part,  "Ampere" },
     { -1,   unknown_part, "unknown" },
 };
