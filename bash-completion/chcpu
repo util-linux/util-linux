@@ -41,6 +41,10 @@ _chcpu_module()
 			COMPREPLY=( $(compgen -W "horizontal vertical" -- $cur) )
 			return 0
 			;;
+		'-s'|'--sysroot')
+			COMPREPLY=( $(compgen -d -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -52,6 +56,7 @@ _chcpu_module()
 		--deconfigure
 		--dispatch
 		--rescan
+		--sysroot
 		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
