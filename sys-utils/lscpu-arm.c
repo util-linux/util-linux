@@ -21,6 +21,7 @@
 struct id_part {
     const int id;
     const char* name;
+    char* (*inner)(const int, const char*, struct lscpu_cputype *ct);
 };
 
 static const struct id_part arm_part[] = {
@@ -266,12 +267,14 @@ static const struct id_part fujitsu_part[] = {
     { -1, "unknown" },
 };
 
+char* hisi_get_inner_name_compatible(const int id, const char* name, struct lscpu_cputype *ct);
+
 static const struct id_part hisi_part[] = {
-    { 0xd01, "TaiShan-v110" },	/* used in Kunpeng-920 SoC */
-    { 0xd02, "TaiShan-v120" },	/* used in Kirin 990A and 9000S SoCs */
-    { 0xd40, "Cortex-A76" },	/* HiSilicon uses this ID though advertises A76 */
-    { 0xd41, "Cortex-A77" },	/* HiSilicon uses this ID though advertises A77 */
-    { -1, "unknown" },
+    { 0xd01, "Kunpeng-920", NULL },   /* aka tsv110 */
+    { 0xd02, "unknown", hisi_get_inner_name_compatible},
+    { 0xd40, "Cortex-A76", NULL },    /* HiSilicon uses this ID though advertises A76 */
+    { 0xd41, "Cortex-A77", NULL },    /* HiSilicon uses this ID though advertises A77 */
+    { -1, "unknown", NULL },
 };
 
 static const struct id_part ampere_part[] = {
@@ -390,6 +393,19 @@ int is_arm(struct lscpu_cxt *cxt)
 	return 0;
 }
 
+char* hisi_get_inner_name_compatible(const int id __attribute__((unused)), const char* name, struct lscpu_cputype *ct)
+{
+    char* bios_modelname = ct->bios_modelname;
+    if (bios_modelname == NULL) {
+        return (char*)name;
+    }
+    // Compatible with HUAWEI Kunpeng 920 7282C models
+    if (strstr(bios_modelname, "7282C") != NULL) {
+        return "Kunpeng 920 7282C";
+    }
+    return bios_modelname;
+}
+
 /*
  * Use model and vendor IDs to decode to human readable names.
  */
@@ -423,7 +439,13 @@ static int arm_ids_decode(struct lscpu_cputype *ct)
 	for (j = 0; parts[j].id != -1; j++) {
 		if (parts[j].id == part) {
 			free(ct->modelname);
-			ct->modelname = xstrdup(parts[j].name);
+			char* real_name = NULL;
+			if (parts[j].inner != NULL) {
+				real_name = parts[j].inner(parts[j].id, parts[j].name, ct);
+			} else {
+				real_name = (char*)parts[j].name;
+			}
+			ct->modelname = xstrdup(real_name);
 			break;
 		}
 	}
