@@ -371,7 +371,7 @@ struct ul_statmount {
 /*
  * Special @mnt_id values that can be passed to listmount
  */
-#ifdef LSMT_ROOT
+#ifndef LSMT_ROOT
 # define LSMT_ROOT              0xffffffffffffffff    /* root mount */
 #endif
 
