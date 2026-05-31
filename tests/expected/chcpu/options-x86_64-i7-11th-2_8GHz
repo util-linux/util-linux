@@ -1,0 +1,52 @@
+---disable---
+CPU 1 disabled
+CPU 2 disabled
+CPU 3 disabled
+CPU 4 disabled
+CPU 5 disabled
+CPU 6 disabled
+CPU 7 disabled
+0
+0
+0
+0
+0
+0
+0
+---enable---
+CPU 1 enabled
+CPU 2 enabled
+CPU 3 enabled
+CPU 4 enabled
+CPU 5 enabled
+CPU 6 enabled
+CPU 7 enabled
+1
+1
+1
+1
+1
+1
+1
+---deconfigure---
+---configure---
+---dispatch horizontal---
+---dispatch vertical---
+---rescan---
+---disable last enabled CPU---
+CPU 0 disabled
+CPU 1 disabled
+CPU 2 disabled
+CPU 3 disabled
+CPU 4 disabled
+CPU 5 disabled
+CPU 6 disabled
+CPU 7 disabled
+0
+0
+0
+0
+0
+0
+0
+0

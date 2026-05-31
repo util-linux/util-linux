@@ -1,0 +1,130 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="options"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+
+ts_check_test_command "$TS_CMD_CHCPU"
+ts_check_test_command "$TS_CMD_LSCPU"
+ts_check_prog "bzip2"
+ts_check_prog "tar"
+
+_PATH_SYS_CPU="/sys/devices/system/cpu"
+
+DUMP_DIR="$TS_OUTDIR/dumps"
+mkdir -p "$DUMP_DIR"
+
+do_chcpu() {
+    local sysroot=$1
+    shift 1
+    "$TS_CMD_CHCPU" --sysroot "${sysroot}" "${@}" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+}
+
+print_cpus_sys_interface() {
+    local sysroot iface_name start end
+    local i p
+    sysroot=$1
+    iface_name=$2
+    start=$3
+    end=$4
+
+    for ((i=start; i <=end; i++ )); do
+        p="${sysroot}/${_PATH_SYS_CPU}/cpu${i}/${iface_name}"
+        [ ! -f "$p" ] && continue
+        cat "$p" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    done
+}
+
+print_ts_section_title() {
+    echo "---${1}---" | tee -a "$TS_OUTPUT" "$TS_ERRLOG" >/dev/null
+}
+
+for dump_name in $(find "$TS_SELF"/dumps/ -type f -maxdepth 1 -name "*.tar.bz2" | sort); do
+    subts_name=$(basename "$dump_name" .tar.bz2)
+    ts_init_subtest "${subts_name}"
+
+    sysroot="${DUMP_DIR}/${subts_name}/"
+
+    tar --no-same-owner -C "$DUMP_DIR" -jxf "$dump_name"
+
+    cpu_start=$( "$TS_CMD_LSCPU" --sysroot "${sysroot}" --online \
+                    --extended=CPU | grep -v CPU | head -n1 | tr -d ' ')
+
+    cpu_end=$( "$TS_CMD_LSCPU" --sysroot "${sysroot}" --online \
+                    --extended=CPU | tail -n1 | tr -d ' ')
+
+    cpu_list="${cpu_start}-${cpu_end}"
+
+    print_ts_section_title "disable"
+    do_chcpu "${sysroot}" --disable "$cpu_list"
+    print_cpus_sys_interface "${sysroot}" "online" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "enable"
+    do_chcpu "${sysroot}" --enable "$cpu_list"
+    print_cpus_sys_interface "${sysroot}" "online" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "deconfigure"
+    do_chcpu "${sysroot}" --deconfigure "$cpu_list"
+    print_cpus_sys_interface "${sysroot}" "configure" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "configure"
+    do_chcpu "${sysroot}" --configure "$cpu_list"
+    print_cpus_sys_interface "${sysroot}" "configure" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "dispatch horizontal"
+    do_chcpu "${sysroot}" --dispatch horizontal
+    print_cpus_sys_interface "${sysroot}" "dispatching" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "dispatch vertical"
+    do_chcpu "${sysroot}" --dispatch vertical
+    print_cpus_sys_interface "${sysroot}" "dispatching" "$cpu_start" "$cpu_end"
+
+    print_ts_section_title "rescan"
+    do_chcpu "${sysroot}" --rescan
+
+    # We will fake a hotpluggable CPU0, so we can test whether chcpu(8)
+    # reliably warns and skips when the last enabled CPU is being disabled.
+    print_ts_section_title "disable last enabled CPU"
+    echo 1 | tee "${sysroot}/${_PATH_SYS_CPU}"/cpu0/online >/dev/null 2>>"$TS_ERRLOG"
+    do_chcpu "${sysroot}" --disable 0-"$cpu_end"
+    print_cpus_sys_interface "${sysroot}" "online" 0 "$cpu_end"
+    rm -f "${sysroot}/${_PATH_SYS_CPU}"/cpu0/online
+
+    # Expected fails
+    # Don't use print_ts_section_title() here
+    echo "---disable invalid CPU list---" >>"$TS_ERRLOG"
+    do_chcpu "${sysroot}" --disable "$((cpu_end+1))-$((cpu_end+2))"
+
+    echo "---configure invalid CPU list---" >>"$TS_ERRLOG"
+    do_chcpu "${sysroot}" --configure "$((cpu_end+1))-$((cpu_end+2))"
+
+    echo "---invalid dispatch mode---" >>"$TS_ERRLOG"
+    do_chcpu "${sysroot}" --dispatch bogus
+
+    echo "---exclusive options---" >>"$TS_ERRLOG"
+    do_chcpu "${sysroot}" --enable "$cpu_list" --rescan
+    do_chcpu "${sysroot}" --enable "$cpu_list" --disable "$cpu_list"
+    do_chcpu "${sysroot}" --configure "$cpu_list" --enable "$cpu_list"
+
+    ts_finalize_subtest
+done
+
+
+ts_finalize

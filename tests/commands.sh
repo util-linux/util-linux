@@ -81,6 +81,7 @@ TS_CMD_BLKID=${TS_CMD_BLKID-"${ts_commandsdir}blkid"}
 TS_CMD_BLOCKDEV=${TS_CMD_BLOCKDEV-"${ts_commandsdir}blockdev"}
 TS_CMD_BLKZONE=${TS_CMD_BLKZONE-"${ts_commandsdir}blkzone"}
 TS_CMD_CAL=${TS_CMD_CAL-"${ts_commandsdir}cal"}
+TS_CMD_CHCPU=${TS_CMD_CHCPU:-"${ts_commandsdir}chcpu"}
 TS_CMD_CHMEM=${TS_CMD_CHMEM:-"${ts_commandsdir}chmem"}
 TS_CMD_CHOOM=${TS_CMD_CHOOM:-"${ts_commandsdir}choom"}
 TS_CMD_CHSH=${TS_CMD_CHSH:-"${ts_commandsdir}chsh"}

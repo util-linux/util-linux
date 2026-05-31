@@ -1,0 +1,62 @@
+---disable---
+chcpu: CPU 0 is not hot pluggable
+chcpu: CPU 1 is not hot pluggable
+chcpu: CPU 2 is not hot pluggable
+chcpu: CPU 3 is not hot pluggable
+chcpu: CPU 4 is not hot pluggable
+chcpu: CPU 5 is not hot pluggable
+chcpu: CPU 6 is not hot pluggable
+chcpu: CPU 7 is not hot pluggable
+---enable---
+chcpu: CPU 0 is not hot pluggable
+chcpu: CPU 1 is not hot pluggable
+chcpu: CPU 2 is not hot pluggable
+chcpu: CPU 3 is not hot pluggable
+chcpu: CPU 4 is not hot pluggable
+chcpu: CPU 5 is not hot pluggable
+chcpu: CPU 6 is not hot pluggable
+chcpu: CPU 7 is not hot pluggable
+---deconfigure---
+chcpu: CPU 0 is not configurable
+chcpu: CPU 1 is not configurable
+chcpu: CPU 2 is not configurable
+chcpu: CPU 3 is not configurable
+chcpu: CPU 4 is not configurable
+chcpu: CPU 5 is not configurable
+chcpu: CPU 6 is not configurable
+chcpu: CPU 7 is not configurable
+---configure---
+chcpu: CPU 0 is not configurable
+chcpu: CPU 1 is not configurable
+chcpu: CPU 2 is not configurable
+chcpu: CPU 3 is not configurable
+chcpu: CPU 4 is not configurable
+chcpu: CPU 5 is not configurable
+chcpu: CPU 6 is not configurable
+chcpu: CPU 7 is not configurable
+---dispatch horizontal---
+chcpu: This system does not support setting the dispatching mode of CPUs
+---dispatch vertical---
+chcpu: This system does not support setting the dispatching mode of CPUs
+---rescan---
+chcpu: This system does not support rescanning of CPUs
+---disable last enabled CPU---
+chcpu: CPU 1 is not hot pluggable
+chcpu: CPU 2 is not hot pluggable
+chcpu: CPU 3 is not hot pluggable
+chcpu: CPU 4 is not hot pluggable
+chcpu: CPU 5 is not hot pluggable
+chcpu: CPU 6 is not hot pluggable
+chcpu: CPU 7 is not hot pluggable
+---disable invalid CPU list---
+chcpu: CPU 8 does not exist
+chcpu: CPU 9 does not exist
+---configure invalid CPU list---
+chcpu: CPU 8 does not exist
+chcpu: CPU 9 does not exist
+---invalid dispatch mode---
+chcpu: unsupported argument: bogus
+---exclusive options---
+chcpu: This system does not support rescanning of CPUs
+chcpu: options --enable and --disable cannot be combined
+chcpu: options --configure and --enable cannot be combined
