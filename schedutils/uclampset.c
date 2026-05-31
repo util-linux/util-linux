@@ -157,16 +157,16 @@ static int set_uclamp_one(struct uclampset *ctl, pid_t pid)
 	if (sched_getattr(pid, &sa, sizeof(sa), 0) != 0)
 		err(EXIT_FAILURE, _("failed to get pid %d's uclamp values"), pid);
 
-	if (ctl->util_min_set)
+	sa.sched_flags = SCHED_FLAG_KEEP_POLICY | SCHED_FLAG_KEEP_PARAMS;
+
+	if (ctl->util_min_set) {
 		sa.sched_util_min = ctl->util_min;
-	if (ctl->util_max_set)
+		sa.sched_flags |= SCHED_FLAG_UTIL_CLAMP_MIN;
+	}
+	if (ctl->util_max_set) {
 		sa.sched_util_max = ctl->util_max;
-
-	sa.sched_flags = SCHED_FLAG_KEEP_POLICY |
-			 SCHED_FLAG_KEEP_PARAMS |
-			 SCHED_FLAG_UTIL_CLAMP_MIN |
-			 SCHED_FLAG_UTIL_CLAMP_MAX;
-
+		sa.sched_flags |= SCHED_FLAG_UTIL_CLAMP_MAX;
+	}
 	if (ctl->reset_on_fork)
 		sa.sched_flags |= SCHED_FLAG_RESET_ON_FORK;
 
