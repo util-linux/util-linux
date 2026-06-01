@@ -77,7 +77,7 @@ enum {
 static int cpu_enable(struct chcpu_context *ctx, int enable)
 {
 	int cpu;
-	int online, rc;
+	int online = -1, rc;
 	int configured = -1;
 	int fails = 0;
 
@@ -94,16 +94,21 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 			fails++;
 			continue;
 		}
-		if (ul_path_readf_s32(ctx->sys, &online, "cpu%d/online", cpu) == 0
-		    && online == 1
-		    && enable == 1) {
-			printf(_("CPU %d is already enabled\n"), cpu);
+
+		if (ul_path_readf_s32(ctx->sys, &online, "cpu%d/online", cpu) != 0) {
+			warnx(_("failed to read CPU %d state"), cpu);
+			fails++;
 			continue;
 		}
-		if (online == 0 && enable == 0) {
+
+		if (online == 1 && enable == 1) {
+			printf(_("CPU %d is already enabled\n"), cpu);
+			continue;
+		} else if (online == 0 && enable == 0) {
 			printf(_("CPU %d is already disabled\n"), cpu);
 			continue;
 		}
+
 		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/configure", cpu) == 0)
 			ul_path_readf_s32(ctx->sys, &configured, "cpu%d/configure", cpu);
 		if (enable) {
@@ -176,7 +181,7 @@ static int cpu_set_dispatch(struct path_cxt *sys, int mode)
 static int cpu_configure(struct chcpu_context *ctx, int configure)
 {
 	int cpu;
-	int rc, current;
+	int rc, current = -1;
 	int fails = 0;
 
 	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
@@ -192,7 +197,12 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 			fails++;
 			continue;
 		}
-		ul_path_readf_s32(ctx->sys, &current, "cpu%d/configure", cpu);
+		if (ul_path_readf_s32(ctx->sys, &current, "cpu%d/configure", cpu) != 0) {
+			warnx(_("failed to read CPU %d configuration state"), cpu);
+			fails++;
+			continue;
+		}
+
 		if (current == 1 && configure == 1) {
 			printf(_("CPU %d is already configured\n"), cpu);
 			continue;
