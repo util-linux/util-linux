@@ -49,18 +49,15 @@
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 
-#define cpu_is_set(cpu, count, cpuset) \
-			(CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(count), cpuset))
-#define num_online_cpus(count, cpuset)  (CPU_COUNT_S(CPU_ALLOC_SIZE(count), cpuset))
-
 struct chcpu_context {
-	struct path_cxt *sys;	/* _PATH_SYS_CPU handler */
+	struct path_cxt *sys;		/* _PATH_SYS_CPU handler */
 
 	cpu_set_t	*cpu_set,
 			*online_cpus;
 
 	size_t		setsize;
-	int		maxcpus;
+	int		maxcpus,
+			ncpus;
 
 	bool		isdump;		/* live system or sys dump ? */
 };
@@ -87,7 +84,7 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 	int fails = 0;
 
 	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
-		if (!cpu_is_set(cpu, ctx->setsize, ctx->cpu_set))
+		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
 		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
@@ -123,7 +120,7 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 				printf(_("CPU %d enabled\n"), cpu);
 		} else {
 			if (ctx->online_cpus
-					&& num_online_cpus(ctx->maxcpus, ctx->online_cpus) == 1) {
+					&& CPU_COUNT_S(ctx->setsize, ctx->online_cpus) == 1) {
 				warnx(_("CPU %d disable failed (last enabled CPU)"), cpu);
 				fails++;
 				continue;
@@ -140,7 +137,7 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 		}
 	}
 
-	return fails == 0 ? 0 : fails == ctx->maxcpus ? -1 : 1;
+	return fails == 0 ? 0 : fails == ctx->ncpus ? -1 : 1;
 }
 
 static int cpu_rescan(struct path_cxt *sys)
@@ -185,7 +182,7 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 	int fails = 0;
 
 	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
-		if (!cpu_is_set(cpu, ctx->setsize, ctx->cpu_set))
+		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
 		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
@@ -207,7 +204,7 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 			continue;
 		}
 		if (current == 1 && configure == 0 && ctx->online_cpus &&
-				cpu_is_set(cpu, ctx->maxcpus, ctx->online_cpus)) {
+				CPU_ISSET_S(cpu, ctx->setsize, ctx->online_cpus)) {
 			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
@@ -229,7 +226,7 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 		}
 	}
 
-	return fails == 0 ? 0 : fails == ctx->maxcpus ? -1 : 1;
+	return fails == 0 ? 0 : fails == ctx->ncpus ? -1 : 1;
 }
 
 static void cpu_parse(struct chcpu_context *ctx, char *cpu_string)
@@ -237,8 +234,10 @@ static void cpu_parse(struct chcpu_context *ctx, char *cpu_string)
 	int rc;
 
 	rc = cpulist_parse(cpu_string, ctx->cpu_set, ctx->setsize, 1);
-	if (rc == 0)
+	if (rc == 0) {
+		ctx->ncpus = CPU_COUNT_S(ctx->setsize, ctx->cpu_set);
 		return;
+	}
 	if (rc == 2)
 		errx(EXIT_FAILURE, _("invalid CPU number in CPU list: %s"), cpu_string);
 	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
