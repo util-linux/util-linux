@@ -42,6 +42,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/utsname.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -56,21 +57,44 @@
 static char defaultmap[]="/boot/System.map";
 static char defaultpro[]="/proc/profile";
 
-static FILE *myopen(char *name, char *mode, int *flag)
+static FILE *myopen(char *name, pid_t *cpid)
 {
-	int len = strlen(name);
+	*cpid = 0;
 
-	if (!strcmp(name + len - 3, ".gz")) {
-		FILE *res;
-		char *cmdline = xmalloc(len + 6);
-		snprintf(cmdline, len + 6, "zcat %s", name);
-		res = popen(cmdline, mode);
-		free(cmdline);
-		*flag = 1;
-		return res;
+	if (ul_endswith(name, ".gz")) {
+		int fd[2];
+		pid_t pid;
+		FILE *fp;
+
+		if (pipe(fd) != 0)
+			err(EXIT_FAILURE, _("pipe failed"));
+
+		pid = fork();
+		if (pid < 0)
+			err(EXIT_FAILURE, _("fork failed"));
+
+		if (pid == 0) {
+			close(fd[0]);
+			if (fd[1] != STDOUT_FILENO) {
+				dup2(fd[1], STDOUT_FILENO);
+				close(fd[1]);
+			}
+			execlp("zcat", "zcat", name, NULL);
+			err(EXIT_FAILURE, _("failed to execute zcat"));
+		}
+
+		close(fd[1]);
+		fp = fdopen(fd[0], "r");
+		if (!fp) {
+			close(fd[0]);
+			waitpid(pid, NULL, 0);
+			return NULL;
+		}
+		*cpid = pid;
+		return fp;
 	}
-	*flag = 0;
-	return fopen(name, mode);
+
+	return fopen(name, "r");
 }
 
 #ifndef BOOT_SYSTEM_MAP
@@ -137,7 +161,7 @@ int main(int argc, char **argv)
 	int optBins = 0, optSub = 0;
 	char mapline[S_LEN];
 	int maplineno = 1;
-	int popenMap;		/* flag to tell if popen() has been used */
+	pid_t gzip_pid;
 	int header_printed;
 	double rep = 0;
 
@@ -283,10 +307,10 @@ int main(int argc, char **argv)
 
 	total = 0;
 
-	map = myopen(mapFile, "r", &popenMap);
+	map = myopen(mapFile, &gzip_pid);
 	if (map == NULL && mapFile == defaultmap) {
 		mapFile = boot_uname_r_str();
-		map = myopen(mapFile, "r", &popenMap);
+		map = myopen(mapFile, &gzip_pid);
 	}
 	if (map == NULL)
 		err(EXIT_FAILURE, "%s", mapFile);
@@ -400,6 +424,8 @@ int main(int argc, char **argv)
 		printf("%6u %-40s %8.4f\n",
 		       total, _("total"), rep);
 
-	popenMap ? pclose(map) : fclose(map);
+	fclose(map);
+	if (gzip_pid > 0)
+		waitpid(gzip_pid, NULL, 0);
 	exit(EXIT_SUCCESS);
 }
