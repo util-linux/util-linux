@@ -51,9 +51,9 @@
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 
-#define is_cpu_online(cpu, count, onlinecpus) \
-			(CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(count), onlinecpus))
-#define num_online_cpus(count, onlinecpus)  (CPU_COUNT_S(CPU_ALLOC_SIZE(count), onlinecpus))
+#define is_cpu_online(cpu, count, cpuset) \
+			(CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(count), cpuset))
+#define num_online_cpus(count, cpuset)  (CPU_COUNT_S(CPU_ALLOC_SIZE(count), cpuset))
 
 struct chcpu_context {
 	struct path_cxt *sys;	/* _PATH_SYS_CPU handler */
@@ -258,10 +258,12 @@ static void read_cpulist(struct chcpu_context *ctx)
 
 	ctx->setsize = CPU_ALLOC_SIZE(ctx->maxcpus);
 
-	if (ul_path_access(ctx->sys, F_OK, "online") == 0)
+	if (ul_path_access(ctx->sys, F_OK, "online") == 0) {
 		ul_path_readf_cpulist(ctx->sys, &ctx->cpu_set, ctx->maxcpus, "online");
-	else
+		ul_path_readf_cpulist(ctx->sys, &ctx->online_cpus, ctx->maxcpus, "online");
+	} else {
 		ctx->cpu_set = CPU_ALLOC(ctx->maxcpus);
+	}
 
 	if (!ctx->cpu_set)
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
@@ -416,6 +418,7 @@ int main(int argc, char *argv[])
 	}
 
 	CPU_FREE(ctx->cpu_set);
+	CPU_FREE(ctx->online_cpus);
 	ul_unref_path(ctx->sys);
 
 	return rc == 0 ? EXIT_SUCCESS :
