@@ -4,6 +4,8 @@
  * Copyright IBM Corp. 2011
  * Author(s): Heiko Carstens <heiko.carstens@de.ibm.com>,
  *
+ * Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -49,11 +51,21 @@
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 
-static cpu_set_t *onlinecpus;
-static int maxcpus;
+#define is_cpu_online(cpu, count, onlinecpus) \
+			(CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(count), onlinecpus))
+#define num_online_cpus(count, onlinecpus)  (CPU_COUNT_S(CPU_ALLOC_SIZE(count), onlinecpus))
 
-#define is_cpu_online(cpu) (CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(maxcpus), onlinecpus))
-#define num_online_cpus()  (CPU_COUNT_S(CPU_ALLOC_SIZE(maxcpus), onlinecpus))
+struct chcpu_context {
+	struct path_cxt *sys;	/* _PATH_SYS_CPU handler */
+
+	cpu_set_t	*cpu_set,
+			*online_cpus;
+
+	size_t		setsize;
+	int		maxcpus;
+
+	bool		isdump;		/* live system or sys dump ? */
+};
 
 enum {
 	CMD_CPU_ENABLE	= 0,
@@ -69,27 +81,27 @@ enum {
  *          < 0 = failure
  *          > 0 = partial success
  */
-static int cpu_enable(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, int enable)
+static int cpu_enable(struct chcpu_context *ctx, int enable)
 {
 	int cpu;
 	int online, rc;
 	int configured = -1;
 	int fails = 0;
 
-	for (cpu = 0; cpu < maxcpus; cpu++) {
-		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
+	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
+		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
-		if (ul_path_accessf(sys, F_OK, "cpu%d", cpu) != 0) {
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
-		if (ul_path_accessf(sys, F_OK, "cpu%d/online", cpu) != 0) {
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/online", cpu) != 0) {
 			warnx(_("CPU %d is not hot pluggable"), cpu);
 			fails++;
 			continue;
 		}
-		if (ul_path_readf_s32(sys, &online, "cpu%d/online", cpu) == 0
+		if (ul_path_readf_s32(ctx->sys, &online, "cpu%d/online", cpu) == 0
 		    && online == 1
 		    && enable == 1) {
 			printf(_("CPU %d is already enabled\n"), cpu);
@@ -99,10 +111,10 @@ static int cpu_enable(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, 
 			printf(_("CPU %d is already disabled\n"), cpu);
 			continue;
 		}
-		if (ul_path_accessf(sys, F_OK, "cpu%d/configure", cpu) == 0)
-			ul_path_readf_s32(sys, &configured, "cpu%d/configure", cpu);
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/configure", cpu) == 0)
+			ul_path_readf_s32(ctx->sys, &configured, "cpu%d/configure", cpu);
 		if (enable) {
-			rc = ul_path_writef_string(sys, "1", "cpu%d/online", cpu);
+			rc = ul_path_writef_string(ctx->sys, "1", "cpu%d/online", cpu);
 			if (rc != 0 && configured == 0) {
 				warn(_("CPU %d enable failed (CPU is deconfigured)"), cpu);
 				fails++;
@@ -112,24 +124,25 @@ static int cpu_enable(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, 
 			} else
 				printf(_("CPU %d enabled\n"), cpu);
 		} else {
-			if (onlinecpus && num_online_cpus() == 1) {
+			if (ctx->online_cpus
+					&& num_online_cpus(ctx->maxcpus, ctx->online_cpus) == 1) {
 				warnx(_("CPU %d disable failed (last enabled CPU)"), cpu);
 				fails++;
 				continue;
 			}
-			rc = ul_path_writef_string(sys, "0", "cpu%d/online", cpu);
+			rc = ul_path_writef_string(ctx->sys, "0", "cpu%d/online", cpu);
 			if (rc != 0) {
 				warn(_("CPU %d disable failed"), cpu);
 				fails++;
 			} else {
 				printf(_("CPU %d disabled\n"), cpu);
-				if (onlinecpus)
-					CPU_CLR_S(cpu, setsize, onlinecpus);
+				if (ctx->online_cpus)
+					CPU_CLR_S(cpu, ctx->setsize, ctx->online_cpus);
 			}
 		}
 	}
 
-	return fails == 0 ? 0 : fails == maxcpus ? -1 : 1;
+	return fails == 0 ? 0 : fails == ctx->maxcpus ? -1 : 1;
 }
 
 static int cpu_rescan(struct path_cxt *sys)
@@ -167,26 +180,26 @@ static int cpu_set_dispatch(struct path_cxt *sys, int mode)
  *          < 0 = failure
  *          > 0 = partial success
  */
-static int cpu_configure(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsize, int configure)
+static int cpu_configure(struct chcpu_context *ctx, int configure)
 {
 	int cpu;
 	int rc, current;
 	int fails = 0;
 
-	for (cpu = 0; cpu < maxcpus; cpu++) {
-		if (!CPU_ISSET_S(cpu, setsize, cpu_set))
+	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
+		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
-		if (ul_path_accessf(sys, F_OK, "cpu%d", cpu) != 0) {
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
-		if (ul_path_accessf(sys, F_OK, "cpu%d/configure", cpu) != 0) {
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/configure", cpu) != 0) {
 			warnx(_("CPU %d is not configurable"), cpu);
 			fails++;
 			continue;
 		}
-		ul_path_readf_s32(sys, &current, "cpu%d/configure", cpu);
+		ul_path_readf_s32(ctx->sys, &current, "cpu%d/configure", cpu);
 		if (current == 1 && configure == 1) {
 			printf(_("CPU %d is already configured\n"), cpu);
 			continue;
@@ -195,21 +208,21 @@ static int cpu_configure(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsiz
 			printf(_("CPU %d is already deconfigured\n"), cpu);
 			continue;
 		}
-		if (current == 1 && configure == 0 && onlinecpus &&
-		    is_cpu_online(cpu)) {
+		if (current == 1 && configure == 0 && ctx->online_cpus &&
+		    is_cpu_online(cpu, ctx->maxcpus, ctx->online_cpus)) {
 			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
 		}
 		if (configure) {
-			rc = ul_path_writef_string(sys, "1", "cpu%d/configure", cpu);
+			rc = ul_path_writef_string(ctx->sys, "1", "cpu%d/configure", cpu);
 			if (rc != 0) {
 				warn(_("CPU %d configure failed"), cpu);
 				fails++;
 			} else
 				printf(_("CPU %d configured\n"), cpu);
 		} else {
-			rc = ul_path_writef_string(sys, "0", "cpu%d/configure", cpu);
+			rc = ul_path_writef_string(ctx->sys, "0", "cpu%d/configure", cpu);
 			if (rc != 0) {
 				warn(_("CPU %d deconfigure failed"), cpu);
 				fails++;
@@ -218,14 +231,14 @@ static int cpu_configure(struct path_cxt *sys, cpu_set_t *cpu_set, size_t setsiz
 		}
 	}
 
-	return fails == 0 ? 0 : fails == maxcpus ? -1 : 1;
+	return fails == 0 ? 0 : fails == ctx->maxcpus ? -1 : 1;
 }
 
-static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
+static void cpu_parse(struct chcpu_context *ctx, char *cpu_string)
 {
 	int rc;
 
-	rc = cpulist_parse(cpu_string, cpu_set, setsize, 1);
+	rc = cpulist_parse(cpu_string, ctx->cpu_set, ctx->setsize, 1);
 	if (rc == 0)
 		return;
 	if (rc == 2)
@@ -233,25 +246,24 @@ static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
 	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
 }
 
-static void read_cpulist(struct path_cxt *sys, const char *sysroot,
-					cpu_set_t **cpu_set, size_t *setsize)
+static void read_cpulist(struct chcpu_context *ctx)
 {
-	if (ul_path_read_s32(sys, &maxcpus, "kernel_max") == 0)
-		maxcpus += 1;
-	else if (!sysroot)
-		maxcpus = get_max_number_of_cpus();
+	if (ul_path_read_s32(ctx->sys, &ctx->maxcpus, "kernel_max") == 0)
+		ctx->maxcpus += 1;
+	else if (!ctx->isdump)
+		ctx->maxcpus = get_max_number_of_cpus();
 
-	if (maxcpus <= 0)
-		maxcpus = 2048;
+	if (ctx->maxcpus <= 0)
+		ctx->maxcpus = 2048;
 
-	*setsize = CPU_ALLOC_SIZE(maxcpus);
+	ctx->setsize = CPU_ALLOC_SIZE(ctx->maxcpus);
 
-	if (ul_path_access(sys, F_OK, "online") == 0)
-		ul_path_readf_cpulist(sys, cpu_set, maxcpus, "online");
+	if (ul_path_access(ctx->sys, F_OK, "online") == 0)
+		ul_path_readf_cpulist(ctx->sys, &ctx->cpu_set, ctx->maxcpus, "online");
 	else
-		*cpu_set = CPU_ALLOC(maxcpus);
+		ctx->cpu_set = CPU_ALLOC(ctx->maxcpus);
 
-	if (!*cpu_set)
+	if (!ctx->cpu_set)
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 }
 
@@ -283,9 +295,7 @@ static void __attribute__((__noreturn__)) usage(void)
 
 int main(int argc, char *argv[])
 {
-	struct path_cxt *sys = NULL;	/* _PATH_SYS_CPU handler */
-	cpu_set_t *cpu_set = NULL;
-	size_t setsize;
+	struct chcpu_context _ctx = { 0 }, *ctx = &_ctx;
 	int cmd = -1;
 	int c, rc;
 	char *sysroot = NULL, *cpu_list_arg = NULL;
@@ -349,6 +359,7 @@ int main(int argc, char *argv[])
 			break;
 		case 's':
 			sysroot = optarg;
+			ctx->isdump = true;
 			break;
 		case 'h':
 			usage();
@@ -365,47 +376,47 @@ int main(int argc, char *argv[])
 	}
 
 	ul_path_init_debug();
-	sys = ul_new_path(_PATH_SYS_CPU);
-	if (!sys)
+	ctx->sys = ul_new_path(_PATH_SYS_CPU);
+	if (!ctx->sys)
 		err(EXIT_FAILURE, _("failed to initialize sysfs handler"));
-	if (sysroot && ul_path_set_prefix(sys, sysroot) != 0)
+	if (sysroot && ul_path_set_prefix(ctx->sys, sysroot) != 0)
 		err(EXIT_FAILURE, _("failed to set up different sysroot"));
-	if (!ul_path_is_accessible(sys))
+	if (!ul_path_is_accessible(ctx->sys))
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_CPU);
 
-	read_cpulist(sys, sysroot, &cpu_set, &setsize);
+	read_cpulist(ctx);
 	if (cpu_list_arg)
-		cpu_parse(cpu_list_arg, cpu_set, setsize);
+		cpu_parse(ctx, cpu_list_arg);
 
 	switch (cmd) {
 	case CMD_CPU_ENABLE:
-		rc = cpu_enable(sys, cpu_set, maxcpus, 1);
+		rc = cpu_enable(ctx, 1);
 		break;
 	case CMD_CPU_DISABLE:
-		rc = cpu_enable(sys, cpu_set, maxcpus, 0);
+		rc = cpu_enable(ctx, 0);
 		break;
 	case CMD_CPU_CONFIGURE:
-		rc = cpu_configure(sys, cpu_set, maxcpus, 1);
+		rc = cpu_configure(ctx, 1);
 		break;
 	case CMD_CPU_DECONFIGURE:
-		rc = cpu_configure(sys, cpu_set, maxcpus, 0);
+		rc = cpu_configure(ctx, 0);
 		break;
 	case CMD_CPU_RESCAN:
-		rc = cpu_rescan(sys);
+		rc = cpu_rescan(ctx->sys);
 		break;
 	case CMD_CPU_DISPATCH_HORIZONTAL:
-		rc = cpu_set_dispatch(sys, 0);
+		rc = cpu_set_dispatch(ctx->sys, 0);
 		break;
 	case CMD_CPU_DISPATCH_VERTICAL:
-		rc = cpu_set_dispatch(sys, 1);
+		rc = cpu_set_dispatch(ctx->sys, 1);
 		break;
 	default:
 		rc = -EINVAL;
 		break;
 	}
 
-	CPU_FREE(cpu_set);
-	ul_unref_path(sys);
+	CPU_FREE(ctx->cpu_set);
+	ul_unref_path(ctx->sys);
 
 	return rc == 0 ? EXIT_SUCCESS :
 	        rc < 0 ? EXIT_FAILURE : CHCPU_EXIT_SOMEOK;
