@@ -99,7 +99,8 @@ static int __mountinfo_find_umount_fs(struct libmnt_context *cxt,
 
 try_loopdev:
 	fs = mnt_table_find_target(mountinfo, tgt, MNT_ITER_BACKWARD);
-	if (!fs && mnt_context_is_swapmatch(cxt)) {
+	if (!fs && mnt_context_is_swapmatch(cxt)
+	    && !mnt_context_is_restricted(cxt)) {
 		/*
 		 * Maybe the option is source rather than target (sometimes
 		 * people use e.g. "umount /dev/sda1")
@@ -128,7 +129,8 @@ try_loopdev:
 		}
 	}
 
-	if (!fs && !loopdev && mnt_context_is_swapmatch(cxt)) {
+	if (!fs && !loopdev && mnt_context_is_swapmatch(cxt)
+	    && !mnt_context_is_restricted(cxt)) {
 		/*
 		 * Maybe the option is /path/file.img, try to convert to /dev/loopN
 		 */

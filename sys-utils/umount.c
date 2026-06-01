@@ -646,11 +646,21 @@ int main(int argc, char **argv)
 		while (argc--)
 			rc += umount_recursive(cxt, *argv++);
 	} else {
+		if (mnt_context_is_restricted(cxt)) {
+			int i;
+			for (i = 0; i < argc; i++) {
+				if (mnt_tag_is_valid(argv[i]))
+					errx(MNT_EX_USAGE,
+					     _("%s: tags are not allowed for non-root users"),
+					     argv[i]);
+			}
+			mnt_context_disable_swapmatch(cxt, 1);
+		}
+
 		while (argc--) {
 			char *path = *argv;
 
-			if (mnt_context_is_restricted(cxt)
-			    && !mnt_tag_is_valid(path))
+			if (mnt_context_is_restricted(cxt))
 				path = sanitize_path(path);
 
 			rc += umount_one(cxt, path);
