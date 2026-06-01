@@ -123,6 +123,7 @@ headers = '''
         linux/kcmp.h
         linux/net_namespace.h
         linux/nsfs.h
+        linux/openat2.h
         linux/mount.h
         linux/pr.h
         linux/rfkill.h
