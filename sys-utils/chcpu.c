@@ -233,6 +233,28 @@ static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
 	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
 }
 
+static void read_cpulist(struct path_cxt *sys, const char *sysroot,
+					cpu_set_t **cpu_set, size_t *setsize)
+{
+	if (ul_path_read_s32(sys, &maxcpus, "kernel_max") == 0)
+		maxcpus += 1;
+	else if (!sysroot)
+		maxcpus = get_max_number_of_cpus();
+
+	if (maxcpus <= 0)
+		maxcpus = 2048;
+
+	*setsize = CPU_ALLOC_SIZE(maxcpus);
+
+	if (ul_path_access(sys, F_OK, "online") == 0)
+		ul_path_readf_cpulist(sys, cpu_set, maxcpus, "online");
+	else
+		*cpu_set = CPU_ALLOC(maxcpus);
+
+	if (!*cpu_set)
+		err(EXIT_FAILURE, _("cpuset_alloc failed"));
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -351,19 +373,7 @@ int main(int argc, char *argv[])
 	if (!ul_path_is_accessible(sys))
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_CPU);
 
-	maxcpus = get_max_number_of_cpus();
-	if (maxcpus < 1)
-		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
-
-	if (ul_path_access(sys, F_OK, "online") == 0)
-		ul_path_readf_cpulist(sys, &cpu_set, maxcpus, "online");
-	else
-		cpu_set = CPU_ALLOC(maxcpus);
-	if (!cpu_set)
-		err(EXIT_FAILURE, _("cpuset_alloc failed"));
-
-	setsize = CPU_ALLOC_SIZE(maxcpus);
-
+	read_cpulist(sys, sysroot, &cpu_set, &setsize);
 	if (cpu_list_arg)
 		cpu_parse(cpu_list_arg, cpu_set, setsize);
 
