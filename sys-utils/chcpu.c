@@ -20,19 +20,11 @@
  * along with this program.  If not, see <https://gnu.org/licenses/>.
  */
 
-#include <ctype.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/utsname.h>
 #include <unistd.h>
-#include <stdarg.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #include "cpuset.h"
 #include "nls.h"
