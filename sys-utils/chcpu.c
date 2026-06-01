@@ -44,14 +44,12 @@
 #include "closestream.h"
 #include "optutils.h"
 
-#define EXCL_ERROR "--{configure,deconfigure,disable,dispatch,enable}"
-
 /* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
 #define CHCPU_EXIT_SOMEOK	64
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 
-#define is_cpu_online(cpu, count, cpuset) \
+#define cpu_is_set(cpu, count, cpuset) \
 			(CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(count), cpuset))
 #define num_online_cpus(count, cpuset)  (CPU_COUNT_S(CPU_ALLOC_SIZE(count), cpuset))
 
@@ -89,7 +87,7 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 	int fails = 0;
 
 	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
-		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
+		if (!cpu_is_set(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
 		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
@@ -187,7 +185,7 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 	int fails = 0;
 
 	for (cpu = 0; cpu < ctx->maxcpus; cpu++) {
-		if (!CPU_ISSET_S(cpu, ctx->setsize, ctx->cpu_set))
+		if (!cpu_is_set(cpu, ctx->setsize, ctx->cpu_set))
 			continue;
 		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d", cpu) != 0) {
 			warnx(_("CPU %d does not exist"), cpu);
@@ -209,7 +207,7 @@ static int cpu_configure(struct chcpu_context *ctx, int configure)
 			continue;
 		}
 		if (current == 1 && configure == 0 && ctx->online_cpus &&
-		    is_cpu_online(cpu, ctx->maxcpus, ctx->online_cpus)) {
+				cpu_is_set(cpu, ctx->maxcpus, ctx->online_cpus)) {
 			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
@@ -316,7 +314,7 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
-		{ 'c','d','e','g','p' },
+		{ 'c','d','e','g','p','r' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -422,5 +420,5 @@ int main(int argc, char *argv[])
 	ul_unref_path(ctx->sys);
 
 	return rc == 0 ? EXIT_SUCCESS :
-	        rc < 0 ? EXIT_FAILURE : CHCPU_EXIT_SOMEOK;
+		rc < 0 ? EXIT_FAILURE : CHCPU_EXIT_SOMEOK;
 }
