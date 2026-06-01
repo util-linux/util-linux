@@ -286,19 +286,17 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Configure CPUs in a multi-processor system.\n"), out);
 
-	fputs(USAGE_OPTIONS, stdout);
-	fputs(_(
-		" -e, --enable <cpu-list>       enable cpus\n"
-		" -d, --disable <cpu-list>      disable cpus\n"
-		" -c, --configure <cpu-list>    configure cpus\n"
-		" -g, --deconfigure <cpu-list>  deconfigure cpus\n"
-		" -p, --dispatch <mode>         set dispatching mode\n"
-		" -r, --rescan                  trigger rescan of cpus\n"
-		" -s, --sysroot <dir>           use the specified directory as system root\n"
-		), stdout);
-	fprintf(stdout, USAGE_HELP_OPTIONS(31));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -e, --enable <cpu-list>       enable cpus\n"), out);
+	fputs(_(" -d, --disable <cpu-list>      disable cpus\n"), out);
+	fputs(_(" -c, --configure <cpu-list>    configure cpus\n"), out);
+	fputs(_(" -g, --deconfigure <cpu-list>  deconfigure cpus\n"), out);
+	fputs(_(" -p, --dispatch <mode>         set dispatching mode\n"), out);
+	fputs(_(" -r, --rescan                  trigger rescan of cpus\n"), out);
+	fputs(_(" -s, --sysroot <dir>           use the specified directory as system root\n"), out);
+	fprintf(out, USAGE_HELP_OPTIONS(31));
 
-	fprintf(stdout, USAGE_MAN_TAIL("chcpu(8)"));
+	fprintf(out, USAGE_MAN_TAIL("chcpu(8)"));
 	exit(EXIT_SUCCESS);
 }
 
