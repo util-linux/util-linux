@@ -145,32 +145,44 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 	return fails == 0 ? 0 : fails == ctx->ncpus ? -1 : 1;
 }
 
+/* returns:   0 = success
+ *          < 0 = failure
+ */
 static int cpu_rescan(struct path_cxt *sys)
 {
-	if (ul_path_access(sys, F_OK, "rescan") != 0)
-		errx(EXIT_FAILURE, _("This system does not support rescanning of CPUs"));
-
-	if (ul_path_write_string(sys, "1", "rescan") != 0)
-		err(EXIT_FAILURE, _("Failed to trigger rescan of CPUs"));
-
+	if (ul_path_access(sys, F_OK, "rescan") != 0) {
+		warnx(_("This system does not support rescanning of CPUs"));
+		return -1;
+	}
+	if (ul_path_write_string(sys, "1", "rescan") != 0) {
+		warn(_("Failed to trigger rescan of CPUs"));
+		return -1;
+	}
 	printf(_("Triggered rescan of CPUs\n"));
 	return 0;
 }
 
+/* returns:   0 = success
+ *          < 0 = failure
+ */
 static int cpu_set_dispatch(struct path_cxt *sys, int mode)
 {
-	if (ul_path_access(sys, F_OK, "dispatching") != 0)
-		errx(EXIT_FAILURE, _("This system does not support setting "
-				     "the dispatching mode of CPUs"));
+	if (ul_path_access(sys, F_OK, "dispatching") != 0) {
+		warnx(_("This system does not support setting "
+			"the dispatching mode of CPUs"));
+		return -1;
+	}
 	if (mode == 0) {
-		if (ul_path_write_string(sys, "0", "dispatching") != 0)
-			err(EXIT_FAILURE, _("Failed to set horizontal dispatch mode"));
-
+		if (ul_path_write_string(sys, "0", "dispatching") != 0) {
+			warn(_("Failed to set horizontal dispatch mode"));
+			return -1;
+		}
 		printf(_("Successfully set horizontal dispatching mode\n"));
 	} else {
-		if (ul_path_write_string(sys, "1", "dispatching") != 0)
-			err(EXIT_FAILURE, _("Failed to set vertical dispatch mode"));
-
+		if (ul_path_write_string(sys, "1", "dispatching") != 0) {
+			warn(_("Failed to set vertical dispatch mode"));
+			return -1;
+		}
 		printf(_("Successfully set vertical dispatching mode\n"));
 	}
 	return 0;
