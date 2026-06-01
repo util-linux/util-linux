@@ -43,7 +43,7 @@ for dump in $(find "$TS_SELF"/dumps/ -maxdepth 1 -name "*.tar.bz2" | sort); do
         ts_init_subtest $name
         mkdir -p $dumpdir
 
-        tar -C $dumpdir -jxf $dump
+        tar --no-same-owner -C $dumpdir -jxf $dump
 
         do_lsmem --split=STATE,REMOVABLE
         do_lsmem --output RANGE,SIZE --split none
