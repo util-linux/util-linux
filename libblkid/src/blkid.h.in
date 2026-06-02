@@ -219,8 +219,13 @@ extern int blkid_send_uevent(const char *devname, const char *action);
 extern char *blkid_evaluate_tag(const char *token, const char *value,
 				blkid_cache *cache)
 			__ul_attribute__((warn_unused_result));
+extern char *blkid_evaluate_tag2(const char *token, const char *value,
+				blkid_cache *cache, int flags)
+			__ul_attribute__((warn_unused_result));
 extern char *blkid_evaluate_spec(const char *spec, blkid_cache *cache)
 			__ul_attribute__((warn_unused_result));
+
+#define BLKID_EVALUATE_NOPROBE	(1 << 0)	/* disable low-level device probing */
 
 /* probe.c */
 extern blkid_probe blkid_new_probe(void)
