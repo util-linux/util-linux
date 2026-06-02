@@ -39,8 +39,8 @@ struct hexdump_clr {
 	struct list_head colorlist;	/* next color unit */
 	const char *fmt;		/* the color, UL_COLOR_* */
 	off_t offt;			/* offset of range where unit is valid... */
-	int range;			/* ... and range length */
-	int val;			/* value ... */
+	size_t range;			/* ... and range length */
+	int64_t val;			/* value ... */
 	char *str;			/* ... or string to match */
 	int invert;			/* invert condition? */
 };
