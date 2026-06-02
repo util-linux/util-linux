@@ -300,10 +300,13 @@ static const struct id_part unknown_part[] = {
     { -1, "unknown" },
 };
 
+#define HW_IMPL_NOOVERWRITE	true	/* don't overwrite vendor and model from /proc/cpuinfo */
+
 struct hw_impl {
    const int    id;
    const struct id_part     *parts;
    const char   *name;
+   const bool   nooverwrite;
 };
 
 static const struct hw_impl hw_implementer[] = {
@@ -324,7 +327,7 @@ static const struct hw_impl hw_implementer[] = {
     { 0x66, faraday_part, "Faraday" },
     { 0x69, intel_part,   "Intel" },
     { 0x6d, ms_part,      "Microsoft" },
-    { 0x70, ft_part,      "Phytium" },
+    { 0x70, ft_part,      "Phytium",  HW_IMPL_NOOVERWRITE },
     { 0xc0, ampere_part,  "Ampere" },
     { -1,   unknown_part, "unknown" },
 };
@@ -368,6 +371,16 @@ static inline int parse_implementer_id(struct lscpu_cputype *ct)
 	return ct->vendor_id;
 }
 
+static const struct hw_impl *find_implementer(int id)
+{
+	int j;
+
+	for (j = 0; hw_implementer[j].id != -1; j++)
+		if (hw_implementer[j].id == id)
+			return &hw_implementer[j];
+	return NULL;
+}
+
 int is_arm(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -378,13 +391,9 @@ int is_arm(struct lscpu_cxt *cxt)
 	/* dump; assume ARM if vendor ID is known */
 	for (i = 0; i < cxt->ncputypes; i++) {
 
-		int j, id = get_implementer_id(cxt->cputypes[i]);
-		if (id <= 0)
-			continue;
-		for (j = 0; hw_implementer[j].id != -1; j++) {
-			if (hw_implementer[j].id == id)
-				return 1;
-		}
+		int id = get_implementer_id(cxt->cputypes[i]);
+		if (id > 0 && find_implementer(id))
+			return 1;
 	}
 
 	return 0;
@@ -396,38 +405,37 @@ int is_arm(struct lscpu_cxt *cxt)
 static int arm_ids_decode(struct lscpu_cputype *ct)
 {
 	int impl, part, j;
-	const struct id_part *parts = NULL;
+	const struct hw_impl *hw;
 
 	impl = parse_implementer_id(ct);
 	if (impl <= 0)
 		return -EINVAL;	/* no ARM or missing ID */
 
+	hw = find_implementer(impl);
+	if (!hw)
+		return 0;
+
 	/* decode vendor */
-	for (j = 0; hw_implementer[j].id != -1; j++) {
-		if (hw_implementer[j].id == impl) {
-			parts = hw_implementer[j].parts;
-			free(ct->vendor);
-			ct->vendor = xstrdup(hw_implementer[j].name);
-			break;
-		}
+	if (!ct->vendor || !hw->nooverwrite) {
+		free(ct->vendor);
+		ct->vendor = xstrdup(hw->name);
 	}
 
 	/* decode model */
-	if (!parts)
-		goto done;
-
 	part = parse_model_id(ct);
 	if (part <= 0)
-		goto done;
+		return 0;
 
-	for (j = 0; parts[j].id != -1; j++) {
-		if (parts[j].id == part) {
-			free(ct->modelname);
-			ct->modelname = xstrdup(parts[j].name);
+	for (j = 0; hw->parts[j].id != -1; j++) {
+		if (hw->parts[j].id == part) {
+			if (!ct->modelname || !hw->nooverwrite) {
+				free(ct->modelname);
+				ct->modelname = xstrdup(hw->parts[j].name);
+			}
 			break;
 		}
 	}
-done:
+
 	return 0;
 }
 
