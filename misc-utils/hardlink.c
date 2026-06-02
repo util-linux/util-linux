@@ -701,6 +701,7 @@ static inline int do_link(struct file *a, struct file *b,
 {
 	if (reflink) {
 		int dest = -1, src = -1;
+		struct timespec times[2];
 
 		dest = open(new_name, O_CREAT|O_WRONLY|O_TRUNC, 0600);
 		if (dest < 0)
@@ -713,6 +714,10 @@ static inline int do_link(struct file *a, struct file *b,
 		if (src < 0)
 			goto fallback;
 		if (ioctl(dest, FICLONE, src) != 0)
+			goto fallback;
+		times[0] = b->st.st_atim;
+		times[1] = b->st.st_mtim;
+		if (futimens(dest, times) != 0)
 			goto fallback;
 		close(dest);
 		close(src);
