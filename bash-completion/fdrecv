@@ -8,7 +8,7 @@ _fdrecv_module()
 	saw_run=
 	for (( i=1; i < COMP_CWORD; i++ )); do
 		case "${COMP_WORDS[i]}" in
-			--run)
+			--run|-r)
 				saw_run=1
 				;;
 			-*)
@@ -28,7 +28,7 @@ _fdrecv_module()
 			return 0
 			;;
 	esac
-	if [[ -n "$saw_run" ]] && [[ "$prev" != "--run" ]]; then
+	if [[ -n "$saw_run" ]] && [[ "$prev" != "--run" ]] && [[ "$prev" != "-r" ]]; then
 		COMPREPLY=( $(compgen -c -- $cur) )
 		return 0
 	fi
@@ -48,7 +48,8 @@ _fdrecv_module()
 			;;
 	esac
 	if [[ -n "$saw_sockspec" ]] && [[ -z "$saw_run" ]]; then
-		COMPREPLY=( $(compgen -W "--run" -- $cur) )
+		OPTS='--run --abstract --f --stdin --stdout --stderr'
+		COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
 		return 0
 	fi
 	local IFS=$'\n'
