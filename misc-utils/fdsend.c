@@ -35,7 +35,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --fd <num>     file descriptor to send (required)\n"), out);
 	fputs(_(" -p, --pid <pid>    process whose fd to send (default: current process)\n"), out);
-	fputs(_(" -b, --blocking     wait for socket to appear before connecting\n"), out);
+	fputs(_(" -b, --blocking     wait/retry until receiver is available\n"), out);
 	fputs(_(" -a, --abstract     SOCKSPEC is an abstract Unix socket name (Linux)\n"), out);
 	fputs(_(" -g, --pidfd-getfd  use pidfd_getfd to obtain fd from process (default: open /proc/<PID>/fd/<FD>)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
