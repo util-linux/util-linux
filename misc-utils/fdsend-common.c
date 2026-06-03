@@ -13,9 +13,11 @@
 #include "fdsend-common.h"
 #include "c.h"
 #include "fileutils.h"
+#include "path.h"
 #include "pathnames.h"
 #include "pidfd-utils.h"
 #include "strutils.h"
+#include "xalloc.h"
 
 #include <errno.h>
 #include <limits.h>
@@ -61,9 +63,10 @@ static void fdrecv_setup_cleanup_signals(void)
 
 static int sockpath_from_spec(const char *spec, char *path, size_t size, int abstract)
 {
-	char dir[PATH_MAX];
+	struct path_cxt *pc;
 	uid_t uid;
-	int rc;
+	char *dir = NULL;
+	int rc = -1;
 	size_t len;
 
 	if (!spec || !path || size == 0) {
@@ -78,7 +81,7 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 			errno = ENAMETOOLONG;
 			return -1;
 		}
-		memcpy(path, spec, len + 1);
+		xstrncpy(path, spec, size);
 		return 0;
 	}
 
@@ -88,7 +91,7 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 			errno = ENAMETOOLONG;
 			return -1;
 		}
-		strncpy(path, spec, size);
+		xstrncpy(path, spec, size);
 		return 0;
 	}
 
@@ -100,22 +103,33 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 
 	uid = getuid();
 	if (uid == 0)
-		snprintf(dir, sizeof(dir), "%s", _PATH_FDSEND_RUN);
+		xasprintf(&dir, "%s", _PATH_FDSEND_RUN);
 	else
-		snprintf(dir, sizeof(dir), "%s/%u/fdsend", _PATH_FDSEND_RUN_USER, (unsigned) uid);
+		xasprintf(&dir, "%s/%u/fdsend", _PATH_FDSEND_RUN_USER, (unsigned) uid);
 
 	/* Ensure the directory exists */
 	rc = ul_mkdir_p(dir, 0700);
 	if (rc != 0) {
 		errno = -rc;
-		return -1;
+		goto done;
 	}
 
-	if (snprintf(path, size, "%s/%s", dir, spec) >= (int) size) {
-		errno = ENAMETOOLONG;
-		return -1;
+	/* Join dir/spec into the caller buffer; ul_path_get_abspath() returns
+	 * NULL and sets errno to ENAMETOOLONG when the result would not fit. */
+	pc = ul_new_path("%s", dir);
+	if (!pc) {
+		errno = ENOMEM;
+		goto done;
 	}
-	return 0;
+	if (!ul_path_get_abspath(pc, path, size, "%s", spec)) {
+		ul_unref_path(pc);
+		goto done;
+	}
+	ul_unref_path(pc);
+	rc = 0;
+done:
+	free(dir);
+	return rc;
 }
 
 /*
@@ -141,14 +155,12 @@ static int fdsend_wait_for_socket(const char *sockpath)
 		errno = ENAMETOOLONG;
 		return -1;
 	}
-	strncpy(dir, sockpath, sizeof(dir));
-	base = strrchr(dir, '/');
+	xstrncpy(dir, sockpath, sizeof(dir));
+	base = stripoff_last_component(dir);
 	if (!base) {
 		errno = EINVAL;
 		return -1;
 	}
-	*base = '\0';
-	base++;
 
 	inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
 	if (inotify_fd < 0)
