@@ -259,6 +259,7 @@ done_options:
 		errtryhelp(EXIT_FAILURE);
 	}
 
+	fdrecv_setup_cleanup_signals();
 	recv_all_fds(pairs, recv_fds, n_pairs);
 	map_received_fds(pairs, recv_fds, n_pairs);
 	close_unused_received_fds(pairs, recv_fds, n_pairs);
