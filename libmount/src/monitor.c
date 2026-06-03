@@ -607,6 +607,7 @@ static int __test_epoll(struct libmnt_test *ts __attribute__((unused)),
 			continue;
 
 		printf(" top-level FD active\n");
+		fflush(stdout);
 		if (cleanup)
 			mnt_monitor_event_cleanup(mn);
 		else {
@@ -628,6 +629,7 @@ static int __test_epoll(struct libmnt_test *ts __attribute__((unused)),
 							mnt_fs_is_moved(fs) ? "MOVED" : "???");
 					}
 				}
+				fflush(stdout);
 			}
 		}
 	} while (1);
