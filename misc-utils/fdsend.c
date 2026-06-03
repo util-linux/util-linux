@@ -16,7 +16,6 @@
 #include "fdsend-common.h"
 #include "pidutils.h"
 
-#include <err.h>
 #include <getopt.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -75,7 +74,7 @@ int main(int argc, char **argv)
 			opt_fd = str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
 			break;
 		case 'p':
-			ul_parse_pid_str_or_err(optarg, &opts.pid, NULL);
+			ul_parse_pid_str_or_err(optarg, &opts.pid, NULL, 0);
 			break;
 		case 'b':
 			opts.blocking = 1;
