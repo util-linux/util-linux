@@ -130,7 +130,6 @@ static int fdsend_wait_for_socket(const char *sockpath)
 	struct pollfd pfd;
 	char buf[INOTIFY_BUF_LEN];
 	int ret = -1;
-	int poll_timeout_ms = 2000;
 
 	/* return if the socket exists */
 	if (access(sockpath, F_OK) == 0)
@@ -161,6 +160,12 @@ static int fdsend_wait_for_socket(const char *sockpath)
 	if (wd < 0)
 		goto out;
 
+	/* Close the race between the initial access() and inotify_add_watch(). */
+	if (access(sockpath, F_OK) == 0) {
+		ret = 0;
+		goto out;
+	}
+
 	for (;;) {
 		ssize_t n;
 		char *p;
@@ -168,20 +173,11 @@ static int fdsend_wait_for_socket(const char *sockpath)
 
 		pfd.fd = inotify_fd;
 		pfd.events = POLLIN;
-		pr = poll(&pfd, 1, poll_timeout_ms);
+		pr = poll(&pfd, 1, -1);
 		if (pr < 0) {
 			if (errno == EINTR)
 				continue;
 			goto out;
-		} else if (pr == 0) {
-			/* Timeout: re-check access() in case fdrecv created socket between access() and poll(). */
-			if (access(sockpath, F_OK) == 0) {
-				ret = 0;
-				goto out;
-			}
-			/* no more timeout */
-			poll_timeout_ms = -1;
-			continue;
 		}
 
 		n = read(inotify_fd, buf, sizeof(buf));
