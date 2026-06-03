@@ -87,7 +87,7 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 			errno = ENAMETOOLONG;
 			return -1;
 		}
-		strncpy(path, spec, size);
+		snprintf(path, size, "%s", spec);
 		return 0;
 	}
 
@@ -140,7 +140,7 @@ static int fdsend_wait_for_socket(const char *sockpath)
 		errno = ENAMETOOLONG;
 		return -1;
 	}
-	strncpy(dir, sockpath, sizeof(dir));
+	snprintf(dir, sizeof(dir), "%s", sockpath);
 	base = strrchr(dir, '/');
 	if (base) {
 		*base = '\0';
