@@ -23,6 +23,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDSEND"
 ts_check_test_command "$TS_CMD_FDRECV"
+ts_check_prog "timeout"
 
 TESTFILE="$TS_OUTDIR/fdsend_test_data"
 SOCKPATH="$(cd "$TS_OUTDIR" 2>/dev/null && pwd)/fdsend_test.sock"
@@ -30,14 +31,40 @@ SOCKNAME_ABSTRACT="fdsend_abstract_$$"
 mkdir -p "$TS_OUTDIR"
 echo "hello" > "$TESTFILE"
 
+wait_for_socket()
+{
+	local path="$1"
+	local pid="$2"
+	local i
+
+	for i in $(seq 1 50); do
+		[ -S "$path" ] && return 0
+		kill -0 "$pid" 2>/dev/null || return 1
+		sleep 0.1
+	done
+	return 1
+}
+
+expect_fail()
+{
+	local label="$1"
+	shift
+
+	if "$@" >/dev/null 2>&1; then
+		echo "$label: unexpected success"
+		return 1
+	fi
+	echo "$label: failed as expected"
+	return 0
+}
+
 {
 	# Test 1: filesystem socket
 	# Start fdrecv in background: receive fd, dup to stdin, run cat
 	# Options (e.g. --stdin) must come before SOCKSPEC
 	$TS_CMD_FDRECV --stdin "$SOCKPATH" --run cat &
 	FDRECV_PID=$!
-	# Wait for socket to be created
-	sleep 1
+	wait_for_socket "$SOCKPATH" "$FDRECV_PID" || echo "filesystem socket wait failed"
 	# Send fd 3 (testfile) to fdrecv; -b blocks until socket appears
 	exec 3<"$TESTFILE"
 	$TS_CMD_FDSEND -f 3 -b "$SOCKPATH"
@@ -47,9 +74,8 @@ echo "hello" > "$TESTFILE"
 	# Test 2: abstract Unix socket
 	$TS_CMD_FDRECV -a --stdin "$SOCKNAME_ABSTRACT" --run cat &
 	FDRECV_PID=$!
-	sleep 1
 	exec 3<"$TESTFILE"
-	$TS_CMD_FDSEND -f 3 -a -b "$SOCKNAME_ABSTRACT"
+	timeout 5 $TS_CMD_FDSEND -f 3 -a -b "$SOCKNAME_ABSTRACT"
 	exec 3<&-
 	wait $FDRECV_PID
 
@@ -62,13 +88,35 @@ echo "hello" > "$TESTFILE"
 	done
 	$TS_CMD_FDRECV $FDRECV_ARGS --run sh -c '(cat <&4); (cat <&5); (cat <&6)' &
 	FDRECV_PID=$!
-	sleep 1
 	for fd in 4 5 6; do
+		wait_for_socket "$TS_OUTDIR/fdsend_multi_${fd}_$$.sock" "$FDRECV_PID" ||
+			echo "multi socket ${fd} wait failed"
 		eval "exec ${fd}<\"\$TS_OUTDIR/multi_${fd}\""
 		$TS_CMD_FDSEND -f ${fd} -b "$TS_OUTDIR/fdsend_multi_${fd}_$$.sock"
 		eval "exec ${fd}<&-"
 	done
 	wait $FDRECV_PID
+
+	# Test 4: pidfd_getfd mode.  Use fdsend's own process to avoid
+	# cross-process ptrace restrictions.
+	SOCK_PIDFD="$TS_OUTDIR/fdsend_pidfd_$$.sock"
+	echo "pidfd_getfd" > "$TS_OUTDIR/pidfd_file"
+	$TS_CMD_FDRECV --stdin "$SOCK_PIDFD" --run cat &
+	FDRECV_PID=$!
+	wait_for_socket "$SOCK_PIDFD" "$FDRECV_PID" || echo "pidfd socket wait failed"
+	bash -c 'exec 7<"$1"; exec "$2" --pid $$ --pidfd-getfd --fd 7 "$3"' \
+		sh "$TS_OUTDIR/pidfd_file" "$TS_CMD_FDSEND" "$SOCK_PIDFD"
+	wait $FDRECV_PID
+
+	# Negative tests
+	expect_fail "duplicate target fd" \
+		$TS_CMD_FDRECV -f 4 "$TS_OUTDIR/dup1.sock" -f 4 "$TS_OUTDIR/dup2.sock" --run true
+	expect_fail "missing sockspec" \
+		$TS_CMD_FDRECV -f 4 --run true
+	expect_fail "invalid fdrecv fd" \
+		$TS_CMD_FDRECV -f -1 "$TS_OUTDIR/invalid.sock" --run true
+	expect_fail "invalid fdsend fd" \
+		$TS_CMD_FDSEND -f -1 "$TS_OUTDIR/invalid.sock"
 } > "$TS_OUTPUT" 2>&1
 
 ts_finalize
