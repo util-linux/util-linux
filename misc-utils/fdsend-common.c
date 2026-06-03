@@ -104,7 +104,7 @@ static int sockpath_from_spec(const char *spec, char *path, size_t size, int abs
 		snprintf(dir, sizeof(dir), "%s/%u/fdsend", _PATH_FDSEND_RUN_USER, (unsigned) uid);
 
 	/* Ensure the directory exists */
-	rc = ul_mkdir_p(dir, 0755);
+	rc = ul_mkdir_p(dir, 0700);
 	if (rc != 0) {
 		errno = -rc;
 		return -1;
