@@ -42,7 +42,7 @@ static void fdrecv_sig_handler(int sig)
 	fdrecv_got_signal = 1;
 }
 
-static void fdrecv_setup_cleanup_signals(void)
+void fdrecv_setup_cleanup_signals(void)
 {
 	struct sigaction sa = { .sa_handler = fdrecv_sig_handler };
 	fdrecv_got_signal = 0;
@@ -299,9 +299,6 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abst
 		unlink_socket_path(abstract, sockpath);
 		return -1;
 	}
-
-	/* Register handler so we unlink the socket file when interrupted in accept(). */
-	fdrecv_setup_cleanup_signals();
 
 	while (true) {
 		conn = accept(sock, NULL, NULL);

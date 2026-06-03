@@ -31,4 +31,7 @@ extern int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts
  * abstract: if true, sockspec is an abstract Unix socket name (Linux). */
 extern int fdrecv_do_recv(const char *sockspec, int *out_fd, int abstract);
 
+/* Install fdrecv signal handlers for socket cleanup during accept(). */
+extern void fdrecv_setup_cleanup_signals(void);
+
 #endif /* UTIL_LINUX_FDSEND_COMMON_H */
