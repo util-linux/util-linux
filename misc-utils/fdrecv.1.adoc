@@ -45,9 +45,25 @@ name under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
 
 *-a*, *--abstract*::
   Treat the following (or preceding) _SOCKSPEC_ as an abstract Unix socket name (Linux).
-  May appear before or after *-f*/*-i*/*-o*/*-e* within the same group.
+  May appear before or after *-f*/*-i*/*-o*/*-e* within the same group. Abstract
+  sockets do not have filesystem permission controls; any process in the same
+  network namespace that knows the socket name may connect to it.
 
 include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+*fdrecv --stdin mysock --run cat*::
+  Receive a file descriptor from _mysock_, map it to standard input, and run
+  *cat*.
+
+*fdrecv -f 4 sock4 -f 5 sock5 --run sh -c 'cat <&4; cat <&5'*::
+  Receive file descriptors from two sockets and map them to file descriptors 4
+  and 5 for the executed shell command.
+
+*fdrecv -a --stdin sockname --run cat*::
+  Receive a file descriptor from the abstract Unix socket named _sockname_, map
+  it to standard input, and run *cat*.
 
 == EXIT STATUS
 

@@ -29,17 +29,33 @@ under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
   Process whose fd to send (default: current process).
 
 *-b*, *--blocking*::
-  Wait for the socket to appear before connecting (useful when receiver starts first).
+  For path-based sockets, wait for the socket file to appear before connecting.
+  For abstract sockets, retry connecting until the receiver is available.
 
 *-a*, *--abstract*::
   Treat _SOCKSPEC_ as an abstract Unix socket name (Linux). No path resolution;
-  the name is used as-is in the kernel abstract namespace.
+  the name is used as-is in the kernel abstract namespace. Abstract sockets do
+  not have filesystem permission controls; any process in the same network
+  namespace that knows the socket name may connect to it.
 
 *-g*, *--pidfd-getfd*::
   Use pidfd_getfd(2) to obtain the fd from the process. If not specified,
   open(/proc/PID/fd/FD) is used instead.
 
 include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+*fdsend --fd 3 mysock*::
+  Send file descriptor 3 to the path-based socket named _mysock_ under the
+  per-user socket directory.
+
+*fdsend --abstract --fd 3 mysock*::
+  Send file descriptor 3 to the abstract Unix socket named _mysock_.
+
+*fdsend --pid 1234 --pidfd-getfd --fd 5 mysock*::
+  Obtain file descriptor 5 from process 1234 with pidfd_getfd(2), then send it
+  to _mysock_.
 
 == EXIT STATUS
 
