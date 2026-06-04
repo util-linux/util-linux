@@ -669,7 +669,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                 list each individual memory block\n"), out);
 	fputs(_("     --annotate[=<when>]   annotate columns with a tooltip (always|never|auto)\n"), out);
-	fputs(_(" -b, --bytes               print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -b, --bytes               print SIZE in bytes, not in human readable format\n"), out);
 	fputs(_(" -J, --json                use JSON output format\n"), out);
 	fputs(_(" -n, --noheadings          don't print headings\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
