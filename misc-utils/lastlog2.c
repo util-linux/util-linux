@@ -236,7 +236,7 @@ int main(int argc, char **argv)
 	}
 
 	if ((Cflg + Sflg + iflg + jflg) > 1)
-		errx(EXIT_FAILURE, _("Option -C, -i, -j and -S cannot be used together"));
+		errx(EXIT_FAILURE, _("Options -C, -i, -j and -S cannot be used together"));
 
 	db_context = ll2_new_context(lastlog2_path);
 	if (!db_context)
@@ -281,7 +281,7 @@ int main(int argc, char **argv)
 		}
 
 		if ((Cflg || Sflg) && !has_user(user)) {
-			warnx(_("User '%s' does not exist."), user);
+			warnx(_("User '%s' does not exist"), user);
 			goto err;
 		}
 
@@ -324,7 +324,7 @@ int main(int argc, char **argv)
 		char *service = NULL;
 
 		if (!has_user(user)) {
-			warnx(_("User '%s' does not exist."), user);
+			warnx(_("User '%s' does not exist"), user);
 			goto err;
 		}
 
