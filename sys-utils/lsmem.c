@@ -678,7 +678,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -r, --raw                 use raw output format\n"), out);
 	fputs(_(" -S, --split <list>        split ranges by specified columns\n"), out);
 	fputs(_(" -s, --sysroot <dir>       use the specified directory as system root\n"), out);
-	fputs(_("     --summary[=<when>]    print summary information (never,always or only)\n"), out);
+	fputs(_("     --summary[=<when>]    print summary information (always|never|only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(27));
