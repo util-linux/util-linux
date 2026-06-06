@@ -26,54 +26,58 @@ ts_check_test_command "$TS_CMD_COLUMN"
 ts_cd "$TS_OUTDIR"
 
 ts_init_subtest "default"
-$TS_CMD_COLUMN --table $TS_SELF/files/table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --table "$TS_SELF"/files/table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "output-separator"
-$TS_CMD_COLUMN --output-separator '|' --table $TS_SELF/files/table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --output-separator '|' --table "$TS_SELF"/files/table \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "input-separator"
-$TS_CMD_COLUMN --input-separator ',' --table $TS_SELF/files/table-sep >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --input-separator ',' --table "$TS_SELF"/files/table-sep \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "input-separator-space"
-$TS_CMD_COLUMN --separator "$(echo -e '\t')" --table $TS_SELF/files/table-sep-space >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --separator "$(echo -e '\t')" --table "$TS_SELF"/files/table-sep-space \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "empty-lines"
-$TS_CMD_COLUMN --table --keep-empty-lines $TS_SELF/files/table-empty-lines >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --table --keep-empty-lines "$TS_SELF"/files/table-empty-lines \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "noempty-lines"
-$TS_CMD_COLUMN --table $TS_SELF/files/table-empty-lines >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --table "$TS_SELF"/files/table-empty-lines >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "long"
-$TS_CMD_COLUMN --table $TS_SELF/files/mountinfo >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_COLUMN --table "$TS_SELF"/files/mountinfo >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "hide"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-hide 1,2,3,4,7,8  >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "headers"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide SEP,ID,PARENT,ROOT \
 		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "noheaders"
-$TS_CMD_COLUMN  --table $TS_SELF/files/table \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/table \
 		--table-noheadings \
 		--table-columns VERYLONG,COLUMN,NAMES \
 		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "truncate"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide SEP,ID,PARENT,ROOT \
 		--table-truncate VFS-OPTS,FS-OPTS \
@@ -82,7 +86,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "right"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide SEP,ID,PARENT,ROOT,VFS-OPTS,FS-OPTS,PROP \
 		--table-right SOURCE,TYPE \
@@ -91,7 +95,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "wrap"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,VFS-OPTS,PROP \
 		--table-wrap FS-OPTS \
@@ -100,7 +104,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "order"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
 		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
@@ -109,7 +113,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "limit"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-columns-limit 2 \
 		--output-width 110 \
@@ -117,7 +121,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "tree"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
 		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
@@ -129,7 +133,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "json"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
                 --table-name "mountinfo" \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
@@ -140,7 +144,7 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "json-lines"
-LIBSMARTCOLS_JSON=lines $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
+LIBSMARTCOLS_JSON=lines $TS_CMD_COLUMN --table "$TS_SELF"/files/mountinfo \
 		--table-name "mountinfo" \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
@@ -151,7 +155,7 @@ LIBSMARTCOLS_JSON=lines $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "json-compact"
-LIBSMARTCOLS_JSON=compact $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
+LIBSMARTCOLS_JSON=compact $TS_CMD_COLUMN --table "$TS_SELF"/files/mountinfo \
 		--table-name "mountinfo" \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
 		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
@@ -162,7 +166,7 @@ LIBSMARTCOLS_JSON=compact $TS_CMD_COLUMN --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "use-spaces"
-$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+$TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
                 --table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
                 --table-order TARGET,SOURCE,TYPE,VFS-OPTS \
@@ -172,15 +176,18 @@ $TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
 ts_finalize_subtest
 
 ts_init_subtest "empty-column"
-printf ':a:b\n' | $TS_CMD_COLUMN --table --separator ':' --output-separator  ':' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf ':a:b\n' | $TS_CMD_COLUMN --table --separator ':' --output-separator  ':' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "empty-column-at-eol"
-printf '|' | $TS_CMD_COLUMN --separator '|' --output-separator '|' --table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf '|' | $TS_CMD_COLUMN --separator '|' --output-separator '|' --table \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "empty-column-at-eol2"
-printf '||' | $TS_CMD_COLUMN --separator '|' --output-separator '|' --table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf '||' | $TS_CMD_COLUMN --separator '|' --output-separator '|' --table \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "neg-1"
@@ -204,51 +211,82 @@ echo "A B C D" | $TS_CMD_COLUMN --output-separator '|' --table --table-maxout \
 ts_finalize_subtest
 
 ts_init_subtest "wrap-separator-basic"
-echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 3 --wrap-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e '0:1:2\na::b|c\nx:y:z' \
+			| $TS_CMD_COLUMN --table --separator ':' --table-wrap 3 --wrap-separator '|' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "wrap-separator-all-columns"
-echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 0 --wrap-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e '0:1:2\na::b|c\nx:y:z' \
+			| $TS_CMD_COLUMN --table --separator ':' --table-wrap 0 --wrap-separator '|' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "wrap-separator-without-wrap"
-echo -e '0:1:2\na::b|c\nx:y:z' | $TS_CMD_COLUMN --table --separator ':' --wrap-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e '0:1:2\na::b|c\nx:y:z' \
+			| $TS_CMD_COLUMN --table --separator ':' --wrap-separator '|' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "wrap-separator-multichar"
-echo -e 'Name:Description\nJohn:A||software||developer\nJane:A||data||scientist' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '||' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'Name:Description\nJohn:A||software||developer\nJane:A||data||scientist' \
+			| $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '||' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "wrap-separator-multiple-separators"
-echo -e 'A:B:C\naa:b1|b2|b3:cc\nxx:y1|y2:zz' | $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'A:B:C\naa:b1|b2|b3:cc\nxx:y1|y2:zz' \
+			| $TS_CMD_COLUMN --table --separator ':' --table-wrap 2 --wrap-separator '|' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "header-as-columns"
-echo -e 'NAME\tAGE\tCITY\nAlice\t30\tNew York\nBob\t25\tLos Angeles' | $TS_CMD_COLUMN --table -K >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'NAME\tAGE\tCITY\nAlice\t30\tNew York\nBob\t25\tLos Angeles' \
+			| $TS_CMD_COLUMN --table --table-header-as-columns >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "header-as-columns-csv"
-echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' | $TS_CMD_COLUMN --table -K --separator ',' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' \
+			| $TS_CMD_COLUMN --table --table-header-as-columns --separator ',' \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "header-as-columns-json"
-echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' | $TS_CMD_COLUMN --table -K --separator ',' --json >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'NAME,AGE,CITY\nAlice,30,New York\nBob,25,Los Angeles' \
+			| $TS_CMD_COLUMN --table --table-header-as-columns --separator ',' --json \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "header-as-columns-empty"
-echo -e 'COL1\t\tCOL3\nData1\tData2\tData3' | $TS_CMD_COLUMN --table -K >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e 'COL1\t\tCOL3\nData1\tData2\tData3' | $TS_CMD_COLUMN --table --table-header-as-columns \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "min-width"
-echo -e "a b c\na b c" | $TS_CMD_COLUMN --table --table-column "name=X,width=5" -C "name=YY,width=5" -C "name=Z" --output-separator '|' --output-width unlimited >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e "a b c\na b c" | $TS_CMD_COLUMN --table \
+			--table-column "name=X,width=5" -C "name=YY,width=5" \
+			-C "name=Z" --output-separator '|' \
+			--output-width unlimited >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "strictwidth"
-echo -e "a b c\na b c" | $TS_CMD_COLUMN --table --table-column "name=X,width=5" -C "name=YY,width=5,strictwidth" -C "name=Z" --output-separator '|' --output-width unlimited >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e "a b c\na b c" | $TS_CMD_COLUMN --table --table-column "name=X,width=5" \
+			-C "name=YY,width=5,strictwidth" -C "name=Z" --output-separator '|' \
+			--output-width unlimited >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "trunc-wanted"
-echo -e "123456 bbb\na bbb" | $TS_CMD_COLUMN --table --table-column "name=X,width=4,trunc" -C "name=Y" --output-separator '|' --output-width 9 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+echo -e "123456 bbb\na bbb" | $TS_CMD_COLUMN --table \
+			--table-column "name=X,width=4,trunc" -C "name=Y" --output-separator '|' \
+			--output-width 9 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "header-repeat"
+# If the output is not a terminal libsmartcols will default to a page
+# height of 24 lines. The test file has 48 lines which will result in 2 pages,
+# i.e. column(1) will print the header twice.
+$TS_CMD_COLUMN --table --table-columns COL1,COL2,COL3 --table-header-repeat \
+			"$TS_SELF"/files/table-long >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_finalize
