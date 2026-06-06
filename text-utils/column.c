@@ -102,7 +102,7 @@ struct column_control {
 		header_repeat,
 		header_as_columns,	/* --table-header-as-columns */
 		hide_unnamed,
-		maxout : 1,
+		maxout,
 		keep_empty_lines,	/* --keep-empty-lines */
 		tab_noheadings,
 		use_spaces;
