@@ -1,7 +1,7 @@
 //po4a: entry man manual
 = ll2_rename_user(3)
 :doctype: manpage
-:man manual: Programmer's Manual
+:man manual: Library Calls
 :man source: util-linux {release-version}
 :page-layout: base
 :lib: liblastlog2
