@@ -233,6 +233,28 @@ static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
 	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
 }
 
+static void read_cpulist(struct path_cxt *sys, const char *sysroot,
+					cpu_set_t **cpu_set, size_t *setsize)
+{
+	if (ul_path_read_s32(sys, &maxcpus, "kernel_max") == 0)
+		maxcpus += 1;
+	else if (!sysroot)
+		maxcpus = get_max_number_of_cpus();
+
+	if (maxcpus <= 0)
+		maxcpus = 2048;
+
+	*setsize = CPU_ALLOC_SIZE(maxcpus);
+
+	if (ul_path_access(sys, F_OK, "online") == 0)
+		ul_path_readf_cpulist(sys, cpu_set, maxcpus, "online");
+	else
+		*cpu_set = CPU_ALLOC(maxcpus);
+
+	if (!*cpu_set)
+		err(EXIT_FAILURE, _("cpuset_alloc failed"));
+}
+
 static void __attribute__((__noreturn__)) usage(void)
 {
 	FILE *out = stdout;
@@ -251,6 +273,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -g, --deconfigure <cpu-list>  deconfigure cpus\n"
 		" -p, --dispatch <mode>         set dispatching mode\n"
 		" -r, --rescan                  trigger rescan of cpus\n"
+		" -s, --sysroot <dir>           use the specified directory as system root\n"
 		), stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(31));
 
@@ -265,6 +288,7 @@ int main(int argc, char *argv[])
 	size_t setsize;
 	int cmd = -1;
 	int c, rc;
+	char *sysroot = NULL, *cpu_list_arg = NULL;
 
 	static const struct option longopts[] = {
 		{ "configure",	required_argument, NULL, 'c' },
@@ -274,6 +298,7 @@ int main(int argc, char *argv[])
 		{ "enable",	required_argument, NULL, 'e' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "rescan",	no_argument,       NULL, 'r' },
+		{ "sysroot",	required_argument, NULL, 's'},
 		{ "version",	no_argument,       NULL, 'V' },
 		{ NULL,		0, NULL, 0 }
 	};
@@ -289,58 +314,42 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	ul_path_init_debug();
-	sys = ul_new_path(_PATH_SYS_CPU);
-	if (!sys)
-		err(EXIT_FAILURE, _("failed to initialize sysfs handler"));
-
-	maxcpus = get_max_number_of_cpus();
-	if (maxcpus < 1)
-		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
-
-	if (ul_path_access(sys, F_OK, "online") == 0)
-		ul_path_readf_cpulist(sys, &cpu_set, maxcpus, "online");
-	else
-		cpu_set = CPU_ALLOC(maxcpus);
-	if (!cpu_set)
-		err(EXIT_FAILURE, _("cpuset_alloc failed"));
-
-	setsize = CPU_ALLOC_SIZE(maxcpus);
-
-	while ((c = getopt_long(argc, argv, "c:d:e:g:hp:rV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:d:e:g:hp:rs:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
 		case 'c':
 			cmd = CMD_CPU_CONFIGURE;
-			cpu_parse(argv[optind - 1], cpu_set, setsize);
+			cpu_list_arg = optarg;
 			break;
 		case 'd':
 			cmd = CMD_CPU_DISABLE;
-			cpu_parse(argv[optind - 1], cpu_set, setsize);
+			cpu_list_arg = optarg;
 			break;
 		case 'e':
 			cmd = CMD_CPU_ENABLE;
-			cpu_parse(argv[optind - 1], cpu_set, setsize);
+			cpu_list_arg = optarg;
 			break;
 		case 'g':
 			cmd = CMD_CPU_DECONFIGURE;
-			cpu_parse(argv[optind - 1], cpu_set, setsize);
+			cpu_list_arg = optarg;
 			break;
 		case 'p':
-			if (strcmp("horizontal", argv[optind - 1]) == 0)
+			if (strcmp("horizontal", optarg) == 0)
 				cmd = CMD_CPU_DISPATCH_HORIZONTAL;
-			else if (strcmp("vertical", argv[optind - 1]) == 0)
+			else if (strcmp("vertical", optarg) == 0)
 				cmd = CMD_CPU_DISPATCH_VERTICAL;
 			else
 				errx(EXIT_FAILURE, _("unsupported argument: %s"),
-				     argv[optind -1 ]);
+					optarg);
 			break;
 		case 'r':
 			cmd = CMD_CPU_RESCAN;
 			break;
-
+		case 's':
+			sysroot = optarg;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -354,6 +363,19 @@ int main(int argc, char *argv[])
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
 	}
+
+	ul_path_init_debug();
+	sys = ul_new_path(_PATH_SYS_CPU);
+	if (!sys)
+		err(EXIT_FAILURE, _("failed to initialize sysfs handler"));
+	if (sysroot && ul_path_set_prefix(sys, sysroot) != 0)
+		err(EXIT_FAILURE, _("failed to set up different sysroot"));
+	if (!ul_path_is_accessible(sys))
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_SYS_CPU);
+
+	read_cpulist(sys, sysroot, &cpu_set, &setsize);
+	if (cpu_list_arg)
+		cpu_parse(cpu_list_arg, cpu_set, setsize);
 
 	switch (cmd) {
 	case CMD_CPU_ENABLE:
