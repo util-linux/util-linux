@@ -45,13 +45,21 @@ for multiplexer in pselect6 select poll ppoll; do
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" -w "$multiplexer" multiplexing {10..22}; }
     } > "$TS_OUTPUT" 2>&1
+    # bash unsets MKFDS_PID when the coproc terminates; save it
+    MKFDS_CPID=$MKFDS_PID
 
     if read -r -u "${MKFDS[0]}" PID; then
+	if ! kill -0 "$PID" 2>/dev/null; then
+	    wait "$MKFDS_CPID"
+	    ts_skip "the $multiplexer process exited unexpectedly"
+	    ts_finalize_subtest
+	    continue
+	fi
 	syscall_line=$(cat /proc/"${PID}"/syscall 2>> "$TS_OUTPUT")
 	syscall_status=$?
 	if [[ "$syscall_status" != 0 ]]; then
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
+	    wait "$MKFDS_CPID"
 	    ts_skip "cannot open /proc/${PID}/syscall"
 	    ts_finalize_subtest
 	    continue
@@ -61,7 +69,7 @@ for multiplexer in pselect6 select poll ppoll; do
 	# on any platforms.
 	if [[ "$syscall_n" == 0 ]]; then
 	    kill -CONT "${PID}"
-	    wait "${MKFDS_PID}"
+	    wait "$MKFDS_CPID"
 	    ts_skip "incorrect syscall number in /proc/${PID}/syscall"
 	    ts_finalize_subtest
 	    continue
@@ -80,7 +88,7 @@ for multiplexer in pselect6 select poll ppoll; do
 	} >> "$TS_OUTPUT" 2>&1
     fi
 
-    wait "${MKFDS_PID}"
+    wait "$MKFDS_CPID"
     ts_finalize_subtest
 done
 
