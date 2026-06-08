@@ -1,0 +1,133 @@
+[30mCOL1 [0m              
+[30mAAA  [0m  BBBB  C     DDDD
+[30mA    [0m  BBB   CCCC  DDD
+[30mAA   [0m  BB    CCC   DD
+[30mAAAA [0m  B     CC    D
+[30mAA   [0m  BB    CC    DD
+[30mAAAAA[0m  BBB   CCC   DDDD
+[5mCOL1 [0m              
+[5mAAA  [0m  BBBB  C     DDDD
+[5mA    [0m  BBB   CCCC  DDD
+[5mAA   [0m  BB    CCC   DD
+[5mAAAA [0m  B     CC    D
+[5mAA   [0m  BB    CC    DD
+[5mAAAAA[0m  BBB   CCC   DDDD
+[34mCOL1 [0m              
+[34mAAA  [0m  BBBB  C     DDDD
+[34mA    [0m  BBB   CCCC  DDD
+[34mAA   [0m  BB    CCC   DD
+[34mAAAA [0m  B     CC    D
+[34mAA   [0m  BB    CC    DD
+[34mAAAAA[0m  BBB   CCC   DDDD
+[1mCOL1 [0m              
+[1mAAA  [0m  BBBB  C     DDDD
+[1mA    [0m  BBB   CCCC  DDD
+[1mAA   [0m  BB    CCC   DD
+[1mAAAA [0m  B     CC    D
+[1mAA   [0m  BB    CC    DD
+[1mAAAAA[0m  BBB   CCC   DDDD
+[33mCOL1 [0m              
+[33mAAA  [0m  BBBB  C     DDDD
+[33mA    [0m  BBB   CCCC  DDD
+[33mAA   [0m  BB    CCC   DD
+[33mAAAA [0m  B     CC    D
+[33mAA   [0m  BB    CC    DD
+[33mAAAAA[0m  BBB   CCC   DDDD
+[36mCOL1 [0m              
+[36mAAA  [0m  BBBB  C     DDDD
+[36mA    [0m  BBB   CCCC  DDD
+[36mAA   [0m  BB    CCC   DD
+[36mAAAA [0m  B     CC    D
+[36mAA   [0m  BB    CC    DD
+[36mAAAAA[0m  BBB   CCC   DDDD
+[1;30mCOL1 [0m              
+[1;30mAAA  [0m  BBBB  C     DDDD
+[1;30mA    [0m  BBB   CCCC  DDD
+[1;30mAA   [0m  BB    CCC   DD
+[1;30mAAAA [0m  B     CC    D
+[1;30mAA   [0m  BB    CC    DD
+[1;30mAAAAA[0m  BBB   CCC   DDDD
+[37mCOL1 [0m              
+[37mAAA  [0m  BBBB  C     DDDD
+[37mA    [0m  BBB   CCCC  DDD
+[37mAA   [0m  BB    CCC   DD
+[37mAAAA [0m  B     CC    D
+[37mAA   [0m  BB    CC    DD
+[37mAAAAA[0m  BBB   CCC   DDDD
+[32mCOL1 [0m              
+[32mAAA  [0m  BBBB  C     DDDD
+[32mA    [0m  BBB   CCCC  DDD
+[32mAA   [0m  BB    CCC   DD
+[32mAAAA [0m  B     CC    D
+[32mAA   [0m  BB    CC    DD
+[32mAAAAA[0m  BBB   CCC   DDDD
+[2mCOL1 [0m              
+[2mAAA  [0m  BBBB  C     DDDD
+[2mA    [0m  BBB   CCCC  DDD
+[2mAA   [0m  BB    CCC   DD
+[2mAAAA [0m  B     CC    D
+[2mAA   [0m  BB    CC    DD
+[2mAAAAA[0m  BBB   CCC   DDDD
+[1;34mCOL1 [0m              
+[1;34mAAA  [0m  BBBB  C     DDDD
+[1;34mA    [0m  BBB   CCCC  DDD
+[1;34mAA   [0m  BB    CCC   DD
+[1;34mAAAA [0m  B     CC    D
+[1;34mAA   [0m  BB    CC    DD
+[1;34mAAAAA[0m  BBB   CCC   DDDD
+[1;36mCOL1 [0m              
+[1;36mAAA  [0m  BBBB  C     DDDD
+[1;36mA    [0m  BBB   CCCC  DDD
+[1;36mAA   [0m  BB    CCC   DD
+[1;36mAAAA [0m  B     CC    D
+[1;36mAA   [0m  BB    CC    DD
+[1;36mAAAAA[0m  BBB   CCC   DDDD
+[37mCOL1 [0m              
+[37mAAA  [0m  BBBB  C     DDDD
+[37mA    [0m  BBB   CCCC  DDD
+[37mAA   [0m  BB    CCC   DD
+[37mAAAA [0m  B     CC    D
+[37mAA   [0m  BB    CC    DD
+[37mAAAAA[0m  BBB   CCC   DDDD
+[1;32mCOL1 [0m              
+[1;32mAAA  [0m  BBBB  C     DDDD
+[1;32mA    [0m  BBB   CCCC  DDD
+[1;32mAA   [0m  BB    CCC   DD
+[1;32mAAAA [0m  B     CC    D
+[1;32mAA   [0m  BB    CC    DD
+[1;32mAAAAA[0m  BBB   CCC   DDDD
+[1;35mCOL1 [0m              
+[1;35mAAA  [0m  BBBB  C     DDDD
+[1;35mA    [0m  BBB   CCCC  DDD
+[1;35mAA   [0m  BB    CCC   DD
+[1;35mAAAA [0m  B     CC    D
+[1;35mAA   [0m  BB    CC    DD
+[1;35mAAAAA[0m  BBB   CCC   DDDD
+[1;31mCOL1 [0m              
+[1;31mAAA  [0m  BBBB  C     DDDD
+[1;31mA    [0m  BBB   CCCC  DDD
+[1;31mAA   [0m  BB    CCC   DD
+[1;31mAAAA [0m  B     CC    D
+[1;31mAA   [0m  BB    CC    DD
+[1;31mAAAAA[0m  BBB   CCC   DDDD
+[35mCOL1 [0m              
+[35mAAA  [0m  BBBB  C     DDDD
+[35mA    [0m  BBB   CCCC  DDD
+[35mAA   [0m  BB    CCC   DD
+[35mAAAA [0m  B     CC    D
+[35mAA   [0m  BB    CC    DD
+[35mAAAAA[0m  BBB   CCC   DDDD
+[31mCOL1 [0m              
+[31mAAA  [0m  BBBB  C     DDDD
+[31mA    [0m  BBB   CCCC  DDD
+[31mAA   [0m  BB    CCC   DD
+[31mAAAA [0m  B     CC    D
+[31mAA   [0m  BB    CC    DD
+[31mAAAAA[0m  BBB   CCC   DDDD
+[1;33mCOL1 [0m              
+[1;33mAAA  [0m  BBBB  C     DDDD
+[1;33mA    [0m  BBB   CCCC  DDD
+[1;33mAA   [0m  BB    CCC   DD
+[1;33mAAAA [0m  B     CC    D
+[1;33mAA   [0m  BB    CC    DD
+[1;33mAAAAA[0m  BBB   CCC   DDDD
