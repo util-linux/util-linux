@@ -1635,7 +1635,10 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs,
 
 		DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
 
-		assert (volsz + 1 < sizeof(stringify_value(UINT64_MAX)));
+		/* a subvolid is a u64, so a longer value cannot match any
+		 * subvolume; reject it rather than overflow subvolidstr */
+		if (volsz + 1 >= sizeof(subvolidstr))
+			goto not_found;
 		memcpy(subvolidstr, vol, volsz);
 		subvolidstr[volsz] = '\0';
 
