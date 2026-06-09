@@ -173,8 +173,8 @@ struct colinfo {
 /* columns descriptions */
 static const struct colinfo infos[] = {
 	[COL_ALIOFF] = { "ALIGNMENT", 6, SCOLS_FL_RIGHT, N_("alignment offset"), COLTYPE_NUM },
-	[COL_ID] = { "ID", 0.1, SCOLS_FL_NOEXTREMES, N_("udev ID (based on ID-LINK)") },
-	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
+	[COL_ID] = { "ID", 0.1, SCOLS_FL_TRUNC | SCOLS_FL_NOEXTREMES, N_("udev ID (based on ID-LINK)") },
+	[COL_IDLINK] = { "ID-LINK", 0.1, SCOLS_FL_TRUNC | SCOLS_FL_NOEXTREMES, N_("the shortest udev /dev/disk/by-id link name") },
 	[COL_DALIGN] = { "DISC-ALN", 6, SCOLS_FL_RIGHT, N_("discard alignment offset"), COLTYPE_NUM },
 	[COL_DAX] = { "DAX", 1, SCOLS_FL_RIGHT, N_("dax-capable device"), COLTYPE_BOOL },
 	[COL_DGRAN] = { "DISC-GRAN", 6, SCOLS_FL_RIGHT, N_("discard granularity, use <number> if --bytes is given"), COLTYPE_SIZE },
