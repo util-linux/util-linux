@@ -858,9 +858,11 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 		d->d_partitions[t].p_fstype = BSD_FS_UNUSED;
 	}
 
-	if (d->d_npartitions > BSD_MAXPARTITIONS)
+	if (d->d_npartitions > BSD_MAXPARTITIONS) {
 		fdisk_warnx(cxt, _("Too many partitions (%d, maximum is %d)."),
 				d->d_npartitions, BSD_MAXPARTITIONS);
+		d->d_npartitions = BSD_MAXPARTITIONS;
+	}
 
 	/* let's follow in-PT geometry */
 	cxt->geom.sectors = d->d_nsectors;
