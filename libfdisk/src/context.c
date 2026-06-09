@@ -383,6 +383,25 @@ int fdisk_has_dialogs(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_enable_force:
+ * @cxt: fdisk context
+ * @enable: 1 to enable, 0 to disable
+ *
+ * The flag allows to bypass all consistency checks.
+ *
+ * Returns: 0 on success, < 0 on error.
+ *
+ * Since: 2.43
+ */
+int fdisk_enable_force(struct fdisk_context *cxt, int enable)
+{
+	if (!cxt)
+		return -EINVAL;
+	cxt->force = enable ? 1 : 0;
+	return 0;
+}
+
+/**
  * fdisk_enable_wipe
  * @cxt: fdisk context
  * @enable: 1 or 0
