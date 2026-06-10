@@ -17,7 +17,7 @@ module IncludeTracker
       docdir = doc.attributes["docdir"]
       path = target
       file = File.expand_path path, docdir
-      data = File.read file
+      data = File.read file, encoding: 'UTF-8'
       reader.push_include data, file, path, 1, attributes
       doc.attributes["include_dependencies"] << file
       reader
