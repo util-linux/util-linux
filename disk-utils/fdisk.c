@@ -691,7 +691,7 @@ void resize_partition(struct fdisk_context *cxt)
 
 	rc = fdisk_ask_partnum(cxt, &i, FALSE);
 	if (rc)
-		goto err;
+		goto out;
 
 	rc = fdisk_partition_get_max_size(cxt, i, &max_size);
 	if (rc)
