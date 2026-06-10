@@ -85,6 +85,7 @@
 #include "pwdutils.h"
 
 #include "logindefs.h"
+#include "vmcp.h"
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 # include "shells.h"
@@ -163,6 +164,85 @@ static int is_consoletty(int fd)
 	}
 	return 0;
 }
+#endif
+
+#if defined(__s390__) || defined(__s390x__)
+/* Avoid that passwords are logged on the hypervisors console log */
+
+#define CON_3215	0x0010	/* s390x 3215 halfduplex console */
+#define CON_3270	0x0020	/* s390x 3270 console */
+#define CON_SCLP	0x0040	/* s390x sclp terminals */
+
+struct s390con {
+	int flags;
+	int vmcpfd;
+};
+
+static struct s390con s390_console_spool_stop(int fd)
+{
+	struct stat stb;
+	struct s390con con = { .flags = 0, .vmcpfd = -1 };
+
+	if ((fstat(fd, &stb) >= 0)) {
+		if (major(stb.st_rdev) == 4 && minor(stb.st_rdev) == 64)
+			con.flags |= CON_3215;
+		if (major(stb.st_rdev) == 4 && minor(stb.st_rdev) >= 65)
+			con.flags |= CON_SCLP;
+		else if (major(stb.st_rdev) == 227 && minor(stb.st_rdev) >= 1)
+			con.flags |= CON_3270;
+	}
+	if (con.flags & (CON_3215|CON_3270)) {
+		con.vmcpfd = openvmcp();
+		if (con.vmcpfd >= 0) {
+			char *msg = queryspool(con.vmcpfd);
+			if (msg) {
+				parsespool(msg);
+				free(msg);
+			}
+			/*
+			 * Avoid that console log during
+			 * password input
+			 */
+			stopspool(con.vmcpfd);
+		}
+	}
+	if (con.flags & CON_3215) {
+		if (con.vmcpfd >= 0) {
+			char *msg = queryterm(con.vmcpfd);
+			if (msg) {
+				parseterm(msg);
+				free(msg);
+			}
+			/*
+			 * Avoid that CLEAR has to be pressed for
+			 * password input
+			 */
+			setterm(con.vmcpfd, "0");
+# ifdef WARN_WITH_VMCP
+			warning3215(con.vmcpfd);
+# endif
+		}
+	}
+	return con;
+}
+
+static void s390_console_spool_restore(struct s390con *con)
+{
+	if (con->vmcpfd >= 0) {
+		if (con->flags & CON_3215)
+			restoreterm(con->vmcpfd);
+		if (con->flags & (CON_3215|CON_3270))
+			restorespool(con->vmcpfd);
+		clearvmcp();
+		close(con->vmcpfd);
+		con->vmcpfd = -1;
+	}
+}
+# define PREPARE_CONSOLE(fd)	struct s390con con = s390_console_spool_stop(fd)
+# define RESTORE_CONSOLE()	s390_console_spool_restore(&con)
+#else
+# define PREPARE_CONSOLE(fd)	/* */
+# define RESTORE_CONSOLE()	/* */
 #endif
 
 /*
@@ -1584,8 +1664,11 @@ int main(int argc, char **argv)
 	/* login -f, then the user has already been authenticated */
 	cxt.noauth = cxt.noauth && getuid() == 0 ? 1 : 0;
 
-	if (!cxt.noauth)
+	if (!cxt.noauth) {
+		PREPARE_CONSOLE(0);
 		loginpam_auth(&cxt);
+		RESTORE_CONSOLE();
+        }
 
 	/*
 	 * Authentication may be skipped (for example, during krlogin, rlogin,
