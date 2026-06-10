@@ -63,6 +63,7 @@ struct libmnt_cache {
 	size_t			nallocs;
 	int			refcount;
 	int			probe_sb_extra;	/* extra BLKID_SUBLKS_* flags */
+	bool			noprobe;	/* disable libblkid device probing */
 
 	/* blkid_evaluate_tag() works in two ways:
 	 *
@@ -212,6 +213,12 @@ int mnt_cache_set_sbprobe(struct libmnt_cache *cache, int flags)
 
 	cache->probe_sb_extra = flags;
 	return 0;
+}
+
+void mnt_cache_enable_noprobe(struct libmnt_cache *cache, int enable)
+{
+	if (cache)
+		cache->noprobe = !!enable;
 }
 
 /* note that the @key could be the same pointer as @value */
@@ -378,6 +385,11 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 
 	assert(cache);
 	assert(devname);
+
+	if (cache->noprobe) {
+		DBG_OBJ(CACHE, cache, ul_debug("%s: skip blkid probe (noprobe)", devname));
+		return 1;
+	}
 
 	DBG_OBJ(CACHE, cache, ul_debug("%s: reading from blkid", devname));
 
@@ -801,9 +813,6 @@ char *mnt_resolve_tag(const char *token, const char *value,
 {
 	char *p = NULL;
 
-	/*DBG_OBJ(CACHE, cache, ul_debug("resolving tag token=%s value=%s",
-				token, value));*/
-
 	if (!token || !value)
 		return NULL;
 
@@ -811,14 +820,20 @@ char *mnt_resolve_tag(const char *token, const char *value,
 		p = (char *) cache_find_tag(cache, token, value);
 
 	if (!p) {
+		DBG_OBJ(CACHE, cache, ul_debug("evaluating (by blkid) tag %s=%s", token, value));
+
 		/* returns newly allocated string */
-		p = blkid_evaluate_tag(token, value, cache ? &cache->bc : NULL);
+		p = blkid_evaluate_tag2(token, value,
+				cache ? &cache->bc : NULL,
+				cache && cache->noprobe ? BLKID_EVALUATE_NOPROBE : 0);
 
 		if (p && cache &&
 		    cache_add_tag(cache, token, value, p, 0))
 				goto error;
 	}
 
+	DBG_OBJ(CACHE, cache, ul_debug("resolve tag %s=%s -> %s",
+				token, value, p ? p : "NOT FOUND"));
 	return p;
 error:
 	free(p);

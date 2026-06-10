@@ -1670,6 +1670,9 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 	mnt_ref_cache(cache);			/* new */
 	mnt_unref_cache(cxt->cache);		/* old */
 
+	if (cache && mnt_context_is_restricted(cxt))
+		mnt_cache_enable_noprobe(cache, 1);
+
 	cxt->cache = cache;
 
 	if (cxt->mountinfo)

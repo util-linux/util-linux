@@ -2775,6 +2775,9 @@ AS_IF([test "x$enable_libmount_udev_support" != xno && test "x$build_libmount" =
    )
 ])
 AM_CONDITIONAL([USE_LIBMOUNT_UDEV_SUPPORT], [test "x$libmount_udev_support" = xyes])
+AS_IF([test "x$libmount_udev_support" != xyes && test "x$build_libmount" = xyes], [
+  AC_MSG_WARN([libmount udev support is disabled; non-root tag resolution (LABEL=, UUID=) in mount/umount will not work])
+])
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd unit files (requires systemd support)]),

@@ -421,6 +421,11 @@ have = cc.has_function(
 conf.set('USE_LIBMOUNT_UDEV_SUPPORT',
   get_option('build-libmount-udev-support').allowed() and have ? 1 : false)
 
+if not (get_option('build-libmount-udev-support').allowed() and have)
+  warning('libmount udev support is disabled; non-root tag resolution (LABEL=, UUID=) ' +
+          'in mount/umount will not work')
+endif
+
 lib_udev = dependency(
   'libudev',
   required : get_option('systemd'))

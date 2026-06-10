@@ -696,6 +696,8 @@ extern int mnt_context_prepare_update(struct libmnt_context *cxt);
 extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
 extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
+extern void mnt_cache_enable_noprobe(struct libmnt_cache *cache, int enable);
+
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
 

@@ -1,6 +1,7 @@
 <SECTION>
 <FILE>evaluate</FILE>
 blkid_evaluate_tag
+blkid_evaluate_tag2
 blkid_evaluate_spec
 </SECTION>
 
