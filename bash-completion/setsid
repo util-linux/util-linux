@@ -1,23 +1,44 @@
 _setsid_module()
 {
-	local cur prev OPTS
-	COMPREPLY=()
-	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	local cur prev words cword
+	local OPTS NOARGOPTS NOARGOPTS_SHORT
+
+	_init_completion -- "$@" || return
+
+	NOARGOPTS="--ctty|--wait|--fork|--help|--version"
+	NOARGOPTS_SHORT="-c|-f|-w|-h|-V"
+	OPTS="${NOARGOPTS//|/ } ${NOARGOPTS_SHORT//|/ }"
+
+	# Detect where the sub-command starts
+	local offset=0 i
+	for ((i = 1; i < cword; i++)); do
+		if [[ "${words[i]}" =~ ^--$ ]]; then
+			offset=$((i + 1))
+			break
+		elif [[ "${words[i]}" =~ ^($NOARGOPTS|$NOARGOPTS_SHORT)$ ]]; then
+			continue
+		fi
+		offset=$i
+		break
+	done
+
+	if (( offset > 0 )); then
+		_command_offset $offset
+		return 0
+	fi
+
 	case $prev in
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
-	case $cur in
-		-*)
-			OPTS="--ctty --wait --fork --help --version"
-			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
-			return 0
-			;;
-	esac
-	compopt -o bashdefault
-	COMPREPLY=( $(compgen -c -- $cur) )
+
+	if [[ "$cur" == -* ]]; then
+		COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
+		return 0
+	fi
+
+	COMPREPLY=( $(compgen -c -- "$cur") )
 	return 0
 }
-complete -F _setsid_module setsid
+complete -F _setsid_module -o bashdefault -o default setsid
