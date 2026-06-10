@@ -684,7 +684,7 @@ void resize_partition(struct fdisk_context *cxt)
 	struct fdisk_table *tb = NULL;
 	uint64_t max_size, secs;
 	uintmax_t size;
-	size_t i;
+	size_t i = 0;
 	int rc;
 
 	assert(cxt);
