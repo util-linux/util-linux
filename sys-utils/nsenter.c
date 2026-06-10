@@ -352,7 +352,7 @@ static void enter_namespaces(int pid_fd, int namespaces, bool ignore_errors)
 {
 	struct namespace_file *n =  NULL;
 
-	if (pid_fd) {
+	if (pid_fd >= 0) {
 		int ns = 0;
 		while ((n = next_enabled_nsfile(n, namespaces))) {
 			if (n->fd < 0)
