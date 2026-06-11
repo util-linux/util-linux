@@ -2017,7 +2017,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 
 				if (pa && fdisk_partition_has_start(pa)) {
 					fdisk_warnx(cxt, "%s", msg);
-					return -EINVAL;
+					if (!cxt->force)
+						return -EINVAL;
 				}
 				fdisk_info(cxt, "%s", msg);
 			}
@@ -2030,7 +2031,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			/* TRANSLATORS: Try to keep this within 80 characters. */
 				fdisk_info(cxt, _("To create more partitions, first replace "
 					  "a primary with an extended partition."));
-			return -EINVAL;
+			if (!cxt->force)
+				return -EINVAL;
 		}
 	} else {
 		char hint[BUFSIZ];

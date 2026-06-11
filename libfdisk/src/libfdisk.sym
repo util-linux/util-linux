@@ -336,4 +336,5 @@ FDISK_2_42 {
 FDISK_2_43 {
 	fdisk_script_disable_devnames;
 	fdisk_script_has_devnames;
+	fdisk_enable_force;
 } FDISK_2_42;

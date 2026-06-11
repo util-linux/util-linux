@@ -2503,6 +2503,8 @@ int main(int argc, char *argv[])
 	colors_init(colormode, "sfdisk");
 
 	sfdisk_init(sf);
+	if (sf->force)
+		fdisk_enable_force(sf->cxt, 1);
 	if (bytes)
 		fdisk_set_size_unit(sf->cxt, FDISK_SIZEUNIT_BYTES);
 	if (user_ss)
