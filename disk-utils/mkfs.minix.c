@@ -602,7 +602,10 @@ static size_t do_check(const struct fs_control *ctl, char * buffer, int try, uns
 
 	/* Try the read */
 	got = read(ctl->device_fd, buffer, try * MINIX_BLOCK_SIZE);
-	if (got < 0) got = 0;
+	if (got < 0) {
+		warn(_("%s: read failed"), ctl->device_name);
+		got = 0;
+	}
 	if (got & (MINIX_BLOCK_SIZE - 1 )) {
 		printf(_("Weird values in do_check: probably bugs\n"));
 	}
