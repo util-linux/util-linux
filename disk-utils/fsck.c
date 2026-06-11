@@ -336,7 +336,8 @@ static int is_irrotational_disk(dev_t disk)
 		else
 			warnx(_("parse error: %s"), path);
 	}
-	fclose(f);
+	if (fclose(f) != 0)
+		warn(_("cannot close %s"), path);
 
 	return rc == 1 ? !x : 0;
 }
