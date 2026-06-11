@@ -27,6 +27,7 @@ chcpu: This system does not support setting the dispatching mode of CPUs
 ---rescan---
 chcpu: This system does not support rescanning of CPUs
 ---disable last enabled CPU---
+chcpu: CPU 7 disable failed (last enabled CPU)
 ---disable invalid CPU list---
 chcpu: CPU 8 does not exist
 chcpu: CPU 9 does not exist
@@ -36,6 +37,6 @@ chcpu: CPU 9 does not exist
 ---invalid dispatch mode---
 chcpu: unsupported argument: bogus
 ---exclusive options---
-chcpu: This system does not support rescanning of CPUs
+chcpu: options --enable and --rescan cannot be combined
 chcpu: options --enable and --disable cannot be combined
 chcpu: options --configure and --enable cannot be combined
