@@ -104,6 +104,7 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->addrsz);	/* address sizes */
 		free(ct->static_mhz);
 		free(ct->dynamic_mhz);
+		free(ct->isa);
 		free(ct);
 	}
 }
