@@ -5,6 +5,7 @@ Thread(s) per core:  2
 Core(s) per socket:  1
 Socket(s):           1
 ISA:                 rv64imafdc
+MMU:                 sv39
 L1d cache:           64 KiB (2 instances)
 L1i cache:           64 KiB (2 instances)
 L2 cache:            2 MiB (1 instance)
