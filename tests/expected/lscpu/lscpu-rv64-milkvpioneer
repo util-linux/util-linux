@@ -8,6 +8,7 @@ Thread(s) per core:  1
 Core(s) per socket:  64
 Socket(s):           1
 ISA:                 rv64imafdcv
+MMU:                 sv39
 NUMA node(s):        4
 NUMA node0 CPU(s):   0-7,16-23
 NUMA node1 CPU(s):   8-15,24-31
