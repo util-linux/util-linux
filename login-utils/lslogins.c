@@ -571,7 +571,8 @@ static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *ds
 			return -1;
 		}
 		if (res_tty) {
-			mem2strcpy(dst, res_tty, strlen(res_tty), strlen(res_tty) + 1);
+			mem2strcpy(dst, res_tty, strlen(res_tty),
+					sizeof_member(struct utmpx, ut_line) + 1);
 			free (res_tty);
 		}
 		break;
@@ -584,7 +585,8 @@ static int get_lastlog2(struct lslogins_control *ctl, const char *user, void *ds
 			return -1;
 		}
 		if (res_host) {
-			mem2strcpy(dst, res_host, strlen(res_host), strlen(res_host) + 1);
+			mem2strcpy(dst, res_host, strlen(res_host),
+					sizeof_member(struct utmpx, ut_host) + 1);
 			free(res_host);
 		}
 		break;
