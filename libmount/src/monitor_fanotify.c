@@ -197,6 +197,12 @@ static int fanotify_next_fs(struct libmnt_monitor *mn, struct monitor_entry *me,
 	    meta->vers != FANOTIFY_METADATA_VERSION)
 		goto nothing;
 
+	if (meta->mask & FAN_Q_OVERFLOW) {
+		DBG(MONITOR, ul_debugobj(mn, "fanotify queue overflow"));
+		data->remaining = 0;
+		return -EOVERFLOW;
+	}
+
 	thislen = meta->event_len - sizeof(*meta);
 
 	mnt = (struct fanotify_event_info_mnt *)
