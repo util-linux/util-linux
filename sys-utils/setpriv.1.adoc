@@ -141,9 +141,23 @@ Be careful with this tool -- it may have unexpected security consequences. For e
 
 == EXAMPLES
 
-If you're looking for behavior similar to *su*(1)/*runuser*(1), or *sudo*(8) (without the *-g* option), try something like:
+Note that *setpriv* is not a 1:1 replacement for *su*(1), *runuser*(1), or *sudo*(8).
+Unlike those tools, *setpriv* does not use PAM, does not prompt for a password,
+and does not perform session or accounting setup. The examples below provide
+a starting point for common privilege-dropping scenarios.
 
-*setpriv --reuid=1000 --regid=1000 --init-groups*
+If you want to switch UIDs/GIDs similarly to *runuser*(1) (without *--login*), try:
+
+*setpriv --reuid=1000 --regid=1000 --inh-caps=-all --init-groups*
+
+To also reset the environment (as *sudo*(8) does by default), add *--reset-env*:
+
+*setpriv --reuid=1000 --regid=1000 --inh-caps=-all --init-groups --reset-env*
+
+For a more restrictive setup that also limits the bounding set and prevents gaining
+new privileges (more restrictive than *runuser* or *sudo*):
+
+*setpriv --reuid=1000 --regid=1000 --init-groups --inh-caps=-all --bounding-set=-all --no-new-privs --reset-env*
 
 If you want to mimic daemontools' *setuid*(8), try:
 
