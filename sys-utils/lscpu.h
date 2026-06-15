@@ -115,7 +115,8 @@ struct lscpu_cputype {
 
 	size_t nr_socket_on_cluster; /* the number of sockets if the is_cluster is 1 */
 
-	char	*isa;	/* loongarch */
+	char	*isa;	/* loongarch, riscv */
+	char	*mmu;	/* riscv */
 };
 
 /* dispatching modes */

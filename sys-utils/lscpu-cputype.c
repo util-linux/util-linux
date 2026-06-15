@@ -104,6 +104,8 @@ void lscpu_unref_cputype(struct lscpu_cputype *ct)
 		free(ct->addrsz);	/* address sizes */
 		free(ct->static_mhz);
 		free(ct->dynamic_mhz);
+		free(ct->isa);
+		free(ct->mmu);
 		free(ct);
 	}
 }
@@ -201,6 +203,7 @@ enum {
 	PAT_VENDOR,
 	PAT_CACHE,
 	PAT_ISA,
+	PAT_MMU,
 };
 
 /*
@@ -242,6 +245,7 @@ static const struct cpuinfo_pattern type_patterns[] =
 	DEF_PAT_CPUTYPE( "max thread id",	PAT_MAX_THREAD_ID, mtid),	/* s390 */
 	DEF_PAT_CPUTYPE( "microcode",	        PAT_MICROCODE, microcode),
 	DEF_PAT_CPUTYPE( "mimpid",		PAT_MODEL,	model),		/* riscv */
+	DEF_PAT_CPUTYPE( "mmu",			PAT_MMU,	mmu),		/* riscv */
 	DEF_PAT_CPUTYPE( "model",		PAT_MODEL,	model),
 	DEF_PAT_CPUTYPE( "model name",		PAT_MODEL_NAME,	modelname),
 	DEF_PAT_CPUTYPE( "mvendorid",		PAT_VENDOR,	vendor),	/* riscv */
