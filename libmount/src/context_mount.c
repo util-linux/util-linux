@@ -740,6 +740,13 @@ static int prepare_target(struct libmnt_context *cxt)
 	if (rc == 0)
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_TARGET);
 
+	if (rc == 0
+	    && mnt_context_target_fd_required(cxt)
+	    && mnt_context_get_target_fd(cxt) < 0) {
+		DBG(CXT, ul_debugobj(cxt, "failed to pin target"));
+		rc = -errno;
+	}
+
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 

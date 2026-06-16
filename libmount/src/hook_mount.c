@@ -548,7 +548,17 @@ static int hook_attach_target(struct libmnt_context *cxt,
 	if (mnt_context_is_beneath(cxt))
 		flags |= MOVE_MOUNT_BENEATH;
 
-	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, flags);
+	/* fd_target is open in restricted mode (see prepare_target()) */
+	if (mnt_context_target_fd_required(cxt)) {
+		int fd = mnt_context_get_target_fd(cxt);
+
+		if (fd < 0)
+			return -errno;
+		flags |= MOVE_MOUNT_T_EMPTY_PATH;
+		rc = move_mount(api->fd_tree, "", fd, "", flags);
+	} else
+		rc = move_mount(api->fd_tree, "", AT_FDCWD, target, flags);
+
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
 
 	if (rc == 0) {
@@ -558,6 +568,9 @@ static int hook_attach_target(struct libmnt_context *cxt,
 			mnt_fs_mark_moved(cxt->fs);
 		else
 			mnt_fs_mark_attached(cxt->fs);
+
+		/* re-open to point to the mounted filesystem root */
+		rc = mnt_context_reopen_target_fd(cxt);
 	}
 
 	return rc == 0 ? 0 : -errno;
