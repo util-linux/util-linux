@@ -14,11 +14,6 @@
 #include "strv.h"
 #include "cctype.h"
 
-static int riscv_cmp_func(const void *a, const void *b)
-{
-	return strcmp(*(const char **)a, *(const char **)b);
-}
-
 bool is_riscv(struct lscpu_cputype *ct)
 {
 	const char *base_isa[] = {"rv32", "rv64", "rv128"};
@@ -42,11 +37,7 @@ void lscpu_format_isa_riscv(struct lscpu_cputype *ct)
 
 	split = ul_strv_split(ct->isa, "_");
 
-	/* Sort multi-letter extensions alphabetically */
-	if (ul_strv_length(split) > 1)
-		qsort(&split[1], ul_strv_length(split) - 1, sizeof(char *), riscv_cmp_func);
-
-	/* Keep Base ISA and single-letter extensions at the start */
+	/* Keep the kernel-provided ISA extension order. */
 	strcpy(ct->isa, split[0]);
 
 	for (i = 1; i < ul_strv_length(split); i++) {
