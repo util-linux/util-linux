@@ -1,0 +1,129 @@
+util-linux 2.42.2 Release Notes
+===============================
+
+Security fixes:
+
+ CVE-2026-53613 - mount(8) TOCTOU race on target path.
+   The SUID mount does not pin the mount target directory, allowing a
+   race between path resolution and the actual mount syscall.  A local
+   attacker can swap an ancestor directory component between these
+   steps to redirect a mount to an arbitrary location.
+   Reported-by: Xinyao Hu
+
+ CVE-2026-53612 - mount(8) TOCTOU race on post-mount owner/mode change.
+   The X-mount.owner, X-mount.group, and X-mount.mode options use
+   path-based lchown()/chmod() after mounting.  An attacker can swap
+   the target between mount and the ownership/mode change to gain
+   control of arbitrary files.
+   Reported-by: Xinyao Hu
+
+ CVE-2026-53614 - mount(8) SUID bypass via LIBMOUNT_FORCE_MOUNT2.
+   The environment variable LIBMOUNT_FORCE_MOUNT2 is not filtered
+   via safe_getenv() in SUID context.  A local attacker can force
+   the legacy mount(2) code path, which uses a two-step bind+remount
+   or propagation sequence with a window where security flags (nosuid,
+   noexec, ...) are not yet applied.
+   Reported-by: Xinyao Hu
+
+ CVE-2026-27456 - mount(8) TOCTOU symlink attack via loop device (follow-up).
+   The v2.42.1 fix used O_NOFOLLOW which only rejects symlinks at the
+   last path component.  This update uses openat2(RESOLVE_NO_SYMLINKS)
+   to reject symlinks at any component of the backing file path.
+
+ libblkid: use-after-free in nested partition probing.
+   The partitions list stores partitions in a contiguous array grown by
+   reallocarray().  When the array is reallocated, all existing
+   blkid_partition pointers become dangling.
+   Reported-by: Thai Duong
+
+Backward incompatible changes:
+
+ The security fixes above harden the SUID mount(8) against TOCTOU
+ attacks.  As a side effect, the following features are restricted
+ for non-root users:
+
+ X-mount.subdir=
+   Restricted to Linux >= 6.15 for non-root users.  The old-kernel
+   implementation uses namespace unsharing and string-based
+   move_mount() which is unsafe (TOCTOU).  The safe detached subdir
+   open is available only on Linux >= 6.15.
+
+ X-mount.nocanonicalize
+   Ignored for non-root users.  Paths must always be canonicalized
+   in restricted mode to ensure safe target resolution before
+   fd pinning.
+
+ LIBMOUNT_FORCE_MOUNT2=
+   Ignored in SUID context (filtered via safe_getenv()).
+   Additionally, multi-step mount(2) sequences (bind+remount and
+   propagation changes) are refused for non-root users in the
+   legacy mount path because the two-step approach has a window
+   where security flags (nosuid, noexec, ...) are not yet applied.
+   The new mount API (fsopen/fsconfig/fsmount) handles this
+   atomically and is not affected.
+
+Changes:
+
+asciidoctor:
+    - fix encoding error for non-ASCII translations (by Karel Zak)
+
+docs:
+    - setpriv improve EXAMPLES section (by Karel Zak)
+
+fdisk-list:
+    - fix memory leak when partition returns empty string (by Leefancy)
+    - fix memory leak in partition listing (by Leefancy)
+
+fsck.minix:
+    - bound namelen guessed in get_dirsize (by aizu-m)
+
+hexdump:
+    - fix buffer overflow in color_cond() (by Karel Zak)
+
+include/mountutils.h:
+    - fix LSMT_ROOT definition (by Shubham Chakraborty)
+
+lib:
+    - (pidutils.c) allow zero and negative numbers for PIDs (by Christian Goeschel Ndjomouo)
+
+libblkid:
+    - fix use-after-free in nested partition probing (by Karel Zak)
+
+libfdisk:
+    - fix use of on-disk sizeof_partition_entry in GPT (by Karel Zak)
+
+lib/fileutils:
+    - add ul_open_no_symlinks() (by Karel Zak)
+
+libmount:
+    - add mount ID verification and man page TOCTOU note (by Karel Zak)
+    - use fd_target in hook_idmap for move_mount() (by Karel Zak)
+    - restrict X-mount.subdir for non-root to Linux >= 6.15 (by Karel Zak)
+    - use fd-based fchownat/chmod in hook_owner (by Karel Zak)
+    - ignore X-mount.nocanonicalize for restricted users (by Karel Zak)
+    - add fd_target to context for TOCTOU prevention (by Karel Zak)
+    - fix SUID bypass via LIBMOUNT_FORCE_MOUNT2 and legacy mount path (by Karel Zak)
+    - detect fanotify queue overflow in monitor (by Karel Zak)
+    - fix subvolid buffer overflow in get_btrfs_fs_root (by aizu-m)
+
+loopdev:
+    - use openat2(RESOLVE_NO_SYMLINKS) for backing file (by Karel Zak)
+
+lscpu:
+    - free cputype ISA string (by Zephyr Li)
+
+lslogins:
+    - bound lastlog2 tty/host copy to destination size (by aizu-m)
+
+nsenter:
+    - Fix invalid fd check in enter_namespaces (by Vladimir Riabchun)
+
+pam_lastlog2:
+    - fix libpam linking in autotools build (by Karel Zak)
+
+readprofile:
+    - replace popen() with fork/exec for .gz map files (by Karel Zak)
+
+tests:
+    - (hexdump) use arrays for OPTS and ADDRFMT (by Karel Zak)
+    - mkswap file-existing subtest add explicit page size (by Karel Zak)
