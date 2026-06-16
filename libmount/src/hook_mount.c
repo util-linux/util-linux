@@ -44,6 +44,7 @@
  */
 
 #include "mountP.h"
+#include "env.h"
 #include "fileutils.h"	/* statx() fallback */
 #include "strutils.h"
 #include "mangle.h"
@@ -657,7 +658,7 @@ fail:
 
 static int force_classic_mount(struct libmnt_context *cxt)
 {
-	const char *env = getenv("LIBMOUNT_FORCE_MOUNT2");
+	const char *env = safe_getenv("LIBMOUNT_FORCE_MOUNT2");
 
 	if (env) {
 		if (strcmp(env, "always") == 0)
