@@ -19,6 +19,7 @@ TS_DESC="XMODE.m for classical system calls for multiplexing"
 
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
+. "$TS_SELF/lsfd-functions.bash"
 
 ts_check_test_command "$TS_CMD_LSFD"
 ts_check_test_command "$TS_HELPER_MKFDS"
@@ -89,7 +90,7 @@ for multiplexer in pselect6 select poll ppoll; do
     fi
 
     wait "$MKFDS_CPID"
-    if [ $? -eq 23 ]; then
+    if [ $? -eq "$ENOSYS" ]; then
 	ts_skip "the $multiplexer syscall is not available (ENOSYS)"
     fi
     ts_finalize_subtest
