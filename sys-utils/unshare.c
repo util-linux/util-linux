@@ -670,9 +670,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
 /**
  * map_ids_from_child() - Set up a new uid/gid map
  * @fd: The eventfd to wait on
- * @mapuser: The user to map the current user to (or -1)
  * @usermap: The range of UIDs to map (or %NULL)
- * @mapgroup: The group to map the current group to (or -1)
  * @groupmap: The range of GIDs to map (or %NULL)
  *
  * fork_and_wait() for our parent to call sync_with_child() on @fd. Upon
