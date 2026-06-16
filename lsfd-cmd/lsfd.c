@@ -1392,7 +1392,7 @@ static void initialize_nodevs(void)
 
 	if (stat("/proc/self/ns/mnt", &sb) == 0) {
 		self_mntns_id = sb.st_ino;
-		self_mntns_fd = open("/proc/self/ns/mnt", O_RDONLY);
+		self_mntns_fd = open("/proc/self/ns/mnt", O_RDONLY|O_PATH);
 	}
 }
 
@@ -2153,7 +2153,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		if (mountinfo) {
 			int mntns_fd = -1;
 			if (proc->mnt_ns && (self_mntns_id != proc->mnt_ns->id))
-				mntns_fd = ul_path_open(pc, O_RDONLY, "ns/mnt");
+				mntns_fd = ul_path_open(pc, O_RDONLY|O_PATH, "ns/mnt");
 			read_mountinfo_in_mntns(mountinfo, proc->mnt_ns, mntns_fd);
 			if (mntns_fd >= 0)
 				close(mntns_fd);

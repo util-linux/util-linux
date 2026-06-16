@@ -245,7 +245,7 @@ void initialize_sock_xinfos(void)
 
 	INIT_LIST_HEAD(&unix_ipcs);
 
-	self_netns_fd = open("/proc/self/ns/net", O_RDONLY);
+	self_netns_fd = open("/proc/self/ns/net", O_RDONLY|O_PATH);
 
 	if (self_netns_fd < 0)
 		load_sock_xinfo_no_nsswitch(NULL);
