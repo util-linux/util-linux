@@ -516,8 +516,24 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		umount2(target, MNT_DETACH);
 	}
 
-	rc = move_mount(api->fd_tree, "", AT_FDCWD, target, MOVE_MOUNT_F_EMPTY_PATH);
+	/* fd_target is open in restricted mode (see prepare_target()) */
+	if (mnt_context_target_fd_required(cxt)) {
+		int fd = mnt_context_get_target_fd(cxt);
+
+		if (fd < 0)
+			return -errno;
+		rc = move_mount(api->fd_tree, "", fd, "",
+				MOVE_MOUNT_F_EMPTY_PATH | MOVE_MOUNT_T_EMPTY_PATH);
+	} else
+		rc = move_mount(api->fd_tree, "", AT_FDCWD, target,
+				MOVE_MOUNT_F_EMPTY_PATH);
+
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
+
+	if (rc == 0) {
+		/* re-open to point to the mounted filesystem root */
+		rc = mnt_context_reopen_target_fd(cxt);
+	}
 
 	return rc == 0 ? 0 : -errno;
 }

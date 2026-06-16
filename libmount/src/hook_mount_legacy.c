@@ -243,6 +243,9 @@ static int hook_mount(struct libmnt_context *cxt,
 		return rc;
 	}
 
+	/* re-open to point to the mounted filesystem root */
+	rc = mnt_context_reopen_target_fd(cxt);
+
 	cxt->syscall_status = 0;
 	return rc;
 }
