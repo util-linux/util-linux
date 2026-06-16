@@ -73,15 +73,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#define EXIT_EPERM  18
-#define EXIT_ENOPROTOOPT 19
-#define EXIT_EPROTONOSUPPORT 20
-#define EXIT_EACCES 21
-#define EXIT_ENOENT 22
-/* EXIT_ENOSYS also defined in test_mkfds.h */
-#define EXIT_EADDRNOTAVAIL 24
-#define EXIT_ENODEV 25
-
 #define _U_ __attribute__((__unused__))
 
 static void do_nothing(int signum _U_);

@@ -23,7 +23,17 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/* Update the constants in
+ * tests/ts/lsfd/lsfd-functions.bash when changing
+ * the above error definitions. */
+#define EXIT_EPERM  18
+#define EXIT_ENOPROTOOPT 19
+#define EXIT_EPROTONOSUPPORT 20
+#define EXIT_EACCES 21
+#define EXIT_ENOENT 22
 #define EXIT_ENOSYS 23
+#define EXIT_EADDRNOTAVAIL 24
+#define EXIT_ENODEV 25
 
 enum multiplexing_mode {
    MX_READ   = 1 << 0,
