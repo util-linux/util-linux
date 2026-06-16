@@ -513,6 +513,8 @@ struct libmnt_context
 	unsigned int	has_selinux_opt : 1;	/* temporary for broken fsconfig() syscall */
 	unsigned int    force_clone : 1;	/* OPEN_TREE_CLONE */
 
+	int		fd_target;	/* pinned target fd (RESOLVE_NO_SYMLINKS) */
+
 	struct list_head	hooksets_datas;	/* global hooksets data */
 	struct list_head	hooksets_hooks;	/* global hooksets data */
 };
@@ -697,6 +699,11 @@ extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
 extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
 extern void mnt_cache_enable_noprobe(struct libmnt_cache *cache, int enable);
+
+extern int mnt_context_target_fd_required(struct libmnt_context *cxt);
+extern int mnt_context_get_target_fd(struct libmnt_context *cxt);
+extern void mnt_context_close_target_fd(struct libmnt_context *cxt);
+extern int mnt_context_reopen_target_fd(struct libmnt_context *cxt);
 
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);

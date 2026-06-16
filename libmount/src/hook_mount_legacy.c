@@ -251,6 +251,9 @@ static int hook_mount(struct libmnt_context *cxt,
 	else
 		mnt_fs_mark_attached(cxt->fs);
 
+	/* re-open to point to the mounted filesystem root */
+	rc = mnt_context_reopen_target_fd(cxt);
+
 	cxt->syscall_status = 0;
 	return rc;
 }
