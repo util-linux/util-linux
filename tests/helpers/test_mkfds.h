@@ -23,6 +23,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#define EXIT_ENOSYS 23
+
 enum multiplexing_mode {
    MX_READ   = 1 << 0,
    MX_WRITE  = 1 << 1,
@@ -72,8 +74,11 @@ struct fdesc {
 		SETUP_SIG_HANDLER					\
 									\
 		if (SYSCALL_INVOCATION < 0				\
-		    && errno != EINTR)					\
+		    && errno != EINTR) {				\
+			if (errno == ENOSYS)				\
+				errx(EXIT_ENOSYS, "no syscall: " SYSCALL); \
 			err(EXIT_FAILURE, "failed in " SYSCALL);	\
+		}							\
 		free(pfds);						\
 	}
 
