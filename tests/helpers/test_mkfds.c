@@ -78,7 +78,7 @@
 #define EXIT_EPROTONOSUPPORT 20
 #define EXIT_EACCES 21
 #define EXIT_ENOENT 22
-#define EXIT_ENOSYS 23
+/* EXIT_ENOSYS also defined in test_mkfds.h */
 #define EXIT_EADDRNOTAVAIL 24
 #define EXIT_ENODEV 25
 
@@ -4551,8 +4551,11 @@ static void sighandler_nop(int si _U_)
 		SETUP_SIG_HANDLER					\
 									\
 		if (SYSCALL_INVOCATION < 0				\
-		    && errno != EINTR)					\
+		    && errno != EINTR) {				\
+			if (errno == ENOSYS)				\
+				errx(EXIT_ENOSYS, "no syscall: " SYSCALL); \
 			err(EXIT_FAILURE, "failed in " SYSCALL);	\
+		}							\
 	}
 
 DEFUN_WAIT_EVENT_SELECT(default,

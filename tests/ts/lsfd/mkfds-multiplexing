@@ -89,6 +89,9 @@ for multiplexer in pselect6 select poll ppoll; do
     fi
 
     wait "$MKFDS_CPID"
+    if [ $? -eq 23 ]; then
+	ts_skip "the $multiplexer syscall is not available (ENOSYS)"
+    fi
     ts_finalize_subtest
 done
 
