@@ -17,6 +17,7 @@
 #include <sched.h>
 
 #include "mountP.h"
+#include "pathnames.h"
 #include "fileutils.h"
 
 struct hook_data {
@@ -48,7 +49,7 @@ static int hook_post(
 {
 	struct hook_data *hd = (struct hook_data *) data;
 	const char *target;
-	int rc = 0;
+	int rc = 0, fd;
 
 	assert(cxt);
 
@@ -59,18 +60,33 @@ static int hook_post(
 	if (!target)
 		return 0;
 
+	/* fd_target is pinned in restricted mode (see prepare_target()),
+	 * for root open it here to keep chmod/chown fd-based too */
+	if (mnt_context_target_fd_required(cxt))
+		fd = mnt_context_get_target_fd(cxt);
+	else
+		fd = open(target, O_PATH | O_CLOEXEC);
+
+	if (fd < 0)
+		return -MNT_ERR_CHMOD;
+
 	if (hd->owner != (uid_t) -1 || hd->group != (uid_t) -1) {
-		DBG_OBJ(CXT, cxt, ul_debug(" lchown(%s, %u, %u)", target, hd->owner, hd->group));
-		if (lchown(target, hd->owner, hd->group) == -1)
-			return -MNT_ERR_CHOWN;
+		DBG_OBJ(CXT, cxt, ul_debug(" fchownat(%s, %u, %u)", target, hd->owner, hd->group));
+		if (fchownat(fd, "", hd->owner, hd->group, AT_EMPTY_PATH) == -1)
+			rc = -MNT_ERR_CHOWN;
 	}
 
-	if (hd->mode != (mode_t) -1) {
-		DBG_OBJ(CXT, cxt, ul_debug(" chmod(%s, %04o)", target, hd->mode));
-		if (chmod(target, hd->mode) == -1)
-			return -MNT_ERR_CHMOD;
+	if (!rc && hd->mode != (mode_t) -1) {
+		char buf[sizeof(_PATH_PROC_FDDIR) + 1 + sizeof(stringify_value(INT_MAX))];
+
+		snprintf(buf, sizeof(buf), _PATH_PROC_FDDIR "/%d", fd);
+		DBG_OBJ(CXT, cxt, ul_debug(" chmod(%s, %04o)", buf, hd->mode));
+		if (chmod(buf, hd->mode) == -1)
+			rc = -MNT_ERR_CHMOD;
 	}
 
+	if (!mnt_context_target_fd_required(cxt))
+		close(fd);
 	return rc;
 }
 
