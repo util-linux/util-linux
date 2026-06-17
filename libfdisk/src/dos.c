@@ -266,17 +266,17 @@ static int read_pte(struct fdisk_context *cxt, size_t pno, fdisk_sector_t offset
 	DBG(LABEL, ul_debug("DOS: reading EBR %zu: offset=%ju, buffer=%p",
 				pno, (uintmax_t) offset, buf));
 
-	pe->offset = offset;
-	pe->sectorbuffer = buf;
-	pe->private_sectorbuffer = 1;
-
-	rc = read_sector(cxt, offset, pe->sectorbuffer);
+	rc = read_sector(cxt, offset, buf);
 	if (rc) {
 		fdisk_warn(cxt, _("Failed to read extended partition table "
 				"(offset=%ju)"), (uintmax_t) offset);
+		free(buf);
 		return rc;
 	}
 
+	pe->offset = offset;
+	pe->sectorbuffer = buf;
+	pe->private_sectorbuffer = 1;
 	pe->changed = 0;
 	pe->pt_entry = pe->ex_entry = NULL;
 	return 0;
