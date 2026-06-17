@@ -105,6 +105,16 @@ test_fdisk_script_fuzz_SOURCES = libfdisk/src/script.c
 test_fdisk_script_fuzz_CFLAGS = -DFUZZ_TARGET $(libfdisk_la_CFLAGS)
 test_fdisk_script_fuzz_LDFLAGS = $(libfdisk_tests_ldflags) $(PTHREAD_LIBS)
 test_fdisk_script_fuzz_LDADD = $(libfdisk_tests_ldadd) $(LIB_FUZZING_ENGINE)
+
+check_PROGRAMS += test_fdisk_fuzz
+
+# https://google.github.io/oss-fuzz/getting-started/new-project-guide/#Requirements
+nodist_EXTRA_test_fdisk_fuzz_SOURCES = dummy.cxx
+
+test_fdisk_fuzz_SOURCES = libfdisk/src/fuzz.c
+test_fdisk_fuzz_CFLAGS = -DFUZZ_TARGET $(libfdisk_la_CFLAGS)
+test_fdisk_fuzz_LDFLAGS = $(libfdisk_tests_ldflags) $(PTHREAD_LIBS)
+test_fdisk_fuzz_LDADD = $(libfdisk_tests_ldadd) $(LIB_FUZZING_ENGINE)
 endif
 
 test_fdisk_version_SOURCES = libfdisk/src/version.c
