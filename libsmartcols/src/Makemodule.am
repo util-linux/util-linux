@@ -105,6 +105,19 @@ libsmartcols_la_LDFLAGS += -version-info $(LIBSMARTCOLS_VERSION_INFO)
 EXTRA_DIST += \
 	libsmartcols/src/libsmartcols.sym
 
+if FUZZING_ENGINE
+check_PROGRAMS += test_smartcols_fuzz
+
+test_smartcols_fuzz_SOURCES = libsmartcols/src/fuzz.c
+
+# https://google.github.io/oss-fuzz/getting-started/new-project-guide/#Requirements
+nodist_EXTRA_test_smartcols_fuzz_SOURCES = dummy.cxx
+
+test_smartcols_fuzz_CFLAGS = $(sample_scols_cflags) -DFUZZ_TARGET
+test_smartcols_fuzz_LDFLAGS = -static
+test_smartcols_fuzz_LDADD = $(sample_scols_ldadd) libcommon.la $(LIB_FUZZING_ENGINE)
+endif
+
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libsmartcols:
 	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libsmartcols.so"; then \
