@@ -17,7 +17,7 @@
 
 # The exit-status used in a test target.
 #
-# Update the above constants when changing
+# Update the following constants when changing
 # the error definitions in tests/helpers/test_mkfds.h.
 readonly EPERM=18
 readonly ENOPROTOOPT=19

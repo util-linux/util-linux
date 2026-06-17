@@ -25,7 +25,7 @@
 
 /* Update the constants in
  * tests/ts/lsfd/lsfd-functions.bash when changing
- * the above error definitions. */
+ * the following error definitions. */
 #define EXIT_EPERM  18
 #define EXIT_ENOPROTOOPT 19
 #define EXIT_EPROTONOSUPPORT 20
