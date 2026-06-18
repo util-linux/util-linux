@@ -62,27 +62,48 @@ int parse_dmi_table(uint16_t len, uint16_t num,
 		while (next - buf + 1 < len && (next[0] != 0 || next[1] != 0))
 			next++;
 		next += 2;
+
+		/*
+		 * Stop if the structure (formatted area plus its string set)
+		 * does not fit in the buffer. h.length and the field offsets
+		 * below come from the firmware, so reading them by offset past
+		 * the end would be an out-of-bounds read.
+		 */
+		if (next - buf > len)
+			goto done;
+
 		switch (h.type) {
 		case 0:
-			di->vendor = dmi_string(&h, data[0x04]);
+			if (h.length > 0x04)
+				di->vendor = dmi_string(&h, data[0x04]);
 			break;
 		case 1:
-			di->manufacturer = dmi_string(&h, data[0x04]);
-			di->product = dmi_string(&h, data[0x05]);
+			if (h.length > 0x04)
+				di->manufacturer = dmi_string(&h, data[0x04]);
+			if (h.length > 0x05)
+				di->product = dmi_string(&h, data[0x05]);
 			break;
 		case 4:
 			/* Get the first processor information */
 			if (di->sockets == 0) {
-				di->processor_manufacturer = dmi_string(&h, data[0x7]);
-				di->processor_version = dmi_string(&h, data[0x10]);
-				di->current_speed = *((uint16_t *)(&data[0x16]));
-				di->max_speed = *((uint16_t *)(&data[0x14]));
-				di->part_num = dmi_string(&h, data[0x22]);
+				if (h.length > 0x07)
+					di->processor_manufacturer = dmi_string(&h, data[0x7]);
+				if (h.length > 0x10)
+					di->processor_version = dmi_string(&h, data[0x10]);
+				if (h.length >= 0x18) {
+					di->current_speed = *((uint16_t *)(&data[0x16]));
+					di->max_speed = *((uint16_t *)(&data[0x14]));
+				}
+				if (h.length > 0x22)
+					di->part_num = dmi_string(&h, data[0x22]);
 
-				if (data[0x6] == 0xfe)
-					di->processor_family = *((uint16_t *)(&data[0x28]));
-				else
-					di->processor_family = data[0x6];
+				if (h.length > 0x06) {
+					if (data[0x6] == 0xfe) {
+						if (h.length >= 0x2a)
+							di->processor_family = *((uint16_t *)(&data[0x28]));
+					} else
+						di->processor_family = data[0x6];
+				}
 			}
 			di->sockets++;
 			break;
