@@ -52,6 +52,7 @@
 #define MSDOS_MBR_SIGNATURE 0xAA55
 #define GPT_PART_NAME_LEN   (72 / sizeof(uint16_t))
 #define GPT_NPARTITIONS     ((size_t) FDISK_GPT_NPARTITIONS_DEFAULT)
+#define GPT_NPARTITIONS_MAX (4 * 1024 * 1024 / sizeof(struct gpt_entry))
 
 /* Globally unique identifier */
 struct gpt_guid {
@@ -1019,6 +1020,11 @@ static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 
 	if (gpt_sizeof_entries(header, &sz))
 		return NULL;
+	if (sz > GPT_NPARTITIONS_MAX * sizeof(struct gpt_entry)
+	    || sz / cxt->sector_size >= le64_to_cpu(header->first_usable_lba)) {
+		DBG(GPT, ul_debug("entries array too large"));
+		return NULL;
+	}
 
 	ret = calloc(1, sz);
 	if (!ret)
@@ -1198,8 +1204,15 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	if (!gpt_check_header_crc(header, NULL))
 		goto invalid;
 
+	/* valid header must be at MyLBA */
+	if (le64_to_cpu(header->my_lba) != lba)
+		goto invalid;
+
 	/* entry size must be large enough to hold struct gpt_entry */
 	if (le32_to_cpu(header->sizeof_partition_entry) < sizeof(struct gpt_entry))
+		goto invalid;
+
+	if (!gpt_check_lba_sanity(cxt, header))
 		goto invalid;
 
 	/* read and verify entries */
@@ -1208,13 +1221,6 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 		goto invalid;
 
 	if (!gpt_check_entryarr_crc(header, ents))
-		goto invalid;
-
-	if (!gpt_check_lba_sanity(cxt, header))
-		goto invalid;
-
-	/* valid header must be at MyLBA */
-	if (le64_to_cpu(header->my_lba) != lba)
 		goto invalid;
 
 	if (_ents)
