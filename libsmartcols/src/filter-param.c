@@ -126,9 +126,11 @@ int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 {
 	int rc;
 
+	if (filter_node_get_type((struct filter_node *) n) != F_NODE_PARAM)
+		return -EINVAL;
 	if (n->re)
 		return 0;
-	if (!n->val.str)
+	if (n->type != SCOLS_DATA_STRING || !n->val.str)
 		return -EINVAL;
 
 	n->re = calloc(1, sizeof(regex_t));
