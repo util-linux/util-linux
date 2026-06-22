@@ -53,6 +53,7 @@
 #include <libmount.h>
 
 #include "nls.h"
+#include "path.h"
 #include "pathnames.h"
 #include "exitcodes.h"
 #include "c.h"
@@ -313,32 +314,20 @@ static void fs_set_done(struct libmnt_fs *fs)
 
 static int is_irrotational_disk(dev_t disk)
 {
-	char path[PATH_MAX];
-	FILE *f;
-	int rc, x;
+	struct path_cxt *pc;
+	int32_t x = 0;
+	int rc = 0;
 
-
-	rc = snprintf(path, sizeof(path),
-			"/sys/dev/block/%u:%u/queue/rotational",
-			major(disk), minor(disk));
-
-	if (rc < 0 || (unsigned int) rc >= sizeof(path))
+	pc = ul_new_path("/sys/dev/block");
+	if (!pc)
 		return 0;
 
-	f = fopen(path, "r");
-	if (!f)
-		return 0;
+	rc = ul_path_readf_s32(pc, &x,
+			"%u:%u/queue/rotational",
+			major(disk), minor(disk)) == 0 && x == 0;
 
-	rc = fscanf(f, "%d", &x);
-	if (rc != 1) {
-		if (ferror(f))
-			warn(_("cannot read %s"), path);
-		else
-			warnx(_("parse error: %s"), path);
-	}
-	fclose(f);
-
-	return rc == 1 ? !x : 0;
+	ul_unref_path(pc);
+	return rc;
 }
 
 static void lock_disk(struct fsck_instance *inst)
