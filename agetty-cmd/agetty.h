@@ -78,6 +78,7 @@ struct agetty_options {
 	char *username;			/* login name, given to /bin/login */
 	char *fakehost;			/* fake hostname for ut_host */
 	char *osrelease;		/* /etc/os-release data */
+	char *nologin_message;		/* message shown when login program is missing */
 	unsigned int delay;		/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
