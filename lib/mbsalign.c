@@ -201,8 +201,9 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t 
 
 		if ((*p == '\\' && *(p + 1) == 'x')
 		    || iscntrl((unsigned char) *p)) {
-			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+			if (rsz < 5)
 				break;
+			snprintf(r, rsz, "\\x%02x", (unsigned char) *p);
 			r += 4;
 			rsz -= 4;
 			*width += 4;
@@ -223,8 +224,9 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t 
 				 * printable char according to the current locales.
 				 */
 				if (!isprint((unsigned char) *p)) {
-					if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+					if (rsz < 5)
 						break;
+					snprintf(r, rsz, "\\x%02x", (unsigned char) *p);
 					r += 4;
 					rsz -= 4;
 					*width += 4;
@@ -238,8 +240,9 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t 
 			} else if (!iswprint(wc)) {
 				size_t i;
 				for (i = 0; i < len; i++) {
-					if (snprintf(r, rsz, "\\x%02x", (unsigned char) p[i]) < 4)
+					if (rsz < 5)
 						break;
+					snprintf(r, rsz, "\\x%02x", (unsigned char) p[i]);
 					r += 4;
 					rsz -= 4;
 					*width += 4;
@@ -258,8 +261,9 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t 
 		}
 #else
 		else if (!isprint((unsigned char) *p)) {
-			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+			if (rsz < 5)
 				break;
+			snprintf(r, rsz, "\\x%02x", (unsigned char) *p);
 			p++;
 			r += 4;
 			rsz -= 4;
@@ -321,8 +325,9 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf, size
 			 * printable char according to the current locales.
 			 */
 			if (!isprint((unsigned char) *p)) {
-				if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+				if (rsz < 5)
 					break;
+				snprintf(r, rsz, "\\x%02x", (unsigned char) *p);
 				r += 4;
 				rsz -= 4;
 				*width += 4;
@@ -334,8 +339,9 @@ char *mbs_invalid_encode_to_buffer(const char *s, size_t *width, char *buf, size
 				rsz--;
 			}
 		} else if (*p == '\\' && *(p + 1) == 'x') {
-			if (snprintf(r, rsz, "\\x%02x", (unsigned char) *p) < 4)
+			if (rsz < 5)
 				break;
+			snprintf(r, rsz, "\\x%02x", (unsigned char) *p);
 			r += 4;
 			rsz -= 4;
 			*width += 4;
