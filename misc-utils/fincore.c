@@ -20,6 +20,9 @@
 
 #include <sys/mman.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_SYSCALL_H
+#include <sys/syscall.h>
+#endif
 #include <unistd.h>
 #include <getopt.h>
 #include <stdio.h>
