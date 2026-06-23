@@ -33,7 +33,9 @@ dist_noinst_DATA += login-utils/sulogin.8.adoc
 sulogin_SOURCES = \
 	login-utils/sulogin.c \
 	login-utils/sulogin-consoles.c \
-	login-utils/sulogin-consoles.h
+	login-utils/sulogin-consoles.h \
+	login-utils/vmcp.c \
+	login-utils/vmcp.h
 if USE_PLYMOUTH_SUPPORT
 sulogin_SOURCES += lib/plymouth-ctrl.c
 endif
@@ -58,7 +60,9 @@ bin_PROGRAMS += login
 MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
-	login-utils/login.c
+	login-utils/login.c \
+	login-utils/vmcp.c \
+	login-utils/vmcp.h
 login_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
