@@ -131,6 +131,32 @@ struct filter_node *filter_new_param(
 	return (struct filter_node *) n;
 }
 
+/* Consecutive ERE quantifiers (a++, a**) and nested group repetitions
+ * ((a+)+, (a*)*) cause glibc regcomp() to allocate gigabytes for the NFA. */
+static int is_unsafe_regex(const char *pattern)
+{
+	size_t i, len = strlen(pattern);
+
+	for (i = 0; i + 1 < len; i++) {
+		if ((pattern[i] == '+' || pattern[i] == '*')
+		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*'))
+			return 1;
+
+		if (pattern[i] == ')'
+		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*')) {
+			int j;
+
+			for (j = (int) i - 1; j >= 0; j--) {
+				if (pattern[j] == '(')
+					break;
+				if (pattern[j] == '+' || pattern[j] == '*')
+					return 1;
+			}
+		}
+	}
+	return 0;
+}
+
 int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 {
 	int rc;
@@ -140,6 +166,10 @@ int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 	if (n->re)
 		return 0;
 	if (n->type != SCOLS_DATA_STRING || !n->val.str)
+		return -EINVAL;
+	if (strlen(n->val.str) > SCOLS_FILTER_MAX_REGSZ)
+		return -EINVAL;
+	if (is_unsafe_regex(n->val.str))
 		return -EINVAL;
 
 	n->re = calloc(1, sizeof(regex_t));

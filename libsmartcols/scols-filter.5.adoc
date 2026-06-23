@@ -111,6 +111,14 @@ long double. The `integer` may be followed by the multiplicative suffixes KiB,
 GiB, TiB, PiB, EiB, ZiB, and YiB (the "iB" is optional, e.g., "K" has the same
 meaning as "KiB").
 
+The filter expression string is limited to 1024 bytes. The number of nodes
+(parameters and operators) in a single expression is limited to 256.
+
+Regular expression patterns used with the `=~` and `!~` operators are limited to
+256 bytes. Patterns with consecutive quantifiers (e.g., `a++`, `a**`) or nested
+group repetitions (e.g., `(a+)+`) are rejected because they can cause excessive
+memory consumption in the POSIX regex compiler.
+
 == AUTHORS
 
 mailto:kzak@redhat.com[Karel Zak]
