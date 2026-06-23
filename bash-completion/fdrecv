@@ -1,0 +1,59 @@
+_fdrecv_module()
+{
+	local cur prev i saw_sockspec saw_run OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	saw_sockspec=
+	saw_run=
+	for (( i=1; i < COMP_CWORD; i++ )); do
+		case "${COMP_WORDS[i]}" in
+			--run|-r)
+				saw_run=1
+				;;
+			-*)
+				;;
+			*)
+				if [[ -z "$saw_run" ]]; then
+					saw_sockspec=1
+				fi
+				;;
+		esac
+	done
+	case $prev in
+		'-f'|'--fd')
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	if [[ -n "$saw_run" ]] && [[ "$prev" != "--run" ]] && [[ "$prev" != "-r" ]]; then
+		COMPREPLY=( $(compgen -c -- $cur) )
+		return 0
+	fi
+	case $cur in
+		-*)
+			OPTS='
+				--fd
+				--abstract
+				--stdin
+				--stdout
+				--stderr
+				--run
+				--help
+				--version'
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	if [[ -n "$saw_sockspec" ]] && [[ -z "$saw_run" ]]; then
+		OPTS='--run --abstract --f --stdin --stdout --stderr'
+		COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
+		return 0
+	fi
+	local IFS=$'\n'
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _fdrecv_module fdrecv

@@ -1,0 +1,10 @@
+hello
+hello
+from_sock4
+from_sock5
+from_sock6
+pidfd_getfd
+duplicate target fd: failed as expected
+missing sockspec: failed as expected
+invalid fdrecv fd: failed as expected
+invalid fdsend fd: failed as expected
