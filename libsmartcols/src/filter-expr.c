@@ -14,16 +14,24 @@ struct filter_expr {
 };
 
 struct filter_node *filter_new_expr(
-			struct libscols_filter *fltr __attribute__((__unused__)),
+			struct libscols_filter *fltr,
 			enum filter_etype type,
 			struct filter_node *left,
 			struct filter_node *right)
 {
-	struct filter_expr *n = (struct filter_expr *) __filter_new_node(
-					F_NODE_EXPR, sizeof(struct filter_expr));
+	struct filter_expr *n;
 
+	if (fltr && fltr->parsing && fltr->parse_nodes >= SCOLS_FILTER_MAX_NODES) {
+		errno = ERANGE;
+		return NULL;
+	}
+
+	n = (struct filter_expr *) __filter_new_node(
+					F_NODE_EXPR, sizeof(struct filter_expr));
 	if (!n)
 		return NULL;
+	if (fltr && fltr->parsing)
+		fltr->parse_nodes++;
 
 	n->type = type;
 

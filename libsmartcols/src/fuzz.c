@@ -18,7 +18,14 @@ static void process_string(const char *str)
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
-    char *str = malloc(size + 1);
+    char *str;
+
+    /* Larger than the library's 1024-byte limit to exercise the
+     * rejection path, small enough to avoid OOM in sanitizer builds */
+    if (size > 4096)
+        return 0;
+
+    str = malloc(size + 1);
     if (!str)
         return 0;
 

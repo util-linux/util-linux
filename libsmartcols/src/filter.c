@@ -193,6 +193,9 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	if (!str || !*str)
 		return 0;	/* empty filter is not error */
 
+	if (strlen(str) > SCOLS_FILTER_MAX_EXPRSZ)
+		return -ERANGE;
+
 	fltr->src = fmemopen((void *) str, strlen(str), "r");
 	if (!fltr->src)
 		return -errno;
@@ -200,7 +203,11 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	yylex_init_extra(fltr, &sc);
 	yyset_in(fltr->src, sc);
 
+	fltr->parsing = 1;
 	rc = yyparse(sc, fltr);
+	fltr->parsing = 0;
+	fltr->parse_nodes = 0;
+
 	yylex_destroy(sc);
 
 	fclose(fltr->src);

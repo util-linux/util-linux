@@ -559,7 +559,13 @@ struct libscols_filter {
 
 	struct list_head params;
 	struct list_head counters;
+
+	size_t parse_nodes;
+	unsigned int parsing : 1;
 };
+
+#define SCOLS_FILTER_MAX_EXPRSZ	1024
+#define SCOLS_FILTER_MAX_NODES	256
 
 struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz);
 void filter_ref_node(struct filter_node *n);
