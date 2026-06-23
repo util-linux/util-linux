@@ -95,7 +95,7 @@ mount_static_dep = declare_dependency(link_with: lib_mount_static, include_direc
 
 lib__mount_deps = [
   lib_selinux,
-  cryptsetup_dlopen ? lib_dl : lib_cryptsetup,
+  lib_dl,
   realtime_libs
 ]
 

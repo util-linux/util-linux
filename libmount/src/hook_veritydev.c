@@ -18,13 +18,12 @@
 #ifdef HAVE_CRYPTSETUP
 
 #include <libcryptsetup.h>
+#include <dlfcn.h>
 #include "path.h"
 #include "strutils.h"
 #include "fileutils.h"
 #include "pathnames.h"
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
-# include <dlfcn.h>
 
 /* Pointers to libcryptsetup functions (initialized by dlsym()) */
 struct verity_opers {
@@ -76,24 +75,17 @@ static const struct verity_sym verity_symbols[] =
 
 	DEF_VERITY_SYM( crypt_deactivate_by_name ),
 };
-#endif /* CRYPTSETUP_VIA_DLOPEN */
 
 
 /* Data used by all verity hooks */
 struct hookset_data {
 	char *devname;			/* the device */
-#ifdef CRYPTSETUP_VIA_DLOPEN
 	void *dl;			/* dlopen() */
 	struct verity_opers dl_funcs;	/* dlsym() */
-#endif
 };
 
 /* libcryptsetup call -- dlopen version requires 'struct hookset_data *hsd' */
-#ifdef CRYPTSETUP_VIA_DLOPEN
-# define verity_call(_func)	(hsd->dl_funcs._func)
-#else
-# define verity_call(_func)	(_func)
-#endif
+#define verity_call(_func)	(hsd->dl_funcs._func)
 
 
 static void delete_veritydev(struct libmnt_context *cxt,
@@ -101,7 +93,6 @@ static void delete_veritydev(struct libmnt_context *cxt,
                         struct hookset_data *hsd);
 
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
 static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
 				      struct hookset_data *hsd)
 {
@@ -157,7 +148,6 @@ failed:
 		errno = ENOTSUP;
 	return -errno;
 }
-#endif
 
 /* libcryptsetup callback */
 static void libcryptsetup_log(int level __attribute__((__unused__)),
@@ -177,10 +167,8 @@ static void free_hookset_data(	struct libmnt_context *cxt,
 		return;
 	if (hsd->devname)
 		delete_veritydev(cxt, hs, hsd);
-#ifdef CRYPTSETUP_VIA_DLOPEN
 	if (hsd->dl)
 		dlclose(hsd->dl);
-#endif
 	free(hsd);
 	mnt_context_set_hookset_data(cxt, hs, NULL);
 }
@@ -199,10 +187,8 @@ static struct hookset_data *new_hookset_data(
 	if (mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
 		goto failed;
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
 	if (load_libcryptsetup_symbols(cxt, hsd) != 0)
 		goto failed;
-#endif
 	if (mnt_context_is_verbose(cxt))
 		verity_call( crypt_set_debug_level(CRYPT_DEBUG_ALL) );
 
