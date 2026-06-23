@@ -76,6 +76,8 @@ static void reset_filter(struct libscols_filter *fltr)
 	filter_unref_node(fltr->root);
 	fltr->root = NULL;
 
+	filter_free_params(fltr);
+
 	if (fltr->src)
 		fclose(fltr->src);
 	fltr->src = NULL;

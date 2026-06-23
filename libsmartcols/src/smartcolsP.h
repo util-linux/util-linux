@@ -574,6 +574,7 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
 int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
+void filter_free_params(struct libscols_filter *fltr);
 int filter_param_reset_holder(struct filter_param *n);
 int filter_param_get_datatype(struct filter_param *n);
 

@@ -199,6 +199,16 @@ void filter_free_param(struct filter_param *n)
 	free(n);
 }
 
+void filter_free_params(struct libscols_filter *fltr)
+{
+	while (!list_empty(&fltr->params)) {
+		struct filter_param *n = list_entry(fltr->params.next,
+					struct filter_param, pr_params);
+		filter_unref_node((struct filter_node *) n);
+	}
+	INIT_LIST_HEAD(&fltr->params);
+}
+
 int filter_param_get_datatype(struct filter_param *n)
 {
 	return n ? n->type : SCOLS_DATA_NONE;
