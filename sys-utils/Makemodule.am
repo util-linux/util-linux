@@ -371,9 +371,13 @@ dist_noinst_DATA += \
 	sys-utils/fstab.5.adoc \
 	sys-utils/umount.8.adoc
 mount_SOURCES = sys-utils/mount.c
-mount_LDADD = $(LDADD) libcommon.la libmount.la $(SELINUX_LIBS)
+mount_LDADD = $(LDADD) libcommon.la libmount.la
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+if HAVE_SELINUX
+mount_SOURCES += lib/selinux-utils.c include/selinux-utils.h
+mount_LDADD += $(SELINUX_LIBS)
+endif
 
 umount_SOURCES = sys-utils/umount.c
 umount_LDADD = $(LDADD) libcommon.la libmount.la
@@ -541,7 +545,11 @@ MANPAGES += sys-utils/nsenter.1
 dist_noinst_DATA += sys-utils/nsenter.1.adoc
 nsenter_SOURCES = sys-utils/nsenter.c lib/exec_shell.c \
 		  lib/caputils.c
-nsenter_LDADD = $(LDADD) libcommon.la $(SELINUX_LIBS)
+nsenter_LDADD = $(LDADD) libcommon.la
+if HAVE_SELINUX
+nsenter_SOURCES += lib/selinux-utils.c include/selinux-utils.h
+nsenter_LDADD += $(SELINUX_LIBS)
+endif
 
 if HAVE_STATIC_NSENTER
 usrbin_exec_PROGRAMS += nsenter.static

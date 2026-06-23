@@ -305,17 +305,19 @@ static void success_message(struct libmnt_context *cxt)
 #if defined(HAVE_LIBSELINUX) && defined(HAVE_SECURITY_GET_INITIAL_CONTEXT)
 # include <selinux/selinux.h>
 # include <selinux/context.h>
+# include "selinux-utils.h"
 
 static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 {
 
-	if (tgt && mnt_context_is_verbose(cxt) && is_selinux_enabled() > 0) {
+	if (tgt && mnt_context_is_verbose(cxt)
+	    && ul_load_libselinux() == 0 && selinux_call(is_selinux_enabled)() > 0) {
 		char *raw = NULL, *def = NULL;
 
-		if (getfilecon(tgt, &raw) > 0
-		    && security_get_initial_context("file", &def) == 0) {
+		if (selinux_call(getfilecon)(tgt, &raw) > 0
+		    && selinux_call(security_get_initial_context)("file", &def) == 0) {
 
-		if (!selinux_file_context_cmp(raw, def))
+		if (!selinux_call(selinux_file_context_cmp)(raw, def))
 			printf(_(
 	"mount: %s does not contain SELinux labels.\n"
 	"       You just mounted a file system that supports labels which does not\n"
@@ -324,8 +326,8 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 	"       this file system.  For more details see restorecon(8) and mount(8).\n"),
 				tgt);
 		}
-		freecon(raw);
-		freecon(def);
+		selinux_call(freecon)(raw);
+		selinux_call(freecon)(def);
 	}
 }
 #else

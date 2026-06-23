@@ -40,6 +40,7 @@
 #include <libsmartcols.h>
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
+# include "selinux-utils.h"
 #endif
 
 #ifdef HAVE_LIBSYSTEMD
@@ -1022,7 +1023,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_SELINUX:
 #ifdef HAVE_LIBSELINUX
-			if (!ctl->selinux_enabled || getcon(&user->context) != 0)
+			if (!ctl->selinux_enabled || selinux_call(getcon)(&user->context) != 0)
 				user->context = NULL;
 #endif
 			break;
@@ -1512,7 +1513,8 @@ static void free_user(void *f)
 	free(u->shell);
 	free(u->pwd_status);
 #ifdef HAVE_LIBSELINUX
-	freecon(u->context);
+	if (u->context)
+		selinux_call(freecon)(u->context);
 #endif
 	free(u);
 }
@@ -1813,7 +1815,10 @@ int main(int argc, char *argv[])
 		case 'Z':
 		{
 #ifdef HAVE_LIBSELINUX
-			int sl = is_selinux_enabled();
+			int sl = 0;
+
+			if (ul_load_libselinux() == 0)
+				sl = selinux_call(is_selinux_enabled)();
 			if (sl < 0)
 				warn(_("failed to request selinux state"));
 			else

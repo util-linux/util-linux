@@ -38,6 +38,7 @@
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
+# include "selinux-utils.h"
 #endif
 
 #ifndef HAVE_ENVIRON_DECL
@@ -765,17 +766,17 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef HAVE_LIBSELINUX
-	if (selinux && is_selinux_enabled() > 0) {
+	if (selinux && ul_load_libselinux() == 0 && selinux_call(is_selinux_enabled)() > 0) {
 		char *scon = NULL;
 
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("no target PID specified for --follow-context"));
-		if (getpidcon(namespace_target_pid, &scon) < 0)
+		if (selinux_call(getpidcon)(namespace_target_pid, &scon) < 0)
 			errx(EXIT_FAILURE, _("failed to get %d SELinux context"),
 					(int) namespace_target_pid);
-		if (setexeccon(scon) < 0)
+		if (selinux_call(setexeccon)(scon) < 0)
 			errx(EXIT_FAILURE, _("failed to set exec context to '%s'"), scon);
-		freecon(scon);
+		selinux_call(freecon)(scon);
 	}
 #endif
 

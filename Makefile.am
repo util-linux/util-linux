@@ -212,9 +212,7 @@ edit_cmd = sed \
 	 -e 's|@LIBBLKID_VERSION[@]|$(LIBBLKID_VERSION)|g'
 
 if HAVE_SELINUX
-edit_cmd += -e 's|@LIBSELINUX[@]|libselinux|g'
-else
-edit_cmd += -e 's|@LIBSELINUX[@]||g'
+edit_cmd += -e 's|@LIBDL[@]|-ldl|g'
 endif
 
 if HAVE_CRYPTSETUP
