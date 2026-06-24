@@ -157,8 +157,11 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 	rc = ioctl(rtc_fd, RTC_RD_TIME, &rtc_tm);
 
 	if (rc == -1) {
+		int errsv = errno;
 		warn(_("ioctl(RTC_RD_TIME) to %s to read the time failed"),
 			rtc_dev_name);
+		if (errsv == EINVAL)
+			warnx(_("RTC may not be initialized"));
 		return -1;
 	}
 
