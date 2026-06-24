@@ -956,6 +956,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	sa.sa_handler = sig_handler_die;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
+	sigaction(SIGHUP, &sa, NULL);
 
 	sa.sa_handler = sig_handler_resize;
 	sigaction(SIGWINCH, &sa, NULL);
