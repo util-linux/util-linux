@@ -679,9 +679,8 @@ static int strtosize_sectors(const char *str, unsigned long sector_size,
 
 void resize_partition(struct fdisk_context *cxt)
 {
-	struct fdisk_partition *pa = NULL, *npa = NULL, *next = NULL;
+	struct fdisk_partition *npa = NULL;
 	char *query = NULL, *response = NULL, *default_size;
-	struct fdisk_table *tb = NULL;
 	uint64_t max_size, secs;
 	uintmax_t size;
 	size_t i = 0;
@@ -732,10 +731,7 @@ void resize_partition(struct fdisk_context *cxt)
 out:
 	free(query);
 	free(response);
-	fdisk_unref_partition(next);
-	fdisk_unref_partition(pa);
 	fdisk_unref_partition(npa);
-	fdisk_unref_table(tb);
 	return;
 
 err:
