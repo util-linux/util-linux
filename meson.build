@@ -732,6 +732,17 @@ foreach func: funcs
   conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
 endforeach
 
+# scandirat() may exist in the SDK but be gated behind availability
+# annotations (e.g. macOS); verify it is actually usable at compile time.
+if conf.get('HAVE_SCANDIRAT') in [1]
+  if not cc.links('''
+      #include <dirent.h>
+      int main(void) { return scandirat(0, ".", (void*)0, (void*)0, (void*)0); }
+    ''', args : ['-D_GNU_SOURCE', '-Werror'], name : 'scandirat (compile test)')
+    conf.set('HAVE_SCANDIRAT', false)
+  endif
+endif
+
 have_mempcpy = cc.has_function('mempcpy', prefix: '#include <string.h>', args: '-D_GNU_SOURCE')
 conf.set('HAVE_MEMPCPY', have_mempcpy ? 1 : false)
 
