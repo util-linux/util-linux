@@ -17,6 +17,8 @@
 
 void yyerror(yyscan_t *locp, struct libscols_filter *fltr, char const *fmt, ...);
 
+#define YYMAXDEPTH 256
+
 %}
 
 %define api.pure full
@@ -79,41 +81,133 @@ filter:
 expr:
 	param			{ $$ = $1; }
 	| '(' expr ')'		{ $$ = $2; }
-	| expr T_AND expr	{ $$ = filter_new_expr(fltr, F_EXPR_AND, $1, $3); }
-	| expr T_OR expr	{ $$ = filter_new_expr(fltr, F_EXPR_OR, $1, $3); }
-	| T_NEG expr		{ $$ = filter_new_expr(fltr, F_EXPR_NEG, NULL, $2); }
-	| expr T_EQ expr	{ $$ = filter_new_expr(fltr, F_EXPR_EQ, $1, $3); }
-	| expr T_NE expr	{ $$ = filter_new_expr(fltr, F_EXPR_NE, $1, $3); }
-	| expr T_LE expr	{ $$ = filter_new_expr(fltr, F_EXPR_LE, $1, $3); }
-	| expr T_LT expr	{ $$ = filter_new_expr(fltr, F_EXPR_LT, $1, $3); }
-	| expr T_GE expr	{ $$ = filter_new_expr(fltr, F_EXPR_GE, $1, $3); }
-	| expr T_GT expr	{ $$ = filter_new_expr(fltr, F_EXPR_GT, $1, $3); }
+	| expr T_AND expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_AND, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_OR expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_OR, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| T_NEG expr		{
+		$$ = filter_new_expr(fltr, F_EXPR_NEG, NULL, $2);
+		if (!$$) {
+			filter_unref_node($2);
+			YYERROR;
+		}
+	}
+	| expr T_EQ expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_EQ, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_NE expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_NE, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_LE expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_LE, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_LT expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_LT, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_GE expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_GE, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
+	| expr T_GT expr	{
+		$$ = filter_new_expr(fltr, F_EXPR_GT, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
+			YYERROR;
+		}
+	}
 
 	| expr T_REG expr	{
-		if (filter_compile_param(fltr, (struct filter_param *) $3) != 0)
+		$$ = NULL;
+		if (filter_compile_param(fltr, (struct filter_param *) $3) == 0)
+			$$ = filter_new_expr(fltr, F_EXPR_REG, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
 			YYERROR;
-		$$ = filter_new_expr(fltr, F_EXPR_REG, $1, $3);
+		}
 	}
 
 	| expr T_NREG expr	{
-		if (filter_compile_param(fltr, (struct filter_param *) $3) != 0)
+		$$ = NULL;
+		if (filter_compile_param(fltr, (struct filter_param *) $3) == 0)
+			$$ = filter_new_expr(fltr, F_EXPR_NREG, $1, $3);
+		if (!$$) {
+			filter_unref_node($1);
+			filter_unref_node($3);
 			YYERROR;
-		$$ = filter_new_expr(fltr, F_EXPR_NREG, $1, $3);
+		}
 	}
 ;
 
 param:
-	T_NUMBER	{ $$ = filter_new_param(fltr, SCOLS_DATA_U64, 0, (void *) (&$1)); }
-	| T_FLOAT	{ $$ = filter_new_param(fltr, SCOLS_DATA_FLOAT, 0, (void *) (&$1)); }
-	| T_HOLDER	{ $$ = filter_new_param(fltr, SCOLS_DATA_NONE, F_HOLDER_COLUMN, (void *) $1); }
-	| T_STRING	{ $$ = filter_new_param(fltr, SCOLS_DATA_STRING, 0, (void *) $1); }
+	T_NUMBER	{
+		$$ = filter_new_param(fltr, SCOLS_DATA_U64, 0, (void *) (&$1));
+		if (!$$)
+			YYERROR;
+	}
+	| T_FLOAT	{
+		$$ = filter_new_param(fltr, SCOLS_DATA_FLOAT, 0, (void *) (&$1));
+		if (!$$)
+			YYERROR;
+	}
+	| T_HOLDER	{
+		$$ = filter_new_param(fltr, SCOLS_DATA_NONE, F_HOLDER_COLUMN, (void *) $1);
+		if (!$$)
+			YYERROR;
+	}
+	| T_STRING	{
+		$$ = filter_new_param(fltr, SCOLS_DATA_STRING, 0, (void *) $1);
+		if (!$$)
+			YYERROR;
+	}
 	| T_TRUE	{
 		bool x = true;
 		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
+		if (!$$)
+			YYERROR;
 	}
 	| T_FALSE	{
 		bool x = false;
 		$$ = filter_new_param(fltr, SCOLS_DATA_BOOLEAN, 0, (void *) &x);
+		if (!$$)
+			YYERROR;
 	}
 	| T_INVALID_NUMBER {		/* YYerror token is unsupported in old Bisons */
 		ignore_result( $$ );	/* suppress "unset value" warning */

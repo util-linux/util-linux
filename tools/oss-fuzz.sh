@@ -24,7 +24,7 @@ if [[ "$SANITIZER" == undefined ]]; then
     CXXFLAGS+=" $UBSAN_FLAGS"
 fi
 
-CONFIGURE_ARGS="--disable-all-programs --enable-libuuid --enable-libfdisk --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid"
+CONFIGURE_ARGS="--disable-all-programs --enable-libuuid --enable-libfdisk --enable-last --enable-fuzzing-engine --enable-libmount --enable-libblkid --enable-libsmartcols"
 
 LIBC_VERSION="$(dpkg -s libc6 | grep Version | cut -d' ' -f2)"
 

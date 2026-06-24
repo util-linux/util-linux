@@ -559,7 +559,14 @@ struct libscols_filter {
 
 	struct list_head params;
 	struct list_head counters;
+
+	size_t parse_nodes;
+	unsigned int parsing : 1;
 };
+
+#define SCOLS_FILTER_MAX_EXPRSZ	1024
+#define SCOLS_FILTER_MAX_NODES	256
+#define SCOLS_FILTER_MAX_REGSZ	256
 
 struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz);
 void filter_ref_node(struct filter_node *n);
@@ -574,6 +581,7 @@ void filter_dump_param(struct ul_jsonwrt *json, struct filter_param *n);
 int filter_eval_param(struct libscols_filter *fltr, struct libscols_line *ln,
 			struct filter_param *n, int *status);
 void filter_free_param(struct filter_param *n);
+void filter_free_params(struct libscols_filter *fltr);
 int filter_param_reset_holder(struct filter_param *n);
 int filter_param_get_datatype(struct filter_param *n);
 
