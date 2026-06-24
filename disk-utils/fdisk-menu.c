@@ -960,7 +960,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu_entry *ent)
 {
 	struct fdisk_context *cxt = *cxt0;
-	int rc = -EINVAL;
+	int rc = 0;
 	size_t n = 0;
 
 	DBG(MENU, ul_debug("enter SGI menu"));
