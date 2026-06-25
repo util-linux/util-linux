@@ -90,6 +90,7 @@ struct hexdump {
   struct list_head fshead;				/* head of format strings */
   ssize_t blocksize;			/* data block size */
   int exitval;				/* final exit value */
+  int stdout_errno;			/* errno from stdout error */
   ssize_t length;			/* max bytes to read */
   off_t skip;				/* bytes to skip */
   /* Sparse file optimization using FIEMAP (Linux only) */

@@ -457,6 +457,11 @@ void display(struct hexdump *hex)
 			rem = hex->blocksize;
 			address = saveaddress;
 		}
+		if (ferror(stdout)) {
+			hex->stdout_errno = errno;
+			hex->exitval = errno == EPIPE ? EXIT_SUCCESS : EXIT_FAILURE;
+			return;
+		}
 	}
 	if (endfu) {
 		/*
