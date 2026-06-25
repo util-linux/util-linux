@@ -140,6 +140,7 @@ extern int mnt_tmptgt_unshare(int *old_ns_fd);
 extern int mnt_tmptgt_cleanup(int old_ns_fd);
 
 extern int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id);
+extern int mnt_fs_fetch_ids(struct libmnt_fs *fs, int fd);
 
 /* tab.c */
 extern int is_mountinfo(struct libmnt_table *tb);

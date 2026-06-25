@@ -251,10 +251,25 @@ static int hook_mount(struct libmnt_context *cxt,
 	else
 		mnt_fs_mark_attached(cxt->fs);
 
+	cxt->syscall_status = 0;
+
 	/* re-open to point to the mounted filesystem root */
 	rc = mnt_context_reopen_target_fd(cxt);
 
-	cxt->syscall_status = 0;
+	/* Fetch mount IDs for utab. Note that IDs are not 100% robust
+	 * with mount(2) -- another process could overmount the target
+	 * between mount(2) and our statx() call. */
+	if (rc == 0 && cxt->fs && cxt->update && mnt_update_is_ready(cxt->update)) {
+		mnt_fs_fetch_ids(cxt->fs, cxt->fd_target);
+		if (cxt->fs->id || cxt->fs->uniq_id) {
+			struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
+			if (fs) {
+				fs->id = cxt->fs->id;
+				fs->uniq_id = cxt->fs->uniq_id;
+			}
+		}
+	}
+
 	return rc;
 }
 
