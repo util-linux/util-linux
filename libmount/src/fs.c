@@ -276,6 +276,7 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
 	dest->tid        = src->tid;
+	dest->uniq_id    = src->uniq_id;
 
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, source)))
 		goto err;
