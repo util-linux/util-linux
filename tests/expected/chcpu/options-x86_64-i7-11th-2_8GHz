@@ -41,7 +41,6 @@ CPU 3 disabled
 CPU 4 disabled
 CPU 5 disabled
 CPU 6 disabled
-CPU 7 disabled
 0
 0
 0
@@ -49,4 +48,5 @@ CPU 7 disabled
 0
 0
 0
-0
+1
+exit code: 64

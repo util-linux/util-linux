@@ -57,6 +57,6 @@ chcpu: CPU 9 does not exist
 ---invalid dispatch mode---
 chcpu: unsupported argument: bogus
 ---exclusive options---
-chcpu: This system does not support rescanning of CPUs
+chcpu: options --enable and --rescan cannot be combined
 chcpu: options --enable and --disable cannot be combined
 chcpu: options --configure and --enable cannot be combined
