@@ -31,10 +31,13 @@ _PATH_SYS_CPU="/sys/devices/system/cpu"
 DUMP_DIR="$TS_OUTDIR/dumps"
 mkdir -p "$DUMP_DIR"
 
+CHCPU_EXITCODE=0
+
 do_chcpu() {
     local sysroot=$1
     shift 1
     "$TS_CMD_CHCPU" --sysroot "${sysroot}" "${@}" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    CHCPU_EXITCODE="$?"
 }
 
 print_cpus_sys_interface() {
@@ -45,7 +48,7 @@ print_cpus_sys_interface() {
     start=$3
     end=$4
 
-    for ((i=start; i <=end; i++ )); do
+    for ((i=start; i <=end; i++)); do
         p="${sysroot}/${_PATH_SYS_CPU}/cpu${i}/${iface_name}"
         [ ! -f "$p" ] && continue
         cat "$p" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
@@ -54,6 +57,10 @@ print_cpus_sys_interface() {
 
 print_ts_section_title() {
     echo "---${1}---" | tee -a "$TS_OUTPUT" "$TS_ERRLOG" >/dev/null
+}
+
+print_chcpu_exit_code() {
+    echo "exit code: $CHCPU_EXITCODE" >>"$TS_OUTPUT"
 }
 
 for dump_name in $(find "$TS_SELF"/dumps/ -type f -maxdepth 1 -name "*.tar.bz2" | sort); do
@@ -106,6 +113,9 @@ for dump_name in $(find "$TS_SELF"/dumps/ -type f -maxdepth 1 -name "*.tar.bz2" 
     do_chcpu "${sysroot}" --disable 0-"$cpu_end"
     print_cpus_sys_interface "${sysroot}" "online" 0 "$cpu_end"
     rm -f "${sysroot}/${_PATH_SYS_CPU}"/cpu0/online
+    # Let's also check the exit code of chcpu, since not all CPUs could be
+    # configured a partial success exit code of 64 should be used.
+    print_chcpu_exit_code
 
     # Expected fails
     # Don't use print_ts_section_title() here
