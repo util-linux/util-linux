@@ -82,6 +82,7 @@ EOF
 		cat "$LIBMOUNT_UTAB" \
 			| grep "$mountpoint" \
 			| sed -e "s|$mountpoint|/mountpoint|g" \
+			      -e 's/UNIQID=[[:digit:]]* //g' \
 			      -e 's/ID=[[:digit:]]* //g' \
 			&> "$TS_OUTPUT"
 		$TS_CMD_UMOUNT "$mountpoint"
