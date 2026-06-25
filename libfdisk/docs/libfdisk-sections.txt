@@ -334,6 +334,7 @@ fdisk_get_sector_size
 fdisk_get_size_unit
 fdisk_get_unit
 fdisk_get_units_per_sector
+fdisk_enable_force
 fdisk_has_dialogs
 fdisk_has_label
 fdisk_has_protected_bootbits

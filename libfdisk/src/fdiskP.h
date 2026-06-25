@@ -404,7 +404,8 @@ struct fdisk_context {
 		     dev_model_probed : 1,	/* tried to read from sys */
 		     is_priv : 1,		/* open by libfdisk */
 		     is_excl : 1,		/* open with O_EXCL */
-		     listonly : 1;		/* list partition, nothing else */
+		     listonly : 1,		/* list partition, nothing else */
+		     force : 1;		/* disable all consistency checking */
 
 	char *collision;			/* name of already existing FS/PT */
 	uint64_t collision_offset;
