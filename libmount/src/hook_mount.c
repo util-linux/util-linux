@@ -336,7 +336,9 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		mnt_fs_fetch_ids(cxt->fs, api->fd_tree);
 
 done:
-	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
+	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d, uniq=%" PRIu64 "]",
+				rc, cxt->fs ? cxt->fs->id : -1,
+				cxt->fs ? cxt->fs->uniq_id : (uint64_t) 0));
 	return rc;
 }
 

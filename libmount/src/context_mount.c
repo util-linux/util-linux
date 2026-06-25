@@ -742,7 +742,7 @@ static int pin_target(struct libmnt_context *cxt)
 	fd = mnt_context_get_target_fd(cxt);
 	if (fd < 0) {
 		rc = -errno;
-		DBG_OBJ(CXT, cxt, ul_debug("failed to pin target [rc=%d]", rc));
+		DBG(CXT, ul_debugobj(cxt, "failed to pin target [rc=%d]", rc));
 
 		/* the kernel refuses a symlink in the path with ELOOP, which
 		 * is confusing without a hint about the new restriction */
@@ -754,7 +754,7 @@ static int pin_target(struct libmnt_context *cxt)
 
 	path = ul_fd_get_path(fd);
 	if (!path) {
-		DBG_OBJ(CXT, cxt, ul_debug("failed to read pinned target path"));
+		DBG(CXT, ul_debugobj(cxt, "failed to read pinned target path"));
 		return -errno;
 	}
 

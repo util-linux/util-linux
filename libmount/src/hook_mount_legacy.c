@@ -245,7 +245,7 @@ static int hook_mount(struct libmnt_context *cxt,
 		if (stat(tgtfdpath, &st) == 0)
 			target = tgtfdpath;
 		else
-			DBG_OBJ(HOOK, hs, ul_debug("  %s not accessible, "
+			DBG(HOOK, ul_debugobj(hs, "  %s not accessible, "
 					"using target path", tgtfdpath));
 	}
 
