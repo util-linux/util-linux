@@ -413,6 +413,7 @@ mnt_table_next_fs
 mnt_table_over_fs
 mnt_table_parse_dir
 mnt_table_parse_file
+mnt_table_disable_useropts
 mnt_table_parse_fstab
 mnt_table_parse_mtab
 mnt_table_parse_stream

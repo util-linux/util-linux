@@ -151,6 +151,8 @@ extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
 extern int __mnt_table_parse_mountinfo(struct libmnt_table *tb,
 					const char *filename,
 					struct libmnt_table *u_tb);
+extern int mnt_table_merge_utab(struct libmnt_table *tb,
+				struct libmnt_table *u_tb);
 
 extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 					struct libmnt_fs *fs,
@@ -336,6 +338,7 @@ struct libmnt_table {
 	struct libmnt_statmnt	*stmnt; /* statmount() stuff */
 
 	int		noautofs;	/* ignore autofs mounts */
+	int		nouseropts;	/* do not merge utab */
 
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 	void		*userdata;

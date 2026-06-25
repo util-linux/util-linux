@@ -1108,6 +1108,7 @@ static struct libmnt_table *fetch_listmount(struct findmnt *findmnt)
 	mnt_table_set_userdata(tb, findmnt);
 
 	mnt_table_refer_statmnt(tb, sm);
+	mnt_table_disable_useropts(tb, 1);
 
 	if (mnt_table_fetch_listmount(tb) != 0) {
 		warn(_("failed to fetch mount nodes"));
