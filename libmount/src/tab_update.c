@@ -449,7 +449,7 @@ static int fprintf_utab_fs(FILE *f, struct libmnt_fs *fs)
 	if (mnt_fs_get_id(fs) > 0)
 		rc = fprintf(f, "ID=%d ", mnt_fs_get_id(fs));
 	if (mnt_fs_get_uniq_id(fs) > 0)
-		rc = fprintf(f, "UNIQID=%" PRIu64, mnt_fs_get_uniq_id(fs));
+		rc = fprintf(f, "UNIQID=%" PRIu64 " ", mnt_fs_get_uniq_id(fs));
 
 	if (rc >= 0) {
 		p = mangle(mnt_fs_get_source(fs));
