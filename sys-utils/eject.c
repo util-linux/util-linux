@@ -654,41 +654,34 @@ static int eject_tape(int fd)
 	return ioctl(fd, MTIOCTOP, &op) >= 0;
 }
 
-
 /* umount a device. */
 static void umount_one(const struct eject_control *ctl, const char *name)
 {
-	int status;
+	int rc;
+	struct libmnt_context *mnt_ctx;
 
 	if (!name)
-		return;
+		errx(EXIT_FAILURE, _("missing device/partition path"));
 
 	verbose(ctl, _("%s: unmounting"), name);
 
-	switch (fork()) {
-	case 0: /* child */
-		if (drop_permissions() != 0)
-			err(EXIT_FAILURE, _("drop permissions failed"));
-		if (ctl->p_option)
-			execl("/bin/umount", "/bin/umount", name, "-n", (char *)NULL);
-		else
-			execl("/bin/umount", "/bin/umount", name, (char *)NULL);
+	mnt_ctx = mnt_new_context();
+	if (!mnt_ctx)
+		err(EXIT_FAILURE, _("libmount context allocation failed"));
 
-		errexec("/bin/umount");
+	rc = mnt_context_set_target(mnt_ctx, name);
+	if (rc)
+		err(EXIT_FAILURE, _("failed to set libmount context target"));
 
-	case -1:
-		warn( _("unable to fork"));
-		break;
+	if (ctl->p_option)
+		mnt_context_disable_mtab(mnt_ctx, true);
 
-	default: /* parent */
-		if (wait(&status) == -1 || WIFEXITED(status) == 0)
-			errx(EXIT_FAILURE,
-			     _("unmount of `%s' did not exit normally"), name);
+	rc = mnt_context_umount(mnt_ctx);
+	rc = mnt_context_get_excode(mnt_ctx, rc, NULL, 0);
+	if (rc != MNT_EX_SUCCESS)
+		errx(EXIT_FAILURE, _("unmount of `%s' failed"), name);
 
-		if (WEXITSTATUS(status) != 0)
-			errx(EXIT_FAILURE, _("unmount of `%s' failed"), name);
-		break;
-	}
+	mnt_free_context(mnt_ctx);
 }
 
 /* Open a device file. */
@@ -871,9 +864,6 @@ int main(int argc, char **argv)
 		info(_("default device: `%s'"), EJECT_DEFAULT_DEVICE);
 		return EXIT_SUCCESS;
 	}
-
-	/* clear any inherited settings */
-	signal(SIGCHLD, SIG_DFL);
 
 	if (!ctl.device) {
 		ctl.device = mnt_resolve_path(EJECT_DEFAULT_DEVICE, NULL);
