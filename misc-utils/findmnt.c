@@ -1247,6 +1247,15 @@ static int match_func(struct libmnt_fs *fs,
 			return rc;
 	}
 
+	if (!(findmnt->flags & FL_SHADOWED)
+	    && is_defined_match(COL_TARGET)) {
+		struct libmnt_table *tb = NULL;
+
+		mnt_fs_get_table(fs, &tb);
+		if (tb && mnt_table_over_fs(tb, fs, NULL) == 0)
+			return rc;
+	}
+
 	return !rc;
 }
 
