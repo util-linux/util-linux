@@ -31,6 +31,8 @@ AUTHORS (merged projects & commands):
       fstrim:          Lukas Czerner <lczerner@redhat.com>
       fsfreeze:        Hajime Taira <htaira@redhat.com>
       getino:          Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+      agetty:          W.Z. Venema
+                       Peter Orbaek <poe@daimi.aau.dk>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       hardlink:        Jakub Jelinek <jakub@redhat.com>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
@@ -59,8 +61,11 @@ AUTHORS (merged projects & commands):
       lslocks:         Davidlohr Bueso <dave@gnu.org>
       lslogins:        Ondrej Oprala <ooprala@redhat.com>
       lsmem/chmem:     Heiko Carstens <heiko.carstens@de.ibm.com>
+      login:           Michael Glad <glad@daimi.aau.dk>
+                       Peter Orbaek <poe@daimi.aau.dk>
       mountpoint:      Karel Zak <kzak@redhat.com>
       nsenter:         Eric W. Biederman <ebiederm@xmission.com>
+      pg:              Gunnar Ritter
       prlimit:         Davidlohr Bueso <dave@gnu.org>
       runuser:         [derived from coreutils su(1)]
                        Karel Zak <kzak@redhat.com>
