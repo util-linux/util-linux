@@ -34,6 +34,7 @@
 #include "bitops.h"
 #include "blkdev.h"
 #include "pathnames.h"
+#include "proc-spawn.h"
 #include "xalloc.h"
 #include "strutils.h"
 #include "optutils.h"
@@ -337,55 +338,50 @@ static int show_table(struct swapon_ctl *ctl)
 /* calls mkswap */
 static int swap_reinitialize(struct swap_device *dev)
 {
-	pid_t pid;
-	int status, ret;
-	char const *cmd[7];
-	int idx=0;
+	char *cmd[7];
+	int idx = 0, ret;
+	proc_wait_result_t pwrs = {};
 
 	assert(dev);
 	assert(dev->path);
 
 	warnx(_("%s: reinitializing the swap."), dev->path);
 
-	switch ((pid=fork())) {
-	case -1: /* fork error */
-		warn(_("fork failed"));
-		return -1;
-
-	case 0:	/* child */
-		if (is_privileged_execution() && drop_permissions() != 0)
-			exit(EXIT_FAILURE);
-
-		cmd[idx++] = "mkswap";
-		if (dev->label) {
-			cmd[idx++] = "-L";
-			cmd[idx++] = dev->label;
-		}
-		if (dev->uuid) {
-			cmd[idx++] = "-U";
-			cmd[idx++] = dev->uuid;
-		}
-		cmd[idx++] = dev->path;
-		cmd[idx++] = NULL;
-		execvp(cmd[0], (char * const *) cmd);
-		errexec(cmd[0]);
-
-	default: /* parent */
-		do {
-			ret = waitpid(pid, &status, 0);
-		} while (ret == -1 && errno == EINTR);
-
-		if (ret < 0) {
-			warn(_("waitpid failed"));
-			return -1;
-		}
-
-		/* mkswap returns: 0=suss, >0 error */
-		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
-			return 0; /* ok */
-		break;
+	cmd[idx++] = "mkswap";
+	if (dev->label) {
+		cmd[idx++] = "-L";
+		cmd[idx++] = (char *) dev->label;
 	}
-	return -1; /* error */
+	if (dev->uuid) {
+		cmd[idx++] = "-U";
+		cmd[idx++] = (char *) dev->uuid;
+	}
+	cmd[idx++] = (char *) dev->path;
+	cmd[idx] = NULL;
+
+	proc_config_t mkswap_cfg =
+	{
+        .path        = cmd[0],
+        .argv        = cmd,
+	.spawnattr_flags = POSIX_SPAWN_RESETIDS,
+	};
+
+	PROC_AUTO(h);
+	ret = proc_spawn(&mkswap_cfg, &h);
+	if (ret < 0) {
+		warn(_("%s: failed to spawn mkswap"), dev->path);
+		return ret;
+	}
+	ret = proc_wait(&h, 0, &pwrs);
+	if (ret < 0) {
+		warn(_("failed to wait for mkswap process on %s: %s"), dev->path, strerror(-ret));
+        	return ret;
+    	}
+	if (!pwrs.exited || pwrs.status != 0) {
+		warn(_("mkswap failed on %s with status %d"), dev->path, pwrs.status);
+		return pwrs.exited ? -pwrs.status : -EIO;
+	}
+	return 0;
 }
 
 /* Replaces unwanted SWSUSPEND signature with swap signature */
