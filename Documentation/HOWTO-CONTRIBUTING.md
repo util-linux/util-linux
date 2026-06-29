@@ -19,6 +19,18 @@ Branches:
 
 Since version 2.40, stabilization is done exclusively in `stable/` branches.
 
+## Release Schedule
+
+The versioning scheme is `<major>.<minor>.<maintenance>`. The minor version
+is incremented roughly twice per year.
+
+Before each release there are typically two release candidates:
+
+- `rc1` (1-2 weeks) — bug fixes only
+- `rc2` (1-2 weeks) — translations, fatal/trivial bug fixes
+
+The period between a release and the next rc1 is the merge window.
+
 ## Sending Patches
 
 - Send patches via GitHub pull request (recommended) or to the mailing
