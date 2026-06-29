@@ -528,15 +528,14 @@ static void add_single_map_range(struct map_range **chain, unsigned int outer,
 				 *next = map->next;
 		unsigned int inner_offset, outer_offset;
 
-		/* Start inner IDs from zero for an auto mapping */
+		/*
+		 * Start inner IDs from zero for an auto mapping; otherwise,
+		 * if the single mapping exists and overlaps the range,
+		 * remove an ID
+		 */
 		if (map->inner + 1 == 0)
 			map->inner = 0;
-
-		/*
-		 * If the single mapping exists and overlaps the range, remove
-		 * an ID
-		 */
-		if (inner + 1 != 0 &&
+		else if (inner + 1 != 0 &&
 		    ((outer >= map->outer && outer <= map->outer + map->count) ||
 		     (inner >= map->inner && inner <= map->inner + map->count)))
 			map->count--;
