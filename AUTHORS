@@ -43,6 +43,10 @@ AUTHORS (merged projects & commands):
       libblkid:        [merged from e2fsprogs]
                        Theodore Ts'o <tytso@mit.edu>
       libmount:        Karel Zak <kzak@redhat.com>
+      mount/umount:    Doug Quale <quale@saavik.cs.wisc.edu>
+                       H.J. Lu <hlu@eecs.wsu.edu>
+                       Rick Sladkey <jrs@world.std.com>
+                       Stephen Tweedie <sct@dcs.ed.ac.uk>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
       liblastlog2:     Thorsten Kukuk <kukuk@suse.com>
       lscpu:           Cai Qian <qcai@redhat.com>
