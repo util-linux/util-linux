@@ -18,14 +18,16 @@
 #endif
 
 #include "c.h"
+#include "vfs.h"
 
-static inline int ul_write_all(int fd, const void *buf, size_t count)
+static inline int __write_all(const struct ul_vfs_ops *vfs, int fd,
+			      const void *buf, size_t count)
 {
 	while (count) {
 		ssize_t tmp;
 
 		errno = 0;
-		tmp = write(fd, buf, count);
+		tmp = ul_vfs_write(vfs, fd, buf, count);
 		if (tmp > 0) {
 			count -= tmp;
 			if (count)
@@ -37,6 +39,9 @@ static inline int ul_write_all(int fd, const void *buf, size_t count)
 	}
 	return 0;
 }
+
+#define ul_write_all(fd, buf, count)		__write_all(NULL, (fd), (buf), (count))
+#define ul_vfs_write_all(vfs, fd, buf, count)	__write_all((vfs), (fd), (buf), (count))
 
 static inline int ul_fwrite_all(const void *ptr, size_t size,
 			     size_t nmemb, FILE *stream)
@@ -58,7 +63,8 @@ static inline int ul_fwrite_all(const void *ptr, size_t size,
 	return 0;
 }
 
-static inline ssize_t ul_read_all(int fd, char *buf, size_t count)
+static inline ssize_t __read_all(const struct ul_vfs_ops *vfs, int fd,
+				 char *buf, size_t count)
 {
 	ssize_t ret;
 	ssize_t c = 0;
@@ -66,7 +72,7 @@ static inline ssize_t ul_read_all(int fd, char *buf, size_t count)
 
 	memset(buf, 0, count);
 	while (count > 0) {
-		ret = read(fd, buf, count);
+		ret = ul_vfs_read(vfs, fd, buf, count);
 		if (ret < 0) {
 			if ((errno == EAGAIN || errno == EINTR) && (tries++ < 5)) {
 				xusleep(250000);
@@ -83,6 +89,9 @@ static inline ssize_t ul_read_all(int fd, char *buf, size_t count)
 	}
 	return c;
 }
+
+#define ul_read_all(fd, buf, count)		__read_all(NULL, (fd), (buf), (count))
+#define ul_vfs_read_all(vfs, fd, buf, count)	__read_all((vfs), (fd), (buf), (count))
 
 static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 {
