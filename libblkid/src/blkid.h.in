@@ -255,6 +255,8 @@ struct ul_vfs_ops {
 	int     (*vfs_close)(int fd);
 	off_t   (*vfs_lseek)(int fd, off_t offset, int whence);
 	int     (*vfs_fsync)(int fd);
+
+	FILE   *(*vfs_fopen)(const char *pathname, const char *mode);
 };
 
 #endif /* UL_VFS_OPS_DEFINED */
