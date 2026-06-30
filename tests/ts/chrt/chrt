@@ -35,6 +35,15 @@ function skip_policy {
 		ts_finalize_subtest
 		return 1
 	fi
+
+	if [ -n "$2" ]; then
+		$TS_CMD_CHRT $2 0 true >/dev/null 2>&1
+		if [ $? != 0 ]; then
+			ts_skip "unsupported by kernel"
+			ts_finalize_subtest
+			return 1
+		fi
+	fi
 	return 0
 }
 
@@ -132,7 +141,7 @@ if skip_policy SCHED_DEADLINE; then
 fi
 
 ts_init_subtest "ext"
-if skip_policy SCHED_EXT; then
+if skip_policy SCHED_EXT --ext; then
 	do_chrt --ext 0
 	do_chrt -e 0
 	cleanup_output
