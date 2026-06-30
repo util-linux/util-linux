@@ -19,6 +19,7 @@
 #include "mountP.h"
 #include "fileutils.h"
 #include "linux_version.h"
+#include "selinux-utils.h"
 
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
@@ -80,7 +81,7 @@ static int hook_selinux_target(
 		return 0;
 
 
-	rc = getfilecon_raw(tgt, &raw);
+	rc = selinux_call(getfilecon_raw)(tgt, &raw);
 	if (rc <= 0 || !raw) {
 		rc = errno ? -errno : -EINVAL;
 		DBG_OBJ(HOOK, hs, ul_debug(" SELinux fix @target failed [rc=%d]", rc));
@@ -91,7 +92,7 @@ static int hook_selinux_target(
 	if (!rc)
 		rc = mnt_opt_set_quoted_value(opt, raw);
 	if (raw)
-		freecon(raw);
+		selinux_call(freecon)(raw);
 
 	return rc != 0 ? -MNT_ERR_MOUNTOPT : 0;
 }
@@ -110,8 +111,8 @@ static int hook_prepare_options(
 	if (!ol)
 		return -EINVAL;
 
-	if (!is_selinux_enabled())
-		/* Always remove SELinux garbage if SELinux disabled */
+	if (ul_load_libselinux() != 0 || !selinux_call(is_selinux_enabled)())
+		/* Remove SELinux garbage if libselinux is unavailable or SELinux disabled */
 		se_rem = 1;
 	else if (mnt_optlist_is_remount(ol))
 		/*
@@ -167,7 +168,7 @@ static int hook_prepare_options(
 						       hook_selinux_target);
 					continue;
 				} else {
-					rc = selinux_trans_to_raw_context(val, &raw);
+					rc = selinux_call(selinux_trans_to_raw_context)(val, &raw);
 					if (rc == -1 || !raw)
 						rc = -EINVAL;
 				}
@@ -177,7 +178,7 @@ static int hook_prepare_options(
 					rc = mnt_opt_set_quoted_value(opt, raw);
 				}
 				if (raw)
-					freecon(raw);
+					selinux_call(freecon)(raw);
 
 				/* temporary for broken fsconfig() syscall */
 				cxt->has_selinux_opt = 1;

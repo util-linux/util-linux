@@ -1076,13 +1076,20 @@ AS_IF([test "x$with_selinux" = xno], [
   )
   AS_IF([test "x$have_selinux" = xyes], [
     AC_DEFINE([HAVE_LIBSELINUX], [1], [Define if SELinux is available])
-    UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
     AM_CONDITIONAL([HAVE_SELINUX], [true])
 
     UL_SET_LIBS([$SELINUX_LIBS])
     # This function is missing in old libselinux 1.xx versions
     AC_CHECK_FUNCS([security_get_initial_context])
     UL_RESTORE_LIBS
+
+    # Used to note dlopen dependency
+    # https://uapi-group.org/specifications/specs/elf_dlopen_metadata/
+    AC_CHECK_HEADERS([systemd/sd-dlopen.h])
+
+    # libselinux is loaded with dlopen()
+    SELINUX_LIBS="-ldl"
+    SELINUX_LIBS_STATIC="-ldl"
   ])
 ])
 AC_SUBST([SELINUX_LIBS])

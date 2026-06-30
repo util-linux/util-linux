@@ -41,6 +41,7 @@ lib_mount_sources = '''
 '''.split() + [
   list_h,
   monotonic_c,
+  selinux_utils_c,
 ]
 
 if LINUX
@@ -83,7 +84,7 @@ lib__mount = static_library(
   lib_mount_sources,
   include_directories : [dir_include,
                          dir_libmount],
-  dependencies : [blkid_dep])
+  dependencies : [blkid_dep] + lib_selinux_compile_deps)
 
 lib_mount_static = static_library(
   'mount_static',
@@ -94,10 +95,9 @@ lib_mount_static = static_library(
 mount_static_dep = declare_dependency(link_with: lib_mount_static, include_directories: '.')
 
 lib__mount_deps = [
-  lib_selinux,
   cryptsetup_dlopen ? lib_dl : lib_cryptsetup,
   realtime_libs
-]
+] + lib_selinux_link_deps
 
 if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
   lib__mount_deps += [lib_systemd]

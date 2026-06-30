@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 #endif
 
 #ifdef HAVE_LIBSELINUX
-	if (is_selinux_enabled() > 0) {
+	if (ul_load_libselinux() == 0 && selinux_call(is_selinux_enabled)() > 0) {
 		char *user_cxt = NULL;
 
 		if (uid == 0 && !ul_selinux_has_access("passwd", "chsh", &user_cxt))
