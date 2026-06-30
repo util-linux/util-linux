@@ -243,6 +243,25 @@ extern int blkid_probe_set_device(blkid_probe pr, int fd,
 	                blkid_loff_t off, blkid_loff_t size)
 			__ul_attribute__((nonnull));
 
+#ifndef UL_VFS_OPS_DEFINED
+#define UL_VFS_OPS_DEFINED
+
+struct ul_vfs_ops {
+	size_t size;
+
+	ssize_t (*vfs_read)(int fd, void *buf, size_t count);
+	ssize_t (*vfs_write)(int fd, const void *buf, size_t count);
+	int     (*vfs_open)(const char *pathname, int flags, mode_t mode);
+	int     (*vfs_close)(int fd);
+	off_t   (*vfs_lseek)(int fd, off_t offset, int whence);
+	int     (*vfs_fsync)(int fd);
+};
+
+#endif /* UL_VFS_OPS_DEFINED */
+
+extern int blkid_probe_set_vfs(blkid_probe pr, const struct ul_vfs_ops *ops)
+			__ul_attribute__((nonnull(1)));
+
 extern dev_t blkid_probe_get_devno(blkid_probe pr)
 			__ul_attribute__((nonnull));
 
