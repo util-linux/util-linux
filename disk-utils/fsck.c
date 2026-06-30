@@ -682,6 +682,8 @@ static int execute(const char *progname, const char *progpath,
 		pid = -1;
 	else if ((pid = fork()) < 0) {
 		warn(_("fork failed"));
+		for (i = 0; i < argc; i++)
+			free(argv[i]);
 		free_instance(inst);
 		return errno;
 	} else if (pid == 0) {
