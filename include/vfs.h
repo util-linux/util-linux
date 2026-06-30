@@ -97,4 +97,33 @@ static inline int ul_vfs_fsync(const struct ul_vfs_ops *vfs, int fd)
 	return fsync(fd);
 }
 
+static inline int ul_mode_to_flags(const char *mode)
+{
+	int flags = 0;
+	const char *p;
+
+	for (p = mode; p && *p; p++) {
+		if (*p == 'r' && *(p + 1) == '+')
+			flags |= O_RDWR;
+		else if (*p == 'r')
+			flags |= O_RDONLY;
+
+		else if (*p == 'w' && *(p + 1) == '+')
+			flags |= O_RDWR | O_TRUNC;
+		else if (*p == 'w')
+			flags |= O_WRONLY | O_TRUNC;
+
+		else if (*p == 'a' && *(p + 1) == '+')
+			flags |= O_RDWR | O_APPEND;
+		else if (*p == 'a')
+			flags |= O_WRONLY | O_APPEND;
+#ifdef O_CLOEXEC
+		else if (*p == 'e')
+			flags |= O_CLOEXEC;
+#endif
+	}
+
+	return flags;
+}
+
 #endif /* UTIL_LINUX_VFS_H */

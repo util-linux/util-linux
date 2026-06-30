@@ -24,6 +24,7 @@
 #include "c.h"
 #include "fileutils.h"
 #include "all-io.h"
+#include "vfs.h"
 #include "path.h"
 #include "debug.h"
 #include "strutils.h"
@@ -502,38 +503,9 @@ int ul_path_openf(struct path_cxt *pc, int flags, const char *path, ...)
 /*
  * Maybe stupid, but good enough ;-)
  */
-static int mode2flags(const char *mode)
-{
-	int flags = 0;
-	const char *p;
-
-	for (p = mode; p && *p; p++) {
-		if (*p == 'r' && *(p + 1) == '+')
-			flags |= O_RDWR;
-		else if (*p == 'r')
-			flags |= O_RDONLY;
-
-		else if (*p == 'w' && *(p + 1) == '+')
-			flags |= O_RDWR | O_TRUNC;
-		else if (*p == 'w')
-			flags |= O_WRONLY | O_TRUNC;
-
-		else if (*p == 'a' && *(p + 1) == '+')
-			flags |= O_RDWR | O_APPEND;
-		else if (*p == 'a')
-			flags |= O_WRONLY | O_APPEND;
-#ifdef O_CLOEXEC
-		else if (*p == *UL_CLOEXECSTR)
-			flags |= O_CLOEXEC;
-#endif
-	}
-
-	return flags;
-}
-
 FILE *ul_path_fopen(struct path_cxt *pc, const char *mode, const char *path)
 {
-	int flags = mode2flags(mode);
+	int flags = ul_mode_to_flags(mode);
 	int fd = ul_path_open(pc, flags, path);
 
 	if (fd < 0)
