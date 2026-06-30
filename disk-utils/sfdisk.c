@@ -1523,6 +1523,7 @@ static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 {
 	struct fdisk_partition *pa = NULL;
 	char *data;
+	int rc;
 
 	assert(sf);
 
@@ -1531,20 +1532,35 @@ static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 	if (fdisk_get_partition(sf->cxt, n, &pa) != 0)
 		return;
 
-	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_DEVICE, &data);
-	printf("%12s : ", data);
+	rc = fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_DEVICE, &data);
+	if (0 == rc) {
+            printf("%12s : ", data);
+	    free(data);
+	}
 
-	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_START, &data);
-	printf("%12s ", data);
+	rc = fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_START, &data);
+	if (0 == rc) {
+            printf("%12s ", data);
+	    free(data);
+	}
 
-	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_END, &data);
-	printf("%12s ", data);
+	rc = fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_END, &data);
+	if (0 == rc) {
+            printf("%12s ", data);
+	    free(data);
+	}
 
-	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_SIZE, &data);
-	printf("(%s) ", data);
+	rc = fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_SIZE, &data);
+	if (0 == rc) {
+            printf("(%s) ", data);
+	    free(data);
+	}
 
-	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_TYPE, &data);
-	printf("%s\n", data);
+	rc = fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_TYPE, &data);
+	if (0 == rc) {
+            printf("%s\n", data);
+	    free(data);
+	}
 
 	fdisk_unref_partition(pa);
 }
