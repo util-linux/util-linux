@@ -421,3 +421,7 @@ MOUNT_2_42 {
 	mnt_fs_is_attached;
 	mnt_fs_is_detached;
 } MOUNT_2_41;
+
+MOUNT_2_43 {
+	mnt_table_disable_useropts;
+} MOUNT_2_42;

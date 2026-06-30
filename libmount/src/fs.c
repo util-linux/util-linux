@@ -276,6 +276,7 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
 	dest->tid        = src->tid;
+	dest->uniq_id    = src->uniq_id;
 
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, source)))
 		goto err;
@@ -1530,6 +1531,45 @@ int mnt_fs_set_uniq_id(struct libmnt_fs *fs, uint64_t id)
 		return -EINVAL;
 	fs->uniq_id = id;
 	return 0;
+}
+
+/*
+ * Fetch mount IDs from kernel via statx(). Prefers unique ID, falls back
+ * to old ID on old kernels. Uses @fd (AT_EMPTY_PATH) if >= 0, otherwise
+ * uses fs->target path.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int mnt_fs_fetch_ids(struct libmnt_fs *fs, int fd)
+{
+	uint64_t uniq_id = 0;
+	int id = 0, rc;
+
+	if (!fs)
+		return -EINVAL;
+	if (fd < 0 && !mnt_fs_get_target(fs))
+		return -EINVAL;
+
+	if (fd >= 0)
+		rc = mnt_id_from_fd(fd, &uniq_id, NULL);
+	else
+		rc = mnt_id_from_path(mnt_fs_get_target(fs), &uniq_id, NULL);
+
+	if (rc == 0 && uniq_id > 0) {
+		fs->uniq_id = uniq_id;
+		return 0;
+	}
+
+	/* fallback to old mount ID */
+	if (fd >= 0)
+		rc = mnt_id_from_fd(fd, NULL, &id);
+	else
+		rc = mnt_id_from_path(mnt_fs_get_target(fs), NULL, &id);
+
+	if (rc == 0)
+		fs->id = id;
+
+	return rc;
 }
 
 /**

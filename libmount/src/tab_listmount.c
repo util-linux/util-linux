@@ -408,6 +408,10 @@ int mnt_table_fetch_listmount(struct libmnt_table *tb)
 	 * have all the necessary data (or on error) */
 	tb->lsmnt->done = 1;
 
+	/* merge userspace mount options from utab */
+	if (rc == 0)
+		rc = mnt_table_merge_utab(tb, NULL);
+
 	/* restore */
 	if (tb->stmnt)
 		mnt_statmnt_disable_fetching(tb->stmnt, stmnt_status);

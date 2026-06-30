@@ -420,23 +420,33 @@ int mnt_context_reopen_target_fd(struct libmnt_context *cxt)
 		return -errno;
 
 	/* verify the mount landed on the expected target;
-	 * cxt->fs->id is set from fd_tree in hook_create_mount() */
-	if (cxt->fs && cxt->fs->id > 0) {
-		int id = 0;
+	 * IDs are set from fd_tree in hook_create_mount() */
+	if (cxt->fs && (cxt->fs->uniq_id || cxt->fs->id > 0)) {
+		int mismatch = 0;
 
-		if (mnt_id_from_fd(cxt->fd_target, NULL, &id) == 0
-		    && id != cxt->fs->id) {
+		if (cxt->fs->uniq_id) {
+			uint64_t uniq_id = 0;
+
+			if (mnt_id_from_fd(cxt->fd_target, &uniq_id, NULL) == 0
+			    && uniq_id != cxt->fs->uniq_id)
+				mismatch = 1;
+		} else {
+			int id = 0;
+
+			if (mnt_id_from_fd(cxt->fd_target, NULL, &id) == 0
+			    && id != cxt->fs->id)
+				mismatch = 1;
+		}
+		if (mismatch) {
 			const char *tgt = mnt_fs_get_target(cxt->fs);
 
-			DBG_OBJ(CXT, cxt, ul_debug(
-				"target mount ID mismatch (expected %d, got %d), umounting",
-				cxt->fs->id, id));
+			DBG_OBJ(CXT, cxt, ul_debug("target mount ID mismatch, umounting"));
 			if (tgt)
 				umount2(tgt, MNT_DETACH);
 			mnt_context_close_target_fd(cxt);
 			return -EPERM;
 		}
-		DBG_OBJ(CXT, cxt, ul_debug("target mount ID verified (%d)", id));
+		DBG_OBJ(CXT, cxt, ul_debug("target mount ID verified"));
 	}
 
 	return 0;
