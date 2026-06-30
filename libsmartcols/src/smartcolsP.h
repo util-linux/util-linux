@@ -567,6 +567,7 @@ struct libscols_filter {
 #define SCOLS_FILTER_MAX_EXPRSZ	1024
 #define SCOLS_FILTER_MAX_NODES	256
 #define SCOLS_FILTER_MAX_REGSZ	256
+#define SCOLS_FILTER_MAX_REPCNT	1024
 
 struct filter_node *__filter_new_node(enum filter_ntype type, size_t sz);
 void filter_ref_node(struct filter_node *n);

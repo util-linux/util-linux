@@ -131,8 +131,9 @@ struct filter_node *filter_new_param(
 	return (struct filter_node *) n;
 }
 
-/* Consecutive ERE quantifiers (a++, a**) and nested group repetitions
- * ((a+)+, (a*)*) cause glibc regcomp() to allocate gigabytes for the NFA. */
+/* Consecutive ERE quantifiers (a++, a**), nested group repetitions
+ * ((a+)+, (a*)*), and large interval bounds ({,N} where N is huge)
+ * cause glibc regcomp() to allocate gigabytes for the NFA. */
 static int is_unsafe_regex(const char *pattern)
 {
 	size_t i, len = strlen(pattern);
@@ -151,6 +152,25 @@ static int is_unsafe_regex(const char *pattern)
 					break;
 				if (pattern[j] == '+' || pattern[j] == '*')
 					return 1;
+			}
+		}
+
+		/* reject large ERE interval bounds like {,32232} or {1,9999} */
+		if (pattern[i] == '{') {
+			const char *p = &pattern[i + 1];
+
+			while (*p && *p != '}') {
+				if (*p >= '0' && *p <= '9') {
+					unsigned long val;
+					char *end = NULL;
+
+					errno = 0;
+					val = strtoul(p, &end, 10);
+					if (errno || val > SCOLS_FILTER_MAX_REPCNT)
+						return 1;
+					p = end;
+				} else
+					p++;
 			}
 		}
 	}
