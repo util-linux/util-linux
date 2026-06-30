@@ -105,7 +105,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		   (long long)diff));
 #endif
 
-	if (sysfs_devno_is_dm_private(st.st_rdev, NULL))
+	if (sysfs_devno_is_dm_private(st.st_rdev, NULL, NULL))
 		goto dev_free;
 	if (!cache->probe) {
 		cache->probe = blkid_new_probe();

@@ -232,7 +232,7 @@ int blkid_probe_open_device(blkid_probe pr, const char *filename, int flags)
 	struct stat sb;
 
 	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL)) {
+	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL, pr->vfs)) {
 		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
 		errno = EINVAL;
 		return -EINVAL;
@@ -1213,7 +1213,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 #endif
 	if (S_ISBLK(sb.st_mode) &&
 	    !is_floppy &&
-	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid)) {
+	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid, pr->vfs)) {
 		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
 	}
