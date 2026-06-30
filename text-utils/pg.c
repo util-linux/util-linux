@@ -296,7 +296,7 @@ static size_t xmbstowcs(wchar_t * pwcs, const char *s, size_t nwcs)
 static int outcap(int i)
 {
 	char c = i;
-	return write_all(STDOUT_FILENO, &c, 1) == 0 ? 1 : -1;
+	return ul_write_all(STDOUT_FILENO, &c, 1) == 0 ? 1 : -1;
 }
 
 /* Write messages to terminal. */
@@ -306,7 +306,7 @@ static void mesg(const char *message)
 		return;
 	if (*message != '\n' && sflag)
 		vidputs(A_STANDOUT, outcap);
-	write_all(STDOUT_FILENO, message, strlen(message));
+	ul_write_all(STDOUT_FILENO, message, strlen(message));
 	if (*message != '\n' && sflag)
 		vidputs(A_NORMAL, outcap);
 }
@@ -518,7 +518,7 @@ static void cline(void)
 	memset(buf, ' ', ttycols + 2);
 	buf[0] = '\r';
 	buf[ttycols + 1] = '\r';
-	write_all(STDOUT_FILENO, buf, ttycols + 2);
+	ul_write_all(STDOUT_FILENO, buf, ttycols + 2);
 	free(buf);
 }
 
@@ -646,7 +646,7 @@ static void prompt(long long pageno)
 		}
 		if (key == tio.c_cc[VERASE]) {
 			if (cmd.cmdlen) {
-				write_all(STDOUT_FILENO, "\b \b", 3);
+				ul_write_all(STDOUT_FILENO, "\b \b", 3);
 				cmd.cmdline[--cmd.cmdlen] = '\0';
 				switch (state) {
 				case ADDON_FIN:
@@ -748,7 +748,7 @@ static void prompt(long long pageno)
 				cmd.key = key;
 			}
 		}
-		write_all(STDOUT_FILENO, &key, 1);
+		ul_write_all(STDOUT_FILENO, &key, 1);
 
 		if (cmd.cmdlen + 1 >= sizeof(cmd.cmdline))
 			goto endprompt;
@@ -935,7 +935,7 @@ static void pgfile(FILE *f, const char *name)
 	if (ontty == 0) {
 		/* Just copy stdin to stdout. */
 		while ((sz = fread(b, sizeof *b, READBUF, f)) != 0)
-			write_all(STDOUT_FILENO, b, sz);
+			ul_write_all(STDOUT_FILENO, b, sz);
 		if (ferror(f)) {
 			warn("%s", name);
 			exitstatus++;
@@ -1012,7 +1012,7 @@ static void pgfile(FILE *f, const char *name)
 
 				if (!nobuf)
 					fputs(b, fbuf);
-				fwrite_all(&pos, sizeof pos, 1, find);
+				ul_fwrite_all(&pos, sizeof pos, 1, find);
 				if (!fflag) {
 					oldpos = pos;
 					p = b;
@@ -1020,7 +1020,7 @@ static void pgfile(FILE *f, const char *name)
 							     p))
 					       != '\0') {
 						pos = oldpos + (p - b);
-						fwrite_all(&pos,
+						ul_fwrite_all(&pos,
 							   sizeof pos,
 							   1, find);
 						fline++;
@@ -1090,7 +1090,7 @@ static void pgfile(FILE *f, const char *name)
 				sz = p - b;
 				makeprint(b, sz);
 				canjump = 1;
-				write_all(STDOUT_FILENO, b, sz);
+				ul_write_all(STDOUT_FILENO, b, sz);
 				canjump = 0;
 			}
 		}
@@ -1234,7 +1234,7 @@ static void pgfile(FILE *f, const char *name)
 					}
 					if (!nobuf)
 						fputs(b, fbuf);
-					fwrite_all(&pos, sizeof pos, 1, find);
+					ul_fwrite_all(&pos, sizeof pos, 1, find);
 					if (!fflag) {
 						oldpos = pos;
 						p = b;
@@ -1242,7 +1242,7 @@ static void pgfile(FILE *f, const char *name)
 								     p))
 						       != '\0') {
 							pos = oldpos + (p - b);
-							fwrite_all(&pos,
+							ul_fwrite_all(&pos,
 								   sizeof pos,
 								   1, find);
 							fline++;
@@ -1256,7 +1256,7 @@ static void pgfile(FILE *f, const char *name)
 				while ((sz = fread(b, sizeof *b, READBUF,
 						   fbuf)) != 0) {
 					/* No error check for compat. */
-					fwrite_all(b, sizeof *b, sz, save);
+					ul_fwrite_all(b, sizeof *b, sz, save);
 				}
 				if (close_stream(save) != 0) {
 					cmd.count = errno;
@@ -1362,9 +1362,9 @@ static void pgfile(FILE *f, const char *name)
 				} else {
 					pid_t cpid;
 
-					write_all(STDOUT_FILENO, cmd.cmdline,
+					ul_write_all(STDOUT_FILENO, cmd.cmdline,
 						  strlen(cmd.cmdline));
-					write_all(STDOUT_FILENO, "\n", 1);
+					ul_write_all(STDOUT_FILENO, "\n", 1);
 					my_sigset(SIGINT, SIG_IGN);
 					my_sigset(SIGQUIT, SIG_IGN);
 					switch (cpid = fork()) {
@@ -1406,9 +1406,9 @@ static void pgfile(FILE *f, const char *name)
 				{
 					/* Help! */
 					const char *help = _(helpscreen);
-					write_all(STDOUT_FILENO, copyright,
+					ul_write_all(STDOUT_FILENO, copyright,
 						  strlen(copyright));
-					write_all(STDOUT_FILENO, help,
+					ul_write_all(STDOUT_FILENO, help,
 						  strlen(help));
 					goto newcmd;
 				}
@@ -1528,9 +1528,9 @@ static int parse_arguments(int arg, int argc, char **argv)
 		}
 		if (ontty == 0 && argc > 2) {
 			/* Use the prefix as specified by SUSv2. */
-			write_all(STDOUT_FILENO, "::::::::::::::\n", 15);
-			write_all(STDOUT_FILENO, argv[arg], strlen(argv[arg]));
-			write_all(STDOUT_FILENO, "\n::::::::::::::\n", 16);
+			ul_write_all(STDOUT_FILENO, "::::::::::::::\n", 15);
+			ul_write_all(STDOUT_FILENO, argv[arg], strlen(argv[arg]));
+			ul_write_all(STDOUT_FILENO, "\n::::::::::::::\n", 16);
 		}
 		pgfile(input, argv[arg]);
 		if (input != stdin)

@@ -312,7 +312,7 @@ static int write_output(char *obuf, ssize_t bytes)
 {
 	DBG(IO, ul_debug(" writing output"));
 
-	if (write_all(STDOUT_FILENO, obuf, bytes)) {
+	if (ul_write_all(STDOUT_FILENO, obuf, bytes)) {
 		DBG(IO, ul_debug("  writing output *failed*"));
 		return -errno;
 	}

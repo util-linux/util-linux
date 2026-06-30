@@ -896,7 +896,7 @@ static int resizetty(void)
 		errx(EXIT_FAILURE, _("stdin does not refer to a terminal"));
 
 	tty_raw(&saved_attributes, &saved_fl);
-	if (write_all(STDIN_FILENO, getpos, strlen(getpos)) < 0) {
+	if (ul_write_all(STDIN_FILENO, getpos, strlen(getpos)) < 0) {
 		warn(_("write failed"));
 		tty_restore(&saved_attributes, &saved_fl);
 		return 1;

@@ -499,7 +499,7 @@ static ssize_t log_write(struct script_control *ctl,
 	switch (log->format) {
 	case SCRIPT_FMT_RAW:
 		DBG(IO, ul_debug("  log raw data"));
-		rc = fwrite_all(obuf, 1, bytes, log->fp);
+		rc = ul_fwrite_all(obuf, 1, bytes, log->fp);
 		if (rc) {
 			warn(_("cannot write %s"), log->filename);
 			return rc;

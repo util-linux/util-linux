@@ -1006,7 +1006,7 @@ static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 	else {
 		unsigned char *buf = xmalloc(size);
 
-		if (read_all(fd, (char *) buf, size) != (ssize_t) size)
+		if (ul_read_all(fd, (char *) buf, size) != (ssize_t) size)
 			fdisk_warn(cxt, _("cannot read"));
 		else
 			dump_buffer(offset, buf, size);

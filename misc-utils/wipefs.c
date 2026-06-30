@@ -478,7 +478,7 @@ static void do_backup(struct wipe_desc *wp, const char *base)
 	fd = open(fname, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		goto err;
-	if (write_all(fd, wp->magic, wp->len) != 0)
+	if (ul_write_all(fd, wp->magic, wp->len) != 0)
 		goto err;
 	close(fd);
 	free(fname);

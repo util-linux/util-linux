@@ -122,7 +122,7 @@ static void setgroups_control(int action)
 		err(EXIT_FAILURE, _("cannot open %s"), file);
 	}
 
-	if (write_all(fd, cmd, strlen(cmd)))
+	if (ul_write_all(fd, cmd, strlen(cmd)))
 		err(EXIT_FAILURE, _("write failed %s"), file);
 	close(fd);
 }
@@ -137,7 +137,7 @@ static void map_id(const char *file, uint32_t from, uint32_t to)
 		 err(EXIT_FAILURE, _("cannot open %s"), file);
 
 	xasprintf(&buf, "%u %u 1", from, to);
-	if (write_all(fd, buf, strlen(buf)))
+	if (ul_write_all(fd, buf, strlen(buf)))
 		err(EXIT_FAILURE, _("write failed %s"), file);
 	free(buf);
 	close(fd);
@@ -273,7 +273,7 @@ static void sync_with_child(pid_t pid, int fd)
 {
 	uint64_t ch = PIPE_SYNC_BYTE;
 
-	write_all(fd, &ch, sizeof(ch));
+	ul_write_all(fd, &ch, sizeof(ch));
 	close(fd);
 
 	waitchild(pid);
@@ -307,7 +307,7 @@ static pid_t fork_and_wait(int *fd)
 
 	if (!pid) {
 		/* wait for the our parent to tell us to continue */
-		if (read_all(*fd, (char *)&ch, sizeof(ch)) != sizeof(ch) ||
+		if (ul_read_all(*fd, (char *)&ch, sizeof(ch)) != sizeof(ch) ||
 		    ch != PIPE_SYNC_BYTE)
 			err(EXIT_FAILURE, _("failed to read eventfd"));
 		close(*fd);
@@ -660,7 +660,7 @@ static void map_ids_internal(const char *type, int ppid, struct map_range *chain
 	fd = open(path, O_WRONLY | O_CLOEXEC | O_NOCTTY);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("failed to open %s"), path);
-	if (write_all(fd, buffer, length) < 0)
+	if (ul_write_all(fd, buffer, length) < 0)
 		err(EXIT_FAILURE, _("failed to write %s"), path);
 	close(fd);
 	free(path);
@@ -733,7 +733,7 @@ static void load_interp(const char *binfmt_mnt, const char *interp)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s/register"), binfmt_mnt);
 
-	if (write_all(fd, interp, strlen(interp)))
+	if (ul_write_all(fd, interp, strlen(interp)))
 		err(EXIT_FAILURE, _("write failed %s/register"), binfmt_mnt);
 
 	close(fd);

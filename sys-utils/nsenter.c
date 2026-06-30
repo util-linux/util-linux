@@ -475,7 +475,7 @@ static void open_cgroup_procs(void)
 
 	open_target_fd(&cgroup_fd, "cgroup", optarg);
 
-	if (read_all_alloc(cgroup_fd, &buf) < 1)
+	if (ul_read_all_alloc(cgroup_fd, &buf) < 1)
 		err(EXIT_FAILURE, _("failed to get cgroup path"));
 
 	p = strtok(buf, "\n");
@@ -512,7 +512,7 @@ static void join_into_cgroup(void)
 
 	pid = getpid();
 	len = snprintf(buf, sizeof(buf), "%zu", (size_t) pid);
-	if (write_all(cgroup_procs_fd, buf, len))
+	if (ul_write_all(cgroup_procs_fd, buf, len))
 		err(EXIT_FAILURE, _("write cgroup.procs failed"));
 }
 
