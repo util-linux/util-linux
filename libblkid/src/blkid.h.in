@@ -262,6 +262,10 @@ struct ul_vfs_ops {
 extern int blkid_probe_set_vfs(blkid_probe pr, const struct ul_vfs_ops *ops)
 			__ul_attribute__((nonnull(1)));
 
+extern int blkid_probe_open_device(blkid_probe pr, const char *filename,
+			int flags)
+			__ul_attribute__((nonnull));
+
 extern dev_t blkid_probe_get_devno(blkid_probe pr)
 			__ul_attribute__((nonnull));
 

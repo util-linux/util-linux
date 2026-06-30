@@ -205,7 +205,54 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
 	return pr;
 }
 
+/**
+ * blkid_probe_open_device:
+ * @pr: probe
+ * @filename: device or regular file
+ * @flags: open(2) flags or 0 for default (O_RDONLY|O_CLOEXEC|O_NONBLOCK)
+ *
+ * Opens the @filename and assigns it to the probe. This is equivalent to
+ * calling open() and blkid_probe_set_device(), but uses VFS operations
+ * if previously set by blkid_probe_set_vfs().
+ *
+ * This allows probe setup before the device is opened:
+ *
+ *   blkid_new_probe() → blkid_probe_set_vfs() → blkid_probe_open_device()
+ *
+ * The @filename is closed by blkid_free_probe() or by the
+ * blkid_probe_set_device() call.
+ *
+ * Since: 2.43
+ *
+ * Returns: 0 on success, or <0 in case of error.
+ */
+int blkid_probe_open_device(blkid_probe pr, const char *filename, int flags)
+{
+	int fd;
+	struct stat sb;
 
+	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
+	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL)) {
+		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
+		errno = EINVAL;
+		return -EINVAL;
+	}
+
+	if (!flags)
+		flags = O_RDONLY | O_CLOEXEC | O_NONBLOCK;
+
+	fd = ul_vfs_open(pr->vfs, filename, flags, 0);
+	if (fd < 0)
+		return -errno;
+
+	if (blkid_probe_set_device(pr, fd, 0, 0)) {
+		ul_vfs_close(pr->vfs, fd);
+		return -errno ? -errno : -EINVAL;
+	}
+
+	pr->flags |= BLKID_FL_PRIVATE_FD;
+	return 0;
+}
 
 /**
  * blkid_new_probe_from_filename:
@@ -222,43 +269,18 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
  */
 blkid_probe blkid_new_probe_from_filename(const char *filename)
 {
-	int fd;
-	blkid_probe pr = NULL;
-	struct stat sb;
-
-	/*
-	 * Check for hidden device-mapper devices (LVM internals, etc.)
-	 * before open() to avoid bumping the kernel open count.  A racing
-	 * DM_DEVICE_REMOVE would otherwise see EBUSY.
-	 *
-	 * Use sysfs_devno_is_dm_hidden() rather than _dm_private() so that
-	 * Stratis devices remain accessible to tools like mkfs.xfs that
-	 * need to probe device geometry.
-	 */
-	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL)) {
-		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
-		errno = EINVAL;
-		return NULL;
-	}
-
-	fd = open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
-	if (fd < 0)
-		return NULL;
+	blkid_probe pr;
 
 	pr = blkid_new_probe();
 	if (!pr)
-		goto err;
+		return NULL;
 
-	if (blkid_probe_set_device(pr, fd, 0, 0))
-		goto err;
+	if (blkid_probe_open_device(pr, filename, 0)) {
+		blkid_free_probe(pr);
+		return NULL;
+	}
 
-	pr->flags |= BLKID_FL_PRIVATE_FD;
 	return pr;
-err:
-	close(fd);
-	blkid_free_probe(pr);
-	return NULL;
 }
 
 /**
