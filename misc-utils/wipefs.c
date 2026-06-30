@@ -367,20 +367,10 @@ new_probe(const char *devname, int mode)
 	if (!devname)
 		return NULL;
 
-	if (mode) {
-		int fd = open(devname, mode | O_NONBLOCK);
-		if (fd < 0)
-			goto error;
-
-		pr = blkid_new_probe();
-		if (!pr || blkid_probe_set_device(pr, fd, 0, 0) != 0) {
-			close(fd);
-			goto error;
-		}
-	} else
-		pr = blkid_new_probe_from_filename(devname);
-
+	pr = blkid_new_probe();
 	if (!pr)
+		goto error;
+	if (blkid_probe_open_device(pr, devname, mode ? mode | O_NONBLOCK : 0))
 		goto error;
 
 	blkid_probe_enable_superblocks(pr, 1);
