@@ -5,6 +5,7 @@
 #ifndef UTIL_LINUX_VFS_H
 #define UTIL_LINUX_VFS_H
 
+#include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>
@@ -35,6 +36,19 @@ static inline void ul_vfs_init(struct ul_vfs_ops *dst,
 		memcpy(dst, src, sz);
 	}
 	dst->size = sizeof(*dst);
+}
+
+static inline struct ul_vfs_ops *ul_vfs_copy(const struct ul_vfs_ops *src)
+{
+	struct ul_vfs_ops *dst;
+
+	if (!src)
+		return NULL;
+	dst = malloc(sizeof(*dst));
+	if (!dst)
+		return NULL;
+	memcpy(dst, src, sizeof(*dst));
+	return dst;
 }
 
 static inline ssize_t ul_vfs_read(const struct ul_vfs_ops *vfs,

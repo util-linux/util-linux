@@ -97,7 +97,7 @@ static int probe_md_tp(blkid_probe pr,
 		if (!diskpath)
 			goto nothing;
 
-		fd = open(diskpath, O_RDONLY|O_CLOEXEC);
+		fd = ul_vfs_open(pr->vfs, diskpath, O_RDONLY|O_CLOEXEC, 0);
 		free(diskpath);
 
                 if (fd == -1)
@@ -110,7 +110,7 @@ static int probe_md_tp(blkid_probe pr,
 		goto nothing;
 
 	if (fd >= 0 && fd != pr->fd) {
-		close(fd);
+		ul_vfs_close(pr->vfs, fd);
 		fd = -1;
 	}
 
