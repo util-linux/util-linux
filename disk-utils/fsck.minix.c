@@ -526,13 +526,13 @@ write_tables(void) {
 
 	write_super_block();
 
-	if (write_all(device_fd, inode_map, imaps * MINIX_BLOCK_SIZE))
+	if (ul_write_all(device_fd, inode_map, imaps * MINIX_BLOCK_SIZE))
 		die(_("Unable to write inode map"));
 
-	if (write_all(device_fd, zone_map, zmaps * MINIX_BLOCK_SIZE))
+	if (ul_write_all(device_fd, zone_map, zmaps * MINIX_BLOCK_SIZE))
 		die(_("Unable to write zone map"));
 
-	if (write_all(device_fd, inode_buffer, buffsz))
+	if (ul_write_all(device_fd, inode_buffer, buffsz))
 		die(_("Unable to write inodes"));
 }
 

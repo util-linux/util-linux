@@ -69,7 +69,7 @@ static char *read_os_release(struct agetty_options *op, const char *varname)
 		op->osrelease = malloc(st.st_size + 1);
 		if (!op->osrelease)
 			agetty_log_err(_("failed to allocate memory: %m"));
-		if (read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
+		if (ul_read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
 			free(op->osrelease);
 			op->osrelease = NULL;
 			goto done;
@@ -210,7 +210,7 @@ void agetty_print_issue_file(struct agetty_issue *ie __attribute__((__unused__))
 {
 	if ((op->flags & F_NONL) == 0) {
 		/* Issue not in use, start with a new line. */
-		write_all(STDOUT_FILENO, "\r\n", 2);
+		ul_write_all(STDOUT_FILENO, "\r\n", 2);
 	}
 }
 
@@ -292,7 +292,7 @@ void agetty_print_issue_file(struct agetty_issue *ie,
 
 	if ((op->flags & F_NONL) == 0) {
 		/* Issue not in use, start with a new line. */
-		write_all(STDOUT_FILENO, "\r\n", 2);
+		ul_write_all(STDOUT_FILENO, "\r\n", 2);
 	}
 
 	if (ie->do_tcsetattr) {
@@ -304,7 +304,7 @@ void agetty_print_issue_file(struct agetty_issue *ie,
 	}
 
 	if (ie->mem_sz && ie->mem)
-		write_all(STDOUT_FILENO, ie->mem, ie->mem_sz);
+		ul_write_all(STDOUT_FILENO, ie->mem, ie->mem_sz);
 
 	if (ie->do_tcrestore) {
 		/* Restore settings. */
@@ -446,7 +446,7 @@ void agetty_show_issue(struct agetty_options *op)
 	agetty_eval_issue_file(&ie, op, &tp);
 
 	if (ie.mem_sz)
-		write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);
+		ul_write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);
 	if (ie.output)
 		fclose(ie.output);
 	free(ie.mem);

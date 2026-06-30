@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 	INSTR(BPF_STMT(BPF_RET | BPF_K, SECCOMP_RET_ALLOW));
 
 	if (dump) {
-		if (fwrite_all(filter, (f - filter) * sizeof(filter[0]), 1, dump))
+		if (ul_fwrite_all(filter, (f - filter) * sizeof(filter[0]), 1, dump))
 			err(EXIT_FAILURE, _("Could not dump seccomp filter"));
 		return EXIT_SUCCESS;
 	}

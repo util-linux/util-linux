@@ -509,14 +509,14 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	if (ret < 1)
 		goto fail;
 
-	ret = read_all(s, (char *) &reply_len, sizeof(reply_len));
+	ret = ul_read_all(s, (char *) &reply_len, sizeof(reply_len));
 	if (ret < 0)
 		goto fail;
 
 	if (reply_len != expected)
 		goto fail;
 
-	ret = read_all(s, op_buf, reply_len);
+	ret = ul_read_all(s, op_buf, reply_len);
 
 	if (op == UUIDD_OP_BULK_TIME_UUID)
 		memcpy(op_buf+16, num, sizeof(int));

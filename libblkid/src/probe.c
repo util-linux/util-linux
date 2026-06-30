@@ -1622,7 +1622,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 			memset(buf, 0, len);
 
 			/* wipen on device */
-			if (write_all(fd, buf, len))
+			if (ul_write_all(fd, buf, len))
 				return BLKID_PROBE_ERROR;
 			if (fsync(fd) != 0)
 				return BLKID_PROBE_ERROR;

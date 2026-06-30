@@ -677,7 +677,7 @@ int ul_path_read(struct path_cxt *pc, char *buf, size_t len, const char *path)
 		return -errno;
 
 	DBG(CXT, ul_debug(" reading '%s'", path));
-	rc = read_all(fd, buf, len);
+	rc = ul_read_all(fd, buf, len);
 
 	errsv = errno;
 	close(fd);
@@ -954,7 +954,7 @@ int ul_path_write_string(struct path_cxt *pc, const char *str, const char *path)
 	if (fd < 0)
 		return -errno;
 
-	rc = write_all(fd, str, strlen(str));
+	rc = ul_write_all(fd, str, strlen(str));
 
 	errsv = errno;
 	close(fd);
@@ -988,7 +988,7 @@ int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path)
 	if (len < 0 || (size_t) len >= sizeof(buf))
 		rc = len < 0 ? -errno : -E2BIG;
 	else
-		rc = write_all(fd, buf, len);
+		rc = ul_write_all(fd, buf, len);
 
 	errsv = errno;
 	close(fd);
@@ -1010,7 +1010,7 @@ int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path)
 	if (len < 0 || (size_t) len >= sizeof(buf))
 		rc = len < 0 ? -errno : -E2BIG;
 	else
-		rc = write_all(fd, buf, len);
+		rc = ul_write_all(fd, buf, len);
 
 	errsv = errno;
 	close(fd);

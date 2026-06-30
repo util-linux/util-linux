@@ -127,7 +127,7 @@ static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
 	if (fd < 0)
 		return -EINVAL;
 
-	sz = read_all(fd, buf, bufsz);
+	sz = ul_read_all(fd, buf, bufsz);
 	if (sz <= 0)
 		return sz;
 

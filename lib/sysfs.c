@@ -474,7 +474,7 @@ static int sysfs_devchain_is_removable(char *chain)
 		/* try to read it */
 		fd = open(chain, O_RDONLY);
 		if (fd != -1) {
-			rc = read_all(fd, buf, sizeof(buf));
+			rc = ul_read_all(fd, buf, sizeof(buf));
 			close(fd);
 
 			if (rc > 0) {

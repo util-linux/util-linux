@@ -46,7 +46,7 @@ blkdev_valid_offset (int fd, off_t offset) {
 
 	if (lseek (fd, offset, 0) < 0)
 		return 0;
-	if (read_all (fd, &ch, 1) < 1)
+	if (ul_read_all (fd, &ch, 1) < 1)
 		return 0;
 	return 1;
 }

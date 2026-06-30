@@ -112,14 +112,14 @@ int plymouth_command(int cmd, ...)
 		fdsock = open_un_socket_and_connect();
 		if (fdsock >= 0) {
 			command[0] = cmd;
-			write_all(fdsock, command, sizeof(command));
+			ul_write_all(fdsock, command, sizeof(command));
 		}
 		break;
 	case MAGIC_QUIT:
 		fdsock = open_un_socket_and_connect();
 		if (fdsock >= 0) {
 			command[0] = cmd;
-			write_all(fdsock, command, sizeof(command));
+			ul_write_all(fdsock, command, sizeof(command));
 		}
 		break;
 	default:
@@ -131,7 +131,7 @@ int plymouth_command(int cmd, ...)
 	answer[0] = '\0';
 	if (fdsock >= 0) {
 		if (can_read(fdsock, 1000))
-			read_all(fdsock, (char *) &answer[0], sizeof(answer));
+			ul_read_all(fdsock, (char *) &answer[0], sizeof(answer));
 		close(fdsock);
 	}
 	sigaction(SIGPIPE, &op, NULL);

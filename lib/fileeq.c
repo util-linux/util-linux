@@ -394,7 +394,7 @@ static ssize_t read_block(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 	if (!*block)
 		return -ENOMEM;
 
-	rsz = read_all(data->fd, (char *) *block, eq->readsiz);
+	rsz = ul_read_all(data->fd, (char *) *block, eq->readsiz);
 	if (rsz < 0) {
 		DBG_OBJ(DATA, data, ul_debug("  read failed"));
 		return rsz;
@@ -462,7 +462,7 @@ static ssize_t get_digest(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 	/* get block digest (note 1st block is data->intro) */
 	*block = data->blocks + (n * eq->method->digsiz);
-	rsz = read_all(eq->fd_cip, (char *) *block, sz);
+	rsz = ul_read_all(eq->fd_cip, (char *) *block, sz);
 
 	if (rsz > 0)
 		data->nblocks++;
@@ -484,7 +484,7 @@ static ssize_t get_intro(struct ul_fileeq *eq, struct ul_fileeq_data *data,
 
 		if (fd < 0)
 			return -1;
-		rsz = read_all(fd, (char *) data->intro, sizeof(data->intro));
+		rsz = ul_read_all(fd, (char *) data->intro, sizeof(data->intro));
 		DBG_OBJ(DATA, data, ul_debug(" read %zd bytes [%zu wanted] intro", rsz, sizeof(data->intro)));
 		if (rsz < 0)
 			return -1;

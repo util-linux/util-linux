@@ -305,12 +305,12 @@ static void backup_sectors(struct sfdisk *sf,
 	} else {
 		unsigned char *buf = xmalloc(size);
 
-		if (read_all(devfd, (char *) buf, size) != (ssize_t) size) {
+		if (ul_read_all(devfd, (char *) buf, size) != (ssize_t) size) {
 			fdisk_warn(sf->cxt, _("cannot read %s"), devname);
 			free(buf);
 			goto fail;
 		}
-		if (write_all(fd, buf, size) != 0) {
+		if (ul_write_all(fd, buf, size) != 0) {
 			fdisk_warn(sf->cxt, _("cannot write %s"), fname);
 			free(buf);
 			goto fail;
@@ -548,7 +548,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		if (!sf->noact) {
 			/* read source */
 			if (lseek(fd, src, SEEK_SET) == (off_t) -1 ||
-			    read_all(fd, buf, step_bytes) != (ssize_t) step_bytes) {
+			    ul_read_all(fd, buf, step_bytes) != (ssize_t) step_bytes) {
 				if (f)
 					fprintf(f, "%05zu: read error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
@@ -559,7 +559,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 			/* write target */
 			if (lseek(fd, dst, SEEK_SET) == (off_t) -1 ||
-			    write_all(fd, buf, step_bytes) != 0) {
+			    ul_write_all(fd, buf, step_bytes) != 0) {
 				if (f)
 					fprintf(f, "%05zu: write error %12ju %12ju\n", cc, src, dst);
 				fdisk_warn(sf->cxt,
