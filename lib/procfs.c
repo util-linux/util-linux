@@ -17,6 +17,7 @@
 #include "procfs.h"
 #include "fileutils.h"
 #include "all-io.h"
+#include "vfs.h"
 #include "debug.h"
 #include "strutils.h"
 #include "statfs_magic.h"
@@ -119,7 +120,8 @@ static void procfs_process_deinit_path(struct path_cxt *pc)
 	ul_path_set_dialect(pc, NULL, NULL);
 }
 
-static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
+static ssize_t read_procfs_file(const struct ul_vfs_ops *vfs, int fd,
+			       char *buf, size_t bufsz)
 {
 	ssize_t sz = 0;
 	size_t i;
@@ -127,7 +129,7 @@ static ssize_t read_procfs_file(int fd, char *buf, size_t bufsz)
 	if (fd < 0)
 		return -EINVAL;
 
-	sz = ul_read_all(fd, buf, bufsz);
+	sz = ul_vfs_read_all(vfs, fd, buf, bufsz);
 	if (sz <= 0)
 		return sz;
 
@@ -145,8 +147,8 @@ static ssize_t procfs_process_get_data_for(struct path_cxt *pc, char *buf, size_
 	int fd = ul_path_open(pc, O_RDONLY|O_CLOEXEC, fname);
 
 	if (fd >= 0) {
-		ssize_t sz = read_procfs_file(fd, buf, bufsz);
-		close(fd);
+		ssize_t sz = read_procfs_file(pc ? pc->vfs : NULL, fd, buf, bufsz);
+		ul_vfs_close(pc ? pc->vfs : NULL, fd);
 		return sz;
 	}
 	return -errno;
@@ -430,7 +432,7 @@ static char *strdup_procfs_file(pid_t pid, const char *name)
 	if (fd < 0)
 		return NULL;
 
-	if (read_procfs_file(fd, buf, sizeof(buf)) > 0)
+	if (read_procfs_file(NULL, fd, buf, sizeof(buf)) > 0)
 		re = strdup(buf);
 	close(fd);
 	return re;
