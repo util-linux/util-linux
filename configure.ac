@@ -533,6 +533,7 @@ have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
 have_mntent_h=$ac_cv_header_mntent_h
 have_sys_vfs_h=$ac_cv_header_sys_vfs_h
+have_lastlog_h=$ac_cv_header_lastlog_h
 have_linux_bpf_h=$ac_cv_header_linux_bpf_h
 
 AS_CASE([$linux_os:$have_linux_version_h],
@@ -1324,6 +1325,7 @@ AS_IF([test "x$build_liblastlog2" != xno], [
   PKG_CHECK_MODULES([SQLITE3], [sqlite3], [have_sqlite3=yes], [have_sqlite3=no])
 ])
 UL_REQUIRES_HAVE([liblastlog2], [sqlite3], [sqlite3 library])
+UL_REQUIRES_HAVE([liblastlog2], [lastlog_h], [lastlog.h header file])
 AC_SUBST([SQLITE3_LIBS])
 
 AC_SUBST([LIBLASTLOG2_VERSION])
