@@ -79,7 +79,7 @@ static int change_info(const char *devname, const char *label,
 				warn(_("%s: failed to seek to swap UUID"), devname);
 				goto err;
 
-			} else if (write_all(fd, newuuid, sizeof(newuuid))) {
+			} else if (ul_write_all(fd, newuuid, sizeof(newuuid))) {
 				warn(_("%s: failed to write UUID"), devname);
 				goto err;
 			}
@@ -100,7 +100,7 @@ static int change_info(const char *devname, const char *label,
 		if (strlen(label) > strlen(newlabel))
 			warnx(_("label is too long. Truncating it to '%s'"),
 					newlabel);
-		if (write_all(fd, newlabel, sizeof(newlabel))) {
+		if (ul_write_all(fd, newlabel, sizeof(newlabel))) {
 			warn(_("%s: failed to write label"), devname);
 			goto err;
 		}

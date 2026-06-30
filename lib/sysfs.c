@@ -474,7 +474,7 @@ static int sysfs_devchain_is_removable(char *chain)
 		/* try to read it */
 		fd = open(chain, O_RDONLY);
 		if (fd != -1) {
-			rc = read_all(fd, buf, sizeof(buf));
+			rc = ul_read_all(fd, buf, sizeof(buf));
 			close(fd);
 
 			if (rc > 0) {
@@ -664,7 +664,8 @@ int sysfs_devno_to_wholedisk(dev_t devno, char *diskname,
  *
  * The @uuid (if not NULL) returns DM device UUID, use free() to deallocate.
  */
-int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid)
+int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid,
+			     const struct ul_vfs_ops *vfs)
 {
 	struct path_cxt *pc = NULL;
 	char *id = NULL;
@@ -673,6 +674,7 @@ int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid)
 	pc = ul_new_sysfs_path(devno, NULL, NULL);
 	if (!pc)
 		goto done;
+	ul_path_refer_vfs(pc, vfs);
 	if (ul_path_read_string(pc, &id, "dm/uuid") <= 0 || !id)
 		goto done;
 
@@ -698,7 +700,8 @@ done:
  * Returns 1 if the device is private device mapper device. The @uuid
  * (if not NULL) returns DM device UUID, use free() to deallocate.
  */
-int sysfs_devno_is_dm_private(dev_t devno, char **uuid)
+int sysfs_devno_is_dm_private(dev_t devno, char **uuid,
+			      const struct ul_vfs_ops *vfs)
 {
 	struct path_cxt *pc = NULL;
 	char *id = NULL;
@@ -707,6 +710,7 @@ int sysfs_devno_is_dm_private(dev_t devno, char **uuid)
 	pc = ul_new_sysfs_path(devno, NULL, NULL);
 	if (!pc)
 		goto done;
+	ul_path_refer_vfs(pc, vfs);
 	if (ul_path_read_string(pc, &id, "dm/uuid") <= 0 || !id)
 		goto done;
 

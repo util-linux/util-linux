@@ -24,6 +24,7 @@
 #include "c.h"
 #include "fileutils.h"
 #include "all-io.h"
+#include "vfs.h"
 #include "path.h"
 #include "debug.h"
 #include "strutils.h"
@@ -99,6 +100,12 @@ void ul_unref_path(struct path_cxt *pc)
 		free(pc->prefix);
 		free(pc);
 	}
+}
+
+void ul_path_refer_vfs(struct path_cxt *pc, const struct ul_vfs_ops *vfs)
+{
+	if (pc)
+		pc->vfs = vfs;
 }
 
 int ul_path_set_prefix(struct path_cxt *pc, const char *prefix)
@@ -502,44 +509,15 @@ int ul_path_openf(struct path_cxt *pc, int flags, const char *path, ...)
 /*
  * Maybe stupid, but good enough ;-)
  */
-static int mode2flags(const char *mode)
-{
-	int flags = 0;
-	const char *p;
-
-	for (p = mode; p && *p; p++) {
-		if (*p == 'r' && *(p + 1) == '+')
-			flags |= O_RDWR;
-		else if (*p == 'r')
-			flags |= O_RDONLY;
-
-		else if (*p == 'w' && *(p + 1) == '+')
-			flags |= O_RDWR | O_TRUNC;
-		else if (*p == 'w')
-			flags |= O_WRONLY | O_TRUNC;
-
-		else if (*p == 'a' && *(p + 1) == '+')
-			flags |= O_RDWR | O_APPEND;
-		else if (*p == 'a')
-			flags |= O_WRONLY | O_APPEND;
-#ifdef O_CLOEXEC
-		else if (*p == *UL_CLOEXECSTR)
-			flags |= O_CLOEXEC;
-#endif
-	}
-
-	return flags;
-}
-
 FILE *ul_path_fopen(struct path_cxt *pc, const char *mode, const char *path)
 {
-	int flags = mode2flags(mode);
+	int flags = ul_mode_to_flags(mode);
 	int fd = ul_path_open(pc, flags, path);
 
 	if (fd < 0)
 		return NULL;
 
-	return fdopen(fd, mode);
+	return ul_vfs_fdopen(pc ? pc->vfs : NULL, fd, mode);
 }
 
 
@@ -677,10 +655,10 @@ int ul_path_read(struct path_cxt *pc, char *buf, size_t len, const char *path)
 		return -errno;
 
 	DBG(CXT, ul_debug(" reading '%s'", path));
-	rc = read_all(fd, buf, len);
+	rc = ul_vfs_read_all(pc ? pc->vfs : NULL, fd, buf, len);
 
 	errsv = errno;
-	close(fd);
+	ul_vfs_close(pc ? pc->vfs : NULL, fd);
 	errno = errsv;
 	return rc;
 }
@@ -954,10 +932,10 @@ int ul_path_write_string(struct path_cxt *pc, const char *str, const char *path)
 	if (fd < 0)
 		return -errno;
 
-	rc = write_all(fd, str, strlen(str));
+	rc = ul_vfs_write_all(pc ? pc->vfs : NULL, fd, str, strlen(str));
 
 	errsv = errno;
-	close(fd);
+	ul_vfs_close(pc ? pc->vfs : NULL, fd);
 	errno = errsv;
 	return rc;
 }
@@ -988,10 +966,10 @@ int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path)
 	if (len < 0 || (size_t) len >= sizeof(buf))
 		rc = len < 0 ? -errno : -E2BIG;
 	else
-		rc = write_all(fd, buf, len);
+		rc = ul_vfs_write_all(pc ? pc->vfs : NULL, fd, buf, len);
 
 	errsv = errno;
-	close(fd);
+	ul_vfs_close(pc ? pc->vfs : NULL, fd);
 	errno = errsv;
 	return rc;
 }
@@ -1010,10 +988,10 @@ int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path)
 	if (len < 0 || (size_t) len >= sizeof(buf))
 		rc = len < 0 ? -errno : -E2BIG;
 	else
-		rc = write_all(fd, buf, len);
+		rc = ul_vfs_write_all(pc ? pc->vfs : NULL, fd, buf, len);
 
 	errsv = errno;
-	close(fd);
+	ul_vfs_close(pc ? pc->vfs : NULL, fd);
 	errno = errsv;
 	return rc;
 }

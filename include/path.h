@@ -25,6 +25,8 @@ struct path_cxt {
 	void	*dialect;
 	void	(*free_dialect)(struct path_cxt *);
 	int	(*redirect_on_enoent)(struct path_cxt *, const char *, int *);
+
+	const struct ul_vfs_ops *vfs;
 };
 
 struct path_cxt *ul_new_path(const char *dir, ...)
@@ -44,6 +46,9 @@ int ul_path_set_dialect(struct path_cxt *pc, void *data, void free_data(struct p
 void *ul_path_get_dialect(struct path_cxt *pc);
 
 int ul_path_set_enoent_redirect(struct path_cxt *pc, int (*func)(struct path_cxt *, const char *, int *));
+
+struct ul_vfs_ops;
+void ul_path_refer_vfs(struct path_cxt *pc, const struct ul_vfs_ops *vfs);
 int ul_path_get_dirfd(struct path_cxt *pc);
 void ul_path_close_dirfd(struct path_cxt *pc);
 int ul_path_isopen_dirfd(struct path_cxt *pc);

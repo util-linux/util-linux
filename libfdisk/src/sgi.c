@@ -484,7 +484,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		goto err;
-	if (write_all(cxt->dev_fd, sgilabel, DEFAULT_SECTOR_SIZE))
+	if (ul_write_all(cxt->dev_fd, sgilabel, DEFAULT_SECTOR_SIZE))
 		goto err;
 	if (!strncmp((char *) sgilabel->volume[0].name, "sgilabel", 8)) {
 		/*
@@ -500,7 +500,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 		info = sgi_new_info();
 		if (!info)
 			goto err;
-		if (write_all(cxt->dev_fd, info, sizeof(*info)))
+		if (ul_write_all(cxt->dev_fd, info, sizeof(*info)))
 			goto err;
 	}
 

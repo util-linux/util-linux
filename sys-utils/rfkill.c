@@ -562,7 +562,7 @@ static int __rfkill_block(int fd, struct rfkill_id *id, uint8_t block, const cha
 		abort();
 	}
 
-	if (write_all(fd, &event, sizeof(event)) != 0)
+	if (ul_write_all(fd, &event, sizeof(event)) != 0)
 		warn(_("write failed: %s"), _PATH_DEV_RFKILL);
 	else {
 		openlog("rfkill", 0, LOG_USER);

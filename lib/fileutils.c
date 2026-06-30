@@ -221,9 +221,9 @@ char *ul_restricted_path_oper(const char *path,
 		          errno ? -errno : -EINVAL;
 
 		/* send length or errno */
-		write_all(pipes[1], (char *) &len, sizeof(len));
+		ul_write_all(pipes[1], (char *) &len, sizeof(len));
 		if (result)
-			write_all(pipes[1], result, len);
+			ul_write_all(pipes[1], result, len);
 		_exit(0);
 	default:
 		break;
@@ -233,7 +233,7 @@ char *ul_restricted_path_oper(const char *path,
 	pipes[1] = -1;
 
 	/* read size or -errno */
-	if (read_all(pipes[0], (char *) &len, sizeof(len)) != sizeof(len))
+	if (ul_read_all(pipes[0], (char *) &len, sizeof(len)) != sizeof(len))
 		goto done;
 	if (len < 0) {
 		errsv = -len;
@@ -246,7 +246,7 @@ char *ul_restricted_path_oper(const char *path,
 		goto done;
 	}
 	/* read path */
-	if (read_all(pipes[0], result, len) != len) {
+	if (ul_read_all(pipes[0], result, len) != len) {
 		errsv = errno;
 		goto done;
 	}
@@ -355,8 +355,8 @@ static int copy_file_simple(int from, int to)
 	ssize_t nr;
 	char buf[BUFSIZ];
 
-	while ((nr = read_all(from, buf, sizeof(buf))) > 0)
-		if (write_all(to, buf, nr) == -1)
+	while ((nr = ul_read_all(from, buf, sizeof(buf))) > 0)
+		if (ul_write_all(to, buf, nr) == -1)
 			return UL_COPY_WRITE_ERROR;
 	if (nr < 0)
 		return UL_COPY_READ_ERROR;
@@ -377,10 +377,10 @@ int ul_copy_file(int from, int to)
 		return UL_COPY_READ_ERROR;
 	if (!S_ISREG(st.st_mode))
 		return copy_file_simple(from, to);
-	if (sendfile_all(to, from, NULL, st.st_size) < 0)
+	if (ul_sendfile_all(to, from, NULL, st.st_size) < 0)
 		return copy_file_simple(from, to);
 	/* ensure we either get an EOF or an error */
-	while ((nw = sendfile_all(to, from, NULL, 16*1024*1024)) != 0)
+	while ((nw = ul_sendfile_all(to, from, NULL, 16*1024*1024)) != 0)
 		if (nw < 0)
 			return copy_file_simple(from, to);
 	return 0;

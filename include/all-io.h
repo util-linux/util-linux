@@ -18,14 +18,16 @@
 #endif
 
 #include "c.h"
+#include "vfs.h"
 
-static inline int write_all(int fd, const void *buf, size_t count)
+static inline int __write_all(const struct ul_vfs_ops *vfs, int fd,
+			      const void *buf, size_t count)
 {
 	while (count) {
 		ssize_t tmp;
 
 		errno = 0;
-		tmp = write(fd, buf, count);
+		tmp = ul_vfs_write(vfs, fd, buf, count);
 		if (tmp > 0) {
 			count -= tmp;
 			if (count)
@@ -38,7 +40,10 @@ static inline int write_all(int fd, const void *buf, size_t count)
 	return 0;
 }
 
-static inline int fwrite_all(const void *ptr, size_t size,
+#define ul_write_all(fd, buf, count)		__write_all(NULL, (fd), (buf), (count))
+#define ul_vfs_write_all(vfs, fd, buf, count)	__write_all((vfs), (fd), (buf), (count))
+
+static inline int ul_fwrite_all(const void *ptr, size_t size,
 			     size_t nmemb, FILE *stream)
 {
 	while (nmemb) {
@@ -58,7 +63,8 @@ static inline int fwrite_all(const void *ptr, size_t size,
 	return 0;
 }
 
-static inline ssize_t read_all(int fd, char *buf, size_t count)
+static inline ssize_t __read_all(const struct ul_vfs_ops *vfs, int fd,
+				 char *buf, size_t count)
 {
 	ssize_t ret;
 	ssize_t c = 0;
@@ -66,7 +72,7 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 
 	memset(buf, 0, count);
 	while (count > 0) {
-		ret = read(fd, buf, count);
+		ret = ul_vfs_read(vfs, fd, buf, count);
 		if (ret < 0) {
 			if ((errno == EAGAIN || errno == EINTR) && (tries++ < 5)) {
 				xusleep(250000);
@@ -84,7 +90,10 @@ static inline ssize_t read_all(int fd, char *buf, size_t count)
 	return c;
 }
 
-static inline ssize_t read_all_alloc(int fd, char **buf)
+#define ul_read_all(fd, buf, count)		__read_all(NULL, (fd), (buf), (count))
+#define ul_vfs_read_all(vfs, fd, buf, count)	__read_all((vfs), (fd), (buf), (count))
+
+static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 {
 	size_t size = 1024, c = 0;
 	ssize_t ret;
@@ -94,7 +103,7 @@ static inline ssize_t read_all_alloc(int fd, char **buf)
 		return -1;
 
 	while (1) {
-		ret = read_all(fd, *buf + c, size - c);
+		ret = ul_read_all(fd, *buf + c, size - c);
 		if (ret < 0) {
 			free(*buf);
 			*buf = NULL;
@@ -114,7 +123,7 @@ static inline ssize_t read_all_alloc(int fd, char **buf)
 	}
 }
 
-static inline ssize_t sendfile_all(int out __attribute__((__unused__)),
+static inline ssize_t ul_sendfile_all(int out __attribute__((__unused__)),
 				   int in __attribute__((__unused__)),
 				   off_t *off __attribute__((__unused__)),
 				   size_t count __attribute__((__unused__)))

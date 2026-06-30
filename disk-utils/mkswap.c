@@ -492,7 +492,7 @@ static void wipe_device(struct mkswap_control *ctl)
 		if (lseek(ctl->fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
-		if (write_all(ctl->fd, buf, sizeof(buf)))
+		if (ul_write_all(ctl->fd, buf, sizeof(buf)))
 			errx(EXIT_FAILURE, _("unable to erase bootbits sectors"));
 #ifdef HAVE_LIBBLKID
 		/*
@@ -544,7 +544,7 @@ static void write_header_to_device(struct mkswap_control *ctl)
 	if (lseek(ctl->fd, offset, SEEK_SET) != offset)
 		errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
-	if (write_all(ctl->fd, (char *) ctl->signature_page + SIGNATURE_OFFSET,
+	if (ul_write_all(ctl->fd, (char *) ctl->signature_page + SIGNATURE_OFFSET,
 		      ctl->pagesize - SIGNATURE_OFFSET) == -1)
 		err(EXIT_FAILURE,
 			_("%s: unable to write signature page"),

@@ -643,7 +643,7 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 		return -errno;
 	}
 
-	if (read_all(fd, ptr, size) != size) {
+	if (ul_read_all(fd, ptr, size) != size) {
 		fdisk_warn(cxt, _("cannot read %s"), path);
 		close(fd);
 		return -errno;
@@ -720,7 +720,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 		rc = -errno;
 		goto done;
 	}
-	if (write_all(cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
+	if (ul_write_all(cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
 		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
@@ -839,7 +839,7 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1)
 		return -1;
-	if (read_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer)) < 0)
+	if (ul_read_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer)) < 0)
 		return errno ? -errno : -1;
 
 	/* The offset to begin of the disk label. Note that BSD uses
@@ -903,7 +903,7 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 		fdisk_warn(cxt, _("seek on %s failed"), cxt->dev_path);
 		return -errno;
 	}
-	if (write_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
+	if (ul_write_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
 		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		return -errno;
 	}

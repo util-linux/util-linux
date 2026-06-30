@@ -964,7 +964,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 	fd = mkstemp_cloexec(name);
 	if (fd < 0)
 		err(EXIT_FAILURE, "mkstemp() failed");
-	if (write_all(fd, data, size) != 0)
+	if (ul_write_all(fd, data, size) != 0)
 		err(EXIT_FAILURE, "write() failed");
 
 	process_wtmp_file(&ctl, name);

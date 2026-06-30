@@ -194,10 +194,65 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
 
 	pr->flags &= ~BLKID_FL_PRIVATE_FD;
 
+	if (parent->vfs) {
+		pr->vfs = ul_vfs_copy(parent->vfs);
+		if (!pr->vfs) {
+			blkid_free_probe(pr);
+			return NULL;
+		}
+	}
+
 	return pr;
 }
 
+/**
+ * blkid_probe_open_device:
+ * @pr: probe
+ * @filename: device or regular file
+ * @flags: open(2) flags or 0 for default (O_RDONLY|O_CLOEXEC|O_NONBLOCK)
+ *
+ * Opens the @filename and assigns it to the probe. This is equivalent to
+ * calling open() and blkid_probe_set_device(), but uses VFS operations
+ * if previously set by blkid_probe_set_vfs().
+ *
+ * This allows probe setup before the device is opened:
+ *
+ *   blkid_new_probe() → blkid_probe_set_vfs() → blkid_probe_open_device()
+ *
+ * The @filename is closed by blkid_free_probe() or by the
+ * blkid_probe_set_device() call.
+ *
+ * Since: 2.43
+ *
+ * Returns: 0 on success, or <0 in case of error.
+ */
+int blkid_probe_open_device(blkid_probe pr, const char *filename, int flags)
+{
+	int fd;
+	struct stat sb;
 
+	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
+	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL, pr->vfs)) {
+		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
+		errno = EINVAL;
+		return -EINVAL;
+	}
+
+	if (!flags)
+		flags = O_RDONLY | O_CLOEXEC | O_NONBLOCK;
+
+	fd = ul_vfs_open(pr->vfs, filename, flags, 0);
+	if (fd < 0)
+		return -errno;
+
+	if (blkid_probe_set_device(pr, fd, 0, 0)) {
+		ul_vfs_close(pr->vfs, fd);
+		return -errno ? -errno : -EINVAL;
+	}
+
+	pr->flags |= BLKID_FL_PRIVATE_FD;
+	return 0;
+}
 
 /**
  * blkid_new_probe_from_filename:
@@ -214,43 +269,18 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
  */
 blkid_probe blkid_new_probe_from_filename(const char *filename)
 {
-	int fd;
-	blkid_probe pr = NULL;
-	struct stat sb;
-
-	/*
-	 * Check for hidden device-mapper devices (LVM internals, etc.)
-	 * before open() to avoid bumping the kernel open count.  A racing
-	 * DM_DEVICE_REMOVE would otherwise see EBUSY.
-	 *
-	 * Use sysfs_devno_is_dm_hidden() rather than _dm_private() so that
-	 * Stratis devices remain accessible to tools like mkfs.xfs that
-	 * need to probe device geometry.
-	 */
-	if (stat(filename, &sb) == 0 && S_ISBLK(sb.st_mode) &&
-	    sysfs_devno_is_dm_hidden(sb.st_rdev, NULL)) {
-		DBG(LOWPROBE, ul_debug("ignore hidden device mapper device"));
-		errno = EINVAL;
-		return NULL;
-	}
-
-	fd = open(filename, O_RDONLY | O_CLOEXEC | O_NONBLOCK);
-	if (fd < 0)
-		return NULL;
+	blkid_probe pr;
 
 	pr = blkid_new_probe();
 	if (!pr)
-		goto err;
+		return NULL;
 
-	if (blkid_probe_set_device(pr, fd, 0, 0))
-		goto err;
+	if (blkid_probe_open_device(pr, filename, 0)) {
+		blkid_free_probe(pr);
+		return NULL;
+	}
 
-	pr->flags |= BLKID_FL_PRIVATE_FD;
 	return pr;
-err:
-	close(fd);
-	blkid_free_probe(pr);
-	return NULL;
 }
 
 /**
@@ -277,13 +307,14 @@ void blkid_free_probe(blkid_probe pr)
 	}
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
-		close(pr->fd);
+		ul_vfs_close(pr->vfs, pr->fd);
 	blkid_probe_reset_buffers(pr);
 	blkid_probe_reset_values(pr);
 	blkid_probe_reset_hints(pr);
 	blkid_free_probe(pr->disk_probe);
 
 	DBG(LOWPROBE, ul_debug("free probe"));
+	free(pr->vfs);
 	free(pr);
 }
 
@@ -578,7 +609,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	ssize_t ret;
 	struct blkid_bufinfo *bf = NULL;
 
-	if (lseek(pr->fd, real_off, SEEK_SET) == (off_t) -1) {
+	if (ul_vfs_lseek(pr->vfs, pr->fd, real_off, SEEK_SET) == (off_t) -1) {
 		errno = 0;
 		return NULL;
 	}
@@ -611,7 +642,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	DBG(LOWPROBE, ul_debug("\tread: off=%"PRIu64" len=%"PRIu64"",
 	                       real_off, len));
 
-	ret = read(pr->fd, bf->data, len);
+	ret = ul_vfs_read(pr->vfs, pr->fd, bf->data, len);
 	if (ret != (ssize_t) len) {
 		DBG(LOWPROBE, ul_debug("\tread failed: %m"));
 		remove_buffer(bf);
@@ -967,15 +998,15 @@ int blkdid_probe_is_opal_locked(blkid_probe pr)
 
 #ifdef CDROM_GET_CAPABILITY
 
-static int is_sector_readable(int fd, uint64_t sector)
+static int is_sector_readable(blkid_probe pr, uint64_t sector)
 {
 	char buf[512];
 	ssize_t sz;
 
-	if (lseek(fd, sector * 512, SEEK_SET) == (off_t) -1)
+	if (ul_vfs_lseek(pr->vfs, pr->fd, sector * 512, SEEK_SET) == (off_t) -1)
 		goto failed;
 
-	sz = read(fd, buf, sizeof(buf));
+	sz = ul_vfs_read(pr->vfs, pr->fd, buf, sizeof(buf));
 	if (sz != (ssize_t) sizeof(buf))
 		goto failed;
 
@@ -1002,7 +1033,7 @@ static void cdrom_size_correction(blkid_probe pr, uint64_t last_written)
 		nsectors = (last_written+1) << 2;
 
 	for (n = nsectors - 12; n < nsectors; n++) {
-		if (!is_sector_readable(pr->fd, n))
+		if (!is_sector_readable(pr, n))
 			goto failed;
 	}
 
@@ -1073,7 +1104,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	blkid_probe_reset_buffers(pr);
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
-		close(pr->fd);
+		ul_vfs_close(pr->vfs, pr->fd);
 
 	if (pr->disk_probe) {
 		blkid_free_probe(pr->disk_probe);
@@ -1182,7 +1213,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 #endif
 	if (S_ISBLK(sb.st_mode) &&
 	    !is_floppy &&
-	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid)) {
+	    sysfs_devno_is_dm_private(sb.st_rdev, &dm_uuid, pr->vfs)) {
 		DBG(LOWPROBE, ul_debug("ignore private device mapper device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
 	}
@@ -1614,7 +1645,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
-	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
+	if (ul_vfs_lseek(pr->vfs, fd, offset, SEEK_SET) == (off_t) -1)
 		return BLKID_PROBE_ERROR;
 
 	if (!dryrun && len) {
@@ -1622,9 +1653,9 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 			memset(buf, 0, len);
 
 			/* wipen on device */
-			if (write_all(fd, buf, len))
+			if (ul_vfs_write_all(pr->vfs, fd, buf, len))
 				return BLKID_PROBE_ERROR;
-			if (fsync(fd) != 0)
+			if (ul_vfs_fsync(pr->vfs, fd) != 0)
 				return BLKID_PROBE_ERROR;
 		} else {
 #ifdef HAVE_LINUX_BLKZONED_H
@@ -2241,6 +2272,45 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 int blkid_probe_set_sectorsize(blkid_probe pr, unsigned int sz)
 {
 	pr->blkssz = sz;
+	return 0;
+}
+
+/**
+ * blkid_probe_set_vfs:
+ * @pr: probe
+ * @ops: VFS operations or NULL to reset to defaults
+ *
+ * Sets custom I/O operations for the probe. This allows replacing
+ * standard read/write/lseek/etc. with custom implementations
+ * (e.g., fiber-aware I/O).
+ *
+ * The @ops struct is copied into a private allocation owned by the
+ * probe. The caller sets ops->size to sizeof(struct ul_vfs_ops) to
+ * enable forward/backward compatibility. NULL function pointers fall
+ * back to standard syscalls. Passing @ops as NULL frees the private
+ * copy and resets the probe to default (direct syscall) I/O.
+ *
+ * Note: blkid_new_probe_from_filename() opens the device before VFS
+ * can be set. VFS users should use blkid_new_probe(), then
+ * blkid_probe_set_vfs(), then blkid_probe_open_device().
+ *
+ * Since: 2.43
+ *
+ * Returns: 0 on success, or <0 in case of error.
+ */
+int blkid_probe_set_vfs(blkid_probe pr, const struct ul_vfs_ops *ops)
+{
+	if (!ops) {
+		free(pr->vfs);
+		pr->vfs = NULL;
+		return 0;
+	}
+	if (!pr->vfs) {
+		pr->vfs = calloc(1, sizeof(*pr->vfs));
+		if (!pr->vfs)
+			return -ENOMEM;
+	}
+	ul_vfs_init(pr->vfs, ops);
 	return 0;
 }
 
