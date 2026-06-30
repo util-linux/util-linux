@@ -56,6 +56,7 @@ static int probe_sysfs_tp(blkid_probe pr,
 	pc = ul_new_sysfs_path(dev, NULL, NULL);
 	if (!pc)
 		return 1;
+	ul_path_refer_vfs(pc, pr->vfs);
 
 	rc = 1;		/* nothing (default) */
 
