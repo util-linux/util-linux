@@ -5,6 +5,7 @@
 #ifndef UTIL_LINUX_VFS_H
 #define UTIL_LINUX_VFS_H
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -23,6 +24,8 @@ struct ul_vfs_ops {
 	int     (*vfs_close)(int fd);
 	off_t   (*vfs_lseek)(int fd, off_t offset, int whence);
 	int     (*vfs_fsync)(int fd);
+
+	FILE   *(*vfs_fopen)(const char *pathname, const char *mode);
 };
 
 #endif /* UL_VFS_OPS_DEFINED */
@@ -124,6 +127,97 @@ static inline int ul_mode_to_flags(const char *mode)
 	}
 
 	return flags;
+}
+
+#ifdef __GLIBC__
+
+struct ul_vfs_cookie {
+	const struct ul_vfs_ops *vfs;
+	int fd;
+};
+
+static ssize_t ul_vfs_cookie_read(void *cookie, char *buf, size_t count)
+{
+	struct ul_vfs_cookie *ck = (struct ul_vfs_cookie *) cookie;
+	return ul_vfs_read(ck->vfs, ck->fd, buf, count);
+}
+
+static ssize_t ul_vfs_cookie_write(void *cookie, const char *buf, size_t count)
+{
+	struct ul_vfs_cookie *ck = (struct ul_vfs_cookie *) cookie;
+	return ul_vfs_write(ck->vfs, ck->fd, buf, count);
+}
+
+static int ul_vfs_cookie_seek(void *cookie, off64_t *pos, int whence)
+{
+	struct ul_vfs_cookie *ck = (struct ul_vfs_cookie *) cookie;
+	off_t rc = ul_vfs_lseek(ck->vfs, ck->fd, (off_t) *pos, whence);
+
+	if (rc == (off_t) -1)
+		return -1;
+	*pos = (off64_t) rc;
+	return 0;
+}
+
+static int ul_vfs_cookie_close(void *cookie)
+{
+	struct ul_vfs_cookie *ck = (struct ul_vfs_cookie *) cookie;
+	int rc = ul_vfs_close(ck->vfs, ck->fd);
+
+	free(ck);
+	return rc;
+}
+
+static inline FILE *ul_vfs_fdopen(const struct ul_vfs_ops *vfs,
+				  int fd, const char *mode)
+{
+	struct ul_vfs_cookie *ck;
+	cookie_io_functions_t io_funcs = {
+		.read  = ul_vfs_cookie_read,
+		.write = ul_vfs_cookie_write,
+		.seek  = ul_vfs_cookie_seek,
+		.close = ul_vfs_cookie_close,
+	};
+
+	if (!vfs)
+		return fdopen(fd, mode);
+
+	ck = malloc(sizeof(*ck));
+	if (!ck)
+		return NULL;
+	ck->vfs = vfs;
+	ck->fd = fd;
+
+	return fopencookie(ck, mode, io_funcs);
+}
+
+#else /* !__GLIBC__ */
+
+static inline FILE *ul_vfs_fdopen(
+		const struct ul_vfs_ops *vfs __attribute__((__unused__)),
+		int fd, const char *mode)
+{
+	return fdopen(fd, mode);
+}
+
+#endif /* __GLIBC__ */
+
+static inline FILE *ul_vfs_fopen(const struct ul_vfs_ops *vfs,
+				 const char *path, const char *mode)
+{
+	if (vfs && vfs->vfs_fopen)
+		return vfs->vfs_fopen(path, mode);
+#ifdef __GLIBC__
+	if (vfs && vfs->vfs_open) {
+		int flags = ul_mode_to_flags(mode);
+		int fd = ul_vfs_open(vfs, path, flags, 0);
+
+		if (fd < 0)
+			return NULL;
+		return ul_vfs_fdopen(vfs, fd, mode);
+	}
+#endif
+	return fopen(path, mode);
 }
 
 #endif /* UTIL_LINUX_VFS_H */
