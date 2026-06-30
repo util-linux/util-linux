@@ -459,20 +459,14 @@ lib_cryptsetup = dependency(
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
 
-cryptsetup_dlopen = get_option('cryptsetup').allowed() and get_option('cryptsetup-dlopen').enabled()
-if cryptsetup_dlopen
+if get_option('cryptsetup').allowed()
   if meson.version().version_compare('>= 0.62.0')
     lib_dl = dependency('dl')
   else
     lib_dl = cc.find_library('dl')
   endif
-  conf.set('CRYPTSETUP_VIA_DLOPEN', 1)
   summary('cryptsetup support (dlopen)',
           'enabled',
-          section : 'components')
-else
-  summary('cryptsetup support',
-          lib_cryptsetup.found()  ? 'enabled' : 'disabled',
           section : 'components')
 endif
 

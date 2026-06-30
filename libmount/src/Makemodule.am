@@ -62,11 +62,7 @@ libmount_la_LIBADD = \
 	$(REALTIME_LIBS)
 
 if HAVE_CRYPTSETUP
-if CRYPTSETUP_VIA_DLOPEN
 libmount_la_LIBADD += -ldl
-else
-libmount_la_LIBADD += $(CRYPTSETUP_LIBS)
-endif
 endif
 
 if USE_LIBMOUNT_UDEV_SUPPORT
@@ -120,11 +116,7 @@ libmount_tests_ldadd += $(SELINUX_LIBS)
 endif
 
 if HAVE_CRYPTSETUP
-if CRYPTSETUP_VIA_DLOPEN
 libmount_tests_ldadd += -ldl
-else
-libmount_tests_ldadd += $(CRYPTSETUP_LIBS)
-endif
 endif
 
 test_mount_cache_SOURCES = libmount/src/cache.c
