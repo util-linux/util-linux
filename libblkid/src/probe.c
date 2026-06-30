@@ -2245,6 +2245,45 @@ int blkid_probe_set_sectorsize(blkid_probe pr, unsigned int sz)
 }
 
 /**
+ * blkid_probe_set_vfs:
+ * @pr: probe
+ * @ops: VFS operations or NULL to reset to defaults
+ *
+ * Sets custom I/O operations for the probe. This allows replacing
+ * standard read/write/lseek/etc. with custom implementations
+ * (e.g., fiber-aware I/O).
+ *
+ * The @ops struct is copied into a private allocation owned by the
+ * probe. The caller sets ops->size to sizeof(struct ul_vfs_ops) to
+ * enable forward/backward compatibility. NULL function pointers fall
+ * back to standard syscalls. Passing @ops as NULL frees the private
+ * copy and resets the probe to default (direct syscall) I/O.
+ *
+ * Note: blkid_new_probe_from_filename() opens the device before VFS
+ * can be set. VFS users should use blkid_new_probe(), then
+ * blkid_probe_set_vfs(), then blkid_probe_open_device().
+ *
+ * Since: 2.43
+ *
+ * Returns: 0 on success, or <0 in case of error.
+ */
+int blkid_probe_set_vfs(blkid_probe pr, const struct ul_vfs_ops *ops)
+{
+	if (!ops) {
+		free(pr->vfs);
+		pr->vfs = NULL;
+		return 0;
+	}
+	if (!pr->vfs) {
+		pr->vfs = calloc(1, sizeof(*pr->vfs));
+		if (!pr->vfs)
+			return -ENOMEM;
+	}
+	ul_vfs_init(pr->vfs, ops);
+	return 0;
+}
+
+/**
  * blkid_probe_get_sectors:
  * @pr: probe
  *

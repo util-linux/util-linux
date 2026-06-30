@@ -194,4 +194,5 @@ BLKID_2_40 {
 
 BLKID_2_43 {
     blkid_evaluate_tag2;
+    blkid_probe_set_vfs;
 } BLKID_2_40;
