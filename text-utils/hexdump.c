@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 {
 	struct list_head *p;
 	struct hexdump_fs *tfs;
-	int ret;
+	int ret, stdout_errno;
 
 	struct hexdump *hex = xcalloc(1, sizeof (struct hexdump));
 	hex->length = -1;
@@ -225,7 +225,21 @@ int main(int argc, char **argv)
 	display(hex);
 
 	ret = hex->exitval;
+	stdout_errno = hex->stdout_errno;
 	hex_free(hex);
+	if (stdout_errno) {
+		/*
+		 * The stream error flag does not preserve errno.  Report the
+		 * saved write error here and bypass close_stdout_atexit() to
+		 * avoid relying on unrelated errno values after cleanup.
+		 */
+		errno = stdout_errno;
+		if (stdout_errno != EPIPE)
+			warn(_("write error"));
+		if (flush_standard_stream(stderr) != 0)
+			_exit(EXIT_FAILURE);
+		_exit(ret);
+	}
 
 	return ret;
 }
