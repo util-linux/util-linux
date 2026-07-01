@@ -55,6 +55,12 @@ _setpriv_module()
 				{+,-}noroot_locked
 				{+,-}no_setuid_fixup
 				{+,-}no_setuid_fixup_locked
+				{+,-}no_cap_ambient_raise
+				{+,-}no_cap_ambient_raise_locked
+				{+,-}exec_restrict_file
+				{+,-}exec_restrict_file_locked
+				{+,-}exec_deny_interactive
+				{+,-}exec_deny_interactive_locked
 			"
 			for WORD in $SBITS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
