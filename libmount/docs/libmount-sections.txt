@@ -418,6 +418,7 @@ mnt_table_parse_fstab
 mnt_table_parse_mtab
 mnt_table_parse_stream
 mnt_table_parse_swaps
+mnt_table_parse_utab
 mnt_table_remove_fs
 mnt_table_set_cache
 mnt_table_set_intro_comment
