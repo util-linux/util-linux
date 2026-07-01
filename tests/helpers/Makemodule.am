@@ -70,6 +70,8 @@ check_PROGRAMS += test_threads_create
 test_threads_create_SOURCES = tests/helpers/test_threads_create.c
 test_threads_create_LDADD =  $(LDADD) libcommon.la $(PTHREAD_LIBS)
 
+if HAVE_SYS_PRCTL_H
 check_PROGRAMS += test_child_create
 test_child_create_SOURCES = tests/helpers/test_child_create.c
 test_child_create_LDADD = $(LDADD) libcommon.la
+endif
