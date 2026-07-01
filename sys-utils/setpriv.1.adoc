@@ -74,7 +74,7 @@ Setting a _uid_ or _gid_ does not change capabilities, although the exec call at
 *setpriv --reuid=1000 --regid=1000 --inh-caps=-all*
 
 *--securebits* (**+**|*-*)__securebit__...::
-Set or clear securebits. The argument is a comma-separated list. The valid securebits are _noroot_, _noroot_locked_, _no_setuid_fixup_, _no_setuid_fixup_locked_, and _keep_caps_locked_. _keep_caps_ is cleared by *execve*(2) and is therefore not allowed.
+Set or clear securebits. The argument is a comma-separated list. The valid securebits are _noroot_, _noroot_locked_, _no_setuid_fixup_, _no_setuid_fixup_locked_, _keep_caps_locked_, _no_cap_ambient_raise_, _no_cap_ambient_raise_locked_, _exec_restrict_file_, _exec_restrict_file_locked_, _exec_deny_interactive_, and _exec_deny_interactive_locked_. _keep_caps_ is cleared by *execve*(2) and is therefore not allowed.
 
 **--pdeathsig keep**|**clear**|*<signal>*::
 Keep, clear or set the parent death signal. Some LSMs, most notably SELinux and AppArmor, clear the signal when the process' credentials change. Using *--pdeathsig keep* will restore the parent death signal after changing credentials to remedy that situation.
