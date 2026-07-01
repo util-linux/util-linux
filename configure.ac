@@ -701,6 +701,7 @@ AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
 AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
+AM_CONDITIONAL([HAVE_SYS_PRCTL_H], [test "x$ac_cv_header_sys_prctl_h" = xyes])
 AM_CONDITIONAL([HAVE_LINUX_LANDLOCK_H], [test "x$ac_cv_header_linux_landlock_h" = xyes])
 
 have_setns_syscall="yes"
