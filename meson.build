@@ -1453,7 +1453,6 @@ exe2 = executable(
   dependencies : [curses_libs,
 		  lib_magic],
   build_by_default : opt and program_tests)
-exes += exe
 if opt and not is_disabler(exe)
   exes += [exe, exe2]
   manadocs += more_manadocs
@@ -3151,7 +3150,7 @@ exe2 = executable(
                lib_uuid],
   dependencies : thread_libs,
   build_by_default : opt and program_tests)
-if not is_disabler(exe)
+if opt and not is_disabler(exe)
   exes += [exe, exe2]
   manadocs += uuidd_manadocs
   bashcompletions += ['uuidd']
@@ -4078,7 +4077,9 @@ exe = executable(
   'tests/helpers/test_enosys.c',
   include_directories : includes,
   build_by_default: opt and program_tests)
-exes += exe
+if opt and not is_disabler(exe)
+  exes += exe
+endif
 
 exe = executable(
   'test_open_twice',
