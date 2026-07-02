@@ -54,6 +54,24 @@
 #ifndef PR_GET_NO_NEW_PRIVS
 # define PR_GET_NO_NEW_PRIVS 39
 #endif
+#ifndef SECBIT_NO_CAP_AMBIENT_RAISE
+# define SECBIT_NO_CAP_AMBIENT_RAISE (1 << 6)
+#endif
+#ifndef SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED
+# define SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED (1 << 7)
+#endif
+#ifndef SECBIT_EXEC_RESTRICT_FILE
+# define SECBIT_EXEC_RESTRICT_FILE (1 << 8)
+#endif
+#ifndef SECBIT_EXEC_RESTRICT_FILE_LOCKED
+# define SECBIT_EXEC_RESTRICT_FILE_LOCKED (1 << 9)
+#endif
+#ifndef SECBIT_EXEC_DENY_INTERACTIVE
+# define SECBIT_EXEC_DENY_INTERACTIVE (1 << 10)
+#endif
+#ifndef SECBIT_EXEC_DENY_INTERACTIVE_LOCKED
+# define SECBIT_EXEC_DENY_INTERACTIVE_LOCKED (1 << 11)
+#endif
 
 #define SETPRIV_EXIT_PRIVERR 127	/* how we exit when we fail to set privs */
 
@@ -246,6 +264,18 @@ static void dump_securebits(void)
 	bits &= ~SECBIT_KEEP_CAPS;
 	dump_one_secbit(&first, &bits, SECBIT_KEEP_CAPS_LOCKED,
 			"keep_caps_locked");
+	dump_one_secbit(&first, &bits, SECBIT_NO_CAP_AMBIENT_RAISE,
+			"no_cap_ambient_raise");
+	dump_one_secbit(&first, &bits, SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED,
+			"no_cap_ambient_raise_locked");
+	dump_one_secbit(&first, &bits, SECBIT_EXEC_RESTRICT_FILE,
+			"exec_restrict_file");
+	dump_one_secbit(&first, &bits, SECBIT_EXEC_RESTRICT_FILE_LOCKED,
+			"exec_restrict_file_locked");
+	dump_one_secbit(&first, &bits, SECBIT_EXEC_DENY_INTERACTIVE,
+			"exec_deny_interactive");
+	dump_one_secbit(&first, &bits, SECBIT_EXEC_DENY_INTERACTIVE_LOCKED,
+			"exec_deny_interactive_locked");
 	if (bits) {
 		if (first)
 			first = 0;
@@ -621,6 +651,18 @@ static void parse_securebits(struct privctx *opts, const char *arg)
 				     _("adjusting keep_caps does not make sense"));
 			else if (!strcmp(c + 1, "keep_caps_locked"))
 				bit = SECBIT_KEEP_CAPS_LOCKED;	/* sigh */
+			else if (!strcmp(c + 1, "no_cap_ambient_raise"))
+				bit = SECBIT_NO_CAP_AMBIENT_RAISE;
+			else if (!strcmp(c + 1, "no_cap_ambient_raise_locked"))
+				bit = SECBIT_NO_CAP_AMBIENT_RAISE_LOCKED;
+			else if (!strcmp(c + 1, "exec_restrict_file"))
+				bit = SECBIT_EXEC_RESTRICT_FILE;
+			else if (!strcmp(c + 1, "exec_restrict_file_locked"))
+				bit = SECBIT_EXEC_RESTRICT_FILE_LOCKED;
+			else if (!strcmp(c + 1, "exec_deny_interactive"))
+				bit = SECBIT_EXEC_DENY_INTERACTIVE;
+			else if (!strcmp(c + 1, "exec_deny_interactive_locked"))
+				bit = SECBIT_EXEC_DENY_INTERACTIVE_LOCKED;
 			else
 				errx(EXIT_FAILURE, _("unrecognized securebit"));
 
