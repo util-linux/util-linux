@@ -32,7 +32,7 @@ agetty - alternative Linux getty
 
 This program does not use the _/etc/gettydefs_ (System V) or _/etc/gettytab_ (SunOS 4) files.
 
-If the login program (by default _/bin/login_, or the program given with *--login-program*) is missing or not executable, then logging in is impossible. In that case *agetty* does not display the issue file or prompt for a login name. Instead it prints a short message ("This system does not permit logins." by default, configurable with *--nologin-message*) and waits for the user to press Enter. On Enter it re-checks whether the login program has become available, for example because an administrator installed it at runtime, and either continues with the normal prompt or shows the message again.
+If the login program (by default _/bin/login_, or the program given with *--login-program*) is missing or not executable, then logging in is impossible. In that case *agetty* does not display the issue file or prompt for a login name. Instead it prints a short message ("Login is currently unavailable. Press any key to check again." by default, configurable with *--nologin-message*) and waits for the user to press a key. It then re-checks whether the login program has become available, for example because an administrator installed it at runtime, and either continues with the normal prompt or shows the message again. This pre-check is skipped when *--chroot* is used, because the login program path is resolved after changing root.
 
 == ARGUMENTS
 
@@ -171,7 +171,7 @@ This option specifies additional characters that should be interpreted as a back
 This option specifies additional characters that should be interpreted as a kill ("ignore all previous characters") when the user types the login name. The default additional 'kill' has been '@', but since util-linux 2.23 no additional kill characters are enabled by default.
 
 *--nologin-message* _string_::
-Use _string_ as the message that is shown when the login program is missing or not executable, instead of the default "This system does not permit logins." See the *DESCRIPTION* above for details about this behavior.
+Use _string_ as the message that is shown when the login program is missing or not executable, instead of the default "Login is currently unavailable. Press any key to check again." See the *DESCRIPTION* above for details about this behavior.
 
 *--chdir* _directory_::
 Change directory before the login.

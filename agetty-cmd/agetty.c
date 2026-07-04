@@ -47,7 +47,7 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
 /* Default banner printed when the login program is not available. */
-#define DEFAULT_NOLOGIN_MESSAGE	N_("This system does not permit logins.")
+#define DEFAULT_NOLOGIN_MESSAGE	N_("Login is currently unavailable. Press any key to check again.")
 
 static int wait_for_term_input(struct agetty_issue *ie, int fd);
 static void wait_for_login_program(struct agetty_options *op);
@@ -556,7 +556,8 @@ int main(int argc, char **argv)
 	 * log in.  Show a banner and wait until it becomes available instead of
 	 * prompting for a username that can never be used.
 	 */
-	wait_for_login_program(&options);
+	if (!options.chroot)
+		wait_for_login_program(&options);
 
 	if (options.autolog) {
 		debug("doing auto login\n");
@@ -643,7 +644,7 @@ int main(int argc, char **argv)
  * On systems without a shell or /bin/login there is no point in showing the
  * issue file and prompting for a username, because the login program can never
  * be executed.  Instead of running into a confusing dead end, print a short
- * banner and wait for the user to press Enter, then re-check whether the login
+ * banner and wait for the user to press any key, then re-check whether the login
  * program has become available (for example because an administrator installed
  * it at runtime).  As soon as the login program is executable we return and the
  * normal prompt flow continues.
@@ -657,7 +658,7 @@ static void wait_for_login_program(struct agetty_options *op)
 		printf("%s\n", message);
 		fflush(stdout);
 
-		/* Wait for Enter, then re-check the login program. */
+		/* Wait for any key, then re-check the login program. */
 		if (getc(stdin) == EOF)
 			return;
 	}
