@@ -301,7 +301,13 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		uint64_t root_off = (uint64_t) root_lba * logical_block_size;
 		const unsigned char *rootdata;
 
-		if (root_len == 0)
+		/*
+		 * A valid root directory holds at least the 34-byte "."
+		 * record inspected below (offsets up to 33). A shorter extent
+		 * cannot be valid and would under-map the buffer, so the fixed
+		 * offset reads must not run before this check.
+		 */
+		if (root_len < 34)
 			return 1;
 
 		rootdata = blkid_probe_get_buffer(pr, root_off,
