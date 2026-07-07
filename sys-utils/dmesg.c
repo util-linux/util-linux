@@ -1419,6 +1419,9 @@ static ssize_t read_kmsg_one(struct dmesg_control *ctl)
 			    sizeof(ctl->kmsg_buf) - 1);
 	} while (size < 0 && errno == EPIPE);
 
+	if (size < 0 && errno == EAGAIN)
+		return 0;
+
 	return size;
 }
 
