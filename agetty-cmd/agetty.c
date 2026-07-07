@@ -46,7 +46,11 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
+/* Default banner printed when the login program is not available. */
+#define DEFAULT_NOLOGIN_MESSAGE	N_("Login is currently unavailable. Press any key to check again.")
+
 static int wait_for_term_input(struct agetty_issue *ie, int fd);
+static void wait_for_login_program(struct agetty_options *op);
 static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 static char *get_logname(struct agetty_issue *ie, struct agetty_options *op,
 			 struct termios *tp, struct chardata *cp);
@@ -157,6 +161,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --long-hostname        show full qualified hostname\n"), out);
 	fputs(_("     --erase-chars <string> additional backspace chars\n"), out);
 	fputs(_("     --kill-chars <string>  additional kill chars\n"), out);
+	fputs(_("     --nologin-message <msg> message shown when login program is missing\n"), out);
 	fputs(_("     --chdir <directory>    chdir before the login\n"), out);
 	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
 	fputs(_("     --nice <number>        run login with this priority\n"), out);
@@ -186,6 +191,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		RELOAD_OPTION,
 		LIST_SPEEDS_OPTION,
 		ISSUE_SHOW_OPTION,
+		NOLOGIN_MESSAGE_OPTION,
 	};
 	static const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 NULL,  '8'  },
@@ -224,6 +230,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		{  "help",	     no_argument,	 NULL,  HELP_OPTION     },
 		{  "erase-chars",    required_argument,  NULL,  ERASE_CHARS_OPTION },
 		{  "kill-chars",     required_argument,  NULL,  KILL_CHARS_OPTION },
+		{  "nologin-message", required_argument, NULL,  NOLOGIN_MESSAGE_OPTION },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -338,6 +345,9 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 			break;
 		case KILL_CHARS_OPTION:
 			op->killchars = optarg;
+			break;
+		case NOLOGIN_MESSAGE_OPTION:
+			op->nologin_message = optarg;
 			break;
 		case RELOAD_OPTION:
 			agetty_reload();
@@ -541,6 +551,14 @@ int main(int argc, char **argv)
 
 	INIT_CHARDATA(&chardata);
 
+	/*
+	 * If the login program is missing or not executable there is no way to
+	 * log in.  Show a banner and wait until it becomes available instead of
+	 * prompting for a username that can never be used.
+	 */
+	if (!options.chroot)
+		wait_for_login_program(&options);
+
 	if (options.autolog) {
 		debug("doing auto login\n");
 		options.username = options.autolog;
@@ -619,6 +637,32 @@ int main(int argc, char **argv)
 	agetty_log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
 
+
+/*
+ * Block until the login program is executable.
+ *
+ * On systems without a shell or /bin/login there is no point in showing the
+ * issue file and prompting for a username, because the login program can never
+ * be executed.  Instead of running into a confusing dead end, print a short
+ * banner and wait for the user to press any key, then re-check whether the login
+ * program has become available (for example because an administrator installed
+ * it at runtime).  As soon as the login program is executable we return and the
+ * normal prompt flow continues.
+ */
+static void wait_for_login_program(struct agetty_options *op)
+{
+	const char *message = op->nologin_message ?
+				op->nologin_message : _(DEFAULT_NOLOGIN_MESSAGE);
+
+	while (access(op->login, X_OK) != 0) {
+		printf("%s\n", message);
+		fflush(stdout);
+
+		/* Wait for any key, then re-check the login program. */
+		if (getc(stdin) == EOF)
+			return;
+	}
+}
 
 static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp)
 {
