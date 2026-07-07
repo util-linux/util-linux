@@ -400,7 +400,7 @@ static int handle_not_graphic(struct col_ctl *ctl, struct col_lines *lns)
 		if (lns->cur_col == 0)
 			return 1;	/* can't go back further */
 		if (lns->c) {
-			if ((size_t) lns->c->c_width <= lns->cur_col)
+			if (lns->c->c_width >= 0 && (size_t) lns->c->c_width <= lns->cur_col)
 				lns->cur_col -= lns->c->c_width;
 			else
 				lns->cur_col = 0;
