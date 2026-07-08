@@ -424,4 +424,5 @@ MOUNT_2_42 {
 
 MOUNT_2_43 {
 	mnt_table_disable_useropts;
+	mnt_table_parse_utab;
 } MOUNT_2_42;

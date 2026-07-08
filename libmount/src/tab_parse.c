@@ -1156,6 +1156,32 @@ int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename)
 }
 
 /**
+ * mnt_table_parse_utab:
+ * @tb: table
+ * @filename: overwrites default or NULL (recommended)
+ *
+ * This function parses the utab file and appends new lines to the @tb. The utab
+ * is a private libmount file that stores userspace mount options. The file
+ * location and format are library implementation details and subject to change;
+ * use NULL as @filename to let the library determine the correct path.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_parse_utab(struct libmnt_table *tb, const char *filename)
+{
+	if (!tb)
+		return -EINVAL;
+	if (!filename)
+		filename = mnt_get_utab_path();
+	if (!filename || is_file_empty(filename))
+		return 0;
+
+	tb->fmt = MNT_FMT_UTAB;
+
+	return mnt_table_parse_file(tb, filename);
+}
+
+/**
  * mnt_table_parse_fstab:
  * @tb: table
  * @filename: overwrites default (/etc/fstab or $LIBMOUNT_FSTAB) or NULL
