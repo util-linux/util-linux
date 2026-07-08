@@ -1166,6 +1166,8 @@ int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename)
  * use NULL as @filename to let the library determine the correct path.
  *
  * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.43
  */
 int mnt_table_parse_utab(struct libmnt_table *tb, const char *filename)
 {
