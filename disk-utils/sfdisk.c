@@ -1139,6 +1139,8 @@ static void assign_device_partition(struct sfdisk *sf,
 	if (partno > n)
 		errx(EXIT_FAILURE, _("%s: partition %zu: partition table contains "
 				     "only %zu partitions"), devname, partno, n);
+	if (partno == 0)
+		errx(EXIT_FAILURE, _("%s: partition number must be a positive number"), devname);
 	if (!fdisk_is_partition_used(sf->cxt, partno - 1))
 		errx(EXIT_FAILURE, _("%s: partition %zu: partition is unused"),
 				devname, partno);
