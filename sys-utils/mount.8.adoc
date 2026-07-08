@@ -820,8 +820,8 @@ Set _mountpoint_'s mode after mounting.
 
 *X-mount.idmap*=__id-type__:__id-mount__:__id-host__:__id-range__ [__id-type__:__id-mount__:__id-host__:__id-range__], *X-mount.idmap*=__file__::
 Use this option to create an idmapped mount.
-An idmapped mount allows to change ownership of all files located under a mount according to the ID-mapping associated with a user namespace.
-The ownership change is tied to the lifetime and localized to the relevant mount.
+An idmapped mount allows the ownership of all files located under a mount to be changed according to the ID-mapping associated with a user namespace.
+The ownership change is tied to the lifetime of, and localized to, the relevant mount.
 The relevant ID-mapping can be specified in two ways:
 +
 * A user can specify the ID-mapping directly.
@@ -836,13 +836,13 @@ It is possible to specify multiple ID-mappings.
 The individual ID mappings must be separated by spaces. Please note that in the __/etc/fstab__ file, spaces are interpreted as separators between fields. To avoid this, you must escape them using \040. For example, X-mount.idmap=0:0:1\040500:1000:1.
 +
 For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 5000:1000:2* creates an idmapped mount where
-UID 0 is mapped to UID 1000, GID 1 is mapped to GUID 1001, GID 2 is mapped to GID 1002, UID and GID 1000 are mapped to 5000, and UID and GID 1001 are mapped to 5001 in the mount.
+UID 0 is mapped to UID 1000, GID 1 is mapped to GID 1001, GID 2 is mapped to GID 1002, UID and GID 1000 are mapped to 5000, and UID and GID 1001 are mapped to 5001 in the mount.
 +
-When an ID-mapping is specified directly a new user namespace will be allocated with the requested ID-mapping.
+When an ID-mapping is specified directly, a new user namespace will be allocated with the requested ID-mapping.
 The newly created user namespace will be attached to the mount.
 * A user can specify a user namespace file.
 +
-The user namespace will then be attached to the mount and the ID-mapping of the user namespace will become the ID-mapping of the mount.
+The user namespace will then be attached to the mount, and the ID-mapping of the user namespace will become the ID-mapping of the mount.
 +
 For example, *X-mount.idmap=/proc/PID/ns/user* will attach the user namespace of the process PID to the mount.
 
