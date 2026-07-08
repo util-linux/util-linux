@@ -80,114 +80,6 @@ conf.set_quoted('ADJTIME_PATH', '/etc/adjtime') # yes, both are used :(
 conf.set_quoted('_PATH_VENDORDIR', vendordir)
 conf.set('USE_VENDORDIR', vendordir == '' ? false : 1)
 
-build_libblkid = get_option('build-libblkid').allowed()
-conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
-summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
-
-build_libuuid = not get_option('build-libuuid').disabled()
-conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
-summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
-
-lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
-build_liblastlog2 = get_option('build-liblastlog2') \
-                    .require(lib_sqlite3.found()) \
-                    .require(conf.get('HAVE_LASTLOG_H').to_string() == '1') \
-                    .allowed()
-conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
-summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
-
-login_lastlogin = get_option('login-lastlogin')
-conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
-summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
-
-login_stat_mail = get_option('login-stat-mail')
-conf.set('LOGIN_STAT_MAIL', login_stat_mail ? 1 : false)
-summary('login-stat-mail', login_stat_mail ? 'enabled' : 'disabled', section : 'components')
-
-have = cc.has_type('struct fanotify_event_info_header', prefix : '#include <linux/fanotify.h>')
-conf.set('HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER', have ? 1 : false)
-
-have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mount.h>')
-conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
-conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
-
-have_struct_statx = cc.has_type('struct statx', args : '-D_GNU_SOURCE', prefix : '#include <sys/stat.h>')
-conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
-have = cc.has_member('struct statx', 'stx_mnt_id',
-                     prefix : '#include <sys/stat.h>')
-conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
-
-
-have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>')
-have_listmount = cc.has_header_symbol('linux/mount.h', 'LSMT_ROOT')
-
-# kernel headers provides the syscall, but there is not SYS_xxx yet
-if have_statmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_statmount')
-  conf.set('SYS_statmount', '__NR_statmount')
-endif
-if have_listmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_listmount')
-  conf.set('SYS_listmount', '__NR_listmount')
-endif
-
-conf.set('HAVE_STATMOUNT_API', have_statmount and have_listmount ? 1 : false)
-
-
-have_sys_vfs_header = cc.has_header('sys/vfs.h')
-
-build_libmount = get_option('build-libmount').require(
-  get_option('build-libblkid').allowed() \
-  and have_sys_vfs_header \
-).allowed()
-
-conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
-conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
-conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
-summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
-
-build_libsmartcols = not get_option('build-libsmartcols').disabled()
-summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
-
-build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
-summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
-
-build_uuidd = not get_option('build-uuidd').disabled()
-conf.set('HAVE_UUIDD', build_uuidd ? 1 : false)
-summary('uuidd', build_uuidd ? 'enabled' : 'disabled', section : 'components')
-
-static_programs = get_option('static-programs')
-need_static_libs = static_programs.length() > 0 # a rough estimate...
-summary('static programs', static_programs)
-
-LINUX = host_machine.system() in ['linux']
-BSD = host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
-
-############################################################
-
-code = '''
-#include <wchar.h>
-#include <wctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-int main(void) {
-  wchar_t wc;
-  wint_t w;
-  w = fgetwc(stdin);
-  if (w == WEOF)
-    return 1;
-  wc = w;
-  fputwc(wc,stdout);
-  return 0;
-}
-'''
-have = cc.compiles(code, name : 'wchar_t support')
-if not have and get_option('widechar').enabled()
-  error('widechar support requested but unavailable')
-endif
-if get_option('ncurses').enabled() and get_option('widechar').enabled()
-  error('widechar support is incompatible with non-wide ncurses')
-endif
-conf.set('HAVE_WIDECHAR', have ? 1 : false)
-
 headers = '''
         byteswap.h
         crypt.h
@@ -335,6 +227,120 @@ foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
     break
   endif
 endforeach
+
+foreach header : headers
+  have = cc.has_header(header)
+  conf.set('HAVE_' + header.underscorify().to_upper(), have ? 1 : false)
+endforeach
+
+build_libblkid = get_option('build-libblkid').allowed()
+conf.set('HAVE_LIBBLKID', build_libblkid ? 1 : false)
+summary('libblkid', build_libblkid ? 'enabled' : 'disabled', section : 'components')
+
+build_libuuid = not get_option('build-libuuid').disabled()
+conf.set('HAVE_LIBUUID', build_libuuid ? 1 : false)
+summary('libuuid', build_libuuid ? 'enabled' : 'disabled', section : 'components')
+
+lib_sqlite3 = dependency('sqlite3', required : get_option('build-liblastlog2'))
+build_liblastlog2 = get_option('build-liblastlog2') \
+                    .require(lib_sqlite3.found()) \
+                    .require(conf.get('HAVE_LASTLOG_H').to_string() == '1') \
+                    .allowed()
+conf.set('HAVE_LIBLASTLOG2', build_liblastlog2 ? 1 : false)
+summary('liblastlog2', build_liblastlog2 ? 'enabled' : 'disabled', section : 'components')
+
+login_lastlogin = get_option('login-lastlogin')
+conf.set('USE_LOGIN_LASTLOG', login_lastlogin ? 1 : false)
+summary('login-lastlogin', login_lastlogin ? 'enabled' : 'disabled', section : 'components')
+
+login_stat_mail = get_option('login-stat-mail')
+conf.set('LOGIN_STAT_MAIL', login_stat_mail ? 1 : false)
+summary('login-stat-mail', login_stat_mail ? 'enabled' : 'disabled', section : 'components')
+
+have = cc.has_type('struct fanotify_event_info_header', prefix : '#include <linux/fanotify.h>')
+conf.set('HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER', have ? 1 : false)
+
+have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mount.h>')
+conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
+conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
+
+have_struct_statx = cc.has_type('struct statx', args : '-D_GNU_SOURCE', prefix : '#include <sys/stat.h>')
+conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
+have = cc.has_member('struct statx', 'stx_mnt_id',
+                     prefix : '#include <sys/stat.h>')
+conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
+
+
+have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>')
+have_listmount = cc.has_header_symbol('linux/mount.h', 'LSMT_ROOT')
+
+# kernel headers provides the syscall, but there is not SYS_xxx yet
+if have_statmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_statmount')
+  conf.set('SYS_statmount', '__NR_statmount')
+endif
+if have_listmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_listmount')
+  conf.set('SYS_listmount', '__NR_listmount')
+endif
+
+conf.set('HAVE_STATMOUNT_API', have_statmount and have_listmount ? 1 : false)
+
+
+have_sys_vfs_header = cc.has_header('sys/vfs.h')
+
+build_libmount = get_option('build-libmount').require(
+  get_option('build-libblkid').allowed() \
+  and have_sys_vfs_header \
+).allowed()
+
+conf.set('HAVE_LIBMOUNT', build_libmount ? 1 : false)
+conf.set('USE_LIBMOUNT_SUPPORT_NAMESPACES', 1)
+conf.set('USE_LIBMOUNT_MOUNTFD_SUPPORT', have_mountfd_api ? 1 : false)
+summary('libmount', build_libmount ? 'enabled' : 'disabled', section : 'components')
+
+build_libsmartcols = not get_option('build-libsmartcols').disabled()
+summary('libsmartcols', build_libsmartcols ? 'enabled' : 'disabled', section : 'components')
+
+build_libfdisk = not get_option('build-libfdisk').require(get_option('build-libblkid').allowed()).disabled()
+summary('libfdisk', build_libfdisk ? 'enabled' : 'disabled', section : 'components')
+
+build_uuidd = not get_option('build-uuidd').disabled()
+conf.set('HAVE_UUIDD', build_uuidd ? 1 : false)
+summary('uuidd', build_uuidd ? 'enabled' : 'disabled', section : 'components')
+
+static_programs = get_option('static-programs')
+need_static_libs = static_programs.length() > 0 # a rough estimate...
+summary('static programs', static_programs)
+
+LINUX = host_machine.system() in ['linux']
+BSD = host_machine.system() in ['dragonfly', 'freebsd', 'netbsd', 'openbsd']
+
+############################################################
+
+code = '''
+#include <wchar.h>
+#include <wctype.h>
+#include <stdio.h>
+#include <stdlib.h>
+int main(void) {
+  wchar_t wc;
+  wint_t w;
+  w = fgetwc(stdin);
+  if (w == WEOF)
+    return 1;
+  wc = w;
+  fputwc(wc,stdout);
+  return 0;
+}
+'''
+have = cc.compiles(code, name : 'wchar_t support')
+if not have and get_option('widechar').enabled()
+  error('widechar support requested but unavailable')
+endif
+if get_option('ncurses').enabled() and get_option('widechar').enabled()
+  error('widechar support is incompatible with non-wide ncurses')
+endif
+conf.set('HAVE_WIDECHAR', have ? 1 : false)
+
 
 lib_z = dependency(
   'zlib',
@@ -511,12 +517,6 @@ lib_audit = dependency(
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
 conf.set('HAVE_SMACK', not get_option('smack').disabled())
-
-
-foreach header : headers
-  have = cc.has_header(header)
-  conf.set('HAVE_' + header.underscorify().to_upper(), have ? 1 : false)
-endforeach
 
 header = 'linux/btrfs.h'
 enable_btrfs = cc.has_header(header,
