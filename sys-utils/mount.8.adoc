@@ -190,6 +190,10 @@ The *user* mount option is accepted if no username is specified. If used in the 
 
 WARNING: When using the legacy *mount*(2) syscall (on older kernels without the new mount API), the mount target path is resolved by the kernel at syscall time. This means there is an inherent time-of-check-to-time-of-use (TOCTOU) window between the permission verification and the actual mount operation. If an ancestor directory of the mount target is writable by the unprivileged user, a path component could be swapped to redirect the mount to an unintended location. The new mount API (available since Linux 5.2) eliminates this issue by using file-descriptor-based target resolution. Administrators should ensure that mount target paths for *user* mounts do not traverse directories writable by unprivileged users.
 
+For mount source paths, *mount*(8) only canonicalizes (resolves symlinks) paths starting with _/dev/_ for unprivileged users and verifies the result stays within _/dev/_. Source paths outside _/dev/_ (e.g. disk images in user-writable directories) are kept as-is from _fstab_.
+
+Filesystem type auto-detection for unprivileged users relies exclusively on *udev* metadata rather than direct device probing; this means file images that are not registered with udev require an explicit filesystem type in _fstab_.
+
 === Bind mount operation
 
 Remount part of the file hierarchy somewhere else. The call is:
@@ -470,10 +474,12 @@ The argument following the *-t* is used to indicate the filesystem type. The fil
 +
 The programs *mount* and *umount*(8) support filesystem subtypes. The subtype is defined by a '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to use subtype notation rather than add any prefix to the mount source (for example 'sshfs#example.com' is deprecated).
 +
-If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. *mount* uses the *libblkid*(3) library for guessing the filesystem type; if that does not turn up anything that looks familiar, *mount* will try to read the file _/etc/filesystems_, or, if that does not exist, _/proc/filesystems_. All of the filesystem types listed there will be tried, except for those that are labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_). If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*.
+If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. The filesystem type is determined using *udev* metadata first, then by direct device probing via *libblkid*(3) for root users. If neither method identifies the type, *mount* will fall back to trying all types listed in _/etc/filesystems_, or if that file does not exist, _/proc/filesystems_. Types labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_) are skipped. If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*.
 //TRANSLATORS: Keep {asterisk} untranslated.
 +
-The *auto* type may be useful for user-mounted floppies. Creating a file _/etc/filesystems_ can be useful to change the probe order (e.g., to try vfat before msdos or ext3 before ext2) or if you use a kernel module autoloader.
+For unprivileged (non-root) users, direct device probing via *libblkid*(3) is disabled and filesystem type detection relies exclusively on *udev* metadata. This means file images that are not registered with *udev* require an explicit filesystem type in _fstab_.
++
+Creating a file _/etc/filesystems_ can be useful to change the probe order (e.g., to try vfat before msdos or ext3 before ext2) or if you use a kernel module autoloader.
 +
 More than one type may be specified in a comma-separated list, for the *-t* option as well as in an _/etc/fstab_ entry. The list of filesystem types for the *-t* option can be prefixed with *no* to specify the filesystem types on which no action should be taken. The prefix *no* has no effect when specified in an _/etc/fstab_ entry.
 +
@@ -796,7 +802,7 @@ Allows disabling of canonicalization for mount source and target paths. By defau
 +
 The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify *open_tree*(2) syscall flags and does not allow the bind-mount over a symbolic link use case.
 +
-Note that *mount*(8) ignores this option for unprivileged (non-root) users. Paths are always canonicalized in restricted mode to ensure safe target resolution.
+Note that *mount*(8) ignores this option for unprivileged (non-root) users. Target paths are always canonicalized in restricted mode to ensure safe resolution. Source paths are only canonicalized when starting with _/dev/_.
 
 *X-mount.noloop*::
 Do not create and mount a loop device, even if the source of the mount is a regular file.
