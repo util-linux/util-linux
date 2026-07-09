@@ -2033,7 +2033,11 @@ AS_IF([test "x$build_enosys" = xyes], [
 ])
 AM_CONDITIONAL([BUILD_ENOSYS], [test "x$build_enosys" = xyes])
 
-UL_BUILD_INIT([lsclocks], [check])
+AC_ARG_ENABLE([lsclocks],
+  AS_HELP_STRING([--disable-lsclocks], [do not build lsclocks]),
+  [], [UL_DEFAULT_ENABLE([lsclocks], [check])]
+)
+UL_BUILD_INIT([lsclocks])
 UL_REQUIRES_LINUX([lsclocks])
 UL_REQUIRES_BUILD([lsclocks], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSCLOCKS], [test "x$build_lsclocks" = xyes])
