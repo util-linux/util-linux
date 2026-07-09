@@ -75,7 +75,7 @@ void *get_mem_chunk(size_t base, size_t len, const char *devmem)
 		goto nothing;
 	if (lseek(fd, base, SEEK_SET) == -1)
 		goto nothing;
-	if (read_all(fd, p, len) == -1)
+	if (ul_read_all(fd, p, len) == -1)
 		goto nothing;
 
 	close(fd);

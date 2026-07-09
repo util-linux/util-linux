@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 	if (introparm && *introparm)
 	{
 		dbg("intro command is '%s'", introparm);
-		if (write_all(tty_fd, introparm, strlen(introparm)) != 0)
+		if (ul_write_all(tty_fd, introparm, strlen(introparm)) != 0)
 			err(EXIT_FAILURE,
 			    _("cannot write intro command to %s"), dev);
 

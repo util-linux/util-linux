@@ -1026,7 +1026,7 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		return -errno;
-	if (write_all(cxt->dev_fd, sunlabel, sz) != 0)
+	if (ul_write_all(cxt->dev_fd, sunlabel, sz) != 0)
 		return -errno;
 
 	return 0;

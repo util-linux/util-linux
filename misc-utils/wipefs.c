@@ -367,20 +367,10 @@ new_probe(const char *devname, int mode)
 	if (!devname)
 		return NULL;
 
-	if (mode) {
-		int fd = open(devname, mode | O_NONBLOCK);
-		if (fd < 0)
-			goto error;
-
-		pr = blkid_new_probe();
-		if (!pr || blkid_probe_set_device(pr, fd, 0, 0) != 0) {
-			close(fd);
-			goto error;
-		}
-	} else
-		pr = blkid_new_probe_from_filename(devname);
-
+	pr = blkid_new_probe();
 	if (!pr)
+		goto error;
+	if (blkid_probe_open_device(pr, devname, mode ? mode | O_NONBLOCK : 0))
 		goto error;
 
 	blkid_probe_enable_superblocks(pr, 1);
@@ -478,7 +468,7 @@ static void do_backup(struct wipe_desc *wp, const char *base)
 	fd = open(fname, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
 		goto err;
-	if (write_all(fd, wp->magic, wp->len) != 0)
+	if (ul_write_all(fd, wp->magic, wp->len) != 0)
 		goto err;
 	close(fd);
 	free(fname);

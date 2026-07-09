@@ -54,7 +54,7 @@
 static int verify_tag(const char *devname, const char *name, const char *value)
 {
 	blkid_probe pr;
-	int fd = -1, rc = -1;
+	int rc = -1;
 	size_t len;
 	const char *data;
 	int errsv = 0;
@@ -73,13 +73,10 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	blkid_probe_enable_partitions(pr, TRUE);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
 
-	fd = open(devname, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
-	if (fd < 0) {
+	if (blkid_probe_open_device(pr, devname, 0)) {
 		errsv = errno;
 		goto done;
 	}
-	if (blkid_probe_set_device(pr, fd, 0, 0))
-		goto done;
 	rc = blkid_do_safeprobe(pr);
 	if (rc)
 		goto done;
@@ -89,8 +86,6 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 done:
 	DBG(EVALUATE, ul_debug("%s: %s verification %s",
 			devname, name, rc == 0 ? "PASS" : "FAILED"));
-	if (fd >= 0)
-		close(fd);
 	blkid_free_probe(pr);
 
 	/* for non-root users we use unverified udev links */

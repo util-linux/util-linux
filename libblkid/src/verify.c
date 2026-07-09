@@ -64,7 +64,6 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	const char *type, *value;
 	struct stat st;
 	time_t diff, now;
-	int fd;
 
 	if (!dev || !cache)
 		return NULL;
@@ -76,15 +75,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		DBG(PROBE, ul_debug("blkid_verify: error %m (%d) while "
 			   "trying to stat %s", errno,
 			   dev->bid_name));
-	open_err:
-		if ((errno == EPERM) || (errno == EACCES) || (errno == ENOENT)) {
-			/* We don't have read permission, just return cache data. */
-			DBG(PROBE, ul_debug("returning unverified data for %s",
-						dev->bid_name));
-			return dev;
-		}
-		blkid_free_dev(dev);
-		return NULL;
+		goto dev_err;
 	}
 
 	if (now >= dev->bid_time &&
@@ -114,31 +105,19 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		   (long long)diff));
 #endif
 
-	if (sysfs_devno_is_dm_private(st.st_rdev, NULL)) {
-		blkid_free_dev(dev);
-		return NULL;
-	}
+	if (sysfs_devno_is_dm_private(st.st_rdev, NULL, NULL))
+		goto dev_free;
 	if (!cache->probe) {
 		cache->probe = blkid_new_probe();
-		if (!cache->probe) {
-			blkid_free_dev(dev);
-			return NULL;
-		}
+		if (!cache->probe)
+			goto dev_free;
 	}
 
-	fd = open(dev->bid_name, O_RDONLY|O_CLOEXEC|O_NONBLOCK);
-	if (fd < 0) {
+	if (blkid_probe_open_device(cache->probe, dev->bid_name, 0)) {
 		DBG(PROBE, ul_debug("blkid_verify: error %m (%d) while "
 					"opening %s", errno,
 					dev->bid_name));
-		goto open_err;
-	}
-
-	if (blkid_probe_set_device(cache->probe, fd, 0, 0)) {
-		/* failed to read the device */
-		close(fd);
-		blkid_free_dev(dev);
-		return NULL;
+		goto dev_err;
 	}
 
 	/* remove old cache info */
@@ -187,9 +166,18 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	/* reset prober */
 	blkid_probe_reset_superblocks_filter(cache->probe);
 	blkid_probe_set_device(cache->probe, -1, 0, 0);
-	close(fd);
 
 	return dev;
+
+dev_err:
+	if ((errno == EPERM) || (errno == EACCES) || (errno == ENOENT)) {
+		DBG(PROBE, ul_debug("returning unverified data for %s",
+					dev->bid_name));
+		return dev;
+	}
+dev_free:
+	blkid_free_dev(dev);
+	return NULL;
 }
 
 #ifdef TEST_PROGRAM

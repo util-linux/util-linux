@@ -32,6 +32,7 @@
 #include "blkdev.h"
 
 #include "debug.h"
+#include "vfs.h"
 #include "blkid.h"
 #include "list.h"
 #include "encode.h"
@@ -232,6 +233,8 @@ struct blkid_struct_probe
 
 	struct blkid_struct_probe *parent;	/* for clones */
 	struct blkid_struct_probe *disk_probe;	/* whole-disk probing */
+
+	struct ul_vfs_ops	*vfs;		/* pluggable I/O ops (owned, or NULL) */
 };
 
 /* private flags library flags */

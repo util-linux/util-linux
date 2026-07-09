@@ -93,10 +93,14 @@ int sysfs_blkdev_get_wholedisk( struct path_cxt *pc,
                                 size_t len,
                                 dev_t *diskdevno);
 
+struct ul_vfs_ops;
+
 int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
                              size_t len, dev_t *diskdevno);
-int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid);
-int sysfs_devno_is_dm_private(dev_t devno, char **uuid);
+int sysfs_devno_is_dm_hidden(dev_t devno, char **uuid,
+                             const struct ul_vfs_ops *vfs);
+int sysfs_devno_is_dm_private(dev_t devno, char **uuid,
+                              const struct ul_vfs_ops *vfs);
 int sysfs_devno_is_wholedisk(dev_t devno);
 
 dev_t sysfs_devname_to_devno(const char *name);

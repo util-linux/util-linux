@@ -100,7 +100,7 @@ static int write_id_mapping(idmap_type_t map_type, pid_t pid, const char *buf,
 			goto err;
 
 		if (setgroups_fd >= 0) {
-			rc = write_all(setgroups_fd, "deny\n", strlen("deny\n"));
+			rc = ul_write_all(setgroups_fd, "deny\n", strlen("deny\n"));
 			if (rc)
 				goto err;
 		}
@@ -113,7 +113,7 @@ static int write_id_mapping(idmap_type_t map_type, pid_t pid, const char *buf,
 	if (fd < 0)
 		goto err;
 
-	rc = write_all(fd, buf, buf_size);
+	rc = ul_write_all(fd, buf, buf_size);
 
 err:
 	if (fd >= 0)
@@ -213,12 +213,12 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 			_exit(EXIT_FAILURE);
 
 		/* Let parent know we're ready to have the idmapping written. */
-		rc = write_all(sock_fds[0], &c, 1);
+		rc = ul_write_all(sock_fds[0], &c, 1);
 		if (rc)
 			_exit(EXIT_FAILURE);
 
 		/* Hang around until the parent has persisted our namespace. */
-		rc = read_all(sock_fds[0], &c, 1);
+		rc = ul_read_all(sock_fds[0], &c, 1);
 		if (rc != 1)
 			_exit(EXIT_FAILURE);
 
@@ -230,7 +230,7 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 	sock_fds[0] = -1;
 
 	/* Wait for child to set up a new namespace. */
-	rc = read_all(sock_fds[1], &c, 1);
+	rc = ul_read_all(sock_fds[1], &c, 1);
 	if (rc != 1) {
 		kill(pid, SIGKILL);
 		goto err_wait;
@@ -246,7 +246,7 @@ static int get_userns_fd_from_idmap(struct list_head *idmap)
 	fd_userns = open(path, O_RDONLY | O_CLOEXEC | O_NOCTTY);
 
 	/* Let child know we've persisted its namespace. */
-	(void)write_all(sock_fds[1], &c, 1);
+	(void)ul_write_all(sock_fds[1], &c, 1);
 
 err_wait:
 	rc = wait_for_pid(pid);

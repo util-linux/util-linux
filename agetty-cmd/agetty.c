@@ -513,7 +513,7 @@ int main(int argc, char **argv)
 	if (options.flags & F_INITSTRING &&
 	    options.initstring && *options.initstring != '\0') {
 		debug("writing init string\n");
-		write_all(STDOUT_FILENO, options.initstring,
+		ul_write_all(STDOUT_FILENO, options.initstring,
 			   strlen(options.initstring));
 	}
 
@@ -601,7 +601,7 @@ int main(int argc, char **argv)
 		agetty_reset_vc(&options, &termios, 1);
 
 	/* Now the newline character should be properly written. */
-	write_all(STDOUT_FILENO, "\r\n", 2);
+	ul_write_all(STDOUT_FILENO, "\r\n", 2);
 
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
@@ -745,8 +745,8 @@ again:
 					cn = res->ai_canonname;
 			}
 
-			write_all(STDOUT_FILENO, cn, strlen(cn));
-			write_all(STDOUT_FILENO, " ", 1);
+			ul_write_all(STDOUT_FILENO, cn, strlen(cn));
+			ul_write_all(STDOUT_FILENO, " ", 1);
 
 			if (res)
 				freeaddrinfo(res);
@@ -755,7 +755,7 @@ again:
 	}
 	if (!op->autolog) {
 		/* Always show login prompt. */
-		write_all(STDOUT_FILENO, LOGIN_PROMPT,
+		ul_write_all(STDOUT_FILENO, LOGIN_PROMPT,
 				sizeof(LOGIN_PROMPT) - 1);
 	}
 }
@@ -924,7 +924,7 @@ static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, str
 						/* Ideally it should be "\xe2\x90\x9b"
 						 * if (op->flags & (F_UTF8)),
 						 * but only some fonts contain it */
-						write_all(1, "^[", 2);
+						ul_write_all(1, "^[", 2);
 						*visual_bp = 2;		/* ESC shows as ^[ (2 chars) */
 					} else if (ascval == '\t') {
 						/* Tab expands to spaces */
@@ -932,10 +932,10 @@ static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, str
 						int spaces = 8 - (pos % 8);
 						int i;
 						for (i = 0; i < spaces; i++)
-							write_all(1, " ", 1);
+							ul_write_all(1, " ", 1);
 						*visual_bp = spaces;
 					} else {
-						write_all(1, &c, 1);	/* echo the character */
+						ul_write_all(1, &c, 1);	/* echo the character */
 						*visual_bp = 1;		/* normal char shows as 1 */
 					}
 				} else {

@@ -196,21 +196,21 @@ static void write_tables(const struct fs_control *ctl)
 	if (lseek(ctl->device_fd, 0, SEEK_SET))
 		err(MKFS_EX_ERROR, _("%s: seek to boot block failed "
 				   "in write_tables"), ctl->device_name);
-	if (write_all(ctl->device_fd, boot_block_buffer, 512))
+	if (ul_write_all(ctl->device_fd, boot_block_buffer, 512))
 		err(MKFS_EX_ERROR, _("%s: unable to clear boot sector"), ctl->device_name);
 	if (MINIX_BLOCK_SIZE != lseek(ctl->device_fd, MINIX_BLOCK_SIZE, SEEK_SET))
 		err(MKFS_EX_ERROR, _("%s: seek failed in write_tables"), ctl->device_name);
 
-	if (write_all(ctl->device_fd, super_block_buffer, MINIX_BLOCK_SIZE))
+	if (ul_write_all(ctl->device_fd, super_block_buffer, MINIX_BLOCK_SIZE))
 		err(MKFS_EX_ERROR, _("%s: unable to write super-block"), ctl->device_name);
 
-	if (write_all(ctl->device_fd, inode_map, imaps * MINIX_BLOCK_SIZE))
+	if (ul_write_all(ctl->device_fd, inode_map, imaps * MINIX_BLOCK_SIZE))
 		err(MKFS_EX_ERROR, _("%s: unable to write inode map"), ctl->device_name);
 
-	if (write_all(ctl->device_fd, zone_map, zmaps * MINIX_BLOCK_SIZE))
+	if (ul_write_all(ctl->device_fd, zone_map, zmaps * MINIX_BLOCK_SIZE))
 		err(MKFS_EX_ERROR, _("%s: unable to write zone map"), ctl->device_name);
 
-	if (write_all(ctl->device_fd, inode_buffer, buffsz))
+	if (ul_write_all(ctl->device_fd, inode_buffer, buffsz))
 		err(MKFS_EX_ERROR, _("%s: unable to write inodes"), ctl->device_name);
 }
 
@@ -219,7 +219,7 @@ static void write_block(const struct fs_control *ctl, int blk, char * buffer)
 	if (blk * MINIX_BLOCK_SIZE != lseek(ctl->device_fd, blk * MINIX_BLOCK_SIZE, SEEK_SET))
 		errx(MKFS_EX_ERROR, _("%s: seek failed in write_block"), ctl->device_name);
 
-	if (write_all(ctl->device_fd, buffer, MINIX_BLOCK_SIZE))
+	if (ul_write_all(ctl->device_fd, buffer, MINIX_BLOCK_SIZE))
 		errx(MKFS_EX_ERROR, _("%s: write failed in write_block"), ctl->device_name);
 }
 

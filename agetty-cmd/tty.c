@@ -168,7 +168,7 @@ void agetty_termio_clear(int fd)
 	 * erase everything below the cursor (ESC [ J), and set the
 	 * scrolling region to the full window (ESC [ r)
 	 */
-	write_all(fd, "\033[r\033[H\033[J", 9);
+	ul_write_all(fd, "\033[r\033[H\033[J", 9);
 }
 
 void agetty_reset_vc(const struct agetty_options *op, struct termios *tp, int canon)
@@ -685,5 +685,5 @@ void agetty_erase_char(int visual_count, struct chardata *cp)
 	};
 	int i;
 	for (i = 0; i < visual_count; i++)
-		write_all(1, erase[cp->parity], 3);
+		ul_write_all(1, erase[cp->parity], 3);
 }

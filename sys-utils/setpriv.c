@@ -742,7 +742,7 @@ static void do_seccomp_filter(const char *file)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot open %s"), file);
 
-	s = read_all_alloc(fd, &filter);
+	s = ul_read_all_alloc(fd, &filter);
 	if (s < 0)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot read %s"), file);

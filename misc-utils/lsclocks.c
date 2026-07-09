@@ -283,7 +283,7 @@ static int64_t get_namespace_offset(const char *name)
 	if (fd == -1)
 		err(EXIT_FAILURE, _("Could not open %s"), _PATH_PROC_TIMENS_OFF);
 
-	read_all_alloc(fd, &buf);
+	ul_read_all_alloc(fd, &buf);
 
 	for (tokstr = buf; ; tokstr = NULL) {
 		line = strtok_r(tokstr, "\n", &saveptr);
