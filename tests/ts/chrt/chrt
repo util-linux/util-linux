@@ -24,16 +24,40 @@ ts_skip_nonroot
 ts_skip_docker
 ts_skip_qemu_user
 
+CHRT_MAX=$($TS_CMD_CHRT --max) || ts_failed "failed to obtain scheduling policies"
+
 function do_chrt {
-	$TS_CMD_CHRT "$@" $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	local filter='s/.* policy: //; s/.* priority: //'
+	# kernel >= 6.12 reports a platform-dependent default runtime parameter
+	# even without --sched-runtime; filter it out unless explicitly set
+	case "$*" in
+		*--sched-runtime*) ;;
+		*) filter="$filter; /runtime parameter/d" ;;
+	esac
+	$TS_CMD_CHRT "$@" $TS_CMD_CHRT --pid 0 | sed "$filter" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 }
 
+# skip_policy <POLICY_NAME> [chrt-option priority]
 function skip_policy {
-	$TS_CMD_CHRT --max | grep $1 | grep 'priority' &> /dev/null
-	if [ $? == 1 ]; then
+	local name=$1; shift
+
+	if ! echo "$CHRT_MAX" | grep -q "$name.*priority"; then
 		ts_skip "unsupported"
 		ts_finalize_subtest
 		return 1
+	fi
+
+	# runtime probe -- verify the kernel actually supports the policy;
+	# last arg is the priority, everything before is the chrt option(s)
+	if [ $# -gt 0 ]; then
+		local probe_args=("$@")
+		local priority="${probe_args[$#-1]}"
+		unset 'probe_args[$#-1]'
+		if ! $TS_CMD_CHRT "${probe_args[@]}" --pid "$priority" 0 >/dev/null 2>&1; then
+			ts_skip "unsupported by kernel"
+			ts_finalize_subtest
+			return 1
+		fi
 	fi
 	return 0
 }
@@ -44,18 +68,6 @@ function skip_kernel_lt {
 		ts_finalize_subtest
 		return 1
 	fi
-
-	return 0
-}
-
-function skip_kernel_ge {
-	ts_kernel_ver_lt $1 $2 $3
-	if [ $? == 1 ]; then
-		ts_skip "kernel version must be < $1.$2.$3"
-		ts_finalize_subtest
-		return 1
-	fi
-
 	return 0
 }
 
@@ -65,7 +77,7 @@ function cleanup_output {
 
 
 ts_init_subtest "fifo"
-if skip_policy SCHED_FIFO; then
+if skip_policy SCHED_FIFO --fifo 1; then
 	do_chrt --fifo 1
 	do_chrt --fifo 99
 	cleanup_output
@@ -74,7 +86,7 @@ fi
 
 
 ts_init_subtest "batch"
-if skip_policy SCHED_BATCH && skip_kernel_ge 6 12 0; then
+if skip_policy SCHED_BATCH --batch 0; then
 	do_chrt --batch 0
 	cleanup_output
 	ts_finalize_subtest
@@ -82,7 +94,7 @@ fi
 
 
 ts_init_subtest "batch-custom-slice"
-if skip_policy SCHED_BATCH && skip_kernel_lt 6 12 0; then
+if skip_policy SCHED_BATCH --batch 0 && skip_kernel_lt 6 12 0; then
 	do_chrt --batch --sched-runtime 100000 0
 	cleanup_output
 	ts_finalize_subtest
@@ -90,7 +102,7 @@ fi
 
 
 ts_init_subtest "other"
-if skip_policy SCHED_OTHER && skip_kernel_ge 6 12 0; then
+if skip_policy SCHED_OTHER --other 0; then
 	do_chrt --other 0
 	cleanup_output
 	ts_finalize_subtest
@@ -98,7 +110,7 @@ fi
 
 
 ts_init_subtest "other-custom-slice"
-if skip_policy SCHED_OTHER && skip_kernel_lt 6 12 0; then
+if skip_policy SCHED_OTHER --other 0 && skip_kernel_lt 6 12 0; then
 	do_chrt --other --sched-runtime 100000 0
 	cleanup_output
 	ts_finalize_subtest
@@ -106,7 +118,7 @@ fi
 
 
 ts_init_subtest "rr"
-if skip_policy SCHED_RR; then
+if skip_policy SCHED_RR --rr 1; then
 	do_chrt --rr 1
 	do_chrt --rr 99
 	cleanup_output
@@ -115,7 +127,7 @@ fi
 
 
 ts_init_subtest "idle"
-if skip_policy SCHED_IDLE; then
+if skip_policy SCHED_IDLE --idle 0; then
 	do_chrt --idle 0
 	cleanup_output
 	ts_finalize_subtest
@@ -123,7 +135,7 @@ fi
 
 
 ts_init_subtest "deadline"
-if skip_policy SCHED_DEADLINE; then
+if skip_policy SCHED_DEADLINE --deadline --sched-period 130000 0; then
 	do_chrt --deadline --sched-period 130000 0
 	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 0
 	do_chrt --deadline --sched-period 130000 --sched-deadline 120000 --sched-runtime 100000 0
@@ -132,7 +144,7 @@ if skip_policy SCHED_DEADLINE; then
 fi
 
 ts_init_subtest "ext"
-if skip_policy SCHED_EXT; then
+if skip_policy SCHED_EXT --ext 0; then
 	do_chrt --ext 0
 	do_chrt -e 0
 	cleanup_output
