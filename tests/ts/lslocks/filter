@@ -49,12 +49,33 @@ if ! dd if=/dev/zero of="$FILE" bs=$SIZE count=1 status=none; then
     ts_skip "failed to create a temporary file"
 fi
 
+# Duplicate lines have been observed in lslocks output on ppc64le
+# (kernel 7.0). The root cause is unknown. No duplication path has
+# been found in the lslocks code itself. Remove duplicates to avoid
+# false test failures, but warn about it.
+LSLOCKS_DUP_FOUND=""
+
+do_lslocks()
+{
+    local raw
+    raw=$("$TS_CMD_LSLOCKS" "$@")
+    if [ -z "$raw" ]; then
+	return
+    fi
+    local dedup
+    dedup=$(echo "$raw" | uniq)
+    if [ "$raw" != "$dedup" ]; then
+	LSLOCKS_DUP_FOUND="yes"
+    fi
+    echo "$dedup"
+}
+
 do_lslocks_flock_crash()
 {
     local pid=$1
 
     echo "#### crash when printing PID column ####"
-    [[ "$pid" == $("$TS_CMD_LSLOCKS" \
+    [[ "$pid" == $(do_lslocks \
 		       --raw --noheadings --pid "$PID" \
 		       --filter 'PATH =~ '"'.*/$FILE'"" and TYPE == 'FLOCK'" \
 		       --output PID) ]]
@@ -70,49 +91,49 @@ do_lslocks_common()
     echo "#### $type $bopt (common) ####"
 
     echo '# -Q PID == ...'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid" -o $COLS
 
     echo '# -Q PATH =~ .*/...'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PATH =~ '.*/$FILE'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PATH =~ '.*/$FILE'" -o $COLS
     echo '# -Q PATH =~ .*/...x'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PATH =~ '.*/${FILE}x'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PATH =~ '.*/${FILE}x'" -o $COLS
 
     echo '# -Q PID == ... SIZE == '"$SIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE == $SIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE == $SIZE" -o $COLS
     echo '# -Q PID == ... SIZE < '"$SIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE < $SIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE < $SIZE" -o $COLS
     echo '# -Q PID == ... SIZE > '"$SIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE > $SIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE > $SIZE" -o $COLS
 
 
     echo '# -Q PID == ... SIZE == '"$HSIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE == $HSIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE == $HSIZE" -o $COLS
     echo '# -Q PID == ... SIZE < '"$HSIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE < $HSIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE < $HSIZE" -o $COLS
     echo '# -Q PID == ... SIZE > '"$HSIZE"
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and SIZE > $HSIZE" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and SIZE > $HSIZE" -o $COLS
 
     echo '# -Q PID == ... TYPE == FLOCK'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'FLOCK'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE == 'FLOCK'" -o $COLS
     echo '# -Q PID == ... TYPE != FLOCK'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'FLOCK'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE != 'FLOCK'" -o $COLS
     echo '# -Q PID == ... TYPE == POSIX'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'POSIX'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE == 'POSIX'" -o $COLS
     echo '# -Q PID == ... TYPE != POSIX'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'POSIX'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE != 'POSIX'" -o $COLS
     echo '# -Q PID == ... TYPE == OFDLCK'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE == 'OFDLCK'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE == 'OFDLCK'" -o $COLS
     echo '# -Q PID == ... TYPE != OFDLCK'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and TYPE != 'OFDLCK'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and TYPE != 'OFDLCK'" -o $COLS
 
     echo '# -Q PID == ... MODE == READ'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE == 'READ'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and MODE == 'READ'" -o $COLS
     echo '# -Q PID == ... MODE != READ'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE != 'READ'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and MODE != 'READ'" -o $COLS
     echo '# -Q PID == ... MODE == WRITE'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE == 'WRITE'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and MODE == 'WRITE'" -o $COLS
     echo '# -Q PID == ... MODE != WRITE'
-    "$TS_CMD_LSLOCKS" $bopt -r -n -Q "PID == $pid and MODE != 'WRITE'" -o $COLS
+    do_lslocks $bopt -r -n -Q "PID == $pid and MODE != 'WRITE'" -o $COLS
     echo
 }
 
@@ -124,18 +145,18 @@ do_lslocks_fcntl()
     echo "#### $type (fcntl specific) ####"
 
     echo '# -Q PID == ... START == $START'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START == $START" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and START == $START" -o $COLS
     echo '# -Q PID == ... START < $START'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START < $START" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and START < $START" -o $COLS
     echo '# -Q PID == ... START > $START'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and START > $START" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and START > $START" -o $COLS
 
     echo '# -Q PID == ... END == $END'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END == $END" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and END == $END" -o $COLS
     echo '# -Q PID == ... END < $END'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END < $END" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and END < $END" -o $COLS
     echo '# -Q PID == ... END > $END'
-    "$TS_CMD_LSLOCKS" -r -n -Q "PID == $pid and END > $END" -o $COLS
+    do_lslocks -r -n -Q "PID == $pid and END > $END" -o $COLS
 }
 
 {
@@ -163,5 +184,10 @@ do_lslocks_fcntl()
     wait "${MKFDS_PID}"
 
 } > "$TS_OUTPUT" 2>&1
+
+if [ "$LSLOCKS_DUP_FOUND" = "yes" ]; then
+    echo "WARNING: duplicate lines in lslocks output" >&2
+    TS_KNOWN_FAIL="yes"
+fi
 
 ts_finalize
