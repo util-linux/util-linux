@@ -1998,7 +1998,22 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		/*
 		 * Source is PATH (canonicalize)
 		 */
-		path = mnt_resolve_path(src, cache);
+		if (mnt_context_is_restricted(cxt)) {
+			/* In restricted mode, only canonicalize /dev/
+			 * paths (e.g. /dev/cdrom -> /dev/sr0) and verify
+			 * the result stays in /dev/. For non-/dev/ paths
+			 * (e.g. disk images in user dirs), keep the
+			 * original fstab path -- symlink protection is
+			 * handled at open time by RESOLVE_NO_SYMLINKS.
+			 */
+			if (ul_startswith(src, "/dev/")) {
+				path = mnt_resolve_path(src, cache);
+				if (path && !ul_startswith(path, "/dev/"))
+					path = NULL;
+			}
+		} else
+			path = mnt_resolve_path(src, cache);
+
 		if (path && strcmp(path, src) != 0)
 			rc = mnt_fs_set_source(cxt->fs, path);
 	 }
