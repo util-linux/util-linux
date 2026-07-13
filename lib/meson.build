@@ -65,6 +65,7 @@ lib_common_shells = static_library('common_shells',
 
 dl_utils_c = files('dl-utils.c')
 dl_cryptsetup_c = files('dl-cryptsetup.c')
+dl_selinux_c = files('dl-selinux.c')
 
 selinux_utils_c = files('selinux-utils.c')
 

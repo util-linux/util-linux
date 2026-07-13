@@ -58,15 +58,28 @@ endif # LINUX
 libmount_la_LIBADD = \
 	libcommon.la \
 	libblkid.la \
-	$(SELINUX_LIBS) \
 	$(REALTIME_LIBS)
 
-if HAVE_CRYPTSETUP
+if HAVE_SELINUX
 libmount_la_SOURCES += \
 	lib/dl-utils.c \
 	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h \
+	lib/selinux-utils.c \
+	include/selinux-utils.h
+libmount_la_LIBADD += -ldl
+endif
+
+if HAVE_CRYPTSETUP
+libmount_la_SOURCES += \
 	lib/dl-cryptsetup.c \
 	include/dl-cryptsetup.h
+if !HAVE_SELINUX
+libmount_la_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h
+endif
 libmount_la_LIBADD += -ldl
 endif
 
@@ -80,7 +93,8 @@ libmount_la_CFLAGS = \
 	-I$(ul_libmount_incdir) \
 	-I$(top_srcdir)/libmount/src \
 	$(SOLIB_CFLAGS) \
-	$(CRYPTSETUP_CFLAGS)
+	$(CRYPTSETUP_CFLAGS) \
+	$(SELINUX_CFLAGS)
 
 EXTRA_libmount_la_DEPENDENCIES = \
 	libmount/src/libmount.sym
@@ -117,11 +131,13 @@ libmount_tests_ldflags = -static
 libmount_tests_ldadd   = libmount.la libblkid.la $(LDADD) $(REALTIME_LIBS)
 
 if HAVE_SELINUX
-libmount_tests_ldadd += $(SELINUX_LIBS)
+libmount_tests_ldadd += -ldl
 endif
 
 if HAVE_CRYPTSETUP
+if !HAVE_SELINUX
 libmount_tests_ldadd += -ldl
+endif
 endif
 
 test_mount_cache_SOURCES = libmount/src/cache.c
