@@ -63,6 +63,9 @@ lib_common_shells = static_library('common_shells',
   dependencies : lib_econf,
 )
 
+dl_utils_c = files('dl-utils.c')
+dl_cryptsetup_c = files('dl-cryptsetup.c')
+
 selinux_utils_c = files('selinux-utils.c')
 
 caputils_c = files('caputils.c')

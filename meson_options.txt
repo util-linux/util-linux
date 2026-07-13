@@ -6,7 +6,9 @@ option('ncurses',     type : 'feature')
 option('slang',       type : 'feature', value : 'disabled',
        description : 'compile cfdisk with slang rather than ncurses')
 option('cryptsetup',  type : 'feature')
-option('cryptsetup-dlopen',  type : 'feature')
+option('cryptsetup-dlopen',  type : 'feature',
+       deprecated : true,
+       description : 'Deprecated, dlopen is now always used')
 option('zlib',        type : 'feature')
 option('readline',    type : 'feature')
 option('nls',         type : 'feature')

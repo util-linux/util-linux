@@ -17,83 +17,18 @@
 
 #ifdef HAVE_CRYPTSETUP
 
-#include <libcryptsetup.h>
+#include "dl-cryptsetup.h"
 #include "path.h"
 #include "strutils.h"
 #include "fileutils.h"
 #include "pathnames.h"
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
-# include <dlfcn.h>
-
-/* Pointers to libcryptsetup functions (initialized by dlsym()) */
-struct verity_opers {
-	void (*crypt_set_debug_level)(int);
-	void (*crypt_set_log_callback)(struct crypt_device *, void (*log)(int, const char *, void *), void *);
-	int (*crypt_init_data_device)(struct crypt_device **, const char *, const char *);
-	int (*crypt_load)(struct crypt_device *, const char *, void *);
-	int (*crypt_get_volume_key_size)(struct crypt_device *);
-# ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-	int (*crypt_activate_by_signed_key)(struct crypt_device *, const char *, const char *, size_t, const char *, size_t, uint32_t);
-# endif
-	int (*crypt_activate_by_volume_key)(struct crypt_device *, const char *, const char *, size_t, uint32_t);
-	void (*crypt_free)(struct crypt_device *);
-	int (*crypt_init_by_name)(struct crypt_device **, const char *);
-	int (*crypt_get_verity_info)(struct crypt_device *, struct crypt_params_verity *);
-	int (*crypt_volume_key_get)(struct crypt_device *, int, char *, size_t *, const char *, size_t);
-
-	int (*crypt_deactivate_by_name)(struct crypt_device *, const char *, uint32_t);
-};
-
-/* libcryptsetup functions names and offsets in 'struct verity_opers' */
-struct verity_sym {
-	const char *name;
-	size_t offset;		/* offset of the symbol in verity_opers */
-};
-
-# define DEF_VERITY_SYM(_name) \
-	{ \
-		.name = # _name, \
-		.offset = offsetof(struct verity_opers, _name), \
-	}
-
-/* All required symbols */
-static const struct verity_sym verity_symbols[] =
-{
-	DEF_VERITY_SYM( crypt_set_debug_level ),
-	DEF_VERITY_SYM( crypt_set_log_callback ),
-	DEF_VERITY_SYM( crypt_init_data_device ),
-	DEF_VERITY_SYM( crypt_load ),
-	DEF_VERITY_SYM( crypt_get_volume_key_size ),
-# ifdef HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY
-	DEF_VERITY_SYM( crypt_activate_by_signed_key ),
-# endif
-	DEF_VERITY_SYM( crypt_activate_by_volume_key ),
-	DEF_VERITY_SYM( crypt_free ),
-	DEF_VERITY_SYM( crypt_init_by_name ),
-	DEF_VERITY_SYM( crypt_get_verity_info ),
-	DEF_VERITY_SYM( crypt_volume_key_get ),
-
-	DEF_VERITY_SYM( crypt_deactivate_by_name ),
-};
-#endif /* CRYPTSETUP_VIA_DLOPEN */
-
-
 /* Data used by all verity hooks */
 struct hookset_data {
 	char *devname;			/* the device */
-#ifdef CRYPTSETUP_VIA_DLOPEN
-	void *dl;			/* dlopen() */
-	struct verity_opers dl_funcs;	/* dlsym() */
-#endif
 };
 
-/* libcryptsetup call -- dlopen version requires 'struct hookset_data *hsd' */
-#ifdef CRYPTSETUP_VIA_DLOPEN
-# define verity_call(_func)	(hsd->dl_funcs._func)
-#else
-# define verity_call(_func)	(_func)
-#endif
+#define verity_call(_func)	cryptsetup_call(_func)
 
 
 static void delete_veritydev(struct libmnt_context *cxt,
@@ -101,63 +36,6 @@ static void delete_veritydev(struct libmnt_context *cxt,
                         struct hookset_data *hsd);
 
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
-static int load_libcryptsetup_symbols(struct libmnt_context *cxt,
-				      struct hookset_data *hsd)
-{
-	size_t i;
-	const char *errmsg = NULL;
-	int flags = RTLD_LAZY | RTLD_LOCAL;
-
-	assert(cxt);
-	assert(hsd);
-	assert(hsd->dl == NULL);
-
-	/* glibc extension: mnt_context_deferred_delete_veritydev is called immediately after, don't unload on dl_close */
-#ifdef RTLD_NODELETE
-	flags |= RTLD_NODELETE;
-#endif
-	/* glibc extension: might help to avoid further symbols clashes */
-#ifdef RTLD_DEEPBIND
-	flags |= RTLD_DEEPBIND;
-#endif
-	/* Don't rely on errno; the dlopen API may not use it. Also, note that
-	 * dlerror() provides complete messages that do not need any additional
-	 * introduction when printed to end users. */
-	errno = 0;
-
-	hsd->dl = dlopen("libcryptsetup.so.12", flags);
-	if (!hsd->dl) {
-		errmsg = dlerror();
-		if (errmsg)
-			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
-		goto failed;
-	}
-
-	/* clear errors first, then load all the libcryptsetup symbols */
-	dlerror();
-
-	/* dlsym()  */
-	for (i = 0; i < ARRAY_SIZE(verity_symbols); i++) {
-		const struct verity_sym *def = &verity_symbols[i];
-		void **sym;
-
-		sym = (void **) ((char *) (&hsd->dl_funcs) + def->offset);
-		*sym = dlsym(hsd->dl, def->name);
-
-		errmsg = dlerror();
-		if (errmsg) {
-			mnt_context_sprintf_mesg(cxt, "e %s", errmsg);
-			goto failed;
-		}
-	}
-	return 0;
-failed:
-	if (!errno)
-		errno = ENOTSUP;
-	return -errno;
-}
-#endif
 
 /* libcryptsetup callback */
 static void libcryptsetup_log(int level __attribute__((__unused__)),
@@ -177,10 +55,6 @@ static void free_hookset_data(	struct libmnt_context *cxt,
 		return;
 	if (hsd->devname)
 		delete_veritydev(cxt, hs, hsd);
-#ifdef CRYPTSETUP_VIA_DLOPEN
-	if (hsd->dl)
-		dlclose(hsd->dl);
-#endif
 	free(hsd);
 	mnt_context_set_hookset_data(cxt, hs, NULL);
 }
@@ -192,6 +66,9 @@ static struct hookset_data *new_hookset_data(
 {
 	struct hookset_data *hsd;
 
+	if (ul_dlopen_libcryptsetup() != 0)
+		return NULL;
+
 	hsd = calloc(1, sizeof(struct hookset_data));
 	if (!hsd)
 		return NULL;
@@ -199,10 +76,6 @@ static struct hookset_data *new_hookset_data(
 	if (mnt_context_set_hookset_data(cxt, hs, hsd) != 0)
 		goto failed;
 
-#ifdef CRYPTSETUP_VIA_DLOPEN
-	if (load_libcryptsetup_symbols(cxt, hsd) != 0)
-		goto failed;
-#endif
 	if (mnt_context_is_verbose(cxt))
 		verity_call( crypt_set_debug_level(CRYPT_DEBUG_ALL) );
 

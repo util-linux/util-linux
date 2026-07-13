@@ -218,13 +218,8 @@ edit_cmd += -e 's|@LIBSELINUX[@]||g'
 endif
 
 if HAVE_CRYPTSETUP
-if CRYPTSETUP_VIA_DLOPEN
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
 edit_cmd += -e 's|@LIBDL[@]|-ldl|g'
-else
-edit_cmd += -e 's|@LIBCRYPTSETUP[@]|libcryptsetup|g'
-edit_cmd += -e 's|@LIBDL[@]||g'
-endif
 else
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
 edit_cmd += -e 's|@LIBDL[@]||g'
