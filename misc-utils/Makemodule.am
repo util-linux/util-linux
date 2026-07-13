@@ -69,7 +69,16 @@ usrbin_exec_PROGRAMS += namei
 MANPAGES += misc-utils/namei.1
 dist_noinst_DATA += misc-utils/namei.1.adoc
 namei_SOURCES = misc-utils/namei.c lib/strutils.c lib/idcache.c
-namei_LDADD = $(LDADD) $(SELINUX_LIBS)
+namei_LDADD = $(LDADD)
+if HAVE_SELINUX
+namei_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+namei_LDADD += -ldl
+namei_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
+endif
 endif
 
 if BUILD_WHEREIS

@@ -70,7 +70,7 @@
 #include "rpmatch.h"
 
 #ifdef HAVE_LIBSELINUX
-# include <selinux/selinux.h>
+# include "dl-selinux.h"
 #endif
 
 #define FILENAMELEN 67
@@ -149,16 +149,16 @@ static void pw_write(void)
 		warn(_("%s: create a link to %s failed"), orig_file, tmp);
 
 #ifdef HAVE_LIBSELINUX
-	if (is_selinux_enabled() > 0) {
+	if (ul_dlopen_libselinux() == 0 && selinux_call(is_selinux_enabled)() > 0) {
 		char *passwd_context = NULL;
 		int ret = 0;
 
-		if (getfilecon(orig_file, &passwd_context) < 0) {
+		if (selinux_call(getfilecon)(orig_file, &passwd_context) < 0) {
 			warnx(_("Can't get context for %s"), orig_file);
 			pw_error(orig_file, 1, 1);
 		}
-		ret = setfilecon(tmp_file, passwd_context);
-		freecon(passwd_context);
+		ret = selinux_call(setfilecon)(tmp_file, passwd_context);
+		selinux_call(freecon)(passwd_context);
 		if (ret != 0) {
 			warnx(_("Can't set context for %s"), tmp_file);
 			pw_error(tmp_file, 1, 1);

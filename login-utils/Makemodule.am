@@ -43,7 +43,13 @@ if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
 if HAVE_SELINUX
-sulogin_LDADD += $(SELINUX_LIBS)
+sulogin_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+sulogin_LDADD += -ldl
+sulogin_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 
 check_PROGRAMS += test_consoles
@@ -65,9 +71,6 @@ login_LDADD += -lpam_misc
 endif
 if HAVE_AUDIT
 login_LDADD += $(AUDIT_LIBS)
-endif
-if HAVE_SELINUX
-login_LDADD += $(SELINUX_LIBS)
 endif
 endif # BUILD_LOGIN
 
@@ -132,9 +135,14 @@ endif
 
 if HAVE_SELINUX
 chfn_chsh_sources += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
-chfn_chsh_ldadd += $(SELINUX_LIBS)
+chfn_chsh_ldadd += -ldl
+chfn_chsh_cflags += $(SELINUX_CFLAGS)
 endif
 
 chfn_SOURCES = \
@@ -219,7 +227,13 @@ lslogins_SOURCES = \
 lslogins_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
-lslogins_LDADD += $(SELINUX_LIBS)
+lslogins_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+lslogins_LDADD += -ldl
+lslogins_CFLAGS += $(SELINUX_CFLAGS)
 endif
 if HAVE_SYSTEMD
 lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
@@ -242,7 +256,13 @@ vipw_SOURCES = \
 	login-utils/setpwnam.h
 vipw_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
-vipw_LDADD += $(SELINUX_LIBS)
+vipw_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+vipw_LDADD += -ldl
+vipw_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 install-exec-hook-vipw::
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
