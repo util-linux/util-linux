@@ -103,8 +103,9 @@ static int cpu_enable(struct chcpu_context *ctx, int enable)
 			continue;
 		}
 
-		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/configure", cpu) == 0)
-			ul_path_readf_s32(ctx->sys, &configured, "cpu%d/configure", cpu);
+		if (ul_path_accessf(ctx->sys, F_OK, "cpu%d/configure", cpu) != 0
+		    || ul_path_readf_s32(ctx->sys, &configured, "cpu%d/configure", cpu) != 0)
+			configured = -1;
 		if (enable) {
 			rc = ul_path_writef_string(ctx->sys, "1", "cpu%d/online", cpu);
 			if (rc != 0 && configured == 0) {
