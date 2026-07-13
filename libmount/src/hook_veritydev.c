@@ -174,7 +174,7 @@ static void delete_veritydev(struct libmnt_context *cxt,
 /* Taken from https://gitlab.com/cryptsetup/cryptsetup/blob/master/lib/utils_crypt.c#L225 */
 static size_t crypt_hex_to_bytes(const char *hex, char **result)
 {
-	char buf[3] = "xx\0", *endp, *bytes;
+	char buf[3] = { 0 }, *endp, *bytes;
 	size_t i, len;
 
 	len = strlen(hex);
