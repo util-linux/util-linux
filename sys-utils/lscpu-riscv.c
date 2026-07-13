@@ -24,6 +24,9 @@ bool is_riscv(struct lscpu_cputype *ct)
 	const char *base_isa[] = {"rv32", "rv64", "rv128"};
 	size_t i;
 
+	if (!ct->isa)
+		return false;
+
 	for (i = 0; i < ARRAY_SIZE(base_isa); i++) {
 		if (!c_strncasecmp(ct->isa, base_isa[i], strlen(base_isa[i])))
 			return true;
@@ -39,6 +42,9 @@ void lscpu_format_isa_riscv(struct lscpu_cputype *ct)
 {
 	char **split;
 	size_t i;
+
+	if (!ct->isa)
+		return;
 
 	split = ul_strv_split(ct->isa, "_");
 
