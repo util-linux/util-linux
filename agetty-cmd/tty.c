@@ -193,8 +193,9 @@ void agetty_reset_vc(const struct agetty_options *op, struct termios *tp, int ca
 		agetty_log_warn(_("setting terminal attributes failed: %m"));
 
 	/* Go to blocking input even in local mode. */
-	fcntl(STDIN_FILENO, F_SETFL,
-	      fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
+	fl = fcntl(STDIN_FILENO, F_GETFL, 0);
+	if (fl >= 0)
+		fcntl(STDIN_FILENO, F_SETFL, fl & ~O_NONBLOCK);
 }
 
 void agetty_open_tty(const char *tty, struct termios *tp, struct agetty_options *op)
