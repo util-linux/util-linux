@@ -387,7 +387,8 @@ void agetty_termio_init(struct agetty_options *op, struct termios *tp)
 		sleep(1);
 	}
 	memset(&lock, 0, sizeof(struct termios));
-	ioctl(STDIN_FILENO, TIOCSLCKTRMIOS, &lock);
+	if (ioctl(STDIN_FILENO, TIOCSLCKTRMIOS, &lock))
+		debug("unlock termios failed\n");
 #endif
 
 	if (op->flags & F_VCONSOLE) {
