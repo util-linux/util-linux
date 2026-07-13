@@ -211,10 +211,10 @@ static inline void unlink_socket_path(int abstract, const char *path)
 }
 
 /* Set permissions for path-based (non-abstract) Unix socket file. No-op for abstract sockets. */
-static inline int chmod_socket_path(int abstract, const char *path)
+static inline int chmod_socket_path(int abstract, int sock)
 {
 	if (!abstract)
-		return chmod(path, 0600);
+		return fchmod(sock, 0600);
 	return 0;
 }
 
@@ -288,7 +288,7 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abst
 		return -1;
 	}
 
-	if (chmod_socket_path(abstract, sockpath) != 0) {
+	if (chmod_socket_path(abstract, sock) != 0) {
 		close(sock);
 		unlink_socket_path(abstract, sockpath);
 		return -1;
