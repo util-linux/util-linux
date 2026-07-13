@@ -226,7 +226,8 @@ static int chmem_configured(struct chmem_desc *desc, char *name)
 {
 	int mblock_configured = 0;
 
-	ul_path_readf_s32(desc->sysmemconfig, &mblock_configured, "%s/config", name);
+	if (ul_path_readf_s32(desc->sysmemconfig, &mblock_configured, "%s/config", name) != 0)
+		return 0;
 	return mblock_configured;
 }
 
