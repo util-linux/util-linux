@@ -137,8 +137,8 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		 * is junk.
 		 */
 		for (p = p0, i = 0; i < 4; i++, p++) {
-			start = dos_partition_get_start(p) * ssf;
-			size = dos_partition_get_size(p) * ssf;
+			start = (uint64_t) dos_partition_get_start(p) * ssf;
+			size = (uint64_t) dos_partition_get_size(p) * ssf;
 
 			if (size && is_extended(p)) {
 				if (start == 0)
