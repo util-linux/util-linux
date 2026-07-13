@@ -584,8 +584,8 @@ static int read_address(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 
 	DBG_OBJ(CPU, cpu, ul_debug("#%d reading address", num));
 
-	ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num);
-	if (cpu->type)
+	if (ul_path_readf_s32(sys, &cpu->address, "cpu%d/address", num) == 0
+	    && cpu->type)
 		cpu->type->has_addresses = 1;
 	return 0;
 }
