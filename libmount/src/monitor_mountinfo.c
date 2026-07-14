@@ -96,7 +96,7 @@ static const struct monitor_opers mountinfo_opers = {
  *
  * Return: 0 on success and <0 on error
  *
- * Since: v2.42
+ * Since: 2.42
  */
 int mnt_monitor_enable_mountinfo(struct libmnt_monitor *mn, int enable)
 {

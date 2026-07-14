@@ -163,9 +163,6 @@ extern int __mnt_table_is_fs_mounted(	struct libmnt_table *tb,
 					struct libmnt_fs *fstab_fs,
 					const char *tgt_prefix);
 
-extern int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore);
-extern int mnt_table_is_noautofs(struct libmnt_table *tb);
-
 /* tab_listmount.c */
 extern int mnt_table_next_lsmnt(struct libmnt_table *tb, int direction);
 extern int mnt_table_reset_listmount(struct libmnt_table *tb);

@@ -1938,9 +1938,9 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 }
 
 /**
- * mnt_fs_print_debug
+ * mnt_fs_print_debug:
  * @fs: fstab/mtab/mountinfo entry
- * @file: file stream
+ * @file: output file stream
  *
  * Returns: 0 on success or negative number in case of error.
  */

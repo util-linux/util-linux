@@ -285,8 +285,8 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
  * still 0, then a mask is generated for all missing data in @fs.
  *
  * The default namespace is the current namespace. This default can be
- * overwritten by mnt_fs_set_ns_id(). The namespace ID is also set when @fs
- * has been created by mnt_table_fetch_statmount() or on-demand (see
+ * overwritten by mnt_fs_set_ns(). The namespace ID is also set when @fs
+ * has been created by mnt_fs_fetch_statmount() or on-demand (see
  * mnt_table_enable_listmount()).
  *
  * Returns: 0 or negative number in case of error (if @fs is NULL).
