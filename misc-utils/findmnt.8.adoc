@@ -175,6 +175,8 @@ Print only filesystems that are over-mounted by another filesystem.
 
 *-T*, *--target* _path_::
 Define the mount target. If _path_ is not a mountpoint file or directory, then *findmnt* checks the _path_ elements in reverse order to get the mountpoint (this feature is supported only when searching in kernel files and unsupported for *--fstab*). It's recommended to use the option *--mountpoint* when checks of _path_ elements are unwanted and _path_ is a strictly specified mountpoint.
++
+The _path_ is always on one filesystem only, so *--target* always returns at most one filesystem entry. Over-mounted entries for the same mountpoint are skipped.
 
 *-t*, *--types* _list_::
 Limit the set of printed filesystems. More than one type may be specified in a comma-separated list. The list of filesystem types can be prefixed with *no* to specify the filesystem types on which no action should be taken. For more details see *mount*(8).
