@@ -1108,6 +1108,7 @@ static struct libmnt_table *fetch_listmount(struct findmnt *findmnt)
 	mnt_table_set_userdata(tb, findmnt);
 
 	mnt_table_refer_statmnt(tb, sm);
+	mnt_table_disable_useropts(tb, 1);
 
 	if (mnt_table_fetch_listmount(tb) != 0) {
 		warn(_("failed to fetch mount nodes"));
@@ -1314,6 +1315,7 @@ static int add_matching_lines(struct libmnt_table *tb,
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
 	int nlines = 0, rc = -1;
+	const char *prev_target = NULL;
 
 	itr = mnt_new_iter(direction);
 	if (!itr) {
@@ -1326,7 +1328,16 @@ static int add_matching_lines(struct libmnt_table *tb,
 			rc = create_treenode(table, tb, fs, NULL, findmnt);
 		else {
 			bool filtered = false;
-			struct libscols_line *l = add_line(table, fs, NULL, findmnt, &filtered);
+			struct libscols_line *l;
+
+			if (is_defined_match(COL_TARGET)) {
+				const char *t = mnt_fs_get_target(fs);
+				if (t && prev_target && strcmp(t, prev_target) == 0)
+					continue;
+				prev_target = t;
+			}
+
+			l = add_line(table, fs, NULL, findmnt, &filtered);
 			if (filtered)
 				continue;
 			rc = !l;
@@ -1763,6 +1774,7 @@ int main(int argc, char *argv[])
 	char *outarg = NULL;
 	size_t i;
 	int force_tree = 0, istree = 0;
+	int force_target = 0;
 
 	struct libscols_table *table = NULL;
 
@@ -2001,7 +2013,7 @@ int main(int argc, char *argv[])
 			FALLTHROUGH;
 		case 'T':
 			set_match(COL_TARGET, optarg);
-			findmnt.flags |= FL_NOSWAPMATCH;
+			force_target = 1;
 			break;
 		case 'U':
 			findmnt.flags |= FL_UNIQ;
@@ -2141,6 +2153,11 @@ int main(int argc, char *argv[])
 		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5) ||
 		    !strncmp(x, "PARTLABEL=", 10) || !strncmp(x, "PARTUUID=", 9))
 			findmnt.flags |= FL_NOSWAPMATCH;
+	}
+
+	if (force_target) {
+		direction = MNT_ITER_BACKWARD;
+		findmnt.flags |= FL_NOSWAPMATCH | FL_FIRSTONLY;
 	}
 
 	/*
