@@ -3,6 +3,7 @@
 blkid_evaluate_tag
 blkid_evaluate_tag2
 blkid_evaluate_spec
+BLKID_EVALUATE_NOPROBE
 </SECTION>
 
 <SECTION>
@@ -64,6 +65,8 @@ blkid_probe_set_hint
 blkid_probe_open_device
 blkid_probe_set_sectorsize
 blkid_probe_set_vfs
+ul_vfs_ops
+UL_VFS_OPS_DEFINED
 blkid_probe_step_back
 blkid_reset_probe
 BLKID_PROBE_OK
@@ -180,6 +183,11 @@ blkid_parse_version_string
 blkid_send_uevent
 BLKID_VERSION
 BLKID_DATE
+LIBBLKID_VERSION
+LIBBLKID_DATE
+LIBBLKID_MAJOR_VERSION
+LIBBLKID_MINOR_VERSION
+LIBBLKID_PATCH_VERSION
 BLKID_FLTR_NOTIN
 BLKID_FLTR_ONLYIN
 BLKID_DEV_CREATE
