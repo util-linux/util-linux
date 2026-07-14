@@ -1764,6 +1764,7 @@ int main(int argc, char *argv[])
 	char *outarg = NULL;
 	size_t i;
 	int force_tree = 0, istree = 0;
+	int force_target = 0;
 
 	struct libscols_table *table = NULL;
 
@@ -2002,7 +2003,7 @@ int main(int argc, char *argv[])
 			FALLTHROUGH;
 		case 'T':
 			set_match(COL_TARGET, optarg);
-			findmnt.flags |= FL_NOSWAPMATCH;
+			force_target = 1;
 			break;
 		case 'U':
 			findmnt.flags |= FL_UNIQ;
@@ -2142,6 +2143,11 @@ int main(int argc, char *argv[])
 		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5) ||
 		    !strncmp(x, "PARTLABEL=", 10) || !strncmp(x, "PARTUUID=", 9))
 			findmnt.flags |= FL_NOSWAPMATCH;
+	}
+
+	if (force_target) {
+		direction = MNT_ITER_BACKWARD;
+		findmnt.flags |= FL_NOSWAPMATCH | FL_FIRSTONLY;
 	}
 
 	/*
