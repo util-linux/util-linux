@@ -144,6 +144,18 @@ Association between file and process.
 BLKDRV <``string``>::
 Block device driver name resolved by `/proc/devices`.
 
+BPF-LINK.ID <``number``>::
+Bpf link ID.
+
+BPF-LINK.TYPE <``string``>::
+Decoded name of bpf link type.
+
+BPF-LINK.TYPE.RAW <``number``>::
+Bpf link type (raw).
+
+BPF-LINK.PROG-ID <``number``>::
+ID of the bpf-prog that this link attaches.
+
 BPF-MAP.ID <``number``>::
 Bpf map ID.
 
@@ -298,6 +310,9 @@ AF_VSOCK:::
 state=_SOCK.STATE_ type=_SOCK.TYPE_ laddr=_VSOCK.LADDR_[ raddr=_VSOCK.RADDR_]
 +
 `raddr` is not shown for listening sockets.
++
+bpf-link:::
+id=_BPF-LINK.ID_ type=_BPF-LINK.TYPE_[ prog=_BPF-LINK.PROG-ID_]
 +
 bpf-map:::
 id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]
