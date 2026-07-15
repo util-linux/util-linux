@@ -13,10 +13,9 @@
  * Please, see the comment in libmount/src/hooks.c to understand how hooks work.
  */
 #ifdef HAVE_LIBSELINUX
-#include <selinux/selinux.h>
-#include <selinux/context.h>
 
 #include "mountP.h"
+#include "dl-selinux.h"
 #include "fileutils.h"
 #include "linux_version.h"
 
@@ -80,7 +79,7 @@ static int hook_selinux_target(
 		return 0;
 
 
-	rc = getfilecon_raw(tgt, &raw);
+	rc = selinux_call(getfilecon_raw)(tgt, &raw);
 	if (rc <= 0 || !raw) {
 		rc = errno ? -errno : -EINVAL;
 		DBG_OBJ(HOOK, hs, ul_debug(" SELinux fix @target failed [rc=%d]", rc));
@@ -91,7 +90,7 @@ static int hook_selinux_target(
 	if (!rc)
 		rc = mnt_opt_set_quoted_value(opt, raw);
 	if (raw)
-		freecon(raw);
+		selinux_call(freecon)(raw);
 
 	return rc != 0 ? -MNT_ERR_MOUNTOPT : 0;
 }
@@ -110,10 +109,13 @@ static int hook_prepare_options(
 	if (!ol)
 		return -EINVAL;
 
-	if (!is_selinux_enabled())
-		/* Always remove SELinux garbage if SELinux disabled */
+	if (ul_dlopen_libselinux() != 0) {
+		DBG_OBJ(HOOK, hs, ul_debug("libselinux not available via dlopen"));
 		se_rem = 1;
-	else if (mnt_optlist_is_remount(ol))
+	} else if (!selinux_call(is_selinux_enabled)()) {
+		DBG_OBJ(HOOK, hs, ul_debug("SELinux disabled"));
+		se_rem = 1;
+	} else if (mnt_optlist_is_remount(ol))
 		/*
 		 * Linux kernel < 2.6.39 does not support remount operation
 		 * with any selinux specific mount options.
@@ -167,7 +169,7 @@ static int hook_prepare_options(
 						       hook_selinux_target);
 					continue;
 				} else {
-					rc = selinux_trans_to_raw_context(val, &raw);
+					rc = selinux_call(selinux_trans_to_raw_context)(val, &raw);
 					if (rc == -1 || !raw)
 						rc = -EINVAL;
 				}
@@ -177,7 +179,7 @@ static int hook_prepare_options(
 					rc = mnt_opt_set_quoted_value(opt, raw);
 				}
 				if (raw)
-					freecon(raw);
+					selinux_call(freecon)(raw);
 
 				/* temporary for broken fsconfig() syscall */
 				cxt->has_selinux_opt = 1;

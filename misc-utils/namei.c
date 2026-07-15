@@ -32,7 +32,7 @@
 #include <grp.h>
 
 #ifdef HAVE_LIBSELINUX
-# include <selinux/selinux.h>
+# include "dl-selinux.h"
 #endif
 
 #include "c.h"
@@ -163,9 +163,10 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 	nm->name = xstrdup(fname);
 
 #ifdef HAVE_LIBSELINUX
-	/* Don't use is_selinux_enabled() here. We need info about a context
-	 * also on systems where SELinux is (temporary) disabled */
-	nm->context_len = lgetfilecon(path, &nm->context);
+	/* Don't check is_selinux_enabled() -- we want context info even
+	 * on systems where SELinux is temporarily disabled */
+	if (ul_dlopen_libselinux() == 0)
+		nm->context_len = selinux_call(lgetfilecon)(path, &nm->context);
 #endif
 	if (lstat(path, &nm->st) != 0) {
 		nm->noent = errno;

@@ -29,8 +29,7 @@
 #include <getopt.h>
 #include <assert.h>
 #ifdef HAVE_LIBSELINUX
-# include <selinux/selinux.h>
-# include <selinux/context.h>
+# include "dl-selinux.h"
 # include "selinux-utils.h"
 #endif
 #ifdef HAVE_LINUX_FS_H
@@ -803,12 +802,13 @@ int main(int argc, char **argv)
 	deinit_signature_page(&ctl);
 
 #ifdef HAVE_LIBSELINUX
-	if ((ctl.file || S_ISREG(ctl.devstat.st_mode)) && is_selinux_enabled() > 0) {
+	if ((ctl.file || S_ISREG(ctl.devstat.st_mode))
+	    && ul_dlopen_libselinux() == 0 && selinux_call(is_selinux_enabled)() > 0) {
 		const char *context_string;
 		char *oldcontext;
 		context_t newcontext;
 
-		if (fgetfilecon(ctl.fd, &oldcontext) < 0) {
+		if (selinux_call(fgetfilecon)(ctl.fd, &oldcontext) < 0) {
 			if (errno != ENODATA)
 				err(EXIT_FAILURE,
 					_("%s: unable to obtain selinux file label"),
@@ -819,20 +819,20 @@ int main(int argc, char **argv)
 					_("%s: unable to obtain default selinux file label"),
 					ctl.devname);
 		}
-		if (!(newcontext = context_new(oldcontext)))
+		if (!(newcontext = selinux_call(context_new)(oldcontext)))
 			errx(EXIT_FAILURE, _("unable to create new selinux context"));
-		if (context_type_set(newcontext, SELINUX_SWAPFILE_TYPE))
+		if (selinux_call(context_type_set)(newcontext, SELINUX_SWAPFILE_TYPE))
 			errx(EXIT_FAILURE, _("couldn't compute selinux context"));
 
-		context_string = context_str(newcontext);
+		context_string = selinux_call(context_str)(newcontext);
 
 		if (strcmp(context_string, oldcontext)!=0) {
-			if (fsetfilecon(ctl.fd, context_string) && errno != ENOTSUP)
+			if (selinux_call(fsetfilecon)(ctl.fd, context_string) && errno != ENOTSUP)
 				err(EXIT_FAILURE, _("unable to relabel %s to %s"),
 						ctl.devname, context_string);
 		}
-		context_free(newcontext);
-		freecon(oldcontext);
+		selinux_call(context_free)(newcontext);
+		selinux_call(freecon)(oldcontext);
 	}
 #endif
 	/*

@@ -71,10 +71,15 @@ mkswap_CFLAGS += -I$(ul_libblkid_incdir)
 mkswap_LDADD += libblkid.la
 endif
 if HAVE_SELINUX
-mkswap_LDADD += $(SELINUX_LIBS)
 mkswap_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
+mkswap_LDADD += -ldl
+mkswap_CFLAGS += $(SELINUX_CFLAGS)
 endif
 endif # BUILD_MKSWAP
 

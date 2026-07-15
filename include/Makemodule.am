@@ -22,6 +22,9 @@ dist_noinst_HEADERS += \
 	include/c_strtod.h \
 	include/debug.h \
 	include/default_shell.h \
+	include/dl-cryptsetup.h \
+	include/dl-selinux.h \
+	include/dl-utils.h \
 	include/encode.h \
 	include/env.h \
 	include/exec_shell.h \

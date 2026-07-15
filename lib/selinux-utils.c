@@ -4,15 +4,15 @@
  *
  * Written by Karel Zak <kzak@redhat.com> [January 2021]
  */
-#include <selinux/context.h>
-#include <selinux/selinux.h>
-#include <selinux/label.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <errno.h>
 
+#include "dl-selinux.h"
 #include "selinux-utils.h"
+
+#ifdef HAVE_LIBSELINUX
 
 /* set the SELinux security context used for _creating_ a new file system object
  *
@@ -21,16 +21,17 @@
  */
 int ul_setfscreatecon_from_file(char *orig_file)
 {
-	if (is_selinux_enabled() > 0) {
+	if (ul_dlopen_libselinux() == 0
+	    && selinux_call(is_selinux_enabled)() > 0) {
 		char *scontext = NULL;
 
-		if (getfilecon(orig_file, &scontext) < 0)
+		if (selinux_call(getfilecon)(orig_file, &scontext) < 0)
 			return -1;
-		if (setfscreatecon(scontext) < 0) {
-			freecon(scontext);
+		if (selinux_call(setfscreatecon)(scontext) < 0) {
+			selinux_call(freecon)(scontext);
 			return -1;
 		}
-		freecon(scontext);
+		selinux_call(freecon)(scontext);
 	}
 	return 0;
 }
@@ -47,14 +48,17 @@ int ul_selinux_has_access(const char *classstr, const char *perm, char **user_cx
 	if (user_cxt)
 		*user_cxt = NULL;
 
-	if (getprevcon(&user) != 0)
+	if (ul_dlopen_libselinux() != 0)
 		return 0;
 
-	rc = selinux_check_access(user, user, classstr, perm, NULL);
+	if (selinux_call(getprevcon)(&user) != 0)
+		return 0;
+
+	rc = selinux_call(selinux_check_access)(user, user, classstr, perm, NULL);
 	if (rc != 0 && user_cxt)
 		*user_cxt = user;
 	else
-		freecon(user);
+		selinux_call(freecon)(user);
 
 	return rc == 0 ? 1 : 0;
 }
@@ -72,14 +76,18 @@ int ul_selinux_get_default_context(const char *path, int st_mode, char **cxt)
 
 	*cxt = NULL;
 
-	hnd = selabel_open(SELABEL_CTX_FILE, options, SELABEL_NOPT);
+	if (ul_dlopen_libselinux() != 0)
+		return -ENOSYS;
+
+	hnd = selinux_call(selabel_open)(SELABEL_CTX_FILE, options, SELABEL_NOPT);
 	if (!hnd)
 		return -errno;
 
-	if (selabel_lookup(hnd, cxt, path, st_mode) != 0)
-		rc = -errno
-			;
-	selabel_close(hnd);
+	if (selinux_call(selabel_lookup)(hnd, cxt, path, st_mode) != 0)
+		rc = -errno;
+	selinux_call(selabel_close)(hnd);
 
 	return rc;
 }
+
+#endif /* HAVE_LIBSELINUX */
