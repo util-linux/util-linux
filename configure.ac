@@ -586,6 +586,11 @@ AC_CHECK_DECL([BPF_OBJ_NAME_LEN],
 AC_CHECK_DECL([BPF_TAG_SIZE],
 	      [have_bpf_tag_size=yes], [have_bpf_tag_size=no],
 	      [#include <linux/bpf.h>])
+AC_CHECK_DECL([BPF_LINK_CREATE],
+	      [have_bpf_link_create=yes], [have_bpf_link_create=no],
+	      [#include <linux/bpf.h>])
+AS_IF([test "x$have_bpf_link_create" = xyes],
+	      [AC_DEFINE([HAVE_BPF_LINK_CREATE], [1], [Define if BPF_LINK_CREATE is available])])
 
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
