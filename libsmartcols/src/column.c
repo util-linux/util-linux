@@ -689,7 +689,7 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * the size itself.
  *
  * The wrap functions do not work directly with cell data, but with buffer used
- * by library to compose output data. The wrap_nextchunk() function can access
+ * by library to compose output data. The @wrap_nextchunk function can access
  * additional details about wrap data by scols_column_get_wrap_data().
  *
  * Returns: 0, a negative value in case of an error.

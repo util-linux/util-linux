@@ -1082,12 +1082,16 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 	return 0;
 }
 
-/*
+/**
  * mnt_table_enable_noautofs:
  * @tb: table
  * @ignore: ignore or don't ignore
  *
  * Enable/disable ignore autofs mount table entries on reading.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ *
+ * Since: 2.38
  */
 int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore)
 {
@@ -1097,11 +1101,13 @@ int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore)
 	return 0;
 }
 
-/*
+/**
  * mnt_table_is_noautofs:
  * @tb: table
  *
- * Return the the enabled status of ignore autofs mount table entries.
+ * Returns: 1 if autofs entries are ignored, 0 otherwise.
+ *
+ * Since: 2.38
  */
 int mnt_table_is_noautofs(struct libmnt_table *tb)
 {

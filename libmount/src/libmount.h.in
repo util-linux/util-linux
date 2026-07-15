@@ -106,21 +106,21 @@ struct libmnt_fs;
 struct libmnt_table;
 
 /**
- * libmnt_update
+ * libmnt_update:
  *
  * utab update description
  */
 struct libmnt_update;
 
 /**
- * libmnt_context
+ * libmnt_context:
  *
  * Mount/umount status
  */
 struct libmnt_context;
 
 /**
- * libmnt_monitor
+ * libmnt_monitor:
  *
  * Mount tables monitor
  */
@@ -141,7 +141,7 @@ struct libmnt_tabdiff;
 struct libmnt_ns;
 
 /**
- * libmnt_statmnt
+ * libmnt_statmnt:
  *
  * Setting for statmount()
  */
@@ -368,8 +368,10 @@ extern int mnt_match_options(const char *optstr, const char *pattern)
 			__ul_attribute__((warn_unused_result));
 extern const char *mnt_get_fstab_path(void);
 extern const char *mnt_get_swaps_path(void);
+#ifndef LIBMOUNT_DISABLE_DEPRECATED
 extern const char *mnt_get_mtab_path(void);
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
+#endif
 extern char *mnt_get_mountpoint(const char *path)
 			__ul_attribute__((warn_unused_result));
 extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
@@ -438,8 +440,10 @@ extern int mnt_optstr_get_options(const char *optstr, char **subset,
 extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 				const struct libmnt_optmap *map);
 
+#ifndef LIBMOUNT_DISABLE_DEPRECATED
 extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
                                 const struct libmnt_optmap *map);
+#endif
 
 /* iter.c */
 enum {
@@ -609,6 +613,8 @@ extern int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_utab(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_enable_noautofs(struct libmnt_table *tb, int ignore);
+extern int mnt_table_is_noautofs(struct libmnt_table *tb);
 extern int mnt_table_disable_useropts(struct libmnt_table *tb, int disable);
 extern int mnt_table_set_parser_errcb(struct libmnt_table *tb,
                 int (*cb)(struct libmnt_table *tb, const char *filename, int line));
