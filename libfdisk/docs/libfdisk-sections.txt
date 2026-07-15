@@ -77,6 +77,7 @@ fdisk_save_user_sector_size
 
 <SECTION>
 <FILE>label</FILE>
+fdisk_get_recommended_labelname
 fdisk_create_disklabel
 fdisk_list_disklabel
 fdisk_locate_disklabel

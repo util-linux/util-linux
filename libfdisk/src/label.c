@@ -2,6 +2,7 @@
 
 #include "fdiskP.h"
 #include "cctype.h"
+#include "pathnames.h"
 
 
 /**
@@ -330,6 +331,27 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
 	} while (rc == 0 || rc == 1);
 
 	return rc < 0 ? rc : 0;
+}
+
+/**
+ * fdisk_get_recommended_labelname:
+ *
+ * Suggests a disklabel type based on the current system: "sun" on SPARC,
+ * "gpt" when booted via EFI, otherwise "dos".
+ *
+ * Returns: label name string
+ * Since: 2.43
+ */
+const char *fdisk_get_recommended_labelname(void)
+{
+#ifdef __sparc__
+	return "sun";
+#else
+	if (access(_PATH_SYS_EFI, F_OK) == 0)
+		return "gpt";
+
+	return "dos";
+#endif
 }
 
 /**

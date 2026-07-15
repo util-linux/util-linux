@@ -1952,6 +1952,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		label = sf->label;
 	else if (fdisk_has_label(sf->cxt))
 		label = fdisk_label_get_name(fdisk_get_label(sf->cxt, NULL));
+	else if (sf->interactive)
+		label = fdisk_get_recommended_labelname();
 	else
 		label = "dos";	/* just for backward compatibility */
 
