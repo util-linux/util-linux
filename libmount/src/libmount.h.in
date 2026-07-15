@@ -147,6 +147,24 @@ struct libmnt_ns;
  */
 struct libmnt_statmnt;
 
+#ifndef UL_VFS_OPS_DEFINED
+#define UL_VFS_OPS_DEFINED
+
+struct ul_vfs_ops {
+	size_t size;
+
+	ssize_t (*vfs_read)(int fd, void *buf, size_t count);
+	ssize_t (*vfs_write)(int fd, const void *buf, size_t count);
+	int     (*vfs_open)(const char *pathname, int flags, mode_t mode);
+	int     (*vfs_close)(int fd);
+	off_t   (*vfs_lseek)(int fd, off_t offset, int whence);
+	int     (*vfs_fsync)(int fd);
+
+	FILE   *(*vfs_fopen)(const char *pathname, const char *mode);
+};
+
+#endif /* UL_VFS_OPS_DEFINED */
+
 /*
  * Actions
  */
@@ -388,6 +406,7 @@ extern void mnt_unref_cache(struct libmnt_cache *cache);
 extern int mnt_cache_set_targets(struct libmnt_cache *cache,
 				struct libmnt_table *mountinfo);
 extern int mnt_cache_set_sbprobe(struct libmnt_cache *cache, int flags);
+extern int mnt_cache_refer_vfs(struct libmnt_cache *cache, const struct ul_vfs_ops *vfs);
 extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
 
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
@@ -640,6 +659,7 @@ extern const char *mnt_table_get_trailing_comment(struct libmnt_table *tb);
 extern int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm);
 
 extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
+extern int mnt_table_refer_vfs(struct libmnt_table *tb, const struct ul_vfs_ops *vfs);
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);
 extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_find_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
@@ -923,6 +943,8 @@ extern int mnt_context_get_mtab(struct libmnt_context *cxt,
 extern int mnt_context_get_table(struct libmnt_context *cxt,
 				const char *filename,
 				struct libmnt_table **tb);
+extern int mnt_context_set_vfs(struct libmnt_context *cxt,
+				const struct ul_vfs_ops *ops);
 extern int mnt_context_set_cache(struct libmnt_context *cxt,
 				 struct libmnt_cache *cache);
 extern struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt);

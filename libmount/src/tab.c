@@ -394,6 +394,26 @@ int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc)
 }
 
 /**
+ * mnt_table_refer_vfs:
+ * @tb: pointer to tab
+ * @vfs: VFS operations or NULL
+ *
+ * Set reference to VFS I/O operations. The table does not own the @vfs
+ * pointer -- the caller is responsible for its lifetime.
+ *
+ * The VFS is used for table parsing (see mnt_table_parse_file()).
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_refer_vfs(struct libmnt_table *tb, const struct ul_vfs_ops *vfs)
+{
+	if (!tb)
+		return -EINVAL;
+	tb->vfs = vfs;
+	return 0;
+}
+
+/**
  * mnt_table_get_cache:
  * @tb: pointer to tab
  *

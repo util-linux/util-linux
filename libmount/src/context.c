@@ -104,6 +104,12 @@ void mnt_free_context(struct libmnt_context *cxt)
 	free(cxt->optstr_pattern);
 	free(cxt->tgt_prefix);
 
+	if (cxt->vfs) {
+		mnt_table_refer_vfs(cxt->fstab, NULL);
+		mnt_table_refer_vfs(cxt->mountinfo, NULL);
+		mnt_cache_refer_vfs(cxt->cache, NULL);
+		free(cxt->vfs);
+	}
 	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
 	mnt_unref_fs(cxt->fs);
@@ -1472,6 +1478,8 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 			return -MNT_ERR_NAMESPACE;
 
 		mnt_table_set_cache(cxt->fstab, mnt_context_get_cache(cxt));
+		if (cxt->vfs)
+			mnt_table_refer_vfs(cxt->fstab, cxt->vfs);
 		rc = mnt_table_parse_fstab(cxt->fstab, NULL);
 
 		if (!mnt_context_switch_ns(cxt, ns_old))
@@ -1516,6 +1524,8 @@ int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **
 					cxt->table_fltrcb_data);
 
 		mnt_table_set_cache(cxt->mountinfo, mnt_context_get_cache(cxt));
+		if (cxt->vfs)
+			mnt_table_refer_vfs(cxt->mountinfo, cxt->vfs);
 	}
 
 	/* Read the table; it's empty, because this first mnt_context_get_mountinfo()
@@ -1678,6 +1688,8 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 
 	if (cxt->table_errcb)
 		mnt_table_set_parser_errcb(*tb, cxt->table_errcb);
+	if (cxt->vfs)
+		mnt_table_refer_vfs(*tb, cxt->vfs);
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -1729,6 +1741,45 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
 }
 
 /**
+ * mnt_context_set_vfs:
+ * @cxt: mount context
+ * @ops: VFS operations or NULL
+ *
+ * Set pluggable VFS I/O operations. The library stores a private copy of @ops.
+ * If @ops is NULL, the VFS is reset to defaults (standard libc I/O).
+ *
+ * The VFS is automatically propagated to the cache (see mnt_cache_refer_vfs())
+ * and to the tables (see mnt_table_refer_vfs()) when they are created or set.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_vfs(struct libmnt_context *cxt, const struct ul_vfs_ops *ops)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	if (!ops) {
+		free(cxt->vfs);
+		cxt->vfs = NULL;
+		return 0;
+	}
+	if (!cxt->vfs) {
+		cxt->vfs = calloc(1, sizeof(*cxt->vfs));
+		if (!cxt->vfs)
+			return -ENOMEM;
+	}
+	ul_vfs_init(cxt->vfs, ops);
+
+	if (cxt->cache)
+		mnt_cache_refer_vfs(cxt->cache, cxt->vfs);
+	if (cxt->fstab)
+		mnt_table_refer_vfs(cxt->fstab, cxt->vfs);
+	if (cxt->mountinfo)
+		mnt_table_refer_vfs(cxt->mountinfo, cxt->vfs);
+	return 0;
+}
+
+/**
  * mnt_context_set_cache:
  * @cxt: mount context
  * @cache: cache instance or NULL
@@ -1758,6 +1809,8 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 
 	cxt->cache = cache;
 
+	if (cache && cxt->vfs)
+		mnt_cache_refer_vfs(cache, cxt->vfs);
 	if (cxt->mountinfo)
 		mnt_table_set_cache(cxt->mountinfo, cache);
 	if (cxt->fstab)

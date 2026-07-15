@@ -844,7 +844,7 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 	if (!filename || !tb)
 		return -EINVAL;
 
-	f = fopen(filename, "r" UL_CLOEXECSTR);
+	f = ul_vfs_fopen(tb->vfs, filename, "r" UL_CLOEXECSTR);
 	if (f) {
 		rc = mnt_table_parse_stream(tb, f, filename);
 		fclose(f);
