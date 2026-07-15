@@ -9,6 +9,7 @@ mnt_cache_device_has_tag
 mnt_cache_find_tag_value
 mnt_cache_read_tags
 mnt_cache_set_targets
+mnt_cache_refer_vfs
 mnt_cache_set_sbprobe
 mnt_get_fstype
 mnt_pretty_path
@@ -94,6 +95,7 @@ mnt_context_is_swapmatch
 mnt_context_is_verbose
 mnt_context_reset_status
 mnt_context_set_cache
+mnt_context_set_vfs
 mnt_context_set_fs
 mnt_context_set_fstab
 mnt_context_set_fstype
@@ -420,6 +422,7 @@ mnt_table_parse_stream
 mnt_table_parse_swaps
 mnt_table_parse_utab
 mnt_table_remove_fs
+mnt_table_refer_vfs
 mnt_table_set_cache
 mnt_table_set_intro_comment
 mnt_table_set_iter
