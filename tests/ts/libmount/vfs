@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2025 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="VFS"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_prog "mkfs.ext2"
+
+TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
+
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
+ts_scsi_debug_init dev_size_mb=10
+mkfs.ext2 -F "$TS_DEVICE" &> /dev/null || ts_skip "mkfs.ext2 failed"
+udevadm settle
+
+ts_init_subtest "table-fstab"
+ts_run $TESTPROG --vfs --table "$TS_SELF/files/fstab" &> "$TS_OUTPUT"
+sed -i -e 's,VFS: fopen(".*/files/,VFS: fopen("files/,g' "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "table-mountinfo"
+ts_run $TESTPROG --vfs --table "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+sed -i -e 's,VFS: fopen(".*/files/,VFS: fopen("files/,g' "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "blkid"
+ts_run $TESTPROG --vfs --blkid "$TS_DEVICE" &> "$TS_OUTPUT"
+sed -i -e "s,$TS_DEVICE,DEVICE,g" \
+       -e 's,read=[0-9]*,read=N,g' \
+       -e 's,lseek=[0-9]*,lseek=N,g' "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_finalize

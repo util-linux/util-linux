@@ -1,0 +1,3 @@
+VFS: fopen("files/fstab", "re")
+VFS calls: open=0 close=0 read=0 write=0 lseek=0
+table: parsed 11 entries
