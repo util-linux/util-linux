@@ -1,0 +1,4 @@
+cgroup 3
+BPF-LINK.TYPE,BPF-LINK.TYPE.RAW: 0
+comparing ids: OK
+comparing prog ids: OK
