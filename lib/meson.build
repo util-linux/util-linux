@@ -51,22 +51,24 @@ pty_session_c = files('pty-session.c')
 ismounted_c = files('ismounted.c')
 exec_shell_c = files('exec_shell.c')
 fileeq_c = files('fileeq.c')
-lib_common_logindefs = static_library('common_logindefs',
-  sources : ['logindefs.c'],
-  include_directories : dir_include,
-  dependencies : lib_econf,
-)
-
-lib_common_shells = static_library('common_shells',
-  sources : ['shells.c'],
-  include_directories : dir_include,
-  dependencies : lib_econf,
-)
 
 dl_utils_c = files('dl-utils.c')
 dl_cryptsetup_c = files('dl-cryptsetup.c')
 dl_selinux_c = files('dl-selinux.c')
 dl_systemd_c = files('dl-systemd.c')
+dl_econf_c = files('dl-econf.c')
+
+lib_common_logindefs = static_library('common_logindefs',
+  sources : ['logindefs.c', dl_utils_c, dl_econf_c],
+  include_directories : dir_include,
+  dependencies : lib_econf_dlopen_deps,
+)
+
+lib_common_shells = static_library('common_shells',
+  sources : ['shells.c', dl_utils_c, dl_econf_c],
+  include_directories : dir_include,
+  dependencies : lib_econf_dlopen_deps,
+)
 
 selinux_utils_c = files('selinux-utils.c')
 

@@ -74,6 +74,12 @@ libcommon_logindefs_la_CFLAGS = $(AM_CFLAGS)
 libcommon_logindefs_la_SOURCES = \
 	lib/logindefs.c
 if HAVE_ECONF
+libcommon_logindefs_la_CFLAGS += $(ECONF_CFLAGS)
+libcommon_logindefs_la_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-econf.c \
+	include/dl-econf.h
 libcommon_logindefs_la_LIBADD = $(ECONF_LIBS)
 endif
 
@@ -83,6 +89,12 @@ libcommon_shells_la_SOURCES = \
 	lib/shells.c
 if HAVE_ECONF
 if USE_VENDORDIR
+libcommon_shells_la_CFLAGS += $(ECONF_CFLAGS)
+libcommon_shells_la_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-econf.c \
+	include/dl-econf.h
 libcommon_shells_la_LIBADD = $(ECONF_LIBS)
 endif
 endif
@@ -270,5 +282,11 @@ test_logindefs_SOURCES = lib/logindefs.c
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 test_logindefs_LDADD = $(LDADD) libcommon.la
 if HAVE_ECONF
+test_logindefs_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-econf.c \
+	include/dl-econf.h
+test_logindefs_CPPFLAGS += $(ECONF_CFLAGS)
 test_logindefs_LDADD += $(ECONF_LIBS)
 endif
