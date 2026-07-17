@@ -996,6 +996,21 @@ AS_IF([test "x$build_widechar" = xyes ], [
   AC_DEFINE([HAVE_WIDECHAR], [1], [Do we have wide character support?])
 ])
 
+# The "R" (SHF_GNU_RETAIN) section flag is only understood by binutils >= 2.36.
+AC_MSG_CHECKING([whether the assembler supports the R (SHF_GNU_RETAIN) section flag])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+	__asm__(".pushsection .note.test, \"aR\", %note\n.popsection\n");
+]])], [
+	AC_MSG_RESULT([yes])
+	ul_dlopen_section_flags="aGR"
+], [
+	AC_MSG_RESULT([no])
+	ul_dlopen_section_flags="aG"
+])
+AC_DEFINE_UNQUOTED([_UL_ELF_NOTE_DLOPEN_SECTION_FLAGS],
+	["$ul_dlopen_section_flags"],
+	[ELF section flags for the .note.dlopen ELF note])
+
 
 AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
 #include <sched.h>
