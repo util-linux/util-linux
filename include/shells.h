@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
-# include <libeconf.h>
+# include "dl-econf.h"
 econf_file *open_etc_shells(void);
 #endif
 

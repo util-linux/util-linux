@@ -2883,8 +2883,13 @@ AS_IF([test "x$with_econf" != xno], [
   AS_CASE([$with_econf:$have_econf],
     [yes:no],
       [AC_MSG_ERROR([libeconf expected but libeconf not found])],
-    [*:yes],
+    [*:yes], [
        AC_DEFINE([HAVE_LIBECONF], [1], [Define if libeconf is available])
+       # libeconf is loaded with dlopen() at runtime rather than linked
+       # against, so the tools need libdl instead of libeconf (the ECONF_CFLAGS
+       # headers are still used at build time).
+       ECONF_LIBS="-ldl"
+    ]
   )
 ])
 AM_CONDITIONAL([HAVE_ECONF], [test "x$have_econf" = xyes])

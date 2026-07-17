@@ -525,11 +525,21 @@ lib_econf = dependency(
   'libeconf',
   required : get_option('econf'))
 conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
+summary('libeconf', lib_econf.found() ? 'enabled (dlopen)' : 'disabled', section : 'components')
 
 have = cc.has_function(
   'econf_readConfig',
   dependencies : lib_econf)
 conf.set('HAVE_ECONF_READCONFIG', have ? 1 : false)
+
+# libeconf is loaded with dlopen() at runtime (through lib/dl-econf.c) instead
+# of being linked, so the tools only need the headers at build time plus libdl.
+lib_econf_compile_deps = []
+lib_econf_dlopen_deps = []
+if lib_econf.found()
+  lib_econf_compile_deps = [lib_econf.partial_dependency(compile_args : true, includes : true)]
+  lib_econf_dlopen_deps = lib_econf_compile_deps + [lib_dl]
+endif
 
 lib_audit = dependency(
   'audit',

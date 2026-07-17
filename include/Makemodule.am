@@ -23,6 +23,7 @@ dist_noinst_HEADERS += \
 	include/debug.h \
 	include/default_shell.h \
 	include/dl-cryptsetup.h \
+	include/dl-econf.h \
 	include/dl-selinux.h \
 	include/dl-systemd.h \
 	include/dl-utils.h \
