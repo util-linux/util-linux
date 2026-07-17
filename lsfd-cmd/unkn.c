@@ -30,6 +30,9 @@
 #include "lsfd.h"
 #include "pidfd.h"
 
+#include "xalloc.h"
+#include "buffer.h"
+
 #define offsetofend(TYPE, MEMBER)				\
 	(offsetof(TYPE, MEMBER)	+ sizeof_member(TYPE, MEMBER))
 
@@ -334,12 +337,10 @@ static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const 
 	return 0;
 }
 
-static inline char *anon_eventfd_data_xstrendpoint(struct file *file)
+static inline void anon_eventfd_data_xbufendpoint(struct file *file, struct ul_buffer *ul_buf)
 {
-	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d",
-		  file->proc->pid, file->proc->command, file->association);
-	return str;
+	ul_buffer_xappendf(ul_buf, "%d,%s,%d",
+			   file->proc->pid, file->proc->command, file->association);
 }
 
 static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -357,22 +358,19 @@ static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused_
 		return true;
 	case COL_ENDPOINTS: {
 		struct list_head *e;
-		char *estr;
+		struct ul_buffer ul_buf = UL_INIT_BUFFER;
 		foreach_endpoint(e, data->endpoint) {
 			struct anon_eventfd_data *other = list_entry(e,
 								     struct anon_eventfd_data,
 								     endpoint.endpoints);
 			if (data == other)
 				continue;
-			if (*str)
-				xstrputc(str, '\n');
-			estr = anon_eventfd_data_xstrendpoint(&other->backptr->file);
-			xstrappend(str, estr);
-			free(estr);
+			if (!ul_buffer_is_empty(&ul_buf))
+				ul_buffer_xappend_char(&ul_buf, '\n');
+			anon_eventfd_data_xbufendpoint(&other->backptr->file, &ul_buf);
 		}
-		if (!*str)
-			return false;
-		return true;
+		*str = ul_buffer_steal_string(&ul_buf);
+		return *str ? true : false;
 	}
 	default:
 		return false;
@@ -462,20 +460,16 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 					     const char *prefix,
 					     const char sep)
 {
-	char *str = prefix? xstrdup(prefix): NULL;
+	struct ul_buffer ul_buf = UL_INIT_BUFFER;
 
-	char buf[256];
+	if (prefix)
+		ul_buffer_xappend_string(&ul_buf, prefix);
 	for (size_t i = 0; i < data->count; i++) {
-		size_t offset = 0;
-
-		if (i > 0) {
-			buf[0] = sep;
-			offset = 1;
-		}
-		snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
-		xstrappend(&str, buf);
+		if (i > 0)
+			ul_buffer_xappend_char(&ul_buf, sep);
+		ul_buffer_xappendf(&ul_buf, "%d", data->tfds[i]);
 	}
-	return str;
+	return ul_buffer_steal_string(&ul_buf);
 }
 
 static char *anon_eventpoll_get_name(struct unkn *unkn)
@@ -731,29 +725,26 @@ static int anon_signalfd_handle_fdinfo(struct unkn *unkn, const char *key, const
 
 static char *anon_signalfd_make_mask_string(const char* prefix, uint64_t sigmask)
 {
-	char *str = NULL;
+	struct ul_buffer ul_buf = UL_INIT_BUFFER;
 
 	for (size_t i = 0; i < sizeof(sigmask) * 8; i++) {
 		if ((((uint64_t)0x1) << i) & sigmask) {
 			const int signum = i + 1;
 			const char *signame = signum_to_signame(signum);
 
-			if (str)
-				xstrappend(&str, ",");
+			if (!ul_buffer_is_empty(&ul_buf))
+				ul_buffer_xappend_char(&ul_buf, ',');
 			else if (prefix)
-				xstrappend(&str, prefix);
+				ul_buffer_xappend_string(&ul_buf, prefix);
 
-			if (signame) {
-				xstrappend(&str, signame);
-			} else {
-				char buf[BUFSIZ];
-				snprintf(buf, sizeof(buf), "%d", signum);
-				xstrappend(&str, buf);
-			}
+			if (signame)
+				ul_buffer_xappend_string(&ul_buf, signame);
+			else
+				ul_buffer_xappendf(&ul_buf, "%d", signum);
 		}
 	}
 
-	return str;
+	return ul_buffer_steal_string(&ul_buf);
 }
 
 static char *anon_signalfd_get_name(struct unkn *unkn)
@@ -823,9 +814,8 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 					     enum decode_source_level decode_level,
 					     struct anon_inotify_data *data)
 {
-	char *str = NULL;
 	char buf[BUFSIZ] = {'\0'};
-	bool first_element = true;
+	struct ul_buffer ul_buf = UL_INIT_BUFFER;
 
 	struct list_head *i;
 	list_for_each(i, &data->inodes) {
@@ -833,18 +823,19 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 		struct anon_inotify_inode *inode = list_entry(i,
 							      struct anon_inotify_inode,
 							      inodes);
+		ul_buffer_xappend_string(&ul_buf,
+					 ul_buffer_is_empty(&ul_buf) ? prefix : sep);
 
 		decode_source(source, sizeof(source),
 			      ANON_INOTIFY_MAJOR(inode->sdev), ANON_INOTIFY_MINOR(inode->sdev),
 			      decode_level);
-		snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: sep,
+		snprintf(buf, sizeof(buf), "%llu@%s",
 			 (unsigned long long)inode->ino, source);
-		first_element = false;
 
-		xstrappend(&str, buf);
+		ul_buffer_xappend_string(&ul_buf, buf);
 	}
 
-	return str;
+	return ul_buffer_steal_string(&ul_buf);
 }
 
 static char *anon_inotify_get_name(struct unkn *unkn)
