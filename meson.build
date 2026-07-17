@@ -295,6 +295,15 @@ if get_option('ncurses').enabled() and get_option('widechar').enabled()
 endif
 conf.set('HAVE_WIDECHAR', have ? 1 : false)
 
+# The "R" (SHF_GNU_RETAIN) section flag is only understood by binutils >= 2.36.
+if cc.compiles(
+        '__asm__(".pushsection .note.test, \\"aR\\", %note\\n.popsection\\n");',
+        name : 'assembler supports the "R" (SHF_GNU_RETAIN) section flag')
+        conf.set_quoted('_UL_ELF_NOTE_DLOPEN_SECTION_FLAGS', 'aGR')
+else
+        conf.set_quoted('_UL_ELF_NOTE_DLOPEN_SECTION_FLAGS', 'aG')
+endif
+
 lib_m = cc.find_library('m')
 
 lib_tinfo = dependency(
