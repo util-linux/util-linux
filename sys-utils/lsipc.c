@@ -914,8 +914,8 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				else {
 					arg = xmalloc(11);
 					xstrmode(p->msg_perm.mode & 0777, arg);
-					rc = scols_line_refer_data(ln, n, arg);
 				}
+				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
 				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.cuid);
@@ -1050,8 +1050,8 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl,
 				else {
 					arg = xmalloc(11);
 					xstrmode(p->mode & 0777, arg);
-					rc = scols_line_refer_data(ln, n, arg);
 				}
+				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
 				rc = scols_line_sprintf(ln, n, "%u", p->cuid);
