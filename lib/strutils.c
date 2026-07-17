@@ -1063,29 +1063,62 @@ char *ul_strfconcat(const char *s, const char *format, ...)
 	return res;
 }
 
-int ul_strappend(char **a, const char *b)
+/*
+ * Append b to *a using caller-supplied lengths. *al must be the current
+ * length of *a, and bl must be the exact length of b, not an upper bound
+ * as in strncat(). On success, *al is updated to the new length.
+ */
+int ul_strnappend(char **a, size_t *const al, const char *b, const size_t bl)
 {
-	size_t al, bl;
 	char *tmp;
 
 	if (!a)
 		return -EINVAL;
-	if (!b || !*b)
+	if (!al)
+		return -EINVAL;
+	if (!b)
+		return bl ? -EINVAL : 0;
+	if (!bl)
 		return 0;
+	if (!*b)
+		return -EINVAL;
 	if (!*a) {
-		*a = strdup(b);
-		return !*a ? -ENOMEM : 0;
+		assert(!*al);
+		if (*al)
+			return -EINVAL;
+
+		*a = malloc(bl + 1);
+		if (!*a)
+			return -ENOMEM;
+
+		memcpy(*a, b, bl);
+		*((*a) + bl) = '\0';
+		*al = bl;
+		return 0;
 	}
 
-	al = strlen(*a);
-	bl = strlen(b);
 
-	tmp = realloc(*a, al + bl + 1);
+	if (bl == SIZE_MAX)
+		return -ENOMEM;
+	if (SIZE_MAX  - *al < bl + 1)
+		return -ENOMEM;
+
+	tmp = realloc(*a, *al + bl + 1);
 	if (!tmp)
 		return -ENOMEM;
 	*a = tmp;
-	memcpy((*a) + al, b, bl + 1);
+	memcpy((*a) + *al, b, bl);
+	*((*a) + *al + bl) = '\0';
+	*al += bl;
 	return 0;
+}
+
+int ul_strappend(char **a, const char *b)
+{
+	size_t al = (a && *a) ? strlen(*a) : 0;
+	size_t bl = b ? strlen(b) : 0;
+
+	return ul_strnappend(a, &al, b, bl);
 }
 
 /* the hybrid version of strfconcat and strappend. */

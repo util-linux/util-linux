@@ -11,6 +11,7 @@
 #ifndef UTIL_LINUX_XALLOC_H
 #define UTIL_LINUX_XALLOC_H
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -135,6 +136,12 @@ int xvasprintf(char **strp, const char *fmt, va_list ap)
 	if (ret < 0)
 		err(XALLOC_EXIT_CODE, "cannot allocate string");
 	return ret;
+}
+
+static inline void xstrnappend(char **a, size_t *const al, const char *b, const size_t bl)
+{
+	if (ul_strnappend(a, al, b, bl) < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate string");
 }
 
 static inline void xstrappend(char **a, const char *b)
