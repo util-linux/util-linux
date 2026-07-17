@@ -495,7 +495,7 @@ static bool anon_eventpoll_fill_column(struct proc *proc  __attribute__((__unuse
 
 	switch(column_id) {
 	case COL_EVENTPOLL_TFDS:
-		*str =anon_eventpoll_make_tfds_string(data, NULL, '\n');
+		*str = anon_eventpoll_make_tfds_string(data, NULL, '\n');
 		if (*str)
 			return true;
 		break;
