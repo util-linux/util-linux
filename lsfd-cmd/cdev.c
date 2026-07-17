@@ -568,13 +568,13 @@ static char * cdev_tty_get_name(struct cdev *cdev)
 	return str;
 }
 
-static inline char *cdev_tty_xstrendpoint(struct file *file)
+static inline char *cdev_tty_xstrendpoint(struct file *file, size_t *len)
 {
 	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  file->proc->pid, file->proc->command, file->association,
-		  (file->mode & S_IRUSR)? 'r': '-',
-		  (file->mode & S_IWUSR)? 'w': '-');
+	*len = xasprintf(&str, "%d,%s,%d%c%c",
+			 file->proc->pid, file->proc->command, file->association,
+			 (file->mode & S_IRUSR)? 'r': '-',
+			 (file->mode & S_IWUSR)? 'w': '-');
 	return str;
 }
 
@@ -606,8 +606,10 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 		if (is_pty(data->drv)) {
 			struct ttydata *this = data;
 			struct list_head *e;
+			size_t strl = *str ? strlen(*str) : 0;
 			foreach_endpoint(e, data->endpoint) {
 				char *estr;
+				size_t estrl;
 				struct ttydata *other = list_entry(e, struct ttydata, endpoint.endpoints);
 				if (this == other)
 					continue;
@@ -617,9 +619,9 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 					continue;
 
 				if (*str)
-					xstrputc(str, '\n');
-				estr = cdev_tty_xstrendpoint(&other->cdev->file);
-				xstrappend(str, estr);
+					xstrnputc(str, &strl, '\n');
+				estr = cdev_tty_xstrendpoint(&other->cdev->file, &estrl);
+				xstrnappend(str, &strl, estr, estrl);
 				free(estr);
 			}
 			if (*str)

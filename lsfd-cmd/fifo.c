@@ -31,13 +31,13 @@ struct fifo_ipc {
 	ino_t ino;
 };
 
-static inline char *fifo_xstrendpoint(struct file *file)
+static inline char *fifo_xstrendpoint(struct file *file, size_t *len)
 {
 	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  file->proc->pid, file->proc->command, file->association,
-		  (file->mode & S_IRUSR)? 'r': '-',
-		  (file->mode & S_IWUSR)? 'w': '-');
+	*len = xasprintf(&str, "%d,%s,%d%c%c",
+			 file->proc->pid, file->proc->command, file->association,
+			 (file->mode & S_IRUSR)? 'r': '-',
+			 (file->mode & S_IWUSR)? 'w': '-');
 	return str;
 }
 
@@ -62,17 +62,19 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 		}
 		return false;
 	case COL_ENDPOINTS: {
+		size_t strl = 0;
 		struct fifo *this = (struct fifo *)file;
 		struct list_head *e;
 		foreach_endpoint(e, this->endpoint) {
 			char *estr;
+			size_t estrl;
 			struct fifo *other = list_entry(e, struct fifo, endpoint.endpoints);
 			if (this == other)
 				continue;
 			if (str)
-				xstrputc(&str, '\n');
-			estr = fifo_xstrendpoint(&other->file);
-			xstrappend(&str, estr);
+				xstrnputc(&str, &strl, '\n');
+			estr = fifo_xstrendpoint(&other->file, &estrl);
+			xstrnappend(&str, &strl, estr, estrl);
 			free(estr);
 		}
 		if (!str)

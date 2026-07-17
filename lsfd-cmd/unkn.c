@@ -334,11 +334,11 @@ static int anon_eventfd_handle_fdinfo(struct unkn *unkn, const char *key, const 
 	return 0;
 }
 
-static inline char *anon_eventfd_data_xstrendpoint(struct file *file)
+static inline char *anon_eventfd_data_xstrendpoint(struct file *file, size_t *len)
 {
 	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d",
-		  file->proc->pid, file->proc->command, file->association);
+	*len = xasprintf(&str, "%d,%s,%d",
+			 file->proc->pid, file->proc->command, file->association);
 	return str;
 }
 
@@ -358,6 +358,8 @@ static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused_
 	case COL_ENDPOINTS: {
 		struct list_head *e;
 		char *estr;
+		size_t strl = *str ? strlen(*str) : 0;
+		size_t estrl;
 		foreach_endpoint(e, data->endpoint) {
 			struct anon_eventfd_data *other = list_entry(e,
 								     struct anon_eventfd_data,
@@ -365,9 +367,9 @@ static bool anon_eventfd_fill_column(struct proc *proc  __attribute__((__unused_
 			if (data == other)
 				continue;
 			if (*str)
-				xstrputc(str, '\n');
-			estr = anon_eventfd_data_xstrendpoint(&other->backptr->file);
-			xstrappend(str, estr);
+				xstrnputc(str, &strl, '\n');
+			estr = anon_eventfd_data_xstrendpoint(&other->backptr->file, &estrl);
+			xstrnappend(str, &strl, estr, estrl);
 			free(estr);
 		}
 		if (!*str)
@@ -462,18 +464,24 @@ static char *anon_eventpoll_make_tfds_string(struct anon_eventpoll_data *data,
 					     const char *prefix,
 					     const char sep)
 {
-	char *str = prefix? xstrdup(prefix): NULL;
+	size_t strl = prefix ? strlen(prefix) : 0;
+	char *str = prefix ? xstrndup(prefix, strl) : NULL;
 
 	char buf[256];
 	for (size_t i = 0; i < data->count; i++) {
 		size_t offset = 0;
+		size_t bufl;
+		int n;
 
 		if (i > 0) {
 			buf[0] = sep;
 			offset = 1;
 		}
-		snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
-		xstrappend(&str, buf);
+
+		n = snprintf(buf + offset, sizeof(buf) - offset, "%d", data->tfds[i]);
+		bufl = offset + (n < 0 ? 0 : (size_t)n);
+		bufl = (bufl >= sizeof(buf)) ? sizeof(buf) - 1 : bufl;
+		xstrnappend(&str, &strl, buf, bufl);
 	}
 	return str;
 }
@@ -732,6 +740,8 @@ static int anon_signalfd_handle_fdinfo(struct unkn *unkn, const char *key, const
 static char *anon_signalfd_make_mask_string(const char* prefix, uint64_t sigmask)
 {
 	char *str = NULL;
+	size_t strl = 0;
+	size_t prefixl = prefix ? strlen(prefix) : 0;
 
 	for (size_t i = 0; i < sizeof(sigmask) * 8; i++) {
 		if ((((uint64_t)0x1) << i) & sigmask) {
@@ -739,16 +749,20 @@ static char *anon_signalfd_make_mask_string(const char* prefix, uint64_t sigmask
 			const char *signame = signum_to_signame(signum);
 
 			if (str)
-				xstrappend(&str, ",");
+				xstrnputc(&str, &strl, ',');
 			else if (prefix)
-				xstrappend(&str, prefix);
+				xstrnappend(&str, &strl, prefix, prefixl);
 
 			if (signame) {
-				xstrappend(&str, signame);
+				size_t signamel = strlen(signame);
+				xstrnappend(&str, &strl, signame, signamel);
 			} else {
 				char buf[BUFSIZ];
-				snprintf(buf, sizeof(buf), "%d", signum);
-				xstrappend(&str, buf);
+				size_t bufl;
+				int n = snprintf(buf, sizeof(buf), "%d", signum);
+				bufl = (n < 0 ? 0 : (size_t)n);
+				bufl = (bufl > sizeof(buf)) ? sizeof(buf) - 1 : bufl;
+				xstrnappend(&str, &strl, buf, bufl);
 			}
 		}
 	}
@@ -824,6 +838,7 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 					     struct anon_inotify_data *data)
 {
 	char *str = NULL;
+	size_t strl = 0;
 	char buf[BUFSIZ] = {'\0'};
 	bool first_element = true;
 
@@ -833,15 +848,19 @@ static char *anon_inotify_make_inodes_string(const char *prefix,
 		struct anon_inotify_inode *inode = list_entry(i,
 							      struct anon_inotify_inode,
 							      inodes);
+		size_t bufl;
+		int n;
 
 		decode_source(source, sizeof(source),
 			      ANON_INOTIFY_MAJOR(inode->sdev), ANON_INOTIFY_MINOR(inode->sdev),
 			      decode_level);
-		snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: sep,
-			 (unsigned long long)inode->ino, source);
+		n = snprintf(buf, sizeof(buf), "%s%llu@%s", first_element? prefix: sep,
+			     (unsigned long long)inode->ino, source);
+		bufl = (n < 0) ? 0 : (size_t)n;
+		bufl = (bufl >= sizeof(buf)) ? sizeof(buf) - 1 : bufl;
 		first_element = false;
 
-		xstrappend(&str, buf);
+		xstrnappend(&str, &strl, buf, bufl);
 	}
 
 	return str;

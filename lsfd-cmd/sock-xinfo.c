@@ -586,7 +586,7 @@ static bool unix_shutdown_chars(struct unix_xinfo *ux, char rw[2])
 	return false;
 }
 
-static inline char *unix_xstrendpoint(struct sock *sock)
+static inline char *unix_xstrendpoint(struct sock *sock, size_t *len)
 {
 	char *str = NULL;
 	char shutdown_chars[3] = { 0 };
@@ -595,9 +595,9 @@ static inline char *unix_xstrendpoint(struct sock *sock)
 		shutdown_chars[0] = '?';
 		shutdown_chars[1] = '?';
 	}
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  sock->file.proc->pid, sock->file.proc->command, sock->file.association,
-		  shutdown_chars[0], shutdown_chars[1]);
+	*len = xasprintf(&str, "%d,%s,%d%c%c",
+			 sock->file.proc->pid, sock->file.proc->command, sock->file.association,
+			 shutdown_chars[0], shutdown_chars[1]);
 
 	return str;
 }
@@ -619,15 +619,17 @@ static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
 static void unix_fill_column_append_endpoints(struct ipc *peer_ipc, char **str)
 {
 	struct list_head *e;
+	size_t strl = *str ? strlen(*str) : 0;
 
 	list_for_each_backwardly(e, &peer_ipc->endpoints) {
 		struct sock *peer_sock = list_entry(e, struct sock, endpoint.endpoints);
 		char *estr;
+		size_t estrl;
 
 		if (*str)
-			xstrputc(str, '\n');
-		estr = unix_xstrendpoint(peer_sock);
-		xstrappend(str, estr);
+			xstrnputc(str, &strl, '\n');
+		estr = unix_xstrendpoint(peer_sock, &estrl);
+		xstrnappend(str, &strl, estr, estrl);
 		free(estr);
 	}
 }
