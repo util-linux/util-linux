@@ -150,10 +150,16 @@ static inline void xstrappend(char **a, const char *b)
 		err(XALLOC_EXIT_CODE, "cannot allocate string");
 }
 
-static inline void xstrputc(char **a, char c)
+static inline void xstrnputc(char **a, size_t *const al, char c)
 {
 	char b[] = {c, '\0'};
-	xstrappend(a, b);
+	xstrnappend(a, al, b, (c == '\0') ? 0 : 1);
+}
+
+static inline void xstrputc(char **a, char c)
+{
+	size_t al = (a && *a) ? strlen(*a) : 0;
+	xstrnputc(a, &al, c);
 }
 
 static inline
