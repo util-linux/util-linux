@@ -32,7 +32,7 @@
 
 /* sd-device is a replacement for libudev */
 #ifdef USE_LIBMOUNT_UDEV_SUPPORT
-# include <systemd/sd-device.h>
+# include "dl-systemd.h"
 #endif
 
 #include "canonicalize.h"
@@ -450,7 +450,10 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 	assert(cache);
 	assert(devname);
 
-	rc = sd_device_new_from_devname(&sd, devname);
+	if (ul_dlopen_libsystemd() != 0)
+		return -ENOSYS;
+
+	rc = systemd_call(sd_device_new_from_devname)(&sd, devname);
 	if (rc < 0)
 		return rc;
 
@@ -461,7 +464,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 
 		if (cache_find_tag_value(cache, devname, t->mnt_name))
 			continue;
-		if (sd_device_get_property_value(sd, t->udev_name, &data) < 0)
+		if (systemd_call(sd_device_get_property_value)(sd, t->udev_name, &data) < 0)
 			continue;
 
 		tagval = strdup(data); /* temporary for unhexmangle() */
@@ -481,7 +484,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 	}
 
 	DBG_OBJ(CACHE, cache, ul_debug("\tread %zu tags [rc=%d]", ntags, rc));
-	sd_device_unref(sd);
+	systemd_call(sd_device_unref)(sd);
 	free(cacheval);
 	free(tagval);
 

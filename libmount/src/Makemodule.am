@@ -84,6 +84,16 @@ libmount_la_LIBADD += -ldl
 endif
 
 if USE_LIBMOUNT_UDEV_SUPPORT
+libmount_la_SOURCES += \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
+if !HAVE_SELINUX
+if !HAVE_CRYPTSETUP
+libmount_la_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h
+endif
+endif
 libmount_la_LIBADD += $(SYSTEMD_LIBS)
 endif
 
@@ -94,7 +104,8 @@ libmount_la_CFLAGS = \
 	-I$(top_srcdir)/libmount/src \
 	$(SOLIB_CFLAGS) \
 	$(CRYPTSETUP_CFLAGS) \
-	$(SELINUX_CFLAGS)
+	$(SELINUX_CFLAGS) \
+	$(SYSTEMD_CFLAGS)
 
 EXTRA_libmount_la_DEPENDENCIES = \
 	libmount/src/libmount.sym

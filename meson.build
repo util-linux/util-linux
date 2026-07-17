@@ -391,6 +391,12 @@ lib_utempter = cc.find_library(
   required : get_option('libutempter'))
 conf.set('HAVE_LIBUTEMPTER', lib_utempter.found() ? 1 : false)
 
+if meson.version().version_compare('>= 0.62.0')
+  lib_dl = dependency('dl')
+else
+  lib_dl = cc.find_library('dl')
+endif
+
 systemd = dependency(
   'systemd',
   required : get_option('systemd'))
@@ -405,7 +411,18 @@ lib_systemd = dependency(
   required : get_option('systemd'))
 conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
 conf.set('USE_SYSTEMD', lib_systemd.found() ? 1 : false)
-summary('libsystemd', lib_systemd.found() ? 'enabled' : 'disabled', section : 'components')
+summary('libsystemd', lib_systemd.found() ? 'enabled (dlopen)' : 'disabled', section : 'components')
+
+# libsystemd is loaded with dlopen() at runtime (through lib/dl-systemd.c)
+# instead of being linked, so the tools only need the headers at build time
+# plus libdl. lib_systemd_dlopen_deps bundles both and is used by all
+# libsystemd-using targets.
+lib_systemd_compile_deps = []
+lib_systemd_dlopen_deps = []
+if lib_systemd.found()
+  lib_systemd_compile_deps = [lib_systemd.partial_dependency(compile_args : true, includes : true)]
+  lib_systemd_dlopen_deps = lib_systemd_compile_deps + [lib_dl]
+endif
 
 # Since systemd-240, which provides basic functions in sd-device.
 have = cc.has_function(
@@ -467,12 +484,6 @@ lib_cryptsetup = dependency(
   'libcryptsetup',
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
-
-if meson.version().version_compare('>= 0.62.0')
-  lib_dl = dependency('dl')
-else
-  lib_dl = cc.find_library('dl')
-endif
 
 summary('cryptsetup support (dlopen)',
         lib_cryptsetup.found() ? 'enabled' : 'disabled',
@@ -1239,13 +1250,13 @@ opt = get_option('build-lslogins') \
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  dl_utils_c, dl_selinux_c,
+  dl_utils_c, dl_selinux_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
                lib_common_logindefs] +
                (build_liblastlog2 ? [lib_lastlog2] : []),
-  dependencies : [lib_systemd] + lib_selinux_dlopen_deps,
+  dependencies : lib_systemd_dlopen_deps + lib_selinux_dlopen_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1930,11 +1941,11 @@ opt = get_option('build-zramctl').allowed()
 exe = executable(
   'zramctl',
   zramctl_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  # requires systemd v240 or newer
-  dependencies : [conf.get('HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH').to_string() == '1' ? lib_systemd : [] ],
+  dependencies : lib_systemd_dlopen_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2806,9 +2817,10 @@ opt = get_option('build-agetty') \
 exe = executable(
   'agetty',
   agetty_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common, lib_common_logindefs],
-  dependencies : [BSD ? lib_util : [], lib_systemd],
+  dependencies : [BSD ? lib_util : []] + lib_systemd_dlopen_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2861,9 +2873,10 @@ opt = get_option('build-wall').allowed()
 exe = executable(
   'wall',
   wall_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_systemd],
+  dependencies : lib_systemd_dlopen_deps,
   install_dir : usrbin_exec_dir,
   install_mode : tty_install_mode,
   install : opt,
@@ -2883,9 +2896,10 @@ opt = get_option('build-write') \
 exe = executable(
   'write',
   write_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_systemd],
+  dependencies : lib_systemd_dlopen_deps,
   install_dir : usrbin_exec_dir,
   install_mode : tty_install_mode,
   install : opt,
@@ -2953,9 +2967,10 @@ opt = get_option('build-logger').allowed()
 exe = executable(
   'logger',
   logger_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_systemd],
+  dependencies : lib_systemd_dlopen_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2968,10 +2983,11 @@ endif
 exe = executable(
   'test_logger',
   logger_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   c_args : '-DTEST_LOGGER',
   link_with : [lib_common],
-  dependencies : [lib_systemd],
+  dependencies : lib_systemd_dlopen_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3144,11 +3160,11 @@ opt = build_uuidd
 exe = executable(
   'uuidd',
   uuidd_sources,
+  dl_utils_c, dl_systemd_c,
   include_directories : includes,
   link_with : [lib_common,
                lib_uuid],
-  dependencies : [realtime_libs,
-                  lib_systemd],
+  dependencies : [realtime_libs] + lib_systemd_dlopen_deps,
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)

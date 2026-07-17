@@ -2779,6 +2779,12 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
        AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
        AC_SUBST([SYSTEMD_USER_LOCK])
+       # libsystemd is loaded with dlopen() at runtime rather than linked
+       # against, so the tools need libdl instead of libsystemd (the
+       # SYSTEMD_CFLAGS headers are still used at build time).
+       SYSTEMD_LIBS="-ldl"
+       SYSTEMD_DAEMON_LIBS=
+       SYSTEMD_JOURNAL_LIBS=
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
