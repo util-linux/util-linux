@@ -82,6 +82,13 @@ if lib_cryptsetup.found()
   lib_mount_sources += dl_cryptsetup_c
 endif
 
+if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
+  if not (lib_selinux.found() or lib_cryptsetup.found())
+    lib_mount_sources += dl_utils_c
+  endif
+  lib_mount_sources += dl_systemd_c
+endif
+
 libmount_sym = 'src/libmount.sym'
 libmount_sym_path = '@0@/@1@'.format(meson.current_source_dir(), libmount_sym)
 
@@ -95,6 +102,9 @@ if lib_selinux.found()
 endif
 if lib_cryptsetup.found()
   lib__mount_compile_deps += lib_cryptsetup.partial_dependency(compile_args : true, includes : true)
+endif
+if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
+  lib__mount_compile_deps += lib_systemd.partial_dependency(compile_args : true, includes : true)
 endif
 
 lib__mount = static_library(
@@ -116,10 +126,6 @@ lib__mount_deps = [
   lib_dl,
   realtime_libs
 ]
-
-if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
-  lib__mount_deps += [lib_systemd]
-endif
 
 libmount_link_depends = []
 libmount_link_args = []

@@ -29,7 +29,7 @@
 #include <libsmartcols.h>
 
 #if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
-#include <systemd/sd-device.h>
+#include "dl-systemd.h"
 #endif
 
 #include "c.h"
@@ -163,6 +163,23 @@ static int column_name_to_id(const char *name, size_t namesz)
 }
 
 #if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
+/*
+ * Cleanup helpers for __attribute__((cleanup)) -- libsystemd's own
+ * sd_device_unrefp()/sd_device_monitor_unrefp() inlines reference the library
+ * symbols directly, which does not work when libsystemd is loaded via dlopen().
+ */
+static inline void ul_sd_device_unrefp(sd_device **p)
+{
+	if (*p)
+		systemd_call(sd_device_unref)(*p);
+}
+
+static inline void ul_sd_device_monitor_unrefp(sd_device_monitor **p)
+{
+	if (*p)
+		systemd_call(sd_device_monitor_unref)(*p);
+}
+
 static int monitor_callback(sd_device_monitor *m, sd_device *device, void *userdata)
 {
 	struct zram *z = userdata;
@@ -172,64 +189,67 @@ static int monitor_callback(sd_device_monitor *m, sd_device *device, void *userd
 	assert(z);
 	assert(device);
 
-	if (sd_device_get_action(device, &a) < 0)
+	if (systemd_call(sd_device_get_action)(device, &a) < 0)
 		return 0;
 
 	if (a == SD_DEVICE_REMOVE)
 		return 0;
 
-	if (sd_device_get_devname(device, &s) < 0)
+	if (systemd_call(sd_device_get_devname)(device, &s) < 0)
 		return 0;
 
 	if (strcmp(s, z->devname) != 0)
 		return 0;
 
-	if (sd_device_get_is_initialized(device) <= 0)
+	if (systemd_call(sd_device_get_is_initialized)(device) <= 0)
 		return 0;
 
 	assert(!z->device);
-	z->device = sd_device_ref(device);
+	z->device = systemd_call(sd_device_ref)(device);
 
-	return sd_event_exit(sd_device_monitor_get_event(m), 0);
+	return systemd_call(sd_event_exit)(systemd_call(sd_device_monitor_get_event)(m), 0);
 }
 #endif
 
 static int zram_wait_initialized(struct zram *z)
 {
 #if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
-	_cleanup_(sd_device_unrefp) sd_device *dev = NULL;
-	_cleanup_(sd_device_monitor_unrefp) sd_device_monitor *m = NULL;
+	_cleanup_(ul_sd_device_unrefp) sd_device *dev = NULL;
+	_cleanup_(ul_sd_device_monitor_unrefp) sd_device_monitor *m = NULL;
 	sd_event *event;
 	int r;
 
 	assert(z);
 
-	z->device = sd_device_unref(z->device);
+	if (ul_dlopen_libsystemd() != 0)
+		return 0;
+
+	z->device = systemd_call(sd_device_unref)(z->device);
 
 	/* prepare device monitor. */
-	r = sd_device_monitor_new(&m);
+	r = systemd_call(sd_device_monitor_new)(&m);
 	if (r < 0)
 		return r;
 
-	r = sd_device_monitor_filter_add_match_subsystem_devtype(m, "block", "disk");
+	r = systemd_call(sd_device_monitor_filter_add_match_subsystem_devtype)(m, "block", "disk");
 	if (r < 0)
 		return r;
 
-	r = sd_device_monitor_start(m, monitor_callback, z);
+	r = systemd_call(sd_device_monitor_start)(m, monitor_callback, z);
 	if (r < 0)
 		return r;
 
-	event = sd_device_monitor_get_event(m);
+	event = systemd_call(sd_device_monitor_get_event)(m);
 
 	/* Wait up to 3 seconds. */
-	r = sd_event_add_time_relative(event, NULL, CLOCK_BOOTTIME, 3 * 1000 * 1000, 0, NULL, (void*) (intptr_t) (-ETIMEDOUT));
+	r = systemd_call(sd_event_add_time_relative)(event, NULL, CLOCK_BOOTTIME, 3 * 1000 * 1000, 0, NULL, (void*) (intptr_t) (-ETIMEDOUT));
 	if (r < 0)
 		return r;
 
 	/* Check if the device is already initialized. */
 #if HAVE_DECL_SD_DEVICE_OPEN
 	/* sd_device_new_from_devname() and sd_device_open() are both since systemd-251 */
-	r = sd_device_new_from_devname(&dev, z->devname);
+	r = systemd_call(sd_device_new_from_devname)(&dev, z->devname);
 #else
 	{
 		char syspath[PATH_MAX];
@@ -240,13 +260,13 @@ static int zram_wait_initialized(struct zram *z)
 			return -EINVAL;
 		snprintf(syspath, sizeof(syspath), "/sys/class/block/%s", slash+1);
 
-		r = sd_device_new_from_syspath(&dev, syspath);
+		r = systemd_call(sd_device_new_from_syspath)(&dev, syspath);
 	}
 #endif
 	if (r < 0)
 		return r;
 
-	r = sd_device_get_is_initialized(dev);
+	r = systemd_call(sd_device_get_is_initialized)(dev);
 	if (r < 0)
 		return r;
 	if (r > 0) {
@@ -256,7 +276,7 @@ static int zram_wait_initialized(struct zram *z)
 		return 0;
 	}
 
-	return sd_event_loop(event);
+	return systemd_call(sd_event_loop)(event);
 #else
 	assert(z);
 	return 0;
@@ -276,7 +296,7 @@ static int zram_lock(struct zram *z, int operation)
 
 #if HAVE_DECL_SD_DEVICE_OPEN
 	if (z->device) {
-		fd = sd_device_open(z->device, O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
+		fd = systemd_call(sd_device_open)(z->device, O_RDONLY|O_CLOEXEC|O_NONBLOCK|O_NOCTTY);
 		if (fd < 0)
 			return fd;
 	} else {
@@ -363,7 +383,8 @@ static void free_zram(struct zram *z)
 	zram_unlock(z);
 
 #if HAVE_DECL_SD_DEVICE_NEW_FROM_SYSPATH
-	sd_device_unref(z->device);
+	if (z->device)
+		systemd_call(sd_device_unref)(z->device);
 #endif
 
 	free(z);
