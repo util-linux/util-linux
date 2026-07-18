@@ -1,9 +1,31 @@
 _setpriv_module()
 {
 	local cur prev OPTS
+	local LANDLOCK_ACCESS_ALL="execute write-file read-file read-dir remove-dir
+		remove-file make-char make-dir make-reg make-sock make-fifo make-block
+		make-sym refer truncate ioctl-dev resolve-unix"
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	# ':' is a field separator for landlock options, but it is also a default
+	# COMP_WORDBREAKS character. If it's still one here, COMP_WORDS may have
+	# been split on it, so glue any nonempty run of ":"s -- and the real word
+	# before it -- back onto $cur.
+	if [[ $COMP_WORDBREAKS == *:* ]]; then
+		local i=$COMP_CWORD
+		# $cur itself may be the lone ":" (e.g. a trailing "fs:"); absorb
+		# the word before it first so the loop below sees a real word in
+		# $cur to keep extending.
+		if (( i > 0 )) && [[ -n ${COMP_WORDS[i]} && -z ${COMP_WORDS[i]//:/} ]]; then
+			cur="${COMP_WORDS[i-1]}$cur"
+			((i--))
+		fi
+		while (( i > 1 )) && [[ -n ${COMP_WORDS[i-1]} && -z ${COMP_WORDS[i-1]//:/} ]]; do
+			cur="${COMP_WORDS[i-2]}${COMP_WORDS[i-1]}$cur"
+			(( i -= 2 ))
+		done
+		prev="${COMP_WORDS[i-1]}"
+	fi
 	case $prev in
 		'--ambient-caps'|'--inh-caps'|'--bounding-set')
 			local prefix realcur INHERIT_ALL INHERIT
@@ -94,13 +116,53 @@ _setpriv_module()
 			return 0
 			;;
 		'--landlock-access')
-			# FIXME: how to list landlock accesses?
-			COMPREPLY=( $(compgen -W "access" -- $cur) )
+			case $cur in
+				fs:*)
+					local prefix realcur ACCESS WORD rest="${cur#fs:}"
+					realcur="${rest##*,}"
+					prefix="fs:${rest%$realcur}"
+					for WORD in $LANDLOCK_ACCESS_ALL; do
+						if ! [[ $prefix == *"$WORD"* ]]; then
+							ACCESS="$WORD ${ACCESS:-""}"
+						fi
+					done
+					COMPREPLY=( $(compgen -P "$prefix" -W "$ACCESS" -- "$realcur") )
+					;;
+				*)
+					compopt -o nospace
+					COMPREPLY=( $(compgen -W "fs fs:" -- $cur) )
+					;;
+			esac
 			return 0
 			;;
 		'--landlock-rule')
-			# FIXME: how to list landlock rules?
-			COMPREPLY=( $(compgen -W "rule" -- $cur) )
+			case $cur in
+				path-beneath:*)
+					local rest="${cur#path-beneath:}"
+					if [[ $rest == *:* ]]; then
+						COMPREPLY=( $(compgen -f -P "path-beneath:${rest%%:*}:" -- "${rest#*:}") )
+					else
+						local prefix realcur ACCESS WORD
+						realcur="${rest##*,}"
+						prefix="path-beneath:${rest%$realcur}"
+						for WORD in $LANDLOCK_ACCESS_ALL; do
+							if ! [[ $prefix == *"$WORD"* ]]; then
+								ACCESS="$WORD ${ACCESS:-""}"
+							fi
+						done
+						# Unlike --landlock-access, the access-rights field here
+						# is never a complete value on its own -- it's always
+						# followed by ":<path>" -- so never let a trailing
+						# space get appended after an unambiguous match.
+						compopt -o nospace
+						COMPREPLY=( $(compgen -P "$prefix" -W "$ACCESS" -- "$realcur") )
+					fi
+					;;
+				*)
+					compopt -o nospace
+					COMPREPLY=( $(compgen -W "path-beneath:" -- $cur) )
+					;;
+			esac
 			return 0
 			;;
 		'--seccomp-filter')
