@@ -33,6 +33,8 @@ struct landlock_path_beneath_attr {
 	int32_t parent_fd;
 } __attribute__((packed));
 
+#define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
+
 #define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
 #define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
 #define LANDLOCK_ACCESS_FS_READ_FILE			(1ULL << 2)
@@ -103,6 +105,38 @@ static const struct {
 	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev",   N_("invoke ioctl(2) on an opened character or block device") },
 };
 
+/* cumulative access_fs rights supported by each landlock ABI version, indexed by (abi - 1) */
+static const uint64_t landlock_access_fs_mask[] = {
+	/* ABI 1 */ (LANDLOCK_ACCESS_FS_MAKE_SYM << 1) - 1,
+	/* ABI 2 */ (LANDLOCK_ACCESS_FS_REFER << 1) - 1,
+	/* ABI 3 */ (LANDLOCK_ACCESS_FS_TRUNCATE << 1) - 1,
+	/* ABI 4 */ (LANDLOCK_ACCESS_FS_TRUNCATE << 1) - 1,
+	/* ABI 5 */ (LANDLOCK_ACCESS_FS_IOCTL_DEV << 1) - 1,
+};
+
+static int supported_landlock_abi(void)
+{
+	static int abi = -1;
+
+	if (abi < 0) {
+		abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+		if (abi <= 0)
+			err(EXIT_FAILURE, _("landlock is not supported"));
+	}
+	return abi;
+}
+
+static uint64_t landlock_abi_fs_mask(void)
+{
+	int abi = supported_landlock_abi();
+	size_t n = ARRAY_SIZE(landlock_access_fs_mask);
+	size_t idx = (size_t) (abi - 1);
+
+	if (idx >= n)
+		idx = n - 1;
+	return landlock_access_fs_mask[idx];
+}
+
 static long landlock_access_to_mask(const char *str, size_t len)
 {
 	size_t i;
@@ -116,17 +150,14 @@ static long landlock_access_to_mask(const char *str, size_t len)
 static uint64_t parse_landlock_fs_access(const char *list)
 {
 	unsigned long r = 0;
-	size_t i;
 
-	/* without argument, match all */
-	if (list[0] == '\0') {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-			r |= landlock_access_fs[i].value;
-	} else {
-		if (string_to_bitmask(list, &r, landlock_access_to_mask))
-			errx(EXIT_FAILURE,
-			     _("could not parse landlock fs access: %s"), list);
-	}
+	/* without argument, match all supported by the current kernel */
+	if (list[0] == '\0')
+		return landlock_abi_fs_mask();
+
+	if (string_to_bitmask(list, &r, landlock_access_to_mask))
+		errx(EXIT_FAILURE,
+		     _("could not parse landlock fs access: %s"), list);
 
 	return r;
 }
@@ -134,11 +165,10 @@ static uint64_t parse_landlock_fs_access(const char *list)
 void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 {
 	const char *type;
-	size_t i;
 
+	/* without argument, match all supported by the current kernel */
 	if (strcmp(str, "fs") == 0) {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-			opts->access_fs |= landlock_access_fs[i].value;
+		opts->access_fs |= landlock_abi_fs_mask();
 		return;
 	}
 
