@@ -33,6 +33,8 @@ struct landlock_path_beneath_attr {
 	int32_t parent_fd;
 } __attribute__((packed));
 
+#define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
+
 #define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
 #define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
 #define LANDLOCK_ACCESS_FS_READ_FILE			(1ULL << 2)
@@ -83,25 +85,38 @@ struct landlock_rule_entry {
 static const struct {
 	unsigned long long value;
 	const char *type;
+	int abi_version;
 	const char *help;
 } landlock_access_fs[] = {
-	{ LANDLOCK_ACCESS_FS_EXECUTE,     "execute",     N_("execute a file") },
-	{ LANDLOCK_ACCESS_FS_WRITE_FILE,  "write-file",  N_("open a file with write access") },
-	{ LANDLOCK_ACCESS_FS_READ_FILE,   "read-file",   N_("open a file with read access") },
-	{ LANDLOCK_ACCESS_FS_READ_DIR,    "read-dir",    N_("open a directory or list its content") },
-	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,  "remove-dir",  N_("remove an empty directory or rename one")  },
-	{ LANDLOCK_ACCESS_FS_REMOVE_FILE, "remove-file", N_("unlink (or rename) a file") },
-	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,   "make-char",   N_("create (or rename or link) a character device") },
-	{ LANDLOCK_ACCESS_FS_MAKE_DIR,    "make-dir",    N_("create (or rename) a directory") },
-	{ LANDLOCK_ACCESS_FS_MAKE_REG,    "make-reg",    N_("create (or rename or link) a regular file") },
-	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,   "make-sock",   N_("create (or rename or link) a UNIX domain socket") },
-	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,   "make-fifo",   N_("create (or rename or link) a named pipe") },
-	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,  "make-block",  N_("create (or rename or link) a block device") },
-	{ LANDLOCK_ACCESS_FS_MAKE_SYM,    "make-sym",    N_("create (or rename or link) a symbolic link") },
-	{ LANDLOCK_ACCESS_FS_REFER,       "refer",       N_("link or rename a file from or to a different directory") },
-	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate",    N_("truncate a file with truncate(2)") },
-	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev",   N_("invoke ioctl(2) on an opened character or block device") },
+	{ LANDLOCK_ACCESS_FS_EXECUTE,     "execute",     1, N_("execute a file") },
+	{ LANDLOCK_ACCESS_FS_WRITE_FILE,  "write-file",  1, N_("open a file with write access") },
+	{ LANDLOCK_ACCESS_FS_READ_FILE,   "read-file",   1, N_("open a file with read access") },
+	{ LANDLOCK_ACCESS_FS_READ_DIR,    "read-dir",    1, N_("open a directory or list its content") },
+	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,  "remove-dir",  1, N_("remove an empty directory or rename one")  },
+	{ LANDLOCK_ACCESS_FS_REMOVE_FILE, "remove-file", 1, N_("unlink (or rename) a file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,   "make-char",   1, N_("create (or rename or link) a character device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_DIR,    "make-dir",    1, N_("create (or rename) a directory") },
+	{ LANDLOCK_ACCESS_FS_MAKE_REG,    "make-reg",    1, N_("create (or rename or link) a regular file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,   "make-sock",   1, N_("create (or rename or link) a UNIX domain socket") },
+	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,   "make-fifo",   1, N_("create (or rename or link) a named pipe") },
+	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,  "make-block",  1, N_("create (or rename or link) a block device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SYM,    "make-sym",    1, N_("create (or rename or link) a symbolic link") },
+	{ LANDLOCK_ACCESS_FS_REFER,       "refer",       2, N_("link or rename a file from or to a different directory") },
+	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate",    3, N_("truncate a file with truncate(2)") },
+	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev",   5, N_("invoke ioctl(2) on an opened character or block device") },
 };
+
+static int supported_landlock_abi(void)
+{
+	static int abi = -1;
+
+	if (abi < 0) {
+		abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
+		if (abi < 0)
+			err(EXIT_FAILURE, _("landlock is not supported"));
+	}
+	return abi;
+}
 
 static long landlock_access_to_mask(const char *str, size_t len)
 {
@@ -117,10 +132,12 @@ static uint64_t parse_landlock_fs_access(const char *list)
 {
 	unsigned long r = 0;
 	size_t i;
+	int abi;
 
-	/* without argument, match all */
+	/* without argument, match all supported by the current kernel */
 	if (list[0] == '\0') {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+		abi = supported_landlock_abi();
+		for (i = 0; i < ARRAY_SIZE(landlock_access_fs) && landlock_access_fs[i].abi_version <= abi; i++)
 			r |= landlock_access_fs[i].value;
 	} else {
 		if (string_to_bitmask(list, &r, landlock_access_to_mask))
@@ -135,9 +152,11 @@ void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 {
 	const char *type;
 	size_t i;
+	int abi;
 
 	if (strcmp(str, "fs") == 0) {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+		abi = supported_landlock_abi();
+		for (i = 0; i < ARRAY_SIZE(landlock_access_fs) && landlock_access_fs[i].abi_version <= abi; i++)
 			opts->access_fs |= landlock_access_fs[i].value;
 		return;
 	}
