@@ -56,6 +56,8 @@
 #include "idcache.h"
 #include "pathnames.h"
 #include "pidfd-utils.h"
+#include "xalloc.h"
+#include "buffer.h"
 
 #include "lsfd.h"
 
@@ -2146,20 +2148,22 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (procfs_process_get_stat(pc, buf, sizeof(buf)) > 0) {
 		char *p;
 		unsigned int flags;
-		char *pat = NULL;
+		struct ul_buffer ul_buf = UL_INIT_BUFFER;
+		char *pat;
 
 		/* See proc(5) about the column in the line. */
-		xstrappend(&pat, "%*d (");
+		ul_buffer_xappend_string(&ul_buf, "%*d (");
 		for (p = proc->command; *p != '\0'; p++) {
 			if (*p == '%')
-				xstrappend(&pat, "%%");
+				ul_buffer_xappend_string(&ul_buf, "%%");
 			else
-				xstrputc(&pat, *p);
+				ul_buffer_xappend_char(&ul_buf, *p);
 		}
-		xstrappend(&pat, ") %*c %*d %*d %*d %*d %*d %u %*[^\n]");
+		ul_buffer_xappend_string(&ul_buf, ") %*c %*d %*d %*d %*d %*d %u %*[^\n]");
+		pat = ul_buffer_get_data(&ul_buf, NULL, NULL);
 		if (sscanf(buf, pat, &flags) == 1)
 			proc->kthread = !!(flags & PF_KTHREAD);
-		free(pat);
+		ul_buffer_free_data(&ul_buf);
 	}
 	if (proc->kthread && !ctl->threads) {
 		free_proc(proc);
