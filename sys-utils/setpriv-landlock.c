@@ -209,6 +209,14 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 	struct list_head *entry;
 	int fd, ret;
 
+	list_for_each(entry, &opts->rules) {
+		rule = list_entry(entry, struct landlock_rule_entry, head);
+		if (rule->rule_type == LANDLOCK_RULE_PATH_BENEATH && !opts->access_fs) {
+			errx(EXIT_FAILURE,
+				_("landlock path-beneath rule requires a filesystem access restriction (--landlock-access fs)"));
+		}
+	}
+
 	if (!opts->access_fs)
 		return;
 
