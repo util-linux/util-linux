@@ -118,7 +118,6 @@ headers = '''
         linux/fiemap.h
         linux/gsmmux.h
         linux/if_alg.h
-        linux/landlock.h
         linux/lp.h
         linux/kcmp.h
         linux/net_namespace.h
@@ -235,6 +234,11 @@ if have_listmount and not cc.has_header_symbol('bits/syscall.h', 'SYS_listmount'
 endif
 
 conf.set('HAVE_STATMOUNT_API', have_statmount and have_listmount ? 1 : false)
+
+have_landlock = cc.has_header_symbol('sys/syscall.h', '__NR_landlock_create_ruleset') \
+            and cc.has_header_symbol('sys/syscall.h', '__NR_landlock_add_rule') \
+            and cc.has_header_symbol('sys/syscall.h', '__NR_landlock_restrict_self')
+conf.set('HAVE_LANDLOCK', have_landlock ? 1 : false)
 
 
 have_sys_vfs_header = cc.has_header('sys/vfs.h')
@@ -654,9 +658,6 @@ funcs = '''
         getsgnam
         inotify_init
         jrand48
-        landlock_create_ruleset
-        landlock_add_rule
-        landlock_restrict_self
         lchown
         lgetxattr
         llistxattr
