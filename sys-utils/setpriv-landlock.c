@@ -51,6 +51,7 @@ struct landlock_path_beneath_attr {
 #define LANDLOCK_ACCESS_FS_REFER			(1ULL << 13)
 #define LANDLOCK_ACCESS_FS_TRUNCATE			(1ULL << 14)
 #define LANDLOCK_ACCESS_FS_IOCTL_DEV			(1ULL << 15)
+#define LANDLOCK_ACCESS_FS_RESOLVE_UNIX			(1ULL << 16)
 
 static inline int landlock_create_ruleset(
 		const struct landlock_ruleset_attr *attr,
@@ -88,22 +89,23 @@ static const struct {
 	int abi_version;
 	const char *help;
 } landlock_access_fs[] = {
-	{ LANDLOCK_ACCESS_FS_EXECUTE,     "execute",     1, N_("execute a file") },
-	{ LANDLOCK_ACCESS_FS_WRITE_FILE,  "write-file",  1, N_("open a file with write access") },
-	{ LANDLOCK_ACCESS_FS_READ_FILE,   "read-file",   1, N_("open a file with read access") },
-	{ LANDLOCK_ACCESS_FS_READ_DIR,    "read-dir",    1, N_("open a directory or list its content") },
-	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,  "remove-dir",  1, N_("remove an empty directory or rename one")  },
-	{ LANDLOCK_ACCESS_FS_REMOVE_FILE, "remove-file", 1, N_("unlink (or rename) a file") },
-	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,   "make-char",   1, N_("create (or rename or link) a character device") },
-	{ LANDLOCK_ACCESS_FS_MAKE_DIR,    "make-dir",    1, N_("create (or rename) a directory") },
-	{ LANDLOCK_ACCESS_FS_MAKE_REG,    "make-reg",    1, N_("create (or rename or link) a regular file") },
-	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,   "make-sock",   1, N_("create (or rename or link) a UNIX domain socket") },
-	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,   "make-fifo",   1, N_("create (or rename or link) a named pipe") },
-	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,  "make-block",  1, N_("create (or rename or link) a block device") },
-	{ LANDLOCK_ACCESS_FS_MAKE_SYM,    "make-sym",    1, N_("create (or rename or link) a symbolic link") },
-	{ LANDLOCK_ACCESS_FS_REFER,       "refer",       2, N_("link or rename a file from or to a different directory") },
-	{ LANDLOCK_ACCESS_FS_TRUNCATE,    "truncate",    3, N_("truncate a file with truncate(2)") },
-	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,   "ioctl-dev",   5, N_("invoke ioctl(2) on an opened character or block device") },
+	{ LANDLOCK_ACCESS_FS_EXECUTE,      "execute",      1, N_("execute a file") },
+	{ LANDLOCK_ACCESS_FS_WRITE_FILE,   "write-file",   1, N_("open a file with write access") },
+	{ LANDLOCK_ACCESS_FS_READ_FILE,    "read-file",    1, N_("open a file with read access") },
+	{ LANDLOCK_ACCESS_FS_READ_DIR,     "read-dir",     1, N_("open a directory or list its content") },
+	{ LANDLOCK_ACCESS_FS_REMOVE_DIR,   "remove-dir",   1, N_("remove an empty directory or rename one")  },
+	{ LANDLOCK_ACCESS_FS_REMOVE_FILE,  "remove-file",  1, N_("unlink (or rename) a file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_CHAR,    "make-char",    1, N_("create (or rename or link) a character device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_DIR,     "make-dir",     1, N_("create (or rename) a directory") },
+	{ LANDLOCK_ACCESS_FS_MAKE_REG,     "make-reg",     1, N_("create (or rename or link) a regular file") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SOCK,    "make-sock",    1, N_("create (or rename or link) a UNIX domain socket") },
+	{ LANDLOCK_ACCESS_FS_MAKE_FIFO,    "make-fifo",    1, N_("create (or rename or link) a named pipe") },
+	{ LANDLOCK_ACCESS_FS_MAKE_BLOCK,   "make-block",   1, N_("create (or rename or link) a block device") },
+	{ LANDLOCK_ACCESS_FS_MAKE_SYM,     "make-sym",     1, N_("create (or rename or link) a symbolic link") },
+	{ LANDLOCK_ACCESS_FS_REFER,        "refer",        2, N_("link or rename a file from or to a different directory") },
+	{ LANDLOCK_ACCESS_FS_TRUNCATE,     "truncate",     3, N_("truncate a file with truncate(2)") },
+	{ LANDLOCK_ACCESS_FS_IOCTL_DEV,    "ioctl-dev",    5, N_("invoke ioctl(2) on an opened character or block device") },
+	{ LANDLOCK_ACCESS_FS_RESOLVE_UNIX, "resolve-unix", 9, N_("connect(2) or bind(2) a pathname UNIX domain socket") },
 };
 
 static int supported_landlock_abi(void)
