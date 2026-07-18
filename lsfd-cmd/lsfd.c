@@ -2095,17 +2095,23 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if (procfs_process_get_stat(pc, buf, sizeof(buf)) > 0) {
 		char *p;
 		unsigned int flags;
-		char *pat = NULL;
+		char *pat, *q;
 
 		/* See proc(5) about the column in the line. */
-		xstrappend(&pat, "%*d (");
+		pat = xmalloc(sizeof("%*d (")
+			      + strlen(proc->command) * 2
+			      + sizeof(") %*c %*d %*d %*d %*d %*d %u %*[^\n]")
+			      + 1);
+		q = stpcpy(pat, "%*d (");
 		for (p = proc->command; *p != '\0'; p++) {
 			if (*p == '%')
-				xstrappend(&pat, "%%");
-			else
-				xstrputc(&pat, *p);
+				q = stpcpy(q, "%%");
+			else {
+				*q++ = *p;
+				*q = '\0';
+			}
 		}
-		xstrappend(&pat, ") %*c %*d %*d %*d %*d %*d %u %*[^\n]");
+		stpcpy(q, ") %*c %*d %*d %*d %*d %*d %u %*[^\n]");
 		if (sscanf(buf, pat, &flags) == 1)
 			proc->kthread = !!(flags & PF_KTHREAD);
 		free(pat);
