@@ -184,7 +184,10 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 	rule->rule_type = LANDLOCK_RULE_PATH_BENEATH;
 
 	accesses_part = xstrndup(accesses, path - accesses);
-	rule->path_beneath_attr.allowed_access = parse_landlock_fs_access(accesses_part);
+	if (accesses_part[0] != '\0')
+		rule->path_beneath_attr.allowed_access = parse_landlock_fs_access(accesses_part);
+	else
+		rule->path_beneath_attr.allowed_access = 0;
 	free(accesses_part);
 
 	path++;
@@ -208,6 +211,7 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 	struct landlock_rule_entry *rule;
 	struct list_head *entry;
 	int fd, ret;
+	struct landlock_path_beneath_attr path_beneath_attr;
 
 	list_for_each(entry, &opts->rules) {
 		rule = list_entry(entry, struct landlock_rule_entry, head);
@@ -233,7 +237,11 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 
 		assert(rule->rule_type == LANDLOCK_RULE_PATH_BENEATH);
 
-		ret = landlock_add_rule(fd, rule->rule_type, &rule->path_beneath_attr, 0);
+		path_beneath_attr = rule->path_beneath_attr;
+		if (!path_beneath_attr.allowed_access)
+			path_beneath_attr.allowed_access = opts->access_fs;
+
+		ret = landlock_add_rule(fd, rule->rule_type, &path_beneath_attr, 0);
 		if (ret == -1)
 			err(SETPRIV_EXIT_PRIVERR, _("adding landlock rule failed"));
 	}
