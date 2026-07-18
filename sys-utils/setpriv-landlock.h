@@ -12,7 +12,7 @@
 #ifndef UTIL_LINUX_SETPRIV_LANDLOCK
 #define UTIL_LINUX_SETPRIV_LANDLOCK
 
-#ifdef HAVE_LINUX_LANDLOCK_H
+#ifdef HAVE_LANDLOCK
 
 #include <stdint.h>
 
@@ -47,6 +47,6 @@ static inline void parse_landlock_access(
 static inline void init_landlock_opts(void *opts __attribute__((unused))) {}
 static inline void usage_landlock(FILE *out __attribute__((unused))) {}
 
-#endif /* HAVE_LINUX_LANDLOCK_H */
+#endif /* HAVE_LANDLOCK */
 
 #endif
