@@ -104,6 +104,12 @@ void mnt_free_context(struct libmnt_context *cxt)
 	free(cxt->optstr_pattern);
 	free(cxt->tgt_prefix);
 
+	if (cxt->vfs) {
+		mnt_table_refer_vfs(cxt->fstab, NULL);
+		mnt_table_refer_vfs(cxt->mountinfo, NULL);
+		mnt_cache_refer_vfs(cxt->cache, NULL);
+		free(cxt->vfs);
+	}
 	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
 	mnt_unref_fs(cxt->fs);
@@ -1472,6 +1478,8 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 			return -MNT_ERR_NAMESPACE;
 
 		mnt_table_set_cache(cxt->fstab, mnt_context_get_cache(cxt));
+		if (cxt->vfs)
+			mnt_table_refer_vfs(cxt->fstab, cxt->vfs);
 		rc = mnt_table_parse_fstab(cxt->fstab, NULL);
 
 		if (!mnt_context_switch_ns(cxt, ns_old))
@@ -1516,6 +1524,8 @@ int mnt_context_get_mountinfo(struct libmnt_context *cxt, struct libmnt_table **
 					cxt->table_fltrcb_data);
 
 		mnt_table_set_cache(cxt->mountinfo, mnt_context_get_cache(cxt));
+		if (cxt->vfs)
+			mnt_table_refer_vfs(cxt->mountinfo, cxt->vfs);
 	}
 
 	/* Read the table; it's empty, because this first mnt_context_get_mountinfo()
@@ -1678,6 +1688,8 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 
 	if (cxt->table_errcb)
 		mnt_table_set_parser_errcb(*tb, cxt->table_errcb);
+	if (cxt->vfs)
+		mnt_table_refer_vfs(*tb, cxt->vfs);
 
 	ns_old = mnt_context_switch_target_ns(cxt);
 	if (!ns_old)
@@ -1729,6 +1741,45 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
 }
 
 /**
+ * mnt_context_set_vfs:
+ * @cxt: mount context
+ * @ops: VFS operations or NULL
+ *
+ * Set pluggable VFS I/O operations. The library stores a private copy of @ops.
+ * If @ops is NULL, the VFS is reset to defaults (standard libc I/O).
+ *
+ * The VFS is automatically propagated to the cache (see mnt_cache_refer_vfs())
+ * and to the tables (see mnt_table_refer_vfs()) when they are created or set.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_vfs(struct libmnt_context *cxt, const struct ul_vfs_ops *ops)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	if (!ops) {
+		free(cxt->vfs);
+		cxt->vfs = NULL;
+		return 0;
+	}
+	if (!cxt->vfs) {
+		cxt->vfs = calloc(1, sizeof(*cxt->vfs));
+		if (!cxt->vfs)
+			return -ENOMEM;
+	}
+	ul_vfs_init(cxt->vfs, ops);
+
+	if (cxt->cache)
+		mnt_cache_refer_vfs(cxt->cache, cxt->vfs);
+	if (cxt->fstab)
+		mnt_table_refer_vfs(cxt->fstab, cxt->vfs);
+	if (cxt->mountinfo)
+		mnt_table_refer_vfs(cxt->mountinfo, cxt->vfs);
+	return 0;
+}
+
+/**
  * mnt_context_set_cache:
  * @cxt: mount context
  * @cache: cache instance or NULL
@@ -1758,6 +1809,8 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 
 	cxt->cache = cache;
 
+	if (cache && cxt->vfs)
+		mnt_cache_refer_vfs(cache, cxt->vfs);
 	if (cxt->mountinfo)
 		mnt_table_set_cache(cxt->mountinfo, cache);
 	if (cxt->fstab)
@@ -3549,6 +3602,8 @@ struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 
 #ifdef TEST_PROGRAM
 
+#include <blkid.h>
+
 static int test_search_helper(struct libmnt_test *ts __attribute__((unused)),
 			      int argc, char *argv[])
 {
@@ -3577,6 +3632,70 @@ static int test_search_helper(struct libmnt_test *ts __attribute__((unused)),
 
 
 static struct libmnt_lock *lock;
+
+static unsigned int test_vfs_opens;
+static unsigned int test_vfs_closes;
+static unsigned int test_vfs_reads;
+static unsigned int test_vfs_writes;
+static unsigned int test_vfs_lseeks;
+
+static ssize_t test_vfs_read(int fd, void *buf, size_t count)
+{
+	test_vfs_reads++;
+	return read(fd, buf, count);
+}
+
+static ssize_t test_vfs_write(int fd, const void *buf, size_t count)
+{
+	test_vfs_writes++;
+	return write(fd, buf, count);
+}
+
+static int test_vfs_open(const char *pathname, int flags, mode_t mode)
+{
+	test_vfs_opens++;
+	return open(pathname, flags, mode);
+}
+
+static int test_vfs_close(int fd)
+{
+	test_vfs_closes++;
+	return close(fd);
+}
+
+static off_t test_vfs_lseek(int fd, off_t offset, int whence)
+{
+	test_vfs_lseeks++;
+	return lseek(fd, offset, whence);
+}
+
+static FILE *test_vfs_fopen(const char *pathname, const char *mode)
+{
+	fprintf(stderr, "VFS: fopen(\"%s\", \"%s\")\n", pathname, mode);
+	return fopen(pathname, mode);
+}
+
+static void test_vfs_dump_stats(void)
+{
+	fprintf(stderr, "VFS calls: open=%u close=%u read=%u write=%u lseek=%u\n",
+			test_vfs_opens, test_vfs_closes,
+			test_vfs_reads, test_vfs_writes, test_vfs_lseeks);
+}
+
+static int test_set_vfs(struct libmnt_context *cxt)
+{
+	struct ul_vfs_ops ops = {
+		.size      = sizeof(ops),
+		.vfs_read  = test_vfs_read,
+		.vfs_write = test_vfs_write,
+		.vfs_open  = test_vfs_open,
+		.vfs_close = test_vfs_close,
+		.vfs_lseek = test_vfs_lseek,
+		.vfs_fopen = test_vfs_fopen,
+	};
+
+	return mnt_context_set_vfs(cxt, &ops);
+}
 
 static void lock_fallback(void)
 {
@@ -3823,6 +3942,101 @@ static int test_mountall(struct libmnt_test *ts __attribute__((unused)),
 
 
 
+static int test_vfs(struct libmnt_test *ts __attribute__((unused)),
+		    int argc, char *argv[])
+{
+	int idx = 1, rc = 0;
+	struct libmnt_context *cxt;
+	struct libmnt_table *tb = NULL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	test_set_vfs(cxt);
+
+	if (idx < argc && !strcmp(argv[idx], "--table")) {
+		idx++;
+		if (idx >= argc) {
+			rc = -EINVAL;
+			goto done;
+		}
+		rc = mnt_context_get_table(cxt, argv[idx++], &tb);
+		if (rc) {
+			warn("failed to parse table");
+			goto done;
+		}
+		printf("table: parsed %d entries\n",
+				mnt_table_get_nents(tb));
+		mnt_unref_table(tb);
+	}
+
+	if (idx < argc && !strcmp(argv[idx], "--cache")) {
+		struct libmnt_cache *cache;
+		char *type;
+
+		idx++;
+		if (idx >= argc) {
+			rc = -EINVAL;
+			goto done;
+		}
+		cache = mnt_context_get_cache(cxt);
+		if (!cache) {
+			warnx("no cache");
+			rc = -ENOMEM;
+			goto done;
+		}
+		rc = mnt_cache_read_tags(cache, argv[idx]);
+		if (rc < 0) {
+			warn("failed to read tags for %s", argv[idx]);
+			goto done;
+		}
+		type = mnt_get_fstype(argv[idx], NULL, cache);
+		printf("cache: %s type=%s\n", argv[idx], type ? type : "unknown");
+		idx++;
+	}
+
+	if (idx < argc && !strcmp(argv[idx], "--blkid")) {
+		blkid_probe pr;
+		const char *data;
+
+		idx++;
+		if (idx >= argc) {
+			rc = -EINVAL;
+			goto done;
+		}
+		pr = blkid_new_probe();
+		if (!pr) {
+			rc = -ENOMEM;
+			goto done;
+		}
+		blkid_probe_set_vfs(pr, cxt->vfs);
+		if (blkid_probe_open_device(pr, argv[idx], 0)) {
+			warn("failed to open %s", argv[idx]);
+			blkid_free_probe(pr);
+			rc = -errno;
+			goto done;
+		}
+		blkid_probe_enable_superblocks(pr, 1);
+		blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
+
+		rc = blkid_do_safeprobe(pr);
+		if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+			printf("blkid: %s type=%s\n", argv[idx], data);
+		else
+			printf("blkid: %s type=unknown\n", argv[idx]);
+
+		blkid_free_probe(pr);
+		idx++;
+		rc = 0;
+	}
+
+done:
+	test_vfs_dump_stats();
+	mnt_free_context(cxt);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -3832,6 +4046,7 @@ int main(int argc, char *argv[])
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
 	{ "--cxtsync", test_cxtsync, "<fsopts> <cxtopts> <fsopts>" },
 	{ "--search-helper", test_search_helper, "<fstype>" },
+	{ "--vfs", test_vfs, "[--table <file>] [--cache <dev>] [--blkid <dev>]" },
 	{ NULL }};
 
 	umask(S_IWGRP|S_IWOTH);	/* to be compatible with mount(8) */

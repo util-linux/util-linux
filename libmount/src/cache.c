@@ -65,6 +65,8 @@ struct libmnt_cache {
 	int			probe_sb_extra;	/* extra BLKID_SUBLKS_* flags */
 	bool			noprobe;	/* disable libblkid device probing */
 
+	const struct ul_vfs_ops	*vfs;		/* borrowed VFS ops (not owned) */
+
 	/* blkid_evaluate_tag() works in two ways:
 	 *
 	 * 1/ all tags are evaluated by udev /dev/disk/by-* symlinks,
@@ -219,6 +221,27 @@ void mnt_cache_enable_noprobe(struct libmnt_cache *cache, int enable)
 {
 	if (cache)
 		cache->noprobe = !!enable;
+}
+
+/**
+ * mnt_cache_refer_vfs:
+ * @cache: cache pointer
+ * @vfs: VFS operations or NULL
+ *
+ * Set reference to VFS I/O operations. The cache does not own the @vfs
+ * pointer -- the caller is responsible for its lifetime (e.g. the mount
+ * context owns it).
+ *
+ * The VFS is used for blkid device probing (see mnt_cache_read_tags()).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_cache_refer_vfs(struct libmnt_cache *cache, const struct ul_vfs_ops *vfs)
+{
+	if (!cache)
+		return -EINVAL;
+	cache->vfs = vfs;
+	return 0;
 }
 
 /* note that the @key could be the same pointer as @value */
@@ -393,9 +416,16 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 
 	DBG_OBJ(CACHE, cache, ul_debug("%s: reading from blkid", devname));
 
-	pr =  blkid_new_probe_from_filename(devname);
+	pr = blkid_new_probe();
 	if (!pr)
 		return -EINVAL;
+
+	if (cache->vfs)
+		blkid_probe_set_vfs(pr, cache->vfs);
+	if (blkid_probe_open_device(pr, devname, 0)) {
+		blkid_free_probe(pr);
+		return -errno;
+	}
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr,
@@ -583,16 +613,23 @@ static char *fstype_from_cache(const char *devname, struct libmnt_cache *cache)
 	return val;
 }
 
-static char *fstype_from_blkid(const char *devname, int *ambi)
+static char *fstype_from_blkid(const char *devname, int *ambi,
+			       const struct ul_vfs_ops *vfs)
 {
 	blkid_probe pr;
 	const char *data;
 	char *type = NULL;
 	int rc;
 
-	pr =  blkid_new_probe_from_filename(devname);
+	pr = blkid_new_probe();
 	if (!pr)
 		return NULL;
+	if (vfs)
+		blkid_probe_set_vfs(pr, vfs);
+	if (blkid_probe_open_device(pr, devname, 0)) {
+		blkid_free_probe(pr);
+		return NULL;
+	}
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
@@ -627,7 +664,7 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 	if (cache)
 		return fstype_from_cache(devname, cache);
 
-	return fstype_from_blkid(devname, ambi);
+	return fstype_from_blkid(devname, ambi, NULL);
 }
 
 static char *canonicalize_path_and_cache(const char *path,

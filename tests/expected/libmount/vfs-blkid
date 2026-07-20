@@ -1,0 +1,2 @@
+VFS calls: open=1 close=1 read=N write=0 lseek=N
+blkid: DEVICE type=ext2

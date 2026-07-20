@@ -426,3 +426,9 @@ MOUNT_2_43 {
 	mnt_table_disable_useropts;
 	mnt_table_parse_utab;
 } MOUNT_2_42;
+
+MOUNT_2_44 {
+	mnt_cache_refer_vfs;
+	mnt_context_set_vfs;
+	mnt_table_refer_vfs;
+} MOUNT_2_43;
