@@ -302,13 +302,19 @@ static int hook_create_mount(struct libmnt_context *cxt,
 
 		if (fd >= 0 && api->subdir) {
 			/*
-			 * subdir for Linux >= 6.15, see hook_subdir.c for more details.
+			 * Subdir for Linux >= 6.15, see hook_subdir.c for
+			 * more details.
+			 *
+			 * Use mnt_open_tree() to safely resolve the subdir
+			 * path within the detached tree (no symlink following,
+			 * no escape via ".."), then clone with open_tree().
 			 */
 			DBG_OBJ(HOOK, hs, ul_debug("opening subdir (detached) '%s'", api->subdir));
-			int sub_fd = open_tree(fd, api->subdir,
-					AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW |
+			int sub_fd = mnt_open_tree(fd, api->subdir,
+					AT_NO_AUTOMOUNT |
 					AT_RECURSIVE | OPEN_TREE_CLOEXEC |
-					OPEN_TREE_CLONE);
+					OPEN_TREE_CLONE,
+					RESOLVE_NO_SYMLINKS | RESOLVE_BENEATH);
 			hookset_set_syscall_status(cxt, "open_tree", sub_fd >= 0);
 			close(fd);
 			fd = sub_fd;
