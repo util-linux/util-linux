@@ -28,4 +28,29 @@ touch rename_from rename_to
 $TS_CMD_RENAME -v --no-overwrite from to rename_from >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 rm rename_from rename_to >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
+touch rename_dangling_from
+ln -s rename_missing_target rename_dangling_to
+$TS_CMD_RENAME -v --no-overwrite dangling_from dangling_to rename_dangling_from >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+if [ ! -e rename_dangling_from ]; then
+	echo "error: original file was renamed despite --no-overwrite" >> "$TS_OUTPUT"
+fi
+if [ ! -L rename_dangling_to ]; then
+	echo "error: dangling symlink was overwritten despite --no-overwrite" >> "$TS_OUTPUT"
+fi
+rm rename_dangling_from rename_dangling_to >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
+echo "data" > rename_copy_from
+ln -s rename_copy_missing rename_copy_to
+$TS_CMD_RENAME -v --copy --no-overwrite copy_from copy_to rename_copy_from >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+if [ ! -e rename_copy_from ]; then
+	echo "error: original file was removed by --copy" >> "$TS_OUTPUT"
+fi
+if [ ! -L rename_copy_to ]; then
+	echo "error: dangling symlink was overwritten by --copy --no-overwrite" >> "$TS_OUTPUT"
+fi
+if [ -e rename_copy_missing ]; then
+	echo "error: --copy followed dangling destination symlink" >> "$TS_OUTPUT"
+fi
+rm rename_copy_from rename_copy_to >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
 ts_finalize

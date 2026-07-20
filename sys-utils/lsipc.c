@@ -914,8 +914,8 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				else {
 					arg = xmalloc(11);
 					xstrmode(p->msg_perm.mode & 0777, arg);
-					rc = scols_line_refer_data(ln, n, arg);
 				}
+				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
 				rc = scols_line_sprintf(ln, n, "%u", p->msg_perm.cuid);
@@ -1050,8 +1050,8 @@ static void do_posix_msg(const char *name, struct lsipc_control *ctl,
 				else {
 					arg = xmalloc(11);
 					xstrmode(p->mode & 0777, arg);
-					rc = scols_line_refer_data(ln, n, arg);
 				}
+				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUID:
 				rc = scols_line_sprintf(ln, n, "%u", p->cuid);
@@ -1200,7 +1200,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGID:
-				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.cuid);
+				rc = scols_line_sprintf(ln, n, "%u", p->shm_perm.cgid);
 				break;
 			case COL_CGROUP:
 				arg = get_groupname(&gr, p->shm_perm.cgid);

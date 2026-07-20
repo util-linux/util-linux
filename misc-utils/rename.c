@@ -227,7 +227,7 @@ static int do_file(char *from, char *to, char *s, int verbose, int noact,
 	if (string_replace(from, to, s, &newname) != 0)
 		return 0;
 
-	if ((nooverwrite || interactive) && access(newname, F_OK) != 0)
+	if ((nooverwrite || interactive) && lstat(newname, &sb) != 0)
 		nooverwrite = interactive = 0;
 
 	if (nooverwrite || (interactive && (noact || ask(newname) != 0))) {
@@ -265,7 +265,7 @@ static int do_copy(char *from, char *to, char *s, int verbose, int noact,
 	if (string_replace(from, to, s, &newname) != 0)
 		return 0;
 
-	if ((nooverwrite || interactive) && access(newname, F_OK) != 0)
+	if ((nooverwrite || interactive) && lstat(newname, &sb) != 0)
 		nooverwrite = interactive = 0;
 
 	if (nooverwrite || (interactive && (noact || ask(newname) != 0))) {
