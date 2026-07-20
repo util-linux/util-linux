@@ -773,6 +773,8 @@ static inline struct libmnt_sysapi *mnt_context_get_sysapi(struct libmnt_context
 }
 
 int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned long mflg);
+int mnt_open_tree(int dirfd, const char *path, unsigned long flags,
+		  unsigned long long resolve);
 
 #endif
 
