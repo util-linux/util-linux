@@ -1934,7 +1934,9 @@ int mnt_context_open_tree(struct libmnt_context *cxt, const char *path, unsigned
 	DBG(CXT, ul_debugobj(cxt, "open_tree(path=%s%s%s)", path,
 				oflg & OPEN_TREE_CLONE ? " clone" : "",
 				oflg & AT_RECURSIVE ? " recursive" : ""));
-	fd = open_tree(AT_FDCWD, path, oflg);
+
+	fd = mnt_open_tree(AT_FDCWD, path, oflg,
+			mnt_context_is_restricted(cxt) ? RESOLVE_NO_SYMLINKS : 0);
 	mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
 
 	return fd;

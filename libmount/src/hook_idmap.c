@@ -328,9 +328,11 @@ static int hook_mount_post(
 	}
 #endif
 	if (fd_tree < 0)
-		fd_tree = open_tree(-1, target,
+		fd_tree = mnt_open_tree(AT_FDCWD, target,
 			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
-			    (recursive ? AT_RECURSIVE : 0));
+			    (recursive ? AT_RECURSIVE : 0),
+			    mnt_context_is_restricted(cxt) ?
+				RESOLVE_NO_SYMLINKS : 0);
 	if (fd_tree < 0) {
 		DBG(HOOK, ul_debugobj(hs, " failed to open tree"));
 		mnt_context_syscall_save_status(cxt, "open_tree", 0);
