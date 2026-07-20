@@ -440,19 +440,25 @@ char *ul_basename(char *path)
 	return p;
 }
 
-int ul_open_no_symlinks(const char *path, int flags, mode_t mode)
+int ul_openat_resolve(int dirfd, const char *path, int flags,
+		      mode_t mode, unsigned long long resolve)
 {
-#if defined(SYS_openat2) && defined(RESOLVE_NO_SYMLINKS)
+#if defined(SYS_openat2)
 	struct open_how how = {
 		.flags = (__u64) flags,
 		.mode = (__u64) mode,
-		.resolve = RESOLVE_NO_SYMLINKS,
+		.resolve = resolve,
 	};
-	int fd = syscall(SYS_openat2, AT_FDCWD, path, &how, sizeof(how));
 
-	/* only fall back to O_NOFOLLOW if the syscall is unavailable */
-	if (fd >= 0 || errno != ENOSYS)
-		return fd;
+	return syscall(SYS_openat2, dirfd, path, &how, sizeof(how));
+#else
+	errno = ENOSYS;
+	return -1;
 #endif
-	return open(path, flags | O_NOFOLLOW, mode);
+}
+
+int ul_open_no_symlinks(const char *path, int flags, mode_t mode)
+{
+	return ul_openat_resolve(AT_FDCWD, path, flags, mode,
+				 RESOLVE_NO_SYMLINKS);
 }
