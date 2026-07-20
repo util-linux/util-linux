@@ -65,6 +65,15 @@ static inline int is_same_inode(const int fd, const struct stat *st)
 }
 
 extern int ul_open_no_symlinks(const char *path, int flags, mode_t mode);
+extern int ul_openat_resolve(int dirfd, const char *path, int flags,
+			     mode_t mode, unsigned long long resolve);
+
+#ifndef RESOLVE_NO_SYMLINKS
+# define RESOLVE_NO_SYMLINKS	0x02
+#endif
+#ifndef RESOLVE_BENEATH
+# define RESOLVE_BENEATH	0x08
+#endif
 
 extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern unsigned int get_fd_tabsize(void);
