@@ -444,7 +444,7 @@ static char *endline_for_mb(unsigned col, char *s)
 				 * Assume the terminal will print the
 				 * entire character onto the next row. */
 				p--;
-			if (*++p == L'\n')
+			if (*p != L'\0' && *++p == L'\n')
 				p++;
 			end = p;
 			goto ended;
@@ -499,7 +499,7 @@ static char *endline(unsigned col, char *s)
 		if (pos > col) {
 			if (*s == '\t')
 				s++;
-			if (*++s == '\n')
+			if (*s != '\0' && *++s == '\n')
 				s++;
 			t = s;
 			goto cend;
