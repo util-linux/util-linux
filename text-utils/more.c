@@ -551,6 +551,8 @@ static int get_line(struct more_control *ctl, int *length)
 				break;
 
 			case (size_t)-1:	/* Invalid as a multibyte character. */
+				if (p >= &ctl->line_buf[ctl->line_sz - 1])
+					break;
 				*p++ = mbc[0];
 				state = state_bak;
 				column++;
