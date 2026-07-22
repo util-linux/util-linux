@@ -7,7 +7,7 @@
 #include "c.h"
 #include "dl-cryptsetup.h"
 
-#ifdef HAVE_CRYPTSETUP
+#if defined(HAVE_CRYPTSETUP) && defined(USE_DLOPEN_CRYPTSETUP)
 
 UL_ELF_NOTE_DLOPEN("cryptsetup",
 		    "Support for dm-verity devices",
@@ -59,4 +59,4 @@ int ul_dlopen_libcryptsetup(void)
 	return status > 0 ? 0 : -ENOSYS;
 }
 
-#endif /* HAVE_CRYPTSETUP */
+#endif /* HAVE_CRYPTSETUP && USE_DLOPEN_CRYPTSETUP */

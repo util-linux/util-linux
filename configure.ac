@@ -1094,6 +1094,15 @@ AS_IF([test "x$with_selinux" = xno], [
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
 
+AC_ARG_ENABLE([selinux-dlopen],
+  AS_HELP_STRING([--enable-selinux-dlopen], [dlopen SELinux at runtime instead of linking]),
+  [], [enable_selinux_dlopen=no])
+AS_IF([test "x$enable_selinux_dlopen" = xyes -a "x$have_selinux" = xyes], [
+  AC_DEFINE([USE_DLOPEN_SELINUX], [1], [Use dlopen for SELinux])
+])
+AM_CONDITIONAL([USE_DLOPEN_SELINUX],
+  [test "x$enable_selinux_dlopen" = xyes -a "x$have_selinux" = xyes])
+
 
 AC_ARG_WITH([audit],
   AS_HELP_STRING([--with-audit], [compile with audit support]),
@@ -3106,6 +3115,15 @@ AS_IF([test "x$with_cryptsetup" = xno], [
 ])
 AC_SUBST([CRYPTSETUP_LIBS])
 AC_SUBST([CRYPTSETUP_LIBS_STATIC])
+
+AC_ARG_ENABLE([cryptsetup-dlopen],
+  AS_HELP_STRING([--enable-cryptsetup-dlopen], [dlopen cryptsetup at runtime instead of linking]),
+  [], [enable_cryptsetup_dlopen=no])
+AS_IF([test "x$enable_cryptsetup_dlopen" = xyes -a "x$have_cryptsetup" = xyes], [
+  AC_DEFINE([USE_DLOPEN_CRYPTSETUP], [1], [Use dlopen for cryptsetup])
+])
+AM_CONDITIONAL([USE_DLOPEN_CRYPTSETUP],
+  [test "x$enable_cryptsetup_dlopen" = xyes -a "x$have_cryptsetup" = xyes])
 
 
 AC_ARG_VAR([SUID_CFLAGS],

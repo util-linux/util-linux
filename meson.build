@@ -458,6 +458,8 @@ lib_cryptsetup = dependency(
   'libcryptsetup',
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
+use_dlopen_cryptsetup = get_option('cryptsetup-dlopen') and lib_cryptsetup.found()
+conf.set('USE_DLOPEN_CRYPTSETUP', use_dlopen_cryptsetup ? 1 : false)
 
 if meson.version().version_compare('>= 0.62.0')
   lib_dl = dependency('dl')
@@ -465,8 +467,11 @@ else
   lib_dl = cc.find_library('dl')
 endif
 
-summary('cryptsetup support (dlopen)',
+summary('cryptsetup support',
         lib_cryptsetup.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('cryptsetup dlopen',
+        use_dlopen_cryptsetup ? 'enabled' : 'disabled',
         section : 'components')
 
 have = cc.has_function(
@@ -486,14 +491,27 @@ lib_selinux = dependency(
   version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
+use_dlopen_selinux = get_option('selinux-dlopen') and lib_selinux.found()
+conf.set('USE_DLOPEN_SELINUX', use_dlopen_selinux ? 1 : false)
 selinux_deps = []
 if lib_selinux.found()
   have = cc.has_function('security_get_initial_context',
                          dependencies : lib_selinux)
   conf.set('HAVE_SECURITY_GET_INITIAL_CONTEXT', have ? 1 : false)
-  selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
-                  lib_dl]
+  if use_dlopen_selinux
+    selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
+                    lib_dl]
+  else
+    selinux_deps = [lib_selinux]
+  endif
 endif
+
+summary('SELinux support',
+        lib_selinux.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('SELinux dlopen',
+        use_dlopen_selinux ? 'enabled' : 'disabled',
+        section : 'components')
 
 lib_magic = dependency(
   'libmagic',
@@ -1056,7 +1074,7 @@ subdir('include')
 subdir('lib')
 
 selinux_sources = []
-if lib_selinux.found()
+if use_dlopen_selinux
   selinux_sources = [dl_utils_c, dl_selinux_c]
 endif
 

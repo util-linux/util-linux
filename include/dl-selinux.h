@@ -12,6 +12,8 @@
 #include <selinux/label.h>
 #include <selinux/get_context_list.h>
 
+#ifdef USE_DLOPEN_SELINUX
+
 #include "dl-utils.h"
 
 /* Pointers to libselinux functions (initialized by dlsym()) */
@@ -69,6 +71,14 @@ extern struct ul_selinux_opers ul_selinux;
 extern int ul_dlopen_libselinux(void);
 
 #define selinux_call(_func)	(ul_selinux._func)
+
+#else /* !USE_DLOPEN_SELINUX */
+
+static inline int ul_dlopen_libselinux(void) { return 0; }
+
+#define selinux_call(_func)	(_func)
+
+#endif /* USE_DLOPEN_SELINUX */
 
 #endif /* HAVE_LIBSELINUX */
 #endif /* UTIL_LINUX_DL_SELINUX_H */

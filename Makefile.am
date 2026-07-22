@@ -212,17 +212,33 @@ edit_cmd = sed \
 	 -e 's|@LIBBLKID_VERSION[@]|$(LIBBLKID_VERSION)|g'
 
 if HAVE_SELINUX
+if USE_DLOPEN_SELINUX
+edit_cmd += -e 's|@LIBSELINUX[@]||g'
+else
 edit_cmd += -e 's|@LIBSELINUX[@]|libselinux|g'
+endif
 else
 edit_cmd += -e 's|@LIBSELINUX[@]||g'
 endif
 
 if HAVE_CRYPTSETUP
+if USE_DLOPEN_CRYPTSETUP
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
-edit_cmd += -e 's|@LIBDL[@]|-ldl|g'
+else
+edit_cmd += -e 's|@LIBCRYPTSETUP[@]|libcryptsetup|g'
+endif
 else
 edit_cmd += -e 's|@LIBCRYPTSETUP[@]||g'
+endif
+
+if USE_DLOPEN_SELINUX
+edit_cmd += -e 's|@LIBDL[@]|-ldl|g'
+else
+if USE_DLOPEN_CRYPTSETUP
+edit_cmd += -e 's|@LIBDL[@]|-ldl|g'
+else
 edit_cmd += -e 's|@LIBDL[@]||g'
+endif
 endif
 
 if USE_VENDORDIR

@@ -69,10 +69,12 @@ endif
 
 if HAVE_CRYPTSETUP
 libmount_la_SOURCES += $(cryptsetup_dl_sources)
-if !HAVE_SELINUX
+if USE_DLOPEN_CRYPTSETUP
+if !USE_DLOPEN_SELINUX
 libmount_la_SOURCES += \
 	lib/dl-utils.c \
 	include/dl-utils.h
+endif
 endif
 libmount_la_LIBADD += $(cryptsetup_dl_ldadd)
 endif
@@ -124,15 +126,7 @@ libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
 libmount_tests_ldflags = -static
 libmount_tests_ldadd   = libmount.la libblkid.la $(LDADD) $(REALTIME_LIBS)
 
-if HAVE_SELINUX
-libmount_tests_ldadd += $(selinux_dl_ldadd)
-endif
-
-if HAVE_CRYPTSETUP
-if !HAVE_SELINUX
-libmount_tests_ldadd += $(cryptsetup_dl_ldadd)
-endif
-endif
+libmount_tests_ldadd += $(selinux_dl_ldadd) $(cryptsetup_dl_ldadd)
 
 test_mount_cache_SOURCES = libmount/src/cache.c
 test_mount_cache_CFLAGS = $(libmount_tests_cflags)

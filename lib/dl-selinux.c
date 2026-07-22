@@ -7,7 +7,7 @@
 #include "c.h"
 #include "dl-selinux.h"
 
-#ifdef HAVE_LIBSELINUX
+#if defined(HAVE_LIBSELINUX) && defined(USE_DLOPEN_SELINUX)
 
 UL_ELF_NOTE_DLOPEN("selinux",
 		    "Support for SELinux",
@@ -80,4 +80,4 @@ int ul_dlopen_libselinux(void)
 	return status > 0 ? 0 : -ENOSYS;
 }
 
-#endif /* HAVE_LIBSELINUX */
+#endif /* HAVE_LIBSELINUX && USE_DLOPEN_SELINUX */
