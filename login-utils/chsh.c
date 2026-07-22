@@ -103,7 +103,22 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 		switch (c) {
 		case 'v': /* deprecated */
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *const features[] = {
+#ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
+				"selinux",
+# endif
+#endif
+#ifdef HAVE_LIBUSER
+				"libuser",
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case 'u': /* deprecated */
 		case 'h':
 			usage();

@@ -1804,6 +1804,13 @@ int main(int argc, char *argv[])
 		case 'V':
 		{
 			static const char *const features[] = {
+#ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
+				"selinux",
+# endif
+#endif
 #ifdef HAVE_LIBLASTLOG2
 				"lastlog2",
 #endif
