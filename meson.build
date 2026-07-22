@@ -486,14 +486,13 @@ lib_selinux = dependency(
   version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
-lib_selinux_compile_deps = []
-lib_selinux_dlopen_deps = []
+selinux_deps = []
 if lib_selinux.found()
   have = cc.has_function('security_get_initial_context',
                          dependencies : lib_selinux)
   conf.set('HAVE_SECURITY_GET_INITIAL_CONTEXT', have ? 1 : false)
-  lib_selinux_compile_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true)]
-  lib_selinux_dlopen_deps = lib_selinux_compile_deps + [lib_dl]
+  selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
+                  lib_dl]
 endif
 
 lib_magic = dependency(
@@ -1055,6 +1054,12 @@ bashcompletionslinks = {}
 
 subdir('include')
 subdir('lib')
+
+selinux_sources = []
+if lib_selinux.found()
+  selinux_sources = [dl_utils_c, dl_selinux_c]
+endif
+
 subdir('libblkid')
 subdir('libmount')
 subdir('libsmartcols')
@@ -1230,13 +1235,13 @@ opt = get_option('build-lslogins') \
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
                lib_common_logindefs] +
                (build_liblastlog2 ? [lib_lastlog2] : []),
-  dependencies : [lib_systemd] + lib_selinux_dlopen_deps,
+  dependencies : [lib_systemd] + selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1253,10 +1258,10 @@ exe = executable(
   'vipw',
   'login-utils/vipw.c',
   'login-utils/setpwnam.h',
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1974,11 +1979,11 @@ opt = get_option('build-mount').allowed()
 exe = executable(
   'mount',
   mount_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : [mount_dep] + lib_selinux_dlopen_deps,
+  dependencies : [mount_dep] + selinux_deps,
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -2216,10 +2221,10 @@ opt = get_option('build-nsenter') \
 exe = executable(
   'nsenter',
   nsenter_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2233,10 +2238,10 @@ opt = opt and 'nsenter' in static_programs
 exe = executable(
   'nsenter.static',
   nsenter_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2403,7 +2408,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_uuid],
-  dependencies: [blkid_dep] + lib_selinux_dlopen_deps,
+  dependencies: [blkid_dep] + selinux_deps,
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2911,10 +2916,10 @@ opt = get_option('build-sulogin') \
 exe = executable(
   'sulogin',
   sulogin_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_crypt] + lib_selinux_dlopen_deps,
+  dependencies : [lib_crypt] + selinux_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -3015,9 +3020,9 @@ opt = get_option('build-namei').allowed()
 exe = executable(
   'namei',
   namei_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources,
   include_directories : includes,
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)

@@ -72,7 +72,7 @@ if enable_btrfs
 endif
 
 if lib_selinux.found()
-  lib_mount_sources += [dl_utils_c, dl_selinux_c, selinux_utils_c]
+  lib_mount_sources += selinux_sources + [selinux_utils_c]
 endif
 
 if lib_cryptsetup.found()

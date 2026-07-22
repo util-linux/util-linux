@@ -105,6 +105,21 @@ endif # !HAVE_TINFO
 MANPAGES += lib/terminal-colors.d.5
 dist_noinst_DATA += lib/terminal-colors.d.5.adoc
 
+# SELinux dlopen sources and link flags -- used by tools with SELinux support
+selinux_dl_sources = \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+selinux_dl_ldadd = -ldl
+
+# Cryptsetup dlopen sources and link flags (dl-utils provided by selinux_dl_sources
+# when SELinux is also enabled; added separately by libmount when only cryptsetup)
+cryptsetup_dl_sources = \
+	lib/dl-cryptsetup.c \
+	include/dl-cryptsetup.h
+cryptsetup_dl_ldadd = -ldl
+
 check_PROGRAMS += \
 	test_blkdev \
 	test_buffer \
