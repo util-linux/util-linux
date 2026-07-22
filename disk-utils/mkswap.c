@@ -670,7 +670,11 @@ int main(int argc, char **argv)
 				"uuid",
 #endif
 #ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
 				"selinux",
+# endif
 #endif
 				NULL,
 			};
