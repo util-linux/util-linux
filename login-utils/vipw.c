@@ -331,7 +331,19 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *const features[] = {
+#ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
+				"selinux",
+# endif
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		case 'h':
 			usage();
 		default:
