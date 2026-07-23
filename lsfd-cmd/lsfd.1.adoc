@@ -317,6 +317,8 @@ id=_BPF-LINK.ID_ type=_BPF-LINK.TYPE_[ prog=_BPF-LINK.PROG-ID_]
 bpf-map:::
 id=_BPF-MAP.ID_ type=_BPF-MAP.TYPE_[ name=_BPF.NAME_]
 +
+This format applies only to opened file descriptors, not to memory-mapped BPF maps.
++
 bpf-prog:::
 id=_BPF-PROG.ID_ type=_BPF-PROG.TYPE_ tag= _BPF-PROG.TAG_ [ name=_BPF.NAME_]
 +
