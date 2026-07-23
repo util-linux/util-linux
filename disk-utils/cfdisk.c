@@ -1477,6 +1477,8 @@ static int ui_draw_extra(struct cfdisk *cf)
 
 	scols_table_reduce_termwidth(ln->extra, 4);
 	scols_print_table_to_string(ln->extra, &tbstr);
+	if (!tbstr)
+		return 0;
 
 	end = tbstr;
 	while ((end = strchr(end, '\n')))
