@@ -9,6 +9,8 @@
 
 #include <libcryptsetup.h>
 
+#ifdef USE_DLOPEN_CRYPTSETUP
+
 #include "dl-utils.h"
 
 /* Pointers to libcryptsetup functions (initialized by dlsym()) */
@@ -44,6 +46,14 @@ extern struct ul_cryptsetup_opers ul_cryptsetup;
 extern int ul_dlopen_libcryptsetup(void);
 
 #define cryptsetup_call(_func)	(ul_cryptsetup._func)
+
+#else /* !USE_DLOPEN_CRYPTSETUP */
+
+static inline int ul_dlopen_libcryptsetup(void) { return 0; }
+
+#define cryptsetup_call(_func)	(_func)
+
+#endif /* USE_DLOPEN_CRYPTSETUP */
 
 #endif /* HAVE_CRYPTSETUP */
 #endif /* UTIL_LINUX_DL_CRYPTSETUP_H */

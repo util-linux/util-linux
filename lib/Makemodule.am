@@ -105,6 +105,36 @@ endif # !HAVE_TINFO
 MANPAGES += lib/terminal-colors.d.5
 dist_noinst_DATA += lib/terminal-colors.d.5.adoc
 
+# SELinux sources and link flags -- dlopen or direct linking
+selinux_dl_sources =
+selinux_dl_ldadd =
+if HAVE_SELINUX
+if USE_DLOPEN_SELINUX
+selinux_dl_sources += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+selinux_dl_ldadd += -ldl
+else
+selinux_dl_ldadd += $(SELINUX_LIBS)
+endif
+endif
+
+# Cryptsetup sources and link flags -- dlopen or direct linking
+cryptsetup_dl_sources =
+cryptsetup_dl_ldadd =
+if HAVE_CRYPTSETUP
+if USE_DLOPEN_CRYPTSETUP
+cryptsetup_dl_sources += \
+	lib/dl-cryptsetup.c \
+	include/dl-cryptsetup.h
+cryptsetup_dl_ldadd += -ldl
+else
+cryptsetup_dl_ldadd += $(CRYPTSETUP_LIBS)
+endif
+endif
+
 check_PROGRAMS += \
 	test_blkdev \
 	test_buffer \

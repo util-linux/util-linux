@@ -72,11 +72,11 @@ if enable_btrfs
 endif
 
 if lib_selinux.found()
-  lib_mount_sources += [dl_utils_c, dl_selinux_c, selinux_utils_c]
+  lib_mount_sources += selinux_sources + [selinux_utils_c]
 endif
 
-if lib_cryptsetup.found()
-  if not lib_selinux.found()
+if lib_cryptsetup.found() and use_dlopen_cryptsetup
+  if not use_dlopen_selinux
     lib_mount_sources += dl_utils_c
   endif
   lib_mount_sources += dl_cryptsetup_c
@@ -91,10 +91,18 @@ endif
 
 lib__mount_compile_deps = [blkid_dep]
 if lib_selinux.found()
-  lib__mount_compile_deps += lib_selinux.partial_dependency(compile_args : true, includes : true)
+  if use_dlopen_selinux
+    lib__mount_compile_deps += lib_selinux.partial_dependency(compile_args : true, includes : true)
+  else
+    lib__mount_compile_deps += lib_selinux
+  endif
 endif
 if lib_cryptsetup.found()
-  lib__mount_compile_deps += lib_cryptsetup.partial_dependency(compile_args : true, includes : true)
+  if use_dlopen_cryptsetup
+    lib__mount_compile_deps += lib_cryptsetup.partial_dependency(compile_args : true, includes : true)
+  else
+    lib__mount_compile_deps += lib_cryptsetup
+  endif
 endif
 
 lib__mount = static_library(
@@ -112,10 +120,10 @@ lib_mount_static = static_library(
   install : false)
 mount_static_dep = declare_dependency(link_with: lib_mount_static, include_directories: '.')
 
-lib__mount_deps = [
-  lib_dl,
-  realtime_libs
-]
+lib__mount_deps = [realtime_libs]
+if use_dlopen_selinux or use_dlopen_cryptsetup
+  lib__mount_deps += [lib_dl]
+endif
 
 if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
   lib__mount_deps += [lib_systemd]

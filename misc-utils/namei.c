@@ -440,7 +440,19 @@ main(int argc, char **argv)
 		case 'h':
 			usage();
 		case 'V':
-			print_version(EXIT_SUCCESS);
+		{
+			static const char *const features[] = {
+#ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
+				"selinux",
+# endif
+#endif
+				NULL
+			};
+			print_version_with_features(EXIT_SUCCESS, features);
+		}
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
