@@ -490,9 +490,23 @@ done:
 
 	/* normalize delay */
 	if (stp->delay_div) {
+		/*
+		 * Scale the complete duration as a single value in
+		 * microseconds, then split the result back into seconds and
+		 * microseconds.  Dividing tv_sec and tv_usec independently
+		 * truncates the fractional part of the whole-seconds field
+		 * instead of carrying it into microseconds, so for example a
+		 * 1.000000 s delay scaled by divisor 2 became 0.000000 s rather
+		 * than the expected 0.500000 s.
+		 */
+		double total = (double) step->delay.tv_sec * 1000000.0
+				+ (double) step->delay.tv_usec;
+
 		DBG(TIMING, ul_debug(" normalize delay: divide"));
-		step->delay.tv_sec /= stp->delay_div;
-		step->delay.tv_usec /= stp->delay_div;
+		total /= stp->delay_div;
+		step->delay.tv_sec  = (time_t) (total / 1000000.0);
+		step->delay.tv_usec = (suseconds_t) (total
+				- (double) step->delay.tv_sec * 1000000.0);
 	}
 	if (timerisset(&stp->delay_max) &&
 	    timercmp(&step->delay, &stp->delay_max, >)) {
