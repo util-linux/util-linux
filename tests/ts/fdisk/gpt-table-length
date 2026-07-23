@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+#
+# Regression test for the "expert" command "change table length" (l) on a GPT
+# whose primary partition entries array is not at the default LBA 2.
+#
+# fdisk_gpt_set_npartitions() must derive the first usable LBA from the actual
+# on-disk location of the primary entries array rather than from the default
+# layout, otherwise the usable area could overlap the entries array.
+#
+# See https://github.com/util-linux/util-linux/issues/3923
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="gpt-table-length"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_SFDISK"
+ts_check_prog "python3"
+
+ts_init_subtest "first-usable-nondefault-entries"
+
+TEST_IMAGE_NAME=$(ts_image_init 10)
+
+# A standard GPT: primary partition entries at the default LBA 2.
+echo -ne "g\nw\nq\n" | $TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
+
+# Relocate the primary partition entries array to a non-default LBA (16). Neither
+# fdisk nor sfdisk can move the entries array, so do it directly on the image and
+# recompute the GPT header CRCs. The backup entries stay at the default
+# end-of-device location.
+python3 - "$TEST_IMAGE_NAME" <<'PYEOF' >&2
+import struct, zlib, os, sys
+SEC = 512
+def crc32(b): return zlib.crc32(b) & 0xffffffff
+path = sys.argv[1]
+total = os.path.getsize(path) // SEC
+with open(path, 'r+b') as f:
+    f.seek(SEC)
+    ph = bytearray(f.read(SEC))
+    n = struct.unpack_from('<I', ph, 80)[0]
+    esz = struct.unpack_from('<I', ph, 84)[0]
+    esects = (n * esz + SEC - 1) // SEC
+    old = struct.unpack_from('<Q', ph, 72)[0]
+    f.seek(old * SEC)
+    ents = f.read(esects * SEC)
+    # zero the old location
+    f.seek(old * SEC)
+    f.write(b'\x00' * (esects * SEC))
+    # write the entries at the new (non-default) location
+    NEW = 16
+    f.seek(NEW * SEC)
+    f.write(ents)
+    ecrc = crc32(ents[:n * esz])
+    struct.pack_into('<Q', ph, 72, NEW)            # partition_entry_lba
+    struct.pack_into('<Q', ph, 40, NEW + esects)  # first_usable_lba
+    struct.pack_into('<I', ph, 88, ecrc)          # partition_entry_array_crc32
+    struct.pack_into('<I', ph, 16, 0)             # header_crc32 (zero for CRC)
+    struct.pack_into('<I', ph, 16, crc32(bytes(ph[:92])))
+    f.seek(SEC)
+    f.write(ph)
+    # backup header: keep its entry_lba (default end), sync first_usable + entries crc
+    f.seek((total - 1) * SEC)
+    bh = bytearray(f.read(SEC))
+    struct.pack_into('<Q', bh, 40, NEW + esects)
+    struct.pack_into('<I', bh, 88, ecrc)
+    struct.pack_into('<I', bh, 16, 0)
+    struct.pack_into('<I', bh, 16, crc32(bytes(bh[:92])))
+    f.seek((total - 1) * SEC)
+    f.write(bh)
+PYEOF
+
+# Change the table length. The first usable LBA must follow the actual
+# (non-default) primary entries location, not the default LBA 2.
+echo -ne "x\nl\n64\nr\nw\nq\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+# sfdisk -J reports the GPT first_usable_lba as "firstlba". With the primary
+# entries at LBA 16 and 64 entries (16 sectors), it must be 16 + 16 = 32; the
+# buggy implementation reported 2 + 16 = 18.
+$TS_CMD_SFDISK -J ${TEST_IMAGE_NAME} 2> /dev/null \
+	| sed -n 's/.*"firstlba": \([0-9]*\),.*/firstlba=\1/p' >> "$TS_OUTPUT"
+
+ts_finalize_subtest
+ts_finalize
