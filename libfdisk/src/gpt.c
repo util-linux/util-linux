@@ -2881,7 +2881,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 	struct fdisk_gpt_label *gpt;
 	size_t new_size = 0;
 	uint32_t old_nents;
-	uint64_t first_usable = 0ULL, last_usable = 0ULL;
+	uint64_t first_usable = 0ULL, last_usable = 0ULL, esects = 0ULL;
 	int rc;
 
 	assert(cxt);
@@ -2909,11 +2909,18 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t nents)
 		return rc;
 	}
 
-	rc = gpt_calculate_first_lba(gpt->pheader, nents, &first_usable, cxt);
+	/* The primary entries array is not relocated when the table length
+	 * changes, so derive the first usable LBA from its real on-disk
+	 * location rather than the default LBA 2. */
+	rc = gpt_calculate_sectorsof_entries(gpt->pheader, nents, &esects, cxt);
+	if (rc == 0)
+		first_usable = le64_to_cpu(gpt->pheader->partition_entry_lba) + esects;
 	if (rc == 0)
 		rc = gpt_calculate_last_lba(gpt->pheader, nents, &last_usable, cxt);
 	if (rc)
 		return rc;
+	if (first_usable > last_usable)
+		return -ENOSPC;
 
 	/* if expanding the table, first check that everything fits,
 	 * then allocate more memory and zero. */
