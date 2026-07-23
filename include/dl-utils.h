@@ -55,10 +55,16 @@ extern int ul_dlopen_symbols(const char *libname, int flags,
 # define _UL_ELF_NOTE_DLOPEN_SECTION_FLAGS "aGR"
 #endif
 
+#if defined(__hppa__) || defined(__hppa64__)
+# define _UL_ELF_NOTE_DLOPEN_GUARD ".set"
+#else
+# define _UL_ELF_NOTE_DLOPEN_GUARD ".equ"
+#endif
+
 #define _UL_ELF_NOTE_DLOPEN(json)                                                                                            \
         __asm__ (                                                                                                             \
                 ".ifndef \"ul_dlopen:" json "\"\n"                                                                            \
-                ".set \"ul_dlopen:" json "\", 1\n"                                                                            \
+                _UL_ELF_NOTE_DLOPEN_GUARD " \"ul_dlopen:" json "\", 1\n"                                                      \
                 ".pushsection .note.dlopen, \"" _UL_ELF_NOTE_DLOPEN_SECTION_FLAGS "\", %note, \"ul_dlopen:" json "\", comdat\n" \
                 ".balign 4\n"                                                                                                 \
                 ".long 884f - 883f\n"                                                                                         \

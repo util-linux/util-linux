@@ -38,6 +38,11 @@ logger_SOURCES = misc-utils/logger.c lib/strutils.c lib/strv.c
 logger_LDADD = $(LDADD) libcommon.la
 logger_CFLAGS = $(AM_CFLAGS)
 if HAVE_SYSTEMD
+logger_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
 logger_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 logger_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif
@@ -139,6 +144,11 @@ uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
 uuidd_SOURCES = misc-utils/uuidd.c lib/monotonic.c lib/timer.c
 if HAVE_SYSTEMD
+uuidd_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
 uuidd_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS)
 uuidd_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS)
 tmpfiles_DATA += misc-utils/uuidd-tmpfiles.conf

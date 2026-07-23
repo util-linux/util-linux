@@ -238,13 +238,14 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 
 #else /* !HAVE_LIBECONF */
 
-#include <libeconf.h>
+#include "dl-econf.h"
 
 static econf_file *file = NULL;
 
 void free_getlogindefs_data(void)
 {
-	econf_free (file);
+	if (file)
+		econf_call(econf_freeFile)(file);
 	file = NULL;
 }
 
@@ -255,16 +256,18 @@ static void load_defaults(void)
 	if (file != NULL)
 		free_getlogindefs_data();
 
+	if (ul_dlopen_libeconf() == 0) {
 #ifdef HAVE_ECONF_READCONFIG
-	error = econf_readConfig(&file, NULL,
-			UL_VENDORDIR_PATH, "login", "defs", "= \t", "#");
+		error = econf_call(econf_readConfig)(&file, NULL,
+				UL_VENDORDIR_PATH, "login", "defs", "= \t", "#");
 #else
-	error = econf_readDirs(&file,
-			UL_VENDORDIR_PATH, "/etc", "login", "defs", "= \t", "#");
+		error = econf_call(econf_readDirs)(&file,
+				UL_VENDORDIR_PATH, "/etc", "login", "defs", "= \t", "#");
 #endif
-	if (error)
-	  syslog(LOG_NOTICE, _("Error reading login.defs: %s"),
-		 econf_errString(error));
+		if (error)
+			syslog(LOG_NOTICE, _("Error reading login.defs: %s"),
+			       econf_call(econf_errString)(error));
+	}
 
 	if (logindefs_loader)
 		logindefs_loader(logindefs_loader_data);
@@ -278,16 +281,19 @@ void logindefs_load_file(const char *filename)
 
 	logindefs_loader = NULL; /* No recursion */
 
+	if (ul_dlopen_libeconf() != 0)
+		return;
+
 #if USE_VENDORDIR
 	xasprintf(&path, _PATH_VENDORDIR"/%s", filename);
 
-	if (!econf_readFile(&file_l, path, "= \t", "#")) {
+	if (!econf_call(econf_readFile)(&file_l, path, "= \t", "#")) {
 		if (file == NULL)
 			file = file_l;
-		else if (!econf_mergeFiles(&file_m, file, file_l)) {
-			econf_free(file);
+		else if (!econf_call(econf_mergeFiles)(&file_m, file, file_l)) {
+			econf_call(econf_freeFile)(file);
 			file = file_m;
-			econf_free(file_l);
+			econf_call(econf_freeFile)(file_l);
 		}
 	}
 	free (path);
@@ -295,23 +301,23 @@ void logindefs_load_file(const char *filename)
 
 	xasprintf(&path, "/etc/%s", filename);
 
-	if (!econf_readFile(&file_l, path, "= \t", "#")) {
+	if (!econf_call(econf_readFile)(&file_l, path, "= \t", "#")) {
 		if (file == NULL)
 			file = file_l;
-		else if (!econf_mergeFiles(&file_m, file, file_l)) {
-			econf_free(file);
+		else if (!econf_call(econf_mergeFiles)(&file_m, file, file_l)) {
+			econf_call(econf_freeFile)(file);
 			file = file_m;
-			econf_free(file_l);
+			econf_call(econf_freeFile)(file_l);
 		}
 
 	/* Try original filename, could be relative */
-	} else if (!econf_readFile(&file_l, filename, "= \t", "#")) {
+	} else if (!econf_call(econf_readFile)(&file_l, filename, "= \t", "#")) {
 		if (file == NULL)
 			file = file_l;
-		else if (!econf_mergeFiles(&file_m, file, file_l)) {
-			econf_free(file);
+		else if (!econf_call(econf_mergeFiles)(&file_m, file, file_l)) {
+			econf_call(econf_freeFile)(file);
 			file = file_m;
-			econf_free(file_l);
+			econf_call(econf_freeFile)(file_l);
 		}
 	}
 	free (path);
@@ -328,10 +334,10 @@ int getlogindefs_bool(const char *name, int dflt)
 	if (!file)
 		return dflt;
 
-	if ((error = econf_getBoolValue(file, NULL, name, &value))) {
+	if ((error = econf_call(econf_getBoolValue)(file, NULL, name, &value))) {
 		if (error != ECONF_NOKEY)
 			syslog(LOG_NOTICE, _("couldn't fetch %s: %s"), name,
-			       econf_errString(error));
+			       econf_call(econf_errString)(error));
 		return dflt;
 	}
 	return value;
@@ -348,10 +354,10 @@ unsigned long getlogindefs_num(const char *name, unsigned long dflt)
 	if (!file)
 		return dflt;
 
-	if ((error = econf_getUInt64Value(file, NULL, name, &value))) {
+	if ((error = econf_call(econf_getUInt64Value)(file, NULL, name, &value))) {
 		if (error != ECONF_NOKEY)
 			syslog(LOG_NOTICE, _("couldn't fetch %s: %s"), name,
-			       econf_errString(error));
+			       econf_call(econf_errString)(error));
 		return dflt;
 	}
 	return value;
@@ -374,10 +380,10 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 	if (!file)
 		return dflt;
 
-	if ((error = econf_getStringValue(file, NULL, name, &value))) {
+	if ((error = econf_call(econf_getStringValue)(file, NULL, name, &value))) {
 		if (error != ECONF_NOKEY)
 			syslog(LOG_NOTICE, _("couldn't fetch %s: %s"), name,
-			       econf_errString(error));
+			       econf_call(econf_errString)(error));
 		return dflt;
 	}
 	if (value)
@@ -590,14 +596,15 @@ int main(int argc, char *argv[])
 				"BOOLEAN", "NUMBER", "STRING", "HELLO_WORLD",
 				NULL};
 
-		for (i = 0; keys[i] != NULL; i++) {
+		for (i = 0; file && keys[i] != NULL; i++) {
 			char *value = NULL;
 
-			econf_getStringValue(file, NULL, keys[i], &value);
+			econf_call(econf_getStringValue)(file, NULL, keys[i], &value);
 			printf ("%s: $%s: '%s'\n", argv[1], keys[i], value);
 		}
 
-		econf_free (file);
+		if (file)
+			econf_call(econf_freeFile)(file);
 
 #else
 		struct item *ptr;

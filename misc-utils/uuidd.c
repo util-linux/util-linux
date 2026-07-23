@@ -53,7 +53,7 @@
 #include "timer.h"
 
 #ifdef HAVE_LIBSYSTEMD
-# include <systemd/sd-daemon.h>
+# include "dl-systemd.h"
 #endif
 
 #include "nls.h"
@@ -411,7 +411,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 #ifdef HAVE_LIBSYSTEMD
 	if (uuidd_cxt->no_sock) {
-		const int r = sd_listen_fds(0);
+		const int r = ul_dlopen_libsystemd() == 0 ?
+				systemd_call(sd_listen_fds)(0) : -ENOSYS;
 
 		if (r < 0) {
 			errno = r * -1;

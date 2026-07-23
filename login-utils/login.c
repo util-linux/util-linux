@@ -1528,20 +1528,20 @@ static void login_shell_fallback(char **child_argv)
 	if (!key_file)
 		return;
 
-	error = econf_getKeys(key_file, NULL, &size, &keys);
+	error = econf_call(econf_getKeys)(key_file, NULL, &size, &keys);
 	if (error) {
-		econf_free(key_file);
+		econf_call(econf_freeFile)(key_file);
 		errx(EXIT_FAILURE,
 			_("Cannot evaluate entries in shells files: %s"),
-			econf_errString(error));
+			econf_call(econf_errString)(error));
 	}
 
 	for (size_t i = 0; i < size; i++) {
 		build_shell_argv(keys[i], child_argv);
 		execvp(child_argv[0], child_argv + 1);
 	}
-	econf_free(keys);
-	econf_free(key_file);
+	econf_call(econf_freeArray)(keys);
+	econf_call(econf_freeFile)(key_file);
 #else
 	char *s;
 	setusershell();

@@ -1001,6 +1001,21 @@ AS_IF([test "x$build_widechar" = xyes ], [
   AC_DEFINE([HAVE_WIDECHAR], [1], [Do we have wide character support?])
 ])
 
+# The "R" (SHF_GNU_RETAIN) section flag is only understood by binutils >= 2.36.
+AC_MSG_CHECKING([whether the assembler supports the R (SHF_GNU_RETAIN) section flag])
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+	__asm__(".pushsection .note.test, \"aR\", %note\n.popsection\n");
+]])], [
+	AC_MSG_RESULT([yes])
+	ul_dlopen_section_flags="aGR"
+], [
+	AC_MSG_RESULT([no])
+	ul_dlopen_section_flags="aG"
+])
+AC_DEFINE_UNQUOTED([_UL_ELF_NOTE_DLOPEN_SECTION_FLAGS],
+	["$ul_dlopen_section_flags"],
+	[ELF section flags for the .note.dlopen ELF note])
+
 
 AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
 #include <sched.h>
@@ -2769,6 +2784,12 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
        AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
        AC_SUBST([SYSTEMD_USER_LOCK])
+       # libsystemd is loaded with dlopen() at runtime rather than linked
+       # against, so the tools need libdl instead of libsystemd (the
+       # SYSTEMD_CFLAGS headers are still used at build time).
+       SYSTEMD_LIBS="-ldl"
+       SYSTEMD_DAEMON_LIBS=
+       SYSTEMD_JOURNAL_LIBS=
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
@@ -2867,8 +2888,13 @@ AS_IF([test "x$with_econf" != xno], [
   AS_CASE([$with_econf:$have_econf],
     [yes:no],
       [AC_MSG_ERROR([libeconf expected but libeconf not found])],
-    [*:yes],
+    [*:yes], [
        AC_DEFINE([HAVE_LIBECONF], [1], [Define if libeconf is available])
+       # libeconf is loaded with dlopen() at runtime rather than linked
+       # against, so the tools need libdl instead of libeconf (the ECONF_CFLAGS
+       # headers are still used at build time).
+       ECONF_LIBS="-ldl"
+    ]
   )
 ])
 AM_CONDITIONAL([HAVE_ECONF], [test "x$have_econf" = xyes])

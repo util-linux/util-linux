@@ -43,7 +43,7 @@
 #endif
 
 #ifdef HAVE_LIBSYSTEMD
-# include <systemd/sd-journal.h>
+# include "dl-systemd.h"
 #endif
 
 #ifdef HAVE_LIBLASTLOG2
@@ -1385,7 +1385,7 @@ static char *get_journal_data(sd_journal *j, const char *name)
 	const char *data = NULL, *p;
 	size_t len = 0;
 
-	if (sd_journal_get_data(j, name, (const void **) &data, &len) < 0
+	if (systemd_call(sd_journal_get_data)(j, name, (const void **) &data, &len) < 0
 	    || !data || !len)
 		return NULL;
 
@@ -1403,23 +1403,26 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 	sd_journal *j;
 	char *match;
 
+	if (ul_dlopen_libsystemd() != 0)
+		return;
+
 	if (journal_path)
-		sd_journal_open_directory(&j, journal_path, 0);
+		systemd_call(sd_journal_open_directory)(&j, journal_path, 0);
 	else
-		sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+		systemd_call(sd_journal_open)(&j, SD_JOURNAL_LOCAL_ONLY);
 
 	xasprintf(&match, "_UID=%u", uid);
 
-	sd_journal_add_match(j, match, 0);
-	sd_journal_seek_tail(j);
-	sd_journal_previous_skip(j, len);
+	systemd_call(sd_journal_add_match)(j, match, 0);
+	systemd_call(sd_journal_seek_tail)(j);
+	systemd_call(sd_journal_previous_skip)(j, len);
 
 	do {
 		char *id, *pid, *msg, *ts;
 		uint64_t x;
 		time_t t;
 
-		sd_journal_get_realtime_usec(j, &x);
+		systemd_call(sd_journal_get_realtime_usec)(j, &x);
 		t = x / 1000000;
 		ts = make_time(time_mode, t);
 
@@ -1434,11 +1437,11 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 		free(id);
 		free(pid);
 		free(msg);
-	} while (sd_journal_next(j));
+	} while (systemd_call(sd_journal_next)(j));
 
 	free(match);
-	sd_journal_flush_matches(j);
-	sd_journal_close(j);
+	systemd_call(sd_journal_flush_matches)(j);
+	systemd_call(sd_journal_close)(j);
 }
 #endif
 

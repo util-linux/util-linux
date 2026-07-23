@@ -68,9 +68,7 @@
 #include <syslog.h>
 
 #ifdef HAVE_LIBSYSTEMD
-# define SD_JOURNAL_SUPPRESS_LOCATION
-# include <systemd/sd-daemon.h>
-# include <systemd/sd-journal.h>
+# include "dl-systemd.h"
 #endif
 
 #ifdef HAVE_SYS_TIMEX_H
@@ -391,8 +389,11 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 		++lines;
 	}
 
-	if (!ctl->noact)
-		ret = sd_journal_sendv(iovec, lines);
+	if (!ctl->noact) {
+		if (ul_dlopen_libsystemd() != 0)
+			errx(EXIT_FAILURE, _("libsystemd is not available"));
+		ret = systemd_call(sd_journal_sendv)(iovec, lines);
+	}
 	if (ctl->stderr_printout) {
 		for (n = 0; n < lines; n++)
 			fprintf(stderr, "%s\n", (char *) iovec[n].iov_base);
@@ -1321,7 +1322,8 @@ int main(int argc, char **argv)
 	case AF_UNIX_ERRORS_AUTO:
 		ctl.unix_socket_errors = ctl.noact || ctl.stderr_printout;
 #ifdef HAVE_LIBSYSTEMD
-		ctl.unix_socket_errors |= !!sd_booted();
+		ctl.unix_socket_errors |= (ul_dlopen_libsystemd() == 0
+					   && systemd_call(sd_booted)() > 0);
 #endif
 		break;
 	default:
