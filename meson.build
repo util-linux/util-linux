@@ -4065,6 +4065,9 @@ if LINUX and lib_rt.found()
   if cc.has_header_symbol('linux/bpf.h', 'BPF_LINK_CREATE')
     test_mkfds_c_args += ['-DHAVE_BPF_LINK_CREATE']
   endif
+  if cc.has_header_symbol('linux/bpf.h', 'BPF_F_MMAPABLE')
+    test_mkfds_c_args += ['-DHAVE_BPF_F_MMAPABLE']
+  endif
   exe = executable(
     'test_mkfds',
     'tests/helpers/test_mkfds.c',

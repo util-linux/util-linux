@@ -3094,6 +3094,56 @@ static void free_bpf_link(const struct factory * factory _U_, void *data)
 	free(data);
 }
 #endif /* HAVE_BPF_LINK_CREATE */
+#ifdef HAVE_BPF_F_MMAPABLE
+static void *make_mmapped_bpf_map(const struct factory *factory, struct fdesc fdescs[],
+				  int argc, char ** argv)
+{
+	struct arg name = decode_arg("name", factory->params, argc, argv);
+	const char *sname = ARG_STRING(name);
+
+	int bfd;
+	union bpf_attr attr;
+	struct munmap_data *munmap_data;
+
+	memset(&attr, 0, sizeof(attr));
+	attr.map_type = BPF_MAP_TYPE_ARRAY;
+	attr.map_flags = BPF_F_MMAPABLE;
+	attr.value_size = 4;
+	attr.key_size = 4;
+	attr.max_entries = 10;
+
+	strncpy(attr.map_name, sname, sizeof(attr.map_name) - 1);
+
+	free_arg(&name);
+
+	bfd = syscall(SYS_bpf, BPF_MAP_CREATE, &attr, sizeof(attr));
+	if (bfd < 0)
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_MAP_CREATE)");
+
+	if (bfd != fdescs[0].fd) {
+		if (dup2(bfd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", bfd, fdescs[0].fd);
+		}
+		close(bfd);
+	}
+
+	munmap_data = xmalloc(sizeof(*munmap_data));
+	munmap_data->len = 4096;
+	munmap_data->ptr = mmap(NULL, munmap_data->len,
+				PROT_READ | PROT_WRITE,
+				MAP_SHARED, fdescs[0].fd, 0);
+	if (munmap_data->ptr == MAP_FAILED)
+		err(EXIT_FAILURE, "failed to mmap bpf-map");
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc_after_munmap,
+		.data  = munmap_data,
+	};
+
+	return NULL;
+}
+#endif	/* HAVE_BPF_F_MMAPABLE */
 
 static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
 		      int argc _U_, char ** argv _U_)
@@ -4423,6 +4473,25 @@ static const struct factory factories[] = {
 		},
 	},
 #endif
+#ifdef HAVE_BPF_F_MMAPABLE
+	{
+		.name = "mapped-bpf-map",
+		.desc = "mmap'ed bpf map",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_mmapped_bpf_map,
+		.params = (struct parameter []) {
+			{
+				.name = "name",
+				.type = PTYPE_STRING,
+				.desc = "name assigned to the bpf map object",
+				.defv.string = "mkfds_bpf_map",
+			},
+			PARAM_END
+		}
+	},
+#endif	/* HAVE_BPF_F_MMAPABLE */
 	{
 		.name = "pty",
 		.desc = "make a pair of ptmx and pts",
