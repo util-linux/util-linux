@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 WanBingjiang <wanbingjiang@webray.com.cn>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mmap'ed bpf map files"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+ts_skip_docker
+
+. "$TS_SELF/lsfd-functions.bash"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+lsfd_check_mkfds_factory mapped-bpf-map
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+FD=3
+NAME=mkfds_map
+EXPR=
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" mapped-bpf-map "$FD" name="$NAME"; }
+    if read -r -u "${MKFDS[0]}" PID; then
+	EXPR='(ASSOC == "shm") and (TYPE == "bpf-map")'
+	"${TS_CMD_LSFD}" -p "${PID}" -n -o TYPE -Q "${EXPR}"
+	echo 'TYPE': $?
+
+	EXPR="(FD == $FD)"
+	"${TS_CMD_LSFD}" -r -n -o BPF-MAP.TYPE,BPF-MAP.TYPE.RAW,BPF.NAME -p "${PID}" -Q "${EXPR}"
+	echo 'BPF-MAP.TYPE,BPF-MAP.TYPE.RAW,BPF.NAME': $?
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+    RC=$?
+} > "$TS_OUTPUT" 2>&1
+
+if [ "$RC" == "$TS_EXIT_NOTSUPP" ]; then
+    ts_skip "bpf(2) is not available"
+fi
+
+ts_finalize
