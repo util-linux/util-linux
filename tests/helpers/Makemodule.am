@@ -51,7 +51,8 @@ if LINUX
 check_PROGRAMS += test_mkfds
 test_mkfds_SOURCES = tests/helpers/test_mkfds.c tests/helpers/test_mkfds.h \
 	tests/helpers/test_mkfds_ppoll.c
-test_mkfds_LDADD = $(LDADD) $(MQ_LIBS)
+test_mkfds_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la
+test_mkfds_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 
 check_PROGRAMS += test_enosys
 test_enosys_SOURCES = tests/helpers/test_enosys.c
