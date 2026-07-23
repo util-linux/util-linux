@@ -4907,11 +4907,34 @@ static struct multiplexer *lookup_multiplexer(const char *name)
 	return NULL;
 }
 
+enum {
+	COL_MULTIPLEXER_NAME,
+	MULTIPLEXER_N_COLS
+};
+
+static const struct colinfo multiplexer_infos[] = {
+	[COL_MULTIPLEXER_NAME] = { "MULTIPLEXER", 0, 0,
+				   "the name of multiplexer" },
+};
+
+static int multiplexer_fill_column(struct libscols_line *ln, int nth_item, const void *data,
+				   int nth_column)
+{
+	const struct multiplexer *m = ((struct multiplexer *)data) + nth_item;
+
+	switch (nth_column) {
+	case COL_MULTIPLEXER_NAME:
+		scols_line_sprintf(ln, nth_column, "%s", m->name);
+		break;
+	}
+	return 0;
+}
+
 static void list_multiplexers(void)
 {
-	puts("NAME");
-	for (size_t i = 0; i < ARRAY_SIZE(multiplexers); i++)
-		puts(multiplexers[i].name);
+	list_items ("multiplexers", multiplexer_infos, MULTIPLEXER_N_COLS,
+		    multiplexers, ARRAY_SIZE(multiplexers),
+		    multiplexer_fill_column, multiplexer_infos[COL_MULTIPLEXER_NAME].name);
 }
 
 static bool is_available(const char *factory)
