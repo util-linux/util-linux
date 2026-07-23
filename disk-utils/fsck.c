@@ -956,6 +956,19 @@ static struct fs_type_compile {
 #define FS_TYPE_OPT	1
 #define FS_TYPE_NEGOPT	2
 
+static void free_fs_type_compile(struct fs_type_compile *cmp)
+{
+    if (cmp->list) {
+        size_t i;
+	for (i = 0; cmp->list[i]; i++)
+	    free(cmp->list[i]);
+	free(cmp->list);
+    }
+    free(cmp->type);
+    cmp->list = NULL;
+    cmp->type = NULL;
+}
+
 static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 {
 	char	*cp, *list, *s;
@@ -1708,5 +1721,6 @@ int main(int argc, char *argv[])
 	mnt_unref_cache(mntcache);
 	mnt_unref_table(fstab);
 	mnt_unref_table(mtab);
+	free_fs_type_compile(&fs_type_compiled);
 	return status;
 }
