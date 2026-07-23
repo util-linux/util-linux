@@ -3001,6 +3001,100 @@ static void *make_bpf_map(const struct factory *factory, struct fdesc fdescs[],
 	return NULL;
 }
 
+#ifdef HAVE_BPF_LINK_CREATE
+static void *make_bpf_link(const struct factory *factory _U_, struct fdesc fdescs[],
+				int argc _U_, char ** argv _U_)
+{
+	int prog_fd, link_fd, cgroup_fd;
+	union bpf_attr attr;
+	struct bpf_link_info info = {};
+	/* Just doing exit with 1 (SK_PASS). */
+	struct bpf_insn insns[] = {
+		[0] = {
+			.code  = BPF_ALU64 | BPF_MOV | BPF_K,
+			.dst_reg = BPF_REG_0, .src_reg = 0, .off   = 0, .imm   = 1
+		},
+		[1] = {
+			.code  = BPF_JMP | BPF_EXIT,
+			.dst_reg = 0, .src_reg = 0, .off   = 0, .imm   = 0
+		},
+	};
+
+	memset(&attr, 0, sizeof(attr));
+	attr.prog_type = BPF_PROG_TYPE_CGROUP_SKB;
+	attr.insns = (uint64_t)(unsigned long)insns;
+	attr.insn_cnt = ARRAY_SIZE(insns);
+	attr.license = (int64_t)(unsigned long)"GPL";
+	prog_fd = syscall(SYS_bpf, BPF_PROG_LOAD, &attr, sizeof(attr));
+	if (prog_fd < 0)
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_PROG_LOAD)");
+
+	cgroup_fd = open("/sys/fs/cgroup", O_RDONLY | O_DIRECTORY);
+	if (cgroup_fd < 0)
+		err_nosys(EXIT_FAILURE, "failed in open(/sys/fs/cgroup)");
+
+	memset(&attr, 0, sizeof(attr));
+	attr.link_create.prog_fd = prog_fd;
+	attr.link_create.target_fd = cgroup_fd;
+	attr.link_create.attach_type = BPF_CGROUP_INET_INGRESS;
+	link_fd = syscall(SYS_bpf, BPF_LINK_CREATE, &attr, sizeof(attr));
+	if (link_fd < 0) {
+		close(cgroup_fd);
+		close(prog_fd);
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_LINK_CREATE)");
+	}
+
+	close(prog_fd);
+	close(cgroup_fd);
+
+	if (link_fd != fdescs[0].fd) {
+		if (dup2(link_fd, fdescs[0].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", link_fd, fdescs[0].fd);
+		close(link_fd);
+	}
+
+	memset(&attr, 0, sizeof(attr));
+	attr.info.bpf_fd = fdescs[0].fd;
+	attr.info.info_len = sizeof(info);
+	attr.info.info = (uint64_t)(unsigned long)&info;
+	if (syscall(SYS_bpf, BPF_OBJ_GET_INFO_BY_FD, &attr, sizeof(attr)) < 0)
+		err_nosys(EXIT_FAILURE, "failed in bpf(BPF_OBJ_GET_INFO_BY_FD)");
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return xmemdup(&info, sizeof(info));
+}
+
+enum ritem_bpf_link {
+	RITEM_BPF_LINK_ID,
+	RITEM_BPF_LINK_PROG_ID,
+};
+
+static void report_bpf_link(const struct factory *factory _U_,
+				int nth, void *data, FILE *fp)
+{
+	struct bpf_link_info *info = data;
+
+	switch (nth) {
+	case RITEM_BPF_LINK_ID:
+		fprintf(fp, "%u", info->id);
+		break;
+	case RITEM_BPF_LINK_PROG_ID:
+		fprintf(fp, "%u", info->prog_id);
+		break;
+	}
+}
+
+static void free_bpf_link(const struct factory * factory _U_, void *data)
+{
+	free(data);
+}
+#endif /* HAVE_BPF_LINK_CREATE */
+
 static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
 		      int argc _U_, char ** argv _U_)
 {
@@ -4309,6 +4403,26 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#ifdef HAVE_BPF_LINK_CREATE
+	{
+		.name = "bpf-link",
+		.desc = "make bpf-link",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.EX_O = 2,
+		.make = make_bpf_link,
+		.report = report_bpf_link,
+		.free = free_bpf_link,
+		.params = (struct parameter []) {
+			PARAM_END
+		},
+		.o_descs = (const char *[]) {
+			[RITEM_BPF_LINK_ID]  = "the id of bpf link object",
+			[RITEM_BPF_LINK_PROG_ID] = "the id of bpf prog attached by the link",
+		},
+	},
+#endif
 	{
 		.name = "pty",
 		.desc = "make a pair of ptmx and pts",

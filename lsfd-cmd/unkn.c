@@ -1319,6 +1319,159 @@ static const struct anon_ops anon_bpf_map_ops = {
 };
 
 /*
+ * bpf-link
+ */
+static const char *const bpf_link_type_table[] = {
+	[0]  = "unspec",		/* BPF_LINK_TYPE_UNSPEC */
+	[1]  = "raw_tracepoint",	/* BPF_LINK_TYPE_RAW_TRACEPOINT */
+	[2]  = "tracing",		/* BPF_LINK_TYPE_TRACING */
+	[3]  = "cgroup",		/* BPF_LINK_TYPE_CGROUP */
+	[4]  = "iter",			/* BPF_LINK_TYPE_ITER */
+	[5]  = "netns",			/* BPF_LINK_TYPE_NETNS */
+	[6]  = "xdp",			/* BPF_LINK_TYPE_XDP */
+	[7]  = "perf_event",		/* BPF_LINK_TYPE_PERF_EVENT */
+	[8]  = "kprobe_multi",		/* BPF_LINK_TYPE_KPROBE_MULTI */
+	[9]  = "struct_ops",		/* BPF_LINK_TYPE_STRUCT_OPS */
+	[10] = "netfilter",		/* BPF_LINK_TYPE_NETFILTER */
+	[11] = "tcx",			/* BPF_LINK_TYPE_TCX */
+	[12] = "uprobe_multi",		/* BPF_LINK_TYPE_UPROBE_MULTI */
+	[13] = "netkit",		/* BPF_LINK_TYPE_NETKIT */
+	[14] = "sockmap",		/* BPF_LINK_TYPE_SOCKMAP */
+};
+
+struct anon_bpf_link_data {
+	int id;
+	int prog_id;
+	char *type_str;		/* "link_type" string from fdinfo */
+};
+
+static bool anon_bpf_link_probe(const char *str)
+{
+	return strncmp(str, "bpf_link", 8) == 0;
+}
+
+static int anon_bpf_link_type_name_to_id(const char *name)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(bpf_link_type_table); i++)
+		if (bpf_link_type_table[i]
+		    && strcmp(bpf_link_type_table[i], name) == 0)
+			return (int)i;
+	return -1;
+}
+
+static bool anon_bpf_link_fill_column(struct proc *proc  __attribute__((__unused__)),
+				      struct unkn *unkn,
+				      struct libscols_line *ln __attribute__((__unused__)),
+				      int column_id,
+				      size_t column_index __attribute__((__unused__)),
+				      char **str)
+{
+	struct anon_bpf_link_data *data = (struct anon_bpf_link_data *)unkn->anon_data;
+	int t;
+
+	switch(column_id) {
+	case COL_BPF_LINK_ID:
+		if (data->id >= 0)
+			xasprintf(str, "%d", data->id);
+		return true;
+	case COL_BPF_LINK_TYPE_RAW:
+		if (data->type_str && data->type_str[0]) {
+			t = anon_bpf_link_type_name_to_id(data->type_str);
+			if (t >= 0)
+				xasprintf(str, "%d", t);
+		}
+		return true;
+	case COL_BPF_LINK_TYPE:
+		if (data->type_str && data->type_str[0])
+			*str = xstrdup(data->type_str);
+		return true;
+	case COL_BPF_LINK_PROG_ID:
+		if (data->prog_id >= 0)
+			xasprintf(str, "%d", data->prog_id);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static char *anon_bpf_link_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+	struct anon_bpf_link_data *data = (struct anon_bpf_link_data *)unkn->anon_data;
+
+	if (data->type_str && data->type_str[0])
+		xasprintf(&str, "id=%d type=%s", data->id, data->type_str);
+	else
+		xasprintf(&str, "id=%d", data->id);
+
+	if (data->prog_id >= 0)
+		xstrfappend(&str, " prog=%d", data->prog_id);
+
+	return str;
+}
+
+static void anon_bpf_link_init(struct unkn *unkn)
+{
+	struct anon_bpf_link_data *data = xmalloc(sizeof(*data));
+	data->id = -1;
+	data->prog_id = -1;
+	data->type_str = NULL;
+	unkn->anon_data = data;
+}
+
+static void anon_bpf_link_free(struct unkn *unkn)
+{
+	struct anon_bpf_link_data *data = (struct anon_bpf_link_data *)unkn->anon_data;
+	free(data->type_str);
+	free(data);
+}
+
+static int anon_bpf_link_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	if (strcmp(key, "link_id") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_link_data *)unkn->anon_data)->id = (int)t;
+		return 1;
+	}
+
+	if (strcmp(key, "link_type") == 0) {
+		/*
+		 * The kernel exposes link_type as a string (e.g. "xdp").
+		 * Store it directly; the integer id is reverse-looked-up
+		 * via bpf_link_type_table for BPF-LINK.TYPE.RAW.
+		 */
+		free(((struct anon_bpf_link_data *)unkn->anon_data)->type_str);
+		((struct anon_bpf_link_data *)unkn->anon_data)->type_str = xstrdup(value);
+		return 1;
+	}
+
+	if (strcmp(key, "prog_id") == 0) {
+		int32_t t = -1;
+		int rc = ul_strtos32(value, &t, 10);
+		if (rc < 0)
+			return 0; /* ignore -- parse failed */
+		((struct anon_bpf_link_data *)unkn->anon_data)->prog_id = (int)t;
+		return 1;
+	}
+
+	return 0;
+}
+
+static const struct anon_ops anon_bpf_link_ops = {
+	.class = "bpf-link",
+	.probe = anon_bpf_link_probe,
+	.get_name = anon_bpf_link_get_name,
+	.fill_column = anon_bpf_link_fill_column,
+	.init = anon_bpf_link_init,
+	.free = anon_bpf_link_free,
+	.handle_fdinfo = anon_bpf_link_handle_fdinfo,
+};
+
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -1339,6 +1492,7 @@ static const struct anon_ops *const anon_ops[] = {
 	&anon_inotify_ops,
 	&anon_bpf_prog_ops,
 	&anon_bpf_map_ops,
+	&anon_bpf_link_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)
