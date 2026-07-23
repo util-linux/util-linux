@@ -972,8 +972,6 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 	if (is_riscv(ct)) {
 		lscpu_format_isa_riscv(ct);
 		add_summary_s(tb, sec, _("ISA:"), ct->isa);
-		if (ct->mmu)
-			add_summary_s(tb, sec, _("MMU:"), ct->mmu);
 	}
 }
 
