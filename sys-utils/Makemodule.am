@@ -613,7 +613,7 @@ dist_noinst_DATA += sys-utils/setpriv.1.adoc
 setpriv_SOURCES = sys-utils/setpriv.c \
 		  lib/caputils.c
 dist_noinst_HEADERS += sys-utils/setpriv-landlock.h
-if HAVE_LINUX_LANDLOCK_H
+if HAVE_LANDLOCK
 setpriv_SOURCES += sys-utils/setpriv-landlock.c
 endif
 setpriv_LDADD = $(LDADD) $(CAP_NG_LIBS) libcommon.la libcommon_logindefs.la

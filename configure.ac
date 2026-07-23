@@ -343,7 +343,6 @@ AC_CHECK_HEADERS([ \
 	linux/falloc.h \
 	linux/fd.h \
 	linux/fiemap.h \
-	linux/landlock.h \
 	linux/kcmp.h \
 	linux/net_namespace.h \
 	linux/nsfs.h \
@@ -641,9 +640,6 @@ AC_CHECK_FUNCS([ \
 	getttynam \
 	inotify_init \
 	jrand48 \
-	landlock_create_ruleset \
-	landlock_add_rule \
-	landlock_restrict_self \
 	lchown \
 	lgetxattr \
 	llistxattr \
@@ -707,7 +703,6 @@ AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 AM_CONDITIONAL([HAVE_SYS_PRCTL_H], [test "x$ac_cv_header_sys_prctl_h" = xyes])
-AM_CONDITIONAL([HAVE_LINUX_LANDLOCK_H], [test "x$ac_cv_header_linux_landlock_h" = xyes])
 
 have_setns_syscall="yes"
 UL_CHECK_SYSCALL([setns])
@@ -1711,6 +1706,17 @@ UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [linux/securebits.h header fil
 UL_REQUIRES_HAVE([setpriv], [linux_capability_h], [linux/capability.h header file])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
 AM_CONDITIONAL([BUILD_SETPRIV], [test "x$build_setpriv" = xyes])
+
+UL_CHECK_SYSCALL([landlock_create_ruleset])
+UL_CHECK_SYSCALL([landlock_add_rule])
+UL_CHECK_SYSCALL([landlock_restrict_self])
+AS_IF([test "x$ul_cv_syscall_landlock_create_ruleset" != xno &&
+       test "x$ul_cv_syscall_landlock_add_rule" != xno &&
+       test "x$ul_cv_syscall_landlock_restrict_self" != xno],
+      [have_landlock=yes], [have_landlock=no])
+AM_CONDITIONAL([HAVE_LANDLOCK], [test "x$have_landlock" = xyes])
+AS_IF([test "x$have_landlock" = xyes],
+      [AC_DEFINE([HAVE_LANDLOCK], [1], [Define if Landlock syscalls are available])])
 
 AC_ARG_ENABLE([hardlink],
   AS_HELP_STRING([--disable-hardlink], [do not build hardlink]),
