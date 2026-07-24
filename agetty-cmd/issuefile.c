@@ -19,16 +19,22 @@
 #include "agetty.h"
 #include "c.h"
 #include "color-names.h"
+#include "configs.h"
 #include "nls.h"
 #include "fileutils.h"
 #include "pathnames.h"
 #include "widechar.h"
 
+/* The default issue file (e.g. /etc/issue) is read via ul_configs_file_list()
+ * whenever ISSUE_SUPPORT is enabled. The drop-in directory (issue.d) scanning
+ * performed by that function additionally requires ISSUEDIR_SUPPORT
+ * (i.e. scandirat()/openat()); when it is unavailable ul_configs_file_list()
+ * still returns the main issue file. */
+#define ISSUEDIR_EXT	"issue"
+#define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
+
 #ifdef ISSUEDIR_SUPPORT
-# include "configs.h"
 # include <dirent.h>
-# define ISSUEDIR_EXT	"issue"
-# define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
 #endif
 
 #ifdef USE_SYSTEMD
@@ -393,7 +399,6 @@ skip:
 		goto done;
 	}
 
-#ifdef ISSUEDIR_SUPPORT
 	struct list_head file_list;
 	struct list_head *current = NULL;
 	char *name = NULL;
@@ -403,6 +408,11 @@ skip:
 	 * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
 	 *
 	 * Note that _PATH_RUNSTATEDIR (/run) is always read by ul_configs_file_list().
+	 *
+	 * ul_configs_file_list() returns the main issue file (e.g. /etc/issue)
+	 * even when drop-in directory support (ISSUEDIR_SUPPORT) is unavailable,
+	 * so the default issue file is still shown on builds without issue.d
+	 * support (see issue #4505).
 	 */
 	ul_configs_file_list(&file_list,
 			     NULL,
@@ -417,7 +427,6 @@ skip:
 	}
 
 	ul_configs_free_list(&file_list);
-#endif
 
 done:
 	if (ie->output) {
