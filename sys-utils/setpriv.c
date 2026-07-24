@@ -188,7 +188,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
-static int has_cap(enum cap_type which, unsigned int i)
+static int has_cap(enum cap_type which, unsigned long i)
 {
 	switch (which) {
 	case CAP_TYPE_EFFECTIVE:
@@ -197,8 +197,7 @@ static int has_cap(enum cap_type which, unsigned int i)
 	case CAP_TYPE_PERMITTED:
 		return capng_have_capability((capng_type_t)which, i);
 	case CAP_TYPE_AMBIENT:
-		return prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET,
-				(unsigned long) i, 0UL, 0UL);
+		return prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_IS_SET, i, 0L, 0L);
 	default:
 		warnx(_("invalid capability type"));
 		return -1;
@@ -246,7 +245,7 @@ static void dump_one_secbit(int *first, int *bits, int bit, const char *name)
 static void dump_securebits(void)
 {
 	int first = 1;
-	int bits = prctl(PR_GET_SECUREBITS, 0, 0, 0, 0);
+	int bits = prctl(PR_GET_SECUREBITS, 0L, 0L, 0L, 0L);
 
 	if (bits < 0) {
 		warnx(_("getting process secure bits failed"));
@@ -398,7 +397,7 @@ static void dump(int dumplevel)
 
 	dump_groups();
 
-	x = prctl(PR_GET_NO_NEW_PRIVS, 0, 0, 0, 0);
+	x = prctl(PR_GET_NO_NEW_PRIVS, 0L, 0L, 0L, 0L);
 	if (0 <= x)
 		printf("no_new_privs: %d\n", x);
 	else
@@ -542,7 +541,7 @@ static void bump_cap(unsigned int cap)
 }
 
 static int cap_update(capng_act_t action,
-		enum cap_type type, unsigned int cap)
+		enum cap_type type, unsigned long cap)
 {
 	switch (type) {
 		case CAP_TYPE_EFFECTIVE:
@@ -556,10 +555,10 @@ static int cap_update(capng_act_t action,
 
 			if (action == CAPNG_ADD)
 				ret = prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE,
-						(unsigned long) cap, 0UL, 0UL);
+						cap, 0L, 0L);
 			else
 				ret = prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_LOWER,
-						(unsigned long) cap, 0UL, 0UL);
+						cap, 0L, 0L);
 
 			return ret;
 		}
@@ -613,7 +612,7 @@ static void parse_securebits(struct privctx *opts, const char *arg)
 	char *c;
 
 	opts->have_securebits = 1;
-	opts->securebits = prctl(PR_GET_SECUREBITS, 0, 0, 0, 0);
+	opts->securebits = prctl(PR_GET_SECUREBITS, 0L, 0L, 0L, 0L);
 	if (opts->securebits < 0)
 		err(SETPRIV_EXIT_PRIVERR, _("getting process secure bits failed"));
 
@@ -759,7 +758,7 @@ static void do_seccomp_filter(const char *file)
 	if (prctl(PR_GET_SECCOMP) == -1 && errno == EINVAL)
 		err(SETPRIV_EXIT_PRIVERR, _("Seccomp non-functional"));
 
-	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0))
+	if (prctl(PR_SET_NO_NEW_PRIVS, 1L, 0L, 0L, 0L))
 		err(SETPRIV_EXIT_PRIVERR, _("Could not run prctl(PR_SET_NO_NEW_PRIVS)"));
 
 	if (ul_set_seccomp_filter_spec_allow(&prog))
@@ -1136,7 +1135,7 @@ int main(int argc, char **argv)
 		do_reset_environ(pw);
 	}
 
-	if (opts.nnp && prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
+	if (opts.nnp && prctl(PR_SET_NO_NEW_PRIVS, 1L, 0L, 0L, 0L) == -1)
 		err(EXIT_FAILURE, _("disallow granting new privileges failed"));
 
 	if (opts.selinux_label)
@@ -1146,7 +1145,7 @@ int main(int argc, char **argv)
 	if (opts.seccomp_filter)
 		do_seccomp_filter(opts.seccomp_filter);
 
-	if (prctl(PR_SET_KEEPCAPS, 1, 0, 0, 0) == -1)
+	if (prctl(PR_SET_KEEPCAPS, 1L, 0L, 0L, 0L) == -1)
 		err(EXIT_FAILURE, _("keep process capabilities failed"));
 
 	/* We're going to want CAP_SETPCAP, CAP_SETUID, and CAP_SETGID if
@@ -1179,7 +1178,7 @@ int main(int argc, char **argv)
 			err(SETPRIV_EXIT_PRIVERR, _("setgroups failed"));
 	}
 
-	if (opts.have_securebits && prctl(PR_SET_SECUREBITS, opts.securebits, 0, 0, 0) != 0)
+	if (opts.have_securebits && prctl(PR_SET_SECUREBITS, opts.securebits, 0L, 0L, 0L) != 0)
 		err(SETPRIV_EXIT_PRIVERR, _("set process securebits failed"));
 
 	if (opts.bounding_set) {
@@ -1200,7 +1199,7 @@ int main(int argc, char **argv)
 	}
 
 	/* Clear or set parent death signal */
-	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0 : opts.pdeathsig) != 0)
+	if (opts.pdeathsig && prctl(PR_SET_PDEATHSIG, opts.pdeathsig < 0 ? 0L : opts.pdeathsig) != 0)
 		err(SETPRIV_EXIT_PRIVERR, _("set parent death signal failed"));
 
 	if (opts.have_ptracer) {
