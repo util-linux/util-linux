@@ -1401,8 +1401,12 @@ int main(int argc, char **argv)
 
 		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
-			if (!noauto_pt)
-				fdisk_create_disklabel(cxt, NULL);
+			if (!noauto_pt) {
+				if (isatty(STDOUT_FILENO) && isatty(STDIN_FILENO) && sizeof(void *) == 8)
+					fdisk_create_disklabel(cxt, "gpt");
+				else
+					fdisk_create_disklabel(cxt, NULL);
+			}
 
 		} else if (fdisk_is_label(cxt, GPT) && fdisk_gpt_is_hybrid(cxt))
 			fdisk_warnx(cxt, _(
