@@ -582,6 +582,8 @@ static int handle_signal(struct ul_pty *pty, int fd)
 							&info, (void *) &pty->win);
 		}
 		break;
+	case SIGALRM:
+		FALLTHROUGH;
 	case SIGHUP:
 		FALLTHROUGH;
 	case SIGTERM:
@@ -589,7 +591,7 @@ static int handle_signal(struct ul_pty *pty, int fd)
 	case SIGINT:
 		FALLTHROUGH;
 	case SIGQUIT:
-		DBG_OBJ(SIG, pty, ul_debug(" get signal SIG{TERM,INT,QUIT}"));
+		DBG_OBJ(SIG, pty, ul_debug(" get signal SIG{ALRM,HUP,TERM,INT,QUIT}"));
 		pty->delivered_signal = info.ssi_signo;
 		/* Child termination is going to generate SIGCHLD (see above) */
 		if (pty->child > 0)
