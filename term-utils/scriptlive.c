@@ -305,6 +305,8 @@ main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to create pseudo-terminal"));
 	if (ul_pty_signals_setup(ss.pty))
 		err(EXIT_FAILURE, _("failed to initialize signals handler"));
+	if (ul_pty_terminal_setup(ss.pty))
+		err(EXIT_FAILURE, _("failed to setup terminal"));
 
 	fflush(stdout);			/* ??? */
 

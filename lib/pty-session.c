@@ -186,9 +186,6 @@ int ul_pty_setup(struct ul_pty *pty)
 		if (rc)
 			goto done;
 
-		/* set the current terminal to raw mode; pty_cleanup() reverses this change on exit */
-		cfmakeraw(&attrs);
-		tcsetattr(STDIN_FILENO, TCSANOW, &attrs);
 	} else {
 		DBG_OBJ(SETUP, pty, ul_debug("create for non-terminal"));
 
@@ -215,6 +212,23 @@ done:
 	DBG_OBJ(SETUP, pty, ul_debug("pty setup done [master=%d, slave=%d, rc=%d]",
 				pty->master, pty->slave, rc));
 	return rc;
+}
+
+/* call me after ul_pty_signals_setup() and before fork() */
+int ul_pty_terminal_setup(struct ul_pty *pty)
+{
+	struct termios attrs;
+
+	if (!pty->isterm)
+		return 0;
+
+	attrs = pty->stdin_attrs;
+	cfmakeraw(&attrs);
+	if (tcsetattr(STDIN_FILENO, TCSANOW, &attrs))
+		return -errno;
+
+	DBG_OBJ(SETUP, pty, ul_debug("terminal raw mode setup done"));
+	return 0;
 }
 
 /* call me before fork() */
@@ -806,6 +820,8 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, "failed to create pseudo-terminal");
 	if (ul_pty_signals_setup(pty))
 		err(EXIT_FAILURE, "failed to initialize signals handler");
+	if (ul_pty_terminal_setup(pty))
+		err(EXIT_FAILURE, "failed to setup terminal");
 
 	fflush(stdout);			/* ??? */
 
