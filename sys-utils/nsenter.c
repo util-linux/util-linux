@@ -183,7 +183,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 	if (*fd >= 0)
 		close(*fd);
 
-	*fd = open(path, O_RDONLY);
+	*fd = open(path, O_RDONLY | O_CLOEXEC);
 	if (*fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
@@ -254,7 +254,7 @@ static void open_target_fd_by_nsid(int *fd, const char *idstr)
 	if (*fd >= 0)
 		close(*fd);
 
-	*fd = open_by_handle_at(nsfs_fd, fh, O_RDONLY);
+	*fd = open_by_handle_at(nsfs_fd, fh, O_RDONLY | O_CLOEXEC);
 	if (*fd < 0)
 		err(EXIT_FAILURE, _("cannot open namespace of id %ju"),
 		    (uintmax_t) ns_id);
@@ -889,7 +889,7 @@ int main(int argc, char *argv[])
 
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
-		wd_fd = open(".", O_RDONLY);
+		wd_fd = open(".", O_RDONLY | O_CLOEXEC);
 		if (wd_fd < 0)
 			err(EXIT_FAILURE,
 			    _("cannot open current working directory"));
@@ -912,7 +912,7 @@ int main(int argc, char *argv[])
 
 	/* working directory specified as in-namespace path */
 	if (wdns) {
-		wd_fd = open(wdns, O_RDONLY);
+		wd_fd = open(wdns, O_RDONLY | O_CLOEXEC);
 		if (wd_fd < 0)
 			err(EXIT_FAILURE,
 			    _("cannot open current working directory"));

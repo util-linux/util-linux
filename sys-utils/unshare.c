@@ -115,7 +115,7 @@ static void setgroups_control(int action)
 		return;
 	cmd = setgroups_strings[action];
 
-	fd = open(file, O_WRONLY);
+	fd = open(file, O_WRONLY | O_CLOEXEC);
 	if (fd < 0) {
 		if (errno == ENOENT)
 			return;
@@ -132,7 +132,7 @@ static void map_id(const char *file, uint32_t from, uint32_t to)
 	char *buf;
 	int fd;
 
-	fd = open(file, O_WRONLY);
+	fd = open(file, O_WRONLY | O_CLOEXEC);
 	if (fd < 0)
 		 err(EXIT_FAILURE, _("cannot open %s"), file);
 
@@ -227,7 +227,7 @@ static void settime(int64_t offset, clockid_t clk_id)
 
 	len = snprintf(buf, sizeof(buf), "%d %" PRId64 " 0", clk_id, offset);
 
-	fd = open("/proc/self/timens_offsets", O_WRONLY);
+	fd = open("/proc/self/timens_offsets", O_WRONLY | O_CLOEXEC);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("failed to open /proc/self/timens_offsets"));
 
@@ -297,7 +297,7 @@ static pid_t fork_and_wait(int *fd)
 	pid_t pid;
 	uint64_t ch;
 
-	*fd = eventfd(0, 0);
+	*fd = eventfd(0, EFD_CLOEXEC);
 	if (*fd < 0)
 		err(EXIT_FAILURE, _("eventfd failed"));
 
@@ -725,11 +725,11 @@ static void load_interp(const char *binfmt_mnt, const char *interp)
 {
 	int dirfd, fd;
 
-	dirfd = open(binfmt_mnt, O_PATH | O_DIRECTORY);
+	dirfd = open(binfmt_mnt, O_PATH | O_DIRECTORY | O_CLOEXEC);
 	if (dirfd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), binfmt_mnt);
 
-	fd = openat(dirfd, "register", O_WRONLY);
+	fd = openat(dirfd, "register", O_WRONLY | O_CLOEXEC);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s/register"), binfmt_mnt);
 
