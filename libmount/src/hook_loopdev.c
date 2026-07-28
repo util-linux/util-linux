@@ -23,6 +23,8 @@ struct hook_data {
 	int loopdev_fd;
 };
 
+static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd);
+
 /* de-initiallize this module */
 static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookset *hs)
 {
@@ -30,9 +32,16 @@ static int hookset_deinit(struct libmnt_context *cxt, const struct libmnt_hookse
 
 	DBG(HOOK, ul_debugobj(hs, "deinit '%s'", hs->name));
 
-	/* remove all our hooks */
+	/* remove all our hooks and free hook data */
 	while (mnt_context_remove_hook(cxt, hs, 0, &data) == 0) {
-		free(data);
+		if (data) {
+			struct hook_data *hd = (struct hook_data *) data;
+
+			/* cleanup after skipped MOUNT_POST hook */
+			if (hd->loopdev_fd > -1)
+				delete_loopdev(cxt, hd);
+			free(hd);
+		}
 		data = NULL;
 	}
 
