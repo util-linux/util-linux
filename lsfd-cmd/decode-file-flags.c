@@ -34,7 +34,7 @@
  * - /usr/include/fcntl.h             (a part of glibc)
  * - /usr/include/bits/fcntl.h        (a part of glibc)
  *
- * For decoding purpose, /usr/include/linuc/fcntl.h is needed.
+ * For decoding purpose, /usr/include/linux/fcntl.h is needed.
  *
  * /usr/include/bits/fcntl.h and /usr/include/fcntl.h are
  * not suitable for decoding. They should not be included.
