@@ -1,7 +1,7 @@
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
-MANPAGES += term-utils/agetty.8
-dist_noinst_DATA += term-utils/agetty.8.adoc
+MANPAGES += agetty-cmd/agetty.8
+dist_noinst_DATA += agetty-cmd/agetty.8.adoc
 
 agetty_SOURCES = agetty-cmd/agetty.c \
 		 agetty-cmd/agetty.h \
