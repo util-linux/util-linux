@@ -285,3 +285,38 @@ void usage_landlock(FILE *out)
 					_(landlock_access_fs[i].help));
 	}
 }
+
+void list_landlock_support(void)
+{
+	size_t i;
+
+	printf("ABI: %d\n", supported_landlock_abi());
+
+	printf("access: fs\n");
+
+	printf("rights:");
+	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+		printf(" %s", landlock_access_fs[i].type);
+	printf("\n");
+
+	printf("rules: path-beneath\n");
+}
+
+void list_landlock_access(void)
+{
+	printf("fs\n");
+}
+
+void list_landlock_rights(const char *access)
+{
+	uint64_t mask;
+	size_t i;
+
+	if (strcmp(access, "fs") != 0)
+		errx(EXIT_FAILURE, _("unknown landlock access: %s"), access);
+
+	mask = landlock_abi_fs_mask();
+	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+		if (landlock_access_fs[i].value & mask)
+			printf("%s\n", landlock_access_fs[i].type);
+}
