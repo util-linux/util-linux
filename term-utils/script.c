@@ -1027,6 +1027,8 @@ int main(int argc, char **argv)
 
 	if (ul_pty_signals_setup(ctl.pty))
 		err(EXIT_FAILURE, _("failed to initialize signals handler"));
+	if (ul_pty_terminal_setup(ctl.pty))
+		err(EXIT_FAILURE, _("failed to setup terminal"));
 	fflush(stdout);
 
 	/*
