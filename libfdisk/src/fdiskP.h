@@ -21,6 +21,7 @@
 
 #include "c.h"
 #include "libfdisk.h"
+#include "vfs.h"
 
 #include "list.h"
 #include "debug.h"
@@ -438,6 +439,8 @@ struct fdisk_context {
 
 	struct fdisk_context	*parent;	/* for nested PT */
 	struct fdisk_script	*script;	/* what we want to follow */
+
+	struct ul_vfs_ops	*vfs;		/* pluggable I/O ops (owned, or NULL) */
 };
 
 /* table */

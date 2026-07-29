@@ -638,19 +638,19 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 {
 	int fd;
 
-	if ((fd = open(path, O_RDONLY)) < 0) {
+	if ((fd = ul_vfs_open(cxt->vfs, path, O_RDONLY, 0)) < 0) {
 		fdisk_warn(cxt, _("cannot open %s"), path);
 		return -errno;
 	}
 
-	if (ul_read_all(fd, ptr, size) != size) {
+	if (ul_vfs_read_all(cxt->vfs, fd, ptr, size) != size) {
 		fdisk_warn(cxt, _("cannot read %s"), path);
-		close(fd);
+		ul_vfs_close(cxt->vfs, fd);
 		return -errno;
 	}
 
 	fdisk_info(cxt, _("The bootstrap file %s successfully loaded."), path);
-	close (fd);
+	ul_vfs_close(cxt->vfs, fd);
 	return 0;
 }
 
@@ -715,12 +715,12 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 #if defined (__alpha__)
 	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
-	if (lseek(cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
+	if (ul_vfs_lseek(cxt->vfs, cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek on %s failed"), cxt->dev_path);
 		rc = -errno;
 		goto done;
 	}
-	if (ul_write_all(cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
+	if (ul_vfs_write_all(cxt->vfs, cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
 		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
@@ -837,9 +837,9 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 		 * partition. Note that DOS uses native sector size. */
 		offset = dos_partition_get_start(l->dos_part) * cxt->sector_size;
 
-	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1)
+	if (ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET) == -1)
 		return -1;
-	if (ul_read_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer)) < 0)
+	if (ul_vfs_read_all(cxt->vfs, cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer)) < 0)
 		return errno ? -errno : -1;
 
 	/* The offset to begin of the disk label. Note that BSD uses
@@ -899,11 +899,11 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	/* Write the checksum to the end of the first sector. */
 	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
-	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1) {
+	if (ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek on %s failed"), cxt->dev_path);
 		return -errno;
 	}
-	if (ul_write_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
+	if (ul_vfs_write_all(cxt->vfs, cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
 		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		return -errno;
 	}

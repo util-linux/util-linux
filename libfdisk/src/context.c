@@ -110,6 +110,7 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 	cxt->user_geom =	parent->user_geom;
 	cxt->user_log_sector =	parent->user_log_sector;
 	cxt->user_pyh_sector =  parent->user_pyh_sector;
+	cxt->vfs =		parent->vfs;
 
 	/* parent <--> nested independent setting, initialize for new nested
 	 * contexts only */
@@ -347,6 +348,47 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
 	cxt->protect_bootbits = enable ? 1 : 0;
 	return 0;
 }
+
+/**
+ * fdisk_set_vfs:
+ * @cxt: fdisk context
+ * @ops: VFS operations or NULL to reset to defaults
+ *
+ * Sets custom I/O operations for the context. This allows replacing
+ * standard read/write/lseek/etc. with custom implementations
+ * (e.g., fiber-aware I/O).
+ *
+ * The @ops struct is copied into a private allocation owned by the
+ * context. The caller sets ops->size to sizeof(struct ul_vfs_ops) to
+ * enable forward/backward compatibility. NULL function pointers fall
+ * back to standard syscalls. Passing @ops as NULL frees the private
+ * copy and resets the context to default (direct syscall) I/O.
+ *
+ * Note: fdisk_set_vfs() should be called before fdisk_assign_device().
+ *
+ * Since: 2.43
+ *
+ * Returns: 0 on success, or <0 in case of error.
+ */
+int fdisk_set_vfs(struct fdisk_context *cxt, const struct ul_vfs_ops *ops)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	if (!ops) {
+		free(cxt->vfs);
+		cxt->vfs = NULL;
+		return 0;
+	}
+	if (!cxt->vfs) {
+		cxt->vfs = calloc(1, sizeof(*cxt->vfs));
+		if (!cxt->vfs)
+			return -ENOMEM;
+	}
+	ul_vfs_init(cxt->vfs, ops);
+	return 0;
+}
+
 /**
  * fdisk_disable_dialogs
  * @cxt: fdisk context
@@ -560,9 +602,11 @@ static void reset_context(struct fdisk_context *cxt)
 	} else {
 		/* we close device only in primary context */
 		if (cxt->dev_fd > -1 && cxt->is_priv)
-			close(cxt->dev_fd);
+			ul_vfs_close(cxt->vfs, cxt->dev_fd);
 		DBG_OBJ(CXT, cxt, ul_debug("  freeing firstsector"));
 		free(cxt->firstsector);
+		free(cxt->vfs);
+		cxt->vfs = NULL;
 	}
 
 	free(cxt->dev_path);
@@ -715,11 +759,11 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 		flags |= (O_RDWR | O_EXCL);
 
 	errno = 0;
-	fd = open(fname,flags);
+	fd = ul_vfs_open(cxt->vfs, fname, flags, 0);
 	if (fd < 0 && errno == EBUSY && (flags & O_EXCL)) {
 		flags &= ~O_EXCL;
 		errno = 0;
-		fd = open(fname, flags);
+		fd = ul_vfs_open(cxt->vfs, fname, flags, 0);
 	}
 
 	if (fd < 0) {
@@ -730,7 +774,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	rc = fdisk_assign_fd(cxt, fd, fname, readonly, 1, flags & O_EXCL);
 	if (rc)
-		close(fd);
+		ul_vfs_close(cxt->vfs, fd);
 	return rc;
 }
 
@@ -784,14 +828,14 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	DBG_OBJ(CXT, cxt, ul_debug("de-assigning device %s", cxt->dev_path));
 
 	if (cxt->readonly && cxt->is_priv)
-		close(cxt->dev_fd);
+		ul_vfs_close(cxt->vfs, cxt->dev_fd);
 	else {
-		if (fsync(cxt->dev_fd)) {
+		if (ul_vfs_fsync(cxt->vfs, cxt->dev_fd)) {
 			fdisk_warn(cxt, _("%s: fsync device failed"),
 					cxt->dev_path);
 			return -errno;
 		}
-		if (cxt->is_priv && close(cxt->dev_fd)) {
+		if (cxt->is_priv && ul_vfs_close(cxt->vfs, cxt->dev_fd)) {
 			fdisk_warn(cxt, _("%s: close device failed"),
 					cxt->dev_path);
 			return -errno;

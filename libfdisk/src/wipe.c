@@ -120,6 +120,9 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
 	if (!pr)
 		return -ENOMEM;
 
+	if (cxt->vfs)
+		blkid_probe_set_vfs(pr, cxt->vfs);
+
 	list_for_each(p, &cxt->wipes) {
 		struct fdisk_wipe *wp = list_entry(p, struct fdisk_wipe, wipes);
 		blkid_loff_t start = (blkid_loff_t) wp->start * cxt->sector_size,
@@ -169,6 +172,10 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	pr = blkid_new_probe();
 	if (!pr)
 		return -ENOMEM;
+
+	if (cxt->vfs)
+		blkid_probe_set_vfs(pr, cxt->vfs);
+
 	rc = blkid_probe_set_device(pr, cxt->dev_fd, 0, 0);
 	if (rc)
 		return rc;

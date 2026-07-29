@@ -229,7 +229,7 @@ static int seek_sector(struct fdisk_context *cxt, fdisk_sector_t secno)
 {
 	off_t offset = (off_t) secno * cxt->sector_size;
 
-	return lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
+	return ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
 }
 
 static int read_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
@@ -241,7 +241,7 @@ static int read_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 	if (rc < 0)
 		return rc;
 
-	r = read(cxt->dev_fd, buf, cxt->sector_size);
+	r = ul_vfs_read(cxt->vfs, cxt->dev_fd, buf, cxt->sector_size);
 	if (r == (ssize_t) cxt->sector_size)
 		return 0;
 	if (r < 0)
@@ -2126,7 +2126,7 @@ static int write_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 
 	DBG(LABEL, ul_debug("DOS: writing to sector %ju", (uintmax_t) secno));
 
-	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
+	if (ul_vfs_write(cxt->vfs, cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		return -errno;
 	return 0;
 }

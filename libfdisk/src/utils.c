@@ -22,7 +22,7 @@ static int read_from_device(struct fdisk_context *cxt,
 	DBG_OBJ(CXT, cxt, ul_debug("reading: offset=%ju, size=%zu",
 				start, size));
 
-	r = lseek(cxt->dev_fd, start, SEEK_SET);
+	r = ul_vfs_lseek(cxt->vfs, cxt->dev_fd, start, SEEK_SET);
 	if (r == -1)
 	{
 		DBG_OBJ(CXT, cxt, ul_debug("failed to seek to offset %ju: %m", start));
@@ -30,7 +30,7 @@ static int read_from_device(struct fdisk_context *cxt,
 	}
 
 	errno = 0;
-	r = read(cxt->dev_fd, buf, size);
+	r = ul_vfs_read(cxt->vfs, cxt->dev_fd, buf, size);
 	if (r < 0 || (size_t)r != size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */

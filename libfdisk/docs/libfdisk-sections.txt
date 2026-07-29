@@ -356,6 +356,7 @@ fdisk_set_first_lba
 fdisk_set_last_lba
 fdisk_set_size_unit
 fdisk_set_unit
+fdisk_set_vfs
 FDISK_SINGULAR
 fdisk_unref_context
 fdisk_use_cylinders

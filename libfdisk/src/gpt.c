@@ -999,9 +999,9 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 {
 	off_t offset = lba * cxt->sector_size;
 
-	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
+	if (ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		return -1;
-	return (size_t)read(cxt->dev_fd, buffer, bytes) != bytes;
+	return (size_t)ul_vfs_read(cxt->vfs, cxt->dev_fd, buffer, bytes) != bytes;
 }
 
 
@@ -1033,10 +1033,10 @@ static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 	offset = (off_t) le64_to_cpu(header->partition_entry_lba) *
 		       cxt->sector_size;
 
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
+	if (offset != ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET))
 		goto fail;
 
-	ssz = read(cxt->dev_fd, ret, sz);
+	ssz = ul_vfs_read(cxt->vfs, cxt->dev_fd, ret, sz);
 	if (ssz < 0 || (size_t) ssz != sz)
 		goto fail;
 
@@ -2064,10 +2064,10 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 
 static int gpt_read(struct fdisk_context *cxt, off_t offset, void *buf, size_t count)
 {
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
+	if (offset != ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET))
 		return -errno;
 
-	if (ul_read_all(cxt->dev_fd, buf, count))
+	if (ul_vfs_read_all(cxt->vfs, cxt->dev_fd, buf, count))
 		return -errno;
 
 	DBG(GPT, ul_debug("  read OK [offset=%zu, size=%zu]",
@@ -2077,13 +2077,13 @@ static int gpt_read(struct fdisk_context *cxt, off_t offset, void *buf, size_t c
 
 static int gpt_write(struct fdisk_context *cxt, off_t offset, void *buf, size_t count)
 {
-	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
+	if (offset != ul_vfs_lseek(cxt->vfs, cxt->dev_fd, offset, SEEK_SET))
 		return -errno;
 
-	if (ul_write_all(cxt->dev_fd, buf, count))
+	if (ul_vfs_write_all(cxt->vfs, cxt->dev_fd, buf, count))
 		return -errno;
 
-	if (fsync(cxt->dev_fd) != 0)
+	if (ul_vfs_fsync(cxt->vfs, cxt->dev_fd) != 0)
 		return -errno;
 
 	DBG(GPT, ul_debug("  write OK [offset=%zu, size=%zu]",

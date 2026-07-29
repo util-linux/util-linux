@@ -240,6 +240,25 @@ int fdisk_get_devfd(struct fdisk_context *cxt);
 dev_t fdisk_get_devno(struct fdisk_context *cxt);
 const char *fdisk_get_devmodel(struct fdisk_context *cxt);
 
+#ifndef UL_VFS_OPS_DEFINED
+#define UL_VFS_OPS_DEFINED
+
+struct ul_vfs_ops {
+	size_t size;
+
+	ssize_t (*vfs_read)(int fd, void *buf, size_t count);
+	ssize_t (*vfs_write)(int fd, const void *buf, size_t count);
+	int     (*vfs_open)(const char *pathname, int flags, mode_t mode);
+	int     (*vfs_close)(int fd);
+	off_t   (*vfs_lseek)(int fd, off_t offset, int whence);
+	int     (*vfs_fsync)(int fd);
+
+	FILE   *(*vfs_fopen)(const char *pathname, const char *mode);
+};
+
+#endif /* UL_VFS_OPS_DEFINED */
+
+extern int fdisk_set_vfs(struct fdisk_context *cxt, const struct ul_vfs_ops *ops);
 
 unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
 fdisk_sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);

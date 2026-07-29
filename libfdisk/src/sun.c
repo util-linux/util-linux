@@ -1024,9 +1024,9 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	sunlabel->csum = 0;
 	sunlabel->csum = sun_pt_checksum(sunlabel);
 
-	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
+	if (ul_vfs_lseek(cxt->vfs, cxt->dev_fd, 0, SEEK_SET) < 0)
 		return -errno;
-	if (ul_write_all(cxt->dev_fd, sunlabel, sz) != 0)
+	if (ul_vfs_write_all(cxt->vfs, cxt->dev_fd, sunlabel, sz) != 0)
 		return -errno;
 
 	return 0;
