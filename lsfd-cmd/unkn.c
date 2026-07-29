@@ -1179,6 +1179,7 @@ struct anon_bpf_map_data {
 	int type;
 	int id;
 	char name[BPF_OBJ_NAME_LEN + 1];
+	bool has_data;		/* true if fdinfo was parsed */
 };
 
 static bool anon_bpf_map_probe(const char *str)
@@ -1202,6 +1203,9 @@ static bool anon_bpf_map_fill_column(struct proc *proc  __attribute__((__unused_
 {
 	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
 	const char *t;
+
+	if (!data->has_data)
+		return false;
 
 	switch(column_id) {
 	case COL_BPF_MAP_ID:
@@ -1231,6 +1235,9 @@ static char *anon_bpf_map_get_name(struct unkn *unkn)
 	char *str = NULL;
 	struct anon_bpf_map_data *data = (struct anon_bpf_map_data *)unkn->anon_data;
 
+	if (!data->has_data)
+		return NULL;
+
 	t = anon_bpf_map_get_map_type_name(data->type);
 	if (t)
 		xasprintf(&str, "id=%d type=%s", data->id, t);
@@ -1249,6 +1256,7 @@ static void anon_bpf_map_init(struct unkn *unkn)
 	data->type = -1;
 	data->id = -1;
 	data->name[0] = '\0';
+	data->has_data = false;
 	unkn->anon_data = data;
 }
 
@@ -1292,6 +1300,7 @@ static int anon_bpf_map_handle_fdinfo(struct unkn *unkn, const char *key, const 
 		if (rc < 0)
 			return 0; /* ignore -- parse failed */
 		((struct anon_bpf_map_data *)unkn->anon_data)->id = (int)t;
+		((struct anon_bpf_map_data *)unkn->anon_data)->has_data = true;
 		anon_bpf_map_get_more_info((struct anon_bpf_map_data *)unkn->anon_data);
 		return 1;
 	}

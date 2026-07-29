@@ -591,6 +591,11 @@ AC_CHECK_DECL([BPF_LINK_CREATE],
 	      [#include <linux/bpf.h>])
 AS_IF([test "x$have_bpf_link_create" = xyes],
 	      [AC_DEFINE([HAVE_BPF_LINK_CREATE], [1], [Define if BPF_LINK_CREATE is available])])
+AC_CHECK_DECL([BPF_F_MMAPABLE],
+	      [have_bpf_f_mmapable=yes], [have_bpf_f_mmapable=no],
+	      [#include <linux/bpf.h>])
+AS_IF([test "x$have_bpf_f_mmapable" = xyes],
+      [AC_DEFINE([HAVE_BPF_F_MMAPABLE], [1], [Define if BPF_F_MMAPABLE is available])])
 
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
