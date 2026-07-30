@@ -67,6 +67,83 @@ void agetty_ifile_free(struct agetty_ifile *ls)
 	}
 }
 
+const struct agetty_idef *agetty_idef_by_code(int c)
+{
+	size_t i;
+
+	for (i = 1; i < __AGETTY_ESC_COUNT; i++)
+		if (itemdefs[i].code == c)
+			return &itemdefs[i];
+	return NULL;
+}
+
+const char *agetty_idef_get_code(int id)
+{
+	if (id > 0 && id < __AGETTY_ESC_COUNT && itemdefs[id].code)
+		return &itemdefs[id].code;
+	return NULL;
+}
+
+void agetty_iiter_reset(struct agetty_iiter *itr)
+{
+	if (itr)
+		memset(itr, 0, sizeof(*itr));
+}
+
+int agetty_ifile_next_item(struct agetty_ifile *ls,
+			   struct agetty_iiter *itr,
+			   struct agetty_iitem **item,
+			   int filter_low, int filter_high)
+{
+	if (!ls || !itr || !item)
+		return -EINVAL;
+
+	if (!itr->head) {
+		itr->head = &ls->items;
+		itr->p = ls->items.next;
+	}
+
+	while (itr->p != itr->head) {
+		struct agetty_iitem *it = list_entry(itr->p,
+						struct agetty_iitem, items);
+		itr->p = itr->p->next;
+
+		if (filter_low >= 0 &&
+		    (it->id < filter_low || it->id > filter_high))
+			continue;
+
+		*item = it;
+		return 0;
+	}
+
+	return 1;
+}
+
+bool agetty_ifile_has_item(struct agetty_ifile *ls, int id)
+{
+	struct agetty_iiter itr = AGETTY_IITER_INIT;
+	struct agetty_iitem *item = NULL;
+
+	if (!ls)
+		return false;
+	return agetty_ifile_next_item(ls, &itr, &item, id, id) == 0;
+}
+
+int agetty_iitem_get_id(struct agetty_iitem *item)
+{
+	return item ? item->id : -EINVAL;
+}
+
+const char *agetty_iitem_get_data(struct agetty_iitem *item)
+{
+	return item ? item->data : NULL;
+}
+
+const char *agetty_iitem_get_arg(struct agetty_iitem *item)
+{
+	return item ? item->arg : NULL;
+}
+
 static int code_to_id(int c)
 {
 	size_t i;

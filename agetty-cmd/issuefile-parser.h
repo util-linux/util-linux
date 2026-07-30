@@ -76,11 +76,9 @@ struct agetty_ifile {
 struct agetty_iiter {
 	struct list_head	*p;	/* current position */
 	struct list_head	*head;	/* list head (sentinel) */
-	int			direction;
 };
 
-#define AGETTY_ITER_FORWARD	0
-#define AGETTY_ITER_BACKWARD	1
+#define AGETTY_IITER_INIT { .p = NULL, .head = NULL }
 
 /* list operations */
 extern void agetty_ifile_init(struct agetty_ifile *ls);
@@ -88,7 +86,7 @@ extern void agetty_ifile_free(struct agetty_ifile *ls);
 extern bool agetty_ifile_has_item(struct agetty_ifile *ls, int id);
 
 /* iterator */
-extern void agetty_iiter_init(struct agetty_iiter *itr, int direction);
+extern void agetty_iiter_reset(struct agetty_iiter *itr);
 extern int  agetty_ifile_next_item(struct agetty_ifile *ls,
 				   struct agetty_iiter *itr,
 				   struct agetty_iitem **item,
