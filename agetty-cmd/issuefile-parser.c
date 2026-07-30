@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "issuefile-parser.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 static const struct agetty_idef itemdefs[__AGETTY_ESC_COUNT] = {
@@ -50,13 +51,34 @@ void agetty_ifile_init(struct agetty_ifile *ls)
 		INIT_LIST_HEAD(&ls->items);
 }
 
+static size_t idef_nargs(int id)
+{
+	const char * const *p;
+	size_t n = 0;
+
+	if (id < 0 || id >= __AGETTY_ESC_COUNT)
+		return 0;
+	for (p = itemdefs[id].args; p && *p; p++)
+		n++;
+	return n;
+}
+
 static void free_item(struct agetty_iitem *item)
 {
 	if (!item)
 		return;
+
 	list_del(&item->items);
 	free(item->data);
 	free(item->arg);
+
+	if (item->args) {
+		size_t i, n = idef_nargs(item->id);
+
+		for (i = 0; i < n; i++)
+			free(item->args[i]);
+		free(item->args);
+	}
 	free(item);
 }
 
@@ -143,9 +165,22 @@ const char *agetty_iitem_get_data(struct agetty_iitem *item)
 	return item ? item->data : NULL;
 }
 
-const char *agetty_iitem_get_arg(struct agetty_iitem *item)
+const char *agetty_iitem_get_arg(struct agetty_iitem *item, const char *name)
 {
-	return item ? item->arg : NULL;
+	const char * const *p;
+	size_t i;
+
+	if (!item)
+		return NULL;
+	if (!name)
+		return item->arg;
+	if (!item->args)
+		return NULL;
+
+	for (p = itemdefs[item->id].args, i = 0; p && *p; p++, i++)
+		if (strcmp(*p, name) == 0)
+			return item->args[i];
+	return NULL;
 }
 
 static int code_to_id(int c)
@@ -158,38 +193,78 @@ static int code_to_id(int c)
 	return -1;
 }
 
-static struct agetty_iitem *new_item(int id, char *data, char *arg)
+static struct agetty_iitem *new_item(int id, char *data)
 {
 	struct agetty_iitem *item = xcalloc(1, sizeof(*item));
 
 	item->id = id;
 	item->data = data;
-	item->arg = arg;
 	INIT_LIST_HEAD(&item->items);
 	return item;
 }
 
-static char *parse_escape_arg(FILE *f)
+static int find_arg_index(int id, const char *name, size_t namesz)
+{
+	const char * const *p;
+	int i;
+
+	for (p = itemdefs[id].args, i = 0; p && *p; p++, i++)
+		if (strncmp(*p, name, namesz) == 0 && (*p)[namesz] == '\0')
+			return i;
+	return -1;
+}
+
+static char *unquote(const char *s, size_t sz)
+{
+	if (sz >= 2 && s[0] == '"' && s[sz - 1] == '"')
+		return xstrndup(s + 1, sz - 2);
+	return xstrndup(s, sz);
+}
+
+static void parse_escape_args(struct agetty_iitem *item, FILE *f)
 {
 	char buf[128];
-	size_t i = 0;
+	size_t i = 0, n;
 	int c = fgetc(f);
+	char *p, *name, *value;
+	size_t namesz, valsz;
 
 	if (c == EOF || (unsigned char) c != '{') {
 		ungetc(c, f);
-		return NULL;
+		return;
 	}
 
 	do {
 		c = fgetc(f);
 		if (c == EOF)
-			return NULL;
+			return;
 		if ((unsigned char) c != '}' && i < sizeof(buf) - 1)
 			buf[i++] = (unsigned char) c;
 	} while ((unsigned char) c != '}');
 
 	buf[i] = '\0';
-	return xstrdup(buf);
+
+	n = idef_nargs(item->id);
+
+	/* try to parse as comma-separated name=value options */
+	p = buf;
+	while (ul_optstr_next(&p, &name, &namesz, &value, &valsz) == 0) {
+		if (valsz && n) {
+			int idx = find_arg_index(item->id, name, namesz);
+
+			if (idx >= 0) {
+				if (!item->args)
+					item->args = xcalloc(n, sizeof(char *));
+				free(item->args[idx]);
+				item->args[idx] = unquote(value, valsz);
+				continue;
+			}
+		}
+
+		/* unnamed argument (no '=' or unknown name) */
+		free(item->arg);
+		item->arg = unquote(name, namesz);
+	}
 }
 
 static void flush_text(struct agetty_ifile *ls, char **buf, size_t *sz)
@@ -199,7 +274,7 @@ static void flush_text(struct agetty_ifile *ls, char **buf, size_t *sz)
 	if (!*sz)
 		return;
 
-	item = new_item(AGETTY_ESC_TEXT, *buf, NULL);
+	item = new_item(AGETTY_ESC_TEXT, *buf);
 	list_add_tail(&item->items, &ls->items);
 
 	*buf = NULL;
@@ -243,7 +318,8 @@ int agetty_ifile_parse_stream(struct agetty_ifile *ls, FILE *f)
 				flush_text(ls, &text, &textsz);
 			}
 
-			item = new_item(id, NULL, parse_escape_arg(f));
+			item = new_item(id, NULL);
+			parse_escape_args(item, f);
 			list_add_tail(&item->items, &ls->items);
 
 			if (!textf) {
@@ -288,14 +364,26 @@ void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out)
 
 	while (agetty_ifile_next_item(ls, &itr, &item, -1, -1) == 0) {
 		int id = agetty_iitem_get_id(item);
-		const char *name = (id >= 0 && id < __AGETTY_ESC_COUNT) ?
+		const char *iname = (id >= 0 && id < __AGETTY_ESC_COUNT) ?
 					itemdefs[id].name : "UNKNOWN";
+		const char * const *p;
 
-		fprintf(out, "%-12s", name);
-		if (agetty_iitem_get_arg(item))
-			fprintf(out, " arg=\"%s\"", agetty_iitem_get_arg(item));
+		fprintf(out, "%-12s", iname);
+
+		if (agetty_iitem_get_arg(item, NULL))
+			fprintf(out, " arg=\"%s\"",
+					agetty_iitem_get_arg(item, NULL));
+
+		for (p = itemdefs[id].args; p && *p; p++) {
+			const char *v = agetty_iitem_get_arg(item, *p);
+
+			if (v)
+				fprintf(out, " %s=\"%s\"", *p, v);
+		}
+
 		if (agetty_iitem_get_data(item))
-			fprintf(out, " data=\"%s\"", agetty_iitem_get_data(item));
+			fprintf(out, " data=\"%s\"",
+					agetty_iitem_get_data(item));
 		fputc('\n', out);
 	}
 }

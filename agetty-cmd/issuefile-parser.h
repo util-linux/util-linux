@@ -64,7 +64,8 @@ struct agetty_idef {
 struct agetty_iitem {
 	int			id;	/* AGETTY_ESC_* */
 	char			*data;	/* text content (TEXT) or handler data */
-	char			*arg;	/* argument from \x{arg}, or NULL */
+	char			*arg;	/* unnamed argument from \x{value} */
+	char			**args;	/* named args, parallel to idef->args */
 	struct list_head	items;	/* linked list member */
 };
 
@@ -96,7 +97,8 @@ extern int  agetty_ifile_next_item(struct agetty_ifile *ls,
 /* item accessors */
 extern int         agetty_iitem_get_id(struct agetty_iitem *item);
 extern const char *agetty_iitem_get_data(struct agetty_iitem *item);
-extern const char *agetty_iitem_get_arg(struct agetty_iitem *item);
+extern const char *agetty_iitem_get_arg(struct agetty_iitem *item,
+					const char *name);
 
 /* definition lookups */
 extern const struct agetty_idef *agetty_idef_by_code(int c);
