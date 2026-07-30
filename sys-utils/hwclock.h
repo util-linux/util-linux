@@ -42,6 +42,7 @@ struct rtc_param {
 #  define RTC_PARAM_FEATURES		0
 #  define RTC_PARAM_CORRECTION		1
 #  define RTC_PARAM_BACKUP_SWITCH_MODE	2
+#  define RTC_PARAM_BATTERY_LOW_DETECT	3
 # endif /* RTC_PARAM_GET */
 
 # ifndef RTC_VL_READ

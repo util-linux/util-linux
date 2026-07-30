@@ -39,6 +39,7 @@ static const struct hwclock_param hwclock_params[] =
 	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
 	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
 	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
+	{ RTC_PARAM_BATTERY_LOW_DETECT, "bld", N_("battery low detection") },
 	{ }
 };
 
