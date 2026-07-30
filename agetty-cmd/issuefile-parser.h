@@ -69,9 +69,22 @@ struct agetty_iitem {
 	struct list_head	items;	/* linked list member */
 };
 
+struct agetty_issue;
+
+struct agetty_ihandler;
+
+/* Per-escape handler — registered at runtime via agetty_ifile_set_handler() */
+struct agetty_ihandler {
+	int	(*printer)(struct agetty_iitem *, struct agetty_issue *,
+			   struct agetty_ihandler *);
+	void	(*deinit)(void *);
+	void	*data;
+};
+
 /* Parsed issue file — container for items */
 struct agetty_ifile {
 	struct list_head	items;	/* list of struct agetty_iitem */
+	struct agetty_ihandler	handlers[__AGETTY_ESC_COUNT];
 };
 
 /* Iterator for traversing parsed items */
@@ -86,6 +99,13 @@ struct agetty_iiter {
 extern void agetty_ifile_init(struct agetty_ifile *ls);
 extern void agetty_ifile_free(struct agetty_ifile *ls);
 extern bool agetty_ifile_has_item(struct agetty_ifile *ls, int id);
+
+/* handler registration */
+extern int agetty_ifile_set_handler(struct agetty_ifile *ls, int id,
+		int (*printer)(struct agetty_iitem *, struct agetty_issue *,
+			       struct agetty_ihandler *),
+		void (*deinit)(void *),
+		void *data);
 
 /* iterator */
 extern void agetty_iiter_reset(struct agetty_iiter *itr);
@@ -107,6 +127,10 @@ extern const char *agetty_idef_get_code(int id);
 /* parser */
 extern int agetty_ifile_parse_stream(struct agetty_ifile *ls, FILE *f);
 extern int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename);
+
+/* output */
+extern int agetty_ifile_print(struct agetty_ifile *ls,
+			      struct agetty_issue *ie, FILE *out);
 
 /* debug */
 extern void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out);

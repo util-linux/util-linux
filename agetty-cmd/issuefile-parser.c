@@ -47,8 +47,25 @@ static const struct agetty_idef itemdefs[__AGETTY_ESC_COUNT] = {
 
 void agetty_ifile_init(struct agetty_ifile *ls)
 {
-	if (ls)
-		INIT_LIST_HEAD(&ls->items);
+	if (!ls)
+		return;
+	INIT_LIST_HEAD(&ls->items);
+	memset(ls->handlers, 0, sizeof(ls->handlers));
+}
+
+int agetty_ifile_set_handler(struct agetty_ifile *ls, int id,
+		int (*printer)(struct agetty_iitem *, struct agetty_issue *,
+			       struct agetty_ihandler *),
+		void (*deinit)(void *),
+		void *data)
+{
+	if (!ls || id < 0 || id >= __AGETTY_ESC_COUNT)
+		return -EINVAL;
+
+	ls->handlers[id].printer = printer;
+	ls->handlers[id].deinit = deinit;
+	ls->handlers[id].data = data;
+	return 0;
 }
 
 static size_t idef_nargs(int id)
@@ -84,12 +101,24 @@ static void free_item(struct agetty_iitem *item)
 
 void agetty_ifile_free(struct agetty_ifile *ls)
 {
+	size_t i;
+
 	if (!ls)
 		return;
+
 	while (!list_empty(&ls->items)) {
 		struct agetty_iitem *item = list_entry(ls->items.next,
 						struct agetty_iitem, items);
 		free_item(item);
+	}
+
+	for (i = 0; i < __AGETTY_ESC_COUNT; i++) {
+		if (!ls->handlers[i].data)
+			continue;
+		if (ls->handlers[i].deinit)
+			ls->handlers[i].deinit(ls->handlers[i].data);
+		else
+			free(ls->handlers[i].data);
 	}
 }
 
@@ -390,9 +419,20 @@ void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out)
 
 #ifdef TEST_PROGRAM
 
+static int fake_sysname_printer(struct agetty_iitem *item __attribute__((__unused__)),
+				struct agetty_issue *ie __attribute__((__unused__)),
+				void *data)
+{
+	printf("  -> printer: %s (data=%s)\n",
+			itemdefs[item->id].name, (const char *) data);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct agetty_ifile ls;
+	struct agetty_iiter itr = AGETTY_IITER_INIT;
+	struct agetty_iitem *item = NULL;
 	int rc;
 
 	agetty_ifile_init(&ls);
@@ -407,9 +447,24 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
+	/* register handler only if the parsed file uses \s */
+	if (agetty_ifile_has_item(&ls, AGETTY_ESC_SYSNAME))
+		agetty_ifile_set_handler(&ls, AGETTY_ESC_SYSNAME,
+					 fake_sysname_printer, NULL,
+					 xstrdup("fake-uname"));
+
 	agetty_ifile_dump(&ls, stdout);
 
-	printf("---\n");
+	printf("--- handlers ---\n");
+	while (agetty_ifile_next_item(&ls, &itr, &item, -1, -1) == 0) {
+		int id = agetty_iitem_get_id(item);
+
+		if (id >= 0 && ls.handlers[id].printer)
+			ls.handlers[id].printer(item, NULL,
+						ls.handlers[id].data);
+	}
+
+	printf("--- query ---\n");
 	printf("has IPV4: %s\n",
 		agetty_ifile_has_item(&ls, AGETTY_ESC_IPV4) ? "yes" : "no");
 	printf("has IPV6: %s\n",
