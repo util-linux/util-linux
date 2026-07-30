@@ -25,8 +25,11 @@ under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
 *-f*, *--fd* _num_::
   File descriptor to send (required).
 
-*-p*, *--pid* _pid_::
-  Process whose fd to send (default: current process).
+*-p*, *--pid* _pid_[:ino]::
+  Process whose fd to send, optionally with a pidfd inode for safe
+  validation. When the _pid:ino_ form is used, the pidfd inode must
+  match the target process, preventing PID reuse races. (default: 
+  current process)
 
 *-b*, *--blocking*::
   For path-based sockets, wait for the socket file to appear before connecting.
@@ -58,6 +61,10 @@ include::man-common/help-version.adoc[]
 *fdsend --pid 1234 --dup --fd 5 mysock*::
   Duplicate file descriptor 5 from process 1234 (shared offset), then send it to
   _mysock_.
+
+*fdsend --pid 1234:67890 --dup --fd 5 mysock*::
+  Same as above, but validate that the pidfd inode matches 67890 to ensure PID
+  1234 has not been reused by a different process since the inode was obtained.
 
 == EXIT STATUS
 

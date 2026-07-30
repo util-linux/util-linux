@@ -379,7 +379,7 @@ static int open_proc_pid_fd(pid_t pid, int fd)
  *         if false open a new copy via /proc/PID/fd/FD (independent offset).
  * Returns the new fd on success, -1 on error.
  */
-static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd)
+static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd, uint64_t pidfd_ino)
 {
 	int pidfd;
 	int ret;
@@ -387,7 +387,10 @@ static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd)
 	if (!dup_fd)
 		return open_proc_pid_fd(pid, fd);
 
-	pidfd = pidfd_open(pid, 0);
+	if (pidfd_ino)
+		pidfd = ul_get_valid_pidfd(pid, pidfd_ino);
+	else
+		pidfd = pidfd_open(pid, 0);
 	if (pidfd < 0)
 		return -1;
 
@@ -506,7 +509,7 @@ int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
 		return -1;
 
 	if (opts->pid >= 0) {
-		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd);
+		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd, opts->pidfd_ino);
 		if (fd_to_send < 0)
 			return -1;
 		own_fd = 1;

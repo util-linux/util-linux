@@ -14,6 +14,7 @@
 #define UTIL_LINUX_FDSEND_COMMON_H
 
 #include <sys/types.h>
+#include <stdint.h>
 
 /* fdsend options. pid < 0 means current process. */
 struct fdsend_opts {
@@ -21,6 +22,7 @@ struct fdsend_opts {
 	int abstract;       /* sockspec is abstract Unix socket name (Linux) */
 	pid_t pid;          /* process whose fd to send; < 0 = current */
 	int dup_fd;         /* duplicate fd via pidfd_getfd(2) instead of open(/proc/PID/fd/FD) */
+	uint64_t pidfd_ino;  /* pidfd inode for safe PID reference (PID:INO format) */
 };
 
 /* Send fd to socket identified by sockspec. */

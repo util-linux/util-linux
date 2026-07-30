@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 			opt_fd = str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
 			break;
 		case 'p':
-			ul_parse_pid_str_or_err(optarg, &opts.pid, NULL, 0);
+			ul_parse_pid_str_or_err(optarg, &opts.pid, &opts.pidfd_ino, 0);
 			break;
 		case 'b':
 			opts.blocking = 1;
