@@ -37,19 +37,20 @@
 
 #define INOTIFY_BUF_LEN (sizeof(struct inotify_event) + NAME_MAX + 1)
 
-/* For fdrecv: cleanup socket file when interrupted in accept(). */
-static volatile sig_atomic_t fdrecv_got_signal;
+/* Interrupt blocking waits (fdrecv accept(), fdsend connect-retry) on signal.
+ * Each binary uses only one of these waits, so a single shared flag is enough. */
+static volatile sig_atomic_t got_signal;
 
-static void fdrecv_sig_handler(int sig)
+static void sig_handler(int sig __attribute__((__unused__)))
 {
-	(void)sig;
-	fdrecv_got_signal = 1;
+	got_signal = 1;
 }
 
 void fdrecv_setup_cleanup_signals(void)
 {
-	struct sigaction sa = { .sa_handler = fdrecv_sig_handler };
-	fdrecv_got_signal = 0;
+	struct sigaction sa = { .sa_handler = sig_handler };
+
+	got_signal = 0;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
 	sigaction(SIGINT, &sa, NULL);
@@ -182,6 +183,13 @@ static int fdsend_wait_for_socket(const char *sockpath)
 		ssize_t n;
 		char *p;
 		int pr;
+
+		/* Interrupt on SIGINT/SIGTERM/SIGHUP: poll()/read() are restarted
+		 * on EINTR and loop back here, where the flag is observed. */
+		if (got_signal) {
+			errno = EINTR;
+			goto out;
+		}
 
 		pfd.fd = inotify_fd;
 		pfd.events = POLLIN;
@@ -321,7 +329,7 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abst
 			unlink_socket_path(abstract, sockpath);
 			return -1;
 		}
-		if (fdrecv_got_signal) {
+		if (got_signal) {
 			close(sock);
 			unlink_socket_path(abstract, sockpath);
 			errno = EINTR;
@@ -463,6 +471,10 @@ static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int 
 				break;
 			if (errno != ECONNREFUSED)
 				goto out;
+			if (got_signal) {
+				errno = EINTR;
+				goto out;
+			}
 			usleep(ABSTRACT_SOCK_CONNECT_RETRY_MS * 1000);
 		}
 	} else {
@@ -506,6 +518,13 @@ int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
 
 	if (sockpath_from_spec(sockspec, path, sizeof(path), opts->abstract) != 0)
 		return -1;
+
+	/*
+	 * Set up signal handlers so SIGINT/SIGTERM/SIGHUP can interrupt
+	 * blocking waits (both inotify and connect-retry loops).
+	 */
+	if (opts->blocking)
+		fdrecv_setup_cleanup_signals();
 
 	/*
 	 * Wait for socket file to appear when blocking;
