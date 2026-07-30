@@ -7,6 +7,8 @@ agetty_SOURCES = agetty-cmd/agetty.c \
 		 agetty-cmd/agetty.h \
 		 agetty-cmd/credentials.c \
 		 agetty-cmd/issuefile.c \
+		 agetty-cmd/issuefile-parser.c \
+		 agetty-cmd/issuefile-parser.h \
 		 agetty-cmd/tty.c \
 		 agetty-cmd/utils.c
 
