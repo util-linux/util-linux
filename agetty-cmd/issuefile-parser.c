@@ -383,6 +383,31 @@ int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename)
 	return rc;
 }
 
+int agetty_ifile_print(struct agetty_ifile *ls,
+		       struct agetty_issue *ie, FILE *out)
+{
+	struct agetty_iiter itr = AGETTY_IITER_INIT;
+	struct agetty_iitem *item = NULL;
+
+	if (!ls || !out)
+		return -EINVAL;
+
+	while (agetty_ifile_next_item(ls, &itr, &item, -1, -1) == 0) {
+		int id = agetty_iitem_get_id(item);
+
+		if (id == AGETTY_ESC_TEXT) {
+			const char *data = agetty_iitem_get_data(item);
+
+			if (data)
+				fputs(data, out);
+		} else if (id >= 0 && ls->handlers[id].printer)
+			ls->handlers[id].printer(item, ie,
+						 &ls->handlers[id]);
+	}
+
+	return 0;
+}
+
 void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out)
 {
 	struct agetty_iiter itr = AGETTY_IITER_INIT;
@@ -421,18 +446,18 @@ void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out)
 
 static int fake_sysname_printer(struct agetty_iitem *item __attribute__((__unused__)),
 				struct agetty_issue *ie __attribute__((__unused__)),
-				void *data)
+				struct agetty_ihandler *handler)
 {
-	printf("  -> printer: %s (data=%s)\n",
-			itemdefs[item->id].name, (const char *) data);
+	if (!handler->data)
+		handler->data = xstrdup("FakeOS");
+
+	printf("%s", (const char *) handler->data);
 	return 0;
 }
 
 int main(int argc, char *argv[])
 {
 	struct agetty_ifile ls;
-	struct agetty_iiter itr = AGETTY_IITER_INIT;
-	struct agetty_iitem *item = NULL;
 	int rc;
 
 	agetty_ifile_init(&ls);
@@ -450,19 +475,13 @@ int main(int argc, char *argv[])
 	/* register handler only if the parsed file uses \s */
 	if (agetty_ifile_has_item(&ls, AGETTY_ESC_SYSNAME))
 		agetty_ifile_set_handler(&ls, AGETTY_ESC_SYSNAME,
-					 fake_sysname_printer, NULL,
-					 xstrdup("fake-uname"));
+					 fake_sysname_printer, NULL, NULL);
 
+	printf("--- dump ---\n");
 	agetty_ifile_dump(&ls, stdout);
 
-	printf("--- handlers ---\n");
-	while (agetty_ifile_next_item(&ls, &itr, &item, -1, -1) == 0) {
-		int id = agetty_iitem_get_id(item);
-
-		if (id >= 0 && ls.handlers[id].printer)
-			ls.handlers[id].printer(item, NULL,
-						ls.handlers[id].data);
-	}
+	printf("--- print ---\n");
+	agetty_ifile_print(&ls, NULL, stdout);
 
 	printf("--- query ---\n");
 	printf("has IPV4: %s\n",
