@@ -20,7 +20,7 @@ struct fdsend_opts {
 	int blocking;       /* wait for socket / retry connect */
 	int abstract;       /* sockspec is abstract Unix socket name (Linux) */
 	pid_t pid;          /* process whose fd to send; < 0 = current */
-	int use_pidfd_getfd; /* use pidfd_getfd(2) to obtain fd from pid */
+	int dup_fd;         /* duplicate fd via pidfd_getfd(2) instead of open(/proc/PID/fd/FD) */
 };
 
 /* Send fd to socket identified by sockspec. */

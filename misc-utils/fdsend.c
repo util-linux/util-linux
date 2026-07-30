@@ -37,7 +37,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -p, --pid <pid>    process whose fd to send (default: current process)\n"), out);
 	fputs(_(" -b, --blocking     wait/retry until receiver is available\n"), out);
 	fputs(_(" -a, --abstract     SOCKSPEC is an abstract Unix socket name (Linux)\n"), out);
-	fputs(_(" -g, --pidfd-getfd  use pidfd_getfd to obtain fd from process (default: open /proc/<PID>/fd/<FD>)\n"), out);
+	fputs(_(" -d, --dup          duplicate fd (shared offset) instead of opening a new copy\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(20));
 	fprintf(out, USAGE_MAN_TAIL("fdsend(1)"));
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 		{ "pid",         required_argument, NULL, 'p' },
 		{ "blocking",    no_argument,       NULL, 'b' },
 		{ "abstract",    no_argument,       NULL, 'a' },
-		{ "pidfd-getfd", no_argument,       NULL, 'g' },
+		{ "dup",         no_argument,       NULL, 'd' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout_atexit);
 
 	/* '+' so we stop at first non-option (SOCKSPEC) */
-	while ((c = getopt_long(argc, argv, "+f:p:baghV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+f:p:badhV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			opt_fd = str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
@@ -82,8 +82,8 @@ int main(int argc, char **argv)
 		case 'a':
 			opts.abstract = 1;
 			break;
-		case 'g':
-			opts.use_pidfd_getfd = 1;
+		case 'd':
+			opts.dup_fd = 1;
 			break;
 		case 'h':
 			usage();

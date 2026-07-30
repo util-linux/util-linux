@@ -38,9 +38,11 @@ under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
   not have filesystem permission controls; any process in the same network
   namespace that knows the socket name may connect to it.
 
-*-g*, *--pidfd-getfd*::
-  Use pidfd_getfd(2) to obtain the fd from the process. If not specified,
-  open(/proc/PID/fd/FD) is used instead.
+*-d*, *--dup*::
+  Duplicate the fd from the target process using pidfd_getfd(2). The duplicated
+  fd shares the file offset and status flags with the original fd in the target
+  process. If not specified, a new, independent fd is opened via
+  open(/proc/PID/fd/FD) instead.
 
 include::man-common/help-version.adoc[]
 
@@ -53,9 +55,9 @@ include::man-common/help-version.adoc[]
 *fdsend --abstract --fd 3 mysock*::
   Send file descriptor 3 to the abstract Unix socket named _mysock_.
 
-*fdsend --pid 1234 --pidfd-getfd --fd 5 mysock*::
-  Obtain file descriptor 5 from process 1234 with pidfd_getfd(2), then send it
-  to _mysock_.
+*fdsend --pid 1234 --dup --fd 5 mysock*::
+  Duplicate file descriptor 5 from process 1234 (shared offset), then send it to
+  _mysock_.
 
 == EXIT STATUS
 

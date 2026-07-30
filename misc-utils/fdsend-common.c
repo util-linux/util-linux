@@ -375,15 +375,16 @@ static int open_proc_pid_fd(pid_t pid, int fd)
 
 /*
  * Get fd number @fd from process @pid.
- * use_pidfd_getfd: if true use pidfd_getfd only; if false use open(/proc/PID/fd/FD) only.
+ * dup_fd: if true use pidfd_getfd to duplicate the fd (shared offset);
+ *         if false open a new copy via /proc/PID/fd/FD (independent offset).
  * Returns the new fd on success, -1 on error.
  */
-static int fdsend_open_pid_fd(pid_t pid, int fd, int use_pidfd_getfd)
+static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd)
 {
 	int pidfd;
 	int ret;
 
-	if (!use_pidfd_getfd)
+	if (!dup_fd)
 		return open_proc_pid_fd(pid, fd);
 
 	pidfd = pidfd_open(pid, 0);
@@ -505,7 +506,7 @@ int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
 		return -1;
 
 	if (opts->pid >= 0) {
-		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->use_pidfd_getfd);
+		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd);
 		if (fd_to_send < 0)
 			return -1;
 		own_fd = 1;

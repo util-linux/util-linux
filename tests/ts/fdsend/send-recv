@@ -97,15 +97,15 @@ expect_fail()
 	done
 	wait $FDRECV_PID
 
-	# Test 4: pidfd_getfd mode.  Use fdsend's own process to avoid
+	# Test 4: --dup mode.  Use fdsend's own process to avoid
 	# cross-process ptrace restrictions.
 	SOCK_PIDFD="$TS_OUTDIR/fdsend_pidfd_$$.sock"
-	echo "pidfd_getfd" > "$TS_OUTDIR/pidfd_file"
+	echo "dup_fd" > "$TS_OUTDIR/dup_fd_file"
 	$TS_CMD_FDRECV --stdin "$SOCK_PIDFD" --run cat &
 	FDRECV_PID=$!
 	wait_for_socket "$SOCK_PIDFD" "$FDRECV_PID" || echo "pidfd socket wait failed"
-	bash -c 'exec 7<"$1"; exec "$2" --pid $$ --pidfd-getfd --fd 7 "$3"' \
-		sh "$TS_OUTDIR/pidfd_file" "$TS_CMD_FDSEND" "$SOCK_PIDFD"
+	bash -c 'exec 7<"$1"; exec "$2" --pid $$ --dup --fd 7 "$3"' \
+		sh "$TS_OUTDIR/dup_fd_file" "$TS_CMD_FDSEND" "$SOCK_PIDFD"
 	wait $FDRECV_PID
 
 	# Negative tests

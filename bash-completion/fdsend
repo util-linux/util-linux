@@ -11,7 +11,7 @@ _fdsend_module()
 		'-p'|'--pid')
 			return 0
 			;;
-		'-g'|'--pidfd-getfd'|'-b'|'--blocking')
+		'-d'|'--dup'|'-b'|'--blocking')
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -25,7 +25,7 @@ _fdsend_module()
 				--pid
 				--abstract
 				--blocking
-				--pidfd-getfd
+				--dup
 				--help
 				--version'
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
