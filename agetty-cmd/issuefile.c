@@ -210,7 +210,7 @@ static int issuedir_read(struct agetty_issue *ie __attribute__((__unused__)),
 #endif /* ISSUEDIR_SUPPORT */
 
 #ifndef ISSUE_SUPPORT
-void agetty_print_issue_file(struct agetty_issue *ie __attribute__((__unused__)),
+void agetty_issue_print(struct agetty_issue *ie __attribute__((__unused__)),
 			     struct agetty_options *op,
 			     struct termios *tp __attribute__((__unused__)))
 {
@@ -220,13 +220,13 @@ void agetty_print_issue_file(struct agetty_issue *ie __attribute__((__unused__))
 	}
 }
 
-void agetty_eval_issue_file(struct agetty_issue *ie __attribute__((__unused__)),
+void agetty_issue_eval(struct agetty_issue *ie __attribute__((__unused__)),
 			    struct agetty_options *op __attribute__((__unused__)),
 			    struct termios *tp __attribute__((__unused__)))
 {
 }
 
-void agetty_show_issue(struct agetty_options *op __attribute__((__unused__)))
+void agetty_issue_show(struct agetty_options *op __attribute__((__unused__)))
 {
 }
 
@@ -290,7 +290,7 @@ int agetty_issue_is_changed(struct agetty_issue *ie)
 }
 #endif
 
-void agetty_print_issue_file(struct agetty_issue *ie,
+void agetty_issue_print(struct agetty_issue *ie,
 			     struct agetty_options *op,
 			     struct termios *tp)
 {
@@ -331,7 +331,7 @@ void agetty_print_issue_file(struct agetty_issue *ie,
 #endif
 }
 
-void agetty_eval_issue_file(struct agetty_issue *ie,
+void agetty_issue_eval(struct agetty_issue *ie,
 			    struct agetty_options *op,
 			    struct termios *tp)
 {
@@ -340,7 +340,7 @@ void agetty_eval_issue_file(struct agetty_issue *ie,
 
 #ifdef USE_NETLINK
 /* TODO:
- * Two pass processing for agetty_eval_issue_file()
+ * Two pass processing for agetty_issue_eval()
  * Implement pass 1: Just evaluate list of netlink_groups (IP protocols) and
  * interfaces to monitor.
  * That is why again label is here: netlink_groups will be re-evaluated and
@@ -438,7 +438,7 @@ done:
 /* This is --show-issue backend, executed by normal user on the current
  * terminal.
  */
-void agetty_show_issue(struct agetty_options *op)
+void agetty_issue_show(struct agetty_options *op)
 {
 	struct agetty_issue ie = {
 		.output = NULL,
@@ -452,7 +452,7 @@ void agetty_show_issue(struct agetty_options *op)
 	if (tcgetattr(STDIN_FILENO, &tp) < 0)
 		err(EXIT_FAILURE, _("failed to get terminal attributes: %m"));
 
-	agetty_eval_issue_file(&ie, op, &tp);
+	agetty_issue_eval(&ie, op, &tp);
 
 	if (ie.mem_sz)
 		ul_write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);

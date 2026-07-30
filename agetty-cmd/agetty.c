@@ -369,7 +369,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 	}
 
 	if (opt_show_issue) {
-		agetty_show_issue(op);
+		agetty_issue_show(op);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -565,8 +565,8 @@ int main(int argc, char **argv)
 	}
 
 	if (options.flags & F_NOPROMPT) {	/* --skip-login */
-		agetty_eval_issue_file(&issue, &options, &termios);
-		agetty_print_issue_file(&issue, &options, &termios);
+		agetty_issue_eval(&issue, &options, &termios);
+		agetty_issue_print(&issue, &options, &termios);
 
 	} else {				/* regular (auto)login */
 		if ((options.flags & F_NOHOSTNAME) == 0 &&
@@ -576,7 +576,7 @@ int main(int argc, char **argv)
 
 		if (options.autolog) {
 			/* Autologin prompt */
-			agetty_eval_issue_file(&issue, &options, &termios);
+			agetty_issue_eval(&issue, &options, &termios);
 			do_prompt(&issue, &options, &termios);
 			printf(_("%s%s (automatic login)\n"), LOGIN_PROMPT,
 					options.autolog);
@@ -669,14 +669,14 @@ static void do_prompt(struct agetty_issue *ie, struct agetty_options *op, struct
 #ifdef AGETTY_RELOAD
 again:
 #endif
-	agetty_print_issue_file(ie, op, tp);
+	agetty_issue_print(ie, op, tp);
 
 	if (op->flags & F_LOGINPAUSE) {
 		puts(_("[press ENTER to login]"));
 #ifdef AGETTY_RELOAD
 		/* reload issue */
 		if (!wait_for_term_input(ie, STDIN_FILENO)) {
-			agetty_eval_issue_file(ie, op, tp);
+			agetty_issue_eval(ie, op, tp);
 			if (agetty_issue_is_changed(ie)) {
 				if ((op->flags & F_VCONSOLE)
 				    && (op->flags & F_NOCLEAR) == 0)
@@ -793,7 +793,7 @@ static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, str
 	visual_bp = visual_widths;
 	*bp = '\0';
 
-	agetty_eval_issue_file(ie, op, tp);
+	agetty_issue_eval(ie, op, tp);
 	while (*logname == '\0') {
 		/* Write issue file and prompt */
 		do_prompt(ie, op, tp);
@@ -806,7 +806,7 @@ static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, str
 			 */
 			if ((op->flags & F_VCONSOLE) == 0)
 				sleep(1);
-			agetty_eval_issue_file(ie, op, tp);
+			agetty_issue_eval(ie, op, tp);
 			if (!agetty_issue_is_changed(ie))
 				goto no_reload;
 			/* if (ie->nl.fd >= 0) ul_nl_close(&(ie->nl));
