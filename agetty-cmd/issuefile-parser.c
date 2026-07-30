@@ -10,34 +10,38 @@
 #include "xalloc.h"
 
 static const struct agetty_idef itemdefs[__AGETTY_ESC_COUNT] = {
-	[AGETTY_ESC_TEXT]	= { .code = 0 },
+	[AGETTY_ESC_TEXT]	= { .name = "TEXT" },
 
-	[AGETTY_ESC_SYSNAME]	= { .code = 's' },
-	[AGETTY_ESC_NODENAME]	= { .code = 'n' },
-	[AGETTY_ESC_RELEASE]	= { .code = 'r' },
-	[AGETTY_ESC_VERSION]	= { .code = 'v' },
-	[AGETTY_ESC_MACHINE]	= { .code = 'm' },
+	[AGETTY_ESC_SYSNAME]	= { .name = "SYSNAME",    .code = 's' },
+	[AGETTY_ESC_NODENAME]	= { .name = "NODENAME",   .code = 'n' },
+	[AGETTY_ESC_RELEASE]	= { .name = "RELEASE",    .code = 'r' },
+	[AGETTY_ESC_VERSION]	= { .name = "VERSION",    .code = 'v' },
+	[AGETTY_ESC_MACHINE]	= { .name = "MACHINE",    .code = 'm' },
 
-	[AGETTY_ESC_NIS_DOMAIN]	= { .code = 'o' },
-	[AGETTY_ESC_DNS_DOMAIN]	= { .code = 'O' },
+	[AGETTY_ESC_NIS_DOMAIN]	= { .name = "NIS_DOMAIN", .code = 'o' },
+	[AGETTY_ESC_DNS_DOMAIN]	= { .name = "DNS_DOMAIN", .code = 'O' },
 
-	[AGETTY_ESC_DATE]	= { .code = 'd' },
-	[AGETTY_ESC_TIME]	= { .code = 't' },
+	[AGETTY_ESC_DATE]	= { .name = "DATE",       .code = 'd' },
+	[AGETTY_ESC_TIME]	= { .name = "TIME",       .code = 't' },
 
-	[AGETTY_ESC_TTYNAME]	= { .code = 'l' },
-	[AGETTY_ESC_BAUDRATE]	= { .code = 'b' },
+	[AGETTY_ESC_TTYNAME]	= { .name = "TTYNAME",    .code = 'l' },
+	[AGETTY_ESC_BAUDRATE]	= { .name = "BAUDRATE",   .code = 'b' },
 
-	[AGETTY_ESC_OSRELEASE]	= { .code = 'S', .args = (const char *[]){ "variable", NULL } },
+	[AGETTY_ESC_OSRELEASE]	= { .name = "OSRELEASE",  .code = 'S',
+				    .args = (const char *[]){ "variable", NULL } },
 
-	[AGETTY_ESC_USERS]	= { .code = 'u' },
-	[AGETTY_ESC_USERS_TEXT]	= { .code = 'U' },
+	[AGETTY_ESC_USERS]	= { .name = "USERS",      .code = 'u' },
+	[AGETTY_ESC_USERS_TEXT]	= { .name = "USERS_TEXT", .code = 'U' },
 
-	[AGETTY_ESC_ESCAPE]	= { .code = 'e', .args = (const char *[]){ "color", NULL } },
+	[AGETTY_ESC_ESCAPE]	= { .name = "ESCAPE",     .code = 'e',
+				    .args = (const char *[]){ "color", NULL } },
 
-	[AGETTY_ESC_IPV4]	= { .code = '4', .args = (const char *[]){ "interface", NULL } },
-	[AGETTY_ESC_IPV6]	= { .code = '6', .args = (const char *[]){ "interface", NULL } },
-	[AGETTY_ESC_NET_GOOD]	= { .code = 'a' },
-	[AGETTY_ESC_NET_ALL]	= { .code = 'A' },
+	[AGETTY_ESC_IPV4]	= { .name = "IPV4",       .code = '4',
+				    .args = (const char *[]){ "interface", NULL } },
+	[AGETTY_ESC_IPV6]	= { .name = "IPV6",       .code = '6',
+				    .args = (const char *[]){ "interface", NULL } },
+	[AGETTY_ESC_NET_GOOD]	= { .name = "NET_GOOD",   .code = 'a' },
+	[AGETTY_ESC_NET_ALL]	= { .name = "NET_ALL",    .code = 'A' },
 };
 
 void agetty_ifile_init(struct agetty_ifile *ls)
@@ -273,3 +277,58 @@ int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename)
 	fclose(f);
 	return rc;
 }
+
+void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out)
+{
+	struct agetty_iiter itr = AGETTY_IITER_INIT;
+	struct agetty_iitem *item = NULL;
+
+	if (!ls || !out)
+		return;
+
+	while (agetty_ifile_next_item(ls, &itr, &item, -1, -1) == 0) {
+		int id = agetty_iitem_get_id(item);
+		const char *name = (id >= 0 && id < __AGETTY_ESC_COUNT) ?
+					itemdefs[id].name : "UNKNOWN";
+
+		fprintf(out, "%-12s", name);
+		if (agetty_iitem_get_arg(item))
+			fprintf(out, " arg=\"%s\"", agetty_iitem_get_arg(item));
+		if (agetty_iitem_get_data(item))
+			fprintf(out, " data=\"%s\"", agetty_iitem_get_data(item));
+		fputc('\n', out);
+	}
+}
+
+#ifdef TEST_PROGRAM
+
+int main(int argc, char *argv[])
+{
+	struct agetty_ifile ls;
+	int rc;
+
+	agetty_ifile_init(&ls);
+
+	if (argc > 1)
+		rc = agetty_ifile_parse_file(&ls, argv[1]);
+	else
+		rc = agetty_ifile_parse_stream(&ls, stdin);
+
+	if (rc) {
+		fprintf(stderr, "parse error: %s\n", strerror(-rc));
+		return EXIT_FAILURE;
+	}
+
+	agetty_ifile_dump(&ls, stdout);
+
+	printf("---\n");
+	printf("has IPV4: %s\n",
+		agetty_ifile_has_item(&ls, AGETTY_ESC_IPV4) ? "yes" : "no");
+	printf("has IPV6: %s\n",
+		agetty_ifile_has_item(&ls, AGETTY_ESC_IPV6) ? "yes" : "no");
+
+	agetty_ifile_free(&ls);
+	return EXIT_SUCCESS;
+}
+
+#endif /* TEST_PROGRAM */

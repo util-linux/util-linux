@@ -55,6 +55,7 @@ enum {
 
 /* Item definition — static description of a supported escape code */
 struct agetty_idef {
+	const char		*name;	/* human-readable name, e.g. "IPV4" */
 	const char		code;	/* escape character, e.g. 's', '4' */
 	const char * const	*args;	/* NULL-terminated named arg list, or NULL */
 };
@@ -104,5 +105,8 @@ extern const char *agetty_idef_get_code(int id);
 /* parser */
 extern int agetty_ifile_parse_stream(struct agetty_ifile *ls, FILE *f);
 extern int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename);
+
+/* debug */
+extern void agetty_ifile_dump(struct agetty_ifile *ls, FILE *out);
 
 #endif /* UTIL_LINUX_AGETTY_ISSUEFILE_PARSER_H */
