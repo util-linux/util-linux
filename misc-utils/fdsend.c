@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include "strutils.h"
+#include "vfs.h"
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -38,6 +39,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -b, --blocking     wait/retry until receiver is available\n"), out);
 	fputs(_(" -a, --abstract     SOCKSPEC is an abstract Unix socket name (Linux)\n"), out);
 	fputs(_(" -d, --dup          duplicate fd (shared offset) instead of opening a new copy\n"), out);
+	fputs(_(" -m, --mode <mode>  open mode for /proc/PID/fd/FD: r, r+, w\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_HELP_OPTIONS(20));
 	fprintf(out, USAGE_MAN_TAIL("fdsend(1)"));
@@ -49,7 +51,7 @@ int main(int argc, char **argv)
 {
 	int c, opt_fd = -1;
 	const char *sockspec = NULL;
-	struct fdsend_opts opts = { .pid = -1 };
+	struct fdsend_opts opts = { .pid = -1, .open_mode = -1 };
 
 	static const struct option longopts[] = {
 		{ "fd",          required_argument, NULL, 'f' },
@@ -57,6 +59,7 @@ int main(int argc, char **argv)
 		{ "blocking",    no_argument,       NULL, 'b' },
 		{ "abstract",    no_argument,       NULL, 'a' },
 		{ "dup",         no_argument,       NULL, 'd' },
+		{ "mode",        required_argument, NULL, 'm' },
 		{ "help",        no_argument,       NULL, 'h' },
 		{ "version",     no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -68,7 +71,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout_atexit);
 
 	/* '+' so we stop at first non-option (SOCKSPEC) */
-	while ((c = getopt_long(argc, argv, "+f:p:badhV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+f:p:m:badhV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			opt_fd = str2num_or_err(optarg, 10, _("invalid fd number"), 0, INT_MAX);
@@ -85,6 +88,16 @@ int main(int argc, char **argv)
 		case 'd':
 			opts.dup_fd = 1;
 			break;
+		case 'm':
+			/* Validate against the documented modes; an invalid string
+			 * would otherwise be silently treated as O_RDONLY (0). */
+			if (strcmp(optarg, "r") != 0 && strcmp(optarg, "r+") != 0 &&
+			    strcmp(optarg, "w") != 0) {
+				warnx(_("invalid mode '%s' (use r, r+ or w)"), optarg);
+				errtryhelp(EXIT_FAILURE);
+			}
+			opts.open_mode = ul_mode_to_flags(optarg) & O_ACCMODE;
+			break;
 		case 'h':
 			usage();
 		case 'V':
@@ -92,6 +105,11 @@ int main(int argc, char **argv)
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
+	if (opts.dup_fd && opts.open_mode >= 0) {
+		warnx(_("--mode is incompatible with --dup"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (opt_fd < 0) {

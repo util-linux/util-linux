@@ -47,6 +47,10 @@ under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
   process. If not specified, a new, independent fd is opened via
   open(/proc/PID/fd/FD) instead.
 
+*-m*, *--mode* _mode_::
+  Open mode for /proc/PID/fd/FD when not using *--dup*. Accepted values
+  are *r+* (read-write, default), *r* (read-only), and *w* (write-only).
+
 include::man-common/help-version.adoc[]
 
 == EXAMPLES
@@ -65,6 +69,10 @@ include::man-common/help-version.adoc[]
 *fdsend --pid 1234:67890 --dup --fd 5 mysock*::
   Same as above, but validate that the pidfd inode matches 67890 to ensure PID
   1234 has not been reused by a different process since the inode was obtained.
+
+*fdsend --pid 1234 --mode r --fd 5 mysock*::
+  Open file descriptor 5 from process 1234 in read-only mode and send it to
+  _mysock_.
 
 == EXIT STATUS
 

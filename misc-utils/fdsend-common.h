@@ -23,6 +23,7 @@ struct fdsend_opts {
 	pid_t pid;          /* process whose fd to send; < 0 = current */
 	int dup_fd;         /* duplicate fd via pidfd_getfd(2) instead of open(/proc/PID/fd/FD) */
 	uint64_t pidfd_ino;  /* pidfd inode for safe PID reference (PID:INO format) */
+	int open_mode;       /* access mode for /proc/PID/fd/FD open: O_RDONLY/O_WRONLY/O_RDWR, -1 = auto */
 };
 
 /* Send fd to socket identified by sockspec. */

@@ -16,6 +16,7 @@
 #include "path.h"
 #include "pathnames.h"
 #include "pidfd-utils.h"
+#include "procfs.h"
 #include "strutils.h"
 #include "xalloc.h"
 
@@ -357,20 +358,25 @@ static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abst
 	return -1;
 }
 
+
 /*
  * Get fd number @fd from process @pid by opening /proc/PID/fd/FD.
+ * @open_mode: O_RDONLY, O_WRONLY, O_RDWR, or -1 for default (O_RDWR).
  * Returns the new fd on success, -1 on error.
  */
-static int open_proc_pid_fd(pid_t pid, int fd)
+static int open_proc_pid_fd(pid_t pid, int fd, int open_mode)
 {
-	char proc_path[PATH_MAX];
+	struct path_cxt *pc;
+	int mode = (open_mode >= 0) ? open_mode : O_RDWR;
+	int ret;
 
-	if (snprintf(proc_path, sizeof(proc_path), "/proc/%d/fd/%d",
-		     (int)pid, fd) >= (int)sizeof(proc_path)) {
-		errno = ENAMETOOLONG;
+	pc = ul_new_procfs_path(pid, NULL);
+	if (!pc)
 		return -1;
-	}
-	return open(proc_path, O_RDWR);
+
+	ret = ul_path_openf(pc, mode | O_CLOEXEC, "fd/%d", fd);
+	ul_unref_path(pc);
+	return ret;
 }
 
 /*
@@ -379,13 +385,13 @@ static int open_proc_pid_fd(pid_t pid, int fd)
  *         if false open a new copy via /proc/PID/fd/FD (independent offset).
  * Returns the new fd on success, -1 on error.
  */
-static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd, uint64_t pidfd_ino)
+static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd, uint64_t pidfd_ino, int open_mode)
 {
 	int pidfd;
 	int ret;
 
 	if (!dup_fd)
-		return open_proc_pid_fd(pid, fd);
+		return open_proc_pid_fd(pid, fd, open_mode);
 
 	if (pidfd_ino)
 		pidfd = ul_get_valid_pidfd(pid, pidfd_ino);
@@ -509,7 +515,8 @@ int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
 		return -1;
 
 	if (opts->pid >= 0) {
-		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd, opts->pidfd_ino);
+		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd,
+						 opts->pidfd_ino, opts->open_mode);
 		if (fd_to_send < 0)
 			return -1;
 		own_fd = 1;
