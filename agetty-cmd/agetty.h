@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <utmpx.h>
 
+#include "issuefile-parser.h"
 #include "ttyutils.h"
 
 /*
@@ -40,6 +41,10 @@
 #endif
 
 struct agetty_issue {
+	struct agetty_ifile ifile;
+	struct agetty_options *op;
+	struct termios *tp;
+
 	FILE *output;
 	char *mem;
 	size_t mem_sz;

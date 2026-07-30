@@ -85,6 +85,7 @@ struct agetty_ihandler {
 struct agetty_ifile {
 	struct list_head	items;	/* list of struct agetty_iitem */
 	struct agetty_ihandler	handlers[__AGETTY_ESC_COUNT];
+	bool			initialized;
 };
 
 /* Iterator for traversing parsed items */
@@ -98,6 +99,8 @@ struct agetty_iiter {
 /* list operations */
 extern void agetty_ifile_init(struct agetty_ifile *ls);
 extern void agetty_ifile_free(struct agetty_ifile *ls);
+extern bool agetty_ifile_is_ready(struct agetty_ifile *ls);
+extern bool agetty_ifile_is_empty(struct agetty_ifile *ls);
 extern bool agetty_ifile_has_item(struct agetty_ifile *ls, int id);
 
 /* handler registration */

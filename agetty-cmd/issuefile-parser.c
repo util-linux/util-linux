@@ -51,6 +51,19 @@ void agetty_ifile_init(struct agetty_ifile *ls)
 		return;
 	INIT_LIST_HEAD(&ls->items);
 	memset(ls->handlers, 0, sizeof(ls->handlers));
+	ls->initialized = true;
+}
+
+bool agetty_ifile_is_ready(struct agetty_ifile *ls)
+{
+	return ls && ls->initialized;
+}
+
+bool agetty_ifile_is_empty(struct agetty_ifile *ls)
+{
+	if (!ls || !ls->initialized)
+		return true;
+	return list_empty(&ls->items);
 }
 
 int agetty_ifile_set_handler(struct agetty_ifile *ls, int id,
@@ -120,6 +133,8 @@ void agetty_ifile_free(struct agetty_ifile *ls)
 		else
 			free(ls->handlers[i].data);
 	}
+
+	ls->initialized = false;
 }
 
 const struct agetty_idef *agetty_idef_by_code(int c)
