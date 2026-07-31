@@ -676,6 +676,7 @@ again:
 #ifdef AGETTY_RELOAD
 		/* reload issue */
 		if (!wait_for_term_input(ie, STDIN_FILENO)) {
+			agetty_issue_reset(ie);
 			agetty_issue_eval(ie, op, tp);
 			if (agetty_issue_is_changed(ie)) {
 				if ((op->flags & F_VCONSOLE)
@@ -806,6 +807,7 @@ static char *get_logname(struct agetty_issue *ie, struct agetty_options *op, str
 			 */
 			if ((op->flags & F_VCONSOLE) == 0)
 				sleep(1);
+			agetty_issue_reset(ie);
 			agetty_issue_eval(ie, op, tp);
 			if (!agetty_issue_is_changed(ie))
 				goto no_reload;

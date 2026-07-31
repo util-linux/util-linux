@@ -331,6 +331,13 @@ void agetty_issue_print(struct agetty_issue *ie,
 #endif
 }
 
+void agetty_issue_reset(struct agetty_issue *ie)
+{
+	if (agetty_ifile_is_ready(&ie->ifile))
+		agetty_ifile_free(&ie->ifile);
+	ie->parsed = false;
+}
+
 void agetty_issue_eval(struct agetty_issue *ie,
 			    struct agetty_options *op,
 			    struct termios *tp)
@@ -342,8 +349,7 @@ void agetty_issue_eval(struct agetty_issue *ie,
 	ie->tp = tp;
 
 	if (!ie->parsed) {
-		if (agetty_ifile_is_ready(&ie->ifile))
-			agetty_ifile_free(&ie->ifile);
+		agetty_issue_reset(ie);
 		agetty_ifile_init(&ie->ifile);
 
 		if (op->issue)
@@ -492,6 +498,7 @@ void agetty_issue_show(struct agetty_options *op)
 		ul_write_all(STDOUT_FILENO, ie.mem, ie.mem_sz);
 	if (ie.output)
 		fclose(ie.output);
+	agetty_ifile_free(&ie.ifile);
 	free(ie.mem);
 }
 
