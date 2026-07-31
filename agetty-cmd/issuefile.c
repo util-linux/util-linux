@@ -320,10 +320,17 @@ void agetty_print_issue_file(struct agetty_issue *ie,
 	}
 
 #ifdef AGETTY_RELOAD
-	free(ie->mem_old);
-	ie->mem_old = ie->mem;
-	ie->mem = NULL;
-	ie->mem_sz = 0;
+	/*
+	 * Pressing return at the prompt will clear ie->mem. Only set mem_old
+	 * when mem is non-NULL. That way, later invocations can compare against
+	 * the last printing of mem. Otherwise, mem is re-printed needlessly.
+	 */
+	if (ie->mem) {
+		free(ie->mem_old);
+		ie->mem_old = ie->mem;
+		ie->mem = NULL;
+		ie->mem_sz = 0;
+	}
 #else
 	free(ie->mem);
 	ie->mem = NULL;
