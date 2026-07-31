@@ -178,6 +178,42 @@ static int print_uname(struct agetty_iitem *item,
 	return 0;
 }
 
+static int print_nis_domain(struct agetty_iitem *item __attribute__((__unused__)),
+			   struct agetty_issue *ie,
+			   struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	char *dom = agetty_xgetdomainname();
+
+	fputs(dom ? dom : "unknown_domain", ie->output);
+	free(dom);
+	return 0;
+}
+
+static int print_dns_domain(struct agetty_iitem *item __attribute__((__unused__)),
+			    struct agetty_issue *ie,
+			    struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	char *dom = NULL;
+	char *host = agetty_xgethostname();
+	struct addrinfo hints, *info = NULL;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_flags = AI_CANONNAME;
+
+	if (host && getaddrinfo(host, NULL, &hints, &info) == 0 && info) {
+		char *canon;
+
+		if (info->ai_canonname &&
+		    (canon = strchr(info->ai_canonname, '.')))
+			dom = canon + 1;
+	}
+	fputs(dom ? dom : "unknown_domain", ie->output);
+	if (info)
+		freeaddrinfo(info);
+	free(host);
+	return 0;
+}
+
 static void register_handlers(struct agetty_issue *ie)
 {
 	struct agetty_ifile *ls = &ie->ifile;
@@ -187,6 +223,9 @@ static void register_handlers(struct agetty_issue *ie)
 	agetty_ifile_set_handler(ls, AGETTY_ESC_RELEASE, print_uname, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_VERSION, print_uname, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_MACHINE, print_uname, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_NIS_DOMAIN, print_nis_domain, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_DNS_DOMAIN, print_dns_domain, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -590,36 +629,6 @@ static void output_special_char(struct agetty_issue *ie,
 			}
 		} else
 			fputs("\033", ie->output);
-		break;
-	}
-	case 'o':
-	{
-		char *dom = agetty_xgetdomainname();
-
-		fputs(dom ? dom : "unknown_domain", ie->output);
-		free(dom);
-		break;
-	}
-	case 'O':
-	{
-		char *dom = NULL;
-		char *host = agetty_xgethostname();
-		struct addrinfo hints, *info = NULL;
-
-		memset(&hints, 0, sizeof(hints));
-		hints.ai_flags = AI_CANONNAME;
-
-		if (host && getaddrinfo(host, NULL, &hints, &info) == 0 && info) {
-			char *canon;
-
-			if (info->ai_canonname &&
-			    (canon = strchr(info->ai_canonname, '.')))
-				dom = canon + 1;
-		}
-		fputs(dom ? dom : "unknown_domain", ie->output);
-		if (info)
-			freeaddrinfo(info);
-		free(host);
 		break;
 	}
 	case 'd':
