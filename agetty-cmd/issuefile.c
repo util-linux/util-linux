@@ -214,6 +214,29 @@ static int print_dns_domain(struct agetty_iitem *item __attribute__((__unused__)
 	return 0;
 }
 
+static int print_time(struct agetty_iitem *item,
+		      struct agetty_issue *ie,
+		      struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	time_t now;
+	struct tm tm;
+
+	time(&now);
+	localtime_r(&now, &tm);
+
+	if (agetty_iitem_get_id(item) == AGETTY_ESC_DATE)
+		fprintf(ie->output, "%s %s %2d  %d",
+			nl_langinfo(ABDAY_1 + tm.tm_wday),
+			nl_langinfo(ABMON_1 + tm.tm_mon),
+			tm.tm_mday,
+			tm.tm_year < 70 ? tm.tm_year + 2000 :
+			tm.tm_year + 1900);
+	else
+		fprintf(ie->output, "%02d:%02d:%02d",
+			tm.tm_hour, tm.tm_min, tm.tm_sec);
+	return 0;
+}
+
 static void register_handlers(struct agetty_issue *ie)
 {
 	struct agetty_ifile *ls = &ie->ifile;
@@ -226,6 +249,9 @@ static void register_handlers(struct agetty_issue *ie)
 
 	agetty_ifile_set_handler(ls, AGETTY_ESC_NIS_DOMAIN, print_nis_domain, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_DNS_DOMAIN, print_dns_domain, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_DATE, print_time, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_TIME, print_time, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -629,27 +655,6 @@ static void output_special_char(struct agetty_issue *ie,
 			}
 		} else
 			fputs("\033", ie->output);
-		break;
-	}
-	case 'd':
-	case 't':
-	{
-		time_t now;
-		struct tm tm;
-
-		time(&now);
-		localtime_r(&now, &tm);
-
-		if (c == 'd') /* ISO 8601 */
-			fprintf(ie->output, "%s %s %2d  %d",
-				      nl_langinfo(ABDAY_1 + tm.tm_wday),
-				      nl_langinfo(ABMON_1 + tm.tm_mon),
-				      tm.tm_mday,
-				      tm.tm_year < 70 ? tm.tm_year + 2000 :
-				      tm.tm_year + 1900);
-		else
-			fprintf(ie->output, "%02d:%02d:%02d",
-				      tm.tm_hour, tm.tm_min, tm.tm_sec);
 		break;
 	}
 	case 'l':
