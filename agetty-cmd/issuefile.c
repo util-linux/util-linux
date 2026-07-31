@@ -151,6 +151,44 @@ void agetty_issue_show(struct agetty_options *op __attribute__((__unused__)))
 
 #else /* ISSUE_SUPPORT */
 
+static int print_uname(struct agetty_iitem *item,
+		       struct agetty_issue *ie,
+		       struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	struct utsname uts;
+
+	uname(&uts);
+	switch (agetty_iitem_get_id(item)) {
+	case AGETTY_ESC_SYSNAME:
+		fputs(uts.sysname, ie->output);
+		break;
+	case AGETTY_ESC_NODENAME:
+		fputs(uts.nodename, ie->output);
+		break;
+	case AGETTY_ESC_RELEASE:
+		fputs(uts.release, ie->output);
+		break;
+	case AGETTY_ESC_VERSION:
+		fputs(uts.version, ie->output);
+		break;
+	case AGETTY_ESC_MACHINE:
+		fputs(uts.machine, ie->output);
+		break;
+	}
+	return 0;
+}
+
+static void register_handlers(struct agetty_issue *ie)
+{
+	struct agetty_ifile *ls = &ie->ifile;
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_SYSNAME, print_uname, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_NODENAME, print_uname, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_RELEASE, print_uname, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_VERSION, print_uname, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_MACHINE, print_uname, NULL, NULL);
+}
+
 #ifdef AGETTY_RELOAD
 int agetty_issue_is_changed(struct agetty_issue *ie)
 {
@@ -249,6 +287,7 @@ void agetty_issue_eval(struct agetty_issue *ie,
 
 			ul_configs_free_list(&plist);
 		}
+		register_handlers(ie);
 		ie->parsed = true;
 	}
 
@@ -290,6 +329,13 @@ error:
 	ie->nl.fd = -1;
 skip:
 #endif /* USE_NETLINK */
+
+	free(ie->mem);
+	ie->mem = NULL;
+	ie->mem_sz = 0;
+	ie->output = open_memstream(&ie->mem, &ie->mem_sz);
+
+	agetty_ifile_print(&ie->ifile, ie, ie->output);
 
 done:
 	if (ie->output) {
@@ -546,26 +592,6 @@ static void output_special_char(struct agetty_issue *ie,
 			fputs("\033", ie->output);
 		break;
 	}
-	case 's':
-		uname(&uts);
-		fprintf(ie->output, "%s", uts.sysname);
-		break;
-	case 'n':
-		uname(&uts);
-		fprintf(ie->output, "%s", uts.nodename);
-		break;
-	case 'r':
-		uname(&uts);
-		fprintf(ie->output, "%s", uts.release);
-		break;
-	case 'v':
-		uname(&uts);
-		fprintf(ie->output, "%s", uts.version);
-		break;
-	case 'm':
-		uname(&uts);
-		fprintf(ie->output, "%s", uts.machine);
-		break;
 	case 'o':
 	{
 		char *dom = agetty_xgetdomainname();
