@@ -338,6 +338,40 @@ void agetty_issue_eval(struct agetty_issue *ie,
 	if (!(op->flags & F_ISSUE))
 		goto done;
 
+	ie->op = op;
+	ie->tp = tp;
+
+	if (!ie->parsed) {
+		if (agetty_ifile_is_ready(&ie->ifile))
+			agetty_ifile_free(&ie->ifile);
+		agetty_ifile_init(&ie->ifile);
+
+		if (op->issue)
+			agetty_ifile_parse_spec(&ie->ifile, op->issue);
+		else {
+			struct list_head plist;
+			struct list_head *pcur = NULL;
+			char *pname = NULL;
+
+			ul_configs_file_list(&plist,
+					     NULL,
+					     _PATH_SYSCONFDIR,
+					     _PATH_RUNSTATEDIR,
+					     _PATH_SYSCONFSTATICDIR,
+					     "issue",
+					     ISSUEDIR_EXT);
+
+			while (ul_configs_next_filename(&plist, &pcur, &pname) == 0)
+				agetty_ifile_parse_file(&ie->ifile, pname);
+
+			ul_configs_free_list(&plist);
+		}
+		ie->parsed = true;
+	}
+
+	if (agetty_ifile_is_empty(&ie->ifile))
+		goto done;
+
 #ifdef USE_NETLINK
 /* TODO:
  * Two pass processing for agetty_issue_eval()

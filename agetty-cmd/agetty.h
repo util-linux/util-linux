@@ -57,6 +57,7 @@ struct agetty_issue {
 #endif
 	bool do_tcsetattr;
 	bool do_tcrestore;
+	bool parsed;
 };
 
 /* Numbers of args for login(1) */
