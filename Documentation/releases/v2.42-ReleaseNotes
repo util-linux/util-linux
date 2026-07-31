@@ -56,7 +56,7 @@ distribution of holes.
 
 A significant performance regression has been fixed in hardlink(1).
 
-hardlink(1) now supports FIEMAP-based sparse file optimization.
+hexdump(1) now supports FIEMAP-based sparse file optimization.
 
 kill(1), waitpid(1) and nsenter(1) now support the PID:INO convention to
 precisely address processes.
