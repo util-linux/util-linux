@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 WanBingjiang <wanbingjiang@webray.com.cn>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="io_uring files"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+ts_skip_docker
+
+. "$TS_SELF/lsfd-functions.bash"
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+lsfd_check_mkfds_factory io_uring
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+SQ_MASK=
+CQ_MASK=
+FD=3
+RC=
+
+{
+    coproc MKFDS { "$TS_HELPER_MKFDS" io_uring "$FD"; }
+    if read -r -u "${MKFDS[0]}" PID SQ_MASK CQ_MASK; then
+	SQ_MASK_LSFD=$("${TS_CMD_LSFD}" -r -n -oIO-URING.SQ-MASK -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${SQ_MASK_LSFD}" == "${SQ_MASK}" ]]; then
+	    echo "sq-mask": OK
+	else
+	    echo "sq-mask": FAILED "SQ_MASK_LSFD:${SQ_MASK_LSFD} != SQ_MASK:${SQ_MASK}"
+	fi
+
+	CQ_MASK_LSFD=$("${TS_CMD_LSFD}" -r -n -oIO-URING.CQ-MASK -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${CQ_MASK_LSFD}" == "${CQ_MASK}" ]]; then
+	    echo "cq-mask": OK
+	else
+	    echo "cq-mask": FAILED "CQ_MASK_LSFD:${CQ_MASK_LSFD} != CQ_MASK:${CQ_MASK}"
+	fi
+
+	NAPI=$("${TS_CMD_LSFD}" -r -n -oIO-URING.NAPI -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${NAPI}" == "disabled" || -z "${NAPI}" ]]; then
+	    echo "napi": OK
+	else
+	    echo "napi": FAILED "NAPI:${NAPI} != disabled"
+	fi
+
+	SQTHREAD=$("${TS_CMD_LSFD}" -r -n -oIO-URING.SQTHREAD -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${SQTHREAD}" == "-1" ]]; then
+	    echo "sqthread": OK
+	else
+	    echo "sqthread": FAILED "SQTHREAD:${SQTHREAD} != -1"
+	fi
+
+	SQES=$("${TS_CMD_LSFD}" -r -n -oIO-URING.SQES -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${SQES}" == "0" ]]; then
+	    echo "sqes": OK
+	else
+	    echo "sqes": FAILED "SQES:${SQES} != 0"
+	fi
+
+	CQES=$("${TS_CMD_LSFD}" -r -n -oIO-URING.CQES -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${CQES}" == "0" ]]; then
+	    echo "cqes": OK
+	else
+	    echo "cqes": FAILED "CQES:${CQES} != 0"
+	fi
+
+	USER_FILES=$("${TS_CMD_LSFD}" -r -n -oIO-URING.USER-FILES -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${USER_FILES}" == "0" ]]; then
+	    echo "user-files": OK
+	else
+	    echo "user-files": FAILED "USER_FILES:${USER_FILES} != 0"
+	fi
+
+	USER_BUFS=$("${TS_CMD_LSFD}" -r -n -oIO-URING.USER-BUFS -p "${PID}" -Q "(FD == $FD)")
+	if [[ "${USER_BUFS}" == "0" ]]; then
+	    echo "user-bufs": OK
+	else
+	    echo "user-bufs": FAILED "USER_BUFS:${USER_BUFS} != 0"
+	fi
+
+	# Verify shm entries exist and have no fake io_uring data
+	SHM_COUNT=$("${TS_CMD_LSFD}" -r -n -oNAME -p "${PID}" -Q '(ASSOC == "shm") and (NAME =~ ".*io_uring.*")' 2>/dev/null | wc -l)
+	if [[ "${SHM_COUNT}" -ge 2 ]]; then
+	    echo "shm-count": OK
+	else
+	    echo "shm-count": FAILED "expected >= 2 shm entries, got ${SHM_COUNT}"
+	fi
+
+	# shm entries should NOT show decoded io_uring name (no fdinfo)
+	SHM_DECODED=$("${TS_CMD_LSFD}" -r -n -oNAME -p "${PID}" -Q '(ASSOC == "shm") and (AINODECLASS == "io_uring") and (NAME =~ "sqmask.*")' 2>/dev/null | wc -l)
+	if [[ "${SHM_DECODED}" -eq 0 ]]; then
+	    echo "shm-no-fake-data": OK
+	else
+	    echo "shm-no-fake-data": FAILED "shm entries should not show sqmask= in NAME"
+	fi
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+    RC=$?
+} > "$TS_OUTPUT" 2>&1
+
+if [ "$RC" == "$TS_EXIT_NOTSUPP" ]; then
+    ts_skip "io_uring(2) is not available"
+fi
+
+ts_finalize
