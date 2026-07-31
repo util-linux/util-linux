@@ -268,6 +268,35 @@ static int print_osrelease(struct agetty_iitem *item,
 	return 0;
 }
 
+static int print_users(struct agetty_iitem *item,
+		       struct agetty_issue *ie,
+		       struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	int users = 0;
+#ifdef USE_SYSTEMD
+	if (sd_booted() > 0) {
+		users = sd_get_sessions(NULL);
+		if (users < 0)
+			users = 0;
+	} else
+#endif
+	{
+		struct utmpx *ut;
+
+		setutxent();
+		while ((ut = getutxent()))
+			if (ut->ut_type == USER_PROCESS)
+				users++;
+		endutxent();
+	}
+
+	if (agetty_iitem_get_id(item) == AGETTY_ESC_USERS_TEXT)
+		fprintf(ie->output, P_("%d user", "%d users", users), users);
+	else
+		fprintf(ie->output, "%d ", users);
+	return 0;
+}
+
 static int print_ttyname(struct agetty_iitem *item __attribute__((__unused__)),
 			 struct agetty_issue *ie,
 			 struct agetty_ihandler *handler __attribute__((__unused__)))
@@ -304,6 +333,9 @@ static void register_handlers(struct agetty_issue *ie)
 	agetty_ifile_set_handler(ls, AGETTY_ESC_BAUDRATE, print_baudrate, NULL, NULL);
 
 	agetty_ifile_set_handler(ls, AGETTY_ESC_OSRELEASE, print_osrelease, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_USERS, print_users, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_USERS_TEXT, print_users, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -707,32 +739,6 @@ static void output_special_char(struct agetty_issue *ie,
 			}
 		} else
 			fputs("\033", ie->output);
-		break;
-	}
-	case 'u':
-	case 'U':
-	{
-		int users = 0;
-#ifdef USE_SYSTEMD
-		if (sd_booted() > 0) {
-			users = sd_get_sessions(NULL);
-			if (users < 0)
-				users = 0;
-		} else
-#endif
-		{
-			users = 0;
-			struct utmpx *ut;
-			setutxent();
-			while ((ut = getutxent()))
-				if (ut->ut_type == USER_PROCESS)
-					users++;
-			endutxent();
-		}
-		if (c == 'U')
-			fprintf(ie->output, P_("%d user", "%d users", users), users);
-		else
-			fprintf (ie->output, "%d ", users);
 		break;
 	}
 #ifdef USE_NETLINK
