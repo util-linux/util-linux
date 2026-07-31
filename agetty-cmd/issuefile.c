@@ -237,6 +237,37 @@ static int print_time(struct agetty_iitem *item,
 	return 0;
 }
 
+static int print_osrelease(struct agetty_iitem *item,
+			   struct agetty_issue *ie,
+			   struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	const char *varname = agetty_iitem_get_arg(item, "variable");
+	char *var;
+
+	if (!varname)
+		varname = agetty_iitem_get_arg(item, NULL);
+
+	if (varname) {
+		var = read_os_release(ie->op, varname);
+		if (var) {
+			if (strcmp(varname, "ANSI_COLOR") == 0)
+				fprintf(ie->output, "\033[%sm", var);
+			else
+				fputs(var, ie->output);
+		}
+	} else if ((var = read_os_release(ie->op, "PRETTY_NAME"))) {
+		fputs(var, ie->output);
+	} else {
+		struct utsname uts;
+
+		uname(&uts);
+		fputs(uts.sysname, ie->output);
+	}
+
+	free(var);
+	return 0;
+}
+
 static int print_ttyname(struct agetty_iitem *item __attribute__((__unused__)),
 			 struct agetty_issue *ie,
 			 struct agetty_ihandler *handler __attribute__((__unused__)))
@@ -271,6 +302,8 @@ static void register_handlers(struct agetty_issue *ie)
 
 	agetty_ifile_set_handler(ls, AGETTY_ESC_TTYNAME, print_ttyname, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_BAUDRATE, print_baudrate, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_OSRELEASE, print_osrelease, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -674,33 +707,6 @@ static void output_special_char(struct agetty_issue *ie,
 			}
 		} else
 			fputs("\033", ie->output);
-		break;
-	}
-	case 'S':
-	{
-		char *var = NULL, varname[64];
-
-		/* \S{varname} */
-		if (get_escape_argument(fp, varname, sizeof(varname))) {
-			var = read_os_release(op, varname);
-			if (var) {
-				if (strcmp(varname, "ANSI_COLOR") == 0)
-					fprintf(ie->output, "\033[%sm", var);
-				else
-					fputs(var, ie->output);
-			}
-		/* \S */
-		} else if ((var = read_os_release(op, "PRETTY_NAME"))) {
-			fputs(var, ie->output);
-
-		/* \S and PRETTY_NAME not found */
-		} else {
-			uname(&uts);
-			fputs(uts.sysname, ie->output);
-		}
-
-		free(var);
-
 		break;
 	}
 	case 'u':
