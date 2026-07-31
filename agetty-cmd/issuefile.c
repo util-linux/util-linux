@@ -297,6 +297,27 @@ static int print_users(struct agetty_iitem *item,
 	return 0;
 }
 
+static int print_escape_char(struct agetty_iitem *item,
+			     struct agetty_issue *ie,
+			     struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	const char *color = agetty_iitem_get_arg(item, "color");
+
+	if (!color)
+		color = agetty_iitem_get_arg(item, NULL);
+
+	if (color) {
+		char *esc = color_get_sequence(color);
+
+		if (esc) {
+			fputs(esc, ie->output);
+			free(esc);
+		}
+	} else
+		fputs("\033", ie->output);
+	return 0;
+}
+
 static int print_ttyname(struct agetty_iitem *item __attribute__((__unused__)),
 			 struct agetty_issue *ie,
 			 struct agetty_ihandler *handler __attribute__((__unused__)))
@@ -336,6 +357,8 @@ static void register_handlers(struct agetty_issue *ie)
 
 	agetty_ifile_set_handler(ls, AGETTY_ESC_USERS, print_users, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_USERS_TEXT, print_users, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_ESCAPE, print_escape_char, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -726,21 +749,6 @@ static void output_special_char(struct agetty_issue *ie,
 	struct utsname uts;
 
 	switch (c) {
-	case 'e':
-	{
-		char escname[UL_COLORNAME_MAXSZ];
-
-		if (get_escape_argument(fp, escname, sizeof(escname))) {
-			char *esc = color_get_sequence(escname);
-
-			if (esc) {
-				fputs(esc, ie->output);
-				free(esc);
-			}
-		} else
-			fputs("\033", ie->output);
-		break;
-	}
 #ifdef USE_NETLINK
 	case '4':
 	case '6':
