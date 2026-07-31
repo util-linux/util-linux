@@ -130,6 +130,8 @@ extern const char *agetty_idef_get_code(int id);
 /* parser */
 extern int agetty_ifile_parse_stream(struct agetty_ifile *ls, FILE *f);
 extern int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename);
+extern int agetty_ifile_parse_dir(struct agetty_ifile *ls, const char *dirname);
+extern int agetty_ifile_parse_spec(struct agetty_ifile *ls, const char *spec);
 
 /* output */
 extern int agetty_ifile_print(struct agetty_ifile *ls,

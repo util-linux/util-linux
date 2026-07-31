@@ -3,10 +3,18 @@
  * it what you wish.
  */
 #include <errno.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+
+#ifdef ISSUEDIR_SUPPORT
+# include <dirent.h>
+#endif
 
 #include "issuefile-parser.h"
+#include "c.h"
+#include "fileutils.h"
 #include "strutils.h"
 #include "xalloc.h"
 
@@ -396,6 +404,98 @@ int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename)
 	rc = agetty_ifile_parse_stream(ls, f);
 	fclose(f);
 	return rc;
+}
+
+#define ISSUEDIR_EXT	"issue"
+#define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
+
+#ifdef ISSUEDIR_SUPPORT
+static int issuedir_filter(const struct dirent *d)
+{
+	size_t namesz;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+	if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+	    d->d_type != DT_LNK)
+		return 0;
+#endif
+	if (*d->d_name == '.')
+		return 0;
+
+	namesz = strlen(d->d_name);
+	if (!namesz || namesz < ISSUEDIR_EXTSIZ + 1 ||
+	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), "." ISSUEDIR_EXT) != 0)
+		return 0;
+
+	return 1;
+}
+
+int agetty_ifile_parse_dir(struct agetty_ifile *ls, const char *dirname)
+{
+	int dd, nfiles, i;
+	struct dirent **namelist = NULL;
+
+	if (!ls || !dirname)
+		return -EINVAL;
+
+	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
+	if (dd < 0)
+		return -errno;
+
+	nfiles = scandirat(dd, ".", &namelist, issuedir_filter, versionsort);
+	if (nfiles <= 0)
+		goto done;
+
+	for (i = 0; i < nfiles; i++) {
+		struct dirent *d = namelist[i];
+		FILE *f;
+
+		f = fopen_at(dd, d->d_name, O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
+		if (f) {
+			agetty_ifile_parse_stream(ls, f);
+			fclose(f);
+		}
+	}
+
+	for (i = 0; i < nfiles; i++)
+		free(namelist[i]);
+	free(namelist);
+done:
+	close(dd);
+	return 0;
+}
+#else
+int agetty_ifile_parse_dir(struct agetty_ifile *ls __attribute__((__unused__)),
+			   const char *dirname __attribute__((__unused__)))
+{
+	return 1;
+}
+#endif /* ISSUEDIR_SUPPORT */
+
+int agetty_ifile_parse_spec(struct agetty_ifile *ls, const char *spec)
+{
+	char *list, *file;
+
+	if (!ls || !spec)
+		return -EINVAL;
+
+	list = strdup(spec);
+	if (!list)
+		return -ENOMEM;
+
+	for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
+		struct stat st;
+
+		if (stat(file, &st) < 0)
+			continue;
+		if (S_ISDIR(st.st_mode))
+			agetty_ifile_parse_dir(ls, file);
+		else
+			agetty_ifile_parse_file(ls, file);
+	}
+
+	free(list);
+	return 0;
 }
 
 int agetty_ifile_print(struct agetty_ifile *ls,
