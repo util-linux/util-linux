@@ -10,6 +10,8 @@
 
 #include "list.h"
 
+#define ISSUEDIR_EXT	"issue"
+
 /* Escape code identifiers — ordered so related codes are adjacent
  * to allow range-based filtering in agetty_ifile_next_item(). */
 enum {

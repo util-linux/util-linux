@@ -30,12 +30,6 @@
  * performed by that function additionally requires ISSUEDIR_SUPPORT
  * (i.e. scandirat()/openat()); when it is unavailable ul_configs_file_list()
  * still returns the main issue file. */
-#define ISSUEDIR_EXT	"issue"
-#define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
-
-#ifdef ISSUEDIR_SUPPORT
-# include <dirent.h>
-#endif
 
 #ifdef USE_SYSTEMD
 # include <systemd/sd-daemon.h>
@@ -47,9 +41,6 @@
 # include <arpa/inet.h>
 static uint32_t netlink_groups;
 #endif
-
-static void output_special_char(struct agetty_issue *ie, unsigned char c,
-				struct agetty_options *op, struct termios *tp, FILE *fp);
 
 static char *read_os_release(struct agetty_options *op, const char *varname)
 {
@@ -137,78 +128,6 @@ done:
 }
 
 
-#ifdef ISSUEDIR_SUPPORT
-static int issuedir_filter(const struct dirent *d)
-{
-	size_t namesz;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-	if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
-	    d->d_type != DT_LNK)
-		return 0;
-#endif
-	if (*d->d_name == '.')
-		return 0;
-
-	namesz = strlen(d->d_name);
-	if (!namesz || namesz < ISSUEDIR_EXTSIZ + 1 ||
-	    strcmp(d->d_name + (namesz - ISSUEDIR_EXTSIZ), "." ISSUEDIR_EXT) != 0)
-		return 0;
-
-	/* Accept this */
-	return 1;
-}
-
-
-static int issuefile_read_stream(struct agetty_issue *ie, FILE *f, struct agetty_options *op, struct termios *tp);
-
-/* returns: 0 on success, 1 cannot open, <0 on error
- */
-static int issuedir_read(struct agetty_issue *ie, const char *dirname,
-			 struct agetty_options *op, struct termios *tp)
-{
-	int dd, nfiles, i;
-	struct dirent **namelist = NULL;
-
-	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
-	if (dd < 0)
-		return 1;
-
-	nfiles = scandirat(dd, ".", &namelist, issuedir_filter, versionsort);
-	if (nfiles <= 0)
-		goto done;
-
-	ie->do_tcsetattr = 1;
-
-	for (i = 0; i < nfiles; i++) {
-		struct dirent *d = namelist[i];
-		FILE *f;
-
-		f = fopen_at(dd, d->d_name, O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
-		if (f) {
-			issuefile_read_stream(ie, f, op, tp);
-			fclose(f);
-		}
-	}
-
-	for (i = 0; i < nfiles; i++)
-		free(namelist[i]);
-	free(namelist);
-done:
-	close(dd);
-	return 0;
-}
-
-#else /* !ISSUEDIR_SUPPORT */
-static int issuedir_read(struct agetty_issue *ie __attribute__((__unused__)),
-			const char *dirname __attribute__((__unused__)),
-			struct agetty_options *op __attribute__((__unused__)),
-			struct termios *tp __attribute__((__unused__)))
-{
-	return 1;
-}
-#endif /* ISSUEDIR_SUPPORT */
-
 #ifndef ISSUE_SUPPORT
 void agetty_issue_print(struct agetty_issue *ie __attribute__((__unused__)),
 			     struct agetty_options *op,
@@ -231,48 +150,6 @@ void agetty_issue_show(struct agetty_options *op __attribute__((__unused__)))
 }
 
 #else /* ISSUE_SUPPORT */
-
-static int issuefile_read_stream(
-		struct agetty_issue *ie, FILE *f,
-		struct agetty_options *op, struct termios *tp)
-{
-	struct stat st;
-	int c;
-
-	if (fstat(fileno(f), &st) || !S_ISREG(st.st_mode))
-		return 1;
-
-	if (!ie->output) {
-		free(ie->mem);
-		ie->mem_sz = 0;
-		ie->mem = NULL;
-		ie->output = open_memstream(&ie->mem, &ie->mem_sz);
-	}
-
-	while ((c = fgetc(f)) != EOF) {
-		if (c == '\\')
-			output_special_char(ie, fgetc(f), op, tp, f);
-		else
-			putc(c, ie->output);
-	}
-
-	return 0;
-}
-
-static int issuefile_read(
-		struct agetty_issue *ie, const char *filename,
-		struct agetty_options *op, struct termios *tp)
-{
-	FILE *f = fopen(filename, "r" UL_CLOEXECSTR);
-	int rc = 1;
-
-	if (f) {
-		rc = issuefile_read_stream(ie, f, op, tp);
-		fclose(f);
-	}
-	return rc;
-}
-
 
 #ifdef AGETTY_RELOAD
 int agetty_issue_is_changed(struct agetty_issue *ie)
@@ -413,60 +290,6 @@ error:
 	ie->nl.fd = -1;
 skip:
 #endif /* USE_NETLINK */
-	/*
-	 * The custom issue file or directory list specified by:
-	 *   agetty --issue-file <path[:path]...>
-	 * Note that nothing is printed if the file/dir does not exist.
-	 */
-	if (op->issue) {
-		char *list = strdup(op->issue);
-		char *file;
-
-		if (!list)
-			agetty_log_err(_("failed to allocate memory: %m"));
-
-		for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
-			struct stat st;
-
-			if (stat(file, &st) < 0)
-				continue;
-			if (S_ISDIR(st.st_mode))
-				issuedir_read(ie, file, op, tp);
-			else
-				issuefile_read(ie, file, op, tp);
-		}
-		free(list);
-		goto done;
-	}
-
-	struct list_head file_list;
-	struct list_head *current = NULL;
-	char *name = NULL;
-
-	/* Reading all issue files and concatenating all contents to one content.
-	 * The ordering rules are defineded in:
-	 * https://github.com/uapi-group/specifications/blob/main/specs/configuration_files_specification.md
-	 *
-	 * Note that _PATH_RUNSTATEDIR (/run) is always read by ul_configs_file_list().
-	 *
-	 * ul_configs_file_list() returns the main issue file (e.g. /etc/issue)
-	 * even when drop-in directory support (ISSUEDIR_SUPPORT) is unavailable,
-	 * so the default issue file is still shown on builds without issue.d
-	 * support.
-	 */
-	ul_configs_file_list(&file_list,
-			     NULL,
-			     _PATH_SYSCONFDIR,
-			     _PATH_RUNSTATEDIR,
-			     _PATH_SYSCONFSTATICDIR,
-			     "issue",
-			     ISSUEDIR_EXT);
-
-	while (ul_configs_next_filename(&file_list, &current, &name) == 0) {
-		issuefile_read(ie, name, op, tp);
-	}
-
-	ul_configs_free_list(&file_list);
 
 done:
 	if (ie->output) {

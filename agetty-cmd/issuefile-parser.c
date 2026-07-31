@@ -406,7 +406,6 @@ int agetty_ifile_parse_file(struct agetty_ifile *ls, const char *filename)
 	return rc;
 }
 
-#define ISSUEDIR_EXT	"issue"
 #define ISSUEDIR_EXTSIZ	sizeof(ISSUEDIR_EXT)
 
 #ifdef ISSUEDIR_SUPPORT
