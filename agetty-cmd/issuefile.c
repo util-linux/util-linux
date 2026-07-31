@@ -237,6 +237,22 @@ static int print_time(struct agetty_iitem *item,
 	return 0;
 }
 
+static int print_ttyname(struct agetty_iitem *item __attribute__((__unused__)),
+			 struct agetty_issue *ie,
+			 struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	fprintf(ie->output, "%s", ie->op->tty);
+	return 0;
+}
+
+static int print_baudrate(struct agetty_iitem *item __attribute__((__unused__)),
+			  struct agetty_issue *ie,
+			  struct agetty_ihandler *handler __attribute__((__unused__)))
+{
+	agetty_fprint_speed(ie->output, cfgetispeed(ie->tp));
+	return 0;
+}
+
 static void register_handlers(struct agetty_issue *ie)
 {
 	struct agetty_ifile *ls = &ie->ifile;
@@ -252,6 +268,9 @@ static void register_handlers(struct agetty_issue *ie)
 
 	agetty_ifile_set_handler(ls, AGETTY_ESC_DATE, print_time, NULL, NULL);
 	agetty_ifile_set_handler(ls, AGETTY_ESC_TIME, print_time, NULL, NULL);
+
+	agetty_ifile_set_handler(ls, AGETTY_ESC_TTYNAME, print_ttyname, NULL, NULL);
+	agetty_ifile_set_handler(ls, AGETTY_ESC_BAUDRATE, print_baudrate, NULL, NULL);
 }
 
 #ifdef AGETTY_RELOAD
@@ -657,12 +676,6 @@ static void output_special_char(struct agetty_issue *ie,
 			fputs("\033", ie->output);
 		break;
 	}
-	case 'l':
-		fprintf (ie->output, "%s", op->tty);
-		break;
-	case 'b':
-		agetty_fprint_speed(ie->output, cfgetispeed(tp));
-		break;
 	case 'S':
 	{
 		char *var = NULL, varname[64];
