@@ -329,6 +329,10 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		keylengths = (uint16_t *) ((uint8_t *) bn + keylengths_offset);
 		values = (int64_t *) ((uint8_t *) bn + values_offset);
 
+		 /* Misaligned offset comes only from corrupt metadata. */
+		if ((uintptr_t) keylengths % sizeof(*keylengths))
+			return -ENOENT; /* Corrupt? */
+
 		first = 0;
 		mid = 0;
 		last = all_key_count - 1;
