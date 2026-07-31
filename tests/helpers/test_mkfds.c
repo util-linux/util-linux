@@ -31,6 +31,9 @@
 #include <sys/file.h>
 #include <getopt.h>
 #include <linux/bpf.h>
+#ifdef HAVE_LINUX_IO_URING_H
+#include <linux/io_uring.h>
+#endif
 #include <linux/if_ether.h>
 #include <linux/if_packet.h>
 #include <linux/if_tun.h>
@@ -3145,6 +3148,103 @@ static void *make_mmapped_bpf_map(const struct factory *factory, struct fdesc fd
 }
 #endif	/* HAVE_BPF_F_MMAPABLE */
 
+#ifdef HAVE_LINUX_IO_URING_H
+struct io_uring_data {
+	struct munmap_data sq_map;
+	struct munmap_data cq_map;
+	unsigned int sq_entries;
+	unsigned int cq_entries;
+};
+
+static void *make_io_uring(const struct factory *factory _U_, struct fdesc fdescs[],
+			   int argc _U_, char ** argv _U_)
+{
+	int fd;
+	void *sq_ptr, *cq_ptr;
+	size_t sq_size, cq_size;
+	struct io_uring_params params;
+	struct io_uring_data *data;
+
+	memset(&params, 0, sizeof(params));
+	fd = syscall(SYS_io_uring_setup, 4, &params);
+	if (fd < 0)
+		err_nosys(EXIT_FAILURE, "failed in io_uring_setup(2)");
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d",
+			    fd, fdescs[0].fd);
+		close(fd);
+	}
+
+	/*
+	 * mmap the SQ and CQ rings so that /proc/pid/maps will show
+	 * shm entries for this io_uring instance.
+	 */
+	sq_size = params.sq_off.array + params.sq_entries * sizeof(__u32);
+	sq_ptr = mmap(NULL, sq_size, PROT_READ | PROT_WRITE,
+		      MAP_SHARED | MAP_POPULATE, fdescs[0].fd,
+		      IORING_OFF_SQ_RING);
+	if (sq_ptr == MAP_FAILED)
+		err(EXIT_FAILURE, "failed to mmap io_uring SQ ring");
+
+	cq_size = params.cq_off.cqes + params.cq_entries * sizeof(struct io_uring_cqe);
+	cq_ptr = mmap(NULL, cq_size, PROT_READ | PROT_WRITE,
+		      MAP_SHARED | MAP_POPULATE, fdescs[0].fd,
+		      IORING_OFF_CQ_RING);
+	if (cq_ptr == MAP_FAILED)
+		err(EXIT_FAILURE, "failed to mmap io_uring CQ ring");
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	/*
+	 * Store the actual queue entries count (the kernel may round
+	 * up to the next power of two).  The masks are entries-1.
+	 */
+	data = xmalloc(sizeof(*data));
+	data->sq_map.ptr = sq_ptr;
+	data->sq_map.len = sq_size;
+	data->cq_map.ptr = cq_ptr;
+	data->cq_map.len = cq_size;
+	data->sq_entries = params.sq_entries;
+	data->cq_entries = params.cq_entries;
+
+	return data;
+}
+
+enum ritem_io_uring {
+	RITEM_IO_URING_SQ_MASK,
+	RITEM_IO_URING_CQ_MASK,
+};
+
+static void report_io_uring(const struct factory *factory _U_,
+			    int nth, void *data, FILE *fp)
+{
+	struct io_uring_data *d = data;
+
+	switch (nth) {
+	case RITEM_IO_URING_SQ_MASK:
+		fprintf(fp, "0x%x", d->sq_entries - 1);
+		break;
+	case RITEM_IO_URING_CQ_MASK:
+		fprintf(fp, "0x%x", d->cq_entries - 1);
+		break;
+	}
+}
+
+static void free_io_uring(const struct factory * factory _U_, void *data)
+{
+	struct io_uring_data *d = data;
+	munmap(d->sq_map.ptr, d->sq_map.len);
+	munmap(d->cq_map.ptr, d->cq_map.len);
+	free(data);
+}
+#endif /* HAVE_LINUX_IO_URING_H */
+
 static void *make_pty(const struct factory *factory _U_, struct fdesc fdescs[],
 		      int argc _U_, char ** argv _U_)
 {
@@ -4492,6 +4592,26 @@ static const struct factory factories[] = {
 		}
 	},
 #endif	/* HAVE_BPF_F_MMAPABLE */
+#ifdef HAVE_LINUX_IO_URING_H
+	{
+		.name = "io_uring",
+		.desc = "make io_uring",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.EX_O = 2,
+		.make = make_io_uring,
+		.report = report_io_uring,
+		.free = free_io_uring,
+		.params = (struct parameter []) {
+			PARAM_END
+		},
+		.o_descs = (const char *[]) {
+			[RITEM_IO_URING_SQ_MASK] = "the sq mask (entries-1)",
+			[RITEM_IO_URING_CQ_MASK] = "the cq mask (entries-1)",
+		},
+	},
+#endif
 	{
 		.name = "pty",
 		.desc = "make a pair of ptmx and pts",
