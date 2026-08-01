@@ -162,6 +162,7 @@ extern void agetty_next_speed(struct agetty_options *op, struct termios *tp);
 extern void agetty_erase_char(int visual_count, struct chardata *cp);
 
 extern void agetty_issue_reset(struct agetty_issue *ie);
+extern void agetty_issue_register_netlink(struct agetty_issue *ie);
 extern void agetty_issue_print(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 extern void agetty_issue_eval(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
 extern void agetty_issue_show(struct agetty_options *op);
