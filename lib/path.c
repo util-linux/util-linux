@@ -398,7 +398,7 @@ int ul_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *p
 
 	return rc;
 }
-#ifdef HAVE_STATX
+#if defined(HAVE_STATX) && !defined(_AIX)
 /*
 * This function follows the semantics of statx(). To call statx() for the directory
 * itself addressed by @pc, use an empty string and the AT_EMPTY_PATH @flag.
