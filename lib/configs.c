@@ -1,7 +1,9 @@
 /*
  * configs_file.c instantiates functions defined and described in configs_file.h
  */
+#ifdef HAVE_ERR_H
 #include <err.h>
+#endif
 #include <errno.h>
 #include <sys/syslog.h>
 #include <sys/stat.h>

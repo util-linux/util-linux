@@ -11,7 +11,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
+#ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
+#endif
 #include <string.h>
 #include <sys/wait.h>
 #include <fcntl.h>
