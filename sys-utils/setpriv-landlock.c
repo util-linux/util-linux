@@ -34,6 +34,7 @@ struct landlock_path_beneath_attr {
 } __attribute__((packed));
 
 #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
+#define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
 
 #define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
 #define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
@@ -288,18 +289,33 @@ void usage_landlock(FILE *out)
 
 void list_landlock_support(void)
 {
-	size_t i;
+	int abi, errata;
+	unsigned i;
+	uint64_t mask;
 
-	printf("ABI: %d\n", supported_landlock_abi());
+	abi = supported_landlock_abi();
+	errata = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_ERRATA);
+	if (errata < 0) errata = 0;
 
-	printf("access: fs\n");
-
-	printf("rights:");
-	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-		printf(" %s", landlock_access_fs[i].type);
+	printf(_("ABI version: %d\n"), abi);
+	printf(_("ABI errata:"));
+	for (i = 1; errata != 0; errata >>= 1, i++) {
+		if (errata & 1)
+			printf(" %u", i);
+	}
 	printf("\n");
 
-	printf("rules: path-beneath\n");
+	printf(_("access: %s\n"), "fs");
+
+	mask = landlock_abi_fs_mask();
+	printf(_("%s rights:"), "fs");
+	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+		if (landlock_access_fs[i].value & mask)
+			printf(" %s", landlock_access_fs[i].type);
+
+	printf("\n");
+
+	printf(_("%s rules: %s\n"), "fs", "path-beneath");
 }
 
 void list_landlock_access(void)
