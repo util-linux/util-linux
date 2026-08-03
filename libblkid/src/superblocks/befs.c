@@ -329,6 +329,10 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		keylengths = (uint16_t *) ((uint8_t *) bn + keylengths_offset);
 		values = (int64_t *) ((uint8_t *) bn + values_offset);
 
+		 /* Misaligned offset comes only from corrupt metadata. */
+		if ((uintptr_t) keylengths % sizeof(*keylengths))
+			return -ENOENT; /* Corrupt? */
+
 		first = 0;
 		mid = 0;
 		last = all_key_count - 1;
@@ -519,7 +523,7 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	/* get_block_run() shifts uint64 left by ag_shift + block_shift,
 	 * so the combined value must stay below 64 to avoid UB */
-	if (FS32_TO_CPU(bs->ag_shift, fs_le) + block_shift >= 64)
+	if ((uint64_t)FS32_TO_CPU(bs->ag_shift, fs_le) + block_shift >= 64)
 		return BLKID_PROBE_NONE;
 
 	ret = get_uuid(pr, bs, &volume_id, fs_le);
