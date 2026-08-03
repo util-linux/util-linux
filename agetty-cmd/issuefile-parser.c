@@ -59,6 +59,7 @@ void agetty_ifile_init(struct agetty_ifile *ls)
 		return;
 	INIT_LIST_HEAD(&ls->items);
 	memset(ls->handlers, 0, sizeof(ls->handlers));
+	ls->mask = 0;
 	ls->initialized = true;
 }
 
@@ -199,12 +200,14 @@ int agetty_ifile_next_item(struct agetty_ifile *ls,
 
 bool agetty_ifile_has_item(struct agetty_ifile *ls, int id)
 {
-	struct agetty_iiter itr = AGETTY_IITER_INIT;
-	struct agetty_iitem *item = NULL;
-
-	if (!ls)
+	if (!ls || id < 0 || id >= __AGETTY_ESC_COUNT)
 		return false;
-	return agetty_ifile_next_item(ls, &itr, &item, id, id) == 0;
+	return (ls->mask & BIT(id)) != 0;
+}
+
+uint32_t agetty_ifile_get_mask(struct agetty_ifile *ls)
+{
+	return ls ? ls->mask : 0;
 }
 
 int agetty_iitem_get_id(struct agetty_iitem *item)
@@ -373,6 +376,7 @@ int agetty_ifile_parse_stream(struct agetty_ifile *ls, FILE *f)
 			item = new_item(id, NULL);
 			parse_escape_args(item, f);
 			list_add_tail(&item->items, &ls->items);
+			ls->mask |= BIT(id);
 
 			if (!textf) {
 				textf = open_memstream(&text, &textsz);
@@ -478,9 +482,7 @@ int agetty_ifile_parse_spec(struct agetty_ifile *ls, const char *spec)
 	if (!ls || !spec)
 		return -EINVAL;
 
-	list = strdup(spec);
-	if (!list)
-		return -ENOMEM;
+	list = xstrdup(spec);
 
 	for (file = strtok(list, ":"); file; file = strtok(NULL, ":")) {
 		struct stat st;

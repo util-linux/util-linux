@@ -87,6 +87,7 @@ struct agetty_ihandler {
 struct agetty_ifile {
 	struct list_head	items;	/* list of struct agetty_iitem */
 	struct agetty_ihandler	handlers[__AGETTY_ESC_COUNT];
+	uint32_t		mask;	/* bitmask of AGETTY_ESC_* present */
 	bool			initialized;
 };
 
@@ -104,6 +105,7 @@ extern void agetty_ifile_free(struct agetty_ifile *ls);
 extern bool agetty_ifile_is_ready(struct agetty_ifile *ls);
 extern bool agetty_ifile_is_empty(struct agetty_ifile *ls);
 extern bool agetty_ifile_has_item(struct agetty_ifile *ls, int id);
+extern uint32_t agetty_ifile_get_mask(struct agetty_ifile *ls);
 
 /* handler registration */
 extern int agetty_ifile_set_handler(struct agetty_ifile *ls, int id,

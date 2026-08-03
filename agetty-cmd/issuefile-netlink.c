@@ -7,6 +7,7 @@
 #include <string.h>
 
 #include "agetty.h"
+#include "c.h"
 
 #ifdef USE_NETLINK
 # include <net/if.h>
@@ -255,10 +256,10 @@ void agetty_issue_register_netlink(struct agetty_issue *ie)
 {
 	struct agetty_ifile *ls = &ie->ifile;
 
-	if (!agetty_ifile_has_item(ls, AGETTY_ESC_IPV4) &&
-	    !agetty_ifile_has_item(ls, AGETTY_ESC_IPV6) &&
-	    !agetty_ifile_has_item(ls, AGETTY_ESC_NET_GOOD) &&
-	    !agetty_ifile_has_item(ls, AGETTY_ESC_NET_ALL))
+	if (!(agetty_ifile_get_mask(ls) & (BIT(AGETTY_ESC_IPV4) |
+					   BIT(AGETTY_ESC_IPV6) |
+					   BIT(AGETTY_ESC_NET_GOOD) |
+					   BIT(AGETTY_ESC_NET_ALL))))
 		return;
 
 	init_netlink(ie);
