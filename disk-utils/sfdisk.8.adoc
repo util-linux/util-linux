@@ -458,7 +458,7 @@ Since version 2.26 *sfdisk* no longer provides the *-R* or *--re-read* option to
 
 Since version 2.26 *sfdisk* does not provide the *--DOS*, *--IBM*, *--DOS-extended*, *--unhide*, *--show-extended*, *--cylinders*, *--heads*, *--sectors*, *--inside-outer*, *--not-inside-outer* options.
 
-Since version 2.43, on an interactive terminal and on an EFI system, the chosen disklabel is GPT; otherwise, *sfdisk* defaults to DOS/MBR, or BSD/SUN on SPARC.
+Since version 2.43, on an interactive terminal and on an EFI system, the chosen disklabel is GPT; otherwise, *sfdisk* defaults to DOS/MBR, or SUN on SPARC.
 
 == EXAMPLES
 
