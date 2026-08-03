@@ -1404,7 +1404,11 @@ int main(int argc, char **argv)
 		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
 			if (!noauto_pt) {
-				rc = fdisk_create_disklabel(cxt, wanted_label);
+				if (is_interactive && !wanted_label)
+					rc = fdisk_create_disklabel(cxt, fdisk_get_recommended_labelname());
+				else
+					rc = fdisk_create_disklabel(cxt, wanted_label);
+
 				if (rc)
 					fdisk_warn(cxt, _("Failed to create a disklabel."));
 			}

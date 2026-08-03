@@ -163,6 +163,9 @@ An IRIX/SGI disklabel can describe 16 partitions, the eleventh of which should b
 +
 A *sync*(2) and an ioctl(BLKRRPART) (rereading the partition table from disk) are performed before exiting when the partition table has been updated.
 
+*Default label on empty devices*::
+When *fdisk* is given a device with no recognized partition table, it creates one automatically (unless --noauto-pt is used). Since v2.43, on an interactive terminal and on an EFI system, the chosen disklabel is GPT; otherwise, it defaults to DOS/MBR, or BSD/SUN on SPARC.
+
 == DOS mode and DOS 6.x WARNING
 
 *Note that all this is deprecated. You don't have to care about things like* *geometry and cylinders on modern operating systems. If you really want* *DOS-compatible partitioning then you have to enable DOS mode and cylinder* *units by using the '-c=dos -u=cylinders' fdisk command-line options.*
