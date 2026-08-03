@@ -227,12 +227,13 @@ static void __attribute__((__noreturn__)) usage(void)
 		stdout);
 
 	fputs(USAGE_OPTIONS, stdout);
-	fprintf(stdout, USAGE_HELP_OPTIONS(21));
 	fputsln(_(" -w <num>, --width <num>\n"
 	          "                     maximum width of bit masks (default 8192)"),
 		stdout);
-	fputsln(_(" -f, --fail-width     fail if bit list contains values wider than width"),
+	fputsln(_(" -f, --fail-width    fail if bit list contains values wider than width"),
 		stdout);
+	fputs(USAGE_SEPARATOR, stdout);
+	fprintf(stdout, USAGE_HELP_OPTIONS(21));
 
 	fputs(_("\nOutput modes:\n"), stdout);
 	fputsln(_(" -m, --mask          display bits as a hex mask value (default)"),
