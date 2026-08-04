@@ -363,7 +363,7 @@ read_block(unsigned int nr, char *addr) {
 		memset(addr, 0, MINIX_BLOCK_SIZE);
 		return;
 	}
-	if (MINIX_BLOCK_SIZE * nr != lseek(device_fd, MINIX_BLOCK_SIZE * nr, SEEK_SET)) {
+	if ((off_t) nr * MINIX_BLOCK_SIZE != lseek(device_fd, (off_t) nr * MINIX_BLOCK_SIZE, SEEK_SET)) {
 		get_current_name();
 		printf(_("Read error: unable to seek to block in file '%s'\n"),
 		       current_name);
@@ -388,7 +388,7 @@ write_block(unsigned int nr, char *addr) {
 		errors_uncorrected = 1;
 		return;
 	}
-	if (MINIX_BLOCK_SIZE * nr != lseek(device_fd, MINIX_BLOCK_SIZE * nr, SEEK_SET))
+	if ((off_t) nr * MINIX_BLOCK_SIZE != lseek(device_fd, (off_t) nr * MINIX_BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed in write_block"));
 	if (MINIX_BLOCK_SIZE != write(device_fd, addr, MINIX_BLOCK_SIZE)) {
 		get_current_name();
@@ -602,6 +602,8 @@ read_superblock(void) {
 	if (get_nzmaps() * MINIX_BLOCK_SIZE * 8 <
 	    get_nzones() - get_first_zone() + 1)
 		die(_("bad s_zmap_blocks field in super-block"));
+	if (inode_blocks() > SIZE_MAX / MINIX_BLOCK_SIZE)
+		die(_("too many inodes"));
 }
 
 static void
@@ -1136,7 +1138,7 @@ static int
 bad_zone(int i) {
 	char buffer[1024];
 
-	if (MINIX_BLOCK_SIZE * i != lseek(device_fd, MINIX_BLOCK_SIZE * i, SEEK_SET))
+	if ((off_t) i * MINIX_BLOCK_SIZE != lseek(device_fd, (off_t) i * MINIX_BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed in bad_zone"));
 	return (MINIX_BLOCK_SIZE != read(device_fd, buffer, MINIX_BLOCK_SIZE));
 }
@@ -1398,14 +1400,14 @@ main(int argc, char **argv) {
 		for (inode = 1, free = 0; inode <= get_ninodes(); inode++)
 			if (!inode_in_use(inode))
 				free++;
-		printf(_("\n%6lu inodes used (%lu%%)\n"),
+		printf(_("\n%6lu inodes used (%llu%%)\n"),
 		       (get_ninodes() - free),
-		       100 * (get_ninodes() - free) / get_ninodes());
+		       100ULL * (get_ninodes() - free) / get_ninodes());
 		for (inode = get_first_zone(), free = 0; inode < get_nzones(); inode++)
 			if (!zone_in_use(inode))
 				free++;
-		printf(_("%6lu zones used (%lu%%)\n"), (get_nzones() - free),
-		       100 * (get_nzones() - free) / get_nzones());
+		printf(_("%6lu zones used (%llu%%)\n"), (get_nzones() - free),
+		       100ULL * (get_nzones() - free) / get_nzones());
 		printf(_("\n%6d regular files\n"
 			 "%6d directories\n"
 			 "%6d character device files\n"

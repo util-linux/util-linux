@@ -216,7 +216,7 @@ static void write_tables(const struct fs_control *ctl)
 
 static void write_block(const struct fs_control *ctl, int blk, char * buffer)
 {
-	if (blk * MINIX_BLOCK_SIZE != lseek(ctl->device_fd, blk * MINIX_BLOCK_SIZE, SEEK_SET))
+	if ((off_t) blk * MINIX_BLOCK_SIZE != lseek(ctl->device_fd, (off_t) blk * MINIX_BLOCK_SIZE, SEEK_SET))
 		errx(MKFS_EX_ERROR, _("%s: seek failed in write_block"), ctl->device_name);
 
 	if (ul_write_all(ctl->device_fd, buffer, MINIX_BLOCK_SIZE))
@@ -595,8 +595,8 @@ static size_t do_check(const struct fs_control *ctl, char * buffer, int try, uns
 	ssize_t got;
 
 	/* Seek to the correct loc. */
-	if (lseek(ctl->device_fd, current_block * MINIX_BLOCK_SIZE, SEEK_SET) !=
-		       current_block * MINIX_BLOCK_SIZE )
+	if (lseek(ctl->device_fd, (off_t) current_block * MINIX_BLOCK_SIZE, SEEK_SET) !=
+		       (off_t) current_block * MINIX_BLOCK_SIZE)
 		err(MKFS_EX_ERROR, _("%s: seek failed during testing of blocks"),
 				ctl->device_name);
 
@@ -631,8 +631,8 @@ static void check_blocks(struct fs_control *ctl)
 	sigaction(SIGALRM, &sa, &old);
 	alarm(5);
 	while (currently_testing < zones) {
-		if (lseek(ctl->device_fd, currently_testing * MINIX_BLOCK_SIZE,SEEK_SET) !=
-		    currently_testing*MINIX_BLOCK_SIZE)
+		if (lseek(ctl->device_fd, (off_t) currently_testing * MINIX_BLOCK_SIZE, SEEK_SET) !=
+		    (off_t) currently_testing * MINIX_BLOCK_SIZE)
 			errx(MKFS_EX_ERROR, _("%s: seek failed in check_blocks"),
 					ctl->device_name);
 		try = TEST_BUFFER_BLOCKS;
