@@ -404,14 +404,12 @@ void agetty_issue_print(struct agetty_issue *ie,
 	}
 
 #ifdef AGETTY_RELOAD
-	free(ie->mem_old);
-	ie->mem_old = ie->mem;
-	ie->mem = NULL;
-	ie->mem_sz = 0;
-#else
-	free(ie->mem);
-	ie->mem = NULL;
-	ie->mem_sz = 0;
+	if (ie->mem) {
+		free(ie->mem_old);
+		ie->mem_old = ie->mem;
+		ie->mem = NULL;
+		ie->mem_sz = 0;
+	}
 #endif
 }
 
