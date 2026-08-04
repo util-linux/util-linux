@@ -228,14 +228,9 @@ int main(int argc, char **argv)
 			ask_psem = 1;
 			break;
 		case 'p':
-		{
-			char *end = NULL;
-			errno = 0;
-			permission = strtoul(optarg, &end, 8);
-			if (errno || optarg == end || (end && *end))
-				err(EXIT_FAILURE, _("failed to parse mode"));
+			permission = (mode_t) str2unum_or_err(optarg, 8,
+					_("failed to parse mode"), 07777);
 			break;
-		}
 		case 'n':
 			name = optarg;
 			break;
