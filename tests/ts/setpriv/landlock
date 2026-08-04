@@ -61,4 +61,18 @@ ts_init_subtest "wildcard-access"
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "wildcard-partial-access"
+"$TS_CMD_SETPRIV" --landlock-access fs:execute \
+	--landlock-rule path-beneath::/ \
+	true \
+	&> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "wildcard-partial-access-reversed"
+"$TS_CMD_SETPRIV" --landlock-rule path-beneath::/ \
+	--landlock-access fs:execute \
+	true \
+	&> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize

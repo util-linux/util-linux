@@ -236,7 +236,7 @@ setpriv_sources = files(
   'setpriv.c',
 ) + \
     caputils_c
-if LINUX and conf.get('HAVE_LINUX_LANDLOCK_H').to_string() == '1'
+if LINUX and conf.get('HAVE_LANDLOCK').to_string() == '1'
   setpriv_sources += files('setpriv-landlock.c')
 endif
 setpriv_manadocs = files('setpriv.1.adoc')

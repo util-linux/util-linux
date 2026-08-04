@@ -1,9 +1,57 @@
+# See bash-completion's _comp_ltrim_colon_completions
+_setpriv_ltrim_colon_completions()
+{
+	local cur="$1"
+	local colon_word i
+	if [[ $cur == *:* && $COMP_WORDBREAKS == *:* ]]; then
+		colon_word=${cur%"${cur##*:}"}
+		for i in "${!COMPREPLY[@]}"; do
+			COMPREPLY[i]=${COMPREPLY[i]#"$colon_word"}
+		done
+	fi
+}
+
+_setpriv_landlock_rights()
+{
+	local cmd="$1" access="$2" prefix="$3" cur="$4"
+	local realcur RIGHTS RIGHTS_ALL WORD
+	RIGHTS_ALL=$("$cmd" --list-landlock-rights "$access" 2>/dev/null) || return 1
+	realcur="${cur##*,}"
+	prefix+="${cur%"$realcur"}"
+	for WORD in $RIGHTS_ALL; do
+		if ! [[ $prefix == *"$WORD"* ]]; then
+			RIGHTS="$WORD ${RIGHTS:-""}"
+		fi
+	done
+	COMPREPLY=( $(compgen -P "$prefix" -W "$RIGHTS" -- "$realcur") )
+	_setpriv_ltrim_colon_completions "$prefix$realcur"
+}
+
 _setpriv_module()
 {
 	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	# ':' is a field separator for landlock options, but it is also a default
+	# COMP_WORDBREAKS character. If it's still one here, COMP_WORDS may have
+	# been split on it, so glue any nonempty run of ":"s -- and the real word
+	# before it -- back onto $cur.
+	if [[ $COMP_WORDBREAKS == *:* ]]; then
+		local i=$COMP_CWORD
+		# $cur itself may be the lone ":" (e.g. a trailing "fs:"); absorb
+		# the word before it first so the loop below sees a real word in
+		# $cur to keep extending.
+		if (( i > 0 )) && [[ -n ${COMP_WORDS[i]} && -z ${COMP_WORDS[i]//:/} ]]; then
+			cur="${COMP_WORDS[i-1]}$cur"
+			((i--))
+		fi
+		while (( i > 1 )) && [[ -n ${COMP_WORDS[i-1]} && -z ${COMP_WORDS[i-1]//:/} ]]; do
+			cur="${COMP_WORDS[i-2]}${COMP_WORDS[i-1]}$cur"
+			(( i -= 2 ))
+		done
+		prev="${COMP_WORDS[i-1]}"
+	fi
 	case $prev in
 		'--ambient-caps'|'--inh-caps'|'--bounding-set')
 			local prefix realcur INHERIT_ALL INHERIT
@@ -94,13 +142,44 @@ _setpriv_module()
 			return 0
 			;;
 		'--landlock-access')
-			# FIXME: how to list landlock accesses?
-			COMPREPLY=( $(compgen -W "access" -- $cur) )
+			case $cur in
+				*:*)
+					_setpriv_landlock_rights "$1" "${cur%%:*}" "${cur%%:*}:" "${cur#*:}"
+					;;
+				*)
+					local WORD OPTS_ACCESS
+					for WORD in $($1 --list-landlock-access); do
+						OPTS_ACCESS="$OPTS_ACCESS $WORD $WORD:"
+					done
+					compopt -o nospace
+					COMPREPLY=( $(compgen -W "$OPTS_ACCESS" -- $cur) )
+					;;
+			esac
 			return 0
 			;;
 		'--landlock-rule')
-			# FIXME: how to list landlock rules?
-			COMPREPLY=( $(compgen -W "rule" -- $cur) )
+			case $cur in
+				path-beneath:*:*)
+					# path-beneath:<rights>:<path>
+					local rest="${cur#path-beneath:}" i
+					local prefix="path-beneath:${rest%%:*}:"
+					local path="${cur#"$prefix"}"
+					compopt -o filenames
+					mapfile -t COMPREPLY < <(compgen -f -- "$path")
+					for i in "${!COMPREPLY[@]}"; do
+						COMPREPLY[i]="$prefix${COMPREPLY[i]}"
+					done
+					_setpriv_ltrim_colon_completions "$cur"
+					;;
+				path-beneath:*)
+					compopt -o nospace
+					_setpriv_landlock_rights "$1" fs 'path-beneath:' "${cur#path-beneath:}"
+					;;
+				*)
+					compopt -o nospace
+					COMPREPLY=( $(compgen -W "path-beneath:" -- $cur) )
+					;;
+			esac
 			return 0
 			;;
 		'--seccomp-filter')
@@ -137,6 +216,7 @@ _setpriv_module()
 				--apparmor-profile
 				--landlock-access
 				--landlock-rule
+				--landlock-support
 				--seccomp-filter
 				--help
 				--version"

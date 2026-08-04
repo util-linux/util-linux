@@ -173,6 +173,10 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" --apparmor-profile <pr>     set AppArmor profile\n"), out);
 	fputs(_(" --landlock-access <access>  add Landlock access\n"), out);
 	fputs(_(" --landlock-rule <rule>      add Landlock rule\n"), out);
+	fputs(_(" --landlock-support          list supported Landlock ABI, access, rights, and rules\n"), out);
+	fputs(_(" --list-landlock-access      list Landlock access categories\n"), out);
+	fputs(_(" --list-landlock-rights <access>\n"
+		"                             list an access category's rights\n"), out);
 	fputs(_(" --seccomp-filter <file>     load seccomp filter from file\n"), out);
 	fputs(_(" --reset-env                 clear all environment and initialize\n"
 		"                               HOME, SHELL, USER, LOGNAME and PATH\n"), out);
@@ -874,6 +878,9 @@ int main(int argc, char **argv)
 		APPARMOR_PROFILE,
 		LANDLOCK_ACCESS,
 		LANDLOCK_RULE,
+		LANDLOCK_SUPPORT,
+		LIST_LANDLOCK_ACCESS,
+		LIST_LANDLOCK_RIGHTS,
 		SECCOMP_FILTER,
 		RESET_ENV
 	};
@@ -903,6 +910,9 @@ int main(int argc, char **argv)
 		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
 		{ "landlock-access",  required_argument, NULL, LANDLOCK_ACCESS  },
 		{ "landlock-rule",    required_argument, NULL, LANDLOCK_RULE    },
+		{ "landlock-support", no_argument,       NULL, LANDLOCK_SUPPORT },
+		{ "list-landlock-access", no_argument,       NULL, LIST_LANDLOCK_ACCESS },
+		{ "list-landlock-rights", required_argument, NULL, LIST_LANDLOCK_RIGHTS },
 		{ "seccomp-filter",   required_argument, NULL, SECCOMP_FILTER   },
 		{ "help",             no_argument,       NULL, 'h'              },
 		{ "reset-env",        no_argument,       NULL, RESET_ENV,       },
@@ -923,6 +933,9 @@ int main(int argc, char **argv)
 	int dumplevel = 0;
 	int total_opts = 0;
 	int list_caps = 0;
+	int landlock_support = 0;
+	int landlock_list_access = 0;
+	const char *landlock_list_rights_access = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1072,6 +1085,15 @@ int main(int argc, char **argv)
 		case LANDLOCK_RULE:
 			parse_landlock_rule(&opts.landlock, optarg);
 			break;
+		case LANDLOCK_SUPPORT:
+			landlock_support = 1;
+			break;
+		case LIST_LANDLOCK_ACCESS:
+			landlock_list_access = 1;
+			break;
+		case LIST_LANDLOCK_RIGHTS:
+			landlock_list_rights_access = optarg;
+			break;
 		case SECCOMP_FILTER:
 			if (opts.seccomp_filter)
 				errx(EXIT_FAILURE,
@@ -1104,6 +1126,30 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE,
 			     _("--list-caps must be specified alone"));
 		list_known_caps();
+		return EXIT_SUCCESS;
+	}
+
+	if (landlock_support) {
+		if (total_opts != 1 || optind < argc)
+			errx(EXIT_FAILURE,
+			     _("--landlock-support must be specified alone"));
+		list_landlock_support();
+		return EXIT_SUCCESS;
+	}
+
+	if (landlock_list_access) {
+		if (total_opts != 1 || optind < argc)
+			errx(EXIT_FAILURE,
+			     _("--list-landlock-access must be specified alone"));
+		list_landlock_access();
+		return EXIT_SUCCESS;
+	}
+
+	if (landlock_list_rights_access) {
+		if (total_opts != 1 || optind < argc)
+			errx(EXIT_FAILURE,
+			     _("--list-landlock-rights must be specified alone"));
+		list_landlock_rights(landlock_list_rights_access);
 		return EXIT_SUCCESS;
 	}
 
