@@ -38,8 +38,7 @@
 #endif
 
 #ifdef USE_SYSTEMD
-# include <systemd/sd-daemon.h>
-# include <systemd/sd-login.h>
+# include "dl-systemd.h"
 #endif
 
 #ifdef USE_NETLINK
@@ -791,8 +790,8 @@ static void output_special_char(struct agetty_issue *ie,
 	{
 		int users = 0;
 #ifdef USE_SYSTEMD
-		if (sd_booted() > 0) {
-			users = sd_get_sessions(NULL);
+		if (ul_dlopen_libsystemd() == 0 && systemd_call(sd_booted)() > 0) {
+			users = systemd_call(sd_get_sessions)(NULL);
 			if (users < 0)
 				users = 0;
 		} else

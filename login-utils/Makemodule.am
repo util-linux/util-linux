@@ -236,6 +236,14 @@ lslogins_LDADD += -ldl
 lslogins_CFLAGS += $(SELINUX_CFLAGS)
 endif
 if HAVE_SYSTEMD
+lslogins_SOURCES += \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
+if !HAVE_SELINUX
+lslogins_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h
+endif
 lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif

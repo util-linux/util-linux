@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #if defined (HAVE_LIBECONF)
-# include <libeconf.h>
+# include "dl-econf.h"
 # include "pathnames.h"
 #endif
 
@@ -159,15 +159,18 @@ struct blkid_config *blkid_read_config(const char *filename)
 	bool uevent = false;
 	econf_err error;
 
+	if (ul_dlopen_libeconf() != 0)
+		goto dflt;
+
 	if (filename) {
 		DBG(CONFIG, ul_debug("reading config file: %s.", filename));
-		error = econf_readFile(&file, filename, "= \t", "#");
+		error = econf_call(econf_readFile)(&file, filename, "= \t", "#");
 	} else {
 #ifdef HAVE_ECONF_READCONFIG
-		error = econf_readConfig(&file, NULL,
+		error = econf_call(econf_readConfig)(&file, NULL,
 			UL_VENDORDIR_PATH, "blkid", "conf", "= \t", "#");
 #else
-		error = econf_readDirs(&file,
+		error = econf_call(econf_readDirs)(&file,
 			UL_VENDORDIR_PATH, "/etc", "blkid", "conf", "= \t", "#");
 #endif
 	}
@@ -183,17 +186,17 @@ struct blkid_config *blkid_read_config(const char *filename)
 			goto dflt;
 		} else {
 			if (filename)
-				DBG(CONFIG, ul_debug("%s: parse error:%s", filename, econf_errString(error)));
+				DBG(CONFIG, ul_debug("%s: parse error:%s", filename, econf_call(econf_errString)(error)));
 			else
-				DBG(CONFIG, ul_debug("parse error:%s", econf_errString(error)));
+				DBG(CONFIG, ul_debug("parse error:%s", econf_call(econf_errString)(error)));
 
 			goto err;
 		}
 	}
 
-	if ((error = econf_getBoolValue(file, NULL, "SEND_UEVENT", &uevent))) {
+	if ((error = econf_call(econf_getBoolValue)(file, NULL, "SEND_UEVENT", &uevent))) {
 		if (error != ECONF_NOKEY) {
-			DBG(CONFIG, ul_debug("couldn't fetch SEND_UEVENT currently: %s", econf_errString(error)));
+			DBG(CONFIG, ul_debug("couldn't fetch SEND_UEVENT currently: %s", econf_call(econf_errString)(error)));
 			goto err;
 		} else {
 			DBG(CONFIG, ul_debug("key SEND_UEVENT not found, using built-in default "));
@@ -202,20 +205,20 @@ struct blkid_config *blkid_read_config(const char *filename)
 		conf->uevent = uevent ? TRUE : FALSE;
 	}
 
-	if ((error = econf_getStringValue(file, NULL, "CACHE_FILE", &(conf->cachefile)))) {
+	if ((error = econf_call(econf_getStringValue)(file, NULL, "CACHE_FILE", &(conf->cachefile)))) {
 		conf->cachefile = NULL;
 		if (error != ECONF_NOKEY) {
-			DBG(CONFIG, ul_debug("couldn't fetch CACHE_FILE correctly: %s", econf_errString(error)));
+			DBG(CONFIG, ul_debug("couldn't fetch CACHE_FILE correctly: %s", econf_call(econf_errString)(error)));
 			goto err;
 		} else {
 			DBG(CONFIG, ul_debug("key CACHE_FILE not found, using built-in default "));
 		}
 	}
 
-	if ((error = econf_getStringValue(file, NULL, "EVALUATE", &line))) {
+	if ((error = econf_call(econf_getStringValue)(file, NULL, "EVALUATE", &line))) {
 		conf->nevals = 0;
 		if (error != ECONF_NOKEY) {
-			DBG(CONFIG, ul_debug("couldn't fetch EVALUATE correctly: %s", econf_errString(error)));
+			DBG(CONFIG, ul_debug("couldn't fetch EVALUATE correctly: %s", econf_call(econf_errString)(error)));
 			goto err;
 		} else {
 			DBG(CONFIG, ul_debug("key CACHE_FILE not found, using built-in default "));
@@ -240,7 +243,8 @@ dflt:
 	if (f)
 		fclose(f);
 #else
-	econf_free(file);
+	if (file)
+		econf_call(econf_freeFile)(file);
 	free(line);
 #endif
 	return conf;
@@ -250,7 +254,8 @@ err:
 #ifndef HAVE_LIBECONF
 	fclose(f);
 #else
-	econf_free(file);
+	if (file)
+		econf_call(econf_freeFile)(file);
 	free(line);
 #endif
 	return NULL;

@@ -59,8 +59,7 @@
 #include <grp.h>
 
 #if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
-# include <systemd/sd-login.h>
-# include <systemd/sd-daemon.h>
+# include "dl-systemd.h"
 #endif
 
 #include "nls.h"
@@ -269,11 +268,11 @@ int main(int argc, char **argv)
 	iov.iov_len = mbufsize;
 
 #if defined(USE_SYSTEMD) && HAVE_DECL_SD_SESSION_GET_USERNAME == 1
-	if (sd_booted() > 0) {
+	if (ul_dlopen_libsystemd() == 0 && systemd_call(sd_booted)() > 0) {
 		char **sessions_list;
 		int sessions;
 
-		sessions = sd_get_sessions(&sessions_list);
+		sessions = systemd_call(sd_get_sessions)(&sessions_list);
 		if (sessions < 0) {
 			warnx(_("error getting sessions: %s"), strerror(-sessions));
 			goto utmp;
@@ -283,12 +282,12 @@ int main(int argc, char **argv)
 			char *name, *tty;
 			int r;
 
-			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0) {
+			if ((r = systemd_call(sd_session_get_username)(sessions_list[i], &name)) < 0) {
 				warnx(_("get user name failed: %s"), strerror (-r));
 				goto utmp;
 			}
 			if (!(group_buf && !is_gr_member(name, group_buf))
-			    && sd_session_get_tty(sessions_list[i], &tty) >= 0
+			    && systemd_call(sd_session_get_tty)(sessions_list[i], &tty) >= 0
 			    && ul_strv_consume(&ttys, tty) < 0)
 				err(EXIT_FAILURE, _("failed to allocate lines list"));
 

@@ -81,6 +81,11 @@ wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 wall_LDADD = $(LDADD) libcommon.la
 if HAVE_SYSTEMD
+wall_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
 wall_LDADD += $(SYSTEMD_LIBS)
 wall_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
@@ -107,6 +112,11 @@ write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 write_LDADD = $(LDADD) libcommon.la
 if HAVE_SYSTEMD
+write_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
 write_LDADD += $(SYSTEMD_LIBS)
 write_CFLAGS += $(SYSTEMD_CFLAGS)
 endif

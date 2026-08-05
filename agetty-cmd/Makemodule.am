@@ -25,6 +25,11 @@ agetty_LDADD += -lutil
 endif
 
 if HAVE_SYSTEMD
+agetty_SOURCES += \
+	lib/dl-utils.c \
+	include/dl-utils.h \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
 agetty_LDADD += $(SYSTEMD_LIBS)
 agetty_CFLAGS = $(SYSTEMD_CFLAGS)
 endif
