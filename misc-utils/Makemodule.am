@@ -38,10 +38,13 @@ logger_SOURCES = misc-utils/logger.c lib/strutils.c lib/strv.c
 logger_LDADD = $(LDADD) libcommon.la
 logger_CFLAGS = $(AM_CFLAGS)
 if HAVE_SYSTEMD
-logger_SOURCES += \
-	$(systemd_sources) \
-	$(common_dl_sources)
+logger_SOURCES += $(systemd_sources)
+if USE_DLOPEN_SYSTEMD
+logger_SOURCES += $(common_dl_sources)
 logger_LDADD += $(common_dl_ldadd)
+else
+logger_LDADD += $(SYSTEMD_LIBS)
+endif
 logger_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 
@@ -74,10 +77,13 @@ dist_noinst_DATA += misc-utils/namei.1.adoc
 namei_SOURCES = misc-utils/namei.c lib/strutils.c lib/idcache.c
 namei_LDADD = $(LDADD)
 if HAVE_SELINUX
-namei_SOURCES += \
-	$(selinux_sources) \
-	$(common_dl_sources)
+namei_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+namei_SOURCES += $(common_dl_sources)
 namei_LDADD += $(common_dl_ldadd)
+else
+namei_LDADD += $(SELINUX_LIBS)
+endif
 namei_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 endif
@@ -140,10 +146,13 @@ uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
 uuidd_SOURCES = misc-utils/uuidd.c lib/monotonic.c lib/timer.c
 if HAVE_SYSTEMD
-uuidd_SOURCES += \
-	$(systemd_sources) \
-	$(common_dl_sources)
+uuidd_SOURCES += $(systemd_sources)
+if USE_DLOPEN_SYSTEMD
+uuidd_SOURCES += $(common_dl_sources)
 uuidd_LDADD += $(common_dl_ldadd)
+else
+uuidd_LDADD += $(SYSTEMD_LIBS)
+endif
 uuidd_CFLAGS += $(SYSTEMD_CFLAGS)
 tmpfiles_DATA += misc-utils/uuidd-tmpfiles.conf
 sysusers_DATA += misc-utils/uuidd-sysusers.conf

@@ -43,10 +43,13 @@ if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
 if HAVE_SELINUX
-sulogin_SOURCES += \
-	$(selinux_sources) \
-	$(common_dl_sources)
+sulogin_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+sulogin_SOURCES += $(common_dl_sources)
 sulogin_LDADD += $(common_dl_ldadd)
+else
+sulogin_LDADD += $(SELINUX_LIBS)
+endif
 sulogin_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 
@@ -68,10 +71,13 @@ login_SOURCES = \
 login_LDADD = $(LDADD) libcommon.la -lpam
 login_CFLAGS = $(AM_CFLAGS)
 if HAVE_ECONF
-login_SOURCES += \
-	$(econf_sources) \
-	$(common_dl_sources)
+login_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+login_SOURCES += $(common_dl_sources)
 login_LDADD += $(common_dl_ldadd)
+else
+login_LDADD += $(ECONF_LIBS)
+endif
 login_CFLAGS += $(ECONF_CFLAGS)
 endif
 if HAVE_LINUXPAM
@@ -145,23 +151,29 @@ endif
 if HAVE_SELINUX
 chfn_chsh_sources += \
 	$(selinux_sources) \
-	$(common_dl_sources) \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
-chfn_chsh_ldadd += $(common_dl_ldadd)
+if !USE_DLOPEN_SELINUX
+chfn_chsh_ldadd += $(SELINUX_LIBS)
+endif
 chfn_chsh_cflags += $(SELINUX_CFLAGS)
 endif
 
 if HAVE_ECONF
-if !HAVE_SELINUX
-chfn_chsh_sources += \
-	$(econf_sources) \
-	$(common_dl_sources)
-chfn_chsh_ldadd += $(common_dl_ldadd)
-else
 chfn_chsh_sources += $(econf_sources)
+if !USE_DLOPEN_ECONF
+chfn_chsh_ldadd += $(ECONF_LIBS)
 endif
 chfn_chsh_cflags += $(ECONF_CFLAGS)
+endif
+if USE_DLOPEN_SELINUX
+chfn_chsh_sources += $(common_dl_sources)
+chfn_chsh_ldadd += $(common_dl_ldadd)
+else
+if USE_DLOPEN_ECONF
+chfn_chsh_sources += $(common_dl_sources)
+chfn_chsh_ldadd += $(common_dl_ldadd)
+endif
 endif
 
 chfn_SOURCES = \
@@ -195,10 +207,13 @@ su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_ECONF
-su_SOURCES += \
-	$(econf_sources) \
-	$(common_dl_sources)
+su_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+su_SOURCES += $(common_dl_sources)
 su_LDADD += $(common_dl_ldadd)
+else
+su_LDADD += $(ECONF_LIBS)
+endif
 su_CFLAGS += $(ECONF_CFLAGS)
 endif
 if HAVE_LINUXPAM
@@ -226,10 +241,13 @@ runuser_SOURCES = \
 runuser_CFLAGS = $(AM_CFLAGS)
 runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_ECONF
-runuser_SOURCES += \
-	$(econf_sources) \
-	$(common_dl_sources)
+runuser_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+runuser_SOURCES += $(common_dl_sources)
 runuser_LDADD += $(common_dl_ldadd)
+else
+runuser_LDADD += $(ECONF_LIBS)
+endif
 runuser_CFLAGS += $(ECONF_CFLAGS)
 endif
 if HAVE_LINUXPAM
@@ -268,28 +286,35 @@ lslogins_SOURCES = \
 lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
-lslogins_SOURCES += \
-	$(selinux_sources)
+lslogins_SOURCES += $(selinux_sources)
+if !USE_DLOPEN_SELINUX
+lslogins_LDADD += $(SELINUX_LIBS)
+endif
 lslogins_CFLAGS += $(SELINUX_CFLAGS)
 endif
 if HAVE_SYSTEMD
-lslogins_SOURCES += \
-	$(systemd_sources)
+lslogins_SOURCES += $(systemd_sources)
+if !USE_DLOPEN_SYSTEMD
+lslogins_LDADD += $(SYSTEMD_LIBS)
+endif
 lslogins_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 if HAVE_ECONF
 lslogins_SOURCES += $(econf_sources)
+if !USE_DLOPEN_ECONF
+lslogins_LDADD += $(ECONF_LIBS)
+endif
 lslogins_CFLAGS += $(ECONF_CFLAGS)
 endif
-if HAVE_SELINUX
+if USE_DLOPEN_SELINUX
 lslogins_SOURCES += $(common_dl_sources)
 lslogins_LDADD += $(common_dl_ldadd)
 else
-if HAVE_SYSTEMD
+if USE_DLOPEN_SYSTEMD
 lslogins_SOURCES += $(common_dl_sources)
 lslogins_LDADD += $(common_dl_ldadd)
 else
-if HAVE_ECONF
+if USE_DLOPEN_ECONF
 lslogins_SOURCES += $(common_dl_sources)
 lslogins_LDADD += $(common_dl_ldadd)
 endif
@@ -312,10 +337,13 @@ vipw_SOURCES = \
 	login-utils/setpwnam.h
 vipw_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
-vipw_SOURCES += \
-	$(selinux_sources) \
-	$(common_dl_sources)
+vipw_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+vipw_SOURCES += $(common_dl_sources)
 vipw_LDADD += $(common_dl_ldadd)
+else
+vipw_LDADD += $(SELINUX_LIBS)
+endif
 vipw_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 install-exec-hook-vipw::
