@@ -27,18 +27,28 @@ agetty_LDADD += -lutil
 endif
 
 if HAVE_ECONF
-agetty_SOURCES += \
-	$(econf_sources) \
-	$(common_dl_sources)
-agetty_LDADD += $(common_dl_ldadd)
+agetty_SOURCES += $(econf_sources)
+if !USE_DLOPEN_ECONF
+agetty_LDADD += $(ECONF_LIBS)
+endif
 agetty_CFLAGS += $(ECONF_CFLAGS)
 endif
 
 if HAVE_SYSTEMD
-agetty_SOURCES += \
-	$(systemd_sources) \
-	$(common_dl_sources)
-agetty_LDADD += $(common_dl_ldadd)
+agetty_SOURCES += $(systemd_sources)
+if !USE_DLOPEN_SYSTEMD
+agetty_LDADD += $(SYSTEMD_LIBS)
+endif
 agetty_CFLAGS += $(SYSTEMD_CFLAGS)
+endif
+
+if USE_DLOPEN_ECONF
+agetty_SOURCES += $(common_dl_sources)
+agetty_LDADD += $(common_dl_ldadd)
+else
+if USE_DLOPEN_SYSTEMD
+agetty_SOURCES += $(common_dl_sources)
+agetty_LDADD += $(common_dl_ldadd)
+endif
 endif
 endif # BUILD_AGETTY

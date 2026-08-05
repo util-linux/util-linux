@@ -88,25 +88,32 @@ endif # !HAVE_TINFO
 MANPAGES += lib/terminal-colors.d.5
 dist_noinst_DATA += lib/terminal-colors.d.5.adoc
 
-# Common dlopen infrastructure -- used by all tools with dlopen support
+# Common dlopen infrastructure
 common_dl_sources = \
 	lib/dl-utils.c \
 	include/dl-utils.h
 common_dl_ldadd = -ldl
 
-# Per-library dlopen sources
-selinux_sources = \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-cryptsetup_sources = \
-	lib/dl-cryptsetup.c \
-	include/dl-cryptsetup.h
-systemd_sources = \
-	lib/dl-systemd.c \
-	include/dl-systemd.h
-econf_sources = \
-	lib/dl-econf.c \
-	include/dl-econf.h
+# Per-library sources (header always, .c only with dlopen)
+selinux_sources = include/dl-selinux.h
+if USE_DLOPEN_SELINUX
+selinux_sources += lib/dl-selinux.c
+endif
+
+cryptsetup_sources = include/dl-cryptsetup.h
+if USE_DLOPEN_CRYPTSETUP
+cryptsetup_sources += lib/dl-cryptsetup.c
+endif
+
+systemd_sources = include/dl-systemd.h
+if USE_DLOPEN_SYSTEMD
+systemd_sources += lib/dl-systemd.c
+endif
+
+econf_sources = include/dl-econf.h
+if USE_DLOPEN_ECONF
+econf_sources += lib/dl-econf.c
+endif
 
 check_PROGRAMS += \
 	test_blkdev \

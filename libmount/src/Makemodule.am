@@ -65,27 +65,34 @@ libmount_la_SOURCES += \
 	$(selinux_sources) \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
+if !USE_DLOPEN_SELINUX
+libmount_la_LIBADD += $(SELINUX_LIBS)
+endif
 endif
 
 if HAVE_CRYPTSETUP
-libmount_la_SOURCES += \
-	$(cryptsetup_sources)
+libmount_la_SOURCES += $(cryptsetup_sources)
+if !USE_DLOPEN_CRYPTSETUP
+libmount_la_LIBADD += $(CRYPTSETUP_LIBS)
+endif
 endif
 
 if USE_LIBMOUNT_UDEV_SUPPORT
-libmount_la_SOURCES += \
-	$(systemd_sources)
+libmount_la_SOURCES += $(systemd_sources)
+if !USE_DLOPEN_SYSTEMD
+libmount_la_LIBADD += $(SYSTEMD_LIBS)
+endif
 endif
 
-if HAVE_SELINUX
+if USE_DLOPEN_SELINUX
 libmount_la_SOURCES += $(common_dl_sources)
 libmount_la_LIBADD += $(common_dl_ldadd)
 else
-if HAVE_CRYPTSETUP
+if USE_DLOPEN_CRYPTSETUP
 libmount_la_SOURCES += $(common_dl_sources)
 libmount_la_LIBADD += $(common_dl_ldadd)
 else
-if USE_LIBMOUNT_UDEV_SUPPORT
+if USE_DLOPEN_SYSTEMD
 libmount_la_SOURCES += $(common_dl_sources)
 libmount_la_LIBADD += $(common_dl_ldadd)
 endif
@@ -136,13 +143,22 @@ libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
 libmount_tests_ldflags = -static
 libmount_tests_ldadd   = libmount.la libblkid.la $(LDADD) $(REALTIME_LIBS)
 
-if HAVE_SELINUX
+if !USE_DLOPEN_SELINUX
+libmount_tests_ldadd += $(SELINUX_LIBS)
+endif
+if !USE_DLOPEN_CRYPTSETUP
+libmount_tests_ldadd += $(CRYPTSETUP_LIBS)
+endif
+if !USE_DLOPEN_SYSTEMD
+libmount_tests_ldadd += $(SYSTEMD_LIBS)
+endif
+if USE_DLOPEN_SELINUX
 libmount_tests_ldadd += $(common_dl_ldadd)
 else
-if HAVE_CRYPTSETUP
+if USE_DLOPEN_CRYPTSETUP
 libmount_tests_ldadd += $(common_dl_ldadd)
 else
-if USE_LIBMOUNT_UDEV_SUPPORT
+if USE_DLOPEN_SYSTEMD
 libmount_tests_ldadd += $(common_dl_ldadd)
 endif
 endif
