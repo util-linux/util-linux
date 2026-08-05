@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <utmpx.h>
 
+#include "issuefile-parser.h"
 #include "ttyutils.h"
 
 /*
@@ -40,6 +41,10 @@
 #endif
 
 struct agetty_issue {
+	struct agetty_ifile ifile;
+	struct agetty_options *op;
+	struct termios *tp;
+
 	FILE *output;
 	char *mem;
 	size_t mem_sz;
@@ -52,6 +57,7 @@ struct agetty_issue {
 #endif
 	bool do_tcsetattr;
 	bool do_tcrestore;
+	bool parsed;
 };
 
 /* Numbers of args for login(1) */
@@ -155,9 +161,11 @@ extern void agetty_auto_baud(struct termios *tp);
 extern void agetty_next_speed(struct agetty_options *op, struct termios *tp);
 extern void agetty_erase_char(int visual_count, struct chardata *cp);
 
-extern void agetty_print_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
-extern void agetty_eval_issue_file(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
-extern void agetty_show_issue(struct agetty_options *op);
+extern void agetty_issue_reset(struct agetty_issue *ie);
+extern void agetty_issue_register_netlink(struct agetty_issue *ie);
+extern void agetty_issue_print(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+extern void agetty_issue_eval(struct agetty_issue *ie, struct agetty_options *op, struct termios *tp);
+extern void agetty_issue_show(struct agetty_options *op);
 #ifdef AGETTY_RELOAD
 extern int agetty_issue_is_changed(struct agetty_issue *ie);
 extern void agetty_reload(void);

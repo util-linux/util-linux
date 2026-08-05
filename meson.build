@@ -3995,6 +3995,17 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'test_agetty_issuefile',
+  'agetty-cmd/issuefile-parser.c',
+  c_args : ['-DTEST_PROGRAM'],
+  include_directories : includes,
+  link_with : lib_common,
+  build_by_default: program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
   'test_strerror',
   'tests/helpers/test_strerror.c',
   include_directories : includes,

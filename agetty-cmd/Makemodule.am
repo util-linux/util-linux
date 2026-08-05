@@ -7,6 +7,9 @@ agetty_SOURCES = agetty-cmd/agetty.c \
 		 agetty-cmd/agetty.h \
 		 agetty-cmd/credentials.c \
 		 agetty-cmd/issuefile.c \
+		 agetty-cmd/issuefile-netlink.c \
+		 agetty-cmd/issuefile-parser.c \
+		 agetty-cmd/issuefile-parser.h \
 		 agetty-cmd/tty.c \
 		 agetty-cmd/utils.c
 
@@ -28,4 +31,9 @@ if HAVE_SYSTEMD
 agetty_LDADD += $(SYSTEMD_LIBS)
 agetty_CFLAGS = $(SYSTEMD_CFLAGS)
 endif
+check_PROGRAMS += test_agetty_issuefile
+test_agetty_issuefile_SOURCES = agetty-cmd/issuefile-parser.c
+test_agetty_issuefile_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_agetty_issuefile_LDADD = $(LDADD) libcommon.la
+
 endif # BUILD_AGETTY
