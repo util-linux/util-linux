@@ -417,15 +417,10 @@ conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
 conf.set('USE_SYSTEMD', lib_systemd.found() ? 1 : false)
 summary('libsystemd', lib_systemd.found() ? 'enabled (dlopen)' : 'disabled', section : 'components')
 
-# libsystemd is loaded with dlopen() at runtime (through lib/dl-systemd.c)
-# instead of being linked, so the tools only need the headers at build time
-# plus libdl. lib_systemd_dlopen_deps bundles both and is used by all
-# libsystemd-using targets.
-lib_systemd_compile_deps = []
-lib_systemd_dlopen_deps = []
+systemd_deps = []
 if lib_systemd.found()
-  lib_systemd_compile_deps = [lib_systemd.partial_dependency(compile_args : true, includes : true)]
-  lib_systemd_dlopen_deps = lib_systemd_compile_deps + [lib_dl]
+  systemd_deps = [lib_systemd.partial_dependency(compile_args : true, includes : true),
+                  lib_dl]
 endif
 
 # Since systemd-240, which provides basic functions in sd-device.
@@ -498,6 +493,12 @@ have = cc.has_function(
   dependencies : lib_cryptsetup)
 conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 
+cryptsetup_deps = []
+if lib_cryptsetup.found()
+  cryptsetup_deps = [lib_cryptsetup.partial_dependency(compile_args : true, includes : true),
+                     lib_dl]
+endif
+
 lib_cap_ng = dependency(
   'libcap-ng',
   required : get_option('build-setpriv'))
@@ -510,14 +511,13 @@ lib_selinux = dependency(
   version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
-lib_selinux_compile_deps = []
-lib_selinux_dlopen_deps = []
+selinux_deps = []
 if lib_selinux.found()
   have = cc.has_function('security_get_initial_context',
                          dependencies : lib_selinux)
   conf.set('HAVE_SECURITY_GET_INITIAL_CONTEXT', have ? 1 : false)
-  lib_selinux_compile_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true)]
-  lib_selinux_dlopen_deps = lib_selinux_compile_deps + [lib_dl]
+  selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
+                  lib_dl]
 endif
 
 lib_magic = dependency(
@@ -536,13 +536,10 @@ have = cc.has_function(
   dependencies : lib_econf)
 conf.set('HAVE_ECONF_READCONFIG', have ? 1 : false)
 
-# libeconf is loaded with dlopen() at runtime (through lib/dl-econf.c) instead
-# of being linked, so the tools only need the headers at build time plus libdl.
-lib_econf_compile_deps = []
-lib_econf_dlopen_deps = []
+econf_deps = []
 if lib_econf.found()
-  lib_econf_compile_deps = [lib_econf.partial_dependency(compile_args : true, includes : true)]
-  lib_econf_dlopen_deps = lib_econf_compile_deps + [lib_dl]
+  econf_deps = [lib_econf.partial_dependency(compile_args : true, includes : true),
+                lib_dl]
 endif
 
 lib_audit = dependency(
@@ -1086,6 +1083,13 @@ bashcompletionslinks = {}
 
 subdir('include')
 subdir('lib')
+
+common_dl_sources = [dl_utils_c]
+selinux_sources = lib_selinux.found() ? [dl_selinux_c] : []
+cryptsetup_sources = lib_cryptsetup.found() ? [dl_cryptsetup_c] : []
+systemd_sources = lib_systemd.found() ? [dl_systemd_c] : []
+econf_sources = lib_econf.found() ? [dl_econf_c] : []
+
 subdir('libblkid')
 subdir('libmount')
 subdir('libsmartcols')
@@ -1261,13 +1265,13 @@ opt = get_option('build-lslogins') \
 exe = executable(
   'lslogins',
   'login-utils/lslogins.c',
-  dl_utils_c, dl_selinux_c, dl_systemd_c,
+  selinux_sources, systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols,
                lib_common_logindefs] +
                (build_liblastlog2 ? [lib_lastlog2] : []),
-  dependencies : lib_systemd_dlopen_deps + lib_selinux_dlopen_deps,
+  dependencies : systemd_deps + selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1284,10 +1288,10 @@ exe = executable(
   'vipw',
   'login-utils/vipw.c',
   'login-utils/setpwnam.h',
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1952,11 +1956,11 @@ opt = get_option('build-zramctl').allowed()
 exe = executable(
   'zramctl',
   zramctl_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : lib_systemd_dlopen_deps,
+  dependencies : systemd_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2005,11 +2009,11 @@ opt = get_option('build-mount').allowed()
 exe = executable(
   'mount',
   mount_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_smartcols],
-  dependencies : [mount_dep] + lib_selinux_dlopen_deps,
+  dependencies : [mount_dep] + selinux_deps,
   install_mode : 'rwsr-xr-x',
   install : opt,
   build_by_default : opt)
@@ -2247,10 +2251,10 @@ opt = get_option('build-nsenter') \
 exe = executable(
   'nsenter',
   nsenter_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2264,10 +2268,10 @@ opt = opt and 'nsenter' in static_programs
 exe = executable(
   'nsenter.static',
   nsenter_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2434,7 +2438,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_uuid],
-  dependencies: [blkid_dep] + lib_selinux_dlopen_deps,
+  dependencies: [blkid_dep] + selinux_deps,
   install_dir : sbindir,
   install : true)
 if not is_disabler(exe)
@@ -2828,10 +2832,10 @@ opt = get_option('build-agetty') \
 exe = executable(
   'agetty',
   agetty_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common, lib_common_logindefs],
-  dependencies : [BSD ? lib_util : []] + lib_systemd_dlopen_deps,
+  dependencies : [BSD ? lib_util : []] + systemd_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2884,10 +2888,10 @@ opt = get_option('build-wall').allowed()
 exe = executable(
   'wall',
   wall_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_systemd_dlopen_deps,
+  dependencies : systemd_deps,
   install_dir : usrbin_exec_dir,
   install_mode : tty_install_mode,
   install : opt,
@@ -2907,10 +2911,10 @@ opt = get_option('build-write') \
 exe = executable(
   'write',
   write_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_systemd_dlopen_deps,
+  dependencies : systemd_deps,
   install_dir : usrbin_exec_dir,
   install_mode : tty_install_mode,
   install : opt,
@@ -2945,10 +2949,10 @@ opt = get_option('build-sulogin') \
 exe = executable(
   'sulogin',
   sulogin_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [lib_crypt] + lib_selinux_dlopen_deps,
+  dependencies : [lib_crypt] + selinux_deps,
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2978,10 +2982,10 @@ opt = get_option('build-logger').allowed()
 exe = executable(
   'logger',
   logger_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : lib_systemd_dlopen_deps,
+  dependencies : systemd_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2994,11 +2998,11 @@ endif
 exe = executable(
   'test_logger',
   logger_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   c_args : '-DTEST_LOGGER',
   link_with : [lib_common],
-  dependencies : lib_systemd_dlopen_deps,
+  dependencies : systemd_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
@@ -3051,9 +3055,9 @@ opt = get_option('build-namei').allowed()
 exe = executable(
   'namei',
   namei_sources,
-  dl_utils_c, dl_selinux_c,
+  selinux_sources, common_dl_sources,
   include_directories : includes,
-  dependencies : lib_selinux_dlopen_deps,
+  dependencies : selinux_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -3171,11 +3175,11 @@ opt = build_uuidd
 exe = executable(
   'uuidd',
   uuidd_sources,
-  dl_utils_c, dl_systemd_c,
+  systemd_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common,
                lib_uuid],
-  dependencies : [realtime_libs] + lib_systemd_dlopen_deps,
+  dependencies : [realtime_libs] + systemd_deps,
   install_dir : usrsbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -3839,12 +3843,11 @@ endif
 exe = executable(
   'test_logindefs',
   'lib/logindefs.c',
-  dl_utils_c,
-  dl_econf_c,
+  econf_sources, common_dl_sources,
   c_args : ['-DTEST_PROGRAM'],
   include_directories : dir_include,
   link_with : lib_common,
-  dependencies : lib_econf_dlopen_deps,
+  dependencies : econf_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe

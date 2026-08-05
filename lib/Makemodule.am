@@ -76,11 +76,9 @@ libcommon_logindefs_la_SOURCES = \
 if HAVE_ECONF
 libcommon_logindefs_la_CFLAGS += $(ECONF_CFLAGS)
 libcommon_logindefs_la_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-econf.c \
-	include/dl-econf.h
-libcommon_logindefs_la_LIBADD = $(ECONF_LIBS)
+	$(econf_sources) \
+	$(common_dl_sources)
+libcommon_logindefs_la_LIBADD = $(common_dl_ldadd)
 endif
 
 EXTRA_LTLIBRARIES += libcommon_shells.la
@@ -91,11 +89,9 @@ if HAVE_ECONF
 if USE_VENDORDIR
 libcommon_shells_la_CFLAGS += $(ECONF_CFLAGS)
 libcommon_shells_la_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-econf.c \
-	include/dl-econf.h
-libcommon_shells_la_LIBADD = $(ECONF_LIBS)
+	$(econf_sources) \
+	$(common_dl_sources)
+libcommon_shells_la_LIBADD = $(common_dl_ldadd)
 endif
 endif
 
@@ -116,6 +112,26 @@ endif # !HAVE_TINFO
 
 MANPAGES += lib/terminal-colors.d.5
 dist_noinst_DATA += lib/terminal-colors.d.5.adoc
+
+# Common dlopen infrastructure -- used by all tools with dlopen support
+common_dl_sources = \
+	lib/dl-utils.c \
+	include/dl-utils.h
+common_dl_ldadd = -ldl
+
+# Per-library dlopen sources
+selinux_sources = \
+	lib/dl-selinux.c \
+	include/dl-selinux.h
+cryptsetup_sources = \
+	lib/dl-cryptsetup.c \
+	include/dl-cryptsetup.h
+systemd_sources = \
+	lib/dl-systemd.c \
+	include/dl-systemd.h
+econf_sources = \
+	lib/dl-econf.c \
+	include/dl-econf.h
 
 check_PROGRAMS += \
 	test_blkdev \
