@@ -75,6 +75,7 @@ static int probe_minix(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const unsigned char *ext;
+	const unsigned char *erofs;
 	const unsigned char *data;
 	int version = 0, swabme = 0;
 	unsigned long zones, ninodes, imaps, zmaps;
@@ -145,6 +146,17 @@ static int probe_minix(blkid_probe pr,
 		return errno ? -errno : 1;
 
 	if (memcmp(ext, "\123\357", 2) == 0)
+		return 1;
+
+	/* erofs superblock starts at 0x400 too, and its inode count field
+	 * overlaps the minix magic offset, so an erofs image can be
+	 * misinterpreted as minix. (For erofs magic and offsets see erofs.c.)
+	 */
+	erofs = blkid_probe_get_buffer(pr, 0x400, 4);
+	if (!erofs)
+		return errno ? -errno : 1;
+
+	if (memcmp(erofs, "\xe2\xe1\xf5\xe0", 4) == 0)
 		return 1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);
