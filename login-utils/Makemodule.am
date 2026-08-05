@@ -63,8 +63,9 @@ MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
 	login-utils/login.c \
-	lib/logindefs.c
-login_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+	lib/logindefs.c \
+	lib/shells.c
+login_LDADD = $(LDADD) libcommon.la -lpam
 login_CFLAGS = $(AM_CFLAGS)
 if HAVE_ECONF
 login_SOURCES += \
@@ -170,11 +171,13 @@ chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 
-chsh_SOURCES = login-utils/chsh.c \
+chsh_SOURCES = \
+	login-utils/chsh.c \
+	lib/shells.c \
 	$(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
-chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_shells.la
+chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 endif # BUILD_CHFN_CHSH
 
 
@@ -186,10 +189,11 @@ su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	lib/logindefs.c
+	lib/logindefs.c \
+	lib/shells.c
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+su_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_ECONF
 su_SOURCES += \
 	$(econf_sources) \
@@ -217,9 +221,10 @@ runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
 	login-utils/su-common.h \
-	lib/logindefs.c
+	lib/logindefs.c \
+	lib/shells.c
 runuser_CFLAGS = $(AM_CFLAGS)
-runuser_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_ECONF
 runuser_SOURCES += \
 	$(econf_sources) \

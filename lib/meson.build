@@ -60,11 +60,7 @@ dl_econf_c = files('dl-econf.c')
 
 logindefs_c = files('logindefs.c')
 
-lib_common_shells = static_library('common_shells',
-  sources : ['shells.c', dl_utils_c, dl_econf_c],
-  include_directories : dir_include,
-  dependencies : econf_deps,
-)
+shells_c = files('shells.c')
 
 selinux_utils_c = files('selinux-utils.c')
 
