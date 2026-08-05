@@ -152,6 +152,11 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 	return 0;
 }
 
+int ul_buffer_append_char(struct ul_buffer *buf, const char c)
+{
+	return ul_buffer_append_data(buf, &c, 1);
+}
+
 int ul_buffer_append_string(struct ul_buffer *buf, const char *str)
 {
 	if (!str)
@@ -332,6 +337,19 @@ int main(void)
 
 	ul_buffer_free_data(&buf);
 	ul_buffer_appendf(&buf, "a%se%d", "bcd", 10);
+	str = ul_buffer_get_data(&buf, &sz, NULL);
+	printf("data [%zu] '%s'\n", sz, str);
+
+	ul_buffer_free_data(&buf);
+	ul_buffer_append_char(&buf, 'x');
+	{
+		char c = 'y';
+		ul_buffer_append_char(&buf, c);
+	}
+	{
+		const char c = 'z';
+		ul_buffer_append_char(&buf, c);
+	}
 	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 

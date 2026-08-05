@@ -31,6 +31,7 @@ void ul_buffer_set_chunksize(struct ul_buffer *buf, size_t sz);
 void ul_buffer_refer_string(struct ul_buffer *buf, char *str);
 int ul_buffer_alloc_data(struct ul_buffer *buf, size_t sz);
 int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz);
+int ul_buffer_append_char(struct ul_buffer *buf, const char c);
 int ul_buffer_append_string(struct ul_buffer *buf, const char *str);
 int ul_buffer_append_ntimes(struct ul_buffer *buf, size_t n, const char *str);
 int ul_buffer_appendf(struct ul_buffer *buf, const char *format, ...)
