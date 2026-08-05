@@ -1473,8 +1473,6 @@ static int ui_draw_extra(struct cfdisk *cf)
 	if ((size_t) win_ex_start_line + win_height + 1 < MENU_START_LINE)
 		win_ex_start_line = MENU_START_LINE - win_height;
 
-	win_ex = subwin(stdscr, win_height, ui_cols - 2, win_ex_start_line, 1);
-
 	scols_table_reduce_termwidth(ln->extra, 4);
 	rc = scols_print_table_to_string(ln->extra, &tbstr);
 	if (rc < 0 || !tbstr)
@@ -1484,6 +1482,11 @@ static int ui_draw_extra(struct cfdisk *cf)
 	while ((end = strchr(end, '\n')))
 		*end++ = '\0';
 
+	win_ex = subwin(stdscr, win_height, ui_cols - 2, win_ex_start_line, 1);
+	if (!win_ex) {
+		free(tbstr);
+		return 0;
+	}
 	box(win_ex, 0, 0);
 
 	end = tbstr;
