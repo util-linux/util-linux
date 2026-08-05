@@ -415,12 +415,24 @@ lib_systemd = dependency(
   required : get_option('systemd'))
 conf.set('HAVE_LIBSYSTEMD', lib_systemd.found() ? 1 : false)
 conf.set('USE_SYSTEMD', lib_systemd.found() ? 1 : false)
-summary('libsystemd', lib_systemd.found() ? 'enabled (dlopen)' : 'disabled', section : 'components')
+use_dlopen_systemd = get_option('systemd-dlopen') and lib_systemd.found()
+conf.set('USE_DLOPEN_SYSTEMD', use_dlopen_systemd ? 1 : false)
+
+summary('libsystemd',
+        lib_systemd.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('systemd dlopen',
+        use_dlopen_systemd ? 'enabled' : 'disabled',
+        section : 'components')
 
 systemd_deps = []
 if lib_systemd.found()
-  systemd_deps = [lib_systemd.partial_dependency(compile_args : true, includes : true),
-                  lib_dl]
+  if use_dlopen_systemd
+    systemd_deps = [lib_systemd.partial_dependency(compile_args : true, includes : true),
+                    lib_dl]
+  else
+    systemd_deps = [lib_systemd]
+  endif
 endif
 
 # Since systemd-240, which provides basic functions in sd-device.
@@ -483,9 +495,14 @@ lib_cryptsetup = dependency(
   'libcryptsetup',
   required : get_option('cryptsetup'))
 conf.set('HAVE_CRYPTSETUP', lib_cryptsetup.found() ? 1 : false)
+use_dlopen_cryptsetup = get_option('cryptsetup-dlopen') and lib_cryptsetup.found()
+conf.set('USE_DLOPEN_CRYPTSETUP', use_dlopen_cryptsetup ? 1 : false)
 
-summary('cryptsetup support (dlopen)',
+summary('cryptsetup support',
         lib_cryptsetup.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('cryptsetup dlopen',
+        use_dlopen_cryptsetup ? 'enabled' : 'disabled',
         section : 'components')
 
 have = cc.has_function(
@@ -495,8 +512,12 @@ conf.set('HAVE_CRYPT_ACTIVATE_BY_SIGNED_KEY', have ? 1 : false)
 
 cryptsetup_deps = []
 if lib_cryptsetup.found()
-  cryptsetup_deps = [lib_cryptsetup.partial_dependency(compile_args : true, includes : true),
-                     lib_dl]
+  if use_dlopen_cryptsetup
+    cryptsetup_deps = [lib_cryptsetup.partial_dependency(compile_args : true, includes : true),
+                       lib_dl]
+  else
+    cryptsetup_deps = [lib_cryptsetup]
+  endif
 endif
 
 lib_cap_ng = dependency(
@@ -511,13 +532,27 @@ lib_selinux = dependency(
   version : '>= 2.5',
   required : get_option('selinux'))
 conf.set('HAVE_LIBSELINUX', lib_selinux.found() ? 1 : false)
+use_dlopen_selinux = get_option('selinux-dlopen') and lib_selinux.found()
+conf.set('USE_DLOPEN_SELINUX', use_dlopen_selinux ? 1 : false)
+
+summary('SELinux support',
+        lib_selinux.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('SELinux dlopen',
+        use_dlopen_selinux ? 'enabled' : 'disabled',
+        section : 'components')
+
 selinux_deps = []
 if lib_selinux.found()
   have = cc.has_function('security_get_initial_context',
                          dependencies : lib_selinux)
   conf.set('HAVE_SECURITY_GET_INITIAL_CONTEXT', have ? 1 : false)
-  selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
-                  lib_dl]
+  if use_dlopen_selinux
+    selinux_deps = [lib_selinux.partial_dependency(compile_args : true, includes : true),
+                    lib_dl]
+  else
+    selinux_deps = [lib_selinux]
+  endif
 endif
 
 lib_magic = dependency(
@@ -529,7 +564,15 @@ lib_econf = dependency(
   'libeconf',
   required : get_option('econf'))
 conf.set('HAVE_LIBECONF', lib_econf.found() ? 1 : false)
-summary('libeconf', lib_econf.found() ? 'enabled (dlopen)' : 'disabled', section : 'components')
+use_dlopen_econf = get_option('econf-dlopen') and lib_econf.found()
+conf.set('USE_DLOPEN_ECONF', use_dlopen_econf ? 1 : false)
+
+summary('libeconf',
+        lib_econf.found() ? 'enabled' : 'disabled',
+        section : 'components')
+summary('econf dlopen',
+        use_dlopen_econf ? 'enabled' : 'disabled',
+        section : 'components')
 
 have = cc.has_function(
   'econf_readConfig',
@@ -538,8 +581,12 @@ conf.set('HAVE_ECONF_READCONFIG', have ? 1 : false)
 
 econf_deps = []
 if lib_econf.found()
-  econf_deps = [lib_econf.partial_dependency(compile_args : true, includes : true),
-                lib_dl]
+  if use_dlopen_econf
+    econf_deps = [lib_econf.partial_dependency(compile_args : true, includes : true),
+                  lib_dl]
+  else
+    econf_deps = [lib_econf]
+  endif
 endif
 
 lib_audit = dependency(
@@ -1084,11 +1131,15 @@ bashcompletionslinks = {}
 subdir('include')
 subdir('lib')
 
-common_dl_sources = [dl_utils_c]
-selinux_sources = lib_selinux.found() ? [dl_selinux_c] : []
-cryptsetup_sources = lib_cryptsetup.found() ? [dl_cryptsetup_c] : []
-systemd_sources = lib_systemd.found() ? [dl_systemd_c] : []
-econf_sources = lib_econf.found() ? [dl_econf_c] : []
+if use_dlopen_selinux or use_dlopen_cryptsetup or use_dlopen_systemd or use_dlopen_econf
+  common_dl_sources = [dl_utils_c]
+else
+  common_dl_sources = []
+endif
+selinux_sources = use_dlopen_selinux ? [dl_selinux_c] : []
+cryptsetup_sources = use_dlopen_cryptsetup ? [dl_cryptsetup_c] : []
+systemd_sources = use_dlopen_systemd ? [dl_systemd_c] : []
+econf_sources = use_dlopen_econf ? [dl_econf_c] : []
 
 subdir('libblkid')
 subdir('libmount')

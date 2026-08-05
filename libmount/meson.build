@@ -83,7 +83,7 @@ if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
   lib_mount_sources += systemd_sources
 endif
 
-if lib_selinux.found() or lib_cryptsetup.found() or conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
+if use_dlopen_selinux or use_dlopen_cryptsetup or (conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1' and use_dlopen_systemd)
   lib_mount_sources += common_dl_sources
 endif
 
@@ -120,10 +120,10 @@ lib_mount_static = static_library(
   install : false)
 mount_static_dep = declare_dependency(link_with: lib_mount_static, include_directories: '.')
 
-lib__mount_deps = [
-  lib_dl,
-  realtime_libs
-]
+lib__mount_deps = [realtime_libs]
+if use_dlopen_selinux or use_dlopen_cryptsetup or use_dlopen_systemd
+  lib__mount_deps += [lib_dl]
+endif
 
 libmount_link_depends = []
 libmount_link_args = []

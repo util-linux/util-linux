@@ -45,7 +45,7 @@ if lib_selinux.found()
   chfn_chsh_deps += selinux_deps
 endif
 
-if lib_econf.found() or lib_selinux.found()
+if use_dlopen_econf or use_dlopen_selinux
   chfn_chsh_sources += common_dl_sources
 endif
 
