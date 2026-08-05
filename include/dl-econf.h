@@ -9,6 +9,8 @@
 
 #include <libeconf.h>
 
+#ifdef USE_DLOPEN_ECONF
+
 #include "dl-utils.h"
 
 /* Pointers to libeconf functions (initialized by dlsym()) */
@@ -46,6 +48,14 @@ extern struct ul_econf_opers ul_econf;
 extern int ul_dlopen_libeconf(void);
 
 #define econf_call(_func)	(ul_econf._func)
+
+#else /* !USE_DLOPEN_ECONF */
+
+static inline int ul_dlopen_libeconf(void) { return 0; }
+
+#define econf_call(_func)	(_func)
+
+#endif /* USE_DLOPEN_ECONF */
 
 #endif /* HAVE_LIBECONF */
 #endif /* UTIL_LINUX_DL_ECONF_H */
