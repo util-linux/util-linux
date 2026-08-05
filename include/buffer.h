@@ -52,5 +52,49 @@ char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short  ptr_idx);
 size_t ul_buffer_get_pointer_length(struct ul_buffer *buf, unsigned short ptr_idx);
 size_t ul_buffer_get_safe_pointer_width(struct ul_buffer *buf, unsigned short ptr_idx);
 
+/*
+ * Include xalloc.h first to use the buffer_x*() functions.
+ */
+#ifdef XALLOC_EXIT_CODE
+static inline int ul_buffer_xappend_string(struct ul_buffer *buf, const char *str)
+{
+	int r = ul_buffer_append_string(buf, str);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline int ul_buffer_xappend_char(struct ul_buffer *buf, const char c)
+{
+	int r = ul_buffer_append_char(buf, c);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 0)))
+int ul_buffer_xappendvf(struct ul_buffer *buf, const char *format, va_list ap)
+{
+	int r = ul_buffer_appendvf(buf, format, ap);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 3)))
+int ul_buffer_xappendf(struct ul_buffer *buf, const char *format, ...)
+{
+	va_list ap;
+	int res;
+
+	va_start(ap, format);
+	res = ul_buffer_xappendvf(buf, format, ap);
+	va_end(ap);
+
+	return res;
+}
+#endif/* XALLOC_EXIT_CODE */
 
 #endif /* UTIL_LINUX_BUFFER */
