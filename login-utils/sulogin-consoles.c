@@ -389,6 +389,20 @@ static int detect_consoles_from_proc(struct list_head *consoles)
 		free(name);
 		if (rc < 0)
 			goto done;
+		if (!list_empty(consoles)) {
+			struct console *last;
+			last = list_last_entry(consoles, struct console, entry);
+			if (!strchr(fbuf, 'C'))
+				last->flags |= CON_CONSDEV;
+#if defined(__s390__) || defined(__s390x__)
+			if (maj == 4 && min == 64)
+				last->flags |= CON_3215;
+			if (maj == 4 && min >= 65)
+				last->flags |= CON_SCLP;
+			else if (maj == 227 && min >= 1)
+				last->flags |= CON_3270;
+#endif
+		}
 	}
 
 	rc = list_empty(consoles) ? 1 : 0;
