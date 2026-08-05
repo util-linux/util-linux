@@ -610,10 +610,19 @@ usrbin_exec_PROGRAMS += setpriv
 MANPAGES += sys-utils/setpriv.1
 dist_noinst_DATA += sys-utils/setpriv.1.adoc
 setpriv_SOURCES = sys-utils/setpriv.c \
-		  lib/caputils.c
+		  lib/caputils.c \
+		  lib/logindefs.c
+setpriv_CFLAGS = $(AM_CFLAGS)
 dist_noinst_HEADERS += sys-utils/setpriv-landlock.h
 if HAVE_LANDLOCK
 setpriv_SOURCES += sys-utils/setpriv-landlock.c
 endif
-setpriv_LDADD = $(LDADD) $(CAP_NG_LIBS) libcommon.la libcommon_logindefs.la
+setpriv_LDADD = $(LDADD) $(CAP_NG_LIBS) libcommon.la
+if HAVE_ECONF
+setpriv_SOURCES += \
+	$(econf_sources) \
+	$(common_dl_sources)
+setpriv_LDADD += $(common_dl_ldadd)
+setpriv_CFLAGS += $(ECONF_CFLAGS)
+endif
 endif # BUILD_SETPRIV

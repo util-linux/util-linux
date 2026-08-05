@@ -8,7 +8,8 @@ agetty_SOURCES = agetty-cmd/agetty.c \
 		 agetty-cmd/credentials.c \
 		 agetty-cmd/issuefile.c \
 		 agetty-cmd/tty.c \
-		 agetty-cmd/utils.c
+		 agetty-cmd/utils.c \
+		 lib/logindefs.c
 
 if USE_PLYMOUTH_SUPPORT
 agetty_SOURCES += lib/plymouth-ctrl.c
@@ -18,10 +19,19 @@ if LINUX
 agetty_SOURCES += lib/netlink.c lib/netaddrq.c
 endif
 
-agetty_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la
+agetty_LDADD = $(LDADD) libcommon.la
 
+agetty_CFLAGS = $(AM_CFLAGS)
 if BSD
 agetty_LDADD += -lutil
+endif
+
+if HAVE_ECONF
+agetty_SOURCES += \
+	$(econf_sources) \
+	$(common_dl_sources)
+agetty_LDADD += $(common_dl_ldadd)
+agetty_CFLAGS += $(ECONF_CFLAGS)
 endif
 
 if HAVE_SYSTEMD
@@ -29,6 +39,6 @@ agetty_SOURCES += \
 	$(systemd_sources) \
 	$(common_dl_sources)
 agetty_LDADD += $(common_dl_ldadd)
-agetty_CFLAGS = $(SYSTEMD_CFLAGS)
+agetty_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 endif # BUILD_AGETTY

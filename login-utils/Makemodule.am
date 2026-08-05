@@ -62,8 +62,17 @@ bin_PROGRAMS += login
 MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
-	login-utils/login.c
-login_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+	login-utils/login.c \
+	lib/logindefs.c
+login_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+login_CFLAGS = $(AM_CFLAGS)
+if HAVE_ECONF
+login_SOURCES += \
+	$(econf_sources) \
+	$(common_dl_sources)
+login_LDADD += $(common_dl_ldadd)
+login_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
@@ -102,7 +111,8 @@ dist_noinst_DATA += \
 
 chfn_chsh_sources = \
 	login-utils/ch-common.h \
-	login-utils/ch-common.c
+	login-utils/ch-common.c \
+	lib/logindefs.c
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chfn_chsh_ldadd = libcommon.la
@@ -141,18 +151,30 @@ chfn_chsh_ldadd += $(common_dl_ldadd)
 chfn_chsh_cflags += $(SELINUX_CFLAGS)
 endif
 
+if HAVE_ECONF
+if !HAVE_SELINUX
+chfn_chsh_sources += \
+	$(econf_sources) \
+	$(common_dl_sources)
+chfn_chsh_ldadd += $(common_dl_ldadd)
+else
+chfn_chsh_sources += $(econf_sources)
+endif
+chfn_chsh_cflags += $(ECONF_CFLAGS)
+endif
+
 chfn_SOURCES = \
 	login-utils/chfn.c \
 	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
-chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la
+chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 
 chsh_SOURCES = login-utils/chsh.c \
 	$(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
-chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la libcommon_shells.la
+chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_shells.la
 endif # BUILD_CHFN_CHSH
 
 
@@ -163,10 +185,18 @@ dist_noinst_DATA += login-utils/su.1.adoc
 su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h
+	login-utils/su-common.h \
+	lib/logindefs.c
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+su_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+if HAVE_ECONF
+su_SOURCES += \
+	$(econf_sources) \
+	$(common_dl_sources)
+su_LDADD += $(common_dl_ldadd)
+su_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 su_LDADD += -lpam_misc
 endif
@@ -186,8 +216,17 @@ dist_noinst_DATA += login-utils/runuser.1.adoc
 runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h
-runuser_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+	login-utils/su-common.h \
+	lib/logindefs.c
+runuser_CFLAGS = $(AM_CFLAGS)
+runuser_LDADD = $(LDADD) libcommon.la libcommon_shells.la -lpam
+if HAVE_ECONF
+runuser_SOURCES += \
+	$(econf_sources) \
+	$(common_dl_sources)
+runuser_LDADD += $(common_dl_ldadd)
+runuser_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
 endif
@@ -219,8 +258,9 @@ usrbin_exec_PROGRAMS += lslogins
 MANPAGES += login-utils/lslogins.1
 dist_noinst_DATA += login-utils/lslogins.1.adoc
 lslogins_SOURCES = \
-	login-utils/lslogins.c
-lslogins_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libsmartcols.la
+	login-utils/lslogins.c \
+	lib/logindefs.c
+lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
 lslogins_SOURCES += \
@@ -232,6 +272,10 @@ lslogins_SOURCES += \
 	$(systemd_sources)
 lslogins_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
+if HAVE_ECONF
+lslogins_SOURCES += $(econf_sources)
+lslogins_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_SELINUX
 lslogins_SOURCES += $(common_dl_sources)
 lslogins_LDADD += $(common_dl_ldadd)
@@ -239,6 +283,11 @@ else
 if HAVE_SYSTEMD
 lslogins_SOURCES += $(common_dl_sources)
 lslogins_LDADD += $(common_dl_ldadd)
+else
+if HAVE_ECONF
+lslogins_SOURCES += $(common_dl_sources)
+lslogins_LDADD += $(common_dl_ldadd)
+endif
 endif
 endif
 if BUILD_LIBLASTLOG2
