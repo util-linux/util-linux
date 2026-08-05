@@ -18,11 +18,16 @@ void ul_buffer_reset_data(struct ul_buffer *buf)
 		memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
 }
 
-void ul_buffer_free_data(struct ul_buffer *buf)
+static inline char *ul_buffer_free_data_common(struct ul_buffer *buf, bool steal)
 {
+	char *t = NULL;
+
 	assert(buf);
 
-	free(buf->begin);
+	if (steal)
+		t = buf->begin;
+	else
+		free(buf->begin);
 	buf->begin = NULL;
 	buf->end = NULL;
 	buf->sz = 0;
@@ -34,6 +39,23 @@ void ul_buffer_free_data(struct ul_buffer *buf)
 	free(buf->encoded);
 	buf->encoded = NULL;
 	buf->encoded_sz = 0;
+
+	return t;
+}
+
+void ul_buffer_free_data(struct ul_buffer *buf)
+{
+	ul_buffer_free_data_common(buf, false);
+}
+
+char *ul_buffer_steal_string(struct ul_buffer *buf)
+{
+	if (ul_buffer_is_empty(buf)) {
+		ul_buffer_free_data(buf);
+		return NULL;
+	}
+
+	return ul_buffer_free_data_common(buf, true);
 }
 
 void ul_buffer_set_chunksize(struct ul_buffer *buf, size_t sz)
