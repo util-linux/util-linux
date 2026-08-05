@@ -43,8 +43,8 @@ logger_SOURCES += \
 	include/dl-utils.h \
 	lib/dl-systemd.c \
 	include/dl-systemd.h
-logger_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS) $(SYSTEMD_JOURNAL_LIBS)
-logger_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
+logger_LDADD += $(SYSTEMD_LIBS)
+logger_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 
 check_PROGRAMS += test_logger
@@ -149,8 +149,8 @@ uuidd_SOURCES += \
 	include/dl-utils.h \
 	lib/dl-systemd.c \
 	include/dl-systemd.h
-uuidd_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS)
-uuidd_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS)
+uuidd_LDADD += $(SYSTEMD_LIBS)
+uuidd_CFLAGS += $(SYSTEMD_CFLAGS)
 tmpfiles_DATA += misc-utils/uuidd-tmpfiles.conf
 sysusers_DATA += misc-utils/uuidd-sysusers.conf
 systemdsystemunit_DATA += \

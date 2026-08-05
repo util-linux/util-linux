@@ -244,8 +244,8 @@ lslogins_SOURCES += \
 	lib/dl-utils.c \
 	include/dl-utils.h
 endif
-lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
-lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
+lslogins_LDADD += $(SYSTEMD_LIBS)
+lslogins_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 if BUILD_LIBLASTLOG2
 lslogins_CFLAGS += -I$(ul_liblastlog2_incdir)

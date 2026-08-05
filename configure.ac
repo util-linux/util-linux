@@ -2769,7 +2769,6 @@ AC_ARG_WITH([systemd],
 
 have_systemd=no
 AS_IF([test "x$with_systemd" != xno], [
-  # new version -- all libsystemd-* libs merged into libsystemd
   # if 257 or newer, use locked system user accounts
   PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 257], [
       have_systemd=yes
@@ -2777,15 +2776,6 @@ AS_IF([test "x$with_systemd" != xno], [
     ], [
       SYSTEMD_USER_LOCK=
       PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
-  ])
-  # old versions
-  AS_IF([test "x$have_systemd" != "xyes"], [
-    PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon],
-		      [have_systemd_daemon=yes], [have_systemd_daemon=no])
-    PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal],
-		      [have_systemd_journal=yes], [have_systemd_journal=no])
-    AS_IF([test "x$have_systemd_daemon" = "xyes" && test "x$have_systemd_journal" = "xyes" ],[
-	   have_systemd=yes])
   ])
   AS_CASE([$with_systemd:$have_systemd],
     [yes:no],
@@ -2801,8 +2791,6 @@ AS_IF([test "x$with_systemd" != xno], [
        # against, so the tools need libdl instead of libsystemd (the
        # SYSTEMD_CFLAGS headers are still used at build time).
        SYSTEMD_LIBS="-ldl"
-       SYSTEMD_DAEMON_LIBS=
-       SYSTEMD_JOURNAL_LIBS=
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
