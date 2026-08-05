@@ -173,6 +173,35 @@ int ul_buffer_append_ntimes(struct ul_buffer *buf, size_t n, const char *str)
 	return 0;
 }
 
+int ul_buffer_appendf(struct ul_buffer *buf, const char *format, ...)
+{
+	va_list ap;
+	int res;
+
+	va_start(ap, format);
+	res = ul_buffer_appendvf(buf, format, ap);
+	va_end(ap);
+
+	return res;
+}
+
+int ul_buffer_appendvf(struct ul_buffer *buf, const char *format, va_list ap)
+{
+	char *val;
+	int sz;
+	int res;
+
+	sz = vasprintf(&val, format, ap);
+	if (sz < 0)
+		return -errno;
+
+	/* Like strlen(), sz doesn't include the last null byte. */
+	res = ul_buffer_append_data(buf, val, sz);
+	free(val);
+
+	return res;
+}
+
 int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz)
 {
 	ul_buffer_reset_data(buf);
@@ -298,6 +327,11 @@ int main(void)
 	ul_buffer_refer_string(&buf, str);
 	ul_buffer_append_data(&buf, ",", 1);
 	ul_buffer_append_string(&buf, "bar");
+	str = ul_buffer_get_data(&buf, &sz, NULL);
+	printf("data [%zu] '%s'\n", sz, str);
+
+	ul_buffer_free_data(&buf);
+	ul_buffer_appendf(&buf, "a%se%d", "bcd", 10);
 	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 
