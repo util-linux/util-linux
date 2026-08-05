@@ -70,20 +70,6 @@ endif
 endif
 
 
-EXTRA_LTLIBRARIES += libcommon_shells.la
-libcommon_shells_la_CFLAGS = $(AM_CFLAGS)
-libcommon_shells_la_SOURCES = \
-	lib/shells.c
-if HAVE_ECONF
-if USE_VENDORDIR
-libcommon_shells_la_CFLAGS += $(ECONF_CFLAGS)
-libcommon_shells_la_SOURCES += \
-	$(econf_sources) \
-	$(common_dl_sources)
-libcommon_shells_la_LIBADD = $(common_dl_ldadd)
-endif
-endif
-
 EXTRA_LTLIBRARIES += libtcolors.la
 libtcolors_la_CFLAGS = $(AM_CFLAGS)
 libtcolors_la_SOURCES = lib/colors.c lib/color-names.c include/colors.h include/color-names.h
