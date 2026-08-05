@@ -1436,7 +1436,7 @@ static int ui_draw_extra(struct cfdisk *cf)
 	struct cfdisk_line *ln = &cf->lines[cf->lines_idx];
 	char *tbstr = NULL, *end;
 	int win_ex_start_line, win_height, tblen;
-	int ndatalines;
+	int ndatalines, rc;
 
 	if (!cf->show_extra)
 		return 0;
@@ -1476,7 +1476,9 @@ static int ui_draw_extra(struct cfdisk *cf)
 	win_ex = subwin(stdscr, win_height, ui_cols - 2, win_ex_start_line, 1);
 
 	scols_table_reduce_termwidth(ln->extra, 4);
-	scols_print_table_to_string(ln->extra, &tbstr);
+	rc = scols_print_table_to_string(ln->extra, &tbstr);
+	if (rc < 0 || !tbstr)
+		return 0;
 
 	end = tbstr;
 	while ((end = strchr(end, '\n')))
