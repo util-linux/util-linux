@@ -2535,7 +2535,7 @@ static bool packet_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (proto)
 			*str = xstrdup(proto);
 		else
-			xstrfappend(str, "unknown(%"PRIu16")", pkt->protocol);
+			xasprintf(str, "unknown(%"PRIu16")", pkt->protocol);
 		return true;
 	}
 	case COL_PACKET_PROTOCOL_RAW:
