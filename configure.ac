@@ -596,6 +596,8 @@ AC_CHECK_DECL([BPF_F_MMAPABLE],
 AS_IF([test "x$have_bpf_f_mmapable" = xyes],
       [AC_DEFINE([HAVE_BPF_F_MMAPABLE], [1], [Define if BPF_F_MMAPABLE is available])])
 
+AC_CHECK_HEADERS([linux/io_uring.h])
+
 AC_CHECK_DECL([TIOCGLCKTRMIOS],
 	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
 	      [#include <sys/ioctl.h>])

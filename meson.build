@@ -4107,6 +4107,9 @@ if LINUX and lib_rt.found()
   if cc.has_header_symbol('linux/bpf.h', 'BPF_F_MMAPABLE')
     test_mkfds_c_args += ['-DHAVE_BPF_F_MMAPABLE']
   endif
+  if cc.has_header('linux/io_uring.h')
+    test_mkfds_c_args += ['-DHAVE_LINUX_IO_URING_H']
+  endif
   exe = executable(
     'test_mkfds',
     'tests/helpers/test_mkfds.c',

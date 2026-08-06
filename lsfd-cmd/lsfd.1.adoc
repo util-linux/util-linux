@@ -271,6 +271,45 @@ INOTIFY.INODES.RAW <``string``>::
 List of monitoring inodes. The format of the element
 is _inode-number_``,``_device-major_``:``_device-minor_.
 
+IO-URING.CQ-HEAD <``number``>::
+Io_uring completion queue head.
+
+IO-URING.CQ-MASK <``number``>::
+Io_uring completion queue ring mask.
+
+IO-URING.CQ-TAIL <``number``>::
+Io_uring completion queue tail.
+
+IO-URING.CQES <``number``>::
+Io_uring unconsumed completion queue entries.
+
+IO-URING.NAPI <``string``>::
+Io_uring NAPI mode ("enabled" or "disabled").
+
+IO-URING.SQ-HEAD <``number``>::
+Io_uring submission queue head.
+
+IO-URING.SQ-MASK <``number``>::
+Io_uring submission queue ring mask.
+
+IO-URING.SQ-TAIL <``number``>::
+Io_uring submission queue tail.
+
+IO-URING.SQES <``number``>::
+Io_uring unconsumed submission queue entries.
+
+IO-URING.SQTHREAD <``number``>::
+Io_uring SQ poll kernel thread PID (-1 if not used).
+
+IO-URING.SQTHREAD-CPU <``number``>::
+Io_uring SQ poll thread CPU affinity.
+
+IO-URING.USER-BUFS <``number``>::
+Io_uring count of registered buffers.
+
+IO-URING.USER-FILES <``number``>::
+Io_uring count of registered files.
+
 KNAME <``string``>::
 //
 // It seems that the manpage backend of asciidoctor has limitations
@@ -330,6 +369,11 @@ id=_EVENTFD.ID_
 +
 inotify:::
 inodes=_INOTIFY.INODES_
++
+io_uring:::
+sqmask=_IO-URING.SQ-MASK_ cqmask=_IO-URING.CQ-MASK_ sqes=_IO-URING.SQES_ cqes=_IO-URING.CQES_[ sqthread=_IO-URING.SQTHREAD_][ userfiles=_IO-URING.USER-FILES_ userbufs=_IO-URING.USER-BUFS_]
++
+Note that the format is used only for opened file objects, not for mapped ones.
 +
 misc:tun:::
 iface=_TUN.IFACE_[ devnetns=_TUN.DEVNETNS_][ socknetns=_SOCK.NETNS_]

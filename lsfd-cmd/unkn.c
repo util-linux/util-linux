@@ -1481,6 +1481,210 @@ static const struct anon_ops anon_bpf_link_ops = {
 
 
 /*
+ * io_uring
+ */
+struct anon_io_uring_data {
+	unsigned int sq_mask;
+	unsigned int sq_head;
+	unsigned int sq_tail;
+	unsigned int cq_mask;
+	unsigned int cq_head;
+	unsigned int cq_tail;
+	unsigned int sqes;
+	unsigned int cqes;
+	int sqthread;
+	int sqthread_cpu;
+	unsigned int user_files;
+	unsigned int user_bufs;
+	char napi[16];		/* "enabled", "disabled", or "" */
+	bool has_data;		/* true if fdinfo was parsed */
+};
+
+static bool anon_io_uring_probe(const char *str)
+{
+	return strncmp(str, "[io_uring]", 10) == 0;
+}
+
+static void anon_io_uring_init(struct unkn *unkn)
+{
+	struct anon_io_uring_data *data = xcalloc(1, sizeof(*data));
+
+	data->sqthread = -1;
+	data->sqthread_cpu = -1;
+	unkn->anon_data = data;
+}
+
+static void anon_io_uring_free(struct unkn *unkn)
+{
+	struct anon_io_uring_data *data = (struct anon_io_uring_data *)unkn->anon_data;
+	free(data);
+}
+
+static int anon_io_uring_handle_fdinfo(struct unkn *unkn, const char *key, const char *value)
+{
+	struct anon_io_uring_data *data = (struct anon_io_uring_data *)unkn->anon_data;
+
+	if (strcmp(key, "SqMask") == 0) {
+		if (ul_strtou32_to_struct_member(data, sq_mask, value, 16) == 0)
+			data->has_data = true;
+		return 1;
+	}
+	if (strcmp(key, "SqHead") == 0) {
+		ul_strtou32_to_struct_member(data, sq_head, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "SqTail") == 0) {
+		ul_strtou32_to_struct_member(data, sq_tail, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "CqMask") == 0) {
+		ul_strtou32_to_struct_member(data, cq_mask, value, 16);
+		return 1;
+	}
+	if (strcmp(key, "CqHead") == 0) {
+		ul_strtou32_to_struct_member(data, cq_head, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "CqTail") == 0) {
+		ul_strtou32_to_struct_member(data, cq_tail, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "SQEs") == 0) {
+		ul_strtou32_to_struct_member(data, sqes, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "CQEs") == 0) {
+		ul_strtou32_to_struct_member(data, cqes, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "SqThread") == 0) {
+		ul_strtos32_to_struct_member(data, sqthread, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "SqThreadCpu") == 0) {
+		ul_strtos32_to_struct_member(data, sqthread_cpu, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "UserFiles") == 0) {
+		ul_strtou32_to_struct_member(data, user_files, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "UserBufs") == 0) {
+		ul_strtou32_to_struct_member(data, user_bufs, value, 10);
+		return 1;
+	}
+	if (strcmp(key, "NAPI") == 0) {
+		strncpy(data->napi, value, sizeof(data->napi) - 1);
+		data->napi[sizeof(data->napi) - 1] = '\0';
+		return 1;
+	}
+
+	/* Skip known fields we don't expose as columns:
+	 *   CachedSqHead, CachedCqTail, SqTotalTime, SqWorkTime,
+	 *   PollList, CqOverflowList
+	 */
+	if (strcmp(key, "CachedSqHead") == 0
+	    || strcmp(key, "CachedCqTail") == 0
+	    || strcmp(key, "SqTotalTime") == 0
+	    || strcmp(key, "SqWorkTime") == 0
+	    || strcmp(key, "PollList") == 0
+	    || strcmp(key, "CqOverflowList") == 0)
+		return 1;
+
+	return 0;
+}
+
+static bool anon_io_uring_fill_column(struct proc *proc  __attribute__((__unused__)),
+				      struct unkn *unkn,
+				      struct libscols_line *ln __attribute__((__unused__)),
+				      int column_id,
+				      size_t column_index __attribute__((__unused__)),
+				      char **str)
+{
+	struct anon_io_uring_data *data = (struct anon_io_uring_data *)unkn->anon_data;
+
+	if (!data->has_data)
+		return false;
+
+	switch(column_id) {
+	case COL_IO_URING_SQ_MASK:
+		xasprintf(str, "0x%x", data->sq_mask);
+		return true;
+	case COL_IO_URING_SQ_HEAD:
+		xasprintf(str, "%u", data->sq_head);
+		return true;
+	case COL_IO_URING_SQ_TAIL:
+		xasprintf(str, "%u", data->sq_tail);
+		return true;
+	case COL_IO_URING_CQ_MASK:
+		xasprintf(str, "0x%x", data->cq_mask);
+		return true;
+	case COL_IO_URING_CQ_HEAD:
+		xasprintf(str, "%u", data->cq_head);
+		return true;
+	case COL_IO_URING_CQ_TAIL:
+		xasprintf(str, "%u", data->cq_tail);
+		return true;
+	case COL_IO_URING_SQES:
+		xasprintf(str, "%u", data->sqes);
+		return true;
+	case COL_IO_URING_CQES:
+		xasprintf(str, "%u", data->cqes);
+		return true;
+	case COL_IO_URING_SQTHREAD:
+		xasprintf(str, "%d", data->sqthread);
+		return true;
+	case COL_IO_URING_SQTHREAD_CPU:
+		xasprintf(str, "%d", data->sqthread_cpu);
+		return true;
+	case COL_IO_URING_USER_FILES:
+		xasprintf(str, "%u", data->user_files);
+		return true;
+	case COL_IO_URING_USER_BUFS:
+		xasprintf(str, "%u", data->user_bufs);
+		return true;
+	case COL_IO_URING_NAPI:
+		if (data->napi[0])
+			*str = xstrdup(data->napi);
+		return true;
+	default:
+		return false;
+	}
+}
+
+static char *anon_io_uring_get_name(struct unkn *unkn)
+{
+	char *str = NULL;
+	struct anon_io_uring_data *data = (struct anon_io_uring_data *)unkn->anon_data;
+
+	if (!data->has_data)
+		return NULL;
+
+	xasprintf(&str, "sqmask=0x%x cqmask=0x%x sqes=%u cqes=%u",
+		  data->sq_mask, data->cq_mask,
+		  data->sqes, data->cqes);
+
+	if (data->sqthread >= 0)
+		xstrfappend(&str, " sqthread=%d", data->sqthread);
+
+	if (data->user_files > 0 || data->user_bufs > 0)
+		xstrfappend(&str, " userfiles=%u userbufs=%u",
+			    data->user_files, data->user_bufs);
+
+	return str;
+}
+
+static const struct anon_ops anon_io_uring_ops = {
+	.class = "io_uring",
+	.probe = anon_io_uring_probe,
+	.get_name = anon_io_uring_get_name,
+	.fill_column = anon_io_uring_fill_column,
+	.init = anon_io_uring_init,
+	.free = anon_io_uring_free,
+	.handle_fdinfo = anon_io_uring_handle_fdinfo,
+};
+
+/*
  * generic (fallback implementation)
  */
 static const struct anon_ops anon_generic_ops = {
@@ -1502,6 +1706,7 @@ static const struct anon_ops *const anon_ops[] = {
 	&anon_bpf_prog_ops,
 	&anon_bpf_map_ops,
 	&anon_bpf_link_ops,
+	&anon_io_uring_ops,
 };
 
 static const struct anon_ops *anon_probe(const char *str)
