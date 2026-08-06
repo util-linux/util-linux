@@ -155,14 +155,13 @@ lib_blkid = both_libraries(
   'blkid',
   list_h,
   lib_blkid_sources,
-  dl_utils_c,
-  dl_econf_c,
+  econf_sources, common_dl_sources,
   include_directories : [dir_include, dir_libblkid],
   link_depends : libblkid_link_depends,
   version : libblkid_version,
   link_args : libblkid_link_args,
   link_with : lib_common,
-  dependencies : build_libblkid ? lib_econf_dlopen_deps : disabler(),
+  dependencies : build_libblkid ? econf_deps : disabler(),
   install : build_libblkid)
 blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 

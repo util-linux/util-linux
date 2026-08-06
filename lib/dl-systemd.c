@@ -7,7 +7,7 @@
 #include "c.h"
 #include "dl-systemd.h"
 
-#ifdef HAVE_LIBSYSTEMD
+#if defined(HAVE_LIBSYSTEMD) && defined(USE_DLOPEN_SYSTEMD)
 
 UL_ELF_NOTE_DLOPEN("systemd",
 		    "Support for systemd",
@@ -85,4 +85,4 @@ int ul_dlopen_libsystemd(void)
 	return status > 0 ? 0 : -ENOSYS;
 }
 
-#endif /* HAVE_LIBSYSTEMD */
+#endif /* HAVE_LIBSYSTEMD && USE_DLOPEN_SYSTEMD */

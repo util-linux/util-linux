@@ -1111,6 +1111,15 @@ AS_IF([test "x$with_selinux" = xno], [
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
 
+AC_ARG_ENABLE([selinux-dlopen],
+  AS_HELP_STRING([--enable-selinux-dlopen], [dlopen SELinux at runtime instead of linking]),
+  [], [enable_selinux_dlopen=no])
+AS_IF([test "x$enable_selinux_dlopen" = xyes -a "x$have_selinux" = xyes], [
+  AC_DEFINE([USE_DLOPEN_SELINUX], [1], [Use dlopen for SELinux])
+])
+AM_CONDITIONAL([USE_DLOPEN_SELINUX],
+  [test "x$enable_selinux_dlopen" = xyes -a "x$have_selinux" = xyes])
+
 
 AC_ARG_WITH([audit],
   AS_HELP_STRING([--with-audit], [compile with audit support]),
@@ -2769,7 +2778,6 @@ AC_ARG_WITH([systemd],
 
 have_systemd=no
 AS_IF([test "x$with_systemd" != xno], [
-  # new version -- all libsystemd-* libs merged into libsystemd
   # if 257 or newer, use locked system user accounts
   PKG_CHECK_MODULES([SYSTEMD], [libsystemd >= 257], [
       have_systemd=yes
@@ -2777,15 +2785,6 @@ AS_IF([test "x$with_systemd" != xno], [
     ], [
       SYSTEMD_USER_LOCK=
       PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
-  ])
-  # old versions
-  AS_IF([test "x$have_systemd" != "xyes"], [
-    PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon],
-		      [have_systemd_daemon=yes], [have_systemd_daemon=no])
-    PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal],
-		      [have_systemd_journal=yes], [have_systemd_journal=no])
-    AS_IF([test "x$have_systemd_daemon" = "xyes" && test "x$have_systemd_journal" = "xyes" ],[
-	   have_systemd=yes])
   ])
   AS_CASE([$with_systemd:$have_systemd],
     [yes:no],
@@ -2797,15 +2796,18 @@ AS_IF([test "x$with_systemd" != xno], [
        AC_CHECK_DECLS([sd_device_new_from_syspath], [], [], [#include <systemd/sd-device.h>])
        AC_CHECK_DECLS([sd_device_open], [], [], [#include <systemd/sd-device.h>])
        AC_SUBST([SYSTEMD_USER_LOCK])
-       # libsystemd is loaded with dlopen() at runtime rather than linked
-       # against, so the tools need libdl instead of libsystemd (the
-       # SYSTEMD_CFLAGS headers are still used at build time).
-       SYSTEMD_LIBS="-ldl"
-       SYSTEMD_DAEMON_LIBS=
-       SYSTEMD_JOURNAL_LIBS=
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
+
+AC_ARG_ENABLE([systemd-dlopen],
+  AS_HELP_STRING([--enable-systemd-dlopen], [dlopen systemd at runtime instead of linking]),
+  [], [enable_systemd_dlopen=no])
+AS_IF([test "x$enable_systemd_dlopen" = xyes -a "x$have_systemd" = xyes], [
+  AC_DEFINE([USE_DLOPEN_SYSTEMD], [1], [Use dlopen for systemd])
+])
+AM_CONDITIONAL([USE_DLOPEN_SYSTEMD],
+  [test "x$enable_systemd_dlopen" = xyes -a "x$have_systemd" = xyes])
 
 libmount_udev_support=no
 AS_IF([test "x$enable_libmount_udev_support" != xno && test "x$build_libmount" = xyes], [
@@ -2903,14 +2905,19 @@ AS_IF([test "x$with_econf" != xno], [
       [AC_MSG_ERROR([libeconf expected but libeconf not found])],
     [*:yes], [
        AC_DEFINE([HAVE_LIBECONF], [1], [Define if libeconf is available])
-       # libeconf is loaded with dlopen() at runtime rather than linked
-       # against, so the tools need libdl instead of libeconf (the ECONF_CFLAGS
-       # headers are still used at build time).
-       ECONF_LIBS="-ldl"
     ]
   )
 ])
 AM_CONDITIONAL([HAVE_ECONF], [test "x$have_econf" = xyes])
+
+AC_ARG_ENABLE([econf-dlopen],
+  AS_HELP_STRING([--enable-econf-dlopen], [dlopen econf at runtime instead of linking]),
+  [], [enable_econf_dlopen=no])
+AS_IF([test "x$enable_econf_dlopen" = xyes -a "x$have_econf" = xyes], [
+  AC_DEFINE([USE_DLOPEN_ECONF], [1], [Use dlopen for econf])
+])
+AM_CONDITIONAL([USE_DLOPEN_ECONF],
+  [test "x$enable_econf_dlopen" = xyes -a "x$have_econf" = xyes])
 
 AC_ARG_WITH([vendordir],
   AS_HELP_STRING([--with-vendordir=DIR], [Directory for distribution provided configuration files]),
@@ -3145,6 +3152,15 @@ AS_IF([test "x$with_cryptsetup" = xno], [
 ])
 AC_SUBST([CRYPTSETUP_LIBS])
 AC_SUBST([CRYPTSETUP_LIBS_STATIC])
+
+AC_ARG_ENABLE([cryptsetup-dlopen],
+  AS_HELP_STRING([--enable-cryptsetup-dlopen], [dlopen cryptsetup at runtime instead of linking]),
+  [], [enable_cryptsetup_dlopen=no])
+AS_IF([test "x$enable_cryptsetup_dlopen" = xyes -a "x$have_cryptsetup" = xyes], [
+  AC_DEFINE([USE_DLOPEN_CRYPTSETUP], [1], [Use dlopen for cryptsetup])
+])
+AM_CONDITIONAL([USE_DLOPEN_CRYPTSETUP],
+  [test "x$enable_cryptsetup_dlopen" = xyes -a "x$have_cryptsetup" = xyes])
 
 
 AC_ARG_VAR([SUID_CFLAGS],

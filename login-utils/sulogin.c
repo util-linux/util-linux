@@ -1057,7 +1057,11 @@ int main(int argc, char **argv)
 				"emergency-mount",
 #endif
 #ifdef HAVE_LIBSELINUX
+# ifdef USE_DLOPEN_SELINUX
+				"selinux(dlopen)",
+# else
 				"selinux",
+# endif
 #endif
 #ifdef USE_PLYMOUTH_SUPPORT
 				"plymouth",

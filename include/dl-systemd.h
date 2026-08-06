@@ -21,6 +21,8 @@
 # include <systemd/sd-event.h>
 #endif
 
+#ifdef USE_DLOPEN_SYSTEMD
+
 #include "dl-utils.h"
 
 /* Pointers to libsystemd functions (initialized by dlsym()) */
@@ -91,6 +93,14 @@ extern struct ul_systemd_opers ul_systemd;
 extern int ul_dlopen_libsystemd(void);
 
 #define systemd_call(_func)	(ul_systemd._func)
+
+#else /* !USE_DLOPEN_SYSTEMD */
+
+static inline int ul_dlopen_libsystemd(void) { return 0; }
+
+#define systemd_call(_func)	(_func)
+
+#endif /* USE_DLOPEN_SYSTEMD */
 
 #endif /* HAVE_LIBSYSTEMD */
 #endif /* UTIL_LINUX_DL_SYSTEMD_H */

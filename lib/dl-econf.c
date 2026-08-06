@@ -7,7 +7,7 @@
 #include "c.h"
 #include "dl-econf.h"
 
-#ifdef HAVE_LIBECONF
+#if defined(HAVE_LIBECONF) && defined(USE_DLOPEN_ECONF)
 
 UL_ELF_NOTE_DLOPEN("econf",
 		    "Support for libeconf",
@@ -55,4 +55,4 @@ int ul_dlopen_libeconf(void)
 	return status > 0 ? 0 : -ENOSYS;
 }
 
-#endif /* HAVE_LIBECONF */
+#endif /* HAVE_LIBECONF && USE_DLOPEN_ECONF */
