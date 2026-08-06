@@ -4116,6 +4116,7 @@ if LINUX and lib_rt.found()
     'tests/helpers/test_mkfds.h',
     'tests/helpers/test_mkfds_ppoll.c',
     include_directories : includes,
+    link_with : lib_smartcols.get_static_lib(),
     dependencies : [lib_rt],
     c_args : test_mkfds_c_args,
     build_by_default: program_tests)
