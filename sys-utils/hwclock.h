@@ -20,6 +20,36 @@
 #include "debug.h"
 #include "nls.h"
 
+#ifdef __linux__
+# include <linux/rtc.h>
+# include <linux/types.h>
+
+# ifndef RTC_PARAM_GET
+struct rtc_param {
+	__u64 param;
+	union {
+		__u64 uvalue;
+		__s64 svalue;
+		__u64 ptr;
+	};
+	__u32 index;
+	__u32 __pad;
+};
+
+#  define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
+#  define RTC_PARAM_SET	_IOW('p', 0x14, struct rtc_param)
+
+#  define RTC_PARAM_FEATURES		0
+#  define RTC_PARAM_CORRECTION		1
+#  define RTC_PARAM_BACKUP_SWITCH_MODE	2
+# endif /* RTC_PARAM_GET */
+
+# ifndef RTC_VL_READ
+#  define RTC_VL_READ	_IOR('p', 0x13, unsigned int)
+#  define RTC_VL_CLR	_IO('p', 0x14)
+# endif /* RTC_VL_READ */
+#endif /* __linux__ */
+
 #define HWCLOCK_DEBUG_INIT		(1 << 0)
 #define HWCLOCK_DEBUG_RANDOM_SLEEP	(1 << 1)
 #define HWCLOCK_DEBUG_DELTA_VS_TARGET	(1 << 2)
@@ -38,7 +68,7 @@ struct hwclock_control {
 #if defined(__linux__) || defined(__GNU__)
 	char *rtc_dev_name;
 #endif
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 	uint32_t param_idx;	/* --param-index <n> */
 #endif
 	char *param_get_option;
@@ -86,19 +116,22 @@ extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 #endif
 
+#ifdef RTC_PARAM_GET
 struct hwclock_param {
 	int id;
 	const char *name;
 	const char *help;
 };
-
 extern const struct hwclock_param *get_hwclock_params(void);
 extern int get_param_rtc(const struct hwclock_control *ctl,
 			const char *name, uint64_t *id, uint64_t *value);
 extern int set_param_rtc(const struct hwclock_control *ctl, const char *name);
+#endif
 
+#ifdef RTC_VL_READ
 extern int rtc_vl_read(const struct hwclock_control *ctl);
 extern int rtc_vl_clear(const struct hwclock_control *ctl);
+#endif
 
 extern void __attribute__((__noreturn__))
 hwclock_exit(const struct hwclock_control *ctl, int status);
