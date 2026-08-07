@@ -421,11 +421,11 @@ function ts_init_env {
 	TS_FSTAB="$TS_OUTDIR/${TS_TESTNAME}.fstab"
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
-	declare -a TS_SUID_PROGS
-	declare -a TS_SUID_USER
-	declare -a TS_SUID_GROUP
-	declare -a TS_LOOP_DEVS
-	declare -a TS_LOCKFILE_FD
+	declare -ag TS_SUID_PROGS
+	declare -ag TS_SUID_USER
+	declare -ag TS_SUID_GROUP
+	declare -ag TS_LOOP_DEVS
+	declare -ag TS_LOCKFILE_FD
 
 	if [ -f $TS_TOPDIR/commands.sh ]; then
 		. $TS_TOPDIR/commands.sh
