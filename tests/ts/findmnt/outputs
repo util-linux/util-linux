@@ -112,6 +112,10 @@ osc8_start_sequence="$($TS_CMD_HEXDUMP --no-squeezing --length 5 --format '"%_c"
 echo "$osc8_start_sequence" >"$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "shell"
+$TS_CMD_FINDMNT --shell --raw --output-all | head -n1 >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_init_subtest "canonicalization"
 # We'll create a symlink to the filesystem root directory
 # and test whether findmnt properly canonicalizes it to its
