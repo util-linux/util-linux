@@ -67,4 +67,19 @@ ts_init_subtest "id"
 check_field "ID" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+# Both backends have to name a filesystem the same way, subtype included, or a caller gets a
+# different answer depending on how the table was built. Key on the mount ID rather than the
+# mount point, which is not unique, and compare only the IDs both reads saw, since the table
+# can gain or lose a mount between them.
+ts_init_subtest "fstype-parity"
+$TS_CMD_FINDMNT --noheadings --kernel=mountinfo --raw --output ID,FSTYPE \
+	2>> "$TS_ERRLOG" | sort > "$TS_OUTDIR/fstype-mountinfo"
+$TS_CMD_FINDMNT --noheadings --kernel=listmount --raw --output ID,FSTYPE \
+	2>> "$TS_ERRLOG" | sort > "$TS_OUTDIR/fstype-listmount"
+awk 'NR==FNR { seen[$1] = $2; next }
+     ($1 in seen) && seen[$1] != $2 { print "fstype for " $1 ": mountinfo " seen[$1] ", listmount " $2 }' \
+	"$TS_OUTDIR/fstype-mountinfo" "$TS_OUTDIR/fstype-listmount" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_finalize

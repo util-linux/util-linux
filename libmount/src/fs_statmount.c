@@ -179,6 +179,24 @@ static inline const char *sm_str(struct ul_statmount *sm, uint32_t offset)
 	return sm->str + offset;
 }
 
+static int apply_fstype(struct libmnt_fs *fs, struct ul_statmount *sm)
+{
+	const char *type = sm_str(sm, sm->fs_type);
+	const char *sub = sm->mask & STATMOUNT_FS_SUBTYPE ?
+				sm_str(sm, sm->fs_subtype) : "";
+	char *p = NULL;
+
+	/* /proc/self/mountinfo spells a filesystem with a subtype as "type.subtype"
+	 * (e.g. "fuse.sshfs"), while statmount() reports the two separately. */
+	if (!*sub)
+		return mnt_fs_set_fstype(fs, type);
+
+	if (asprintf(&p, "%s.%s", type, sub) < 0)
+		return -ENOMEM;
+
+	return __mnt_fs_set_fstype_ptr(fs, p);
+}
+
 static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
 	int rc = 0;
@@ -187,7 +205,7 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 		return -EINVAL;
 
 	if ((sm->mask & STATMOUNT_FS_TYPE) && !fs->fstype)
-		rc = mnt_fs_set_fstype(fs, sm_str(sm, sm->fs_type));
+		rc = apply_fstype(fs, sm);
 
 	if (!rc && (sm->mask & STATMOUNT_MNT_POINT) && !fs->target)
 		rc = mnt_fs_set_target(fs, sm_str(sm, sm->mnt_point));
@@ -354,6 +372,11 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 		if (!fs->source)
 			mask |= STATMOUNT_SB_SOURCE;
 	}
+
+	/* The type and the subtype share one string, and the lazy accessors
+	 * (mnt_fs_get_fstype() and friends) request FS_TYPE alone. */
+	if (mask & STATMOUNT_FS_TYPE)
+		mask |= STATMOUNT_FS_SUBTYPE;
 
 	if (fs->ns_id)
 		ns = fs->ns_id;
