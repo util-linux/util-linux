@@ -674,7 +674,7 @@ int ul_pty_proxy_master(struct ul_pty *pty)
 
 			gettime_monotonic(&now);
 			timersub(&pty->next_callback_time, &now, &rest);
-			timeout = (rest.tv_sec * 1000) +  (rest.tv_usec / 1000);
+			timeout = (rest.tv_sec * MSEC_PER_SEC) +  (rest.tv_usec / USEC_PER_MSEC);
 		} else
 			timeout = pty->poll_timeout;
 
