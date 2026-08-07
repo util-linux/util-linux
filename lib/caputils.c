@@ -25,10 +25,10 @@
 #include "procfs.h"
 #include "nls.h"
 
-static int test_cap(unsigned int cap)
+static int test_cap(unsigned long cap)
 {
 	/* prctl returns 0 or 1 for valid caps, -1 otherwise */
-	return prctl(PR_CAPBSET_READ, cap, 0, 0, 0) >= 0;
+	return prctl(PR_CAPBSET_READ, cap, 0L, 0L, 0L) >= 0;
 }
 
 static int cap_last_by_bsearch(int *ret)
@@ -119,7 +119,7 @@ void cap_permitted_to_ambient(void)
 			continue;
 
 		if ((effective & (1ULL << cap))
-		    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0)
+		    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0L, 0L) < 0)
 			err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
 	}
 }
