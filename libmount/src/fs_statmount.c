@@ -400,6 +400,12 @@ int mnt_fs_fetch_statmount(struct libmnt_fs *fs, uint64_t mask)
 	if (mask & STATMOUNT_FS_TYPE)
 		mask |= STATMOUNT_FS_SUBTYPE;
 
+	/* The superblock flags and the filesystem's own options share fs_optstr, and
+	 * mnt_fs_get_devno() asks for SB_BASIC alone while mnt_fs_get_fs_options() asks
+	 * for both. Fetched apart, whichever arrives first defines the string for good. */
+	if (mask & (STATMOUNT_SB_BASIC | STATMOUNT_MNT_OPTS))
+		mask |= STATMOUNT_SB_BASIC | STATMOUNT_MNT_OPTS;
+
 	if (fs->ns_id)
 		ns = fs->ns_id;
 
