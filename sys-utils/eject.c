@@ -459,8 +459,8 @@ static void toggle_tray(int fd)
 	 * the tray.  */
 	gettime_monotonic(&time_stop);
 
-	time_elapsed = (time_stop.tv_sec * 1000000 + time_stop.tv_usec) -
-		(time_start.tv_sec * 1000000 + time_start.tv_usec);
+	time_elapsed = (time_stop.tv_sec * USEC_PER_SEC + time_stop.tv_usec) -
+		(time_start.tv_sec * USEC_PER_SEC + time_start.tv_usec);
 
 	/* If the tray "opened" too fast, we can be nearly sure, that it
 	 * was already open. In this case, close it now. Else the tray was
