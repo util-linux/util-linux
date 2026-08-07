@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="evaluate"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_prog "mkfs.ext2"
+ts_check_losetup
+
+IMG_PATH="${TS_OUTDIR}/${TS_TESTNAME}"
+
+function build_device() {
+    local dev img tag val mkfs_opt
+    img=$1
+    tag=${2^^}
+    val=$3
+
+    case $tag in
+    UUID)
+        mkfs_opt="-U $val"
+    ;;
+    LABEL)
+        mkfs_opt="-L $val"
+    ;;
+    *)
+        ts_die "Cannot build device. Invalid argument '$tag'"
+    esac
+
+    ts_device_init 10 "$img"
+    dev="$TS_LODEV"
+
+    mkfs.ext2 $mkfs_opt "$dev" &> /dev/null || ts_die "Cannot make ext2 on $dev"
+    ts_device_has "$tag" "$val" "$dev"  || ts_die "Cannot find $tag '$val' on $dev"
+}
+
+
+function validate_ts_output() {
+    for d in "${@}"; do
+        sed -i "s@${d}@<validated>@" "$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    done
+}
+
+
+ts_init_subtest "sources-uuid"
+    uuid="a3f5c9d2-7b14-4e6a-9c8f-1d4b6e2a9f07"
+
+    ts_fstab_add "UUID=$uuid" "/mnt/loop_a" "ext2" "defaults"
+
+    build_device "$IMG_PATH"-1.img UUID $uuid
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img UUID $uuid
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$TS_FSTAB" --evaluate \
+                                --output UUID,SOURCES >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    ts_fstab_clean
+    unset -v DEV1 DEV2 uuid
+
+ts_finalize_subtest
+
+
+ts_init_subtest "sources-label"
+    label="identifybylabel"
+
+    ts_fstab_add "LABEL=$label" "/mnt/loop_a" "ext2" "defaults"
+
+    build_device "$IMG_PATH"-1.img LABEL $label
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img LABEL $label
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$TS_FSTAB" --evaluate \
+                                --output LABEL,SOURCES >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    ts_fstab_clean
+    unset -v DEV1 DEV2 label
+
+ts_finalize_subtest
+
+
+ts_init_subtest "source-uuid-label"
+    uuid="fcc1c1e5-a60f-46b6-a9ae-40e0bbfd59d9"
+    label="testdevwithlabel"
+
+    ts_fstab_add "UUID=$uuid" "/mnt/loop_a" "ext2" "defaults"
+    # ts_fstab_add opens and locks the fstab file, so lets just add a line
+    ts_fstab_addline "LABEL=$label" "/mnt/loop_b" "ext2" "defaults"
+
+    build_device "$IMG_PATH"-1.img UUID $uuid
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img LABEL $label
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$TS_FSTAB" --evaluate \
+                                --output SOURCE >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    ts_fstab_clean
+    unset -v DEV1 DEV2 uuid label
+
+ts_finalize_subtest
+
+
+ts_finalize
+
