@@ -268,7 +268,10 @@ static const struct id_part fujitsu_part[] = {
 
 static const struct id_part hisi_part[] = {
     { 0xd01, "TaiShan-v110" },	/* used in Kunpeng-920 SoC */
-    { 0xd02, "TaiShan-v120" },	/* used in Kirin 990A and 9000S SoCs */
+    { 0xd02, "Kunpeng 920" },
+    { 0xd03, "Kunpeng 920" },
+    { 0xd06, "Kunpeng 950" },
+    { 0xd22, "Kunpeng 920" },
     { 0xd40, "Cortex-A76" },	/* HiSilicon uses this ID though advertises A76 */
     { 0xd41, "Cortex-A77" },	/* HiSilicon uses this ID though advertises A77 */
     { -1, "unknown" },
@@ -381,6 +384,26 @@ static const struct hw_impl *find_implementer(int id)
 	return NULL;
 }
 
+static const char *hisi_get_compatible_modelname(int part, const char *name,
+						 const struct lscpu_cputype *ct)
+{
+	switch (part) {
+	case 0xd02:
+	case 0xd03:
+	case 0xd06:
+	case 0xd22:
+		break;
+	default:
+		return name;
+	}
+
+	/* A virtual machine may provide an arbitrary processor version. */
+	if (!ct->bios_modelname || !strstr(ct->bios_modelname, "Kunpeng"))
+		return name;
+
+	return ct->bios_modelname;
+}
+
 int is_arm(struct lscpu_cxt *cxt)
 {
 	size_t i;
@@ -428,9 +451,14 @@ static int arm_ids_decode(struct lscpu_cputype *ct)
 
 	for (j = 0; hw->parts[j].id != -1; j++) {
 		if (hw->parts[j].id == part) {
+			const char *modelname = hw->parts[j].name;
+
+			if (impl == 0x48)
+				modelname = hisi_get_compatible_modelname(part,
+							modelname, ct);
 			if (!ct->modelname || !hw->nooverwrite) {
 				free(ct->modelname);
-				ct->modelname = xstrdup(hw->parts[j].name);
+				ct->modelname = xstrdup(modelname);
 			}
 			break;
 		}
