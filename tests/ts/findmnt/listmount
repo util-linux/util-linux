@@ -112,4 +112,38 @@ else
 fi
 ts_finalize_subtest
 
+# mountinfo's super-options field is the superblock flags followed by the filesystem's own
+# options, and both backends have to produce it. MAJ:MIN is read first on purpose: it needs
+# only STATMOUNT_SB_BASIC, and fetching that without the mount options used to leave
+# fs_optstr holding nothing but "rw".
+ts_init_subtest "fs-options-parity"
+if ts_kernel_ver_lt 6 11 0; then
+	# STATMOUNT_MNT_OPTS: kernel commit f9af549d1fd3
+	ts_skip "statmount() cannot report filesystem options before Linux 6.11"
+else
+	# Two shapes are excluded from the comparison because the kernel, not libmount, makes
+	# them differ:
+	# - statmount() reports only SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME}, so a mount
+	#   carrying SB_MANDLOCK differs by that one token. The kernel ignores -o mand anyway;
+	#   the bit is kept so that old fstab entries still mount.
+	# - LSM-supplied options: the plain "seclabel" token is dropped from both sides, and
+	#   rows carrying a value-bearing LSM option are skipped, because kernels take them
+	#   out of statmount's reach before Linux 6.15 (commits 056d33137bf9, 5eb987105357;
+	#   the fix was backported to stable kernels down to 6.11, so a version check cannot
+	#   identify the affected ones).
+	# shellcheck disable=SC2016 # $1 and $2 are awk fields, not shell parameters
+	compare_backends fsopts ID,FS-OPTIONS MAJ:MIN,ID,FS-OPTIONS \
+		'function canon(s) {
+	         s = "," s ","
+	         while (gsub(/,seclabel,/, ",", s)) continue;
+	         sub(/^,/, "", s); sub(/,$/, "", s)
+	         return s
+	     }
+	     /(^|,)(context|fscontext|defcontext|rootcontext|smackfsdef|smackfsroot|smackfshat|smackfsfloor|smackfstransmute)=/ { next }
+	     NR==FNR { if ($2 !~ /(^|,)mand(,|$)/) seen[$1] = canon($2); next }
+	     ($1 in seen) && seen[$1] != canon($2) { print "fs-options for " $1 ": mountinfo " seen[$1] ", listmount " $2 }' \
+		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+fi
+ts_finalize_subtest
+
 ts_finalize
