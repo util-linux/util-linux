@@ -30,6 +30,33 @@ function check_field {
 	[ -n "$data" ] || echo "$name empty"
 }
 
+# Compares one column between the two backends, keyed on the mount ID. A mount can be added or
+# removed between the two reads, and an ID can even be reused by a different mount, so a single
+# disagreement is not yet a failure: only one that survives a fresh pair of reads is reported.
+# Both reads must also return something, or an empty listmount table would compare clean.
+function compare_backends {
+	local desc="$1" mnt_cols="$2" lsmnt_cols="$3" prog="$4"
+	local out
+
+	for _ in 1 2 3; do
+		$TS_CMD_FINDMNT --noheadings --kernel=mountinfo --raw --output "$mnt_cols" \
+			2>> "$TS_ERRLOG" | sort > "$TS_OUTDIR/$desc-mountinfo"
+		$TS_CMD_FINDMNT --noheadings --kernel=listmount --raw --output "$lsmnt_cols" \
+			2>> "$TS_ERRLOG" | sed 's/^[^ ]* //' | sort > "$TS_OUTDIR/$desc-listmount"
+
+		if [ ! -s "$TS_OUTDIR/$desc-mountinfo" ] || [ ! -s "$TS_OUTDIR/$desc-listmount" ]; then
+			echo "$desc: a backend returned no mounts"
+			return
+		fi
+
+		out=$(awk "$prog" "$TS_OUTDIR/$desc-mountinfo" "$TS_OUTDIR/$desc-listmount" \
+			2>> "$TS_ERRLOG")
+		[ -n "$out" ] || return
+	done
+
+	echo "$out"
+}
+
 
 ts_init_subtest "target"
 check_field "TARGET" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
@@ -65,6 +92,24 @@ ts_finalize_subtest
 
 ts_init_subtest "id"
 check_field "ID" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+# Both backends have to name a filesystem the same way, subtype included, or a caller gets a
+# different answer depending on how the table was built. Key on the mount ID rather than the
+# mount point, which is not unique, and compare only the IDs both reads saw, since the table
+# can gain or lose a mount between them. MAJ:MIN is read first on the listmount side on purpose:
+# it needs only STATMOUNT_SB_BASIC, so the read also covers a fetch that asked for that alone.
+ts_init_subtest "fstype-parity"
+if ts_kernel_ver_lt 6 13 0; then
+	# STATMOUNT_FS_SUBTYPE: kernel commit ed9d95f691c2
+	ts_skip "statmount() cannot report the filesystem subtype before Linux 6.13"
+else
+	# shellcheck disable=SC2016 # $1 and $2 are awk fields, not shell parameters
+	compare_backends fstype ID,FSTYPE MAJ:MIN,ID,FSTYPE \
+		'NR==FNR { seen[$1] = $2; next }
+		 ($1 in seen) && seen[$1] != $2 { print "fstype for " $1 ": mountinfo " seen[$1] ", listmount " $2 }' \
+		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+fi
 ts_finalize_subtest
 
 ts_finalize
