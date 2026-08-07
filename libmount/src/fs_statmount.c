@@ -197,6 +197,42 @@ static int apply_fstype(struct libmnt_fs *fs, struct ul_statmount *sm)
 	return __mnt_fs_set_fstype_ptr(fs, p);
 }
 
+/*
+ * mountinfo's super-options field is the superblock flags followed by the filesystem's
+ * own options, and libmount keeps the two in one string. statmount() reports them
+ * separately, so join them in that order.
+ */
+static int apply_fs_optstr(struct libmnt_fs *fs, struct ul_statmount *sm)
+{
+	int rc = 0;
+
+	if (sm->mask & STATMOUNT_SB_BASIC) {
+		rc = mnt_optstr_append_option(&fs->fs_optstr,
+				sm->sb_flags & SB_RDONLY ? "ro" : "rw", NULL);
+		if (!rc && (sm->sb_flags & SB_SYNCHRONOUS))
+			rc = mnt_optstr_append_option(&fs->fs_optstr, "sync", NULL);
+		if (!rc && (sm->sb_flags & SB_DIRSYNC))
+			rc = mnt_optstr_append_option(&fs->fs_optstr, "dirsync", NULL);
+		if (!rc && (sm->sb_flags & SB_LAZYTIME))
+			rc = mnt_optstr_append_option(&fs->fs_optstr, "lazytime", NULL);
+	}
+
+	/* The kernel leaves STATMOUNT_MNT_OPTS clear when the filesystem reported no
+	 * options of its own, so there is nothing to append and no trailing comma.
+	 * unmangle() returns NULL for an empty string as well as on failure, so test the
+	 * source rather than the result and do not mistake a failure for "no options". */
+	if (!rc && (sm->mask & STATMOUNT_MNT_OPTS) && *sm_str(sm, sm->mnt_opts)) {
+		char *opts = unmangle(sm_str(sm, sm->mnt_opts), NULL);
+
+		if (!opts)
+			return -ENOMEM;
+		rc = mnt_optstr_append_option(&fs->fs_optstr, opts, NULL);
+		free(opts);
+	}
+
+	return rc;
+}
+
 static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
 	int rc = 0;
@@ -260,27 +296,14 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 	if (!rc && (sm->mask & STATMOUNT_MNT_NS_ID) && !fs->ns_id)
 		fs->ns_id = sm->mnt_ns_id;
 
-	if (!rc && (sm->mask & STATMOUNT_MNT_OPTS) && !fs->fs_optstr) {
-		fs->fs_optstr = unmangle(sm_str(sm, sm->mnt_opts), NULL);
+	if (!rc && (sm->mask & STATMOUNT_SB_BASIC) && !fs->devno)
+		fs->devno = makedev(sm->sb_dev_major, sm->sb_dev_minor);
+
+	if (!rc && (sm->mask & (STATMOUNT_SB_BASIC | STATMOUNT_MNT_OPTS))
+	    && !fs->fs_optstr) {
+		rc = apply_fs_optstr(fs, sm);
 		free(fs->optstr);
 		fs->optstr = NULL;
-	}
-
-	if (!rc && (sm->mask & STATMOUNT_SB_BASIC)) {
-		if (!fs->devno)
-			fs->devno = makedev(sm->sb_dev_major, sm->sb_dev_minor);
-		if (!fs->fs_optstr) {
-			rc = mnt_optstr_append_option(&fs->fs_optstr,
-					sm->sb_flags & SB_RDONLY ? "ro" : "rw", NULL);
-			if (!rc && (sm->sb_flags & SB_SYNCHRONOUS))
-				rc = mnt_optstr_append_option(&fs->fs_optstr, "sync", NULL);
-			if (!rc && (sm->sb_flags & SB_DIRSYNC))
-				rc = mnt_optstr_append_option(&fs->fs_optstr, "dirsync", NULL);
-			if (!rc && (sm->sb_flags & SB_LAZYTIME))
-				rc = mnt_optstr_append_option(&fs->fs_optstr, "lazytime", NULL);
-			free(fs->optstr);
-			fs->optstr = NULL;
-		}
 	}
 
 	fs->flags |= MNT_FS_KERNEL;

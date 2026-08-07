@@ -82,4 +82,22 @@ awk 'NR==FNR { seen[$1] = $2; next }
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+# mountinfo's super-options field is the superblock flags followed by the filesystem's own
+# options, and both backends have to produce it. MAJ:MIN is read first on purpose: it needs
+# only STATMOUNT_SB_BASIC, and fetching that without the mount options used to leave
+# fs_optstr holding nothing but "rw".
+ts_init_subtest "fs-options-parity"
+$TS_CMD_FINDMNT --noheadings --kernel=mountinfo --raw --output ID,FS-OPTIONS \
+	2>> "$TS_ERRLOG" | sort > "$TS_OUTDIR/fsopts-mountinfo"
+$TS_CMD_FINDMNT --noheadings --kernel=listmount --raw --output MAJ:MIN,ID,FS-OPTIONS \
+	2>> "$TS_ERRLOG" | sed 's/^[^ ]* //' | sort > "$TS_OUTDIR/fsopts-listmount"
+# statmount() reports only SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME}, so a mount carrying
+# SB_MANDLOCK differs by that one token and is not comparable. The kernel ignores -o mand
+# anyway; the bit is kept so that old fstab entries still mount.
+awk 'NR==FNR { if ($2 !~ /(^|,)mand(,|$)/) seen[$1] = $2; next }
+     ($1 in seen) && seen[$1] != $2 { print "fs-options for " $1 ": mountinfo " seen[$1] ", listmount " $2 }' \
+	"$TS_OUTDIR/fsopts-mountinfo" "$TS_OUTDIR/fsopts-listmount" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_finalize
