@@ -1,0 +1,143 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="evaluate"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_prog "mkfs.ext2"
+ts_check_losetup
+
+IMG_PATH="${TS_OUTDIR}/${TS_TESTNAME}"
+
+FSTAB_FILE="$(mktemp "/tmp/ul-$TS_COMPONENT-$TS_TESTNAME-fstab-XXXXXX")" \
+	|| ts_die "mktemp failed"
+
+
+function build_device() {
+    local dev img tag val mkfs_opt
+    img=$1
+    tag=${2^^}
+    val=$3
+
+    case $tag in
+    UUID)
+        mkfs_opt="-U $val"
+    ;;
+    LABEL)
+        mkfs_opt="-L $val"
+    ;;
+    *)
+        ts_die "Cannot build device. Invalid argument '$tag'"
+    esac
+
+    ts_device_init 10 "$img"
+    dev="$TS_LODEV"
+
+    mkfs.ext2 $mkfs_opt "$dev" &> /dev/null || ts_die "Cannot make ext2 on $dev"
+    ts_device_has "$tag" "$val" "$dev"  || ts_die "Cannot find $tag '$val' on $dev"
+}
+
+
+function validate_ts_output() {
+    for d in "${@}"; do
+        sed -i "s@${d}@<validated>@" "$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    done
+}
+
+
+ts_init_subtest "sources-uuid"
+    uuid="a3f5c9d2-7b14-4e6a-9c8f-1d4b6e2a9f07"
+
+cat > "$FSTAB_FILE" << EOF 
+# The first loop device sharing the same UUID tag with the second device
+UUID=$uuid   /mnt/loop_a   ext2   defaults 0  2
+EOF
+
+    build_device "$IMG_PATH"-1.img UUID $uuid
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img UUID $uuid
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$FSTAB_FILE" --evaluate \
+                                --output UUID,SOURCES >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    unset -v DEV1 DEV2 uuid
+
+ts_finalize_subtest
+
+
+ts_init_subtest "sources-label"
+    label="identifybylabel"
+
+cat > "$FSTAB_FILE" << EOF 
+# The first loop device sharing the same LABEL tag with the second
+LABEL=$label   /mnt/loop_a   ext2   defaults 0  2
+EOF
+
+    build_device "$IMG_PATH"-1.img LABEL $label
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img LABEL $label
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$FSTAB_FILE" --evaluate \
+                                --output LABEL,SOURCES >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    unset -v DEV1 DEV2 label
+
+ts_finalize_subtest
+
+
+ts_init_subtest "source-uuid-label"
+    uuid="fcc1c1e5-a60f-46b6-a9ae-40e0bbfd59d9"
+    label="testdevwithlabel"
+
+cat > "$FSTAB_FILE" << EOF
+UUID=$uuid   /mnt/loop_a   ext2   defaults 0  2
+LABEL=$label /mnt/loop_b   ext2   defaults 0  2
+EOF
+
+    build_device "$IMG_PATH"-1.img UUID $uuid
+    DEV1="$TS_LODEV"
+    build_device "$IMG_PATH"-2.img LABEL $label
+    DEV2="$TS_LODEV"
+
+    udevadm settle
+
+    "$TS_CMD_FINDMNT" --fstab --tab-file "$FSTAB_FILE" --evaluate \
+                                --output SOURCE >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+    validate_ts_output "$DEV1" "$DEV2"
+
+    unset -v DEV1 DEV2 uuid label
+ts_finalize_subtest
+
+
+ts_finalize
+
