@@ -68,6 +68,8 @@ ignore_programs=""
 declare -A real_prog_ts_dir=(
 	[fsck.cramfs]="cramfs"
 	[mkfs.cramfs]="cramfs"
+	[fsck.minix]="minix"
+	[mkfs.minix]="minix"
 )
 
 # Each program has a dedicated subdirectory with test scripts

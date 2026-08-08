@@ -33,7 +33,7 @@ mkfs_and_fsck_minix() {
 	test $ret = 0 || return $ret
 
 	ts_log_both "$ fsck.minix -lavsf image"
-	$TS_CMD_FSCKMINIX -lavsf $img >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	$TS_CMD_FSCKMINIX --list --auto --verbose --super --force "$img" >>"$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	ret=$?
 	echo "return fsck: $ret" >> "$TS_OUTPUT"
 	return $ret
