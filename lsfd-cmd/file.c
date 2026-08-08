@@ -199,9 +199,9 @@ static bool abst_fill_column(struct proc *proc,
 			return true;
 
 		file_fill_flags_buf(&buf, file->sys_flags);
-		if (ul_buffer_is_empty(&buf))
+		str = ul_buffer_steal_string(&buf);
+		if (!str)
 			return true;
-		str = ul_buffer_get_data(&buf, NULL, NULL);
 		break;
 	}
 	case COL_MAPLEN:
