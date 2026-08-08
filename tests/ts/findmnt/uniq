@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="uniq"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_prog "mkfs.ext2"
+ts_check_losetup
+
+
+ts_device_init 10
+dev="$TS_LODEV"
+
+mkfs.ext2 -U "a0078978-39c3-4ef5-8f19-4c24a376c7f0" "$dev" &>/dev/null \
+    || ts_die "Cannot make ext2 on $dev"
+
+[ ! -d "$TS_MOUNTPOINT" ] && mkdir -p "$TS_MOUNTPOINT"
+
+$TS_CMD_MOUNT "$dev" "$TS_MOUNTPOINT" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+udevadm settle
+
+if ! ts_is_mounted "$dev"; then
+    $TS_CMD_UMOUNT --detach-loop --force "$dev" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    udevadm settle
+    ts_die "$dev cannot be found in the /proc/mounts"
+fi
+
+# Let's over-mount with the same filesystem
+if ! $TS_CMD_MOUNT "$dev" "$TS_MOUNTPOINT" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"; then
+    $TS_CMD_UMOUNT --detach-loop --force "$dev" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    udevadm settle
+    ts_skip "failed to overmount $dev at $TS_MOUNTPOINT"
+fi
+udevadm settle
+# Output should be a single line; deduplicating the identical mountpoints for the fs
+$TS_CMD_FINDMNT --noheadings --output TARGET --uniq --raw "$dev" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+sed -i "s@$TS_MOUNTPOINT@<mountpoint>@" "$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+# unmount both overlaid mounts
+$TS_CMD_UMOUNT --force "$dev" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+udevadm settle
+$TS_CMD_UMOUNT --detach-loop --force "$dev" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+udevadm settle
+
+ts_finalize
