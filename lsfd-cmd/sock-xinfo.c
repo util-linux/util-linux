@@ -586,20 +586,17 @@ static bool unix_shutdown_chars(struct unix_xinfo *ux, char rw[2])
 	return false;
 }
 
-static inline char *unix_xstrendpoint(struct sock *sock)
+static inline void unix_xbufendpoint(struct sock *sock, struct ul_buffer *ul_buf)
 {
-	char *str = NULL;
 	char shutdown_chars[3] = { 0 };
 
 	if (!unix_shutdown_chars(((struct unix_xinfo *)sock->xinfo), shutdown_chars)) {
 		shutdown_chars[0] = '?';
 		shutdown_chars[1] = '?';
 	}
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  sock->file.proc->pid, sock->file.proc->command, sock->file.association,
-		  shutdown_chars[0], shutdown_chars[1]);
-
-	return str;
+	xbuffer_appendf(ul_buf, "%d,%s,%d%c%c",
+			sock->file.proc->pid, sock->file.proc->command, sock->file.association,
+			shutdown_chars[0], shutdown_chars[1]);
 }
 
 static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
@@ -616,19 +613,16 @@ static struct ipc *unix_get_peer_ipc(struct unix_xinfo *ux,
 	return get_ipc(&dummy_peer_sock.file);
 }
 
-static void unix_fill_column_append_endpoints(struct ipc *peer_ipc, char **str)
+static void unix_fill_column_append_endpoints(struct ipc *peer_ipc, struct ul_buffer *ul_buf)
 {
 	struct list_head *e;
 
 	list_for_each_backwardly(e, &peer_ipc->endpoints) {
 		struct sock *peer_sock = list_entry(e, struct sock, endpoint.endpoints);
-		char *estr;
 
-		if (*str)
-			xstrputc(str, '\n');
-		estr = unix_xstrendpoint(peer_sock);
-		xstrappend(str, estr);
-		free(estr);
+		if (!ul_buffer_is_empty(ul_buf))
+			xbuffer_append_char(ul_buf, '\n');
+		unix_xbufendpoint(peer_sock, ul_buf);
 	}
 }
 
@@ -643,6 +637,7 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 	struct unix_xinfo *ux = (struct unix_xinfo *)sock_xinfo;
 	struct ipc *peer_ipc;
 	char shutdown_chars[3] = { 0 };
+	struct ul_buffer ul_buf = UL_INIT_BUFFER;
 
 	switch (column_id) {
 	case COL_UNIX_PATH:
@@ -666,17 +661,18 @@ static bool unix_fill_column(struct proc *proc __attribute__((__unused__)),
 			break;
 
 		if (peer_ipc)
-			unix_fill_column_append_endpoints(peer_ipc, str);
+			unix_fill_column_append_endpoints(peer_ipc, &ul_buf);
 
 		if (ux->unix_ipc->ipeer == 0) {
 			struct list_head *e;
 			list_for_each(e, &ux->unix_ipc->unix_ipcs) {
 				struct unix_ipc *peer_unix_ipc = list_entry(e, struct unix_ipc, unix_ipcs);
 				peer_ipc = &peer_unix_ipc->ipc;
-				unix_fill_column_append_endpoints(peer_ipc, str);
+				unix_fill_column_append_endpoints(peer_ipc, &ul_buf);
 			}
 		}
 
+		*str = ul_buffer_steal_string(&ul_buf);
 		if (*str)
 			return true;
 		break;
@@ -2535,7 +2531,7 @@ static bool packet_fill_column(struct proc *proc __attribute__((__unused__)),
 		if (proto)
 			*str = xstrdup(proto);
 		else
-			xstrfappend(str, "unknown(%"PRIu16")", pkt->protocol);
+			xasprintf(str, "unknown(%"PRIu16")", pkt->protocol);
 		return true;
 	}
 	case COL_PACKET_PROTOCOL_RAW:

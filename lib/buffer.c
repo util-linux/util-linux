@@ -18,11 +18,16 @@ void ul_buffer_reset_data(struct ul_buffer *buf)
 		memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
 }
 
-void ul_buffer_free_data(struct ul_buffer *buf)
+static inline char *ul_buffer_free_data_commn(struct ul_buffer *buf, bool steal)
 {
+	char *t = NULL;
+
 	assert(buf);
 
-	free(buf->begin);
+	if (steal)
+		t = buf->begin;
+	else
+		free(buf->begin);
 	buf->begin = NULL;
 	buf->end = NULL;
 	buf->sz = 0;
@@ -34,6 +39,26 @@ void ul_buffer_free_data(struct ul_buffer *buf)
 	free(buf->encoded);
 	buf->encoded = NULL;
 	buf->encoded_sz = 0;
+
+	return t;
+}
+
+void ul_buffer_free_data(struct ul_buffer *buf)
+{
+	ul_buffer_free_data_commn(buf, false);
+}
+
+char *ul_buffer_steal_string(struct ul_buffer *buf)
+{
+	char * t = ul_buffer_get_string(buf, NULL, NULL);
+
+	if (ul_buffer_is_empty(buf)) {
+		ul_buffer_free_data(buf);
+		return NULL;
+	}
+
+	ul_buffer_free_data_commn(buf, true);
+	return t;
 }
 
 void ul_buffer_set_chunksize(struct ul_buffer *buf, size_t sz)
@@ -152,6 +177,11 @@ int ul_buffer_append_data(struct ul_buffer *buf, const char *data, size_t sz)
 	return 0;
 }
 
+int ul_buffer_append_char(struct ul_buffer *buf, const char c)
+{
+	return ul_buffer_append_data(buf, &c, 1);
+}
+
 int ul_buffer_append_string(struct ul_buffer *buf, const char *str)
 {
 	if (!str)
@@ -171,6 +201,35 @@ int ul_buffer_append_ntimes(struct ul_buffer *buf, size_t n, const char *str)
 			return rc;
 	}
 	return 0;
+}
+
+int ul_buffer_appendf(struct ul_buffer *buf, const char *format, ...)
+{
+	va_list ap;
+	int res;
+
+	va_start(ap, format);
+	res = ul_buffer_appendvf(buf, format, ap);
+	va_end(ap);
+
+	return res;
+}
+
+int ul_buffer_appendvf(struct ul_buffer *buf, const char *format, va_list ap)
+{
+	char *val;
+	int sz;
+	int res;
+
+	sz = vasprintf(&val, format, ap);
+	if (sz < 0)
+		return -errno;
+
+	/* Like strlen(), sz doesn't include the last null byte. */
+	res = ul_buffer_append_data(buf, val, sz);
+	free(val);
+
+	return res;
 }
 
 int ul_buffer_set_data(struct ul_buffer *buf, const char *data, size_t sz)
@@ -298,6 +357,24 @@ int main(void)
 	ul_buffer_refer_string(&buf, str);
 	ul_buffer_append_data(&buf, ",", 1);
 	ul_buffer_append_string(&buf, "bar");
+	str = ul_buffer_get_data(&buf, &sz, NULL);
+	printf("data [%zu] '%s'\n", sz, str);
+
+	ul_buffer_free_data(&buf);
+	ul_buffer_appendf(&buf, "a%se%d", "bcd", 10);
+	str = ul_buffer_get_data(&buf, &sz, NULL);
+	printf("data [%zu] '%s'\n", sz, str);
+
+	ul_buffer_free_data(&buf);
+	ul_buffer_append_char(&buf, 'x');
+	{
+		char c = 'y';
+		ul_buffer_append_char(&buf, c);
+	}
+	{
+		const char c = 'z';
+		ul_buffer_append_char(&buf, c);
+	}
 	str = ul_buffer_get_data(&buf, &sz, NULL);
 	printf("data [%zu] '%s'\n", sz, str);
 

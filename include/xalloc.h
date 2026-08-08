@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include "c.h"
+#include "buffer.h"
 #include "strutils.h"
 
 #ifndef XALLOC_EXIT_CODE
@@ -208,4 +209,43 @@ char *xgethosturi(const char *proto)
 	return uri;
 }
 
+static inline int xbuffer_append_string(struct ul_buffer *buf, const char *str)
+{
+	int r = ul_buffer_append_string(buf, str);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline int xbuffer_append_char(struct ul_buffer *buf, const char c)
+{
+	int r = ul_buffer_append_char(buf, c);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 0)))
+int xbuffer_appendvf(struct ul_buffer *buf, const char *format, va_list ap)
+{
+	int r =  ul_buffer_appendvf(buf, format, ap);
+	if (r < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate buffer");
+	return r;
+}
+
+static inline
+__attribute__ ((__format__ (__printf__, 2, 3)))
+int xbuffer_appendf(struct ul_buffer *buf, const char *format, ...)
+{
+	va_list ap;
+	int res;
+
+	va_start(ap, format);
+	res = xbuffer_appendvf(buf, format, ap);
+	va_end(ap);
+
+	return res;
+}
 #endif
