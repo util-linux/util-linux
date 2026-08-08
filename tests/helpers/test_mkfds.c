@@ -1180,6 +1180,116 @@ static void *make_inotify_fd(const struct factory *factory _U_, struct fdesc fde
 	return NULL;
 }
 
+struct inotify_multiple_inodes_data {
+	char *tempdir;
+	int count;
+};
+
+static void delete_generated_files(const char *tempdir, int count)
+{
+	for (int i = count; i > 0; i--) {
+		char buf[BUFSIZ];
+
+		snprintf(buf, sizeof(buf), "%s/%d", tempdir, i - 1);
+		unlink(buf);
+	}
+}
+
+static void create_files_exclusively(struct inotify_multiple_inodes_data *data)
+{
+	for (int i = 0; i < data->count; i++) {
+		char buf[BUFSIZ];
+		int fd;
+
+		snprintf(buf, sizeof(buf), "%s/%d", data->tempdir, i);
+		fd = open(buf, O_CREAT | O_EXCL, 0600);
+		if (fd < 0) {
+			int e = errno;
+			if (i > 0)
+				delete_generated_files(data->tempdir, i);
+			free(data->tempdir);
+
+			errno = e;
+			err(EXIT_FAILURE, "failed to create %s", buf);
+		}
+		close(fd);
+	}
+}
+
+static void watch_generated_files(int inotify_fd,
+				  struct inotify_multiple_inodes_data *data)
+{
+	for (int i = 0; i < data->count; i++) {
+		char buf[BUFSIZ];
+
+		snprintf(buf, sizeof(buf), "%s/%d", data->tempdir, i);
+		if (inotify_add_watch(inotify_fd, buf, IN_DELETE) < 0) {
+			delete_generated_files(data->tempdir, data->count);
+			free(data->tempdir);
+			err(EXIT_FAILURE, "failed in inotify_add_watch(\"%s\")", buf);
+		}
+	}
+}
+
+static void close_inotify_with_multiple_inodes(int fd, void *user_data)
+{
+	struct inotify_multiple_inodes_data *data = user_data;
+
+	delete_generated_files(data->tempdir, data->count);
+	free(data->tempdir);
+	close(fd);
+}
+
+static void *make_inotify_fd_monitoring_multiple_inodes(const struct factory *factory _U_, struct fdesc fdescs[],
+							int argc _U_, char ** argv _U_)
+{
+	struct arg tempdir = decode_arg("tempdir", factory->params, argc, argv);
+	const char *stempdir = ARG_STRING(tempdir);
+	struct arg count = decode_arg("count", factory->params, argc, argv);
+	const int icount = ARG_INTEGER(count);
+	static struct inotify_multiple_inodes_data data;
+	int fd;
+
+	if (icount < 0)
+		err(EXIT_FAILURE, "give a positive number as \"extra-files\": %d",
+		    icount);
+
+	if (stempdir == NULL || stempdir[0] == '\0')
+		err(EXIT_FAILURE, "no \"tempdir\" given");
+
+	data.tempdir = xstrdup(stempdir);
+	data.count = icount;
+	free_arg(&count);
+	free_arg(&tempdir);
+
+	create_files_exclusively(&data);
+	fd = inotify_init();
+	if (fd < 0) {
+		int e = errno;
+		delete_generated_files(data.tempdir, data.count);
+		free(data.tempdir);
+		errno = e;
+		err(EXIT_FAILURE, "failed in inotify_init()");
+	}
+
+	watch_generated_files(fd, &data);
+
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_inotify_with_multiple_inodes,
+		.data  = &data,
+	};
+
+	return NULL;
+}
+
 static void close_unix_socket(int fd, void *data)
 {
 	char *path = data;
@@ -3942,6 +4052,29 @@ static const struct factory factories[] = {
 				.type = PTYPE_STRING,
 				.desc = "the file that the inotify monitors",
 				.defv.string = "/etc/fstab",
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "inotify-many",
+		.desc = "inotify fd monitoring multiple inodes",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_inotify_fd_monitoring_multiple_inodes,
+		.params = (struct parameter []) {
+			{
+				.name = "tempdir",
+				.type = PTYPE_STRING,
+				.desc = "directory where temporary files to watch are created",
+				.defv.string = "",
+			},
+			{
+				.name = "count",
+				.type = PTYPE_INTEGER,
+				.desc = "number of temporary files to create and watch",
+				.defv.integer = 17,
 			},
 			PARAM_END
 		},
