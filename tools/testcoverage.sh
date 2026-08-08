@@ -65,6 +65,11 @@ unsupported_programs=$(grep 'unsupported_programs=' "${top_srcdir}"/tools/get-op
 # These are programs that we do not need to check on
 ignore_programs=""
 
+declare -A real_prog_ts_dir=(
+	[fsck.cramfs]="cramfs"
+	[mkfs.cramfs]="cramfs"
+)
+
 # Each program has a dedicated subdirectory with test scripts
 program_test_subdirs="$(ls -1 ${top_testdir} | tr '\n' ' ')"
 
@@ -270,6 +275,7 @@ function generate_report() {
 		percentage=''
 		frac=''
 		notes=''
+		dirname="$prog"
 		((counter++))
 
 		[ -t 1 ] && progress_status "$prog" "$num_total_progs" "$counter"
@@ -292,7 +298,10 @@ function generate_report() {
 			continue
 		fi
 
-		if ! echo "$program_test_subdirs" | grep -E " $prog " &>/dev/null; then
+		# Some test directories are shared between programs
+		dirname=${real_prog_ts_dir[$prog]:-$dirname}
+
+		if ! echo "$program_test_subdirs" | grep -E " $dirname " &>/dev/null; then
 			percentage=0.00
 			frac=0/0
 			notes="missing test subdirectory, "
@@ -303,7 +312,7 @@ function generate_report() {
 		fi
 
 		if [[ "$has_ts_dir" == 1 ]]; then
-			test_scripts="$(find "${top_testdir}/${prog}" -maxdepth 1 -type f -executable \
+			test_scripts="$(find "${top_testdir}/${dirname}" -maxdepth 1 -type f -executable \
 							-exec grep -l 'ts_init' {} \; 2>/dev/null | tr '\n' ' ')"
 		fi
 
