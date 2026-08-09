@@ -1300,6 +1300,22 @@ static void close_unix_socket(int fd, void *data)
 	}
 }
 
+static void init_unix_addr(struct sockaddr_un *un, size_t *un_len,
+			   const char *path, bool abstract)
+{
+	memset(un, 0, sizeof(*un));
+	un->sun_family = AF_UNIX;
+	*un_len = sizeof(*un);
+
+	if (abstract) {
+		size_t pathlen = strlen(path);
+		strncpy(un->sun_path + 1, path, sizeof(un->sun_path) - 1 - 1);
+		if (sizeof(un->sun_path) - 1 > pathlen)
+			*un_len = sizeof(*un) - sizeof(un->sun_path) + 1 + pathlen;
+	} else
+		strncpy(un->sun_path,     path, sizeof(un->sun_path) - 1    );
+}
+
 static void *make_unix_stream_core(const struct factory *factory, struct fdesc fdescs[],
 				   int argc, char ** argv, int type, const char *typestr)
 {
@@ -1319,17 +1335,9 @@ static void *make_unix_stream_core(const struct factory *factory, struct fdesc f
 
 	int ssd, csd, asd;	/* server, client, and accepted socket descriptors */
 	struct sockaddr_un un;
-	size_t un_len = sizeof(un);
+	size_t un_len;
 
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	if (babstract) {
-		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
-		size_t pathlen = strlen(spath);
-		if (sizeof(un.sun_path) - 1 > pathlen)
-			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
-	} else
-		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+	init_unix_addr(&un, &un_len, spath, babstract);
 
 	free_arg(&client_shutdown);
 	free_arg(&server_shutdown);
@@ -1459,6 +1467,110 @@ static void *make_unix_stream(const struct factory *factory, struct fdesc fdescs
 	return make_unix_stream_core(factory, fdescs, argc, argv, typesym, typestr);
 }
 
+static void *make_unix_stream_listen(const struct factory *factory, struct fdesc fdescs[],
+				     int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg backlog = decode_arg("backlog", factory->params, argc, argv);
+	int ibacklog = ARG_INTEGER(backlog);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	struct sockaddr_un un;
+	size_t un_len;
+	int sd;
+
+	init_unix_addr(&un, &un_len, spath, babstract);
+
+	free_arg(&abstract);
+	free_arg(&backlog);
+	free_arg(&path);
+
+	sd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_STREAM (server side)");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_unix_socket,
+		.data  = NULL,
+	};
+
+	if (!babstract)
+		unlink(un.sun_path);
+	if (bind(sd, (const struct sockaddr *)&un, un_len) < 0) {
+		err(EXIT_FAILURE, "failed to bind a socket for listening");
+	}
+
+	if (!babstract)
+		fdescs[0].data = xstrdup(un.sun_path);
+
+	if (listen(sd, ibacklog) < 0) {
+		int e = errno;
+		close_unix_socket(sd, fdescs[0].data);
+		errno = e;
+		err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	return NULL;
+}
+
+static void *make_unix_stream_connect(const struct factory *factory, struct fdesc fdescs[],
+				      int argc, char ** argv)
+{
+	struct arg path = decode_arg("path", factory->params, argc, argv);
+	const char *spath = ARG_STRING(path);
+
+	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
+	bool babstract = ARG_BOOLEAN(abstract);
+
+	struct sockaddr_un un;
+	size_t un_len;
+	int sd;
+
+	init_unix_addr(&un, &un_len, spath, babstract);
+
+	free_arg(&abstract);
+	free_arg(&path);
+
+	sd = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a socket with AF_UNIX + SOCK_STREAM (client side)");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	if (connect(sd, (const struct sockaddr *)&un, un_len) < 0) {
+		err(EXIT_FAILURE, "failed to connect a socket to the listening socket");
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
 static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[],
 			     int argc, char ** argv)
 {
@@ -1471,17 +1583,9 @@ static void *make_unix_dgram(const struct factory *factory, struct fdesc fdescs[
 	int ssd, csd;	/* server and client socket descriptors */
 
 	struct sockaddr_un un;
-	size_t un_len = sizeof(un);
+	size_t un_len;
 
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	if (babstract) {
-		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
-		size_t pathlen = strlen(spath);
-		if (sizeof(un.sun_path) - 1 > pathlen)
-			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
-	} else
-		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+	init_unix_addr(&un, &un_len, spath, babstract);
 
 	free_arg(&abstract);
 	free_arg(&path);
@@ -1562,7 +1666,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 	const char *typestr;
 
 	struct sockaddr_un un;
-	size_t un_len = sizeof(un);
+	size_t un_len;
 
 	int self_netns, tmp_netns, sd;
 
@@ -1579,15 +1683,7 @@ static void *make_unix_in_new_netns(const struct factory *factory, struct fdesc 
 		errx(EXIT_FAILURE, "unknown unix socket type: %s", stype);
 	}
 
-	memset(&un, 0, sizeof(un));
-	un.sun_family = AF_UNIX;
-	if (babstract) {
-		strncpy(un.sun_path + 1, spath, sizeof(un.sun_path) - 1 - 1);
-		size_t pathlen = strlen(spath);
-		if (sizeof(un.sun_path) - 1 > pathlen)
-			un_len = sizeof(un) - sizeof(un.sun_path) + 1 + pathlen;
-	} else
-		strncpy(un.sun_path,     spath, sizeof(un.sun_path) - 1    );
+	init_unix_addr(&un, &un_len, spath, babstract);
 
 	free_arg(&abstract);
 	free_arg(&path);
@@ -1820,6 +1916,102 @@ static void *make_tcp_bare(const struct factory *factory _U_, struct fdesc fdesc
 		}
 		close(sd);
 		sd = fdescs[0].fd;
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
+static void *make_tcp_listen(const struct factory *factory, struct fdesc fdescs[],
+			     int argc, char ** argv)
+{
+	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
+	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
+
+	struct arg backlog = decode_arg("backlog", factory->params, argc, argv);
+	int ibacklog = ARG_INTEGER(backlog);
+
+	struct arg reuseaddr = decode_arg("reuseaddr", factory->params, argc, argv);
+	bool breuseaddr = ARG_BOOLEAN(reuseaddr);
+
+	struct sockaddr_in sin;
+	int sd;
+
+	free_arg(&reuseaddr);
+	free_arg(&backlog);
+	free_arg(&server_port);
+
+	sd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a tcp socket for listening");
+
+	if (breuseaddr) {
+		const int y = 1;
+		if (setsockopt(sd, SOL_SOCKET,
+			       SO_REUSEADDR, (const char *)&y, sizeof(y)) < 0) {
+			err(EXIT_FAILURE, "failed to setsockopt(SO_REUSEADDR)");
+		}
+	}
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	tcp_init_addr((struct sockaddr *)&sin, iserver_port);
+	if (bind(sd, (const struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		err(EXIT_FAILURE, "failed to bind a listening socket");
+	}
+
+	if (listen(sd, ibacklog) < 0) {
+		err(EXIT_FAILURE, "failed to listen a socket");
+	}
+
+	fdescs[0] = (struct fdesc) {
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL,
+	};
+
+	return NULL;
+}
+
+static void *make_tcp_connect(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char ** argv)
+{
+	struct arg server_port = decode_arg("server-port", factory->params, argc, argv);
+	unsigned short iserver_port = (unsigned short)ARG_INTEGER(server_port);
+
+	struct sockaddr_in sin;
+	int sd;
+
+	free_arg(&server_port);
+
+	sd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sd < 0)
+		err(EXIT_FAILURE,
+		    "failed to make a tcp client socket");
+
+	if (sd != fdescs[0].fd) {
+		if (dup2(sd, fdescs[0].fd) < 0) {
+			err(EXIT_FAILURE, "failed to dup %d -> %d", sd, fdescs[0].fd);
+		}
+		close(sd);
+		sd = fdescs[0].fd;
+	}
+
+	tcp_init_addr((struct sockaddr *)&sin, iserver_port);
+	if (connect(sd, (const struct sockaddr *)&sin, sizeof(sin)) < 0) {
+		err(EXIT_FAILURE, "failed to connect a client socket to the server socket");
 	}
 
 	fdescs[0] = (struct fdesc) {
@@ -4127,6 +4319,58 @@ static const struct factory factories[] = {
 		},
 	},
 	{
+		.name = "unix-stream-listen",
+		.desc = "AF_UNIX+SOCK_STREAM listening socket (no connect)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_unix_stream_listen,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path for listening-socket bound to",
+				.defv.string = "/tmp/test_mkfds-unix-stream-listen",
+			},
+			{
+				.name = "backlog",
+				.type = PTYPE_INTEGER,
+				.desc = "backlog passed to listen(2)",
+				.defv.integer = 5,
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+	{
+		.name = "unix-stream-connect",
+		.desc = "AF_UNIX+SOCK_STREAM socket connected to PATH (no bind)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_unix_stream_connect,
+		.params = (struct parameter []) {
+			{
+				.name = "path",
+				.type = PTYPE_STRING,
+				.desc = "path of the listening-socket to connect to",
+				.defv.string = "/tmp/test_mkfds-unix-stream-listen",
+			},
+			{
+				.name = "abstract",
+				.type = PTYPE_BOOLEAN,
+				.desc = "use PATH as an abstract socket address",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+	{
 		.name = "unix-dgram",
 		.desc = "AF_UNIX+SOCK_DGRAM sockets",
 		.priv = false,
@@ -4209,6 +4453,52 @@ static const struct factory factories[] = {
 		.EX_N = 0,
 		.make = make_tcp_bare,
 		.params = (struct parameter []) {
+			PARAM_END
+		}
+	},
+	{
+		.name = "tcp-listen",
+		.desc = "AF_INET+SOCK_STREAM listening socket (no connect)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_tcp_listen,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the server listens on",
+				.defv.integer = 12345,
+			},
+			{
+				.name = "backlog",
+				.type = PTYPE_INTEGER,
+				.desc = "backlog passed to listen(2)",
+				.defv.integer = 5,
+			},
+			{
+				.name = "reuseaddr",
+				.type = PTYPE_BOOLEAN,
+				.desc = "set SO_REUSEADDR before bind(2)",
+				.defv.boolean = true,
+			},
+			PARAM_END
+		}
+	},
+	{
+		.name = "tcp-connect",
+		.desc = "AF_INET+SOCK_STREAM socket connected to SERVER-PORT (no bind)",
+		.priv = false,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_tcp_connect,
+		.params = (struct parameter []) {
+			{
+				.name = "server-port",
+				.type = PTYPE_INTEGER,
+				.desc = "TCP port the server listens on",
+				.defv.integer = 12345,
+			},
 			PARAM_END
 		}
 	},
