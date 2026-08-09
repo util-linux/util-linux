@@ -27,6 +27,10 @@ PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{
 PACKAGE_VERSION_RELEASE=$(echo $PACKAGE_VERSION | awk -F. '{
 		     sub("-.*","",$3); print $3 ~ /^@<:@0-9@:>@+$/ ? $3 : 0}')
 
+dnl util-linux.pc version (no VCS suffix, matches meson's pc_version)
+UTIL_LINUX_PC_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+AC_SUBST([UTIL_LINUX_PC_VERSION])
+
 dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
 LIBBLKID_DATE="26-Feb-2026"
@@ -1733,10 +1737,23 @@ UL_BUILD_INIT([agetty])
 UL_REQUIRES_HAVE([agetty], [utmpx_h], [utmpx.h header])
 UL_REQUIRES_HAVE([agetty], [gnu_utmpx], [GNU utmpx functions])
 AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
+have_agetty_reload=no
 AS_IF([test "x$have_futimens" = xyes && test "x$have_inotify_init1" = xyes ], [
+  have_agetty_reload=yes
   AC_DEFINE([AGETTY_RELOAD], [1], [Enable agetty --reload feature])
 ],[
   AC_MSG_WARN([futimens or inotify_init1 not found; agetty(8) will not provide ---reload functionality])
+])
+
+have_agetty_netlink=no
+AS_IF([test "x$have_agetty_reload" = xyes], [
+  AC_CHECK_DECL([RTMGRP_IPV4_IFADDR], [have_rtmgrp_ipv4=yes], [have_rtmgrp_ipv4=no],
+                [[#include <linux/rtnetlink.h>]])
+  AC_CHECK_DECL([RTMGRP_IPV6_IFADDR], [have_rtmgrp_ipv6=yes], [have_rtmgrp_ipv6=no],
+                [[#include <linux/rtnetlink.h>]])
+  AS_IF([test "x$have_rtmgrp_ipv4" = xyes && test "x$have_rtmgrp_ipv6" = xyes], [
+    have_agetty_netlink=yes
+  ])
 ])
 
 
@@ -3140,6 +3157,25 @@ fi
 
 
 LIBS=""
+
+
+dnl util-linux.pc lib and tool specific feature flags
+AS_IF([test "x$have_systemd" = xyes], [SYSTEMD_SUPPORT_PC=1], [SYSTEMD_SUPPORT_PC=0])
+AS_IF([test "x$have_econf" = xyes], [LIBECONF_SUPPORT_PC=1], [LIBECONF_SUPPORT_PC=0])
+AS_IF([test "x$have_btrfs" = xyes], [BTRFS_SUPPORT_PC=1], [BTRFS_SUPPORT_PC=0])
+AS_IF([test "x$build_liblastlog2" = xyes], [LASTLOG2_SUPPORT_PC=1], [LASTLOG2_SUPPORT_PC=0])
+AS_IF([test "x$have_cryptsetup" = xyes], [LIBCRYPTSETUP_SUPPORT_PC=1], [LIBCRYPTSETUP_SUPPORT_PC=0])
+AS_IF([test "x$build_more" = xyes], [MORE_SECURE_PAGER_SUPPORT_PC=1], [MORE_SECURE_PAGER_SUPPORT_PC=0])
+AS_IF([test "x$have_agetty_reload" = xyes], [AGETTY_RELOAD_SUPPORT_PC=1], [AGETTY_RELOAD_SUPPORT_PC=0])
+AS_IF([test "x$have_agetty_netlink" = xyes], [AGETTY_NETLINK_SUPPORT_PC=1], [AGETTY_NETLINK_SUPPORT_PC=0])
+AC_SUBST([SYSTEMD_SUPPORT_PC])
+AC_SUBST([LIBECONF_SUPPORT_PC])
+AC_SUBST([BTRFS_SUPPORT_PC])
+AC_SUBST([LASTLOG2_SUPPORT_PC])
+AC_SUBST([LIBCRYPTSETUP_SUPPORT_PC])
+AC_SUBST([MORE_SECURE_PAGER_SUPPORT_PC])
+AC_SUBST([AGETTY_RELOAD_SUPPORT_PC])
+AC_SUBST([AGETTY_NETLINK_SUPPORT_PC])
 
 
 AC_CONFIG_HEADERS([config.h])
