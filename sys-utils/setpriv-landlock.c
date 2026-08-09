@@ -108,7 +108,7 @@ static const struct {
 	{ LANDLOCK_ACCESS_FS_RESOLVE_UNIX, "resolve-unix", N_("connect(2) or bind(2) a pathname UNIX domain socket") },
 };
 
-/* cumulative access_fs rights supported by each landlock ABI version, indexed by (abi - 1) */
+/* cumulative access_fs rights supported by each Landlock ABI version, indexed by (abi - 1) */
 static const uint64_t landlock_access_fs_mask[] = {
 	/* ABI 1 */ (LANDLOCK_ACCESS_FS_MAKE_SYM << 1) - 1,
 	/* ABI 2 */ (LANDLOCK_ACCESS_FS_REFER << 1) - 1,
@@ -165,11 +165,21 @@ static long landlock_access_to_mask(const char *str, size_t len)
 
 static uint64_t parse_landlock_fs_access(const char *list)
 {
-	unsigned long r = 0;
+	unsigned long r = 0, unsupported;
+	unsigned i;
 
 	if (string_to_bitmask(list, &r, landlock_access_to_mask))
 		errx(EXIT_FAILURE,
 		     _("could not parse Landlock fs access: %s"), list);
+
+	unsupported = r & ~landlock_abi_fs_mask();
+	if (unsupported) {
+		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
+			if (landlock_access_fs[i].value & unsupported)
+				errx(EXIT_FAILURE,
+				     _("Landlock fs access right is not supported by the running kernel: %s"),
+				     landlock_access_fs[i].type);
+	}
 
 	return r;
 }
@@ -188,6 +198,8 @@ void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 
 	if (type)
 		opts->access_fs |= parse_landlock_fs_access(type);
+	else
+		errx(EXIT_FAILURE, _("invalid Landlock access: %s"), str);
 }
 
 void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
@@ -239,7 +251,7 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 		rule = list_entry(entry, struct landlock_rule_entry, head);
 		if (rule->rule_type == LANDLOCK_RULE_PATH_BENEATH && !opts->access_fs) {
 			errx(EXIT_FAILURE,
-				_("landlock path-beneath rule requires a filesystem access restriction (--landlock-access fs)"));
+				_("Landlock path-beneath rule requires a filesystem access restriction (--landlock-access fs)"));
 		}
 	}
 

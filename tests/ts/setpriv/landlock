@@ -75,4 +75,14 @@ ts_init_subtest "wildcard-partial-access-reversed"
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
 
+## Invalid Landlock rule/right
+
+ts_init_subtest "invalid-access"
+"$TS_CMD_SETPRIV" --landlock-access invalid true &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "invalid-fs-right"
+"$TS_CMD_SETPRIV" --landlock-access fs:an-invalid-right true &> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize
