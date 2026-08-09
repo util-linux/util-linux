@@ -85,6 +85,25 @@ else
 fi
 ts_finalize_subtest
 
+ts_init_subtest "scope-unsupported"
+if [[ "$abi_version" -ge 6 ]]; then
+	ts_skip "landlock scope restrictions are supported"
+else
+	"$TS_CMD_SETPRIV" --landlock-access scope true &> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+background_pid=
+cleanup()
+{
+	if [[ -n "$background_pid" ]]; then
+		kill "$background_pid" 2> /dev/null
+		wait "$background_pid" 2> /dev/null
+		background_pid=
+	fi
+}
+trap cleanup EXIT
+
 # test_mkfds prints its pid only after the requested fd was made, so a
 # successful read means it is ready to serve.
 mkfds_has_factory()
@@ -179,6 +198,94 @@ if [[ -n "$tcp_listener" ]]; then
 	echo DONE >&"${TCP_LISTEN[1]}"
 	wait "$TCP_LISTEN_PID"
 	tcp_listener=
+fi
+
+# Both scopes appeared in ABI 6, so each one can serve as the control of
+# the other: it must leave the operation the other one blocks alone.
+signal_tests_issue=
+if [[ "$abi_version" -lt 6 ]]; then
+	signal_tests_issue="landlock scopes are not supported"
+elif ! type "$TS_CMD_KILL" > /dev/null 2>&1; then
+	signal_tests_issue="kill is unavailable"
+else
+	# The sleep process remains outside the new Landlock domain.
+	sleep 60 &
+	background_pid=$!
+fi
+
+ts_init_subtest "scope-signal-blocked"
+if [[ -n "$signal_tests_issue" ]]; then
+	ts_skip "$signal_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access scope:signal \
+		"$TS_CMD_KILL" -0 "$background_pid" &> /dev/null; then
+	echo "signal allowed" > "$TS_OUTPUT"
+else
+	echo "signal blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "scope-signal-allowed"
+if [[ -n "$signal_tests_issue" ]]; then
+	ts_skip "$signal_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
+		"$TS_CMD_KILL" -0 "$background_pid" &> /dev/null; then
+	echo "signal allowed" > "$TS_OUTPUT"
+else
+	echo "signal blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+cleanup
+
+socket_name="util-linux-setpriv-$$"
+unix_listener=
+
+unix_tests_issue=
+if [[ "$abi_version" -lt 6 ]]; then
+	unix_tests_issue="landlock scopes are not supported"
+elif ! mkfds_has_factory unix-stream-listen || ! mkfds_has_factory unix-stream-connect; then
+	unix_tests_issue="test_mkfds has no unix-stream-listen or unix-stream-connect factory"
+else
+	coproc UNIX_LISTEN { "$TS_HELPER_MKFDS" unix-stream-listen 3 \
+				path="$socket_name" abstract=1 2> /dev/null; }
+	if ! read -r -u "${UNIX_LISTEN[0]}" unix_listener; then
+		unix_tests_issue="cannot listen on abstract UNIX socket $socket_name"
+	elif ! "$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
+			path="$socket_name" abstract=1 &> /dev/null; then
+		unix_tests_issue="cannot connect to abstract UNIX socket $socket_name"
+	fi
+fi
+
+ts_init_subtest "scope-abstract-unix-socket-blocked"
+if [[ -n "$unix_tests_issue" ]]; then
+	ts_skip "$unix_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
+		"$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
+		path="$socket_name" abstract=1 \
+		&> /dev/null; then
+	echo "abstract UNIX socket allowed" > "$TS_OUTPUT"
+else
+	echo "abstract UNIX socket blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "scope-abstract-unix-socket-allowed"
+if [[ -n "$unix_tests_issue" ]]; then
+	ts_skip "$unix_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access scope:signal \
+		"$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
+		path="$socket_name" abstract=1 \
+		&> /dev/null; then
+	echo "abstract UNIX socket allowed" > "$TS_OUTPUT"
+else
+	echo "abstract UNIX socket blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+if [[ -n "$unix_listener" ]]; then
+	echo DONE >&"${UNIX_LISTEN[1]}"
+	wait "$UNIX_LISTEN_PID"
+	unix_listener=
 fi
 
 ## Invalid Landlock rule/right

@@ -117,6 +117,10 @@ Block TCP connect calls:
 +
 *setpriv --landlock-access net:connect-tcp*
 +
+Limit access to abstract unix sockets to those created inside the Landlock domain:
++
+*setpriv --landlock-access scope:abstract-unix-socket*
++
 For a complete set of supported access categories use *setpriv --help*.
 
 *--landlock-rule* _rule_::

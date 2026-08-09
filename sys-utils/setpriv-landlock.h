@@ -21,6 +21,7 @@
 struct setpriv_landlock_opts {
 	uint64_t access_fs;
 	uint64_t access_net;
+	uint64_t scoped;
 	struct list_head rules;
 };
 
