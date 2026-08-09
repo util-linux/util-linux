@@ -175,9 +175,15 @@ _setpriv_module()
 					compopt -o nospace
 					_setpriv_landlock_rights "$1" fs 'path-beneath:' "${cur#path-beneath:}"
 					;;
+				net-port:*:*)
+					;;
+				net-port:*)
+					compopt -o nospace
+					_setpriv_landlock_rights "$1" net 'net-port:' "${cur#net-port:}"
+					;;
 				*)
 					compopt -o nospace
-					COMPREPLY=( $(compgen -W "path-beneath:" -- $cur) )
+					COMPREPLY=( $(compgen -W "path-beneath: net-port:" -- $cur) )
 					;;
 			esac
 			return 0

@@ -105,7 +105,7 @@ Request a particular AppArmor profile (using a transition on exec). This will fa
 Enable Landlock restrictions for a specific set of system accesses.
 To allow specific subgroups of accesses use *--landlock-rule*.
 +
-Block all filesystem access:
+Block all Landlock filesystem accesses (depends on kernel version):
 +
 *setpriv --landlock-access fs*
 +
@@ -113,10 +113,11 @@ Block all file deletions and directory creations:
 +
 *setpriv --landlock-access fs:remove-file,make-dir*
 +
-For a complete set of supported access categories use *setpriv --help*.
+Block TCP connect calls:
 +
-The generic placeholder "fs" is subject to change and may be extended in future versions
-to support new access types.
+*setpriv --landlock-access net:connect-tcp*
++
+For a complete set of supported access categories use *setpriv --help*.
 
 *--landlock-rule* _rule_::
 
@@ -126,9 +127,13 @@ The syntax is as follows:
 +
 *--landlock-rule $ruletype:$access:$rulearg*
 +
-For example grant file read access to everything under */boot*:
+For example, to grant the file read right on files under */boot*:
 +
 *--landlock-rule path-beneath:read-file:/boot*
++
+To allow connect to TCP port 443:
++
+*--landlock-rule net-port:connect-tcp:443*
 
 *--landlock-support*::
 List the Landlock ABI version supported by the running kernel, together with the access

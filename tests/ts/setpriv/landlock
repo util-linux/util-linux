@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Copyright (C) 2023 Thomas Weißschuh <thomas@t-8ch.de>
+# Copyright (C) 2026 Skye Soss <skye@soss.website>
 #
 # This file is part of util-linux.
 #
@@ -23,12 +24,13 @@ ts_init "$*"
 [[ "$COVERAGE" = yes ]] && ts_skip "does not work with coverage"
 
 ts_check_test_command "$TS_CMD_SETPRIV"
+ts_check_test_command "$TS_HELPER_MKFDS"
 
-"$TS_CMD_SETPRIV" --landlock-access fs \
-	--landlock-rule path-beneath:execute:/ \
-	--landlock-rule path-beneath:read-file:/ \
-	true \
-	|| ts_skip "no landlock support in setpriv"
+if ! landlock_support="$("$TS_CMD_SETPRIV" --landlock-support)"; then
+	ts_skip "no Landlock support in setpriv"
+fi
+
+abi_version="$(echo "$landlock_support" | sed -n 's/ABI version: \([0-9]\+\)/\1/p')"
 
 ts_init_subtest "nothing-allowed"
 "$TS_CMD_SETPRIV" --landlock-access fs true &> "$TS_OUTPUT"
@@ -74,6 +76,110 @@ ts_init_subtest "wildcard-partial-access-reversed"
 	true \
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
+
+ts_init_subtest "net-unsupported"
+if [[ "$abi_version" -ge 4 ]]; then
+	ts_skip "landlock network restrictions are supported"
+else
+	"$TS_CMD_SETPRIV" --landlock-access net true &> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+# test_mkfds prints its pid only after the requested fd was made, so a
+# successful read means it is ready to serve.
+mkfds_has_factory()
+{
+	[[ -x "$TS_HELPER_MKFDS" ]] && "$TS_HELPER_MKFDS" --is-available "$1"
+}
+
+net_port=$((30000 + $$ % 10000))
+
+ts_init_subtest "net-invalid-port"
+if [[ "$abi_version" -lt 4 ]]; then
+	ts_skip "landlock network restrictions are not supported"
+else
+	"$TS_CMD_SETPRIV" --landlock-access net \
+		--landlock-rule net-port:bind-tcp:65536 \
+		true &> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+## Landlock network rights
+
+net_tests_issue=
+if [[ "$abi_version" -lt 4 ]]; then
+	net_tests_issue="landlock network restrictions are not supported"
+elif ! mkfds_has_factory tcp-listen || ! mkfds_has_factory tcp-connect; then
+	net_tests_issue="test_mkfds has no tcp-listen or tcp-connect factory"
+elif ! "$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" &> /dev/null; then
+	net_tests_issue="cannot bind TCP port $net_port"
+fi
+
+ts_init_subtest "net-bind-blocked"
+if [[ -n "$net_tests_issue" ]]; then
+	ts_skip "$net_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
+		"$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" \
+		&> /dev/null; then
+	echo "bind allowed" > "$TS_OUTPUT"
+else
+	echo "bind blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "net-bind-allowed"
+if [[ -n "$net_tests_issue" ]]; then
+	ts_skip "$net_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
+		--landlock-rule net-port:bind-tcp:"$net_port" \
+		"$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" \
+		&> /dev/null; then
+	echo "bind allowed" > "$TS_OUTPUT"
+else
+	echo "bind blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+tcp_listener=
+if [[ -z "$net_tests_issue" ]]; then
+	coproc TCP_LISTEN { "$TS_HELPER_MKFDS" tcp-listen 3 server-port="$net_port" 2> /dev/null; }
+	if ! read -r -u "${TCP_LISTEN[0]}" tcp_listener; then
+		net_tests_issue="cannot listen on TCP port $net_port"
+	elif ! "$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" &> /dev/null; then
+		net_tests_issue="cannot connect to TCP port $net_port"
+	fi
+fi
+
+ts_init_subtest "net-connect-blocked"
+if [[ -n "$net_tests_issue" ]]; then
+	ts_skip "$net_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
+		"$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" \
+		&> /dev/null; then
+	echo "connect allowed" > "$TS_OUTPUT"
+else
+	echo "connect blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "net-connect-allowed"
+if [[ -n "$net_tests_issue" ]]; then
+	ts_skip "$net_tests_issue"
+elif "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
+		--landlock-rule net-port:connect-tcp:"$net_port" \
+		"$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" \
+		&> /dev/null; then
+	echo "connect allowed" > "$TS_OUTPUT"
+else
+	echo "connect blocked" > "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+if [[ -n "$tcp_listener" ]]; then
+	echo DONE >&"${TCP_LISTEN[1]}"
+	wait "$TCP_LISTEN_PID"
+	tcp_listener=
+fi
 
 ## Invalid Landlock rule/right
 
