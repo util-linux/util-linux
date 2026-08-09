@@ -179,6 +179,51 @@ static inline const char *sm_str(struct ul_statmount *sm, uint32_t offset)
 	return sm->str + offset;
 }
 
+/* Build the whole string before assigning it, so that a failed allocation half way
+ * through cannot leave fs->vfs_optstr holding a prefix of the real options: the fetch
+ * is not repeated for fields that are already set, so a partial string would be
+ * returned by mnt_fs_get_vfs_options() from then on. */
+static int apply_vfs_optstr(struct libmnt_fs *fs, struct ul_statmount *sm)
+{
+	char *str = NULL;
+	int rc;
+
+	rc = mnt_optstr_append_option(&str,
+			sm->mnt_attr & MOUNT_ATTR_RDONLY ? "ro" : "rw", NULL);
+	if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSUID))
+		rc = mnt_optstr_append_option(&str, "nosuid", NULL);
+	if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODEV))
+		rc = mnt_optstr_append_option(&str, "nodev", NULL);
+	if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOEXEC))
+		rc = mnt_optstr_append_option(&str, "noexec", NULL);
+	if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODIRATIME))
+		rc = mnt_optstr_append_option(&str, "nodiratime", NULL);
+	if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSYMFOLLOW))
+		rc = mnt_optstr_append_option(&str, "nosymfollow", NULL);
+
+	if (!rc)
+		switch (sm->mnt_attr & MOUNT_ATTR__ATIME) {
+		case MOUNT_ATTR_STRICTATIME:
+			rc = mnt_optstr_append_option(&str, "strictatime", NULL);
+			break;
+		case MOUNT_ATTR_NOATIME:
+			rc = mnt_optstr_append_option(&str, "noatime", NULL);
+			break;
+		case MOUNT_ATTR_RELATIME:
+			rc = mnt_optstr_append_option(&str, "relatime", NULL);
+			break;
+		}
+
+	if (rc) {
+		free(str);
+		return rc;
+	}
+
+	free(fs->vfs_optstr);
+	fs->vfs_optstr = str;
+	return 0;
+}
+
 static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 {
 	int rc = 0;
@@ -210,30 +255,7 @@ static int apply_statmount(struct libmnt_fs *fs, struct ul_statmount *sm)
 		if (!fs->uniq_id)
 			fs->uniq_id = sm->mnt_id;
 		if (!fs->vfs_optstr) {
-			rc = mnt_optstr_append_option(&fs->vfs_optstr,
-					sm->mnt_attr & MOUNT_ATTR_RDONLY ? "ro" : "rw", NULL);
-			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSUID))
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nosuid", NULL);
-			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODEV))
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nodev", NULL);
-			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOEXEC))
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "noexec", NULL);
-			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NODIRATIME))
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nodiratime", NULL);
-			if (!rc && (sm->mnt_attr & MOUNT_ATTR_NOSYMFOLLOW))
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "nosymfollow", NULL);
-
-			switch (sm->mnt_attr & MOUNT_ATTR__ATIME) {
-			case MOUNT_ATTR_STRICTATIME:
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "strictatime", NULL);
-				break;
-			case MOUNT_ATTR_NOATIME:
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "noatime", NULL);
-				break;
-			case MOUNT_ATTR_RELATIME:
-				rc = mnt_optstr_append_option(&fs->vfs_optstr, "relatime", NULL);
-				break;
-			}
+			rc = apply_vfs_optstr(fs, sm);
 			free(fs->optstr);
 			fs->optstr = NULL;
 		}
@@ -390,7 +412,11 @@ done:
 	else
 		free(buf);
 
-	fs->stmnt_done |= mask;
+	/* Only record the fields as done when they were actually applied. Marking them on the
+	 * failure path pins whatever the failed call left behind: the accessors for those fields
+	 * skip the fetch from then on, so a transient error becomes a permanently empty field. */
+	if (!rc)
+		fs->stmnt_done |= mask;
 	return rc;
 }
 
