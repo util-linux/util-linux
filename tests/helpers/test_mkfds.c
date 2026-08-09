@@ -1307,7 +1307,7 @@ static void *make_unix_stream_core(const struct factory *factory, struct fdesc f
 	const char *spath = ARG_STRING(path);
 
 	struct arg backlog = decode_arg("backlog", factory->params, argc, argv);
-	int ibacklog = ARG_INTEGER(path);
+	int ibacklog = ARG_INTEGER(backlog);
 
 	struct arg abstract = decode_arg("abstract", factory->params, argc, argv);
 	bool babstract = ARG_BOOLEAN(abstract);
