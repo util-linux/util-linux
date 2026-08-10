@@ -28,7 +28,7 @@ The user is then prompted for a password, where appropriate. Echoing is disabled
 
 If password aging has been enabled for the account, the user may be prompted for a new password before proceeding. In such a case, the old password must be provided and the new password entered before continuing. Please refer to *passwd*(1) for more information.
 
-The user and group ID will be set according to the account's password entry from the system user database (typically configured via *nsswitch*(5); local files such as _/etc/passwd_ are only one possible backend). There is one exception if the user ID is zero. In this case, only the primary group ID of the account is set. This should allow the system administrator to login even in case of network problems. The environment variable values for *$HOME*, *$USER*, *$SHELL*, *$PATH*, *$LOGNAME*, and *$MAIL* are set according to the appropriate fields in the password entry. *$PATH* defaults to _/usr/local/bin:/bin:/usr/bin_ for normal users, and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root, if not otherwise configured.
+The user and group ID will be set according to the account's password entry from the system password database (see *nsswitch.conf*(5) and *nss*(5)). There is one exception if the user ID is zero. In this case, only the primary group ID of the account is set. This should allow the system administrator to login even in case of network problems. The environment variable values for *$HOME*, *$USER*, *$SHELL*, *$PATH*, *$LOGNAME*, and *$MAIL* are set according to the appropriate fields in the password entry. *$PATH* defaults to _/usr/local/bin:/bin:/usr/bin_ for normal users, and to _/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin_ for root, if not otherwise configured.
 
 The environment variable *$TERM* will be preserved, if it exists, else it will be initialized to the terminal type on your tty. The environment variables *$COLORTERM* and *$NO_COLOR* will be preserved if they exist.
 
@@ -186,6 +186,8 @@ Derived from BSD login 5.40 (5/9/89) by mailto:glad@daimi.dk[Michael Glad] for H
 *mail*(1),
 *passwd*(1),
 *passwd*(5),
+*nss*(5),
+*nsswitch.conf*(5),
 *utmp*(5),
 *environ*(7),
 *getty*(8),
