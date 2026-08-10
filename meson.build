@@ -452,6 +452,13 @@ have = cc.has_function(
   dependencies : lib_systemd)
 conf.set('HAVE_DECL_SD_SESSION_GET_USERNAME', have ? 1 : false)
 
+# Since systemd-257, which provides sd-varlink and sd-json.
+have_systemd_varlink = cc.has_header_symbol(
+  'systemd/sd-varlink.h',
+  'sd_varlink_connect_address',
+  dependencies : lib_systemd)
+conf.set('HAVE_DECL_SD_VARLINK_CONNECT_ADDRESS', have_systemd_varlink ? 1 : false)
+
 have = cc.has_function(
   'sd_device_new_from_devname',
   dependencies : lib_systemd)
@@ -1139,6 +1146,15 @@ endif
 selinux_sources = use_dlopen_selinux ? [dl_selinux_c] : []
 cryptsetup_sources = use_dlopen_cryptsetup ? [dl_cryptsetup_c] : []
 systemd_sources = use_dlopen_systemd ? [dl_systemd_c] : []
+
+systemd_varlink_sources = []
+systemd_varlink_deps = []
+if have_systemd_varlink
+  systemd_varlink_deps = systemd_deps
+  if use_dlopen_systemd
+    systemd_varlink_sources = [dl_systemd_varlink_c] + common_dl_sources
+  endif
+endif
 econf_sources = use_dlopen_econf ? [dl_econf_c] : []
 
 subdir('libblkid')
@@ -2276,10 +2292,10 @@ endif
 opt = get_option('build-unshare').allowed()
 exe = executable(
   'unshare',
-  unshare_sources,
+  unshare_sources, systemd_varlink_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep],
+  dependencies : [mount_dep] + systemd_varlink_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -2292,10 +2308,10 @@ endif
 opt = opt and 'unshare' in static_programs
 exe = executable(
   'unshare.static',
-  unshare_sources,
+  unshare_sources, systemd_varlink_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [mount_dep],
+  dependencies : [mount_dep] + systemd_varlink_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
