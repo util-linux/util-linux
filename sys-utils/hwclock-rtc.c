@@ -33,32 +33,13 @@
 
 #include "hwclock.h"
 
-#ifndef __GNU__
-#ifndef RTC_PARAM_GET
-struct rtc_param {
-	__u64 param;
-	union {
-		__u64 uvalue;
-		__s64 svalue;
-		__u64 ptr;
-	};
-	__u32 index;
-	__u32 __pad;
-};
-
-# define RTC_PARAM_GET	_IOW('p', 0x13, struct rtc_param)
-# define RTC_PARAM_SET	_IOW('p', 0x14, struct rtc_param)
-
-# define RTC_PARAM_FEATURES		0
-# define RTC_PARAM_CORRECTION		1
-# define RTC_PARAM_BACKUP_SWITCH_MODE	2
-#endif /* RTC_PARAM_GET */
-
+#ifdef RTC_PARAM_GET
 static const struct hwclock_param hwclock_params[] =
 {
 	{ RTC_PARAM_FEATURES,  "features", N_("supported features") },
 	{ RTC_PARAM_CORRECTION, "correction", N_("time correction") },
 	{ RTC_PARAM_BACKUP_SWITCH_MODE, "bsm", N_("backup switch mode") },
+	{ RTC_PARAM_BATTERY_LOW_DETECT, "bld", N_("battery low detection") },
 	{ }
 };
 
@@ -66,7 +47,7 @@ const struct hwclock_param *get_hwclock_params(void)
 {
 	return hwclock_params;
 }
-#endif /* __GNU__ */
+#endif /* RTC_PARAM_GET */
 
 /*
  * /dev/rtc is conventionally chardev 10/135
@@ -429,7 +410,7 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 
 
-#ifndef __GNU__
+#ifdef RTC_PARAM_GET
 static int resolve_rtc_param_alias(const char *alias, __u64 *value)
 {
 	const struct hwclock_param *param = &hwclock_params[0];
@@ -558,22 +539,24 @@ done:
 	free(opt);
 	return rc;
 }
+#endif /* RTC_PARAM_GET */
 
-#ifndef RTC_VL_DATA_INVALID
-#define RTC_VL_DATA_INVALID     0x1
-#endif
-#ifndef RTC_VL_BACKUP_LOW
-#define RTC_VL_BACKUP_LOW       0x2
-#endif
-#ifndef RTC_VL_BACKUP_EMPTY
-#define RTC_VL_BACKUP_EMPTY     0x4
-#endif
-#ifndef RTC_VL_ACCURACY_LOW
-#define RTC_VL_ACCURACY_LOW     0x8
-#endif
-#ifndef RTC_VL_BACKUP_SWITCH
-#define RTC_VL_BACKUP_SWITCH    0x10
-#endif
+#ifdef RTC_VL_READ
+# ifndef RTC_VL_DATA_INVALID
+#  define RTC_VL_DATA_INVALID     0x1
+# endif
+# ifndef RTC_VL_BACKUP_LOW
+#  define RTC_VL_BACKUP_LOW       0x2
+# endif
+# ifndef RTC_VL_BACKUP_EMPTY
+#  define RTC_VL_BACKUP_EMPTY     0x4
+# endif
+# ifndef RTC_VL_ACCURACY_LOW
+#  define RTC_VL_ACCURACY_LOW     0x8
+# endif
+# ifndef RTC_VL_BACKUP_SWITCH
+#  define RTC_VL_BACKUP_SWITCH    0x10
+# endif
 
 int rtc_vl_read(const struct hwclock_control *ctl)
 {
@@ -644,4 +627,4 @@ int rtc_vl_clear(const struct hwclock_control *ctl)
 
 	return 0;
 }
-#endif /* __GNU__ */
+#endif /* RTC_VL_READ */
