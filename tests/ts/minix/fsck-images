@@ -71,14 +71,14 @@ fi
 ts_init_subtest "auto-fix"
 img=${TS_OUTPUT}.img
 cp "$TS_SELF/broken-root" $img
-$TS_CMD_FSCKMINIX -sav $img >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+$TS_CMD_FSCKMINIX --super --auto --verbose $img >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo "fsck reports changed and uncorrected: $?" >> "$TS_OUTPUT"
 $TS_CMD_HEXDUMP -C $img >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 sed -i 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' "$TS_OUTPUT" "$TS_ERRLOG"
 ts_finalize_subtest
 
 ts_init_subtest "bug.773892"
-"$TS_CMD_FSCKMINIX" -f "$TS_SELF/debian.bug.773892" 2>&1 >/dev/null
+"$TS_CMD_FSCKMINIX" --force "$TS_SELF/debian.bug.773892" >/dev/null 2>&1
 echo "fsck reports uncorrected: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
