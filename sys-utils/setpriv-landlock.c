@@ -126,9 +126,18 @@ static int supported_landlock_abi(void)
 	static int abi = -1;
 
 	if (abi < 0) {
+		errno = 0;
 		abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-		if (abi <= 0)
-			err(EXIT_FAILURE, _("landlock is not supported"));
+		if (abi <= 0) {
+			switch (errno) {
+			case ENOSYS:
+				err(EXIT_FAILURE, _("landlock is not supported"));
+			case EOPNOTSUPP:
+				err(EXIT_FAILURE, _("landlock is supported but currently disabled"));
+			default:
+				err(EXIT_FAILURE, _("failed to obtain Landlock ABI version"));
+			}
+		}
 	}
 	return abi;
 }
