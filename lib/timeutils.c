@@ -144,7 +144,7 @@ static int parse_sec(const char *t, usec_t *usec)
 static int parse_subseconds(const char *t, usec_t *usec)
 {
 	usec_t ret = 0;
-	int factor = USEC_PER_SEC / 10;
+	usec_t factor = USEC_PER_SEC / 10;
 
 	if (*t != '.' && *t != ',')
 		return -1;

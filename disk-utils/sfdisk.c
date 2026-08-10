@@ -51,6 +51,7 @@
 #include "rpmatch.h"
 #include "optutils.h"
 #include "ttyutils.h"
+#include "timeutils.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -577,7 +578,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 			fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
 
 		if (progress && i % 10 == 0) {
-			unsigned int elapsed = 0;	/* usec */
+			usec_t elapsed = 0;
 			struct timeval cur_time;
 
 			gettimeofday(&cur_time, NULL);

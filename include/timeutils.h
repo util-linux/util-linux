@@ -20,6 +20,7 @@
 #include <sys/time.h>
 #include <stdbool.h>
 
+typedef uint64_t msec_t;
 typedef uint64_t usec_t;
 typedef uint64_t nsec_t;
 

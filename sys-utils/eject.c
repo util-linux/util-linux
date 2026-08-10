@@ -70,7 +70,7 @@
  * time or less, the tray was probably already ejected, so we close it
  * again.
  */
-#define TRAY_WAS_ALREADY_OPEN_USECS  200000	/* about 0.2 seconds */
+#define TRAY_WAS_ALREADY_OPEN_USECS  ((usec_t) 200000)	/* about 0.2 seconds */
 
 struct eject_control {
 	struct libmnt_table *mtab;
@@ -443,7 +443,7 @@ static void toggle_tray(int fd)
 	}
 #else
 	struct timeval time_start, time_stop;
-	int time_elapsed;
+	usec_t time_elapsed;
 
 	/* Try to open the CDROM tray and measure the time therefore
 	 * needed.  In my experience the function needs less than 0.05
