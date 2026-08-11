@@ -278,10 +278,8 @@ int main(int argc, char *argv[])
 			strtotimeval_or_err(optarg, &timeout.it_value, _("invalid timeout"));
 			break;
 		case 'E':
-			conflict_exit_code = strtos32_or_err(optarg,
-				_("invalid exit code"));
-			if (conflict_exit_code < 0 || conflict_exit_code > 255)
-				errx(EX_USAGE, _("exit code out of range (expected 0 to 255)"));
+			conflict_exit_code = str2unum_or_err(optarg, 10,
+					_("invalid exit code (allowed values: 0-255)"), 255);
 			break;
 		case OPT_FCNTL:
 			api = API_FCNTL_OFD;
