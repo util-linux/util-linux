@@ -35,6 +35,7 @@
 
 #include "linux_version.h"
 #include "c.h"
+#include "timeutils.h"
 #include "sysfs.h"
 #include "pathnames.h"
 #include "loopdev.h"

@@ -473,28 +473,6 @@ static inline bool is_privileged_execution(void)
 #endif
 }
 
-/*
- * The usleep function was marked obsolete in POSIX.1-2001 and was removed
- * in POSIX.1-2008.  It was replaced with nanosleep() that provides more
- * advantages (like no interaction with signals and other timer functions).
- */
-#include <time.h>
-
-static inline int xusleep(useconds_t usec)
-{
-#ifdef HAVE_NANOSLEEP
-	struct timespec waittime = {
-		.tv_sec   =  usec / 1000000L,
-		.tv_nsec  = (usec % 1000000L) * 1000
-	};
-	return nanosleep(&waittime, NULL);
-#elif defined(HAVE_USLEEP)
-	return usleep(usec);
-#else
-# error	"System with usleep() or nanosleep() required!"
-#endif
-}
-
 /* ul_sig_printf is signal safe as long you don't use floating point formats,
    positional arguments or wide characters.*/
 #define ul_sig_printf(fmt, ...) ignore_result(dprintf(STDERR_FILENO, fmt, __VA_ARGS__))

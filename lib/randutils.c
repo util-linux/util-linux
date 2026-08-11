@@ -17,6 +17,7 @@
 #include <sys/syscall.h>
 #endif
 #include "c.h"
+#include "timeutils.h"
 #include "randutils.h"
 #include "nls.h"
 
