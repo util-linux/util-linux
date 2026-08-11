@@ -43,12 +43,13 @@ if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
 if HAVE_SELINUX
-sulogin_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-sulogin_LDADD += -ldl
+sulogin_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+sulogin_SOURCES += $(common_dl_sources)
+sulogin_LDADD += $(common_dl_ldadd)
+else
+sulogin_LDADD += $(SELINUX_LIBS)
+endif
 sulogin_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 
@@ -64,8 +65,21 @@ bin_PROGRAMS += login
 MANPAGES += login-utils/login.1
 dist_noinst_DATA += login-utils/login.1.adoc
 login_SOURCES = \
-	login-utils/login.c
-login_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+	login-utils/login.c \
+	lib/logindefs.c \
+	lib/shells.c
+login_LDADD = $(LDADD) libcommon.la -lpam
+login_CFLAGS = $(AM_CFLAGS)
+if HAVE_ECONF
+login_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+login_SOURCES += $(common_dl_sources)
+login_LDADD += $(common_dl_ldadd)
+else
+login_LDADD += $(ECONF_LIBS)
+endif
+login_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 login_LDADD += -lpam_misc
 endif
@@ -104,7 +118,8 @@ dist_noinst_DATA += \
 
 chfn_chsh_sources = \
 	login-utils/ch-common.h \
-	login-utils/ch-common.c
+	login-utils/ch-common.c \
+	lib/logindefs.c
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chfn_chsh_ldadd = libcommon.la
@@ -135,14 +150,30 @@ endif
 
 if HAVE_SELINUX
 chfn_chsh_sources += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h \
+	$(selinux_sources) \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
-chfn_chsh_ldadd += -ldl
+if !USE_DLOPEN_SELINUX
+chfn_chsh_ldadd += $(SELINUX_LIBS)
+endif
 chfn_chsh_cflags += $(SELINUX_CFLAGS)
+endif
+
+if HAVE_ECONF
+chfn_chsh_sources += $(econf_sources)
+if !USE_DLOPEN_ECONF
+chfn_chsh_ldadd += $(ECONF_LIBS)
+endif
+chfn_chsh_cflags += $(ECONF_CFLAGS)
+endif
+if USE_DLOPEN_SELINUX
+chfn_chsh_sources += $(common_dl_sources)
+chfn_chsh_ldadd += $(common_dl_ldadd)
+else
+if USE_DLOPEN_ECONF
+chfn_chsh_sources += $(common_dl_sources)
+chfn_chsh_ldadd += $(common_dl_ldadd)
+endif
 endif
 
 chfn_SOURCES = \
@@ -150,13 +181,15 @@ chfn_SOURCES = \
 	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
-chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la
+chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 
-chsh_SOURCES = login-utils/chsh.c \
+chsh_SOURCES = \
+	login-utils/chsh.c \
+	lib/shells.c \
 	$(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
-chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd) libcommon_logindefs.la libcommon_shells.la
+chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 endif # BUILD_CHFN_CHSH
 
 
@@ -167,10 +200,22 @@ dist_noinst_DATA += login-utils/su.1.adoc
 su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h
+	login-utils/su-common.h \
+	lib/logindefs.c \
+	lib/shells.c
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+su_LDADD = $(LDADD) libcommon.la -lpam
+if HAVE_ECONF
+su_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+su_SOURCES += $(common_dl_sources)
+su_LDADD += $(common_dl_ldadd)
+else
+su_LDADD += $(ECONF_LIBS)
+endif
+su_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 su_LDADD += -lpam_misc
 endif
@@ -190,8 +235,21 @@ dist_noinst_DATA += login-utils/runuser.1.adoc
 runuser_SOURCES = \
 	login-utils/runuser.c \
 	login-utils/su-common.c \
-	login-utils/su-common.h
-runuser_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libcommon_shells.la -lpam
+	login-utils/su-common.h \
+	lib/logindefs.c \
+	lib/shells.c
+runuser_CFLAGS = $(AM_CFLAGS)
+runuser_LDADD = $(LDADD) libcommon.la -lpam
+if HAVE_ECONF
+runuser_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+runuser_SOURCES += $(common_dl_sources)
+runuser_LDADD += $(common_dl_ldadd)
+else
+runuser_LDADD += $(ECONF_LIBS)
+endif
+runuser_CFLAGS += $(ECONF_CFLAGS)
+endif
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
 endif
@@ -223,29 +281,44 @@ usrbin_exec_PROGRAMS += lslogins
 MANPAGES += login-utils/lslogins.1
 dist_noinst_DATA += login-utils/lslogins.1.adoc
 lslogins_SOURCES = \
-	login-utils/lslogins.c
-lslogins_LDADD = $(LDADD) libcommon.la libcommon_logindefs.la libsmartcols.la
+	login-utils/lslogins.c \
+	lib/logindefs.c
+lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
-lslogins_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-lslogins_LDADD += -ldl
+lslogins_SOURCES += $(selinux_sources)
+if !USE_DLOPEN_SELINUX
+lslogins_LDADD += $(SELINUX_LIBS)
+endif
 lslogins_CFLAGS += $(SELINUX_CFLAGS)
 endif
 if HAVE_SYSTEMD
-lslogins_SOURCES += \
-	lib/dl-systemd.c \
-	include/dl-systemd.h
-if !HAVE_SELINUX
-lslogins_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h
+lslogins_SOURCES += $(systemd_sources)
+if !USE_DLOPEN_SYSTEMD
+lslogins_LDADD += $(SYSTEMD_LIBS)
 endif
-lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
-lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
+lslogins_CFLAGS += $(SYSTEMD_CFLAGS)
+endif
+if HAVE_ECONF
+lslogins_SOURCES += $(econf_sources)
+if !USE_DLOPEN_ECONF
+lslogins_LDADD += $(ECONF_LIBS)
+endif
+lslogins_CFLAGS += $(ECONF_CFLAGS)
+endif
+if USE_DLOPEN_SELINUX
+lslogins_SOURCES += $(common_dl_sources)
+lslogins_LDADD += $(common_dl_ldadd)
+else
+if USE_DLOPEN_SYSTEMD
+lslogins_SOURCES += $(common_dl_sources)
+lslogins_LDADD += $(common_dl_ldadd)
+else
+if USE_DLOPEN_ECONF
+lslogins_SOURCES += $(common_dl_sources)
+lslogins_LDADD += $(common_dl_ldadd)
+endif
+endif
 endif
 if BUILD_LIBLASTLOG2
 lslogins_CFLAGS += -I$(ul_liblastlog2_incdir)
@@ -264,12 +337,13 @@ vipw_SOURCES = \
 	login-utils/setpwnam.h
 vipw_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
-vipw_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-vipw_LDADD += -ldl
+vipw_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+vipw_SOURCES += $(common_dl_sources)
+vipw_LDADD += $(common_dl_ldadd)
+else
+vipw_LDADD += $(SELINUX_LIBS)
+endif
 vipw_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 install-exec-hook-vipw::

@@ -34,9 +34,19 @@ else
   )
 endif
 
+chfn_chsh_sources += [logindefs_c]
+if lib_econf.found()
+  chfn_chsh_sources += econf_sources
+  chfn_chsh_deps += econf_deps
+endif
+
 if lib_selinux.found()
-  chfn_chsh_sources += [dl_utils_c, dl_selinux_c, selinux_utils_c]
-  chfn_chsh_deps += lib_selinux_dlopen_deps
+  chfn_chsh_sources += selinux_sources + [selinux_utils_c]
+  chfn_chsh_deps += selinux_deps
+endif
+
+if use_dlopen_econf or use_dlopen_selinux
+  chfn_chsh_sources += common_dl_sources
 endif
 
 chfn_sources = files(

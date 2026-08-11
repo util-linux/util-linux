@@ -334,12 +334,13 @@ zramctl_SOURCES = sys-utils/zramctl.c \
 zramctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
 zramctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SYSTEMD
-zramctl_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-systemd.c \
-	include/dl-systemd.h
+zramctl_SOURCES += $(systemd_sources)
+if USE_DLOPEN_SYSTEMD
+zramctl_SOURCES += $(common_dl_sources)
+zramctl_LDADD += $(common_dl_ldadd)
+else
 zramctl_LDADD += $(SYSTEMD_LIBS)
+endif
 zramctl_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 endif # BUILD_ZRAMCTL
@@ -380,12 +381,13 @@ mount_LDADD = $(LDADD) libcommon.la libmount.la
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 if HAVE_SELINUX
-mount_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-mount_LDADD += -ldl
+mount_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+mount_SOURCES += $(common_dl_sources)
+mount_LDADD += $(common_dl_ldadd)
+else
+mount_LDADD += $(SELINUX_LIBS)
+endif
 mount_CFLAGS += $(SELINUX_CFLAGS)
 endif
 
@@ -557,12 +559,13 @@ nsenter_SOURCES = sys-utils/nsenter.c lib/exec_shell.c \
 		  lib/caputils.c
 nsenter_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
-nsenter_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h
-nsenter_LDADD += -ldl
+nsenter_SOURCES += $(selinux_sources)
+if USE_DLOPEN_SELINUX
+nsenter_SOURCES += $(common_dl_sources)
+nsenter_LDADD += $(common_dl_ldadd)
+else
+nsenter_LDADD += $(SELINUX_LIBS)
+endif
 nsenter_CFLAGS = $(AM_CFLAGS) $(SELINUX_CFLAGS)
 endif
 
@@ -616,10 +619,22 @@ usrbin_exec_PROGRAMS += setpriv
 MANPAGES += sys-utils/setpriv.1
 dist_noinst_DATA += sys-utils/setpriv.1.adoc
 setpriv_SOURCES = sys-utils/setpriv.c \
-		  lib/caputils.c
+		  lib/caputils.c \
+		  lib/logindefs.c
+setpriv_CFLAGS = $(AM_CFLAGS)
 dist_noinst_HEADERS += sys-utils/setpriv-landlock.h
 if HAVE_LANDLOCK
 setpriv_SOURCES += sys-utils/setpriv-landlock.c
 endif
-setpriv_LDADD = $(LDADD) $(CAP_NG_LIBS) libcommon.la libcommon_logindefs.la
+setpriv_LDADD = $(LDADD) $(CAP_NG_LIBS) libcommon.la
+if HAVE_ECONF
+setpriv_SOURCES += $(econf_sources)
+if USE_DLOPEN_ECONF
+setpriv_SOURCES += $(common_dl_sources)
+setpriv_LDADD += $(common_dl_ldadd)
+else
+setpriv_LDADD += $(ECONF_LIBS)
+endif
+setpriv_CFLAGS += $(ECONF_CFLAGS)
+endif
 endif # BUILD_SETPRIV

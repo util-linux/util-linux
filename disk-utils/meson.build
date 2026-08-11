@@ -18,7 +18,10 @@ mkswap_sources = files(
 ) + \
   ismounted_c
 if lib_selinux.found()
-  mkswap_sources += [dl_utils_c, dl_selinux_c, selinux_utils_c]
+  mkswap_sources += selinux_sources + [selinux_utils_c]
+endif
+if use_dlopen_selinux
+  mkswap_sources += common_dl_sources
 endif
 mkswap_manadocs = files('mkswap.8.adoc')
 

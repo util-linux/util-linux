@@ -81,12 +81,13 @@ wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 wall_LDADD = $(LDADD) libcommon.la
 if HAVE_SYSTEMD
-wall_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-systemd.c \
-	include/dl-systemd.h
+wall_SOURCES += $(systemd_sources)
+if USE_DLOPEN_SYSTEMD
+wall_SOURCES += $(common_dl_sources)
+wall_LDADD += $(common_dl_ldadd)
+else
 wall_LDADD += $(SYSTEMD_LIBS)
+endif
 wall_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 if USE_TTY_GROUP
@@ -112,12 +113,13 @@ write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 write_LDADD = $(LDADD) libcommon.la
 if HAVE_SYSTEMD
-write_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-systemd.c \
-	include/dl-systemd.h
+write_SOURCES += $(systemd_sources)
+if USE_DLOPEN_SYSTEMD
+write_SOURCES += $(common_dl_sources)
+write_LDADD += $(common_dl_ldadd)
+else
 write_LDADD += $(SYSTEMD_LIBS)
+endif
 write_CFLAGS += $(SYSTEMD_CFLAGS)
 endif
 

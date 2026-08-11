@@ -72,13 +72,15 @@ mkswap_LDADD += libblkid.la
 endif
 if HAVE_SELINUX
 mkswap_SOURCES += \
-	lib/dl-utils.c \
-	include/dl-utils.h \
-	lib/dl-selinux.c \
-	include/dl-selinux.h \
+	$(selinux_sources) \
 	lib/selinux-utils.c \
 	include/selinux-utils.h
-mkswap_LDADD += -ldl
+if USE_DLOPEN_SELINUX
+mkswap_SOURCES += $(common_dl_sources)
+mkswap_LDADD += $(common_dl_ldadd)
+else
+mkswap_LDADD += $(SELINUX_LIBS)
+endif
 mkswap_CFLAGS += $(SELINUX_CFLAGS)
 endif
 endif # BUILD_MKSWAP
