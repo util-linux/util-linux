@@ -1187,8 +1187,9 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	/*  ignore swap */
 	if (mnt_fs_is_swaparea(*fs) ||
 
-	/* ignore root filesystem */
-	   (tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
+	/* ignore root filesystem (but not with --target-prefix) */
+	   (tgt && !mnt_context_get_target_prefix(cxt) &&
+		   (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
 
 	/* ignore noauto filesystems */
 	   (o && mnt_optstr_get_option(o, "noauto", NULL, NULL) == 0) ||
