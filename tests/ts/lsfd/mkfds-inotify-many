@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="inotify monitoring multiple inodes"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+
+ts_check_prog "jq"
+ts_check_prog "wc"
+
+ts_cd "$TS_OUTDIR"
+
+PID=
+FD=3
+EXPR='(FD == '"$FD"')'
+DIR=
+
+ts_init_subtest "0xA-inodes"
+{
+    DIR=0xA
+    trap "rm -r $DIR" EXIT
+    mkdir -p "$DIR"
+
+    coproc MKFDS { "$TS_HELPER_MKFDS" inotify-many $FD count=10 tempdir=$DIR; }
+    if read -u ${MKFDS[0]} PID; then
+	${TS_CMD_LSFD} -p "${PID}" --json -n -o INOTIFY.INODES -Q "${EXPR}" | jq '.lsfd[0]["inotify.inodes"][]' | wc -l
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait "${MKFDS_PID}"
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
+
+ts_finalize
