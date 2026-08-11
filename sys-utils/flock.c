@@ -194,7 +194,7 @@ int main(int argc, char *argv[])
 	int block = 0;
 	int open_flags = 0;
 	int fd = -1;
-	int opt, ix;
+	int opt;
 	int do_close = 0;
 	int no_fork = 0;
 	int status;
@@ -252,8 +252,7 @@ int main(int argc, char *argv[])
 
 	optopt = 0;
 	while ((opt =
-		getopt_long(argc, argv, "+sexnoFuw:E:hV?", long_options,
-			    &ix)) != EOF) {
+		getopt_long(argc, argv, "+sexnoFuw:E:hV?", long_options, NULL)) != EOF) {
 		switch (opt) {
 		case 's':
 			type = LOCK_SH;
