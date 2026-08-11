@@ -7,7 +7,7 @@
 
 COMPILE & INSTALL:
 
-      See Documentation/howto-compilation.txt.
+      See Documentation/HOWTO-BUILDING.md.
 
 MAILING LIST:
 
@@ -64,9 +64,9 @@ SOURCE CODE:
 	  https://www.kernel.org/pub/linux/utils/util-linux/
 
  See also:
-     Documentation/howto-contribute.txt
-     Documentation/howto-build-sys.txt
-     Documentation/howto-pull-request.txt
+     Documentation/HOWTO-CONTRIBUTING.md
+     Documentation/HOWTO-HACKING.md
+     Documentation/HOWTO-TESTING.md
 
  SCM (Source Code Management) Repository:
 
