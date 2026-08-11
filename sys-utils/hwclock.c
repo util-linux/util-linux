@@ -1152,7 +1152,7 @@ manipulate_epoch(const struct hwclock_control *ctl)
 }
 #endif		/* __linux__ __alpha__ */
 
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 static int
 manipulate_rtc_param(const struct hwclock_control *ctl)
 {
@@ -1178,7 +1178,9 @@ manipulate_rtc_param(const struct hwclock_control *ctl)
 
 	return 1;
 }
+#endif /* RTC_PARAM_GET */
 
+#ifdef RTC_VL_READ
 static int
 manipulate_rtc_voltage_low(const struct hwclock_control *ctl)
 {
@@ -1192,7 +1194,7 @@ manipulate_rtc_voltage_low(const struct hwclock_control *ctl)
 	}
 	return 0;
 }
-#endif
+#endif /* RTC_VL_READ */
 
 static void out_version(void)
 {
@@ -1202,7 +1204,7 @@ static void out_version(void)
 static void __attribute__((__noreturn__))
 usage(void)
 {
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 	const struct hwclock_param *param = get_hwclock_params();
 #endif
 
@@ -1224,10 +1226,12 @@ usage(void)
 	puts(_("     --getepoch                  display the RTC epoch"));
 	puts(_("     --setepoch                  set the RTC epoch according to --epoch"));
 #endif
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 	puts(_("     --param-get <param>         display the RTC parameter"));
 	puts(_("     --param-set <param>=<value> set the RTC parameter"));
 	puts(_("     --param-index <number>      parameter index (default 0)"));
+#endif
+#ifdef RTC_VL_READ
 	puts(_("     --vl-read                   read voltage low information"));
 	puts(_("     --vl-clear                  clear voltage low information"));
 #endif
@@ -1257,7 +1261,7 @@ usage(void)
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(33));
 
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 	fputs(USAGE_ARGUMENTS, stdout);
 	fputsln(_(" <param> is either a numeric RTC parameter value or one of these aliases:"), stdout);
 
@@ -1330,10 +1334,12 @@ int main(int argc, char **argv)
 		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },	/* IGNORECHECK=yes */
 		{ "epoch",        required_argument, NULL, OPT_EPOCH      },	/* IGNORECHECK=yes */
 #endif
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 		{ "param-get",    required_argument, NULL, OPT_PARAM_GET  },
 		{ "param-set",    required_argument, NULL, OPT_PARAM_SET  },
 		{ "param-index",  required_argument, NULL, OPT_PARAM_IDX  },
+#endif
+#ifdef RTC_VL_READ
 		{ "vl-read",      no_argument,       NULL, OPT_VL_READ    },
 		{ "vl-clear",     no_argument,       NULL, OPT_VL_CLEAR   },
 #endif
@@ -1450,7 +1456,7 @@ int main(int argc, char **argv)
 			ctl.epoch_option = optarg;	/* --epoch */
 			break;
 #endif
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 		case OPT_PARAM_GET:
 			ctl.param_get_option = optarg;
 			ctl.show = 0;
@@ -1463,6 +1469,8 @@ int main(int argc, char **argv)
 		case OPT_PARAM_IDX:
 			ctl.param_idx = strtou32_or_err(optarg, _("failed to parse param-index"));
 			break;
+#endif
+#ifdef RTC_VL_READ
 		case OPT_VL_READ:
 			ctl.vl_read = 1;
 			ctl.show = 0;
@@ -1565,14 +1573,16 @@ int main(int argc, char **argv)
 		}
 	}
 
-#ifdef __linux__
+#ifdef RTC_PARAM_GET
 	if (ctl.param_get_option || ctl.param_set_option) {
 		if (manipulate_rtc_param(&ctl))
 			hwclock_exit(&ctl, EXIT_FAILURE);
 
 		hwclock_exit(&ctl, EXIT_SUCCESS);
 	}
+#endif
 
+#ifdef RTC_VL_READ
 	if (ctl.vl_read || ctl.vl_clear) {
 		if (manipulate_rtc_voltage_low(&ctl))
 			hwclock_exit(&ctl, EXIT_FAILURE);
