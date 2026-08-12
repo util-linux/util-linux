@@ -126,9 +126,18 @@ static int supported_landlock_abi(void)
 	static int abi = -1;
 
 	if (abi < 0) {
+		errno = 0;
 		abi = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_VERSION);
-		if (abi <= 0)
-			err(EXIT_FAILURE, _("landlock is not supported"));
+		if (abi <= 0) {
+			switch (errno) {
+			case ENOSYS:
+				err(EXIT_FAILURE, _("Landlock is not supported"));
+			case EOPNOTSUPP:
+				err(EXIT_FAILURE, _("Landlock is supported but currently disabled"));
+			default:
+				err(EXIT_FAILURE, _("failed to obtain Landlock ABI version"));
+			}
+		}
 	}
 	return abi;
 }
@@ -160,7 +169,7 @@ static uint64_t parse_landlock_fs_access(const char *list)
 
 	if (string_to_bitmask(list, &r, landlock_access_to_mask))
 		errx(EXIT_FAILURE,
-		     _("could not parse landlock fs access: %s"), list);
+		     _("could not parse Landlock fs access: %s"), list);
 
 	return r;
 }
@@ -190,10 +199,10 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 
 	accesses = ul_startswith(str, "path-beneath:");
 	if (!accesses)
-		errx(EXIT_FAILURE, _("invalid landlock rule: %s"), str);
+		errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
 	path = strchr(accesses, ':');
 	if (!path)
-		errx(EXIT_FAILURE, _("invalid landlock rule: %s"), str);
+		errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
 	rule->rule_type = LANDLOCK_RULE_PATH_BENEATH;
 
 	accesses_part = xstrndup(accesses, path - accesses);
@@ -207,7 +216,7 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 
 	parent_fd = open(path, O_RDONLY | O_PATH | O_CLOEXEC);
 	if (parent_fd == -1)
-		err(EXIT_FAILURE, _("could not open file for landlock: %s"), path);
+		err(EXIT_FAILURE, _("could not open file for Landlock: %s"), path);
 
 	rule->path_beneath_attr.parent_fd = parent_fd;
 
@@ -256,11 +265,11 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 
 		ret = landlock_add_rule(fd, rule->rule_type, &path_beneath_attr, 0);
 		if (ret == -1)
-			err(SETPRIV_EXIT_PRIVERR, _("adding landlock rule failed"));
+			err(SETPRIV_EXIT_PRIVERR, _("adding Landlock rule failed"));
 	}
 
 	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0) == -1)
-		err(SETPRIV_EXIT_PRIVERR, _("disallow granting new privileges for landlock failed"));
+		err(SETPRIV_EXIT_PRIVERR, _("disallow granting new privileges for Landlock failed"));
 
 	if (landlock_restrict_self(fd, 0) == -1)
 		err(SETPRIV_EXIT_PRIVERR, _("landlock_restrict_self failed"));
@@ -271,16 +280,16 @@ void usage_landlock(FILE *out)
 	size_t i;
 
 	fputs(USAGE_ARGUMENTS, out);
-	fputs(_(" <access> is a landlock access; syntax is fs[:<right>, ...>]\n"), out);
-	fputs(_(" <rule> is a landlock rule; syntax is <type>:<right>:<argument>\n"), out);
+	fputs(_(" <access> is a Landlock access; syntax is fs[:<right>, ...>]\n"), out);
+	fputs(_(" <rule> is a Landlock rule; syntax is <type>:<right>:<argument>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" available landlock rule types are:\n"), out);
+	fputs(_(" available Landlock rule types are:\n"), out);
 	/* TRANSLATORS: Keep *{path-beneath}* untranslated, it's a type name */
 	fputs(_("  path-beneath - filesystem based rule; <argument> is a path\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" available landlock filesystems rights are:\n"), out);
+	fputs(_(" available Landlock filesystems rights are:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++) {
 		fprintf(out, "  %12s - %s\n", landlock_access_fs[i].type,
 					_(landlock_access_fs[i].help));
@@ -329,7 +338,7 @@ void list_landlock_rights(const char *access)
 	size_t i;
 
 	if (strcmp(access, "fs") != 0)
-		errx(EXIT_FAILURE, _("unknown landlock access: %s"), access);
+		errx(EXIT_FAILURE, _("unknown Landlock access: %s"), access);
 
 	mask = landlock_abi_fs_mask();
 	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)

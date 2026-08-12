@@ -44,19 +44,19 @@ static inline void parse_landlock_access(
 		void *opts __attribute__((unused)),
 		const char *str __attribute__((unused)))
 {
-	errx(EXIT_FAILURE, _("no support for landlock"));
+	errx(EXIT_FAILURE, _("no support for Landlock"));
 }
 #define parse_landlock_rule parse_landlock_access
 static inline void init_landlock_opts(void *opts __attribute__((unused))) {}
 static inline void usage_landlock(FILE *out __attribute__((unused))) {}
 static inline void list_landlock_support(void)
 {
-	errx(EXIT_FAILURE, _("no support for landlock"));
+	errx(EXIT_FAILURE, _("no support for Landlock"));
 }
 #define list_landlock_access list_landlock_support
 static inline void list_landlock_rights(const char *access __attribute__((unused)))
 {
-	errx(EXIT_FAILURE, _("no support for landlock"));
+	errx(EXIT_FAILURE, _("no support for Landlock"));
 }
 
 #endif /* HAVE_LANDLOCK */
