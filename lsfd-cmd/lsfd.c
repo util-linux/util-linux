@@ -2005,9 +2005,7 @@ static void mark_poll_fds_as_multiplexed(char *buf,
 		return;
 
 	local.iov_len = sizeof(struct pollfd) * nfds;
-	local.iov_base = malloc(local.iov_len);
-	if (!local.iov_base)
-		goto out;
+	local.iov_base = xmalloc(local.iov_len);
 
 	remote.iov_len = local.iov_len;
 	remote.iov_base = (void *)fds;
