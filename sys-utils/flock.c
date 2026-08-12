@@ -66,7 +66,9 @@ static void __attribute__((__noreturn__)) usage(void)
 	fprintf(stdout,
 		_(" %1$s [options] <file>|<directory> <command> [<argument>...]\n"
 		  " %1$s [options] <file>|<directory> -c <command>\n"
-		  " %1$s [options] <file descriptor number>\n"),
+		  " %1$s [options] <file descriptor number>\n"
+		  " %1$s [options] --fd <file descriptor number> -c <command>\n"
+		  " %1$s [options] --fd <file descriptor number> <command> [<argument>...]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
@@ -86,6 +88,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  "     --fcntl              use fcntl(F_OFD_SETLK) rather than flock()\n"), stdout);
 	fputs(_(  "     --start <offset>     starting offset for lock (implies --fcntl)\n"), stdout);
 	fputs(_(  "     --length <number>    number of bytes to lock (implies --fcntl)\n"), stdout);
+	fputs(_(  "     --fd                 use the file descriptor number to wrap the\n"
+	             "                          lock around the command execution\n"), stdout);
 	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
 	fprintf(stdout, USAGE_HELP_OPTIONS(26));
@@ -209,12 +213,14 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
+	bool use_fd = false;
 
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1,
 		OPT_FCNTL,
 		OPT_FCNTL_START,
 		OPT_FCNTL_LENGTH,
+		OPT_FD,
 	};
 	static const struct option long_options[] = {
 		{"shared", no_argument, NULL, 's'},
@@ -231,6 +237,7 @@ int main(int argc, char *argv[])
 		{"fcntl", no_argument, NULL, OPT_FCNTL},
 		{"start", required_argument, NULL, OPT_FCNTL_START},
 		{"length", required_argument, NULL, OPT_FCNTL_LENGTH},
+		{"fd", no_argument, NULL, OPT_FD},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -294,10 +301,12 @@ int main(int argc, char *argv[])
 						  _("invalid as length of lock range"));
 			api = API_FCNTL_OFD;
 			break;
+		case OPT_FD:
+			use_fd = true;
+			break;
 		case OPT_VERBOSE:
 			verbose = 1;
 			break;
-
 		case 'V':
 			print_version(EX_OK);
 		case 'h':
@@ -335,9 +344,12 @@ int main(int argc, char *argv[])
 			cmd_argv = &argv[optind + 1];
 		}
 
-		filename = argv[optind];
-		fd = open_file(filename, &open_flags);
-
+		if (!use_fd) {
+			filename = argv[optind];
+			fd = open_file(filename, &open_flags);
+		} else {
+			fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
+		}
 	} else if (optind < argc) {
 		/* Use provided file descriptor */
 		fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
