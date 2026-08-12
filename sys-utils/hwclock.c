@@ -152,9 +152,9 @@ static void hwclock_init_debug(const char *str)
 /* FOR TESTING ONLY: inject random delays of up to 1000ms */
 static void up_to_1000ms_sleep(void)
 {
-	int usec = random() % 1000000;
+	usec_t usec = (usec_t) random() % USEC_PER_SEC;
 
-	DBG(RANDOM_SLEEP, ul_debug("sleeping ~%d usec", usec));
+	DBG(RANDOM_SLEEP, ul_debug("sleeping ~%ju usec", (uintmax_t) usec));
 	xusleep(usec);
 }
 

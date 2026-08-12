@@ -18,6 +18,7 @@
 #endif
 
 #include "c.h"
+#include "timeutils.h"
 #include "vfs.h"
 
 static inline int __write_all(const struct ul_vfs_ops *vfs, int fd,

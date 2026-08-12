@@ -17,9 +17,11 @@
 
 #include <stdio.h>
 #include <inttypes.h>
+#include <time.h>
 #include <sys/time.h>
 #include <stdbool.h>
 
+typedef uint64_t msec_t;
 typedef uint64_t usec_t;
 typedef uint64_t nsec_t;
 
@@ -116,4 +118,25 @@ static inline double time_diff(const struct timeval *a, const struct timeval *b)
 {
 	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / (double) USEC_PER_SEC;
 }
+
+/*
+ * The usleep function was marked obsolete in POSIX.1-2001 and was removed
+ * in POSIX.1-2008.  It was replaced with nanosleep() that provides more
+ * advantages (like no interaction with signals and other timer functions).
+ */
+static inline int xusleep(usec_t usec)
+{
+#ifdef HAVE_NANOSLEEP
+	struct timespec waittime = {
+		.tv_sec   =  usec / USEC_PER_SEC,
+		.tv_nsec  = (usec % USEC_PER_SEC) * NSEC_PER_USEC
+	};
+	return nanosleep(&waittime, NULL);
+#elif defined(HAVE_USLEEP)
+	return usleep(usec);
+#else
+# error	"System with usleep() or nanosleep() required!"
+#endif
+}
+
 #endif /* UTIL_LINUX_TIME_UTIL_H */

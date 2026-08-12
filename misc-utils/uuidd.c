@@ -444,9 +444,15 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	pfd[POLLFD_SIGNAL].events = pfd[POLLFD_SOCKET].events = POLLIN | POLLERR | POLLHUP;
 
 	while (1) {
-		ret = poll(pfd, ARRAY_SIZE(pfd),
-				uuidd_cxt->timeout ?
-					(int) uuidd_cxt->timeout * 1000 : -1);
+		int poll_timeout = -1;
+
+		if (uuidd_cxt->timeout) {
+			msec_t msec = (msec_t) uuidd_cxt->timeout * MSEC_PER_SEC;
+
+			poll_timeout = msec > INT_MAX ? INT_MAX : (int) msec;
+		}
+
+		ret = poll(pfd, ARRAY_SIZE(pfd), poll_timeout);
 		if (ret < 0) {
 			if (errno == EAGAIN)
 				continue;

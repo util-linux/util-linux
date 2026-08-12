@@ -55,6 +55,7 @@
 #endif
 
 #include "c.h"
+#include "timeutils.h"
 #include "closestream.h"
 #include "env.h"
 #include "nls.h"

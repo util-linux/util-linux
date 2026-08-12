@@ -340,7 +340,7 @@ static int test_lock(struct libmnt_test *ts __attribute__((unused)),
 		     int argc, char *argv[])
 {
 	time_t synctime = 0;
-	unsigned int usecs;
+	usec_t usecs;
 	const char *datafile = NULL;
 	int verbose = 0, loops = 0, l, idx = 1;
 

@@ -26,6 +26,7 @@
 #include <libsmartcols.h>
 
 #include "c.h"
+#include "timeutils.h"
 #include "cctype.h"
 #include "nls.h"
 #include "strutils.h"
