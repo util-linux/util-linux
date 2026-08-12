@@ -28,12 +28,12 @@ function do_lock {
 	local expected_rc="$2"
 	local mesg="$3"
 
-	$TS_CMD_FLOCK $1 $TS_OUTDIR/lockfile \
+	# shellcheck disable=SC2086
+	$TS_CMD_FLOCK $opts $TS_OUTDIR/lockfile \
 		echo "$mesg" \
 		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 	local rc="$?"
-
 	if [  "$rc" == "$expected_rc" ]; then
 		ts_log "Success"
 	else

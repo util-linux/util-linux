@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="unlock"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FLOCK"
+
+LOCK_FILENAME="$TS_OUTDIR"/lock
+LOCK_FD=10
+# shellcheck disable=SC2093
+exec 10<>"$LOCK_FILENAME"
+
+{
+    "$TS_CMD_FLOCK" --exclusive --nonblock --verbose "$LOCK_FD"
+    "$TS_CMD_FLOCK" --unlock "$LOCK_FD"
+    # A timeout of 0 should be interpreted as --nonblock
+    "$TS_CMD_FLOCK" --exclusive --wait 0 --verbose "$LOCK_FILENAME" true
+} >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+# Clean up output
+sed -i -E 's@(flock.*took) [0-9]+\.[0-9]+ (seconds$)@\1 <n> \2@g' "$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+ts_finalize
