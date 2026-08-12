@@ -39,35 +39,35 @@ POUT=
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD file=/etc/group; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='((PID == '"${PID}"') or (PID == 1)) and (FD == '"$FD"')'
-	QOUT=$(${TS_CMD_LSFD} -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}")
+	QOUT=$(${TS_CMD_LSFD} -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "${EXPR}")
 	echo "QOUT:" $?
 
-	POUT=$(${TS_CMD_LSFD} --pid="1 $PID" -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} --pid="1 $PID" -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[--pid=1 PID]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[--pid=1 PID]:" $?
 
-	POUT=$(${TS_CMD_LSFD} --pid="$PID 1" -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} --pid="$PID 1" -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[--pid=PID 1]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[--pid=PID 1]:" $?
 
-	POUT=$(${TS_CMD_LSFD} --pid="1,$PID" -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} --pid="1,$PID" -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[--pid=1,PID]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[--pid=1,PID]:" $?
 
-	POUT=$(${TS_CMD_LSFD} --pid="$PID,1" -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} --pid="$PID,1" -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[--pid=PID,1]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[--pid=PID,1]:" $?
 
-	POUT=$(${TS_CMD_LSFD} -p 1 --pid="$PID"  -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} -p 1 --pid="$PID"  -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[-p 1 --pid=PID]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[-p 1 --pid=PID]:" $?
 
-	POUT=$(${TS_CMD_LSFD} -p "$PID" --pid=1  -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
+	POUT=$(${TS_CMD_LSFD} -p "$PID" --pid=1  -r -n -o ASSOC,MODE,TYPE,FLAGS,NAME -Q "(FD == $FD)")
 	echo "POUT[-p PID --pid=1]:" $?
 	[ "${QOUT}" = "${POUT}" ]
 	echo "EQ[-p PID --pid=1]:" $?

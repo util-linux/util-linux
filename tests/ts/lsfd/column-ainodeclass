@@ -37,7 +37,7 @@ for C in pidfd inotify; do
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" $C $FD ; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    ${TS_CMD_LSFD} -n -o ASSOC,STTYPE,AINODECLASS -p "${PID}" -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -r -n -o ASSOC,STTYPE,AINODECLASS -p "${PID}" -Q "${EXPR}"
 	    echo "$C"':ASSOC,STTYPE,AINODECLASS': $?
 
 	    echo DONE >&"${MKFDS[1]}"

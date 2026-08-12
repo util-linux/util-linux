@@ -36,7 +36,7 @@ INODE=
     coproc MKFDS { "$TS_HELPER_MKFDS" nop; }
     if read -u ${MKFDS[0]} PID; then
 	INODE=$("$TS_CMD_GETINO" "$PID")
-	inode=$(${TS_CMD_LSFD} --pid="$PID" -n -o INODE -Q '(ASSOC == "pidfs")')
+	inode=$(${TS_CMD_LSFD} --pid="$PID" -r -n -o INODE -Q '(ASSOC == "pidfs")')
 	if [[ -z "$inode" ]]; then
 	    echo INODE: "FAILED (empty)"
 	elif [[ "$inode" == "$INODE" ]]; then
@@ -45,7 +45,7 @@ INODE=
 	    echo INODE: "FAILED (getino: $INODE, lsfd: $inode)"
 	fi
 
-	pid=$(${TS_CMD_LSFD} --pid="$PID" -n -o PIDFD.PID -Q '(ASSOC == "pidfs")')
+	pid=$(${TS_CMD_LSFD} --pid="$PID" -r -n -o PIDFD.PID -Q '(ASSOC == "pidfs")')
 	if [[ -z "$pid" ]]; then
 	    echo PID: "FAILED (empty)"
 	elif [[ "$pid" == "$PID" ]]; then
@@ -54,14 +54,14 @@ INODE=
 	    echo PID: "FAILED (PID: $PID, lsfd: $pid)"
 	fi
 
-	comm=$(${TS_CMD_LSFD} --pid="$PID" -n -o PIDFD.COMM -Q '(ASSOC == "pidfs")')
+	comm=$(${TS_CMD_LSFD} --pid="$PID" -r -n -o PIDFD.COMM -Q '(ASSOC == "pidfs")')
 	if [[ "$comm" =~ .*test_mkfds ]]; then
 	    echo COMM: OK
 	else
 	    echo COMM: "FAILED (lsfd: $comm)"
 	fi
 
-	nspid=$(${TS_CMD_LSFD} --pid="$PID" -n -o PIDFD.NSPID -Q '(ASSOC == "pidfs")')
+	nspid=$(${TS_CMD_LSFD} --pid="$PID" -r -n -o PIDFD.NSPID -Q '(ASSOC == "pidfs")')
 	if [[ -z "$nspid" ]]; then
 	    echo NSPID: "FAILED (empty)"
 	elif [[ "$nspid" == "$PID" ]]; then

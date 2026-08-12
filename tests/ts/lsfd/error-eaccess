@@ -34,7 +34,7 @@ EXPR=
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file "$FD"; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(ASSOC == "exe")'
-	${TS_CMD_LSFD} --_drop-privilege -p "$PID" -n -o UID,ASSOC,TYPE,SOURCE -Q "$EXPR"
+	${TS_CMD_LSFD} --_drop-privilege -p "$PID" -r -n -o UID,ASSOC,TYPE,SOURCE -Q "$EXPR"
 	echo "UID,ASSOC,TYPE,SOURCE: " $?
 	echo DONE >&"${MKFDS[1]}"
     fi

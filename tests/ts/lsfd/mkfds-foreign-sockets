@@ -60,7 +60,7 @@ RC=
 	    for t in $(for t0 in "${!tcase[@]}"; do echo "$t0"; done | sort); do
 		column=$t
 		expected=${tcase[$t]}
-		output=$(${TS_CMD_LSFD} -n -o $column -p "${PID}" -Q "FD == $fd")
+		output=$(${TS_CMD_LSFD} -r -n -o $column -p "${PID}" -Q "FD == $fd")
 		echo "$fd/$column \$? $?"
 
 		if [[ "${output}" == "$expected" ]]; then

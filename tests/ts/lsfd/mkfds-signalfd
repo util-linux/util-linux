@@ -53,7 +53,7 @@ EXPR='(FD == '"$FD"')'
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" signalfd $FD; }
     if read -u ${MKFDS[0]} PID; then
-	${TS_CMD_LSFD} -p "${PID}" -n -o "${COL}" -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID}" -r -n -o "${COL}" -Q "${EXPR}"
 	echo "${COL}": $?
 
 	echo DONE >&"${MKFDS[1]}"

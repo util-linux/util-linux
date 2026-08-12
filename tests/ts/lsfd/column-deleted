@@ -36,7 +36,7 @@ ts_init_subtest $C
     coproc MKFDS { "$TS_HELPER_MKFDS" "$C" "$FD" file="$target"  delete=1; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(FD == '"$FD"')'
-	${TS_CMD_LSFD} -p "$PID" -n -o DELETED -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "$PID" -r -n -o DELETED -Q "${EXPR}"
 	echo "$C: DELETED: " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -50,7 +50,7 @@ ts_init_subtest $C
     coproc MKFDS { "$TS_HELPER_MKFDS" "$C" "$FD"; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(FD == '"$FD"')'
-	${TS_CMD_LSFD} -p "$PID" -n -o DELETED -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "$PID" -r -n -o DELETED -Q "${EXPR}"
 	echo "$C: DELETED: " $?
 	echo DONE >&"${MKFDS[1]}"
     fi

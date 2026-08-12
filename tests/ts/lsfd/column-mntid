@@ -31,13 +31,13 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_cd "$TS_OUTDIR"
 
 FILE=/etc/passwd
-ID=$("$TS_CMD_FINDMNT" -n -o ID --target "$FILE" 2>> "$TS_OUTPUT" )
+ID=$("$TS_CMD_FINDMNT" -r -n -o ID --target "$FILE" 2>> "$TS_OUTPUT" )
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" mmap file=${FILE}; }
 
     if read -u ${MKFDS[0]} PID; then
-	MNTID=$("$TS_CMD_LSFD" -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "mem"' -p "$PID")
+	MNTID=$("$TS_CMD_LSFD" -r -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "mem"' -p "$PID")
 	if [[ "$MNTID" == "$ID" ]]; then
 	    echo mem:OK
 	else
@@ -53,7 +53,7 @@ wait "${MKFDS_PID}"
     coproc MKFDS { "$TS_HELPER_MKFDS" mmap file=${FILE} shared=true; }
 
     if read -u ${MKFDS[0]} PID; then
-	MNTID=$("$TS_CMD_LSFD" -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "shm"' -p "$PID")
+	MNTID=$("$TS_CMD_LSFD" -r -n -o MNTID -Q 'NAME == "'"$FILE"'" and ASSOC == "shm"' -p "$PID")
 	if [[ "$MNTID" == "$ID" ]]; then
 	    echo shm:OK
 	else

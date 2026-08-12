@@ -35,7 +35,7 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 IFNAME=
-readonly MYNETNS=$($TS_CMD_LSNS -n -t net -p $$ -oNS)
+readonly MYNETNS=$($TS_CMD_LSNS -r -n -t net -p $$ -oNS)
 
 if [[ -z "$MYNETNS" ]]; then
     ts_skip "the current netns is unknown"
@@ -90,11 +90,11 @@ cdev_tun_test()
 
 	if read -u ${MKFDS[0]} PID IFNAME; then
 	    EXPR='(FD == '"$FD"')'
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
 	    echo 'ASSOC,MODE,TYPE,SOURCE': $?
 
 	    if [[ -z "$netns" ]]; then
-		netns=$($TS_CMD_LSNS -n -t net -p $PID -oNS)
+		netns=$($TS_CMD_LSNS -r -n -t net -p $PID -oNS)
 	    fi
 
 	    output=$(${TS_CMD_LSFD} -p "${PID}" -n --raw -o NAME -Q "${EXPR}")

@@ -40,7 +40,7 @@ ENDPOINTS=
     coproc MKFDS { "$TS_HELPER_MKFDS" eventfd $FD0 $FD1 ; }
     if read -u ${MKFDS[0]} PID0 PID1; then
 	EXPR='(FD == '"$FD0"') or (FD =='"$FD1"')'
-	${TS_CMD_LSFD} -p "${PID0}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID0}" -r -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
 	echo 'parent: ASSOC,MODE,TYPE,SOURCE': $?
 
 	NAME0=$(${TS_CMD_LSFD} -p "${PID0}" --raw -n -o NAME -Q "${EXPR}")
@@ -50,7 +50,7 @@ ENDPOINTS=
 	echo 'parent: ID': $?
 
 	EXPR='(FD == '"$FD0"') or (FD =='"$FD1"')'
-	${TS_CMD_LSFD} -p "${PID1}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID1}" -r -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
 	echo 'child: ASSOC,MODE,TYPE,SOURCE': $?
 
 	NAME1=$(${TS_CMD_LSFD} -p "${PID1}" --raw -n -o NAME -Q "${EXPR}")

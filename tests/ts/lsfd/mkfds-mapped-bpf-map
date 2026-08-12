@@ -38,7 +38,7 @@ EXPR=
     coproc MKFDS { "$TS_HELPER_MKFDS" mapped-bpf-map "$FD" name="$NAME"; }
     if read -r -u "${MKFDS[0]}" PID; then
 	EXPR='(ASSOC == "shm") and (TYPE == "bpf-map")'
-	"${TS_CMD_LSFD}" -p "${PID}" -n -o TYPE,NAME -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -p "${PID}" -r -n -o TYPE,NAME -Q "${EXPR}"
 	echo 'TYPE,NAME': $?
 
 	EXPR="(FD == $FD)"

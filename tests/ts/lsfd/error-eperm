@@ -62,7 +62,7 @@ EXPR=
 	chmod u-rwx "$DIR"
 
 	EXPR='(ASSOC == "mem") and (NAME =~ ".*/'"$FILE"'$")'
-	${TS_CMD_LSFD} ${LSFD_XOPT} -p "$PID" -n -o ASSOC,TYPE,SOURCE -Q "$EXPR"
+	${TS_CMD_LSFD} ${LSFD_XOPT} -p "$PID" -r -n -o ASSOC,TYPE,SOURCE -Q "$EXPR"
 	echo "ASSOC,TYPE,SOURCE: " $?
 
 	chmod u+rwx "$DIR"

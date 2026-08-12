@@ -38,7 +38,7 @@ ts_init_subtest "MODE-r-bit"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(r-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -50,7 +50,7 @@ ts_init_subtest "XMODE-r-bit"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(r-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -63,7 +63,7 @@ ts_init_subtest "MODE-w-bit"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" pipe-no-fork $FD $((FD + 1)); }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o MODE -p "${PID}" -Q "${EXPR}"
 	echo "MODE(w-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -75,7 +75,7 @@ ts_init_subtest "XMODE-w-bit"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" pipe-no-fork $FD $((FD + 1)); }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(w-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -93,7 +93,7 @@ else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "${TS_CMD_LSFD}" -n -o MODE -p "${PID}" -Q "${EXPR}"
+	    "${TS_CMD_LSFD}" -r -n -o MODE -p "${PID}" -Q "${EXPR}"
 	    echo "MODE(x-bit): " $?
 	    echo DONE >&"${MKFDS[1]}"
 	fi
@@ -111,7 +111,7 @@ else
     {
 	coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	    "${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(x-bit): " $?
 	    echo DONE >&"${MKFDS[1]}"
 	fi
@@ -127,7 +127,7 @@ ts_init_subtest "XMODE-D-bit"
     rm -f "${FILE}"
     coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" delete=1; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(D-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -142,7 +142,7 @@ for m in flock-sh posix-r- ofd-r-; do
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	    "${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(l-bit): " $?
 	    echo DONE >&"${MKFDS[1]}"
 	fi
@@ -163,7 +163,7 @@ touch "$f"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file $FD file=$f read-lease=1; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(l-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
@@ -179,7 +179,7 @@ for m in flock-ex posix--w posix-rw  ofd--w ofd-rw lease-w; do
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	    "${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	    echo "XMODE(L-bit): " $?
 	    echo DONE >&"${MKFDS[1]}"
 	fi
@@ -201,7 +201,7 @@ ts_init_subtest "XMODE-m-bit"
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" eventpoll $FD $M0 $M1; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -o XMODE -p "${PID}" -Q "${EXPR}"
+	"${TS_CMD_LSFD}" -r -n -o XMODE -p "${PID}" -Q "${EXPR}"
 	echo "XMODE(m-bit): " $?
 	echo DONE >&"${MKFDS[1]}"
     fi
