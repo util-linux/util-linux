@@ -22,6 +22,7 @@
 
 #include "blkidP.h"
 #include "sysfs.h"
+#include "timeutils.h"
 
 static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 {
@@ -82,7 +83,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 #ifdef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
 	    (st.st_mtime < dev->bid_time ||
 	        (st.st_mtime == dev->bid_time &&
-		 st.st_mtim.tv_nsec / 1000 <= dev->bid_utime)) &&
+		 (suseconds_t) (st.st_mtim.tv_nsec / NSEC_PER_USEC) <= dev->bid_utime)) &&
 #else
 	    st.st_mtime <= dev->bid_time &&
 #endif
@@ -101,7 +102,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		   "time since last check %lld)",
 		   dev->bid_name,
 		   (long long)dev->bid_time, (long long)dev->bid_utime,
-		   (long long)st.st_mtime, (long long)st.st_mtim.tv_nsec / 1000,
+		   (long long)st.st_mtime, (long long) (st.st_mtim.tv_nsec / NSEC_PER_USEC),
 		   (long long)diff));
 #endif
 

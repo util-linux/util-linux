@@ -464,7 +464,7 @@ int main(int argc, char **argv)
 		usec_t x;
 		/* cal <timestamp> */
 		if (ul_parse_timestamp(*argv, &x) == 0)
-			now = (time_t) (x / 1000000);
+			now = (time_t) (x / USEC_PER_SEC);
 		/* cal <monthname> */
 		else if ((ctl.req.month = monthname_to_number(&ctl, *argv)) > 0)
 			cal_time(&now);	/* this year */

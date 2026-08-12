@@ -1423,7 +1423,7 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 		time_t t;
 
 		systemd_call(sd_journal_get_realtime_usec)(j, &x);
-		t = x / 1000000;
+		t = x / USEC_PER_SEC;
 		ts = make_time(time_mode, t);
 
 		id = get_journal_data(j, "SYSLOG_IDENTIFIER");

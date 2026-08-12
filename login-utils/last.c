@@ -1090,17 +1090,17 @@ int main(int argc, char **argv)
 		case 'p':
 			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.present = (time_t) (p / 1000000);
+			ctl.present = (time_t) (p / USEC_PER_SEC);
 			break;
 		case 's':
 			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.since = (time_t) (p / 1000000);
+			ctl.since = (time_t) (p / USEC_PER_SEC);
 			break;
 		case 't':
 			if (ul_parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-			ctl.until = (time_t) (p / 1000000);
+			ctl.until = (time_t) (p / USEC_PER_SEC);
 			break;
 		case 'w':
 			ctl.fullnames_mode = true;

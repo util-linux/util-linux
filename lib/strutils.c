@@ -19,6 +19,7 @@
 #include "cctype.h"
 #include "nls.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "bitops.h"
 #include "pathnames.h"
 
@@ -547,7 +548,7 @@ void strtotimeval_or_err(const char *str, struct timeval *tv, const char *errmes
 
 	user_input = strtold_or_err(str, errmesg);
 	tv->tv_sec = (time_t) user_input;
-	tv->tv_usec = (suseconds_t)((user_input - tv->tv_sec) * 1000000);
+	tv->tv_usec = (suseconds_t)((user_input - tv->tv_sec) * USEC_PER_SEC);
 }
 
 void strtotimespec_or_err(const char *str, struct timespec *ts, const char *errmesg)
@@ -556,7 +557,7 @@ void strtotimespec_or_err(const char *str, struct timespec *ts, const char *errm
 
 	user_input = strtold_or_err(str, errmesg);
 	ts->tv_sec = (time_t) user_input;
-	ts->tv_nsec = (long)((user_input - ts->tv_sec) * 1000000000);
+	ts->tv_nsec = (long)((user_input - ts->tv_sec) * NSEC_PER_SEC);
 }
 
 time_t strtotime_or_err(const char *str, const char *errmesg)

@@ -38,6 +38,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "optutils.h"
 #include "script-playutils.h"
 
@@ -101,7 +102,7 @@ delay_for(const struct timeval *delay)
 #ifdef HAVE_NANOSLEEP
 	struct timespec ts, remainder;
 	ts.tv_sec = (time_t) delay->tv_sec;
-	ts.tv_nsec = delay->tv_usec * 1000;
+	ts.tv_nsec = delay->tv_usec * NSEC_PER_USEC;
 
 	DBG(TIMING, ul_debug("going to sleep for %"PRId64".%06"PRId64,
 			(int64_t) delay->tv_sec, (int64_t) delay->tv_usec));

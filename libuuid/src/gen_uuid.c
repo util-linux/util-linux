@@ -108,11 +108,11 @@ static void gettimeofday (struct timeval *tv, void *dummy)
 	     + (uint64_t) ftime.dwLowDateTime);
 	if (n) {
 		n /= 10;
-		n -= ((369 * 365 + 89) * (uint64_t) 86400) * 1000000;
+		n -= ((369 * 365 + 89) * (uint64_t) 86400) * USEC_PER_SEC;
 	}
 
-	tv->tv_sec = n / 1000000;
-	tv->tv_usec = n % 1000000;
+	tv->tv_sec = n / USEC_PER_SEC;
+	tv->tv_usec = n % USEC_PER_SEC;
 }
 
 static int getuid (void)
@@ -337,8 +337,8 @@ try_again:
 		adjustment += *num - 1;
 		last.tv_usec += adjustment / 10;
 		adjustment = adjustment % 10;
-		last.tv_sec += last.tv_usec / 1000000;
-		last.tv_usec = last.tv_usec % 1000000;
+		last.tv_sec += last.tv_usec / USEC_PER_SEC;
+		last.tv_usec = last.tv_usec % USEC_PER_SEC;
 	}
 
 	if (state_fd >= 0) {

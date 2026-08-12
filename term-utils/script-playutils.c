@@ -15,6 +15,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "script-playutils.h"
 
 UL_DEBUG_DEFINE_MASK(scriptreplay);
@@ -499,14 +500,14 @@ done:
 		 * 1.000000 s delay scaled by divisor 2 became 0.000000 s rather
 		 * than the expected 0.500000 s.
 		 */
-		double total = (double) step->delay.tv_sec * 1000000.0
+		double total = (double) step->delay.tv_sec * (double) USEC_PER_SEC
 				+ (double) step->delay.tv_usec;
 
 		DBG(TIMING, ul_debug(" normalize delay: divide"));
 		total /= stp->delay_div;
-		step->delay.tv_sec  = (time_t) (total / 1000000.0);
+		step->delay.tv_sec  = (time_t) (total / (double) USEC_PER_SEC);
 		step->delay.tv_usec = (suseconds_t) (total
-				- (double) step->delay.tv_sec * 1000000.0);
+				- (double) step->delay.tv_sec * (double) USEC_PER_SEC);
 	}
 	if (timerisset(&stp->delay_max) &&
 	    timercmp(&step->delay, &stp->delay_max, >)) {

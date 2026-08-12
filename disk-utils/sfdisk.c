@@ -583,11 +583,11 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 
 			gettimeofday(&cur_time, NULL);
 			if (cur_time.tv_sec - prev_time.tv_sec > 1) {
-				elapsed = ((cur_time.tv_sec - prev_time.tv_sec) * 1000000) +
+				elapsed = ((cur_time.tv_sec - prev_time.tv_sec) * USEC_PER_SEC) +
 					  (cur_time.tv_usec - prev_time.tv_usec);
 
 				bytes_per_sec = ((i - prev) * ss) / elapsed;	/* per usec */
-				bytes_per_sec *= 1000000;			/* per sec */
+				bytes_per_sec *= USEC_PER_SEC;			/* per sec */
 
 				prev_time = cur_time;
 				prev = i;
