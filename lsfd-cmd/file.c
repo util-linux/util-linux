@@ -314,13 +314,13 @@ static bool file_fill_column(struct proc *proc __attribute__((__unused__)),
 	switch(column_id) {
 	case COL_NAME:
 		if (file->name && file->stat.st_nlink == 0) {
-			char *d = strnrstr(file->name, "(deleted)",
-					   sizeof("(deleted)") - 1);
+			char *d = strnrstr(file->name, " (deleted)",
+					   sizeof(" (deleted)") - 1);
 			if (d) {
 				int r;
 				*d = '\0';
 				r = scols_line_set_data(ln, column_index, file->name);
-				*d = '(';
+				*d = ' ';
 				if (r)
 					err(EXIT_FAILURE, _("failed to add output data"));
 				return true;
