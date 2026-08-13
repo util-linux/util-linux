@@ -104,13 +104,6 @@ cleanup()
 }
 trap cleanup EXIT
 
-# test_mkfds prints its pid only after the requested fd was made, so a
-# successful read means it is ready to serve.
-mkfds_has_factory()
-{
-	[[ -x "$TS_HELPER_MKFDS" ]] && "$TS_HELPER_MKFDS" --is-available "$1"
-}
-
 net_port=$((30000 + $$ % 10000))
 
 ts_init_subtest "net-invalid-port"
@@ -128,7 +121,8 @@ ts_finalize_subtest
 net_tests_issue=
 if [[ "$abi_version" -lt 4 ]]; then
 	net_tests_issue="landlock network restrictions are not supported"
-elif ! mkfds_has_factory tcp-listen || ! mkfds_has_factory tcp-connect; then
+elif ! "$TS_HELPER_MKFDS" --is-available tcp-listen \
+        || ! "$TS_HELPER_MKFDS" --is-available tcp-connect; then
 	net_tests_issue="test_mkfds has no tcp-listen or tcp-connect factory"
 elif ! "$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" &> /dev/null; then
 	net_tests_issue="cannot bind TCP port $net_port"
@@ -243,7 +237,8 @@ unix_listener=
 unix_tests_issue=
 if [[ "$abi_version" -lt 6 ]]; then
 	unix_tests_issue="landlock scopes are not supported"
-elif ! mkfds_has_factory unix-stream-listen || ! mkfds_has_factory unix-stream-connect; then
+elif ! "$TS_HELPER_MKFDS" --is-available unix-stream-listen \
+        || ! "$TS_HELPER_MKFDS" --is-available unix-stream-connect; then
 	unix_tests_issue="test_mkfds has no unix-stream-listen or unix-stream-connect factory"
 else
 	coproc UNIX_LISTEN { "$TS_HELPER_MKFDS" unix-stream-listen 3 \
