@@ -1,4 +1,4 @@
-3 timerfd clockid=realtime remaining=100.987654321 interval=5.123456789
+3 timerfd clockid=realtime\x20remaining=100.987654321\x20interval=5.123456789
 ASSOC,TYPE,NAME: 0
 realtime
 CLOCKID: 0

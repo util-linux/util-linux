@@ -1,2 +1,2 @@
-3 [KNAME] pid=1 comm= nspid=1
+3 [KNAME] pid=1\x20comm=\x20nspid=1
 pidfd:ASSOC,KNAME,NAME: 0

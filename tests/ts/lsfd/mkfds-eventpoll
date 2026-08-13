@@ -34,9 +34,9 @@ FD2=7
     coproc MKFDS { "$TS_HELPER_MKFDS" eventpoll $FD0 $FD1 $FD2 ; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(FD == '"$FD0"')'
-	${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
 	echo 'ASSOC,TYPE,NAME,EVENTPOLL.TFDS': $?
-	${TS_CMD_LSFD} -J -p "${PID}" -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
+	${TS_CMD_LSFD} -J -p "${PID}" -r -n -o ASSOC,TYPE,NAME,EVENTPOLL.TFDS -Q "${EXPR}"
 	echo 'ASSOC,TYPE,NAME,EVENTPOLL.TFDS (JSON)': $?
 	echo DONE >&"${MKFDS[1]}"
     fi

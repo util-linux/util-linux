@@ -44,8 +44,8 @@ compare_net_namespaces()
     local altns_inode
     local sock_netns
 
-    altns_inode=$(${TS_CMD_LSFD} -n -o INODE -p "${pid}" -Q '(FD == 4)')
-    sock_netns=$(${TS_CMD_LSFD} -n -o SOCK.NETNS -p "${pid}" -Q '(FD == 5)')
+    altns_inode=$(${TS_CMD_LSFD} -r -n -o INODE -p "${pid}" -Q '(FD == 4)')
+    sock_netns=$(${TS_CMD_LSFD} -r -n -o SOCK.NETNS -p "${pid}" -Q '(FD == 5)')
 
     if [[ "${altns_inode}" == "${sock_netns}" ]]; then
 	echo "the netns for the $type socket is extracted as expected"
@@ -73,7 +73,7 @@ for t in stream dgram seqpacket; do
 					  path=test_mkfds-unix-$t-ns \
 					  type=$t ; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    ${TS_CMD_LSFD} -n \
+	    ${TS_CMD_LSFD} -r -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
 			   -p "${PID}" -Q "${EXPR}" | strip_type_stream $t
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}
@@ -89,7 +89,7 @@ for t in stream dgram seqpacket; do
 					  abstract=true \
 					  type=$t ; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    ${TS_CMD_LSFD} -n \
+	    ${TS_CMD_LSFD} -r -n \
 			   -o ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH \
 			   -p "${PID}" -Q "${EXPR}" | strip_type_stream $t
 	    echo 'ASSOC,STTYPE,NAME,SOCK.STATE,SOCK.TYPE,SOCK.LISTENING,UNIX.PATH': ${PIPESTATUS[0]}

@@ -55,7 +55,7 @@ for C in ro-regular-file pidfd socketpair; do
 	    "$TS_HELPER_MKFDS" $C $FD "${argv[@]}"
 	}
 	if read -r -u "${MKFDS[0]}" PID; then
-	    ${TS_CMD_LSFD} -n -o ASSOC,KNAME,NAME -p "${PID}" -Q "${EXPR}" | {
+	    ${TS_CMD_LSFD} -r -n -o ASSOC,KNAME,NAME -p "${PID}" -Q "${EXPR}" | {
 		# Replace the unpredictable an inode number for the socket
 		# with "INODENUM".
 		sed -e 's/\[[0-9]\+\]/[INODENUM]/g' | make_state_connected $C
@@ -88,7 +88,7 @@ ts_init_subtest deleted-file
     target=tmp-column-name
     coproc MKFDS { "$TS_HELPER_MKFDS" $C $FD file=tmp-column-name delete=1; }
     if read -r -u "${MKFDS[0]}" PID; then
-	${TS_CMD_LSFD} -n -o DELETED,NAME -p "${PID}" -Q "${EXPR}" |
+	${TS_CMD_LSFD} -r -n -o DELETED,NAME -p "${PID}" -Q "${EXPR}" |
 	    sed -e 's#.*/\([^/]\+\)#\1#'
 	echo "$C: DELETED,NAME: " ${PIPESTATUS[0]}
 
