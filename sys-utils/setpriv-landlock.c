@@ -233,7 +233,7 @@ static long landlock_fs_access_to_mask(const char *str, size_t len)
 static uint64_t parse_landlock_fs_access(const char *list)
 {
 	unsigned long r = 0, unsupported;
-	unsigned i;
+	size_t i;
 
 	if (string_to_bitmask(list, &r, landlock_fs_access_to_mask))
 		errx(EXIT_FAILURE,
@@ -266,7 +266,7 @@ static long landlock_net_access_to_mask(const char *str, size_t len)
 static uint64_t parse_landlock_net_access(const char *list)
 {
 	unsigned long r = 0, unsupported;
-	unsigned i;
+	size_t i;
 
 	if (string_to_bitmask(list, &r, landlock_net_access_to_mask))
 		errx(EXIT_FAILURE,
@@ -535,7 +535,8 @@ void usage_landlock(FILE *out)
 void list_landlock_support(void)
 {
 	int abi, errata;
-	unsigned i;
+	unsigned n;
+	size_t i;
 	uint64_t fs_mask, net_mask, scope_mask;
 
 	abi = supported_landlock_abi();
@@ -544,9 +545,9 @@ void list_landlock_support(void)
 
 	printf(_("ABI version: %d\n"), abi);
 	printf(_("ABI errata:"));
-	for (i = 1; errata != 0; errata >>= 1, i++) {
+	for (n = 1; errata != 0; errata >>= 1, n++) {
 		if (errata & 1)
-			printf(" %u", i);
+			printf(" %u", n);
 	}
 	printf("\n");
 
