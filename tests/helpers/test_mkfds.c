@@ -1313,7 +1313,7 @@ static void init_unix_addr(struct sockaddr_un *un, size_t *un_len,
 		if (sizeof(un->sun_path) - 1 > pathlen)
 			*un_len = sizeof(*un) - sizeof(un->sun_path) + 1 + pathlen;
 	} else
-		strncpy(un->sun_path,     path, sizeof(un->sun_path) - 1    );
+		strncpy(un->sun_path, path, sizeof(un->sun_path) - 1);
 }
 
 static void *make_unix_stream_core(const struct factory *factory, struct fdesc fdescs[],
