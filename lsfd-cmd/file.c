@@ -38,6 +38,7 @@
 #include <sys/stat.h>
 #include <mqueue.h>		/* mq_open */
 
+#include "xalloc.h"
 #include "buffer.h"
 #include "idcache.h"
 #include "strutils.h"
@@ -199,9 +200,9 @@ static bool abst_fill_column(struct proc *proc,
 			return true;
 
 		file_fill_flags_buf(&buf, file->sys_flags);
-		if (ul_buffer_is_empty(&buf))
+		str = ul_buffer_steal_string(&buf);
+		if (!str)
 			return true;
-		str = ul_buffer_get_data(&buf, NULL, NULL);
 		break;
 	}
 	case COL_MAPLEN:
@@ -763,14 +764,12 @@ bool is_mqueue_dev(dev_t dev)
 	return false;
 }
 
-static inline char *mqueue_file_xstrendpoint(struct file *file)
+static inline void mqueue_file_xbufendpoint(struct file *file, struct ul_buffer *ul_buf)
 {
-	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  file->proc->pid, file->proc->command, file->association,
-		  (file->mode & S_IRUSR)? 'r': '-',
-		  (file->mode & S_IWUSR)? 'w': '-');
-	return str;
+	ul_buffer_xappendf(ul_buf, "%d,%s,%d%c%c",
+			   file->proc->pid, file->proc->command, file->association,
+			   (file->mode & S_IRUSR)? 'r': '-',
+			   (file->mode & S_IWUSR)? 'w': '-');
 }
 
 static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -788,18 +787,17 @@ static bool mqueue_file_fill_column(struct proc *proc __attribute__((__unused__)
 		char *str = NULL;
 		struct mqueue_file *this = (struct mqueue_file *)file;
 		struct list_head *e;
+		struct ul_buffer ul_buf = UL_INIT_BUFFER;
 		foreach_endpoint(e, this->endpoint) {
-			char *estr;
 			struct mqueue_file *other = list_entry(e, struct mqueue_file,
 							       endpoint.endpoints);
 			if (this == other)
 				continue;
-			if (str)
-				xstrputc(&str, '\n');
-			estr = mqueue_file_xstrendpoint(&other->file);
-			xstrappend(&str, estr);
-			free(estr);
+			if (!ul_buffer_is_empty(&ul_buf))
+				ul_buffer_xappend_char(&ul_buf, '\n');
+			mqueue_file_xbufendpoint(&other->file, &ul_buf);
 		}
+		str = ul_buffer_steal_string(&ul_buf);
 		if (!str)
 			return false;
 		if (scols_line_refer_data(ln, column_index, str))

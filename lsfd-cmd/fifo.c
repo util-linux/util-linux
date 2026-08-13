@@ -21,6 +21,9 @@
 
 #include "lsfd.h"
 
+#include "xalloc.h"
+#include "buffer.h"
+
 struct fifo {
 	struct file file;
 	struct ipc_endpoint endpoint;
@@ -31,14 +34,12 @@ struct fifo_ipc {
 	ino_t ino;
 };
 
-static inline char *fifo_xstrendpoint(struct file *file)
+static inline void fifo_xbufendpoint(struct file *file, struct ul_buffer *ul_buf)
 {
-	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  file->proc->pid, file->proc->command, file->association,
-		  (file->mode & S_IRUSR)? 'r': '-',
-		  (file->mode & S_IWUSR)? 'w': '-');
-	return str;
+	ul_buffer_xappendf(ul_buf, "%d,%s,%d%c%c",
+			   file->proc->pid, file->proc->command, file->association,
+			   (file->mode & S_IRUSR)? 'r': '-',
+			   (file->mode & S_IWUSR)? 'w': '-');
 }
 
 static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
@@ -64,17 +65,16 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 	case COL_ENDPOINTS: {
 		struct fifo *this = (struct fifo *)file;
 		struct list_head *e;
+		struct ul_buffer ul_buf = UL_INIT_BUFFER;
 		foreach_endpoint(e, this->endpoint) {
-			char *estr;
 			struct fifo *other = list_entry(e, struct fifo, endpoint.endpoints);
 			if (this == other)
 				continue;
-			if (str)
-				xstrputc(&str, '\n');
-			estr = fifo_xstrendpoint(&other->file);
-			xstrappend(&str, estr);
-			free(estr);
+			if (!ul_buffer_is_empty(&ul_buf))
+				ul_buffer_xappend_char(&ul_buf, '\n');
+			fifo_xbufendpoint(&other->file, &ul_buf);
 		}
+		str = ul_buffer_steal_string(&ul_buf);
 		if (!str)
 			return false;
 		break;
@@ -83,8 +83,6 @@ static bool fifo_fill_column(struct proc *proc __attribute__((__unused__)),
 		return false;
 	}
 
-	if (!str)
-		err(EXIT_FAILURE, _("failed to add output data"));
 	if (scols_line_refer_data(ln, column_index, str))
 		err(EXIT_FAILURE, _("failed to add output data"));
 	return true;

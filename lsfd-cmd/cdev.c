@@ -21,6 +21,8 @@
 
 #include "lsfd.h"
 #include "pidfd-utils.h"
+#include "xalloc.h"
+#include "buffer.h"
 
 #include <sys/ioctl.h>		/* ioctl */
 #include <linux/if_tun.h>	/* TUNGETDEVNETNS */
@@ -568,14 +570,12 @@ static char * cdev_tty_get_name(struct cdev *cdev)
 	return str;
 }
 
-static inline char *cdev_tty_xstrendpoint(struct file *file)
+static inline void cdev_tty_xbufendpoint(struct file *file, struct ul_buffer *ul_buf)
 {
-	char *str = NULL;
-	xasprintf(&str, "%d,%s,%d%c%c",
-		  file->proc->pid, file->proc->command, file->association,
-		  (file->mode & S_IRUSR)? 'r': '-',
-		  (file->mode & S_IWUSR)? 'w': '-');
-	return str;
+	ul_buffer_xappendf(ul_buf, "%d,%s,%d%c%c",
+			   file->proc->pid, file->proc->command, file->association,
+			   (file->mode & S_IRUSR)? 'r': '-',
+			   (file->mode & S_IWUSR)? 'w': '-');
 }
 
 static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
@@ -606,8 +606,8 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 		if (is_pty(data->drv)) {
 			struct ttydata *this = data;
 			struct list_head *e;
+			struct ul_buffer ul_buf = UL_INIT_BUFFER;
 			foreach_endpoint(e, data->endpoint) {
-				char *estr;
 				struct ttydata *other = list_entry(e, struct ttydata, endpoint.endpoints);
 				if (this == other)
 					continue;
@@ -616,12 +616,11 @@ static bool cdev_tty_fill_column(struct proc *proc  __attribute__((__unused__)),
 				    || (this->drv->is_pts && !other->drv->is_ptmx))
 					continue;
 
-				if (*str)
-					xstrputc(str, '\n');
-				estr = cdev_tty_xstrendpoint(&other->cdev->file);
-				xstrappend(str, estr);
-				free(estr);
+				if (!ul_buffer_is_empty(&ul_buf))
+					ul_buffer_xappend_char(&ul_buf, '\n');
+				cdev_tty_xbufendpoint(&other->cdev->file, &ul_buf);
 			}
+			*str = ul_buffer_steal_string(&ul_buf);
 			if (*str)
 				return true;
 		}
