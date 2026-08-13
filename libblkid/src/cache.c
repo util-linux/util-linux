@@ -221,6 +221,8 @@ int main(int argc, char** argv)
 			argv[1] ? argv[1] : blkid_get_cache_filename(NULL));
 		exit(1);
 	}
+	blkid_put_cache(cache);
+
 	if ((ret = blkid_get_cache(&cache, "/dev/null")) != 0) {
 		fprintf(stderr, "%s: error creating cache (%d)\n",
 			argv[0], ret);
