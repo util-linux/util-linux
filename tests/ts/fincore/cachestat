@@ -25,6 +25,8 @@ ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "jq"
 ts_check_prog "sed"
 
+ts_skip_qemu_user
+
 # The cachestat system call was introduced in kernel version 6.5
 if ts_kernel_ver_lt 6 5; then
 	ts_skip "this test requires Linux version >= 6.5"
