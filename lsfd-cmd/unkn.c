@@ -888,7 +888,7 @@ static int anon_inotify_handle_fdinfo(struct unkn *unkn, const char *key, const 
 		unsigned long long ino;
 		unsigned long long sdev;
 
-		if (sscanf(value, "%*d ino:%llx sdev:%llx %*s", &ino, &sdev) == 2) {
+		if (sscanf(value, "%*x ino:%llx sdev:%llx %*s", &ino, &sdev) == 2) {
 			add_inode(data, (ino_t)ino, (dev_t)sdev);
 			return 1;
 		}

@@ -35,6 +35,7 @@ PACKAGES=(
 	sqlite3
 	libsqlite3-dev
 	libunicode-linebreak-perl
+	jq
 )
 
 PACKAGES_OPTIONAL=(
