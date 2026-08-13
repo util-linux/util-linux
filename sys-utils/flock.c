@@ -55,6 +55,8 @@
 #define F_OFD_SETLKW	38
 #endif
 
+#define IS_COMMAND_OPT(s) (!strcmp((s), "-c") || !strcmp((s), "--command"))
+
 enum {
 	API_FLOCK,
 	API_FCNTL_OFD,
@@ -88,7 +90,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(  "     --fcntl              use fcntl(F_OFD_SETLK) rather than flock()\n"), stdout);
 	fputs(_(  "     --start <offset>     starting offset for lock (implies --fcntl)\n"), stdout);
 	fputs(_(  "     --length <number>    number of bytes to lock (implies --fcntl)\n"), stdout);
-	fputs(_(  "     --fd                 use the file descriptor number to wrap the\n"
+	fputs(_(  "     --fd <number>        use the file descriptor number to wrap the\n"
 	             "                          lock around the command execution\n"), stdout);
 	fputs(_(  "     --verbose            increase verbosity\n"), stdout);
 	fputs(USAGE_SEPARATOR, stdout);
@@ -136,6 +138,15 @@ static int open_file(const char *filename, int *flags)
 	}
 	*flags = fl;
 	return fd;
+}
+
+static char **build_shell_cmd_argv(char **sh_c_argv, char *command)
+{
+	sh_c_argv[0] = (char *)ul_default_shell(UL_SHELL_NOPWD, NULL);
+	sh_c_argv[1] = "-c";
+	sh_c_argv[2] = command;
+	sh_c_argv[3] = NULL;
+	return sh_c_argv;
 }
 
 static void __attribute__((__noreturn__)) run_program(char **cmd_argv)
@@ -213,7 +224,7 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
-	bool use_fd = false;
+	bool use_fd = false, cmd_opt_given = false;
 
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1,
@@ -237,7 +248,7 @@ int main(int argc, char *argv[])
 		{"fcntl", no_argument, NULL, OPT_FCNTL},
 		{"start", required_argument, NULL, OPT_FCNTL_START},
 		{"length", required_argument, NULL, OPT_FCNTL_LENGTH},
-		{"fd", no_argument, NULL, OPT_FD},
+		{"fd", required_argument, NULL, OPT_FD},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -257,9 +268,11 @@ int main(int argc, char *argv[])
 
 	memset(&timeout, 0, sizeof timeout);
 
+	opterr = 0;
 	optopt = 0;
 	while ((opt =
-		getopt_long(argc, argv, "+sexnoFuw:E:hV?", long_options, NULL)) != EOF) {
+		getopt_long(argc, argv, "+:sexnoFuw:E:hV?",
+			long_options, NULL)) != EOF) {
 		switch (opt) {
 		case 's':
 			type = LOCK_SH;
@@ -303,6 +316,7 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_FD:
 			use_fd = true;
+			fd = str2num_or_err(optarg, 10, _("invalid file descriptor"), 0, INT_MAX);
 			break;
 		case OPT_VERBOSE:
 			verbose = 1;
@@ -312,6 +326,19 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage();
 		default:
+			/* When getopt(3) detects an unknown option it increments
+			 * optind by 1, conversely, it does not increment optind
+			 * when it encounters a non-option argument. This holds
+			 * true only because our @shortopts starts with a '+'.
+			 */
+			if (IS_COMMAND_OPT(argv[optind-1])) {
+				cmd_opt_given = true;
+				break;
+			} else if (opt == ':') {
+				warnx(_("option '%s' requires an argument"), argv[optind - 1]);
+			} else {
+				warnx(_("unrecognized option '%s'"), argv[optind - 1]);
+			}
 			errtryhelp(EX_USAGE);
 		}
 	}
@@ -327,36 +354,42 @@ int main(int argc, char *argv[])
 	if (api != API_FLOCK && type == LOCK_EX)
 		open_flags = O_WRONLY;
 
-	if (argc > optind + 1) {
-		/* Run command */
-		if (!strcmp(argv[optind + 1], "-c") ||
-		    !strcmp(argv[optind + 1], "--command")) {
+
+	/* This can only be set if no filename/directory was specified */
+	if (cmd_opt_given) {
+		/* optind points to the --command option's argument */
+		if (argc != optind + 1)
+			errx(EX_USAGE,
+				_("%s requires exactly one command argument"),
+				argv[optind-1]);
+		cmd_argv = build_shell_cmd_argv(sh_c_argv, argv[optind]);
+	} else if (argc > optind + 1 && !use_fd) { /* filename/directory and command passed */
+		if (IS_COMMAND_OPT(argv[optind + 1])) {
 			if (argc != optind + 3)
 				errx(EX_USAGE,
-				     _("%s requires exactly one command argument"),
-				     argv[optind + 1]);
-			cmd_argv = sh_c_argv;
-			cmd_argv[0] = (char *)ul_default_shell(UL_SHELL_NOPWD, NULL);
-			cmd_argv[1] = "-c";
-			cmd_argv[2] = argv[optind + 2];
-			cmd_argv[3] = NULL;
+					_("%s requires exactly one command argument"),
+					argv[optind+1]);
+			cmd_argv = build_shell_cmd_argv(sh_c_argv, argv[optind + 2]);
 		} else {
-			cmd_argv = &argv[optind + 1];
+			cmd_argv = &argv[optind+1];
 		}
 
-		if (!use_fd) {
-			filename = argv[optind];
-			fd = open_file(filename, &open_flags);
-		} else {
-			fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
-		}
-	} else if (optind < argc) {
-		/* Use provided file descriptor */
-		fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
+		filename = argv[optind];
+		fd = open_file(filename, &open_flags);
+	} else if (argc > optind) {
+		if (use_fd)
+			cmd_argv = &argv[optind];
+		else
+			fd = str2num_or_err(argv[optind], 10,
+				_("invalid file descriptor"), 0, INT_MAX);
 	} else {
-		/* Bad options */
-		errx(EX_USAGE, _("requires file descriptor, file or directory"));
+		if (use_fd)
+			errx(EX_USAGE, _("missing command"));
+		errx(EX_USAGE, _("missing file descriptor, file or directory"));
 	}
+
+	if (fd < 0)
+		errx(EX_USAGE, _("missing file descriptor, file or directory"));
 
 	if (have_timeout) {
 		if (timeout.it_value.tv_sec == 0 &&
