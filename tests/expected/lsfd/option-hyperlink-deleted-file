@@ -1,7 +1,7 @@
 # NAME
 00000000  2e 2f 74 6d 70 2d 6f 70  74 69 6f 6e 2d 68 79 70  |./tmp-option-hyp|
-00000010  65 72 6c 69 6e 6b 20 0a                           |erlink .|
-00000018
+00000010  65 72 6c 69 6e 6b 0a                              |erlink.|
+00000017
 # KNAME
 00000000  2e 2f 74 6d 70 2d 6f 70  74 69 6f 6e 2d 68 79 70  |./tmp-option-hyp|
 00000010  65 72 6c 69 6e 6b 20 28  64 65 6c 65 74 65 64 29  |erlink (deleted)|
