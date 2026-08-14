@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="fsfreeze"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_FSFREEZE"
+ts_check_test_command "$TS_CMD_SFDISK"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_HELPER_STRERROR"
+ts_check_prog "mkfs.ext4"
+
+ts_scsi_debug_init dev_size_mb=20 sector_size=512
+
+"$TS_CMD_SFDISK" "$TS_DEVICE" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG" <<EOF
+label: gpt
+label-id: b77c19be-ed66-4d9e-b696-15741fc4f84b
+size=10M, type=L, name="part-1", uuid=b77c19be-ed66-4d9e-b696-15741fc4f84b
+EOF
+ts_fdisk_clean "$TS_DEVICE"
+PART="${TS_DEVICE}1"
+udevadm settle
+
+mkfs.ext4 -q "$PART" &>/dev/null || ts_die "failed to make ext4 on $PART"
+udevadm settle
+
+[ ! -d "$TS_MOUNTPOINT" ] && mkdir -p "$TS_MOUNTPOINT"
+
+"$TS_CMD_MOUNT" "$PART" "$TS_MOUNTPOINT" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+if ! ts_is_mounted "$PART"; then
+    "$TS_CMD_UMOUNT" --force "$PART" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+    ts_die "failed to find $PART in /proc/mounts :("
+fi
+
+{
+    "$TS_CMD_FSFREEZE" --freeze "$TS_MOUNTPOINT"
+
+    # Testing whether the filesystem is frozen should be fairly simple with a
+    # second freeze attempt. This is because the FIFREEZE ioctl() command used
+    # in fsfreeze(8), calls the kernel internal freeze_super() which returns
+    # -EBUSY if the fs is already frozen.
+    # This is stable UAPI so let's check for this error message on a second try.
+    # Note: In some cases repeated freeze requests are allowed but this doesn't
+    # affect us, as it relates to multi-device filesystems.
+    "$TS_CMD_FSFREEZE" --freeze "$TS_MOUNTPOINT"
+}>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+{
+    "$TS_CMD_FSFREEZE" --unfreeze "$TS_MOUNTPOINT"
+    "$TS_CMD_UMOUNT" --force "$PART"
+}>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+sed -i "s@$("$TS_HELPER_STRERROR" EBUSY)@EBUSY@g" "$TS_ERRLOG"
+sed -i "s@${TS_MOUNTPOINT}@<mountpoint>@g" "$TS_OUTPUT" "$TS_ERRLOG"
+
+ts_finalize
