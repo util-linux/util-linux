@@ -131,25 +131,21 @@ fi
 ts_init_subtest "net-bind-blocked"
 if [[ -n "$net_tests_issue" ]]; then
 	ts_skip "$net_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
-		"$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" \
-		&> /dev/null; then
-	echo "bind allowed" > "$TS_OUTPUT"
 else
-	echo "bind blocked" > "$TS_OUTPUT"
+    "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
+		"$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" \
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "net-bind-allowed"
 if [[ -n "$net_tests_issue" ]]; then
 	ts_skip "$net_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
+else
+    "$TS_CMD_SETPRIV" --landlock-access net:bind-tcp \
 		--landlock-rule net-port:bind-tcp:"$net_port" \
 		"$TS_HELPER_MKFDS" -c -q tcp-listen 3 server-port="$net_port" \
-		&> /dev/null; then
-	echo "bind allowed" > "$TS_OUTPUT"
-else
-	echo "bind blocked" > "$TS_OUTPUT"
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
@@ -166,25 +162,21 @@ fi
 ts_init_subtest "net-connect-blocked"
 if [[ -n "$net_tests_issue" ]]; then
 	ts_skip "$net_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
-		"$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" \
-		&> /dev/null; then
-	echo "connect allowed" > "$TS_OUTPUT"
 else
-	echo "connect blocked" > "$TS_OUTPUT"
+    "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
+		"$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" \
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "net-connect-allowed"
 if [[ -n "$net_tests_issue" ]]; then
 	ts_skip "$net_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
+else
+    "$TS_CMD_SETPRIV" --landlock-access net:connect-tcp \
 		--landlock-rule net-port:connect-tcp:"$net_port" \
 		"$TS_HELPER_MKFDS" -c -q tcp-connect 3 server-port="$net_port" \
-		&> /dev/null; then
-	echo "connect allowed" > "$TS_OUTPUT"
-else
-	echo "connect blocked" > "$TS_OUTPUT"
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
@@ -210,22 +202,20 @@ fi
 ts_init_subtest "scope-signal-blocked"
 if [[ -n "$signal_tests_issue" ]]; then
 	ts_skip "$signal_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access scope:signal \
-		"$TS_CMD_KILL" -0 "$background_pid" &> /dev/null; then
-	echo "signal allowed" > "$TS_OUTPUT"
 else
-	echo "signal blocked" > "$TS_OUTPUT"
+    "$TS_CMD_SETPRIV" --landlock-access scope:signal \
+		"$TS_CMD_KILL" -0 "$background_pid" \
+        2>&1 >>"$TS_OUTPUT" | sed 's/'"$background_pid"'\+/<pid>/g' >>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "scope-signal-allowed"
 if [[ -n "$signal_tests_issue" ]]; then
 	ts_skip "$signal_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
-		"$TS_CMD_KILL" -0 "$background_pid" &> /dev/null; then
-	echo "signal allowed" > "$TS_OUTPUT"
 else
-	echo "signal blocked" > "$TS_OUTPUT"
+    "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
+		"$TS_CMD_KILL" -0 "$background_pid" \
+        >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
@@ -246,7 +236,7 @@ else
 	if ! read -r -u "${UNIX_LISTEN[0]}" unix_listener; then
 		unix_tests_issue="cannot listen on abstract UNIX socket $socket_name"
 	elif ! "$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
-			path="$socket_name" abstract=1 &> /dev/null; then
+			path="$socket_name" abstract=1 > /dev/null 2>>"$TS_ERRLOG"; then
 		unix_tests_issue="cannot connect to abstract UNIX socket $socket_name"
 	fi
 fi
@@ -254,26 +244,22 @@ fi
 ts_init_subtest "scope-abstract-unix-socket-blocked"
 if [[ -n "$unix_tests_issue" ]]; then
 	ts_skip "$unix_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
+else
+    "$TS_CMD_SETPRIV" --landlock-access scope:abstract-unix-socket \
 		"$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
 		path="$socket_name" abstract=1 \
-		&> /dev/null; then
-	echo "abstract UNIX socket allowed" > "$TS_OUTPUT"
-else
-	echo "abstract UNIX socket blocked" > "$TS_OUTPUT"
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "scope-abstract-unix-socket-allowed"
 if [[ -n "$unix_tests_issue" ]]; then
 	ts_skip "$unix_tests_issue"
-elif "$TS_CMD_SETPRIV" --landlock-access scope:signal \
+else
+    "$TS_CMD_SETPRIV" --landlock-access scope:signal \
 		"$TS_HELPER_MKFDS" -c -q unix-stream-connect 3 \
 		path="$socket_name" abstract=1 \
-		&> /dev/null; then
-	echo "abstract UNIX socket allowed" > "$TS_OUTPUT"
-else
-	echo "abstract UNIX socket blocked" > "$TS_OUTPUT"
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 fi
 ts_finalize_subtest
 
