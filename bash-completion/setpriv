@@ -188,6 +188,11 @@ _setpriv_module()
 			esac
 			return 0
 			;;
+        '--list-landlock-rights')
+            local access=$("$1" --list-landlock-access 2>/dev/null || true)
+            COMPREPLY=( $(compgen -W "$access" -- $cur) )
+            return 0
+            ;;
 		'--seccomp-filter')
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0
@@ -224,6 +229,9 @@ _setpriv_module()
 				--landlock-rule
 				--landlock-support
 				--seccomp-filter
+                --list-caps
+                --list-landlock-access
+                --list-landlock-rights
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
