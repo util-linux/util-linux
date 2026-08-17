@@ -65,6 +65,7 @@
 #include "strutils.h"
 #include "ttyutils.h"
 #include "sulogin-consoles.h"
+#include "vmcp.h"
 #define CONMAX		16
 
 static unsigned int timeout;
@@ -221,7 +222,7 @@ static void tcinit(struct console *con)
 #endif
 
 #ifdef KDGKBMODE
-	if (!(con->flags & CON_SERIAL)
+	if (!(con->flags & (CON_SERIAL|CON_3215|CON_3270))
 	    && ioctl(fd, KDGKBMODE, &mode) < 0)
 		con->flags |= CON_SERIAL;
 	errno = 0;
@@ -268,6 +269,13 @@ static void tcinit(struct console *con)
 		}
 	}
 
+#if defined(__s390__) || defined(__s390x__)
+	if (con->flags & (CON_3215|CON_3270)) {
+		setlocale(LC_CTYPE, "POSIX");
+		setlocale(LC_MESSAGES, "POSIX");
+		goto setattr;
+	}
+#endif
 	/* Handle lines other than virtual consoles here */
 #if defined(KDGKBMODE) || defined(TIOCGSERIAL)
 	if (con->flags & CON_SERIAL)
@@ -367,6 +375,10 @@ static void tcfinal(struct console *con)
 		free(term);
 	}
 
+#if defined(__s390__) || defined(__s390x__)
+	if (con->flags & (CON_3215|CON_3270))
+		return;
+#endif
 	if (!(con->flags & CON_SERIAL) || (con->flags & CON_NOTTY))
 		return;
 
@@ -1200,10 +1212,29 @@ int main(int argc, char **argv)
 				char *answer;
 				int doshell = 0;
 				int deny = !opt_e && locked_account_password(pwd->pw_passwd);
-
+#if defined(__s390__) || defined(__s390x__)
+				int vmcpfd = -1;
+				if (con->flags & (CON_3215|CON_3270)) {
+					vmcpfd = vmcp_open();
+					if (vmcpfd >= 0) {
+						vmcp_stop_console_logging(vmcpfd);
+					}
+				}
+				if (con->flags & CON_3215) {
+					if (vmcpfd >= 0) {
+						vmcp_prepare_terminal_for_password(vmcpfd);
+						vmcp_warning3215(vmcpfd);
+					}
+				}
+#endif
 				doprompt(passwd, con, deny);
 
-				if ((answer = getpasswd(con)) == NULL)
+				answer = getpasswd(con);
+#if defined(__s390__) || defined(__s390x__)
+				vmcp_restore_and_close(vmcpfd, con->flags);
+				vmcpfd = -1;
+#endif
+				if (answer == NULL)
 					break;
 				if (deny) {
 #ifdef HAVE_EXPLICIT_BZERO

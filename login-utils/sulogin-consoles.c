@@ -312,7 +312,7 @@ static
 #ifdef __GNUC__
 __attribute__((__hot__))
 #endif
-int append_console(struct list_head *consoles, const char * const name)
+int append_console(struct list_head *consoles, const char * const name, dev_t dev __attribute__((__unused__)))
 {
 	struct console *restrict tail;
 	const struct console *last = NULL;
@@ -343,7 +343,22 @@ int append_console(struct list_head *consoles, const char * const name)
 	tail->reset_tty_context = NULL;
 	tail->user_tty_context = NULL;
 #endif
-
+#if defined(__s390__) || defined(__s390x__)
+	/*
+	 * Stat the device path to determine its major/minor numbers.
+	 * This ensures we detect s390x terminal types regardless of whether
+	 * the console was found via /proc, /sys, cmdline, or a direct stdin
+	 * fallback (e.g. sulogin < /dev/ttyS0).
+	 */
+	if (!dev) {
+		struct stat st;
+		if (stat(name, &st) == 0 && S_ISCHR(st.st_mode))
+			dev = st.st_rdev;
+	}
+	if (dev) {
+		tail->flags |= get_s390_con_flags(dev);
+	}
+#endif
 	return 0;
 }
 
@@ -385,7 +400,7 @@ static int detect_consoles_from_proc(struct list_head *consoles)
 		name = scandev(dir, comparedev);
 		if (!name)
 			continue;
-		rc = append_console(consoles, name);
+		rc = append_console(consoles, name, comparedev);
 		free(name);
 		if (rc < 0)
 			goto done;
@@ -447,7 +462,7 @@ static int detect_consoles_from_sysfs(struct list_head *consoles)
 		name = scandev(dir, comparedev);
 		if (!name)
 			continue;
-		rc = append_console(consoles, name);
+		rc = append_console(consoles, name, comparedev);
 		free(name);
 		if (rc < 0)
 			goto done;
@@ -535,7 +550,7 @@ static int detect_consoles_from_cmdline(struct list_head *consoles)
 		name = scandev(dir, comparedev);
 		if (!name)
 			continue;
-		rc = append_console(consoles, name);
+		rc = append_console(consoles, name, comparedev);
 		free(name);
 		if (rc < 0)
 			goto done;
@@ -593,7 +608,7 @@ static int detect_consoles_from_tiocgdev(struct list_head *consoles,
 			goto done;
 		}
 	}
-	rc = append_console(consoles, name);
+	rc = append_console(consoles, name, comparedev);
 	free(name);
 	if (rc < 0)
 		goto done;
@@ -707,7 +722,7 @@ int detect_consoles(const char *device, const int fallback, struct list_head *co
 		closedir(dir);
 
 		if (name) {
-			rc = append_console(consoles, name);
+			rc = append_console(consoles, name, comparedev);
 			free(name);
 			if (rc < 0)
 				return rc;
@@ -784,7 +799,7 @@ fallback:
 		n = strdup(name);
 		if (!n)
 			return -ENOMEM;
-		rc = append_console(consoles, n);
+		rc = append_console(consoles, n, 0);
 		free(n);
 		if (rc < 0)
 			return rc;
@@ -806,6 +821,14 @@ int main(int argc, char *argv[])
 	char *name = NULL;
 	int fd, re;
 	struct list_head *p, consoles;
+
+#if defined(__s390__) || defined(__s390x__)
+	/* Pure function tests for get_s390_con_flags() */
+	if (get_s390_con_flags(makedev(4, 64)) != CON_3215) return EXIT_FAILURE;
+	if (get_s390_con_flags(makedev(4, 65)) != CON_SCLP) return EXIT_FAILURE;
+	if (get_s390_con_flags(makedev(227, 1)) != CON_3270) return EXIT_FAILURE;
+	if (get_s390_con_flags(makedev(4, 63)) != 0) return EXIT_FAILURE;
+#endif
 
 	if (argc == 2) {
 		name = argv[1];
