@@ -29,27 +29,27 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_cd "$TS_OUTDIR"
 
-ID_EXE=$("$TS_CMD_FINDMNT" -n -o ID --target "$TS_HELPER_MKFDS" 2>> "$TS_OUTPUT" )
-ID_CWD=$("$TS_CMD_FINDMNT" -n -o ID --target . 2>> "$TS_OUTPUT" )
-ID_RTD=$("$TS_CMD_FINDMNT" -n -o ID --target / 2>> "$TS_OUTPUT" )
+ID_EXE=$("$TS_CMD_FINDMNT" -r -n -o ID --target "$TS_HELPER_MKFDS" 2>> "$TS_OUTPUT" )
+ID_CWD=$("$TS_CMD_FINDMNT" -r -n -o ID --target . 2>> "$TS_OUTPUT" )
+ID_RTD=$("$TS_CMD_FINDMNT" -r -n -o ID --target / 2>> "$TS_OUTPUT" )
 
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" ro-regular-file 5; }
 
     if read -u ${MKFDS[0]} PID; then
-	MNTID_EXE=$("$TS_CMD_LSFD" -n -o MNTID -Q 'ASSOC == "exe"' -p "$PID")
+	MNTID_EXE=$("$TS_CMD_LSFD" -r -n -o MNTID -Q 'ASSOC == "exe"' -p "$PID")
 	if [[ "$MNTID_EXE" == "$ID_EXE" ]]; then
 	    echo exe:OK
 	else
 	    echo exe:ERROR: "MNTID:$MNTID_EXE" != "ID:$ID_EXE"
 	fi
-	MNTID_CWD=$("$TS_CMD_LSFD" -n -o MNTID -Q 'ASSOC == "cwd"' -p "$PID")
+	MNTID_CWD=$("$TS_CMD_LSFD" -r -n -o MNTID -Q 'ASSOC == "cwd"' -p "$PID")
 	if [[ "$MNTID_CWD" == "$ID_CWD" ]]; then
 	    echo cwd:OK
 	else
 	    echo cwd:ERROR: "MNTID:$MNTID_CWD" != "ID:$ID_CWD"
 	fi
-	MNTID_RTD=$("$TS_CMD_LSFD" -n -o MNTID -Q 'ASSOC == "rtd"' -p "$PID")
+	MNTID_RTD=$("$TS_CMD_LSFD" -r -n -o MNTID -Q 'ASSOC == "rtd"' -p "$PID")
 	if [[ "$MNTID_RTD" == "$ID_RTD" ]]; then
 	    echo rtd:OK
 	else

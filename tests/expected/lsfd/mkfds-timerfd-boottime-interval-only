@@ -1,4 +1,4 @@
-3 timerfd clockid=boottime interval=10.123456789
+3 timerfd clockid=boottime\x20interval=10.123456789
 ASSOC,TYPE,NAME: 0
 boottime
 CLOCKID: 0

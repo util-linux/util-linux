@@ -41,7 +41,7 @@ ts_init_subtest "DGRAM"
     coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=DGRAM; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
+	${TS_CMD_LSFD} -r -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-DGRAM/UNIX/'
 	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': ${PIPESTATUS[0]}
 
 	echo DONE >&"${MKFDS[1]}"
@@ -56,7 +56,7 @@ ts_init_subtest "STREAM"
     coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM; }
     if read -u ${MKFDS[0]} PID; then
 	EXPR='(PID == '"${PID}"') and ((FD == '"$FD0"') or (FD == '"$FD1"'))'
-	${TS_CMD_LSFD} -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-STREAM/UNIX/'
+	${TS_CMD_LSFD} -r -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME -Q "${EXPR}" | sed -e 's/UNIX-STREAM/UNIX/'
 	echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.PROTONAME': ${PIPESTATUS[0]}
 
 	echo DONE >&"${MKFDS[1]}"
@@ -78,7 +78,7 @@ mkfds_socketpair_stream_endpoint()
 	coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM; }
 	if read -u ${MKFDS[0]} PID; then
 	    EXPR='(FD == '"$FD0"') or (FD == '"$FD1"')'
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS -Q "${EXPR}" | sed -e "s/${PID}/1/g"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS -Q "${EXPR}" | sed -e "s/${PID}/1/g"
 	    echo 'ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS': ${PIPESTATUS[0]}
 
 	    echo DONE >&"${MKFDS[1]}"
@@ -101,7 +101,7 @@ mkfds_socketpair_stream_shutdown_state()
 	coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM halfclose=1; }
 	if read -u ${MKFDS[0]} PID; then
 	    EXPR='(FD == '"$FD0"') or (FD == '"$FD1"')'
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.SHUTDOWN -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,MODE,STTYPE,SOURCE,SOCK.SHUTDOWN -Q "${EXPR}"
 	    echo 'ASSOC,MODE,STTYPE,SOURCE,SOCK.SHUTDOWN': ${PIPESTATUS[0]}
 
 	    echo DONE >&"${MKFDS[1]}"
@@ -124,7 +124,7 @@ mkfds_socketpair_stream_endpoint_halfclose()
 	coproc MKFDS { "$TS_HELPER_MKFDS" socketpair $FD0 $FD1 socktype=STREAM halfclose=1; }
 	if read -u ${MKFDS[0]} PID; then
 	    EXPR='(FD == '"$FD0"') or (FD == '"$FD1"')'
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS -Q "${EXPR}" | sed -e "s/${PID}/1/g"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS -Q "${EXPR}" | sed -e "s/${PID}/1/g"
 	    echo 'ASSOC,MODE,STTYPE,SOURCE,ENDPOINTS': ${PIPESTATUS[0]}
 
 	    echo DONE >&"${MKFDS[1]}"

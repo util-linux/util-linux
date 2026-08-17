@@ -35,16 +35,16 @@ EXPR='(FD == '"$FD"')'
     for clock in realtime-alarm  boottime-alarm; do
 	coproc MKFDS { "$TS_HELPER_MKFDS" timerfd $FD clockid=$clock remaining=0 interval=0 interval-nanofrac=0; }
 	if read -u ${MKFDS[0]} PID; then
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o ASSOC,TYPE,NAME -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o ASSOC,TYPE,NAME -Q "${EXPR}"
 	    echo 'ASSOC,TYPE,NAME': $?
 
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.CLOCKID -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o TIMERFD.CLOCKID -Q "${EXPR}"
 	    echo 'CLOCKID': $?
 
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.REMAINING -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o TIMERFD.REMAINING -Q "${EXPR}"
 	    echo 'TIMERFD.REMAINING': $?
 
-	    ${TS_CMD_LSFD} -p "${PID}" -n -o TIMERFD.INTERVAL -Q "${EXPR}"
+	    ${TS_CMD_LSFD} -p "${PID}" -r -n -o TIMERFD.INTERVAL -Q "${EXPR}"
 	    echo 'TIMERFD.INTERVAL': $?
 
 	    echo DONE >&"${MKFDS[1]}"

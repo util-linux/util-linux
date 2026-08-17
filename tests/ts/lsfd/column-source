@@ -44,7 +44,7 @@ ts_init_subtest namespace-ASSOC
     for ns in "${NAMESPACES[@]}"; do
 	EXPR=${EXPR}' || (ASSOC == "'"$ns"'")'
     done
-    ${TS_CMD_LSFD} -p $$ -n -o ASSOC,SOURCE -Q "$EXPR"
+    ${TS_CMD_LSFD} -p $$ -r -n -o ASSOC,SOURCE -Q "$EXPR"
 } > "$TS_OUTPUT" 2>&1
 ts_finalize_subtest
 

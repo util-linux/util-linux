@@ -39,11 +39,11 @@ RC=
 {
     coproc MKFDS { "$TS_HELPER_MKFDS" netns "$FD"; }
     if read -r -u "${MKFDS[0]}" PID; then
-	"${TS_CMD_LSFD}" -n -oNS.TYPE -p "${PID}" -Q "(FD == $FD)"
-	NAME_FD=$("${TS_CMD_LSFD}" -n -oNS.NAME -p "${PID}" -Q "(FD == $FD)")
-	NAME_NS=$("${TS_CMD_LSFD}" -n -oNS.NAME -p "${PID}" -Q '(ASSOC == "net")')
-	INO_FD=$( "${TS_CMD_LSFD}" -n -oINODE   -p "${PID}" -Q "(FD == $FD)")
-	INO_NS=$( "${TS_CMD_LSFD}" -n -oINODE   -p "${PID}" -Q '(ASSOC == "net")')
+	"${TS_CMD_LSFD}" -r -n -oNS.TYPE -p "${PID}" -Q "(FD == $FD)"
+	NAME_FD=$("${TS_CMD_LSFD}" -r -n -oNS.NAME -p "${PID}" -Q "(FD == $FD)")
+	NAME_NS=$("${TS_CMD_LSFD}" -r -n -oNS.NAME -p "${PID}" -Q '(ASSOC == "net")')
+	INO_FD=$( "${TS_CMD_LSFD}" -r -n -oINODE   -p "${PID}" -Q "(FD == $FD)")
+	INO_NS=$( "${TS_CMD_LSFD}" -r -n -oINODE   -p "${PID}" -Q '(ASSOC == "net")')
 
 	if [[ "$NAME_FD" = "$NAME_NS" ]]; then
 	    echo "NAME_FD" == "NAME_NS": 0

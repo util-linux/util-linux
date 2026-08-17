@@ -65,7 +65,7 @@ PID=
 
 if read -u ${MKFDS[0]} PID; then
     {
-	INO_BEFORE=$(${TS_CMD_LSFD} -p "$PID" -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
+	INO_BEFORE=$(${TS_CMD_LSFD} -p "$PID" -r -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
 	echo "INODE:" $?
 	[[ "${FILE_MASKED_INO}" == "${INO_BEFORE}" ]]
 	echo "BEFORE:" $?
@@ -76,7 +76,7 @@ if read -u ${MKFDS[0]} PID; then
     fi
 
     {
-	INO_AFTER=$(${TS_CMD_LSFD} -p "$PID" -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
+	INO_AFTER=$(${TS_CMD_LSFD} -p "$PID" -r -n -o INODE -Q 'NAME =~ ".*'${FILE_MASKED}'"')
 	echo "INODE:" $?
 	[[ "${FILE_MASKED_INO}" == "${INO_AFTER}" ]]
 	echo "AFTER:" $?

@@ -40,14 +40,14 @@ ENDPOINTS=
     coproc MKFDS { "$TS_HELPER_MKFDS" mqueue $FD0 $FD1 path=${MQUEUE}; }
     if read -u ${MKFDS[0]} PID0 PID1; then
 	EXPR='(FD == '"$FD0"') or (FD =='"$FD1"')'
-	${TS_CMD_LSFD} -p "${PID0}" -n -o ASSOC,MODE,TYPE,SOURCE,NAME -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID0}" -r -n -o ASSOC,MODE,TYPE,SOURCE,NAME -Q "${EXPR}"
 	echo 'parent: ASSOC,MODE,TYPE,SOURCE,NAME': $?
 
 	INODE0=$(${TS_CMD_LSFD} -p "${PID0}" --raw -n -o INODE -Q "${EXPR}")
 	echo 'parent: INODE': $?
 
 	EXPR='(FD == '"$FD0"') or (FD =='"$FD1"')'
-	${TS_CMD_LSFD} -p "${PID1}" -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
+	${TS_CMD_LSFD} -p "${PID1}" -r -n -o ASSOC,MODE,TYPE,SOURCE -Q "${EXPR}"
 	echo 'child: ASSOC,MODE,TYPE,SOURCE': $?
 
 	INODE1=$(${TS_CMD_LSFD} -p "${PID1}" --raw -n -o INODE -Q "${EXPR}")
