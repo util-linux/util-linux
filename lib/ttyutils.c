@@ -21,7 +21,7 @@
 #  if defined (__s390__) || defined (__s390x__)
 #    define DEFAULT_TTYS0  "dumb"
 #    define DEFAULT_TTY32  "ibm327x"
-#    define DEFAULT_TTYS1  "vt220"
+#    define DEFAULT_TTYS1  "sclp"
 #  endif
 #  ifndef DEFAULT_STERM
 #    define DEFAULT_STERM  "vt102"
@@ -176,7 +176,8 @@ char *get_terminal_default_type(const char *ttyname, int is_serial)
 		 * Special terminal on first serial line on a S/390(x) which
 		 * is due legacy reasons a block terminal of type 3270 or
 		 * higher.  Whereas the second serial line on a S/390(x) is
-		 * a real character terminal which is compatible with VT220.
+		 * a real character terminal which is compatible with "sclp"
+		 * since ncurses 6.5-20250405 for e.g. color support.
 		 */
 		if (strcmp(ttyname, "ttyS0") == 0)		/* linux/drivers/s390/char/con3215.c */
 			return strdup(DEFAULT_TTYS0);
