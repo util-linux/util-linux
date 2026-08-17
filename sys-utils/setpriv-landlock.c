@@ -64,6 +64,8 @@ struct landlock_net_port_attr {
 
 #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
 #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+#define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
+#define LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP		(1ULL << 3)
 
 #define LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
 #define LANDLOCK_SCOPE_SIGNAL				(1ULL << 1)
@@ -128,6 +130,8 @@ static const struct landlock_restriction landlock_access_fs[] = {
 static const struct landlock_restriction landlock_access_net[] = {
 	{ LANDLOCK_ACCESS_NET_BIND_TCP,		"bind-tcp",	    N_("bind(2) a TCP socket") },
 	{ LANDLOCK_ACCESS_NET_CONNECT_TCP,	"connect-tcp",	    N_("connect(2) a TCP socket") },
+	{ LANDLOCK_ACCESS_NET_BIND_UDP,		"bind-udp",	    N_("bind(2) a UDP socket") },
+	{ LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP,	"connect-send-udp", N_("connect(2) or send(2) a UDP socket") },
 };
 
 static const struct landlock_restriction landlock_scope_restriction[] = {
@@ -154,6 +158,12 @@ static const uint64_t landlock_access_net_mask[] = {
 	/* ABI 2 */ 0,
 	/* ABI 3 */ 0,
 	/* ABI 4 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 5 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 6 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 7 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 8 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 9 */ (LANDLOCK_ACCESS_NET_CONNECT_TCP << 1) - 1,
+	/* ABI 10 */ (LANDLOCK_ACCESS_NET_CONNECT_SEND_UDP << 1) - 1,
 };
 
 /* cumulative scope restrictions supported by each Landlock ABI version, indexed by (abi - 1) */
