@@ -483,6 +483,8 @@ static void add_rtc_clock_from_path(struct libscols_table *tb,
 	tm.tm_yday = rtc_time.tm_yday;
 
 	now.tv_sec = timegm(&tm);
+	if (now.tv_sec == -1)
+		err(EXIT_FAILURE, _("timegm() failed"));
 
 	struct clockinfo clockinfo = {
 		.type = CT_RTC,
