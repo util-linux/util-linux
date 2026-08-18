@@ -38,7 +38,7 @@ DIR=
 ts_init_subtest "0xA-inodes"
 {
     DIR=0xA
-    trap "rm -r $DIR" EXIT
+    trap 'rm -r $DIR' EXIT
     mkdir -p "$DIR"
 
     coproc MKFDS { "$TS_HELPER_MKFDS" inotify-many $FD count=10 tempdir=$DIR; }

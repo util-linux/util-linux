@@ -40,7 +40,7 @@ fi
 if ! mount $IMG $MNTPNT; then
     ts_skip "failed to mount a btrfs image, $IMG to $MNTPNT"
 fi
-trap "umount $MNTPNT; rm -f $IMG" EXIT
+trap 'umount $MNTPNT; rm -f $IMG' EXIT
 
 if ! touch $MNTPNT/fstab; then
     ts_skip "failed to touch a file on a btrfs filesystem: $MNTPNT/fstab"

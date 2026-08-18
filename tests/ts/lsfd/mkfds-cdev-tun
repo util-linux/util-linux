@@ -35,7 +35,8 @@ ts_cd "$TS_OUTDIR"
 PID=
 FD=3
 IFNAME=
-readonly MYNETNS=$($TS_CMD_LSNS -r -n -t net -p $$ -oNS)
+MYNETNS=$($TS_CMD_LSNS -r -n -t net -p $$ -oNS)
+readonly MYNETNS
 
 if [[ -z "$MYNETNS" ]]; then
     ts_skip "the current netns is unknown"
