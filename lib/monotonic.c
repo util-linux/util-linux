@@ -70,7 +70,7 @@ int gettime_monotonic(struct timeval *tv)
 	/* Linux specific, can't slew */
 	if (!(ret = clock_gettime(UL_CLOCK_MONOTONIC, &ts))) {
 		tv->tv_sec = ts.tv_sec;
-		tv->tv_usec = ts.tv_nsec / 1000;
+		tv->tv_usec = ts.tv_nsec / NSEC_PER_USEC;
 	}
 	return ret;
 #else

@@ -11,6 +11,7 @@
 #include <sys/time.h>
 
 #include "c.h"
+#include "timeutils.h"
 #include "timer.h"
 
 /*
@@ -44,9 +45,9 @@ int setup_timer(struct ul_timer *timer,
 	};
 	struct itimerspec val = {
 		.it_value.tv_sec = sec,
-		.it_value.tv_nsec = usec * 1000,
+		.it_value.tv_nsec = usec * NSEC_PER_USEC,
 		.it_interval.tv_sec = sec / 100,
-		.it_interval.tv_nsec = (sec ? sec % 100 : 1) * 10*1000*1000
+		.it_interval.tv_nsec = (sec ? sec % 100 : 1) * 10 * NSEC_PER_MSEC
 	};
 
 	if (sigemptyset(&sig_a.sa_mask))

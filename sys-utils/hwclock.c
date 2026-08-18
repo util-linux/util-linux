@@ -1565,7 +1565,7 @@ int main(int argc, char **argv)
 		usec_t usec;
 
 		if (ul_parse_timestamp(ctl.date_opt, &usec) == 0)
-			set_time = (time_t) (usec / 1000000);
+			set_time = (time_t) (usec / USEC_PER_SEC);
 #endif
 		else {
 			warnx(_("invalid date '%s'"), ctl.date_opt);
