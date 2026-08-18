@@ -35,6 +35,7 @@ _flock_module()
 				--command
 				--no-fork
 				--fcntl
+				--fd
 				--start
 				--length
 				--wait

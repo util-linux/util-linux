@@ -27,6 +27,7 @@ static struct {
 	E(EPERM),
 	E(EACCES),
 	E(EBUSY),
+	E(EBADF),
 };
 
 int main(int argc, const char *argv[])

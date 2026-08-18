@@ -45,6 +45,10 @@ flock - manage locks from shell scripts
 
 *flock* [options] _number_
 
+*flock* [options] *--fd* _number_ *-c* _command_
+
+*flock* [options] *--fd* _number_ _command_ [_arguments_]
+
 == DESCRIPTION
 
 This utility manages *flock*(2) locks from within shell scripts or from the command line.
@@ -93,6 +97,9 @@ The starting offset for lock. This option implies *--fcntl*.
 *--length* _number_::
 The number of bytes to lock. This option implies *--fcntl*.
 
+*--fd* _number_::
+This makes it possible to lock an open file by its file descriptor _number_ and execute the specified _command_, similar to the first and second forms described above. See in the EXAMPLES section for how this can be used.
+
 *--verbose*::
 Report how long it took to acquire the lock, or why the lock could not be obtained.
 
@@ -136,6 +143,9 @@ This is useful boilerplate code for shell scripts. Put it at the top of the shel
 
 shell> exec 4<>/var/lock/mylockfile; shell> flock -n 4::
 This form is convenient for locking a file without spawning a subprocess. The shell opens the lock file for reading and writing as file descriptor 4, then *flock* is used to lock the descriptor.
+
+shell> exec 10<>/var/lock/mylockfile; shell> flock -n --fd 10 echo '1 2 3'::
+This form is convenient when instead of a filename the file descriptor of an already open file needs to be used.
 
 == AUTHORS
 
