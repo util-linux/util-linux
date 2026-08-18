@@ -482,7 +482,7 @@ static void add_rtc_clock_from_path(struct libscols_table *tb,
 	tm.tm_wday = rtc_time.tm_wday;
 	tm.tm_yday = rtc_time.tm_yday;
 
-	now.tv_sec = mktime(&tm);
+	now.tv_sec = timegm(&tm);
 
 	struct clockinfo clockinfo = {
 		.type = CT_RTC,
