@@ -766,7 +766,8 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	if (is_log_enabled(INFO)) {
 		char *ssz = size_to_human_string(SIZE_SUFFIX_3LETTER |
 				   SIZE_SUFFIX_SPACE |
-				   SIZE_DECIMAL_2DIGITS, a->st.st_size);
+				   SIZE_DECIMAL_2DIGITS,
+				   (uint64_t) a->st.st_blocks * 512);
 		jlog(INFO, printf(_("%s%sLinking %s to %s (-%s)"),
 		     opts.dry_run ? _("[DryRun] ") : "",
 		     reflink ? "Ref" : "",
@@ -803,7 +804,7 @@ static int file_link(struct file *a, struct file *b, int reflink)
 	b->st.st_nlink--;
 
 	if (b->st.st_nlink == 0)
-		stats.saved += a->st.st_size;
+		stats.saved += (uint64_t) a->st.st_blocks * 512;
 
 	/* Move the link from file b to a */
 	{
@@ -883,6 +884,12 @@ static int inserter(const char *fpath, const struct stat *sb,
 	if ((uintmax_t) sb->st_size < opts.min_size) {
 		jlog(VERBOSE1,
 			printf(_("Skipped (smaller than configured size) %s"), fpath));
+		return 0;
+	}
+
+	if (sb->st_blocks == 0) {
+		jlog(VERBOSE1,
+			printf(_("Skipped (no blocks allocated) %s"), fpath));
 		return 0;
 	}
 
@@ -1042,9 +1049,12 @@ static int is_reflink(struct file *xa, struct file *xb)
 		if (ioctl(bf, FS_IOC_FIEMAP, (unsigned long) bmap) < 0)
 			goto done;
 
-		if (amap->fm_mapped_extents == 0 ||
-		    amap->fm_mapped_extents != bmap->fm_mapped_extents)
+		if (amap->fm_mapped_extents != bmap->fm_mapped_extents)
 			goto done;
+		if (amap->fm_mapped_extents == 0) {
+			rc = 1;
+			goto done;
+		}
 
 		for (i = 0; i < amap->fm_mapped_extents; i++) {
 			struct fiemap_extent *a = &amap->fm_extents[i];
