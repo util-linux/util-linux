@@ -68,6 +68,7 @@ _hardlink_module()
 			--ignore-mode
 			--quiet
 			--prioritize-trees
+			--real-size
 			--ignore-time
 			--reflink
 			--verbose

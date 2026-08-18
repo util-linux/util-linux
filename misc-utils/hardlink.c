@@ -198,6 +198,7 @@ static struct options {
 	bool dry_run;
 	bool list_duplicates;
 	bool within_mount;
+	bool real_size;
 	char line_delim;
 	uintmax_t min_size;
 	uintmax_t max_size;
@@ -881,10 +882,21 @@ static int inserter(const char *fpath, const struct stat *sb,
 
 	stats.files++;
 
-	if ((uintmax_t) sb->st_size < opts.min_size) {
-		jlog(VERBOSE1,
-			printf(_("Skipped (smaller than configured size) %s"), fpath));
-		return 0;
+	{
+		uintmax_t sz = opts.real_size ?
+				(uintmax_t) sb->st_blocks * 512 :
+				(uintmax_t) sb->st_size;
+
+		if (sz < opts.min_size) {
+			jlog(VERBOSE1,
+				printf(_("Skipped (smaller than configured size) %s"), fpath));
+			return 0;
+		}
+		if ((opts.max_size > 0) && (sz > opts.max_size)) {
+			jlog(VERBOSE1,
+			     printf(_("Skipped (greater than configured size) %s"), fpath));
+			return 0;
+		}
 	}
 
 	if (sb->st_blocks == 0) {
@@ -896,12 +908,6 @@ static int inserter(const char *fpath, const struct stat *sb,
 	jlog(VERBOSE2, printf(" %5zu: [%" PRIu64 "/%" PRIu64 "/%zu] %s",
 			stats.files, (uint64_t)sb->st_dev, sb->st_ino,
 			(size_t) sb->st_nlink, fpath));
-
-	if ((opts.max_size > 0) && ((uintmax_t) sb->st_size > opts.max_size)) {
-		jlog(VERBOSE1,
-		     printf(_("Skipped (greater than configured size) %s"), fpath));
-		return 0;
-	}
 
 	pathlen = strlen(fpath) + 1;
 
@@ -1253,6 +1259,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --reflink[=<when>]     create clone/CoW copies (auto, always, never)\n"), out);
 	fputs(_("     --skip-reflinks        skip already cloned files (enabled on --reflink)\n"), out);
 #endif
+	fputs(_("     --real-size            filter by real size on disk (use with -s/-S)\n"), out);
 	fputs(_(" -s, --minimum-size <size>  minimum size for files\n"), out);
 	fputs(_(" -S, --maximum-size <size>  maximum size for files\n"), out);
 	fputs(_(" -t, --ignore-time          ignore timestamps (when testing for equality)\n"), out);
@@ -1285,7 +1292,8 @@ static int parse_options(int argc, char *argv[])
 		OPT_REFLINK = CHAR_MAX + 1,
 		OPT_SKIP_RELINKS,
 		OPT_EXCLUDE_SUBTREE,
-		OPT_MOUNT
+		OPT_MOUNT,
+		OPT_REAL_SIZE
 	};
 	static const char optstr[] = "VhvndfpotXcmMFOlzx:y:i:r:S:s:b:q";
 	static const struct option long_options[] = {
@@ -1309,6 +1317,7 @@ static int parse_options(int argc, char *argv[])
 		{"exclude-subtree", required_argument, NULL, OPT_EXCLUDE_SUBTREE},
 #endif
 		{"mount", no_argument, NULL, OPT_MOUNT},
+		{"real-size", no_argument, NULL, OPT_REAL_SIZE},
 		{"method", required_argument, NULL, 'y' },
 		{"minimum-size", required_argument, NULL, 's'},
 		{"maximum-size", required_argument, NULL, 'S'},
@@ -1434,6 +1443,9 @@ static int parse_options(int argc, char *argv[])
 #endif
 		case OPT_MOUNT:
 			opts.within_mount = 1;
+			break;
+		case OPT_REAL_SIZE:
+			opts.real_size = TRUE;
 			break;
 		case 'h':
 			usage();

@@ -116,6 +116,9 @@ which means that only reflinks are allowed.
 *--skip-reflinks*::
 Ignore already cloned files. This option may be used without *--reflink* when creating classic hardlinks.
 
+*--real-size*::
+Use real file size (blocks allocated on disk) rather than apparent file size when applying *--minimum-size* and *--maximum-size* filters. This is useful for excluding sparse files that have large apparent size but use little or no actual disk space.
+
 *-s*, *--minimum-size* _size_::
 The minimum size to consider. By default this is 1, so empty files will not be linked. The _size_ argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g., "K" has the same meaning as "KiB").
 
