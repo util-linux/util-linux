@@ -133,18 +133,22 @@ struct clockinfo {
 	const char * const name;
 	const char * const ns_offset_name;
 	bool no_id;
+	bool timezone;
 };
 
 static const struct clockinfo clocks[] = {
-	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
+	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
 	  .ns_offset_name = "monotonic"						       },
 	{ CT_SYS, CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
-	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
+	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
 	{ CT_SYS, CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
 	  .ns_offset_name = "boottime"						       },
-	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
+	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
 	{ CT_SYS, CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
 	{ CT_AUX, CLOCK_AUX0,             "CLOCK_AUX0",             "auxiliary-0"      },
@@ -345,7 +349,8 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 					break;
 
 				rc = strtimespec_iso(now,
-						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
+						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC
+						| (clockinfo->timezone ? ISO_TIMEZONE : 0),
 						buf, sizeof(buf));
 				if (rc)
 					errx(EXIT_FAILURE, _("failed to format iso time"));
