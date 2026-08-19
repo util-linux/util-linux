@@ -70,8 +70,8 @@
 #include <termios.h>
 #include <sys/stat.h>
 #include <getopt.h>
-#include <err.h>
 
+#include "c.h"
 #include "blkdev.h"
 #include "minix_programs.h"
 #include "nls.h"

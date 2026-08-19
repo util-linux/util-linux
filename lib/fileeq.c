@@ -568,7 +568,6 @@ done:
 
 #ifdef TEST_PROGRAM_FILEEQ
 # include <getopt.h>
-# include <err.h>
 
 int main(int argc, char *argv[])
 {

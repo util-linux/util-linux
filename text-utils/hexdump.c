@@ -38,7 +38,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <err.h>
 #include <limits.h>
 #include <getopt.h>
 #include "hexdump.h"

@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <err.h>
 #include <getopt.h>
 #include <errno.h>
 

@@ -6,8 +6,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <err.h>
 
+#include "c.h"
 #include "md5.h"
 
 int main(void)

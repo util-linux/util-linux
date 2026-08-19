@@ -1206,7 +1206,6 @@ int sysfs_get_address_bits(struct path_cxt *pc)
 
 #ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
-#include <err.h>
 #include <stdlib.h>
 
 int main(int argc, char *argv[])
