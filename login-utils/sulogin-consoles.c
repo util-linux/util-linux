@@ -312,7 +312,11 @@ static
 #ifdef __GNUC__
 __attribute__((__hot__))
 #endif
+#if defined(__s390__) || defined(__s390x__)
 int append_console(struct list_head *consoles, const char * const name, dev_t dev)
+#else
+int append_console(struct list_head *consoles, const char * const name, dev_t dev __attribute__((__unused__)))
+#endif
 {
 	struct console *restrict tail;
 	const struct console *last = NULL;
@@ -356,14 +360,7 @@ int append_console(struct list_head *consoles, const char * const name, dev_t de
 			dev = st.st_rdev;
 	}
 	if (dev) {
-		unsigned int maj = major(dev);
-		unsigned int min = minor(dev);
-		if (maj == 4 && min == 64)
-			tail->flags |= CON_3215;
-		else if (maj == 4 && min >= 65)
-			tail->flags |= CON_SCLP;
-		else if (maj == 227 && min >= 1)
-			tail->flags |= CON_3270;
+		tail->flags |= get_s390_con_flags(dev);
 	}
 #endif
 	return 0;

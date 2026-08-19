@@ -22,6 +22,7 @@
 #ifndef UTIL_LINUX_SULOGIN_CONSOLES_H
 #define UTIL_LINUX_SULOGIN_CONSOLES_H
 
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -51,6 +52,25 @@ struct console {
 	char *user_tty_context;
 #endif
 };
+
+#if defined(__s390__) || defined(__s390x__)
+# include <sys/sysmacros.h>
+
+static inline uint32_t get_s390_con_flags(dev_t dev)
+{
+	unsigned int maj = major(dev);
+	unsigned int min = minor(dev);
+
+	if (maj == 4 && min == 64)
+		return CON_3215;
+	else if (maj == 4 && min >= 65)
+		return CON_SCLP;
+	else if (maj == 227 && min >= 1)
+		return CON_3270;
+
+	return 0;
+}
+#endif
 
 extern int detect_consoles(const char *device, int fallback,
 			   struct list_head *consoles);

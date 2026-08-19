@@ -86,6 +86,9 @@
 
 #include "logindefs.h"
 #include "vmcp.h"
+#if defined(__s390__) || defined(__s390x__)
+# include "sulogin-consoles.h"	/* For CON_3215, CON_3270, and CON_SCLP */
+#endif
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 # include "shells.h"
@@ -169,10 +172,6 @@ static int is_consoletty(int fd)
 #if defined(__s390__) || defined(__s390x__)
 /* Avoid that passwords are logged on the hypervisors console log */
 
-#define CON_3215	0x0010	/* s390x 3215 halfduplex console */
-#define CON_3270	0x0020	/* s390x 3270 console */
-#define CON_SCLP	0x0040	/* s390x sclp terminals */
-
 struct s390con {
 	int flags;
 	int vmcpfd;
@@ -183,13 +182,8 @@ static struct s390con s390_console_spool_stop(int fd)
 	struct stat stb;
 	struct s390con con = { .flags = 0, .vmcpfd = -1 };
 
-	if ((fstat(fd, &stb) >= 0)) {
-		if (major(stb.st_rdev) == 4 && minor(stb.st_rdev) == 64)
-			con.flags |= CON_3215;
-		if (major(stb.st_rdev) == 4 && minor(stb.st_rdev) >= 65)
-			con.flags |= CON_SCLP;
-		else if (major(stb.st_rdev) == 227 && minor(stb.st_rdev) >= 1)
-			con.flags |= CON_3270;
+	if ((fstat(fd, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
+		con.flags |= get_s390_con_flags(stb.st_rdev);
 	}
 	if (con.flags & (CON_3215|CON_3270)) {
 		con.vmcpfd = openvmcp();

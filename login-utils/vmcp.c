@@ -20,6 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include "all-io.h"
 #include "vmcp.h"
 
 int isinteger(const char *str)
@@ -85,13 +86,8 @@ static char* askvmcp(int fd, const char *question)
 
     if (ioctl(fd, VMCP_SETBUF, &buffersize) == -1)
 	goto out;
-    do {
-	rc = write(fd, question, strlen(question));
-	if (rc < 0) {
-	    if (errno != EINTR)
-		goto out;
-	}
-    } while (rc < 0);
+    if (ul_write_all(fd, question, strlen(question)) != 0)
+        goto out;
     if (ioctl(fd, VMCP_GETCODE, &rc) == -1)
 	goto out;
     if (ioctl(fd, VMCP_GETSIZE, &buffersize) == -1)
@@ -99,16 +95,10 @@ static char* askvmcp(int fd, const char *question)
     ret = (char*)malloc(buffersize);
     if (!ret)
 	goto out;
-    do {
-	rc = read(fd, ret, buffersize);
-	if (rc < 0) {
-	    if (errno != EINTR) {
-		free(ret);
-		ret = NULL;
-		goto out;
-	    }
-	}
-    } while (rc < 0);
+    if (ul_read_all(fd, ret, buffersize) != 0) {
+	free(ret);
+	ret = NULL;
+    }
 out:
     return ret;
 }
