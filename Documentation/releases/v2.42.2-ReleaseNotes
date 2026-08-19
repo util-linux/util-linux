@@ -24,13 +24,13 @@ Security fixes:
    or propagation sequence with a window where security flags (nosuid,
    noexec, ...) are not yet applied.
    Reported-by: Xinyao Hu
-
+ 
  CVE-2026-27456 - mount(8) TOCTOU symlink attack via loop device (follow-up).
    The v2.42.1 fix used O_NOFOLLOW which only rejects symlinks at the
    last path component.  This update uses openat2(RESOLVE_NO_SYMLINKS)
    to reject symlinks at any component of the backing file path.
 
- libblkid: use-after-free in nested partition probing.
+ CVE-2026-13595 - libblkid: use-after-free in nested partition probing.
    The partitions list stores partitions in a contiguous array grown by
    reallocarray().  When the array is reallocated, all existing
    blkid_partition pointers become dangling.
