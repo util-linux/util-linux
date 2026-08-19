@@ -102,8 +102,11 @@ static char* askvmcp(int fd, const char *question)
     do {
 	rc = read(fd, ret, buffersize);
 	if (rc < 0) {
-	    if (errno != EINTR)
+	    if (errno != EINTR) {
+		free(ret);
+		ret = NULL;
 		goto out;
+	    }
 	}
     } while (rc < 0);
 out:
@@ -113,6 +116,8 @@ out:
 char* queryterm(int fd)
 {
     const char* question = "QUERY TERMINAL";
+    /* Reset cached terminal state before reparsing a fresh QUERY TERMINAL reply. */
+    clearvmcp();
     return askvmcp(fd, question);
 }
 
@@ -198,16 +203,15 @@ int restorespool(int fd)
 
 void parseterm(char *msg)
 {
-    int n;
-    char *token, *ptr;
-    for (n = 1, ptr = msg; ; n++, ptr = NULL) {
-	token = strtok(ptr, ",\n");
-	if (!token)
-	    break;
+    char *token;
+
+    for (token = strtok(msg, ",\n"); token != NULL; token = strtok(NULL, ",\n")) {
 	if (hold && more)
 	    break;
+
 	while (*token == ' ')
 	    token++;
+
 	if (strncmp("MORE ", token, 5) == 0)
 	    more = strdup(token);
 	if (strncmp("HOLD ", token, 5) == 0)
