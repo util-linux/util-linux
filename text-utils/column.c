@@ -103,6 +103,7 @@ struct column_control {
 		header_as_columns,	/* --table-header-as-columns */
 		hide_unnamed,
 		maxout,
+		minout,			/* --table-minout */
 		keep_empty_lines,	/* --keep-empty-lines */
 		tab_noheadings,
 		use_spaces;
@@ -389,7 +390,10 @@ static void init_table(struct column_control *ctl)
 	} else
 		scols_table_enable_noencoding(ctl->tab, 1);
 
-	scols_table_enable_maxout(ctl->tab, ctl->maxout ? 1 : 0);
+	if (ctl->maxout)
+		scols_table_enable_maxout(ctl->tab, 1);
+	else if (ctl->minout)
+		scols_table_enable_minout(ctl->tab, 1);
 	scols_table_enable_colors(ctl->tab, colors_wanted() ? 1 : 0);
 
 	if (ctl->tab_columns) {
@@ -1036,6 +1040,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                                    to the column's width\n"), out);
 	fputs(_(" -d, --table-noheadings           don't print header\n"), out);
 	fputs(_(" -m, --table-maxout               fill all available space\n"), out);
+	fputs(_("     --table-minout               minimize output width\n"), out);
 	fputs(_(" -e, --table-header-repeat        repeat header for each page\n"), out);
 	fputs(_(" -K, --table-header-as-columns    use the first row as table header\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
@@ -1086,6 +1091,7 @@ int main(int argc, char **argv)
 		OPT_COLOR	= CHAR_MAX + 1,
 		OPT_COLORSCHEME,
 		OPT_WRAP_SEPARATOR,
+		OPT_MINOUT,
 	};
 
 	static const struct option longopts[] =
@@ -1108,6 +1114,7 @@ int main(int argc, char **argv)
 		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "table-maxout",        no_argument,       NULL, 'm' },
+		{ "table-minout",        no_argument,       NULL, OPT_MINOUT },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-noheadings",    no_argument,       NULL, 'd' },
 		{ "table-order",         required_argument, NULL, 'O' },
@@ -1197,6 +1204,9 @@ int main(int argc, char **argv)
 		case 'm':
 			ctl.maxout = 1;
 			break;
+		case OPT_MINOUT:
+			ctl.minout = 1;
+			break;
 		case 'O':
 			ctl.tab_order = optarg;
 			break;
@@ -1260,6 +1270,10 @@ int main(int argc, char **argv)
 
 	if (ctl.termwidth == (size_t) -1)
 		ctl.termwidth = get_terminal_width(80);
+
+	if (ctl.maxout && ctl.minout)
+		errx(EXIT_FAILURE, _("options --table-maxout and --table-minout are "
+				     "mutually exclusive"));
 
 	if (ctl.tree) {
 		ctl.mode = COLUMN_MODE_TABLE;

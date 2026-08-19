@@ -202,6 +202,9 @@ Specify the table name used for JSON output. The default is "table".
 *-m, --table-maxout*::
 Fill all available space on output.
 
+*--table-minout*::
+Minimize output width. The last column separator is not padded, which removes trailing whitespace from lines where the last column is shorter than the column width. This option is mutually exclusive with *--table-maxout*.
+
 *-L, --keep-empty-lines*::
 Preserve whitespace-only lines in the input. The default is to ignore all empty lines. This option's original name was *--table-empty-lines*, but has since been deprecated because it gives the false impression that the option only applies to table mode.
 
