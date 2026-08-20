@@ -542,6 +542,17 @@ unshare_SOURCES = sys-utils/unshare.c \
 unshare_LDADD = $(LDADD) libcommon.la
 unshare_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 
+if HAVE_SYSTEMD_VARLINK
+unshare_SOURCES += $(systemd_varlink_sources)
+if USE_DLOPEN_SYSTEMD
+unshare_SOURCES += $(common_dl_sources)
+unshare_LDADD += $(common_dl_ldadd)
+else
+unshare_LDADD += $(SYSTEMD_LIBS)
+endif
+unshare_CFLAGS += $(SYSTEMD_CFLAGS)
+endif
+
 if HAVE_STATIC_UNSHARE
 usrbin_exec_PROGRAMS += unshare.static
 unshare_static_SOURCES = $(unshare_SOURCES)
