@@ -22,7 +22,6 @@
 #ifndef UTIL_LINUX_SULOGIN_CONSOLES_H
 #define UTIL_LINUX_SULOGIN_CONSOLES_H
 
-#include <sys/sysmacros.h>
 #include <sys/types.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -54,8 +53,6 @@ struct console {
 };
 
 #if defined(__s390__) || defined(__s390x__)
-# include <sys/sysmacros.h>
-
 static inline uint32_t get_s390_con_flags(dev_t dev)
 {
 	unsigned int maj = major(dev);
