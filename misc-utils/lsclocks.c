@@ -133,18 +133,22 @@ struct clockinfo {
 	const char * const name;
 	const char * const ns_offset_name;
 	bool no_id;
+	bool timezone;
 };
 
 static const struct clockinfo clocks[] = {
-	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime"         },
+	{ CT_SYS, CLOCK_REALTIME,         "CLOCK_REALTIME",         "realtime",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_MONOTONIC,        "CLOCK_MONOTONIC",        "monotonic",
 	  .ns_offset_name = "monotonic"						       },
 	{ CT_SYS, CLOCK_MONOTONIC_RAW,    "CLOCK_MONOTONIC_RAW",    "monotonic-raw"    },
-	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse"  },
+	{ CT_SYS, CLOCK_REALTIME_COARSE,  "CLOCK_REALTIME_COARSE",  "realtime-coarse",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_MONOTONIC_COARSE, "CLOCK_MONOTONIC_COARSE", "monotonic-coarse" },
 	{ CT_SYS, CLOCK_BOOTTIME,         "CLOCK_BOOTTIME",         "boottime",
 	  .ns_offset_name = "boottime"						       },
-	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm"   },
+	{ CT_SYS, CLOCK_REALTIME_ALARM,   "CLOCK_REALTIME_ALARM",   "realtime-alarm",
+	  .timezone = true,							       },
 	{ CT_SYS, CLOCK_BOOTTIME_ALARM,   "CLOCK_BOOTTIME_ALARM",   "boottime-alarm"   },
 	{ CT_SYS, CLOCK_TAI,              "CLOCK_TAI",              "tai"              },
 	{ CT_AUX, CLOCK_AUX0,             "CLOCK_AUX0",             "auxiliary-0"      },
@@ -187,7 +191,7 @@ static const struct colinfo infos[] = {
 	[COL_CLOCK]      = { "CLOCK",      1, 0,              SCOLS_JSON_STRING, N_("symbolic name") },
 	[COL_NAME]       = { "NAME",       1, 0,              SCOLS_JSON_STRING, N_("readable name") },
 	[COL_TIME]       = { "TIME",       1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("numeric time") },
-	[COL_ISO_TIME]   = { "ISO_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable ISO time") },
+	[COL_ISO_TIME]   = { "ISO_TIME",   1, 0,              SCOLS_JSON_STRING, N_("human readable ISO time") },
 	[COL_RESOL]      = { "RESOL",      1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable resolution") },
 	[COL_RESOL_RAW]  = { "RESOL_RAW",  1, SCOLS_FL_RIGHT, SCOLS_JSON_NUMBER, N_("resolution") },
 	[COL_REL_TIME]   = { "REL_TIME",   1, SCOLS_FL_RIGHT, SCOLS_JSON_STRING, N_("human readable relative time") },
@@ -345,7 +349,8 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 					break;
 
 				rc = strtimespec_iso(now,
-						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC | ISO_TIMEZONE,
+						ISO_GMTIME | ISO_DATE | ISO_TIME | ISO_T | ISO_DOTNSEC
+						| (clockinfo->timezone ? ISO_TIMEZONE : 0),
 						buf, sizeof(buf));
 				if (rc)
 					errx(EXIT_FAILURE, _("failed to format iso time"));
@@ -482,7 +487,9 @@ static void add_rtc_clock_from_path(struct libscols_table *tb,
 	tm.tm_wday = rtc_time.tm_wday;
 	tm.tm_yday = rtc_time.tm_yday;
 
-	now.tv_sec = mktime(&tm);
+	now.tv_sec = timegm(&tm);
+	if (now.tv_sec == -1)
+		err(EXIT_FAILURE, _("timegm() failed"));
 
 	struct clockinfo clockinfo = {
 		.type = CT_RTC,
