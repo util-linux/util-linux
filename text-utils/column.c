@@ -1135,6 +1135,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
 		{ 'C','K','N' },
 		{ 'J','x' },
+		{ 'm', OPT_MINOUT },
 		{ 't','x' },
 		{ 0 }
 	};
@@ -1270,10 +1271,6 @@ int main(int argc, char **argv)
 
 	if (ctl.termwidth == (size_t) -1)
 		ctl.termwidth = get_terminal_width(80);
-
-	if (ctl.maxout && ctl.minout)
-		errx(EXIT_FAILURE, _("options --table-maxout and --table-minout are "
-				     "mutually exclusive"));
 
 	if (ctl.tree) {
 		ctl.mode = COLUMN_MODE_TABLE;
