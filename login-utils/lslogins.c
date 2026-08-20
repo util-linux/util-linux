@@ -32,7 +32,6 @@
 #include <time.h>
 #include <utmpx.h>
 #include <signal.h>
-#include <err.h>
 #include <limits.h>
 #include <search.h>
 #include <lastlog.h>

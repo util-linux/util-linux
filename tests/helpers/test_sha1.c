@@ -5,9 +5,9 @@
  */
 #include <stdio.h>
 #include <unistd.h>
-#include <err.h>
 #include <stdlib.h>
 
+#include "c.h"
 #include "sha1.h"
 
 int main(void)

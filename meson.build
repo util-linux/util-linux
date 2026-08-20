@@ -215,11 +215,17 @@ have_mountfd_api = cc.has_type('struct mount_attr', prefix : '#include <linux/mo
 conf.set('HAVE_STRUCT_MOUNT_ATTR', have_mountfd_api ? 1 : false)
 conf.set('HAVE_MOUNTFD_API', have_mountfd_api ? 1 : false)
 
-have_struct_statx = cc.has_type('struct statx', args : '-D_GNU_SOURCE', prefix : '#include <sys/stat.h>')
+have_struct_statx = false
+have_statx_mnt_id = false
+if host_machine.system() == 'linux'
+  have_struct_statx = cc.has_type('struct statx', args : '-D_GNU_SOURCE', prefix : '#include <sys/stat.h>')
+  if have_struct_statx
+    have_statx_mnt_id = cc.has_member('struct statx', 'stx_mnt_id',
+                                       prefix : '#include <sys/stat.h>')
+  endif
+endif
 conf.set('HAVE_STRUCT_STATX', have_struct_statx ? 1 : false)
-have = cc.has_member('struct statx', 'stx_mnt_id',
-                     prefix : '#include <sys/stat.h>')
-conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have ? 1 : false)
+conf.set('HAVE_STRUCT_STATX_STX_MNT_ID', have_statx_mnt_id ? 1 : false)
 
 
 have_statmount = cc.has_type('struct statmount', prefix : '#include <linux/mount.h>')
@@ -764,7 +770,6 @@ funcs = '''
         sched_setscheduler
         sigqueue
         srandom
-        statx
         strnchr
         strndup
         strnlen
@@ -803,6 +808,12 @@ foreach func: funcs
   # redefined macros from Python.h, which uses this convention.
   conf.set('HAVE_' + func.to_upper(), have ? 1 : false)
 endforeach
+
+have_statx = false
+if host_machine.system() == 'linux'
+  have_statx = cc.has_function('statx')
+endif
+conf.set('HAVE_STATX', have_statx ? 1 : false)
 
 # scandirat() may exist in the SDK but be gated behind availability
 # annotations (e.g. macOS); verify it is actually usable at compile time.

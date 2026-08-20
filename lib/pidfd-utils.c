@@ -9,7 +9,6 @@
 #include <sys/vfs.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <err.h>
 
 #include "c.h"
 #include "nls.h"
