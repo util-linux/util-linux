@@ -80,11 +80,15 @@ void mnt_free_update(struct libmnt_update *upd)
 
 	DBG(UPDATE, ul_debugobj(upd, "free"));
 
+	if (upd->act_fd >= 0) {
+		mnt_update_end(upd);
+		if (upd->act_fd >= 0)
+			close(upd->act_fd);
+		upd->act_fd = -1;
+	}
 	mnt_unref_lock(upd->lock);
 	mnt_unref_fs(upd->fs);
 	mnt_unref_table(upd->mountinfo);
-	if (upd->act_fd >= 0)
-		close(upd->act_fd);
 	free(upd->target);
 	free(upd->filename);
 	free(upd->act_filename);
