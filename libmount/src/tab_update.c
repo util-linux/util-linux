@@ -80,11 +80,15 @@ void mnt_free_update(struct libmnt_update *upd)
 
 	DBG_OBJ(UPDATE, upd, ul_debug("free"));
 
+	if (upd->act_fd >= 0) {
+		mnt_update_end(upd);
+		if (upd->act_fd >= 0)
+			close(upd->act_fd);
+		upd->act_fd = -1;
+	}
 	mnt_unref_lock(upd->lock);
 	mnt_unref_fs(upd->fs);
 	mnt_unref_table(upd->mountinfo);
-	if (upd->act_fd >= 0)
-		close(upd->act_fd);
 	free(upd->target);
 	free(upd->filename);
 	free(upd->act_filename);
@@ -1053,6 +1057,11 @@ int mnt_update_start(struct libmnt_update *upd)
 	if (!upd->act_filename &&
 	    asprintf(&upd->act_filename, "%s.act", upd->filename) <= 0)
 		return -ENOMEM;
+
+	if (upd->act_fd >= 0) {
+		DBG_OBJ(UPDATE, upd, ul_debug("reusing existing act file"));
+		return 0;
+	}
 
 	/* Use exclusive lock to avoid some other process will remove the the
 	 * file before it's marked as used by LOCK_SH (below) */
