@@ -1058,6 +1058,11 @@ int mnt_update_start(struct libmnt_update *upd)
 	    asprintf(&upd->act_filename, "%s.act", upd->filename) <= 0)
 		return -ENOMEM;
 
+	if (upd->act_fd >= 0) {
+		DBG_OBJ(UPDATE, upd, ul_debug("reusing existing act file"));
+		return 0;
+	}
+
 	/* Use exclusive lock to avoid some other process will remove the the
 	 * file before it's marked as used by LOCK_SH (below) */
 	rc = update_init_lock(upd, NULL);
