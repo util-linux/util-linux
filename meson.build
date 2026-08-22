@@ -4177,8 +4177,17 @@ if not is_disabler(exe)
   exes += exe
 endif
 
-if LINUX and lib_rt.found()
+if LINUX
   test_mkfds_c_args = []
+  test_mkfds_deps = []
+  test_mkfds_sources = [
+    'tests/helpers/test_mkfds.c',
+    'tests/helpers/test_mkfds.h',
+    'tests/helpers/test_mkfds_ppoll.c',
+  ]
+  if lib_rt.found()
+    test_mkfds_deps += [lib_rt]
+  endif
   if cc.has_header_symbol('linux/bpf.h', 'BPF_LINK_CREATE')
     test_mkfds_c_args += ['-DHAVE_BPF_LINK_CREATE']
   endif
@@ -4190,12 +4199,10 @@ if LINUX and lib_rt.found()
   endif
   exe = executable(
     'test_mkfds',
-    'tests/helpers/test_mkfds.c',
-    'tests/helpers/test_mkfds.h',
-    'tests/helpers/test_mkfds_ppoll.c',
+    test_mkfds_sources,
     include_directories : includes,
     link_with : lib_smartcols.get_static_lib(),
-    dependencies : [lib_rt],
+    dependencies : test_mkfds_deps,
     c_args : test_mkfds_c_args,
     build_by_default: program_tests)
   exes += exe
