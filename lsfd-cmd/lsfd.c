@@ -56,6 +56,7 @@
 #include "idcache.h"
 #include "pathnames.h"
 #include "pidfd-utils.h"
+#include "optutils.h"
 #include "xalloc.h"
 #include "buffer.h"
 
@@ -2758,6 +2759,13 @@ int main(int argc, char *argv[])
 		{ NULL, 0, NULL, 0 },
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'J', 'r' },
+		{ 'J', 'n' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	lsfd_init_debug();
 
 	setlocale(LC_ALL, "");
@@ -2766,6 +2774,8 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:sH", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'n':
 			ctl.noheadings = 1;
@@ -2853,6 +2863,17 @@ int main(int argc, char *argv[])
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
+	}
+
+	if (ctl.uri) {
+		char *badopt =
+			ctl.json ? "json" :
+			ctl.raw  ? "raw"  :
+			NULL;
+		if (badopt)
+			errx(OPTUTILS_EXIT_CODE,
+			     _("options %s%s and %s%s cannot be combined"),
+			     "--", "hyperlink", "--", badopt);
 	}
 
 	if (collist)
