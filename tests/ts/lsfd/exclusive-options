@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mutually exclusive options"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_LSFD"
+
+ts_cd "$TS_OUTDIR"
+
+run_with()
+{
+    "${TS_CMD_LSFD}" "$@" -p $$
+    printf "%s: %s\n" "$*" "$?"
+}  >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+
+run_with -J -r
+run_with -J -n
+run_with -r -J
+run_with -n -J
+run_with --json --hyperlink=always
+run_with --hyperlink=always -J
+run_with -r --hyperlink=always
+run_with --hyperlink=always --raw
+
+ts_finalize

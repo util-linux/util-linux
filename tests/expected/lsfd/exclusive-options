@@ -1,0 +1,8 @@
+-J -r: 1
+-J -n: 1
+-r -J: 1
+-n -J: 1
+--json --hyperlink=always: 1
+--hyperlink=always -J: 1
+-r --hyperlink=always: 1
+--hyperlink=always --raw: 1
