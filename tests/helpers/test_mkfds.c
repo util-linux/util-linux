@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <linux/bpf.h>
+#include <sys/mount.h>
 #ifdef HAVE_LINUX_IO_URING_H
 #include <linux/io_uring.h>
 #endif
@@ -795,6 +796,351 @@ static void free_after_closing_duplicated_fd(const struct factory * factory _U_,
 	}
 }
 
+struct munmap_data {
+	void *ptr;
+	size_t len;
+};
+
+static void close_fdesc_after_munmap(int fd, void *data)
+{
+	struct munmap_data *munmap_data = data;
+	if (munmap_data) {
+		munmap(munmap_data->ptr, munmap_data->len);
+		free(data);
+	}
+	close(fd);
+}
+
+#ifdef HAVE_LIBFUSE
+struct hungfs_ctl {
+	int fd;
+	pid_t pid;
+	char *mountpoint;
+	char *targetfile;
+	bool hung;
+	dev_t orig_dev;
+};
+
+static void stop_hungfs(struct hungfs_ctl *ctl)
+{
+	if (ctl->fd >= 0)
+		close(ctl->fd);
+	if (ctl->pid > 0) {
+		kill(ctl->pid, SIGTERM);
+		while (waitpid(ctl->pid, NULL, 0) < 0 && errno == EINTR)
+			;
+	}
+	/*
+	 * When the FUSE server process terminates, its FUSE mount is
+	 * automatically cleaned up by the kernel. If a pre-existing bind mount
+	 * exists on the same filesystem (sharing st_dev with its parent),
+	 * calling umount2 unconditionally here would mistakenly unmount that
+	 * underlying bind mount instead. Therefore, only unmount if the
+	 * mountpoint device still differs from the original pre-mount device.
+	 */
+	if (ctl->mountpoint) {
+		struct stat st;
+		if (stat(ctl->mountpoint, &st) == 0 && st.st_dev != ctl->orig_dev) {
+			if (umount2(ctl->mountpoint, MNT_DETACH) < 0
+			    && errno != EINVAL && errno != ENOENT)
+				warn("failed to unmount: %s", ctl->mountpoint);
+		}
+	}
+	free(ctl->mountpoint);
+	free(ctl->targetfile);
+}
+
+static void wait_hungfs(struct hungfs_ctl *ctl)
+{
+	int pfd;
+	struct pollfd pfds[2];
+	char c;
+
+	pfd = pidfd_open(ctl->pid, 0);
+	if (pfd < 0) {
+		int e = errno;
+		stop_hungfs(ctl);
+		errno = e;
+		err_nosys(EXIT_FAILURE, "failed to open pidfd for fuse server");
+	}
+
+	pfds[0] = (struct pollfd){ .fd = ctl->fd, .events = POLLIN };
+	pfds[1] = (struct pollfd){ .fd = pfd,     .events = POLLIN };
+
+	while (poll(pfds, 2, -1) < 0) {
+		if (errno == EINTR)
+			continue;
+		int e = errno;
+		close(pfd);
+		stop_hungfs(ctl);
+		errno = e;
+		err(EXIT_FAILURE, "failed in poll for fuse server");
+	}
+
+	close(pfd);
+
+	/* If fuse server terminated before sending READY, fail immediately */
+	if (pfds[1].revents & (POLLIN | POLLHUP | POLLERR)) {
+		int status;
+		pid_t r;
+		while ((r = waitpid(ctl->pid, &status, WNOHANG)) < 0 && errno == EINTR)
+			;
+		if (r > 0 && WIFEXITED(status)) {
+			ctl->pid = 0;
+			stop_hungfs(ctl);
+			errx(EXIT_FAILURE, "fuse server exited with status %d",
+			     WEXITSTATUS(status));
+		}
+		stop_hungfs(ctl);
+		errx(EXIT_FAILURE, "fuse server terminated unexpectedly");
+	}
+
+	/* Read READY signal from FUSE server's init callback */
+	ssize_t r;
+	while ((r = read(ctl->fd, &c, 1)) < 0 && errno == EINTR)
+		;
+	if (r != 1 || c != HUNGFS_READY) {
+		stop_hungfs(ctl);
+		errx(EXIT_FAILURE, "failed to receive READY from fuse server");
+	}
+}
+
+static void arm_hungfs(struct hungfs_ctl *ctl)
+{
+	char c = HUNGFS_HANG;
+	if (send(ctl->fd, &c, 1, MSG_NOSIGNAL) != 1) {
+		stop_hungfs(ctl);
+		errx(EXIT_FAILURE, "failed to send the 'hang' message to fuse server");
+	}
+}
+
+static void unarm_hungfs(struct hungfs_ctl *ctl)
+{
+	char c = HUNGFS_UNHUNG;
+	ignore_result(send(ctl->fd, &c, 1, MSG_NOSIGNAL));
+}
+
+static enum hungfs_target decode_hung_target(const char *target)
+{
+	if (strcmp(target, "file") == 0)
+		return HUNGFS_TARGET_FILE;
+	if (strcmp(target, "root") == 0)
+		return HUNGFS_TARGET_ROOT;
+	if (strcmp(target, "all") == 0)
+		return HUNGFS_TARGET_ALL;
+
+	errx(EXIT_FAILURE, "unknown hung-target value: %s", target);
+}
+
+static dev_t check_mountpoint(const char *mountpoint)
+{
+	struct stat sb, parent_sb;
+	char *parent;
+
+	if (strcmp(mountpoint, "/") == 0)
+		errx(EXIT_FAILURE, "refusing to use '/' as mountpoint");
+
+	if (lstat(mountpoint, &sb) < 0)
+		err(EXIT_FAILURE, "failed to access mountpoint: %s", mountpoint);
+	/*
+	 * Do not allow symbolic links for mountpoint to avoid any trouble
+	 * or pitfalls with path resolution (e.g. symlink pointing to '/').
+	 */
+	if (S_ISLNK(sb.st_mode))
+		errx(EXIT_FAILURE, "mountpoint must not be a symbolic link: %s", mountpoint);
+	if (!S_ISDIR(sb.st_mode))
+		errx(EXIT_FAILURE, "mountpoint is not a directory: %s", mountpoint);
+
+	xasprintf(&parent, "%s/..", mountpoint);
+	if (stat(parent, &parent_sb) == 0 && sb.st_dev != parent_sb.st_dev) {
+		free(parent);
+		errx(EXIT_FAILURE, "mountpoint is already a mountpoint: %s", mountpoint);
+	}
+	free(parent);
+
+	return sb.st_dev;
+}
+
+static void check_file_name(const char *file)
+{
+	if (!file || *file == '\0')
+		errx(EXIT_FAILURE, "file name must not be empty");
+	if (strchr(file, '/'))
+		errx(EXIT_FAILURE, "file name must not contain '/': %s", file);
+	if (strcmp(file, ".") == 0 || strcmp(file, "..") == 0)
+		errx(EXIT_FAILURE, "file name must not be '.' or '..': %s", file);
+}
+
+static void start_hungfs(struct hungfs_ctl *ctl,
+			 const char *mountpoint,
+			 const char *file,
+			 bool hung,
+			 enum hungfs_target hung_target)
+{
+	int sv[2];
+	pid_t pid;
+
+	if (socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, sv) < 0)
+		err(EXIT_FAILURE, "failed in socketpair for fuse IPC");
+
+	pid = fork();
+	if (pid < 0)
+		err(EXIT_FAILURE, "failed in fork");
+
+	if (pid == 0) {
+		close(sv[0]);
+		run_hungfs(&(struct hungfs_args) {
+				.ctlfd = sv[1],
+				.mountpoint = mountpoint,
+				.file = file,
+				.hung = hung,
+				.hung_target = hung_target
+			});
+		exit(EXIT_FAILURE);
+	}
+
+	close(sv[1]);
+	ctl->pid = pid;
+	ctl->fd = sv[0];
+	ctl->mountpoint = xstrdup(mountpoint);
+	ctl->hung = hung;
+	xasprintf(&ctl->targetfile, "%s/%s", mountpoint, file);
+
+	wait_hungfs(ctl);
+}
+
+static int open_hungfs_file(struct hungfs_ctl *ctl, struct munmap_data *mdata)
+{
+	int fd;
+
+	fd = open(ctl->targetfile, O_RDONLY);
+	if (fd < 0) {
+		int e = errno;
+		char *t = ctl->targetfile;
+
+		ctl->targetfile = NULL;
+		stop_hungfs(ctl);
+
+		free(mdata);
+		errno = e;
+		err(EXIT_FAILURE, "failed to open %s", t);
+	}
+
+	if (mdata) {
+		mdata->len = HUNGFS_FILE_SIZE;
+		mdata->ptr = mmap(NULL, mdata->len, PROT_READ, MAP_PRIVATE, fd, 0);
+		if (mdata->ptr == MAP_FAILED) {
+			int e = errno;
+			char *t = ctl->targetfile;
+
+			ctl->targetfile = NULL;
+			stop_hungfs(ctl);
+
+			free(mdata);
+			errno = e;
+			err(EXIT_FAILURE, "failed in mmap %s", t);
+		}
+	}
+
+	return fd;
+}
+
+/*
+ * make_fuse_hungfs:
+ * Spawn a hungfs FUSE server child, wait for it to be ready, open (and
+ * optionally mmap) a file within the mountpoint, and optionally arm the
+ * hang on subsequent getattr requests.
+ *
+ * Cleanup notes:
+ * - When test_mkfds exits normally (via timeout, EOF on stdin, or regular
+ *   termination signals), the FUSE child is terminated and its mount is
+ *   cleaned up.
+ * - If the FUSE child is killed abruptly from outside with SIGKILL,
+ *   libfuse cannot run its normal unmount sequence and a dead FUSE mount
+ *   may remain, requiring manual 'umount' or 'umount -l' cleanup.
+ */
+static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char **argv)
+{
+	int fd;
+	struct hungfs_ctl ctl = {
+		.pid = 0,
+		.fd = -1,
+		.mountpoint = NULL,
+		.targetfile = NULL,
+		.hung = false,
+		.orig_dev = 0,
+	};
+	struct arg mountpoint  = decode_arg("mountpoint", factory->params, argc, argv);
+	struct arg file        = decode_arg("file", factory->params, argc, argv);
+	struct arg hung        = decode_arg("hung", factory->params, argc, argv);
+	struct arg hung_target = decode_arg("hung-target", factory->params, argc, argv);
+	struct arg mmap_arg    = decode_arg("mmap", factory->params, argc, argv);
+
+	const char *sMountpoint        = ARG_STRING(mountpoint);
+	const char *sFile              = ARG_STRING(file);
+	bool bHung                     = ARG_BOOLEAN(hung);
+	enum hungfs_target eHungTarget = decode_hung_target(ARG_STRING(hung_target));
+	bool bMmap                     = ARG_BOOLEAN(mmap_arg);
+
+	struct munmap_data *mdata = NULL;
+
+	ctl.orig_dev = check_mountpoint(sMountpoint);
+	check_file_name(sFile);
+
+	/* Reserve the requested fd so socketpair won't occupy it */
+	reserve_fd(fdescs[0].fd);
+
+	start_hungfs(&ctl, sMountpoint, sFile, bHung, eHungTarget);
+
+	free_arg(&mountpoint);
+	free_arg(&file);
+	free_arg(&hung);
+	free_arg(&hung_target);
+	free_arg(&mmap_arg);
+
+	if (bMmap)
+		mdata = xmalloc(sizeof(*mdata));
+	fd = open_hungfs_file(&ctl, mdata);
+
+	if (ctl.hung)
+		arm_hungfs(&ctl);
+
+	/* Release the reservation and duplicate the opened fd into fdescs[0].fd */
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0) {
+			int e = errno;
+			close(fd);
+			stop_hungfs(&ctl);
+
+			free(mdata);
+			errno = e;
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		}
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc_after_munmap,
+		.data  = mdata
+	};
+
+	return xmemdup(&ctl, sizeof(ctl));
+}
+
+static void free_fuse_hungfs(const struct factory *factory _U_, void *data)
+{
+	struct hungfs_ctl *ctl = data;
+
+	if (ctl->hung)
+		unarm_hungfs(ctl);
+
+	stop_hungfs(ctl);
+	free(ctl);
+}
+#endif /* HAVE_LIBFUSE */
+
 static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
 		       int argc, char ** argv)
 {
@@ -1088,19 +1434,6 @@ static int make_packet_socket(int socktype, const char *interface, int protocol)
 	}
 
 	return sd;
-}
-
-struct munmap_data {
-	void *ptr;
-	size_t len;
-};
-
-static void close_fdesc_after_munmap(int fd, void *data)
-{
-	struct munmap_data *munmap_data = data;
-	munmap(munmap_data->ptr, munmap_data->len);
-	free(data);
-	close(fd);
 }
 
 static void *make_mmapped_packet_socket(const struct factory *factory, struct fdesc fdescs[],
@@ -5183,6 +5516,50 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#ifdef HAVE_LIBFUSE
+	{
+		.name = "fuse-hungfs",
+		.desc = "open a file in user-mode file system reproducing process hangs",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_fuse_hungfs,
+		.free = free_fuse_hungfs,
+		.params = (struct parameter []) {
+			{
+				.name = "mountpoint",
+				.type = PTYPE_STRING,
+				.desc = "mount point for fuse file system",
+				.defv.string = "./test_mkfds_fuse_mnt",
+			},
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "file to be opened in fuse mount",
+				.defv.string = "test_file",
+			},
+			{
+				.name = "hung",
+				.type = PTYPE_BOOLEAN,
+				.desc = "hang on getattr after open",
+				.defv.boolean = false,
+			},
+			{
+				.name = "hung-target",
+				.type = PTYPE_STRING,
+				.desc = "target node to hang on getattr: \"file\" (default), \"root\", or \"all\"",
+				.defv.string = "file",
+			},
+			{
+				.name = "mmap",
+				.type = PTYPE_BOOLEAN,
+				.desc = "mmap the opened file into memory privately (MAP_PRIVATE)",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+#endif	/* HAVE_LIBFUSE */
 };
 
 static int count_parameters(const struct factory *factory)
