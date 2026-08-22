@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <getopt.h>
 #include <linux/bpf.h>
+#include <sys/mount.h>
 #ifdef HAVE_LINUX_IO_URING_H
 #include <linux/io_uring.h>
 #endif
@@ -796,6 +797,147 @@ static void free_after_closing_duplicated_fd(const struct factory * factory _U_,
 		free(data);
 	}
 }
+
+#ifdef HAVE_LIBFUSE
+struct hungfs_ctl {
+	int fd;
+	pid_t pid;
+	char *mountpoint;
+	char *targetfile;
+	bool hung;
+};
+
+static void stop_hungfs(struct hungfs_ctl *ctl)
+{
+	close(ctl->fd);
+	kill(ctl->pid, SIGTERM);
+	waitpid(ctl->pid, NULL, 0);
+	umount2(ctl->mountpoint, MNT_DETACH);
+	free(ctl->mountpoint);
+	free(ctl->targetfile);
+}
+
+static void wait_hungfs(struct hungfs_ctl *ctl)
+{
+	char c;
+
+	/* Wait for READY signal from FUSE server's init callback */
+	if (read(ctl->fd, &c, 1) != 1 || c != HUNGFS_READY) {
+		stop_hungfs(ctl);
+		errx(EXIT_FAILURE, "failed to receive READY from fuse server");
+	}
+}
+
+static void go_hungfs(struct hungfs_ctl *ctl)
+{
+	char c = HUNGFS_UNHUNG;
+	if (write(ctl->fd, &c, 1) != 1) {
+		stop_hungfs(ctl);
+		errx(EXIT_FAILURE, "failed to send the \'unhung\' message to fuse server");
+	}
+}
+
+static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs[],
+			      int argc, char **argv)
+{
+	int fd;
+	int sv[2];
+	pid_t pid;
+	struct hungfs_ctl ctl;
+
+	struct arg mountpoint = decode_arg("mountpoint", factory->params, argc, argv);
+	const char *sMountpoint = ARG_STRING(mountpoint);
+	struct arg file = decode_arg("file", factory->params, argc, argv);
+	const char *sFile = ARG_STRING(file);
+	struct arg hung = decode_arg("hung", factory->params, argc, argv);
+	bool bHung = ARG_BOOLEAN(hung);
+
+	{
+		struct stat sb;
+		if (stat(sMountpoint, &sb) < 0)
+			err(EXIT_FAILURE, "failed to access mountpoint: %s", sMountpoint);
+		if (!S_ISDIR(sb.st_mode))
+			errx(EXIT_FAILURE, "mountpoint is not a directory: %s", sMountpoint);
+	}
+
+	/* Reserve the requested fd so socketpair won't occupy it */
+	reserve_fd(fdescs[0].fd);
+
+	if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) < 0)
+		err(EXIT_FAILURE, "failed in socketpair for fuse IPC");
+
+	ctl.targetfile = NULL;
+	xasprintf(&ctl.targetfile, "%s/%s", sMountpoint, sFile);
+
+	pid = fork();
+	if (pid < 0)
+		err(EXIT_FAILURE, "failed in fork");
+
+	if (pid == 0) {
+		close(sv[0]);
+		run_hungfs(&(struct hungfs_args) {
+				.ctlfd = sv[1],
+				.mountpoint = sMountpoint,
+				.file = sFile,
+				.hung = bHung
+			});
+		exit(0);
+	}
+
+	close(sv[1]);
+	ctl.pid = pid;
+	ctl.fd = sv[0];
+	ctl.mountpoint = xstrdup(sMountpoint);
+	ctl.hung = bHung;
+
+	free_arg(&mountpoint);
+	free_arg(&file);
+	free_arg(&hung);
+
+	wait_hungfs(&ctl);
+
+	if (ctl.hung)
+		go_hungfs(&ctl);
+
+	fd = open(ctl.targetfile, O_RDONLY);
+	if (fd < 0) {
+		int e = errno;
+		char *t = ctl.targetfile;
+
+		ctl.targetfile = NULL;
+		stop_hungfs(&ctl);
+
+		errno = e;
+		err(EXIT_FAILURE, "failed to open %s", t);
+	}
+
+	/* Release the reservation and duplicate the opened fd into fdescs[0].fd */
+	if (fd != fdescs[0].fd) {
+		if (dup2(fd, fdescs[0].fd) < 0)
+			err(EXIT_FAILURE, "failed to dup %d -> %d", fd, fdescs[0].fd);
+		close(fd);
+	}
+
+	fdescs[0] = (struct fdesc){
+		.fd    = fdescs[0].fd,
+		.close = close_fdesc,
+		.data  = NULL
+	};
+
+	return xmemdup(&ctl, sizeof(ctl));
+}
+
+static void free_fuse_hungfs(const struct factory *factory _U_, void *data)
+{
+	struct hungfs_ctl *ctl = data;
+
+	if (ctl->hung)
+		go_hungfs(ctl);
+
+	stop_hungfs(ctl);
+	free(ctl);
+}
+#endif /* HAVE_LIBFUSE */
 
 static void *make_pipe(const struct factory *factory, struct fdesc fdescs[],
 		       int argc, char ** argv)
@@ -5185,6 +5327,38 @@ static const struct factory factories[] = {
 			PARAM_END
 		}
 	},
+#ifdef HAVE_LIBFUSE
+	{
+		.name = "fuse-hungfs",
+		.desc = "open a file in user mode file system reproducing process hung",
+		.priv = true,
+		.N    = 1,
+		.EX_N = 0,
+		.make = make_fuse_hungfs,
+		.free = free_fuse_hungfs,
+		.params = (struct parameter []) {
+			{
+				.name = "mountpoint",
+				.type = PTYPE_STRING,
+				.desc = "mount point for fuse file system",
+				.defv.string = "./test_mkfds_fuse_mnt",
+			},
+			{
+				.name = "file",
+				.type = PTYPE_STRING,
+				.desc = "file to be opened in fuse mount",
+				.defv.string = "test_file",
+			},
+			{
+				.name = "hung",
+				.type = PTYPE_BOOLEAN,
+				.desc = "hang on getattr after open",
+				.defv.boolean = false,
+			},
+			PARAM_END
+		},
+	},
+#endif
 };
 
 static int count_parameters(const struct factory *factory)
