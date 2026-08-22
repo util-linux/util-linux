@@ -823,6 +823,13 @@ conf.set('AGETTY_RELOAD', have ? 1 : false)
 if not have
   warning('futimens or inotify_init1 not found; agetty(8) will not provide --reload functionality')
 endif
+agetty_reload_enabled = have
+
+# mirrors the #if defined(RTMGRP_IPV4_IFADDR) && defined(RTMGRP_IPV6_IFADDR)
+# guard in agetty.h that enables USE_NETLINK
+agetty_netlink_enabled = agetty_reload_enabled \
+    and cc.has_header_symbol('linux/rtnetlink.h', 'RTMGRP_IPV4_IFADDR') \
+    and cc.has_header_symbol('linux/rtnetlink.h', 'RTMGRP_IPV6_IFADDR')
 
 have_dirfd = (cc.has_function('dirfd') or
               cc.has_header_symbol('dirent.h', 'dirfd',
@@ -1526,6 +1533,7 @@ endif
 opt = get_option('build-more') \
       .require(conf.get('HAVE_SYS_SIGNALFD_H').to_string() == '1') \
       .allowed()
+build_more_enabled = opt
 exe = executable(
   'more',
   more_sources,
@@ -4438,3 +4446,37 @@ if bash_completion.found()
       bash_completion.get_variable(pkgconfig : 'completionsdir') / link_name)
   endforeach
 endif
+
+# util-linux.pc exposes build-time paths and tool specific feature availability
+# via `pkg-config --variable=` for other projects that embed us.
+util_linux_pc_vars = {
+  'localstatedir' : localstatedir,
+  'runstatedir' : runstatedir,
+  'sysconfdir' : sysconfdir,
+  'sysconfstaticdir' : sysconfstaticdir,
+  'systemd_support' : lib_systemd.found() ? '1' : '0',
+  'libeconf_support' : lib_econf.found() ? '1' : '0',
+  'btrfs_support' : enable_btrfs ? '1' : '0',
+  'lastlog2_support' : build_liblastlog2 ? '1' : '0',
+  'libcryptsetup_support' : lib_cryptsetup.found() ? '1' : '0',
+  'more_secure_pager_support' : build_more_enabled ? '1' : '0',
+  'agetty_reload_support' : agetty_reload_enabled ? '1' : '0',
+  'agetty_netlink_support' : agetty_netlink_enabled ? '1' : '0',
+}
+
+# vendordir/tmpfilesdir could be empty and passing an empty-string
+# variable value to pkg.generate() requires Meson 1.4.0, which is
+# newer than this project's minimum supported version.
+if vendordir != ''
+  util_linux_pc_vars += {'vendordir' : vendordir}
+endif
+if systemd_tmpfiles_dir != ''
+  util_linux_pc_vars += {'tmpfilesdir' : systemd_tmpfiles_dir}
+endif
+
+pkgconfig.generate(
+  name : 'util-linux',
+  description : 'A random collection of Linux utilities',
+  version : pc_version,
+  install_dir : prefixdir / get_option('libdir') / 'pkgconfig',
+  variables : util_linux_pc_vars)
