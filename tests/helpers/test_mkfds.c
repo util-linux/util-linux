@@ -358,6 +358,46 @@ struct factory {
 				 * EX_O elements are expected. */
 };
 
+/*
+ * Validate remaining arguments passed after the factory's positional
+ * file descriptor arguments (factory->N):
+ *
+ * 1. Each argument must be in "name=value" parameter format (must contain '=').
+ *    Positional arguments without '=' (such as extra fd numbers) are rejected
+ *    as "too many file descriptors".
+ * 2. The parameter name (before '=') must not be empty.
+ * 3. The parameter name must match one of the parameters defined in
+ *    factory->params.
+ */
+static void validate_factory_arguments(const struct factory *factory, int argc, char **argv)
+{
+	for (int i = 0; i < argc; i++) {
+		const char *arg = argv[i];
+		const char *eq = strchr(arg, '=');
+		bool found = false;
+
+		if (!eq)
+			errx(EXIT_FAILURE, "too many file descriptors given for %s: %s",
+			     factory->name, arg);
+
+		if (eq == arg)
+			errx(EXIT_FAILURE, "no parameter name given for %s: %s",
+			     factory->name, arg);
+
+		size_t name_len = eq - arg;
+		for (const struct parameter *p = factory->params; p && p->name; p++) {
+			if (strncmp(p->name, arg, name_len) == 0 && p->name[name_len] == '\0') {
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			errx(EXIT_FAILURE, "unknown parameter \"%.*s\" for %s",
+			     (int)name_len, arg, factory->name);
+	}
+}
+
 static void close_fdesc(int fd, void *data _U_)
 {
 	close(fd);
@@ -5690,6 +5730,8 @@ int main(int argc, char **argv)
 		fdescs[i].fd = fd;
 	}
 	optind += factory->N;
+
+	validate_factory_arguments(factory, argc - optind, argv + optind);
 
 	data = factory->make(factory, fdescs, argc - optind, argv + optind);
 
