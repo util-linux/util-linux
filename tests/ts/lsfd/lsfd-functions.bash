@@ -19,6 +19,7 @@
 #
 # Update the following constants when changing
 # the error definitions in tests/helpers/test_mkfds.h.
+readonly EXPIRED=2
 readonly EPERM=18
 readonly ENOPROTOOPT=19
 readonly EPROTONOSUPPORT=20

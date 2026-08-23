@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="hung fuse file system"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_skip_qemu_user
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_HELPER_MKFDS"
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
+if [ "$("$TS_HELPER_SYSINFO" statx-dontsync-ok)" != "1" ]; then
+    ts_skip "statx(2) with AT_STATX_DONT_SYNC is not supported on this kernel"
+fi
+
+if [ ! -c /dev/fuse ] || [ ! -r /dev/fuse ] || [ ! -w /dev/fuse ]; then
+    ts_skip "FUSE (/dev/fuse) is not accessible"
+fi
+
+. "$TS_SELF/lsfd-functions.bash"
+lsfd_check_mkfds_factory fuse-hungfs
+
+ts_cd "$TS_OUTDIR"
+
+MNTDIR="$TS_OUTDIR/mnt-hungfs"
+
+PID=
+FD=3
+EXPR=
+TMO=10
+
+ts_init_subtest "fd"
+{
+    mkdir -p "$MNTDIR"
+    coproc MKFDS { "$TS_HELPER_MKFDS" -t "$TMO" fuse-hungfs $FD mountpoint="$MNTDIR" file="stalled_file" hung=true; }
+    if read -u ${MKFDS[0]} PID; then
+	EXPR='(FD == '"$FD"')'
+	${TS_CMD_LSFD} -b -r -n -p "${PID}" -o ASSOC,TYPE,SOURCE -Q "${EXPR}"
+	RC=$?
+	echo 'ASSOC,TYPE,SOURCE': $RC
+	if [ $RC -ne 0 ]; then
+	    echo "lsfd failed (PID: ${PID}, RC: ${RC})"
+	fi
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait ${MKFDS_PID}
+    MKFDS_RC=$?
+    if [ "${MKFDS_RC}" -eq "${EXPIRED}" ]; then
+	echo "test_mkfds timed out"
+    fi
+    rmdir "$MNTDIR" 2>/dev/null || true
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
+
+ts_finalize

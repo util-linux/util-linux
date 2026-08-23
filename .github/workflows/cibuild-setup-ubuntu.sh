@@ -13,6 +13,7 @@ PACKAGES=(
 	btrfs-progs
 	dnsutils
 	libcap-ng-dev
+	libfuse-dev
 	libncursesw5-dev
 	libpam-dev
 	libudev-dev
