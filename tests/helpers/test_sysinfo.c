@@ -52,6 +52,7 @@
 #endif
 
 #include "xalloc.h"
+#include "fileutils.h"
 #include "namespace.h"
 
 typedef struct {
@@ -228,6 +229,18 @@ static int hlp_get_userns_ok(void)
 	return 0;
 }
 
+static int hlp_statx_dontsync_ok(void)
+{
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	struct statx stx;
+	int rc = statx(AT_FDCWD, "/proc/self", AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx);
+	printf("%d\n", rc == 0);
+#else
+	printf("0\n");
+#endif
+	return 0;
+}
+
 static int hlp_hostname(void)
 {
 	char * h = xgethostname();
@@ -339,6 +352,7 @@ static const mntHlpfnc hlps[] =
 	{ "sz(time_t)", hlp_sz_time     },
 	{ "ns-gettype-ok", hlp_get_nstype_ok },
 	{ "ns-getuserns-ok", hlp_get_userns_ok },
+	{ "statx-dontsync-ok", hlp_statx_dontsync_ok },
 	{ "hostname", hlp_hostname, },
 	{ "fts", hlp_fts, },
 	{ NULL, NULL }
