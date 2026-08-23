@@ -3228,12 +3228,9 @@ static void free_bpf_prog(const struct factory * factory _U_, void *data)
 static void *make_some_pipes(const struct factory *factory, struct fdesc fdescs[],
 			     int argc _U_, char ** argv _U_)
 {
-	/* Reserver fds before making pipes */
-	for (int i = 0; i < factory->N; i++) {
-		close(fdescs[i].fd);
-		if (dup2(0, fdescs[i].fd) < 0)
-			err(EXIT_FAILURE, "failed to reserve fd %d with dup2", fdescs[i].fd);
-	}
+	/* Reserve fds before making pipes */
+	for (int i = 0; i < factory->N; i++)
+		reserve_fd(fdescs[i].fd);
 
 	for (int i = 0; i < (factory->N) / 2; i++) {
 		int pd[2];
