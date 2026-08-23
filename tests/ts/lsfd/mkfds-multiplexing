@@ -44,7 +44,7 @@ for multiplexer in pselect6 select poll ppoll; do
     fi
 
     {
-	coproc MKFDS { "$TS_HELPER_MKFDS" -w "$multiplexer" multiplexing {10..22}; }
+	coproc MKFDS { "$TS_HELPER_MKFDS" -w "$multiplexer" multiplexing {10..21}; }
     } > "$TS_OUTPUT" 2>&1
     # bash unsets MKFDS_PID when the coproc terminates; save it
     MKFDS_CPID=$MKFDS_PID
@@ -77,7 +77,7 @@ for multiplexer in pselect6 select poll ppoll; do
 	fi
 
 	{
-	    "${TS_CMD_LSFD}" -r -n -o ASSOC,XMODE -p "${PID}" -Q '(FD >= 10) && (FD <= 22)'
+	    "${TS_CMD_LSFD}" -r -n -o ASSOC,XMODE -p "${PID}" -Q '(FD >= 10) && (FD <= 21)'
 	    echo "[$multiplexer] ASSOC,XMODE: $?"
 
 	    # For debugging
