@@ -373,6 +373,11 @@ void __err_oom(const char *file, unsigned int line)
 	exit(eval); \
 })
 
+/* Error message for mutually exclusive options */
+#define errexclusive(excode, opt1_prefix, opt1_name, opt2_prefix, opt2_name) \
+	errx(excode, _("options %s%s and %s%s cannot be combined"), \
+	     opt1_prefix, opt1_name, opt2_prefix, opt2_name)
+
 /* After failed execvp() */
 #define EX_EXEC_FAILED		126	/* Program located, but not usable. */
 #define EX_EXEC_ENOENT		127	/* Could not find program to exec.  */

@@ -197,8 +197,7 @@ static inline void err_exclusive_options(
 				const char *b = ul_get_longopt(opts, c);
 				char buf[16];	/* short option in hex */
 
-				errx(OPTUTILS_EXIT_CODE,
-					_("options %s%s and %s%s cannot be combined"),
+				errexclusive(OPTUTILS_EXIT_CODE,
 					a ? "--" : "-",
 					a ? a : ul_get_shortopt(buf, sizeof(buf), status[e]),
 					b ? "--" : "-",
