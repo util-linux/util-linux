@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <err.h>
 #include <getopt.h>
 #include <errno.h>
 #include "strutils.h"

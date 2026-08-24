@@ -6,9 +6,10 @@
  * Written by Sami Kerola <kerolasa@iki.fi>
  */
 
-#include <err.h>
 #include <getopt.h>
 #include <pwd.h>
+
+#include "c.h"
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -27,7 +27,6 @@
  * After another character is given, the program exits.
  */
 
-#include <err.h>
 #include <fcntl.h>
 #include <getopt.h>
 #include <stdbool.h>
@@ -35,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#include "c.h"
 
 static void __attribute__((__noreturn__)) usage(const char *prog, FILE *fp, int eval)
 {

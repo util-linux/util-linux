@@ -563,9 +563,13 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
     [[#include <sys/stat.h>]])
 
-AC_CHECK_TYPES([struct statx], [have_struct_statx=yes], [have_struct_statx=no], [[#include <sys/stat.h>]])
-AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
-    [[#include <sys/stat.h>]])
+AS_IF([test "x$linux_os" = xyes], [
+  AC_CHECK_TYPES([struct statx], [have_struct_statx=yes], [have_struct_statx=no], [[#include <sys/stat.h>]])
+  AC_CHECK_MEMBERS([struct statx.stx_mnt_id],,,
+      [[#include <sys/stat.h>]])
+], [
+  have_struct_statx=no
+])
 
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
@@ -706,7 +710,11 @@ AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=
 AC_CHECK_FUNCS([posix_fallocate], [have_posix_fallocate=yes], [have_posix_fallocate=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 AC_CHECK_FUNCS([updwtmpx updwtmpx], [have_gnu_utmpx=yes], [have_gnu_utmpx=no])
-AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
+AS_IF([test "x$linux_os" = xyes], [
+  AC_CHECK_FUNCS([statx], [have_statx=yes], [have_statx=no])
+], [
+  have_statx=no
+])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 AM_CONDITIONAL([HAVE_SYS_PRCTL_H], [test "x$ac_cv_header_sys_prctl_h" = xyes])

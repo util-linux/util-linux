@@ -51,8 +51,6 @@
 # define USE_PTY
 #endif
 
-#include "err.h"
-
 #include <stdbool.h>
 
 #include "c.h"

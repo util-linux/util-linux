@@ -38,8 +38,9 @@
 
 #include "test_mkfds.h"
 
+/* c.h conflicts with raw kernel headers used below */
+#include <err.h>
 #include <string.h>		/* memset */
-#include <err.h>		/* err */
 #include <errno.h>		/* EINTR */
 #include <linux/poll.h>		/* struct pollfd */
 #include <asm/signal.h>		/* sigset_t */

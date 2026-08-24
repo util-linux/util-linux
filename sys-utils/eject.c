@@ -24,7 +24,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <limits.h>
-#include <err.h>
 #include <stdarg.h>
 
 #include <getopt.h>

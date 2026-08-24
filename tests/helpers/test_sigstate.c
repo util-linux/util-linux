@@ -12,7 +12,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <errno.h>
-#include <err.h>
 
 #define _U_ __attribute__((__unused__))
 

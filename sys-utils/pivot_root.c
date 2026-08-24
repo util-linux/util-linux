@@ -8,7 +8,6 @@
  *
  * Copyright (C) 2000 Werner Almesberger
  */
-#include <err.h>
 #include <errno.h>
 #include <getopt.h>
 #include <stdio.h>

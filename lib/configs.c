@@ -1,7 +1,6 @@
 /*
  * configs_file.c instantiates functions defined and described in configs_file.h
  */
-#include <err.h>
 #include <errno.h>
 #include <sys/syslog.h>
 #include <sys/stat.h>
