@@ -341,6 +341,7 @@ static void do_write(const struct write_control *ctl)
 	time_t now;
 	struct tm *tm;
 	char *host, *line = NULL;
+	char buf[512];
 	size_t linelen = 0;
 	struct sigaction sigact;
 
@@ -370,14 +371,15 @@ static void do_write(const struct write_control *ctl)
 	/* print greeting */
 	printf("\r\n\a\a\a");
 	if (strcmp(login, pwuid) != 0)
-		printf(_("Message from %s@%s (as %s) on %s at %02d:%02d ..."),
+		snprintf(buf, sizeof(buf), _("Message from %s@%s (as %s) on %s at %02d:%02d ..."),
 		       login, host, pwuid, ctl->src_tty_name,
 		       tm->tm_hour, tm->tm_min);
 	else
-		printf(_("Message from %s@%s on %s at %02d:%02d ..."),
+		snprintf(buf, sizeof(buf), _("Message from %s@%s on %s at %02d:%02d ..."),
 		       login, host, ctl->src_tty_name,
 		       tm->tm_hour, tm->tm_min);
 	free(host);
+	fputs_careful(buf, stdout, '^', true, 0);
 	printf("\r\n");
 
 	while (getline(&line, &linelen, stdin) >= 0) {
