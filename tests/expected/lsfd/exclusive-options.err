@@ -1,0 +1,6 @@
+lsfd: options --json and --raw cannot be combined
+lsfd: options --raw and --json cannot be combined
+lsfd: options --hyperlink and --json cannot be combined
+lsfd: options --hyperlink and --json cannot be combined
+lsfd: options --hyperlink and --raw cannot be combined
+lsfd: options --hyperlink and --raw cannot be combined
