@@ -382,7 +382,8 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		snprintf(lbuf, lbuflen,
 				_("Broadcast message from %s@%s (%s) (%s):"),
 				whom, hostname, where, date);
-		fprintf(fs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
+		fputs_careful(lbuf, fs, '^', true, TERM_WIDTH);
+		fprintf(fs, "\007\007\r\n");
 		free(hostname);
 		free(whombuf);
 	}
