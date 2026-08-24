@@ -1059,7 +1059,7 @@ int mnt_update_start(struct libmnt_update *upd)
 		return -ENOMEM;
 
 	if (upd->act_fd >= 0) {
-		DBG_OBJ(UPDATE, upd, ul_debug("reusing existing act file"));
+		DBG(UPDATE, ul_debugobj(upd, "reusing existing act file"));
 		return 0;
 	}
 
