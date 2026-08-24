@@ -1,6 +1,9 @@
 /*
  * test_mkfds - make various file descriptors
  *
+ * For architecture overview, test writing guide, and instructions on
+ * how to add new factories, see Documentation/HOWTO-HACKING-lsfd.md.
+ *
  * Written by Masatake YAMATO <yamato@redhat.com>
  *
  * This program is free software; you can redistribute it and/or
@@ -319,6 +322,10 @@ static struct arg decode_arg(const char *pname,
 	return arg;
 }
 
+/*
+ * Caller MUST call free_arg() for each struct arg returned by decode_arg()
+ * to prevent memory leaks (e.g. allocated string values).
+ */
 static void free_arg(struct arg *arg)
 {
 	arg->free(arg->v);
@@ -331,11 +338,21 @@ struct factory {
 #define MAX_N 13
 	int  N;			/* the number of fds this factory makes */
 	int  EX_N;		/* fds made optionally */
-	int  EX_O;		/* the number of extra words printed to stdout. */
-	void *(*make)(const struct factory *, struct fdesc[], int, char **);
-	void (*free)(const struct factory *, void *);
-	void (*report)(const struct factory *, int, void *, FILE *);
-	const struct parameter * params;
+	int  EX_O;		/* the number of extra words printed to stdout (must match o_descs length). */
+
+	/*
+	 * make() creates resources and assigns them to fdescs[0..N-1].fd via dup2().
+	 * It can return a custom context pointer, which will be passed to report() and free().
+	 */
+	void *(*make)(const struct factory *factory, struct fdesc fdescs[], int argc, char **argv);
+
+	/* free() releases the custom context pointer returned by make() */
+	void (*free)(const struct factory *factory, void *data);
+
+	/* report() prints the nth extra output value (0 <= nth < EX_O) to fp */
+	void (*report)(const struct factory *factory, int nth, void *data, FILE *fp);
+
+	const struct parameter * params;	/* must be terminated with PARAM_END */
 	const char **o_descs;	/* string array describing values printed
 				 * to stdout. Used in -O option.
 				 * EX_O elements are expected. */
