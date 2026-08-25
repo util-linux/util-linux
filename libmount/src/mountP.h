@@ -243,6 +243,7 @@ struct libmnt_fs {
 	char		*root;		/* mountinfo[4]: root of the mount within the FS */
 	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
 	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
+	char		*mounttype;	/* kernel FS driver name (if differs from fstype) */
 
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
@@ -675,6 +676,8 @@ extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 			__attribute__((nonnull(1)));
 extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 			__attribute__((nonnull(1)));
+extern const char *mnt_fs_get_mounttype(struct libmnt_fs *fs);
+extern int mnt_fs_set_mounttype(struct libmnt_fs *fs, const char *mounttype);
 extern int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
 			__attribute__((nonnull(1)));
 
@@ -694,7 +697,8 @@ extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 				    struct libmnt_table **mountinfo, const char *tgt);
 
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
-extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);
+extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type,
+					    const char **mounttype);
 extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
 				      const char *name, const char *type);

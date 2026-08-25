@@ -327,7 +327,7 @@ option('build-libmount-udev-support',
 
 option('ntfs-mounttype',
        type : 'string',
-       description : 'overwrite default ntfs3 mount type for NTFS')
+       description : 'set kernel FS driver name for NTFS (e.g., ntfs3)')
 
 option('vendordir',
        type: 'string',

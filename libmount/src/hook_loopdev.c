@@ -455,9 +455,11 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (!type || strcmp(type, "auto") == 0) {
 		char *autotype = NULL;
+		const char *automounttype = NULL;
 		int rc;
 
-		rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
+		rc = mnt_context_guess_srcpath_fstype(cxt, &autotype,
+						      &automounttype);
 		if (rc) {
 			free(autotype);
 			DBG_OBJ(CXT, cxt, ul_debug("failed to guess regfile FS type [rc=%d]", rc));
@@ -466,6 +468,8 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 		if (autotype) {
 			__mnt_fs_set_fstype_ptr(cxt->fs, autotype);
 			type = mnt_fs_get_fstype(cxt->fs);
+			if (automounttype)
+				mnt_fs_set_mounttype(cxt->fs, automounttype);
 		}
 	}
 

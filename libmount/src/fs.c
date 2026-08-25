@@ -88,6 +88,7 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 	free(fs->swaptype);
 	free(fs->target);
 	free(fs->fstype);
+	free(fs->mounttype);
 	free(fs->optstr);
 	free(fs->vfs_optstr);
 	free(fs->fs_optstr);
@@ -291,6 +292,8 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, target)))
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fstype)))
+		goto err;
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, mounttype)))
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, optstr)))
 		goto err;
@@ -872,6 +875,37 @@ int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
 			return -ENOMEM;
 	}
 	return  __mnt_fs_set_fstype_ptr(fs, p);
+}
+
+/*
+ * Returns the kernel FS driver name, or NULL if not set. The mounttype is
+ * optional and used only when the driver name differs from fstype.
+ */
+const char *mnt_fs_get_mounttype(struct libmnt_fs *fs)
+{
+	if (!fs)
+		return NULL;
+	return fs->mounttype;
+}
+
+/*
+ * Sets the kernel FS driver name (mounttype). This is used when the driver
+ * name differs from the filesystem type (e.g., ntfs vs. ntfs3).
+ */
+int mnt_fs_set_mounttype(struct libmnt_fs *fs, const char *mounttype)
+{
+	char *p = NULL;
+
+	if (!fs)
+		return -EINVAL;
+	if (mounttype) {
+		p = strdup(mounttype);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(fs->mounttype);
+	fs->mounttype = p;
+	return 0;
 }
 
 /*
