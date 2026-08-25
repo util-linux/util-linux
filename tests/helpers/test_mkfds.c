@@ -3225,7 +3225,7 @@ static void free_bpf_prog(const struct factory * factory _U_, void *data)
 	free(data);
 }
 
-static void *make_some_pipes(const struct factory *factory _U_, struct fdesc fdescs[],
+static void *make_some_pipes(const struct factory *factory, struct fdesc fdescs[],
 			     int argc _U_, char ** argv _U_)
 {
 	/* Reserver fds before making pipes */
