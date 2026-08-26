@@ -59,7 +59,7 @@ Reading from a _file_ is refused when the invoker is not superuser and the progr
 == OPTIONS
 
 *-n*, *--nobanner*::
-Suppress the banner.
+Suppress the banner. Works only for root; for other users the option is ignored.
 
 *-t*, *--timeout* _timeout_::
 Abandon the write attempt to the terminals after _timeout_ seconds. This _timeout_ must be a positive integer. The default value is 300 seconds, which is a legacy from the time when people ran terminals over modem lines.
