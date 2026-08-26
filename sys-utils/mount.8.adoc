@@ -470,7 +470,7 @@ The argument following the *-t* is used to indicate the filesystem type. The fil
 +
 The programs *mount* and *umount*(8) support filesystem subtypes. The subtype is defined by a '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to use subtype notation rather than add any prefix to the mount source (for example 'sshfs#example.com' is deprecated).
 +
-If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. *mount* uses the *libblkid*(3) library for guessing the filesystem type; if that does not turn up anything that looks familiar, *mount* will try to read the file _/etc/filesystems_, or, if that does not exist, _/proc/filesystems_. All of the filesystem types listed there will be tried, except for those that are labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_). If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*.
+If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. *mount* uses the *libblkid*(3) library for guessing the filesystem type; if that does not turn up anything that looks familiar, *mount* will try to read the file _/etc/filesystems_, or, if that does not exist, _/proc/filesystems_. All of the filesystem types listed there will be tried, except for those that are labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_). If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*. For auto-detected types, the kernel driver name used for the mount syscall can be overridden via configuration files; see *FILESYSTEM TYPE CONFIGURATION* below.
 //TRANSLATORS: Keep {asterisk} untranslated.
 +
 The *auto* type may be useful for user-mounted floppies. Creating a file _/etc/filesystems_ can be useful to change the probe order (e.g., to try vfat before msdos or ext3 before ext2) or if you use a kernel module autoloader.
@@ -1752,6 +1752,39 @@ The command *mount* does not pass the mount options *unbindable*, *runbindable*,
 
 The exit status value of the helper is returned as the exit status of *mount*(8). The value 126 is sed if the mount helper program is found, but the execl() failed.
 
+== FILESYSTEM TYPE CONFIGURATION
+
+When the filesystem type is auto-detected (no *-t* option given), *mount* can
+use a different kernel driver name than the detected filesystem type. This
+allows the filesystem type used for helper program lookup
+(**/sbin/mount.**__type__) to remain the original detected name, while the
+kernel mount syscall uses the configured driver name.
+
+The mapping is configured via per-filesystem configuration files:
+
+  /etc/mount/fs.d/<type>.conf
+  /run/mount/fs.d/<type>.conf
+  /usr/lib/mount/fs.d/<type>.conf
+
+where _<type>_ is the detected filesystem type (e.g., _ntfs_). Files in
+_/etc_ take priority over _/run_, which takes priority over _/usr/lib_.
+
+The configuration file uses a simple _key_ = _value_ format. Currently
+supported keys:
+
+*mounttype*::
+Kernel filesystem driver name to use for *mount*(2) or *fsopen*(2) syscalls
+instead of the detected filesystem type. For example:
++
+  # /etc/mount/fs.d/ntfs.conf
+  mounttype = ntfs3
++
+This makes *mount* use the _ntfs3_ driver for the kernel syscall while still
+searching for **/sbin/mount.ntfs** as the external helper.
+
+The configuration file is only used for auto-detected filesystem types. An
+explicit *-t* option or a type specified in _/etc/fstab_ is always used as-is.
+
 == ENVIRONMENT
 
 *LIBBLKID_DEBUG*=all::
@@ -1790,6 +1823,9 @@ temporary file (unused on systems with _mtab_ symbolic link)
 
 _/etc/filesystems_::
 a list of filesystem types to try
+
+_/etc/mount/fs.d/<type>.conf_::
+per-filesystem type configuration (see *FILESYSTEM TYPE CONFIGURATION*)
 
 == HISTORY
 
