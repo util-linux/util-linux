@@ -29,6 +29,7 @@ libmount_la_SOURCES = \
 
 if LINUX
 libmount_la_SOURCES += \
+	libmount/src/config.c \
 	libmount/src/context.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \

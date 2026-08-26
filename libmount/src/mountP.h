@@ -522,6 +522,8 @@ struct libmnt_context
 
 	struct list_head	hooksets_datas;	/* global hooksets data */
 	struct list_head	hooksets_hooks;	/* global hooksets data */
+
+	struct list_head	config_entries;	/* cached config file values */
 };
 
 /* flags */
@@ -680,6 +682,9 @@ extern const char *mnt_fs_get_mounttype(struct libmnt_fs *fs);
 extern int mnt_fs_set_mounttype(struct libmnt_fs *fs, const char *mounttype);
 extern int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
 			__attribute__((nonnull(1)));
+
+/* config.c */
+extern void mnt_free_config(struct libmnt_context *cxt);
 
 /* context.c */
 extern void mnt_context_syscall_save_status(struct libmnt_context *cxt,
