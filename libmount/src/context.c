@@ -2234,15 +2234,8 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type,
 		}
 	}
 
-	if (rc == 0 && *type && mounttype) {
-		const char *x;
-
-		x = mnt_config_get_value(cxt, "fs.d", *type, "mounttype");
-		if (!x)
-			x = ul_fstype_to_mounttype(*type);
-		if (x)
-			*mounttype = x;
-	}
+	if (rc == 0 && *type && mounttype)
+		*mounttype = mnt_config_get_value(cxt, "fs.d", *type, "mounttype");
 
 	return rc;
 }

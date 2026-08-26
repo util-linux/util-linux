@@ -231,6 +231,17 @@ static int read_config(struct libmnt_context *cxt,
 	}
 
 done:
+#ifdef CONFIG_UL_NTFS_MOUNTTYPE
+	if (rc == 0
+	    && strcmp(dir, "fs.d") == 0
+	    && strcmp(name, "ntfs") == 0
+	    && !get_entry(cxt, dir, name, "mounttype")) {
+		rc = add_entry(cxt, dir, name, "mounttype",
+				CONFIG_UL_NTFS_MOUNTTYPE);
+		if (rc == 0)
+			nents++;
+	}
+#endif
 	if (rc == 0 && nents == 0)
 		rc = add_sentinel(cxt, dir, name);
 

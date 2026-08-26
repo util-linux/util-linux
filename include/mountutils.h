@@ -484,24 +484,4 @@ static inline int has_listmount(void)
 #endif /* HAVE_STATMOUNT_API */
 #endif /* HAVE_LINUX_MOUNT_H */
 
-/*
- * Convert FS-type (as provided by libblkid or udev) to the preferred
- * kernel FS driver (type used to mount the FS).
- *
- * By default, no remapping is done. Use --with-ntfs-mounttype=<type>
- * (or -Dntfs-mounttype=<type>) to define a compile-time mapping.
- *
- * The final solution should be based on config files managed by libmount.
- */
-static inline const char *ul_fstype_to_mounttype(const char *fstype)
-{
-	if (!fstype)
-		return NULL;
-
-#ifdef CONFIG_UL_NTFS_MOUNTTYPE
-	if (strcmp(fstype, "ntfs") == 0)
-		return CONFIG_UL_NTFS_MOUNTTYPE;
-#endif
-	return NULL;
-}
 #endif /* UTIL_LINUX_MOUNTUTILS_H */
