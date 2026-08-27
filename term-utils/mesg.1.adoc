@@ -69,6 +69,9 @@ The usual setup is to use a "tty" group and add relevant users to this group.
 Alternatively, a less secure solution is to set utilities like *write*(1) or
 *wall*(1) to setgid for the "tty" group.
 
+*mesg n* additionally clears the _other_ write bit, so a terminal that was made
+world-writable by other means is not left writable.
+
 The *mesg* utility silently exits with error status 2 if not executed on a terminal. In this case executing *mesg* is pointless. The command line option *--verbose* forces *mesg* to print a warning in this situation. This behaviour has been introduced in version 2.33.
 
 == ARGUMENTS
