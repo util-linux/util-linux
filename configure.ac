@@ -1734,6 +1734,28 @@ AS_IF([test "x$with_cap_ng" = xno], [
 AC_SUBST([CAP_NG_LIBS])
 
 
+AC_ARG_WITH([fuse],
+  AS_HELP_STRING([--without-fuse], [compile the test_mkfds helper without libfuse]),
+  [], [with_fuse=auto]
+)
+have_fuse=no
+AS_IF([test "x$with_fuse" = xno], [
+  AM_CONDITIONAL([HAVE_FUSE], [false])
+],[
+  PKG_CHECK_MODULES_STATIC([FUSE], [fuse >= 2.6], [have_fuse=yes], [have_fuse=no])
+  AS_CASE([$with_fuse:$have_fuse],
+    [yes:no],
+      [AC_MSG_ERROR([fuse selected, but required library not found])]
+  )
+  AS_IF([test "x$have_fuse" = xyes], [
+    AC_DEFINE([HAVE_LIBFUSE], [1], [Define if libfuse is available])
+  ])
+  AM_CONDITIONAL([HAVE_FUSE], [test "x$have_fuse" = xyes])
+])
+AC_SUBST([FUSE_CFLAGS])
+AC_SUBST([FUSE_LIBS])
+
+
 AC_ARG_ENABLE([setpriv],
   AS_HELP_STRING([--disable-setpriv], [do not build setpriv]),
   [], [UL_DEFAULT_ENABLE([setpriv], [check])]

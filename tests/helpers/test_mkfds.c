@@ -81,8 +81,6 @@
 #include "test_mkfds.h"
 #include "xalloc.h"
 
-#define _U_ __attribute__((__unused__))
-
 static void do_nothing(int signum _U_);
 
 static void __attribute__((__noreturn__)) usage(FILE *out, int status)
