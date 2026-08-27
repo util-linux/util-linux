@@ -404,11 +404,10 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-volatile ssize_t unused_result_ok;
 static void abort_with_child_death_message(int signum _U_)
 {
 	const char msg[] = "the child process exits unexpectedly";
-	unused_result_ok = write(2, msg, sizeof(msg));
+	ignore_result(write(2, msg, sizeof(msg)));
 	_exit(EXIT_FAILURE);
 }
 
