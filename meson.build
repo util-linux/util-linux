@@ -600,6 +600,16 @@ lib_audit = dependency(
   required : get_option('audit'))
 conf.set('HAVE_LIBAUDIT', lib_audit.found() ? 1 : false)
 
+lib_fuse = dependency(
+  'fuse',
+  version : '>= 2.6',
+  required : get_option('fuse'))
+conf.set('HAVE_LIBFUSE', lib_fuse.found() ? 1 : false)
+
+summary('libfuse',
+        lib_fuse.found() ? 'enabled' : 'disabled',
+        section : 'components')
+
 conf.set('HAVE_SMACK', get_option('smack').allowed())
 
 header = 'linux/btrfs.h'
@@ -4196,6 +4206,10 @@ if LINUX
   endif
   if cc.has_header('linux/io_uring.h')
     test_mkfds_c_args += ['-DHAVE_LINUX_IO_URING_H']
+  endif
+  if lib_fuse.found()
+    test_mkfds_sources += ['tests/helpers/test_mkfds_hungfs.c']
+    test_mkfds_deps += [lib_fuse]
   endif
   exe = executable(
     'test_mkfds',

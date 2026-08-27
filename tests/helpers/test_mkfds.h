@@ -23,6 +23,10 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#ifndef _U_
+#define _U_ __attribute__((__unused__))
+#endif
+
 /* Exit code for test_mkfds execution control (distinct from errno-based
  * exit codes returned when factories fail to construct file descriptors). */
 #define EXIT_EXPIRED 2
@@ -111,6 +115,20 @@ struct fdesc {
 
 #ifdef __NR_ppoll
 bool wait_event_ppoll(bool add_stdin, int tfd, struct fdesc *fdescs, size_t n_fdescs);
+#endif
+
+#ifdef HAVE_LIBFUSE
+#define HUNGFS_UNHUNG 'G'
+#define HUNGFS_READY 'R'
+
+struct hungfs_args {
+	int ctlfd;
+	const char *mountpoint;
+	const char *file;
+	bool hung;
+};
+
+void run_hungfs(struct hungfs_args *args);
 #endif
 
 #endif	/* TEST_MKFDS_H */
