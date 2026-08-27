@@ -162,20 +162,32 @@ static int read_config(struct libmnt_context *cxt,
 
 	snprintf(confname, sizeof(confname), "%s/%s", dir, name);
 
-	count = ul_configs_file_list(&file_list,
-				     "mount",
-				     _PATH_SYSCONFDIR,
-				     _PATH_RUNSTATEDIR,
-				     _PATH_SYSCONFSTATICDIR,
-				     confname,
-				     "conf");
+	{
+		const char *etcdir = _PATH_SYSCONFDIR;
+		const char *rundir = _PATH_RUNSTATEDIR;
+		const char *usrdir = _PATH_SYSCONFSTATICDIR;
+#ifdef TEST_PROGRAM
+		if (getenv("LIBMOUNT_CONFIG_ETCDIR"))
+			etcdir = getenv("LIBMOUNT_CONFIG_ETCDIR");
+		if (getenv("LIBMOUNT_CONFIG_RUNDIR"))
+			rundir = getenv("LIBMOUNT_CONFIG_RUNDIR");
+		if (getenv("LIBMOUNT_CONFIG_USRDIR"))
+			usrdir = getenv("LIBMOUNT_CONFIG_USRDIR");
+#endif
+		count = ul_configs_file_list(&file_list,
+					     "mount",
+					     etcdir,
+					     rundir,
+					     usrdir,
+					     confname,
+					     "conf");
+	}
 	if (count <= 0) {
 		DBG_OBJ(CXT, cxt, ul_debug("config: no files for %s", confname));
 		goto done;
 	}
 
 	while (ul_configs_next_filename(&file_list, &current, &filename) == 0) {
-		struct stat st;
 		FILE *f;
 		char buf[BUFSIZ];
 
@@ -210,7 +222,7 @@ static int read_config(struct libmnt_context *cxt,
 				continue;
 			}
 		}
-
+#endif
 		while (fgets(buf, sizeof(buf), f)) {
 			char *key = NULL, *val = NULL;
 
@@ -302,3 +314,40 @@ void mnt_free_config(struct libmnt_context *cxt)
 		free_confentry(en);
 	}
 }
+
+#ifdef TEST_PROGRAM
+
+static int test_read_config(struct libmnt_test *ts __attribute__((unused)),
+			    int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	const char *val;
+
+	if (argc != 4)
+		return -1;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	val = mnt_config_get_value(cxt, argv[1], argv[2], argv[3]);
+	if (val)
+		printf("%s\n", val);
+	else
+		printf("(not found)\n");
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	struct libmnt_test tss[] = {
+	{ "--read-config",  test_read_config,  "<dir> <name> <key>  read config value" },
+	{ NULL }
+	};
+
+	return mnt_run_test(tss, argc, argv);
+}
+
+#endif /* TEST_PROGRAM */

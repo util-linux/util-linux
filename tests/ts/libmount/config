@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="config"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+TESTPROG="$TS_HELPER_LIBMOUNT_CONFIG"
+
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
+TESTDIR="$TS_OUTDIR/${TS_TESTNAME}-root"
+ETC_DIR="$TESTDIR/etc"
+RUN_DIR="$TESTDIR/run"
+USR_DIR="$TESTDIR/usr"
+
+export LIBMOUNT_CONFIG_ETCDIR="$ETC_DIR"
+export LIBMOUNT_CONFIG_RUNDIR="$RUN_DIR"
+export LIBMOUNT_CONFIG_USRDIR="$USR_DIR"
+
+cleanup_dirs()
+{
+	rm -rf "$ETC_DIR" "$RUN_DIR" "$USR_DIR"
+	mkdir -p "$ETC_DIR" "$RUN_DIR" "$USR_DIR"
+}
+
+ts_init_subtest "basic"
+cleanup_dirs
+mkdir -p "$ETC_DIR/mount/fs.d"
+echo "mounttype = ntfs3" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "not-found"
+cleanup_dirs
+mkdir -p "$ETC_DIR/mount/fs.d"
+echo "mounttype = ntfs3" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs nokey >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "no-file"
+cleanup_dirs
+ts_run $TESTPROG --read-config fs.d xfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "comments"
+cleanup_dirs
+mkdir -p "$ETC_DIR/mount/fs.d"
+printf "# this is a comment\nmounttype = ntfs3\n# another comment\n" \
+	> "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "priority"
+cleanup_dirs
+mkdir -p "$ETC_DIR/mount/fs.d"
+mkdir -p "$USR_DIR/mount/fs.d"
+echo "mounttype = ntfs3" > "$USR_DIR/mount/fs.d/ntfs.conf"
+echo "mounttype = ntfs3g" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "multiple-keys"
+cleanup_dirs
+mkdir -p "$ETC_DIR/mount/fs.d"
+printf "mounttype = ntfs3\nhelper = /sbin/mount.ntfs\n" \
+	> "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_run $TESTPROG --read-config fs.d ntfs helper >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "builtin-ntfs"
+cleanup_dirs
+BUILTIN=$(sed -n 's/.*CONFIG_UL_NTFS_MOUNTTYPE[[:space:]]*"\(.*\)"/\1/p' \
+	${top_builddir}/config.h)
+RESULT=$($TESTPROG --read-config fs.d ntfs mounttype 2>/dev/null)
+if [ -n "$BUILTIN" ]; then
+	test "$RESULT" = "$BUILTIN" && echo "OK" >> "$TS_OUTPUT" \
+		|| echo "FAILED (expected '$BUILTIN', got '$RESULT')" >> "$TS_OUTPUT"
+else
+	test "$RESULT" = "(not found)" && echo "OK" >> "$TS_OUTPUT" \
+		|| echo "FAILED (expected not-found, got '$RESULT')" >> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+rm -rf "$TESTDIR"
+
+ts_finalize
