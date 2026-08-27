@@ -49,7 +49,7 @@ mesg - display (or do not display) messages from other users
 
 == DESCRIPTION
 
-The *mesg* utility is invoked by a user to control write access others have to the terminal device associated with standard error output. If write access is allowed, then programs such as *talk*(1) and *write*(1) may display messages on the terminal.
+The *mesg* utility is invoked by a user to control write access others have to the terminal device associated with its standard input, standard output or standard error, whichever is a terminal. If write access is allowed, then programs such as *talk*(1) and *write*(1) may display messages on the terminal.
 
 Traditionally, write access is allowed by default. However, as users become
 more conscious of various security risks, there is a trend to remove write
@@ -79,7 +79,7 @@ Disallow messages.
 *y*::
 Allow messages to be displayed.
 
-If no arguments are given, *mesg* shows the current message status on standard error output.
+If no arguments are given, *mesg* shows the current message status on standard output.
 
 
 == OPTIONS
