@@ -492,6 +492,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		if (!yes) {
 			fdisk_info(sf->cxt, _("Leaving."));
 			free(devname);
+			free(typescript);
 			return 0;
 		}
 	}
