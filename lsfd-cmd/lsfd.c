@@ -963,7 +963,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		f = new_readlink_error_file(proc, errno, assoc);
-	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+	else if (lsfd_path_stat(pc, &sb, 0, name) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
@@ -995,7 +995,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		/* file-descriptor based association */
 		FILE *fdinfo;
 
-		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
+		if (lsfd_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
 			f->mode = sb.st_mode;
 
 		if (is_nsfs_dev(f->stat.st_dev))
@@ -1079,7 +1079,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		f = copy_file(prev, -assoc);
 	else if ((path = strchr(buf, '/'))) {
 		rtrim_whitespace((unsigned char *) path);
-		if (stat(path, &sb) < 0)
+		if (lsfd_stat(path, &sb) < 0)
 			/* If a file is mapped but deleted from the file system,
 			 * "stat by the file name" may not work. In that case,
 			 */
@@ -1099,7 +1099,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
 				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (ul_path_statf(pc, &sb, 0,
+		else if (lsfd_path_statf(pc, &sb, 0,
 				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
 			f = new_stat_error_file(proc, sym, errno, -assoc);
 		else
@@ -1197,7 +1197,7 @@ static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 		struct stat sb;
 		const int assoc = ASSOC_PIDFS * -1;
 
-		if (fstat(pidfd, &sb) < 0) {
+		if (lsfd_fstat(pidfd, &sb) < 0) {
 			/* Even fstat fails here, the pidfd is still
 			 * usable in the caller side. */
 			return pidfd;
@@ -1495,7 +1495,7 @@ static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 {
 	if (mnt_ns != NULL) {
 		struct stat sb;
-		if (stat(mntpoint_filename, &sb) == 0)
+		if (lsfd_stat(mntpoint_filename, &sb) == 0)
 			add_cooked_bdev(mnt_ns, sb.st_dev, makedev(major, minor), filesystem);
 	}
 
@@ -2863,6 +2863,8 @@ int main(int argc, char *argv[])
 			errtryhelp(EXIT_FAILURE);
 		}
 	}
+
+	lsfd_init_stat_system();
 
 	if (ctl.uri) {
 		char *badopt =
