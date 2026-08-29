@@ -500,7 +500,7 @@ static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
 	if (nsfd < 0)
 		return;
 
-	if (fstat(nsfd, &sb) == 0) {
+	if (lsfd_fstat(nsfd, &sb) == 0) {
 		tundata->devnetns = sb.st_ino;
 		load_fdsk_xinfo(tundata->devnetns, nsfd);
 	}

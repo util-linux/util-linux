@@ -516,8 +516,8 @@ static unsigned long get_minor_for_sysvipc(void)
 	if (procfs_process_init_path(pc, self) != 0)
 		goto out;
 
-	if (ul_path_statf(pc, &sb, 0, "map_files/%lx-%lx",
-			  (long)start, (long)start + pagesize) < 0)
+	if (lsfd_path_statf(pc, &sb, 0, "map_files/%lx-%lx",
+			    (long)start, (long)start + pagesize) < 0)
 		goto out;
 
 	m = minor(sb.st_dev);
@@ -546,7 +546,7 @@ static unsigned long get_minor_for_mqueue(void)
 	if (mq < 0)
 		return 0;
 
-	if (fstat((int)mq, &sb) < 0) {
+	if (lsfd_fstat((int)mq, &sb) < 0) {
 		mq_close(mq);
 		mq_unlink(mq_name);
 		return 0;
@@ -566,7 +566,7 @@ static unsigned long get_minor_for_pidfs(void)
 	if (fd < 0)
 		return 0;
 
-	if (fstat(fd, &sb) == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
+	if (lsfd_fstat(fd, &sb) == 0 && (sb.st_mode & S_IFMT) == S_IFREG)
 		ret = minor(sb.st_dev);
 
 	close(fd);
