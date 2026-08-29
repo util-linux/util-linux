@@ -651,7 +651,8 @@ struct lsfd_control {
 			show_main : 1,		/* print main table */
 			show_summary : 1,	/* print summary/counters */
 			sockets_only : 1,	/* display only SOCKETS */
-			show_xmode : 1;		/* XMODE column is enabled. */
+			show_xmode : 1,		/* XMODE column is enabled. */
+			abort_if_blockable : 1;
 
 	char *uri;
 
@@ -2385,6 +2386,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate             don't truncate text in columns\n"), out);
 	fputs(_(" -p, --pid <list>             collect information only for specified processes\n"), out);
 	fputs(_(" -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"), out);
+	fputs(_(" -b, --abort-if-blockable     exit immediately if stat with AT_STATX_DONT_SYNC is unavailable\n"), out);
 	fputs(_(" -Q, --filter <expr>          apply display filter\n"), out);
 	fputs(_("     --debug-filter           dump the internal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
@@ -2748,6 +2750,7 @@ int main(int argc, char *argv[])
 		{ "notruncate", no_argument, NULL, 'u' },
 		{ "pid",        required_argument, NULL, 'p' },
 		{ "inet",       optional_argument, NULL, 'i' },
+		{ "abort-if-blockable", no_argument, NULL, 'b' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
@@ -2772,7 +2775,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:sH", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:sHb", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -2796,6 +2799,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			parse_pids(optarg, &pids, &n_pids);
+			break;
+		case 'b':
+			ctl.abort_if_blockable = 1;
 			break;
 		case 'i': {
 			const char *subexpr = NULL;
@@ -2864,7 +2870,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	lsfd_init_stat_system();
+	if (!lsfd_init_stat_system() && ctl.abort_if_blockable)
+		errx(LSFD_EX_NONBLOCK_UNAVAIL,
+		     _("the kernel or build does not support statx with AT_STATX_DONT_SYNC"));
 
 	if (ctl.uri) {
 		char *badopt =

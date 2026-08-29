@@ -52,9 +52,9 @@ int call_with_foreign_fd(pid_t target_pid, int target_fd,
 	return r;
 }
 
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
 
-static bool statx_available = false;
+static bool dont_sync_available = false;
 
 static void statx_to_stat(const struct statx *stx, struct stat *st)
 {
@@ -77,27 +77,30 @@ static void statx_to_stat(const struct statx *stx, struct stat *st)
 	st->st_ctim.tv_nsec = stx->stx_ctime.tv_nsec;
 }
 
-void lsfd_init_stat_system(void)
+bool lsfd_init_stat_system(void)
 {
 	struct statx stx;
 
-	if (statx(AT_FDCWD, "/proc/self", 0, STATX_BASIC_STATS, &stx) == 0)
-		statx_available = true;
+	if (statx(AT_FDCWD, "/proc/self", AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx) == 0)
+		dont_sync_available = true;
+
+	return dont_sync_available;
 }
 #else
-void lsfd_init_stat_system(void)
+bool lsfd_init_stat_system(void)
 {
+	return false;
 }
 #endif
 
 int lsfd_stat(const char *path, struct stat *sb)
 {
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
-	if (statx_available) {
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	if (dont_sync_available) {
 		struct statx stx;
 		int rc;
 
-		rc = statx(AT_FDCWD, path, 0, STATX_BASIC_STATS, &stx);
+		rc = statx(AT_FDCWD, path, AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx);
 		if (rc == 0)
 			statx_to_stat(&stx, sb);
 		return rc;
@@ -108,12 +111,12 @@ int lsfd_stat(const char *path, struct stat *sb)
 
 int lsfd_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path)
 {
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
-	if (statx_available) {
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	if (dont_sync_available) {
 		struct statx stx;
 		int rc;
 
-		rc = ul_path_statx(pc, &stx, flags, STATX_BASIC_STATS, path);
+		rc = ul_path_statx(pc, &stx, flags | AT_STATX_DONT_SYNC, STATX_BASIC_STATS, path);
 		if (rc == 0)
 			statx_to_stat(&stx, sb);
 		return rc;
@@ -142,12 +145,12 @@ int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char 
 
 int lsfd_fstat(int fd, struct stat *sb)
 {
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
-	if (statx_available) {
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	if (dont_sync_available) {
 		struct statx stx;
 		int rc;
 
-		rc = statx(fd, "", AT_EMPTY_PATH, STATX_BASIC_STATS, &stx);
+		rc = statx(fd, "", AT_EMPTY_PATH | AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx);
 		if (rc == 0)
 			statx_to_stat(&stx, sb);
 		return rc;

@@ -39,7 +39,20 @@ default outputs in your scripts. Always explicitly define expected columns by us
 option for customizing the output format, and *--filter* option for filtering. Use *lsfd --list-columns*
 to get a list of all available columns.
 
+Since util-linux v2.43, *lsfd* uses *statx*(2) with the *AT_STATX_DONT_SYNC*
+flag by default to collect file attributes without synchronizing with remote
+(e.g., NFS) or user-space (e.g., FUSE) file systems, reducing the risk of
+hanging on unresponsive storage. On platforms or environments where *statx*(2)
+or *AT_STATX_DONT_SYNC* is not available, *lsfd* falls back to traditional
+*stat*(2) calls without *AT_STATX_DONT_SYNC*, where synchronization with
+underlying file systems may still occur. The *-b* option can be specified
+to abort immediately if *AT_STATX_DONT_SYNC* is unavailable.
+
 == OPTIONS
+
+*-b*, *--abort-if-blockable*::
+Exit immediately with exit status 2 if the kernel or build does not
+support *statx*(2) with *AT_STATX_DONT_SYNC*.
 
 *-l*, *--threads*::
 List in threads level.
@@ -827,6 +840,14 @@ Do the same but print in JSON format: ::
 ....
 
 
+== EXIT STATUS
+*0*::
+Success.
+*1*::
+Failure.
+*2*::
+Non-blocking feature (*AT_STATX_DONT_SYNC*) is unavailable when *-b* is specified.
+
 == HISTORY
 
 The *lsfd* command is part of the util-linux package since v2.38.
@@ -847,6 +868,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *socket*(2),
 *ss*(8),
 *stat*(2),
+*statx*(2),
 *vsock*(7)
 
 include::man-common/bugreports.adoc[]
