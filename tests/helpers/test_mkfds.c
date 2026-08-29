@@ -99,6 +99,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out, int status)
 	fputs(" -q, --quiet                   don't print pid(s)\n", out);
 	fputs(" -X, --dont-monitor-stdin      don't monitor stdin when pausing\n", out);
 	fputs(" -c, --dont-pause              don't pause after making fd(s)\n", out);
+	fputs(" -t, --timeout <sec>           timeout in seconds\n", out);
 	fputs(" -w, --wait-with <multiplexer> use MULTIPLEXER for waiting events\n", out);
 	fputs(" -W, --multiplexers            list multiplexers\n", out);
 
@@ -5447,7 +5448,7 @@ static void do_nothing(int signum _U_)
  */
 struct multiplexer {
 	const char *name;
-	void (*fn)(bool, struct fdesc *fdescs, size_t n_fdescs);
+	bool (*fn)(bool add_stdin, int tfd, struct fdesc *fdescs, size_t n_fdescs);
 };
 
 #if defined(__NR_select) || defined(__NR_poll)
@@ -5458,13 +5459,14 @@ static void sighandler_nop(int si _U_)
 #endif
 
 #define DEFUN_WAIT_EVENT_SELECT(NAME,SYSCALL,XDECLS,SETUP_SIG_HANDLER,SYSCALL_INVOCATION) \
-	static void wait_event_##NAME(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs) \
+	static bool wait_event_##NAME(bool add_stdin, int tfd, struct fdesc *fdescs, size_t n_fdescs) \
 	{								\
 		fd_set readfds;						\
 		fd_set writefds;					\
 		fd_set exceptfds;					\
 		XDECLS							\
 		int n = 0;						\
+		bool expired = false;					\
 									\
 		FD_ZERO(&readfds);					\
 		FD_ZERO(&writefds);					\
@@ -5474,6 +5476,10 @@ static void sighandler_nop(int si _U_)
 		if (add_stdin) {					\
 			n = 1;						\
 			FD_SET(0, &readfds);				\
+		}							\
+		if (tfd >= 0) {						\
+			n = max(n, tfd + 1);				\
+			FD_SET(tfd, &readfds);				\
 		}							\
 									\
 		for (size_t i = 0; i < n_fdescs; i++) {			\
@@ -5499,6 +5505,9 @@ static void sighandler_nop(int si _U_)
 				errx(EXIT_ENOSYS, "no syscall: " SYSCALL); \
 			err(EXIT_FAILURE, "failed in " SYSCALL);	\
 		}							\
+		if (tfd >= 0 && FD_ISSET(tfd, &readfds))		\
+			expired = true;					\
+		return expired;						\
 	}
 
 DEFUN_WAIT_EVENT_SELECT(default,
@@ -5621,6 +5630,9 @@ int main(int argc, char **argv)
 	bool cont  = false;
 	void *data;
 	bool monitor_stdin = true;
+	unsigned int timeout = 0;
+	int tfd = -1;
+	bool expired = false;
 
 	struct multiplexer *wait_event = NULL;
 
@@ -5633,6 +5645,7 @@ int main(int argc, char **argv)
 		{ "quiet",	no_argument, NULL, 'q' },
 		{ "dont-monitor-stdin", no_argument, NULL, 'X' },
 		{ "dont-pause", no_argument, NULL, 'c' },
+		{ "timeout",	required_argument, NULL, 't' },
 		{ "wait-with",  required_argument, NULL, 'w' },
 		{ "multiplexers",no_argument,NULL, 'W' },
 		{ "help",	no_argument, NULL, 'h' },
@@ -5640,12 +5653,13 @@ int main(int argc, char **argv)
 	};
 
 	static const ul_excl_t excl[] = {
+		{ 'c', 't' },
 		{ 'c', 'w' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	while ((c = getopt_long(argc, argv, "a:lhqcI:O:r:w:WX", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "a:lhqcI:O:r:t:w:WX", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -5667,6 +5681,9 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			cont = true;
+			break;
+		case 't':
+			timeout = strtou32_or_err(optarg, "failed to parse timeout");
 			break;
 		case 'w':
 			wait_event = lookup_multiplexer(optarg);
@@ -5755,9 +5772,25 @@ int main(int argc, char **argv)
 		fflush(stdout);
 	}
 
+	if (timeout > 0) {
+		struct itimerspec its = {
+			.it_value = { .tv_sec = timeout, .tv_nsec = 0 },
+			.it_interval = { 0, 0 }
+		};
+
+		tfd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK | TFD_CLOEXEC);
+		if (tfd < 0)
+			err(EXIT_FAILURE, "failed in timerfd_create(2)");
+		if (timerfd_settime(tfd, 0, &its, NULL) < 0)
+			err(EXIT_FAILURE, "failed in timerfd_settime(2)");
+	}
+
 	if (!cont)
-		wait_event->fn(monitor_stdin,
-			       fdescs, factory->N + factory->EX_N);
+		expired = wait_event->fn(monitor_stdin, tfd,
+					 fdescs, factory->N + factory->EX_N);
+
+	if (tfd >= 0)
+		close(tfd);
 
 	for (int i = 0; i < factory->N + factory->EX_N; i++)
 		if (fdescs[i].fd >= 0 && fdescs[i].close)
@@ -5765,6 +5798,9 @@ int main(int argc, char **argv)
 
 	if (factory->free)
 		factory->free(factory, data);
+
+	if (expired)
+		errx(EXIT_EXPIRED, "timed out after %u seconds", timeout);
 
 	exit(EXIT_SUCCESS);
 }
