@@ -23,6 +23,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+/* Exit code for test_mkfds execution control (distinct from errno-based
+ * exit codes returned when factories fail to construct file descriptors).
+ * 124 matches GNU timeout(1) exit status for expired timeout. */
+#define EXIT_EXPIRED 124
+
 /* Update the constants in
  * tests/ts/lsfd/lsfd-functions.bash when changing
  * the following error definitions. */
@@ -49,10 +54,12 @@ struct fdesc {
 };
 
 #define DEFUN_WAIT_EVENT_POLL(NAME,SYSCALL,XDECLS,SETUP_SIG_HANDLER,SYSCALL_INVOCATION) \
-	void wait_event_##NAME(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs) \
+	bool wait_event_##NAME(bool add_stdin, int tfd, struct fdesc *fdescs, size_t n_fdescs) \
 	{								\
-		int n = add_stdin? 1: 0;				\
+		int n = (add_stdin ? 1 : 0) + (tfd >= 0 ? 1 : 0);	\
 		int n0 = 0;						\
+		int tfd_idx = -1;					\
+		bool expired = false;					\
 		struct pollfd *pfds = NULL;				\
 									\
 		XDECLS							\
@@ -79,21 +86,35 @@ struct fdesc {
 		if (add_stdin) {					\
 			pfds[n0].fd = 0;				\
 			pfds[n0].events |= POLLIN;			\
+			n0++;						\
+		}							\
+									\
+		if (tfd >= 0) {						\
+			tfd_idx = n0;					\
+			pfds[n0].fd = tfd;				\
+			pfds[n0].events |= POLLIN;			\
+			n0++;						\
 		}							\
 									\
 		SETUP_SIG_HANDLER					\
 									\
-		if (SYSCALL_INVOCATION < 0				\
-		    && errno != EINTR) {				\
+		if (SYSCALL_INVOCATION < 0) {				\
+			if (errno == EINTR) {				\
+				free(pfds);				\
+				return false;				\
+			}						\
 			if (errno == ENOSYS)				\
 				errx(EXIT_ENOSYS, "no syscall: " SYSCALL); \
 			err(EXIT_FAILURE, "failed in " SYSCALL);	\
 		}							\
+		if (tfd_idx >= 0 && (pfds[tfd_idx].revents & (POLLIN | POLLERR | POLLHUP))) \
+			expired = true;					\
 		free(pfds);						\
+		return expired;						\
 	}
 
 #ifdef __NR_ppoll
-void wait_event_ppoll(bool add_stdin, struct fdesc *fdescs, size_t n_fdescs);
+bool wait_event_ppoll(bool add_stdin, int tfd, struct fdesc *fdescs, size_t n_fdescs);
 #endif
 
 #endif	/* TEST_MKFDS_H */
