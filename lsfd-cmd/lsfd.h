@@ -362,6 +362,8 @@ bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
  */
 bool is_pidfs_dev(dev_t dev);
 
+#define LSFD_EX_NONBLOCK_UNAVAIL 2
+
 /*
  * Utility
  */
@@ -370,7 +372,7 @@ int call_with_foreign_fd(pid_t target_pid, int target_fd,
 int call_with_foreign_fd_via_pidfd(int pidfd, int target_fd,
 				   int (*fn)(int, void*), void *data);
 
-void lsfd_init_stat_system(void);
+bool lsfd_init_stat_system(void);
 int lsfd_stat(const char *path, struct stat *sb);
 int lsfd_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path);
 int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, ...)
