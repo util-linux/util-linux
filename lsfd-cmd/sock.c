@@ -154,7 +154,7 @@ ino_t get_netns_from_socket(int sk)
 	if (nsfd < 0)
 		return 0;
 
-	if (fstat(nsfd, &sb) < 0) {
+	if (lsfd_fstat(nsfd, &sb) < 0) {
 		close(nsfd);
 		return 0;
 	}

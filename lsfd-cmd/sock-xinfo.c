@@ -253,7 +253,7 @@ void initialize_sock_xinfos(void)
 	if (self_netns_fd < 0)
 		load_sock_xinfo_no_nsswitch(NULL);
 	else {
-		if (fstat(self_netns_fd, &self_netns_sb) == 0) {
+		if (lsfd_fstat(self_netns_fd, &self_netns_sb) == 0) {
 			unsigned long m;
 			struct netns *nsobj = mark_sock_xinfo_loaded(self_netns_sb.st_ino);
 			load_sock_xinfo_no_nsswitch(nsobj);
@@ -279,7 +279,7 @@ void initialize_sock_xinfos(void)
 		struct stat sb;
 		int fd;
 		struct netns *nsobj;
-		if (ul_path_stat(pc, &sb, 0, d->d_name) < 0)
+		if (lsfd_path_stat(pc, &sb, 0, d->d_name) < 0)
 			continue;
 		if (is_sock_xinfo_loaded(sb.st_ino))
 			continue;
