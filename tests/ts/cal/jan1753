@@ -41,5 +41,6 @@ function call_cal {
 
 call_cal "Monday-based 1753 week numbers" --monday --three --week $MYMONTH
 call_cal "Sunday-based 1753 week numbers" -3w $MYMONTH
+call_cal "Saturday-based 1753 week numbers" --saturday --three --week $MYMONTH
 
 ts_finalize

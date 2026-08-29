@@ -6,24 +6,25 @@ _cal_module()
 	case $cur in
 		-*)
 			OPTS="	--one
-				--columns
-				--iso
-				--reform
-				--three
+			  --three
 				--months
-				--sunday
 				--span
+				--saturday
+				--sunday
 				--monday
 				--julian
+				--reform
+				--iso
 				--year
 				--twelve
 				--week
+				--vertical
+				--columns
 				--color=auto
 				--color=always
 				--color=never
-				--vertical
-				--version
 				--help"
+				--version
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -46,12 +46,16 @@ function call_cal {
 
 call_cal "Gregorian - Monday-based week with week numbers" -ymw
 call_cal "Gregorian - Sunday-based week with week numbers" -ysw
+call_cal "Gregorian - Saturday-based week with week numbers" -ytw
 call_cal "Julian - Monday-based week with week numbers" -ymjw
 call_cal "Julian - Sunday-based week with week numbers" -ysjw
+call_cal "Julian - Saturday-based week with week numbers" -ytjw
 call_cal "Gregorian - Monday-based week with week number" -3mw
 call_cal "Gregorian - Sunday-based week with week numbers - 3 month" -3sw
+call_cal "Gregorian - Saturday-based week with week numbers - 3 month" -3tw
 call_cal "Julian - Monday-based week with week numbers - 3 month" -3mjw
 call_cal "Julian - Sunday-based week with week numbers - 3 month" -3sjw
+call_cal "Julian - Saturday-based week with week numbers - 3 month" -3tjw
 
 ts_finalize
 
