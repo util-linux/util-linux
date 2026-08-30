@@ -1039,14 +1039,14 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 	}
 }
 
-static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
+static void parse_maps_line(struct lsfd_control *ctl, struct path_cxt *pc, char *buf, struct proc *proc)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
 	enum association assoc = ASSOC_MEM;
 	struct stat sb = { .st_mode = 0 };
-	struct file *f, *prev;
-	char *path, modestr[5];
+	struct file *f = NULL, *prev;
+	char *path = NULL, modestr[5];
 	dev_t devno;
 
 	/* read rest of the map */
@@ -1078,33 +1078,39 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
-	else if ((path = strchr(buf, '/'))) {
-		rtrim_whitespace((unsigned char *) path);
-		if (lsfd_stat(path, &sb) < 0)
-			/* If a file is mapped but deleted from the file system,
-			 * "stat by the file name" may not work. In that case,
-			 */
-			goto try_map_files;
-		if (sb.st_ino != ino || sb.st_dev != devno)
-			/* There are two files having the same absolute file names!
-			 *
-			 * Maybe the file is bind-mount'ed after mapped.
-			 */
-			goto try_map_files;
-		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
-	} else {
-		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
+	else {
 		char sym[PATH_MAX] = { '\0' };
+		int readlink_err = 0;
+		int stat_err = 0;
 
-	try_map_files:
+		/* Prefer map_files to bypass pathname lookup and avoid hangs */
 		if (ul_path_readlinkf(pc, sym, sizeof(sym),
-				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (lsfd_path_statf(pc, &sb, 0,
-				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_stat_error_file(proc, sym, errno, -assoc);
-		else
-			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+				      "map_files/%"PRIx64"-%"PRIx64, start, end) >= 0) {
+			if (lsfd_path_statf(pc, &sb, 0,
+					    "map_files/%"PRIx64"-%"PRIx64, start, end) == 0)
+				f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+			else
+				stat_err = errno;
+		} else
+			readlink_err = errno;
+
+		if (!f && !ctl->abort_if_blockable && (path = strchr(buf, '/'))) {
+			/* Fallback to pathname from /proc/PID/maps if map_files is not accessible */
+			rtrim_whitespace((unsigned char *) path);
+			if (lsfd_stat(path, &sb) == 0 && sb.st_ino == ino && sb.st_dev == devno)
+				f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
+		}
+
+		if (!f) {
+			if (stat_err)
+				f = new_stat_error_file(proc, sym, stat_err, -assoc);
+			else if (readlink_err)
+				f = new_readlink_error_file(proc, readlink_err, -assoc);
+			else if (path)
+				f = new_stat_error_file(proc, path, ENOENT, -assoc);
+			else
+				f = new_readlink_error_file(proc, ENOENT, -assoc);
+		}
 	}
 
 	if (modestr[0] == 'r')
@@ -1132,7 +1138,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	file_init_content(f);
 }
 
-static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
+static void collect_mem_files(struct lsfd_control *ctl, struct path_cxt *pc, struct proc *proc)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1142,7 +1148,7 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(pc, buf, proc);
+		parse_maps_line(ctl, pc, buf, proc);
 
 	fclose(fp);
 }
@@ -2232,7 +2238,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if ((!ctl->sockets_only)
 	    && (proc->pid == proc->leader->pid
 		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
-		collect_mem_files(pc, proc);
+		collect_mem_files(ctl, pc, proc);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)

@@ -52,7 +52,9 @@ to abort immediately if *AT_STATX_DONT_SYNC* is unavailable.
 
 *-b*, *--abort-if-blockable*::
 Exit immediately with exit status 2 if the kernel or build does not
-support *statx*(2) with *AT_STATX_DONT_SYNC*.
+support *statx*(2) with *AT_STATX_DONT_SYNC*. When this option is specified,
+*lsfd* also avoids falling back to pathnames in _/proc/pid/maps_ if
+_/proc/pid/map_files_ is inaccessible, preventing potential pathname resolution hangs.
 
 *-l*, *--threads*::
 List in threads level.
