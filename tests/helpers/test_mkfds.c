@@ -76,6 +76,7 @@
 #include "cctype.h"
 #include "exitcodes.h"
 #include "libsmartcols.h"
+#include "optutils.h"
 #include "pidfd-utils.h"
 #include "test_mkfds.h"
 #include "xalloc.h"
@@ -5639,7 +5640,15 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 },
 	};
 
+	static const ul_excl_t excl[] = {
+		{ 'c', 'w' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	while ((c = getopt_long(argc, argv, "a:lhqcI:O:r:w:WX", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -5682,8 +5691,6 @@ int main(int argc, char **argv)
 	if (optind == argc)
 		errx(EXIT_FAILURE, "no file descriptor specification given");
 
-	if (cont && wait_event)
-		errx(EXIT_FAILURE, "don't specify both -c/--dont-puase and -w/--wait-with options");
 	if (wait_event == NULL)
 		wait_event = multiplexers + DEFAULT_MULTIPLEXER;
 
