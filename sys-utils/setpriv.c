@@ -1030,7 +1030,7 @@ int main(int argc, char **argv)
 		case PDEATHSIG:
 			if (opts.pdeathsig)
 				errx(EXIT_FAILURE,
-				     _("duplicate --keep-pdeathsig option"));
+				     _("duplicate --pdeathsig option"));
 			parse_pdeathsig(&opts, optarg);
 			break;
 		case PTRACER:
