@@ -805,6 +805,8 @@ struct hungfs_ctl {
 	char *mountpoint;
 	char *targetfile;
 	bool hung;
+	void *mmap_addr;
+	size_t mmap_len;
 };
 
 static void stop_hungfs(struct hungfs_ctl *ctl)
@@ -843,14 +845,23 @@ static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs
 	int fd;
 	int sv[2];
 	pid_t pid;
-	struct hungfs_ctl ctl;
-
+	struct hungfs_ctl ctl = {
+		.pid = 0,
+		.fd = -1,
+		.mountpoint = NULL,
+		.targetfile = NULL,
+		.hung = false,
+		.mmap_addr = NULL,
+		.mmap_len = 0,
+	};
 	struct arg mountpoint = decode_arg("mountpoint", factory->params, argc, argv);
 	const char *sMountpoint = ARG_STRING(mountpoint);
 	struct arg file = decode_arg("file", factory->params, argc, argv);
 	const char *sFile = ARG_STRING(file);
 	struct arg hung = decode_arg("hung", factory->params, argc, argv);
 	bool bHung = ARG_BOOLEAN(hung);
+	struct arg mmap_arg = decode_arg("mmap", factory->params, argc, argv);
+	bool bMmap = ARG_BOOLEAN(mmap_arg);
 
 	{
 		struct stat sb;
@@ -893,6 +904,7 @@ static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs
 	free_arg(&mountpoint);
 	free_arg(&file);
 	free_arg(&hung);
+	free_arg(&mmap_arg);
 
 	wait_hungfs(&ctl);
 
@@ -909,6 +921,21 @@ static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs
 
 		errno = e;
 		err(EXIT_FAILURE, "failed to open %s", t);
+	}
+
+	if (bMmap) {
+		ctl.mmap_len = 1024;
+		ctl.mmap_addr = mmap(NULL, ctl.mmap_len, PROT_READ, MAP_PRIVATE, fd, 0);
+		if (ctl.mmap_addr == MAP_FAILED) {
+			int e = errno;
+			char *t = ctl.targetfile;
+
+			ctl.targetfile = NULL;
+			stop_hungfs(&ctl);
+
+			errno = e;
+			err(EXIT_FAILURE, "failed in mmap %s", t);
+		}
 	}
 
 	/* Release the reservation and duplicate the opened fd into fdescs[0].fd */
@@ -930,6 +957,9 @@ static void *make_fuse_hungfs(const struct factory *factory, struct fdesc fdescs
 static void free_fuse_hungfs(const struct factory *factory _U_, void *data)
 {
 	struct hungfs_ctl *ctl = data;
+
+	if (ctl->mmap_addr && ctl->mmap_addr != MAP_FAILED)
+		munmap(ctl->mmap_addr, ctl->mmap_len);
 
 	if (ctl->hung)
 		go_hungfs(ctl);
@@ -5353,6 +5383,12 @@ static const struct factory factories[] = {
 				.name = "hung",
 				.type = PTYPE_BOOLEAN,
 				.desc = "hang on getattr after open",
+				.defv.boolean = false,
+			},
+			{
+				.name = "mmap",
+				.type = PTYPE_BOOLEAN,
+				.desc = "mmap the opened file into memory privately (MAP_PRIVATE)",
 				.defv.boolean = false,
 			},
 			PARAM_END
