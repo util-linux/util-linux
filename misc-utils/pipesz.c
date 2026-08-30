@@ -240,6 +240,7 @@ int main(int argc, char **argv)
 	};
 
 	int c, fd, n_opt_pipe = 0, n_opt_size = 0;
+	char size_clamped = FALSE;
 	uintmax_t sz;
 
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -280,8 +281,8 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			sz = strtosize_or_err(optarg, _("invalid size"));
-			opt_size = sz > PIPESZ_MAX_SIZE ?
-					PIPESZ_MAX_SIZE : (unsigned int) sz;
+			size_clamped = sz > PIPESZ_MAX_SIZE;
+			opt_size = size_clamped ? PIPESZ_MAX_SIZE : (unsigned int) sz;
 			opt_size_set = TRUE;
 			++n_opt_size;
 			break;
@@ -325,6 +326,11 @@ int main(int argc, char **argv)
 
 		if (!opt_quiet && n_opt_size > 1)
 			warnx(_("using last specified size"));
+
+		if (!opt_quiet && size_clamped)
+			/* TRANSLATORS: '%u' refers to a buffer size in bytes */
+			warnx(_("size reduced to the maximum of %u bytes"),
+			      PIPESZ_MAX_SIZE);
 
 		/* special behavior for --set */
 		if (!n_opt_pipe) {
