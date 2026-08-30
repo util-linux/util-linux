@@ -19,20 +19,11 @@
  * along with this program.  If not, see <https://gnu.org/licenses/>.
  */
 
-#include "c.h"
-#include "cctype.h"
-#include "xalloc.h"
-#include "test_mkfds.h"
-#include "exitcodes.h"
-#include "pidfd-utils.h"
-#include "libsmartcols.h"
-
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/file.h>
 #include <getopt.h>
 #include <linux/bpf.h>
 #ifdef HAVE_LINUX_IO_URING_H
@@ -62,6 +53,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
+#include <sys/file.h>
 #include <sys/inotify.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -79,6 +71,14 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+
+#include "c.h"
+#include "cctype.h"
+#include "exitcodes.h"
+#include "libsmartcols.h"
+#include "pidfd-utils.h"
+#include "test_mkfds.h"
+#include "xalloc.h"
 
 #define _U_ __attribute__((__unused__))
 
