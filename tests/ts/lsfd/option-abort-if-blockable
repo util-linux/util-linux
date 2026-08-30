@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2026 Masatake YAMATO <yamato@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="option -b/--abort-if-blockable"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_LSFD"
+ts_check_test_command "$TS_CMD_ENOSYS"
+ts_check_enosys_syscalls statx
+
+ts_cd "$TS_OUTDIR"
+
+export LC_ALL=C
+
+{
+    "$TS_CMD_ENOSYS" --syscall statx -- "$TS_CMD_LSFD" -b -p $$
+    echo "RC: $?"
+} > "$TS_OUTPUT" 2>&1
+
+sed -i -e 's/^.*lsfd: /lsfd: /' "$TS_OUTPUT"
+
+ts_finalize
