@@ -71,4 +71,28 @@ ts_init_subtest "fd"
 } > "$TS_OUTPUT" 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "mem"
+{
+    mkdir -p "$MNTDIR"
+    coproc MKFDS { "$TS_HELPER_MKFDS" -t "$TMO" fuse-hungfs $FD mountpoint="$MNTDIR" file="stalled_file" hung=true mmap=true; }
+    if read -u ${MKFDS[0]} PID; then
+	EXPR='(NAME =~ "stalled_file") and (ASSOC == "mem")'
+	${TS_CMD_LSFD} -b -r -n -p "${PID}" -o ASSOC,TYPE,SOURCE -Q "${EXPR}"
+	RC=$?
+	echo 'ASSOC,TYPE,SOURCE': $RC
+	if [ $RC -ne 0 ]; then
+	    echo "lsfd failed (PID: ${PID}, RC: ${RC})"
+	fi
+
+	echo DONE >&"${MKFDS[1]}"
+    fi
+    wait ${MKFDS_PID}
+    MKFDS_RC=$?
+    if [ "${MKFDS_RC}" -eq "${EXPIRED}" ]; then
+	echo "test_mkfds timed out"
+    fi
+    rmdir "$MNTDIR" 2>/dev/null || true
+} > "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
+
 ts_finalize
