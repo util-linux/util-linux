@@ -54,9 +54,11 @@ to abort immediately if *AT_STATX_DONT_SYNC* is unavailable.
 Exit immediately with exit status 2 if the kernel or build does not
 support *statx*(2) with *AT_STATX_DONT_SYNC*. When this option is specified,
 *lsfd* also avoids resolving mountpoint pathnames from _/proc/pid/mountinfo_
-to prevent potential pathname resolution hangs. Note that skipping mountpoint
-pathname resolution may reduce the accuracy of device and file system identification
-(such as `SOURCE` and `DEV` columns) on certain file systems (e.g. btrfs or overlayfs).
+and falling back to pathnames in _/proc/pid/maps_ (if _/proc/pid/map_files_
+is inaccessible) to prevent potential pathname resolution hangs. Note that
+skipping mountpoint pathname resolution may reduce the accuracy of device
+and file system identification (such as `SOURCE` and `DEV` columns) on
+certain file systems (e.g. btrfs or overlayfs).
 
 *-l*, *--threads*::
 List in threads level.
