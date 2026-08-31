@@ -273,8 +273,10 @@ static int hook_create_mount(struct libmnt_context *cxt,
 	assert(api);
 
 	if (api->fd_fs < 0) {
-		const char *type = mnt_fs_get_fstype(cxt->fs);
+		const char *type = mnt_fs_get_mounttype(cxt->fs);
 
+		if (!type)
+			type = mnt_fs_get_fstype(cxt->fs);
 		rc = open_fs_configuration_context(cxt, api, type);
 		if (rc < 0) {
 			rc = api->fd_fs;
@@ -648,8 +650,12 @@ static int init_sysapi(struct libmnt_context *cxt,
 		int rc = 0;
 
 		/* fsopen() to create a superblock */
-		if (cxt->helper == NULL && type && !strchr(type, ','))
-			rc = open_fs_configuration_context(cxt, api, type);
+		if (cxt->helper == NULL && type && !strchr(type, ',')) {
+			const char *mtype = mnt_fs_get_mounttype(cxt->fs);
+
+			rc = open_fs_configuration_context(cxt, api,
+							   mtype ? mtype : type);
+		}
 
 		/* dummy fsopen() to test if API is available */
 		else if (!fsopen_is_supported()) {

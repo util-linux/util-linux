@@ -2877,7 +2877,7 @@ AS_IF([test "x$with_sysusersdir" != "xno"], [
 
 
 AC_ARG_WITH([ntfs-mounttype],
-  AS_HELP_STRING([--with-ntfs-mounttype=TYPE], [overwrite default ntfs3 mount type for NTFS]),
+  AS_HELP_STRING([--with-ntfs-mounttype=TYPE], [set kernel FS driver name for NTFS (e.g., ntfs3)]),
   [], [with_ntfs_mounttype=no]
 )
 AS_IF([test "x$with_ntfs_mounttype" != "xno"], [

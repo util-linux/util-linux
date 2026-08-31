@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mounttype config"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_BLKID"
+
+ts_skip_nonroot
+ts_check_losetup
+ts_check_prog "mkfs.ext2"
+
+[ "$("$TS_HELPER_SYSINFO" fsopen-ok)" = "1" ] || ts_skip "no fsopen support"
+
+CONF="/run/mount/fs.d/ext2.conf"
+
+[ -f "$CONF" ] && ts_skip "config $CONF already exists"
+
+ts_device_init
+DEVICE=$TS_LODEV
+
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
+ts_udevadm_settle "$DEVICE"
+ts_device_has "TYPE" "ext2" $DEVICE || ts_die "Cannot find ext2 on $DEVICE"
+
+mkdir -p $TS_MOUNTPOINT
+mkdir -p "$(dirname $CONF)"
+echo "mounttype = ext2nonexist" > "$CONF"
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 \
+	| sed -e "s|$DEVICE|DEVICE|" -e "s|$TS_MOUNTPOINT|MOUNTPOINT|" >> "$TS_OUTPUT"
+rm -f "$CONF"
+
+ts_finalize

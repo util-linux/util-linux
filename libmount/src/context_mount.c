@@ -505,10 +505,11 @@ static int exec_helper(struct libmnt_context *cxt)
  *         >0 in case of mount(2) error (returns syscall errno),
  *         <0 in case of other errors.
  */
-static int do_mount(struct libmnt_context *cxt, const char *try_type)
+static int do_mount(struct libmnt_context *cxt, const char *try_type,
+		    const char *try_mounttype)
 {
 	int rc = 0;
-	char *org_type = NULL;
+	char *org_type = NULL, *org_mounttype = NULL;
 	struct libmnt_optlist *ol = NULL;
 
 	assert(cxt);
@@ -538,7 +539,11 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 				goto done;
 			}
 		}
+		if (mnt_fs_get_mounttype(cxt->fs))
+			org_mounttype = strdup(mnt_fs_get_mounttype(cxt->fs));
+
 		mnt_fs_set_fstype(cxt->fs, try_type);
+		mnt_fs_set_mounttype(cxt->fs, try_mounttype);
 	}
 
 
@@ -555,7 +560,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 	if (org_type && rc != 0) {
 		__mnt_fs_set_fstype_ptr(cxt->fs, org_type);
-		org_type  = NULL;
+		org_type = NULL;
+		mnt_fs_set_mounttype(cxt->fs, org_mounttype);
 	}
 
 	if (rc == 0 && try_type && cxt->update) {
@@ -568,6 +574,7 @@ done:
 	if (try_type && ol)
 		mnt_optlist_remove_flags(ol, MS_SILENT, cxt->map_linux);
 	free(org_type);
+	free(org_mounttype);
 	return rc;
 }
 
@@ -607,6 +614,7 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 		return -ENOMEM;
 	do {
 		char *autotype = NULL;
+		const char *automounttype = NULL;
 		char *end = strchr(p, ',');
 
 		if (end)
@@ -616,7 +624,8 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 
 		/* Let's support things like "udf,iso9660,auto" */
 		if (strcmp(p, "auto") == 0) {
-			rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
+			rc = mnt_context_guess_srcpath_fstype(cxt, &autotype,
+							      &automounttype);
 			if (rc) {
 				DBG_OBJ(CXT, cxt, ul_debug("failed to guess FS type [rc=%d]", rc));
 				free(p0);
@@ -628,7 +637,7 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 		}
 
 		if (p)
-			rc = do_mount(cxt, p);
+			rc = do_mount(cxt, p, automounttype);
 		p = end ? end + 1 : NULL;
 		free(autotype);
 	} while (!is_termination_status(cxt) && p);
@@ -675,7 +684,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 
 	for (fp = filesystems; *fp; fp++) {
 		DBG_OBJ(CXT, cxt, ul_debug(" ##### trying '%s'", *fp));
-		rc = do_mount(cxt, *fp);
+		rc = do_mount(cxt, *fp, NULL);
 		if (is_termination_status(cxt))
 			break;
 	}
@@ -884,7 +893,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 			/* this only happens if fstab contains a list of filesystems */
 			res = do_mount_by_types(cxt, type);
 		else
-			res = do_mount(cxt, NULL);
+			res = do_mount(cxt, NULL, NULL);
 	} else
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
@@ -1786,9 +1795,14 @@ int mnt_context_get_mount_excode(
 	case ENODEV:
 		if (!buf)
 			break;
-		if (mnt_context_get_fstype(cxt))
+		if (mnt_context_get_fstype(cxt)) {
+			const char *type = mnt_fs_get_mounttype(cxt->fs);
+
+			if (!type)
+				type = mnt_context_get_fstype(cxt);
 			snprintf(buf, bufsz, _("unknown filesystem type '%s'"),
-					mnt_context_get_fstype(cxt));
+					type);
+		}
 		else
 			snprintf(buf, bufsz, _("unknown filesystem type"));
 		break;

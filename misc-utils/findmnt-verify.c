@@ -17,13 +17,12 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "match.h"
-#include "mountutils.h"
-
 #include "findmnt.h"
 
 struct verify_context {
 	struct libmnt_fs	*fs;
 	struct libmnt_table	*tb;
+	struct libmnt_context	*cxt;
 
 	char	**fs_ary;
 	size_t	fs_num;
@@ -478,7 +477,12 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 			goto done;
 		}
 
-		mounttype = ul_fstype_to_mounttype(realtype) ? : realtype;
+		if (!vfy->cxt)
+			vfy->cxt = mnt_new_context();
+		mounttype = mnt_config_get_value(vfy->cxt,
+					"fs.d", realtype, "mounttype");
+		if (!mounttype)
+			mounttype = realtype;
 
 		if (!isswap
 		    && (!type || isauto)
@@ -594,6 +598,7 @@ done:
 		fprintf(stdout, _("Success, no errors or warnings detected\n"));
 
 
+	mnt_free_context(vfy.cxt);
 	free_proc_filesystems(&vfy);
 
 	return rc != 0 ? rc : vfy.nerrors + findmnt->parse_nerrors;

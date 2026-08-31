@@ -23,6 +23,7 @@ mnt_resolve_target
 <FILE>context</FILE>
 libmnt_context
 libmnt_ns
+mnt_config_get_value
 mnt_free_context
 mnt_new_context
 mnt_reset_context

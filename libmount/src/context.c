@@ -75,6 +75,7 @@ struct libmnt_context *mnt_new_context(void)
 
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
+	INIT_LIST_HEAD(&cxt->config_entries);
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
@@ -123,6 +124,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_set_target_ns(cxt, NULL);
 
 	free(cxt->children);
+	mnt_free_config(cxt);
 
 	DBG_OBJ(CXT, cxt, ul_debug("free"));
 	free(cxt);
@@ -2154,8 +2156,12 @@ end:
 /* Guess type, but not set to cxt->fs, always use free() for the result. It's
  * no error when we're not able to guess a filesystem type. Note that error
  * does not mean that result in @type is NULL.
+ *
+ * The @mounttype is optional (may be NULL); if non-NULL and the detected
+ * fstype has a different kernel driver name, it is set to the driver name.
  */
-int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
+int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type,
+				     const char **mounttype)
 {
 	int rc = 0;
 	struct libmnt_ns *ns_old;
@@ -2228,16 +2234,8 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 		}
 	}
 
-	if (rc == 0 && *type) {
-		const char *x = ul_fstype_to_mounttype(*type);
-
-		if (x) {
-			free(*type);
-			*type = strdup(x);
-			if (!*type)
-				rc = -ENOMEM;
-		}
-	}
+	if (rc == 0 && *type && mounttype)
+		*mounttype = mnt_config_get_value(cxt, "fs.d", *type, "mounttype");
 
 	return rc;
 }
@@ -2280,14 +2278,22 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	if (cxt->fstype_pattern)
 		goto done;
 
-	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
-	if (rc == 0 && type)
-		__mnt_fs_set_fstype_ptr(cxt->fs, type);
-	else
-		free(type);
+	{
+		const char *mtype = NULL;
+
+		rc = mnt_context_guess_srcpath_fstype(cxt, &type, &mtype);
+		if (rc == 0 && type) {
+			__mnt_fs_set_fstype_ptr(cxt->fs, type);
+			if (mtype)
+				mnt_fs_set_mounttype(cxt->fs, mtype);
+		} else
+			free(type);
+	}
 done:
-	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s [rc=%d]",
-				mnt_fs_get_fstype(cxt->fs), rc));
+	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s, mount type: %s [rc=%d]",
+				mnt_fs_get_fstype(cxt->fs),
+				mnt_fs_get_mounttype(cxt->fs) ? : "same as FS type",
+				rc));
 	return rc;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");

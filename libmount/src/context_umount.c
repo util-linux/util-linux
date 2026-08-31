@@ -300,9 +300,14 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 			close(fd);
 		}
 		if (type) {
-			const char *x = ul_fstype_to_mounttype(type);
-			int rc = mnt_fs_set_fstype(cxt->fs, x ? x : type);
+			int rc = mnt_fs_set_fstype(cxt->fs, type);
 
+			if (!rc) {
+				const char *x = mnt_config_get_value(cxt,
+							"fs.d", type, "mounttype");
+				if (x)
+					rc = mnt_fs_set_mounttype(cxt->fs, x);
+			}
 			if (rc)
 				return rc;
 		}
