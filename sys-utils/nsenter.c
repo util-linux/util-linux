@@ -171,7 +171,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 	if (*fd >= 0)
 		close(*fd);
 
-	*fd = open(path, O_RDONLY);
+	*fd = open(path, O_RDONLY | O_CLOEXEC);
 	if (*fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
@@ -396,7 +396,7 @@ static void open_cgroup_procs(void)
 
 	snprintf(fdpath, sizeof(fdpath), _PATH_SYS_CGROUP "/%s/cgroup.procs", path);
 
-	if ((cgroup_procs_fd = open(fdpath, O_WRONLY | O_APPEND)) < 0)
+	if ((cgroup_procs_fd = open(fdpath, O_WRONLY | O_APPEND | O_CLOEXEC)) < 0)
 		err(EXIT_FAILURE, _("failed to open cgroup.procs"));
 
 	free(buf);
@@ -762,7 +762,7 @@ int main(int argc, char *argv[])
 
 	/* Remember the current working directory if I'm not changing it */
 	if (root_fd >= 0 && wd_fd < 0 && wdns == NULL) {
-		wd_fd = open(".", O_RDONLY);
+		wd_fd = open(".", O_RDONLY | O_CLOEXEC);
 		if (wd_fd < 0)
 			err(EXIT_FAILURE,
 			    _("cannot open current working directory"));
@@ -785,7 +785,7 @@ int main(int argc, char *argv[])
 
 	/* working directory specified as in-namespace path */
 	if (wdns) {
-		wd_fd = open(wdns, O_RDONLY);
+		wd_fd = open(wdns, O_RDONLY | O_CLOEXEC);
 		if (wd_fd < 0)
 			err(EXIT_FAILURE,
 			    _("cannot open current working directory"));
