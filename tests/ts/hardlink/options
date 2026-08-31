@@ -119,7 +119,7 @@ else
 	mkdir -p "$SPDIR"
 	truncate -s 1M "$SPDIR"/sparse-a
 	truncate -s 1M "$SPDIR"/sparse-b
-	echo "content" > "$SPDIR"/real-a
+	dd if=/dev/zero of="$SPDIR"/real-a bs=4096 count=1 2>/dev/null
 	cp "$SPDIR"/real-a "$SPDIR"/real-b
 	$TS_CMD_HARDLINK -v "$SPDIR" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	summary_clean
