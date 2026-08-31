@@ -77,6 +77,9 @@ Display _number_ of months, starting from the month containing the date.
 *-S, --span*::
 Display months spanning the date.
 
+*-t*, *--saturday*::
+Display Saturday as the first day of the week.
+
 *-s*, *--sunday*::
 Display Sunday as the first day of the week.
 
@@ -151,7 +154,7 @@ Denote the _day_ (1-31), _month and year_, and the day will be highlighted if th
 
 == NOTES
 
-A year starts on January 1. The first day of the week is determined by the locale or the *--sunday* and *--monday* options.
+A year starts on January 1. The first day of the week is determined by the locale or the *--sunday*, *--monday* and *--saturday* options.
 
 The week numbering depends on the choice of the first day of the week. If it is Sunday then the customary North American numbering is used, where 1 January is in week number 1. If it is Monday (*-m*) then the ISO 8601 standard week numbering is used, where the first Thursday is in week number 1.
 

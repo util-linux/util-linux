@@ -48,20 +48,28 @@ function call_cal {
 
 call_cal "Gregorian - Monday-based week" -1mv $MYTIME
 call_cal "Gregorian - Sunday-based week" -1sv $MYTIME
+call_cal "Gregorian - Saturday-based week" -1tv $MYTIME
 call_cal "Julian - Monday-based week" -1mjv $MYTIME
 call_cal "Julian - Sunday-based week" -1sjv $MYTIME
+call_cal "Julian - Saturday-based week" -1tjv $MYTIME
 call_cal "Gregorian - Monday-based week with week numbers" -1mwv $MYTIME
 call_cal "Gregorian - Sunday-based week with week numbers" -1swv $MYTIME
+call_cal "Gregorian - Saturday-based week with week numbers" -1twv $MYTIME
 call_cal "Julian - Monday-based week with week numbers" -1mjwv $MYTIME
 call_cal "Julian - Sunday-based week with week numbers" -1sjwv $MYTIME
+call_cal "Julian - Saturday-based week with week numbers" -1tjwv $MYTIME
 call_cal "Gregorian - Monday-based week" -3mv $MYTIME
 call_cal "Gregorian - Sunday-based week" -3sv $MYTIME
+call_cal "Gregorian - Saturday-based week" -3tv $MYTIME
 call_cal "Julian - Monday-based week" -3mjv $MYTIMET
 call_cal "Julian - Sunday-based week" -3sjv $MYTIME
+call_cal "Julian - Saturday-based week" -3tjv $MYTIME
 call_cal "Gregorian - Monday-based week with week numbers" -3mwv $MYTIME
 call_cal "Gregorian - Sunday-based week with week numbers" -3swv $MYTIME
+call_cal "Gregorian - Saturday-based week with week numbers" -3twv $MYTIME
 call_cal "Julian - Monday-based week with week numbers" -3mjwv $MYTIME
 call_cal "Julian - Sunday-based week with week numbers" -3sjwv $MYTIME
+call_cal "Julian - Saturday-based week with week numbers" -3tjwv $MYTIME
 
 call_cal "Normal span" "-vSn 3" $MYTIME
 call_cal "Large span" "-vSn 21" $MYTIME

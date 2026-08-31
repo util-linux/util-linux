@@ -51,33 +51,45 @@ function call_cal {
 
 call_cal "Gregorian - Monday-based month" -1m $MYMONTH
 call_cal "Gregorian - Sunday-based month" -1s $MYMONTH
+call_cal "Gregorian - Saturday-based month" -1t $MYMONTH
 call_cal "Julian    - Monday-based month" -1mj $MYMONTH
 call_cal "Julian    - Sunday-based month" -1sj $MYMONTH
+call_cal "Julian    - Saturday-based month" -1tj $MYMONTH
 
 call_cal "Gregorian - Monday-based 3 months" -3m $MYMONTH
 call_cal "Gregorian - Sunday-based 3 months" -3s $MYMONTH
+call_cal "Gregorian - Saturday-based 3 months" -3t $MYMONTH
 call_cal "Julian    - Monday-based 3 months" -3mj $MYMONTH
 call_cal "Julian    - Sunday-based 3 months" -3sj $MYMONTH
+call_cal "Julian    - Saturday-based 3 months" -3tj $MYMONTH
 
 call_cal "Gregorian - Monday-based year" -1m $MYYEAR
 call_cal "Gregorian - Sunday-based year" -1s $MYYEAR
+call_cal "Gregorian - Saturday-based year" -1t $MYYEAR
 call_cal "Julian    - Monday-based year" -1mj $MYYEAR
 call_cal "Julian    - Sunday-based year" -1sj $MYYEAR
+call_cal "Julian    - Saturday-based year" -1tj $MYYEAR
 
 
 call_cal "Gregorian - Monday-based month with weeks" -1mw $MYMONTH
 call_cal "Gregorian - Sunday-based month with weeks" -1sw $MYMONTH
+call_cal "Gregorian - Saturday-based month with weeks" -1tw $MYMONTH
 call_cal "Julian    - Monday-based month with weeks" -1mjw $MYMONTH
 call_cal "Julian    - Sunday-based month with weeks" -1sjw $MYMONTH
+call_cal "Julian    - Saturday-based month with weeks" -1tjw $MYMONTH
 
 call_cal "Gregorian - Monday-based 3 months with weeks" -3mw $MYMONTH
 call_cal "Gregorian - Sunday-based 3 months with weeks" -3sw $MYMONTH
+call_cal "Gregorian - Saturday-based 3 months with weeks" -3tw $MYMONTH
 call_cal "Julian    - Monday-based 3 months with weeks" -3mjw $MYMONTH
 call_cal "Julian    - Sunday-based 3 months with weeks" -3sjw $MYMONTH
+call_cal "Julian    - Saturday-based 3 months with weeks" -3tjw $MYMONTH
 
 call_cal "Gregorian - Monday-based year with weeks" -1mw $MYYEAR
 call_cal "Gregorian - Sunday-based year with weeks" -1sw $MYYEAR
+call_cal "Gregorian - Saturday-based year with weeks" -1tw $MYYEAR
 call_cal "Julian    - Monday-based year with weeks" -1mjw $MYYEAR
 call_cal "Julian    - Sunday-based year with weeks" -1sjw $MYYEAR
+call_cal "Julian    - Saturday-based year with weeks" -1tjw $MYYEAR
 
 ts_finalize
