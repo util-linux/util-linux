@@ -19,20 +19,11 @@
  * along with this program.  If not, see <https://gnu.org/licenses/>.
  */
 
-#include "c.h"
-#include "cctype.h"
-#include "xalloc.h"
-#include "test_mkfds.h"
-#include "exitcodes.h"
-#include "pidfd-utils.h"
-#include "libsmartcols.h"
-
 #include <arpa/inet.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys/file.h>
 #include <getopt.h>
 #include <linux/bpf.h>
 #ifdef HAVE_LINUX_IO_URING_H
@@ -62,6 +53,7 @@
 #include <string.h>
 #include <sys/epoll.h>
 #include <sys/eventfd.h>
+#include <sys/file.h>
 #include <sys/inotify.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
@@ -79,6 +71,15 @@
 #include <sys/wait.h>
 #include <time.h>
 #include <unistd.h>
+
+#include "c.h"
+#include "cctype.h"
+#include "exitcodes.h"
+#include "libsmartcols.h"
+#include "optutils.h"
+#include "pidfd-utils.h"
+#include "test_mkfds.h"
+#include "xalloc.h"
 
 #define _U_ __attribute__((__unused__))
 
@@ -403,11 +404,10 @@ static void close_fdesc(int fd, void *data _U_)
 	close(fd);
 }
 
-volatile ssize_t unused_result_ok;
 static void abort_with_child_death_message(int signum _U_)
 {
 	const char msg[] = "the child process exits unexpectedly";
-	unused_result_ok = write(2, msg, sizeof(msg));
+	ignore_result(write(2, msg, sizeof(msg)));
 	_exit(EXIT_FAILURE);
 }
 
@@ -5639,7 +5639,15 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 },
 	};
 
+	static const ul_excl_t excl[] = {
+		{ 'c', 'w' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	while ((c = getopt_long(argc, argv, "a:lhqcI:O:r:w:WX", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'h':
 			usage(stdout, EXIT_SUCCESS);
@@ -5682,8 +5690,6 @@ int main(int argc, char **argv)
 	if (optind == argc)
 		errx(EXIT_FAILURE, "no file descriptor specification given");
 
-	if (cont && wait_event)
-		errx(EXIT_FAILURE, "don't specify both -c/--dont-puase and -w/--wait-with options");
 	if (wait_event == NULL)
 		wait_event = multiplexers + DEFAULT_MULTIPLEXER;
 
