@@ -2,7 +2,7 @@ CPU(s):              2
 On-line CPU(s) list: 0,1
 Vendor ID:           ARM
 Model name:          Cortex-A15
-Model:               4
+Model:               0xc0f
 Thread(s) per core:  1
 Core(s) per socket:  2
 Socket(s):           1

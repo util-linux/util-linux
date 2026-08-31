@@ -910,7 +910,7 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 	if (ct->family)
 		add_summary_s(tb, sec, _("CPU family:"), ct->family);
 	if (ct->model || ct->revision)
-		add_summary_s(tb, sec, _("Model:"), ct->revision ? ct->revision : ct->model);
+		add_summary_s(tb, sec, _("Model:"), ct->model ?: ct->revision);
 
 	add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
 	if (cxt->is_cluster)
