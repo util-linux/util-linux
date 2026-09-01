@@ -47,5 +47,10 @@ loopdev:
 nsenter, unshare:
     - add O_CLOEXEC to all open() calls [CVE-2026-78408] (by Karel Zak)
 
+tests:
+    - (lsfd) add a function checking the availability of UDPLite socket (by Masatake YAMATO)
+    - (lsfd/option-inet) make UDPLite related test case skippable (by Masatake YAMATO)
+    - (lsfd/mkfds-udp*) make UDPLite related test cases skippable (by Masatake YAMATO)
+
 wall, write:
     - sanitize hostname in banner header (by Karel Zak)
