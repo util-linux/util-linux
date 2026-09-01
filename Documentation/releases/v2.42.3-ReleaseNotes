@@ -1,0 +1,121 @@
+util-linux 2.42.3 Release Notes
+===============================
+
+Security fixes:
+
+ CVE-2026-76642 - mount(8) post-mount hooks execute after helper failure.
+   When an external mount.<type> helper exits nonzero, post-mount hooks
+   (X-mount.idmap, X-mount.owner/group/mode) still execute as if the
+   mount had succeeded, allowing privileged operations on the
+   pre-existing target filesystem.
+
+ CVE-2026-78410 - mount(8) TOCTOU race on source path.
+   In restricted (SUID, non-root) mode, the source path is
+   canonicalized with realpath() as euid=0, following symlinks through
+   user-writable directories.  Additionally, open_tree() follows
+   symlinks in intermediate path components.  A local attacker can
+   redirect a privileged mount or post-mount ownership change to an
+   arbitrary path.
+
+ CVE-2026-78409 - mount(8) X-mount.subdir symlink escape.
+   The open_tree() call used to open a subdirectory on a detached mount
+   follows symlinks in intermediate path components, allowing escape
+   from the detached tree.
+
+ CVE-2026-78408 - nsenter(1), unshare(1) file descriptor leak.
+   File descriptors in nsenter and unshare were not created with
+   O_CLOEXEC, potentially leaking them across exec.  Added O_CLOEXEC
+   as defense in depth.
+
+ wall(1), write(1) - hostname escape sequence injection.
+   The CVE-2024-28085 fix sanitized only message bodies; the banner
+   headers still interpolated the system hostname without sanitization.
+   An unprivileged user can inject terminal escape sequences via a user
+   namespace hostname.
+   Additional fix for CVE-2024-28085.
+   Reported-by: Skyler Ferrante
+
+Changes between v2.42.2 and v2.42.3:
+
+agetty:
+    - fix spurious issue file reprinting on reload (by Karel Zak)
+
+bitops:
+    - avoid macro redefinition on macOS (by Karel Zak)
+
+build-sys:
+    - require lastlog.h for liblastlog2 (by WanBingjiang)
+
+col:
+    - guard c_width sign before size_t cast in BS branch (by Aizal Khan)
+    - fix cur_col underflow on backspace over a wide char (by Aizal Khan)
+
+disk-utils:
+    - fix memory leak in execute function (by Tigran Sogomonian)
+
+hexdump:
+    - stop after stdout write errors (by WanBingjiang)
+
+libblkid:
+    - befs fix possible load of misaligned address (by Milan Broz)
+    - befs fix possible too large shift (by Milan Broz)
+    - dos fix 32-bit overflow in partition start/size [coverity CID 503517, 503518] (by Karel Zak)
+    - (iso9660) fix out-of-bounds read of root dir record (by Aizal Khan)
+
+libfdisk:
+    - fix OOM on GPT with huge partition entries array (by Karel Zak)
+
+lib/fileutils:
+    - add ul_openat_resolve() openat2 wrapper (by Karel Zak)
+
+libmount:
+    - skip post-mount hooks after failed mount helper [CVE-2026-76642] (by Karel Zak)
+    - pin source path with openat2() for restricted users [CVE-2026-78410] (by Karel Zak)
+    - restrict source path canonicalization for non-root users [CVE-2026-78410] (by Karel Zak)
+    - fix X-mount.subdir symlink following on detached tree [CVE-2026-78409] (by Karel Zak)
+    - add mnt_open_tree() helper for safe tree opening (by Karel Zak)
+    - fix DBG() macro use (by Karel Zak)
+    - reuse existing act fd in mnt_update_start on ro retry (by wangrong)
+    - properly end act file in mnt_free_update (by wangrong)
+    - don't ignore "/" target in mount --all when target prefix is set (by Karel Zak)
+
+lscpu:
+    - remove mmu reference not available in stable/v2.42 (by Karel Zak)
+    - add NULL guards for RISC-V ISA functions [coverity CID 503785] (by Karel Zak)
+
+mbsalign:
+    - check remaining buffer space before writing hex escapes (by aizu-m)
+
+meson:
+    - move header checks before component dependency resolution (by Karel Zak)
+    - gate liblastlog2 on lastlog.h (by Thomas Weißschuh)
+
+more:
+    - fix out-of-bounds write in get_line() on invalid multibyte input (by logical-misha)
+
+nsenter, unshare:
+    - add O_CLOEXEC to all open() calls [CVE-2026-78408] (by Karel Zak)
+
+pg:
+    - fix out-of-bounds access past wbuf on a trailing tab (by logical-misha)
+
+po:
+    - merge changes (by Karel Zak)
+    - update zh_CN.po (from translationproject.org) (by Boyuan Yang)
+    - update tr.po (from translationproject.org) (by Emir SARI)
+    - update es.po (from translationproject.org) (by Antonio Ceballos Roa)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update pl.po (from translationproject.org) (by Michał Kułach)
+
+tests:
+    - (partx) settle udev before checking partition count (by Karel Zak)
+    - kill/decode also strip RT0 from signal mask output (by Karel Zak)
+    - test_scols_termreduce needs libsmartcols (by Adam Sampson)
+
+unshare:
+    - Fix --map-auto regression (by Chris Webb)
+
+wall, write:
+    - sanitize hostname in banner header (by Karel Zak)
