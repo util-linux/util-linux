@@ -35,6 +35,7 @@ shopt -s nullglob
 function check_partition_count
 {
 	# this function needs shopt -s nullglob
+	udevadm settle
 	local cnt_want=$1
 	local devname=$(basename $TS_DEVICE)
 	local parts=(/sys/block/${devname}/${devname}*)
