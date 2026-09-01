@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.38-rc4\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-06-16 12:05+0200\n"
+"POT-Creation-Date: 2026-09-01 13:07+0200\n"
 "PO-Revision-Date: 2022-12-23 14:44+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <(nothing)>\n"
@@ -43,7 +43,7 @@ msgstr "არასაკმარისი არგუმენტები"
 #: disk-utils/blockdev.c:497 disk-utils/cfdisk.c:2838 disk-utils/delpart.c:68
 #: disk-utils/fdformat.c:240 disk-utils/fdisk.c:1047 disk-utils/fdisk.c:1386
 #: disk-utils/fdisk-list.c:403 disk-utils/fdisk-list.c:444
-#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1481
+#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1483
 #: disk-utils/fsck.cramfs.c:159 disk-utils/fsck.cramfs.c:547
 #: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:217
 #: disk-utils/mkfs.cramfs.c:182 disk-utils/mkfs.cramfs.c:664
@@ -71,12 +71,12 @@ msgstr "არასაკმარისი არგუმენტები"
 #: sys-utils/setpriv.c:271 sys-utils/setpriv.c:650 sys-utils/setpriv.c:682
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
-#: sys-utils/unshare.c:726 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3119 term-utils/mesg.c:156 term-utils/script.c:393
+#: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
+#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:419 text-utils/colcrt.c:286
+#: term-utils/scriptreplay.c:314 term-utils/wall.c:420 text-utils/colcrt.c:286
 #: text-utils/more.c:469 text-utils/rev.c:167 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -323,7 +323,7 @@ msgid "Quit program without writing changes"
 msgstr "პროგრამიდან ცვლილებების შენახვის გარეშე გასვლა"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3264 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3270 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "ტიპი"
@@ -903,7 +903,7 @@ msgid "Using default response %c."
 msgstr ""
 
 #: disk-utils/fdisk.c:241 disk-utils/fdisk.c:315 disk-utils/fdisk.c:392
-#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2586
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2592
 msgid "Value out of range."
 msgstr ""
 
@@ -1117,7 +1117,7 @@ msgid "cannot read"
 msgstr "წაკითხვის შეცდომა"
 
 #: disk-utils/fdisk.c:1025 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
-#: libfdisk/src/gpt.c:2506
+#: libfdisk/src/gpt.c:2512
 msgid "First sector"
 msgstr "პირველი სექტორი"
 
@@ -1277,7 +1277,7 @@ msgstr ""
 #: sys-utils/mount.c:1045 sys-utils/mount.c:1117 sys-utils/mountpoint.c:264
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:285 sys-utils/swapon.c:1043
 #: sys-utils/switch_root.c:271 sys-utils/umount.c:629 term-utils/setterm.c:1189
-#: text-utils/col.c:583 text-utils/more.c:2196
+#: text-utils/col.c:586 text-utils/more.c:2198
 msgid "bad usage"
 msgstr ""
 
@@ -1349,7 +1349,7 @@ msgid "Alignment offset: %lu bytes"
 msgstr ""
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:263
-#: disk-utils/fsck.c:1268 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
+#: disk-utils/fsck.c:1270 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
 #: misc-utils/findmnt.c:1716 misc-utils/lsblk.c:2212 misc-utils/lsblk.c:2266
 #: misc-utils/lslocks.c:1011 sys-utils/lsns.c:1424
 msgid "failed to allocate iterator"
@@ -1423,22 +1423,22 @@ msgid "Partition table entries are not in disk order."
 msgstr ""
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
-#: libfdisk/src/gpt.c:3260 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3266 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "გაშვება"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
-#: libfdisk/src/gpt.c:3261 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3267 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "End"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
-#: libfdisk/src/gpt.c:3262 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3268 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "სექტორები"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
-#: libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "ზომა"
 
@@ -1967,204 +1967,204 @@ msgstr ""
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
 #: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
-#: sys-utils/unshare.c:699 sys-utils/unshare.c:1164
+#: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
 msgstr "ფორკის შეცდომა"
 
-#: disk-utils/fsck.c:702
+#: disk-utils/fsck.c:704
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: შესრულების შეცდომა"
 
-#: disk-utils/fsck.c:792
+#: disk-utils/fsck.c:794
 msgid "wait: no more child process?!?"
 msgstr ""
 
-#: disk-utils/fsck.c:795 lib/pager.c:305 sys-utils/flock.c:462
-#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1198
+#: disk-utils/fsck.c:797 lib/pager.c:305 sys-utils/flock.c:462
+#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1197
 msgid "waitpid failed"
 msgstr "waitpid -ის შეცდომა"
 
-#: disk-utils/fsck.c:813
+#: disk-utils/fsck.c:815
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr ""
 
-#: disk-utils/fsck.c:819
+#: disk-utils/fsck.c:821
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr ""
 
-#: disk-utils/fsck.c:865
+#: disk-utils/fsck.c:867
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr ""
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "fsck.%s not found; ignore %s"
 msgstr ""
 
-#: disk-utils/fsck.c:949
+#: disk-utils/fsck.c:951
 #, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr ""
 
-#: disk-utils/fsck.c:1015
+#: disk-utils/fsck.c:1017
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
 msgstr ""
 
-#: disk-utils/fsck.c:1131
+#: disk-utils/fsck.c:1133
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr ""
 
-#: disk-utils/fsck.c:1143
+#: disk-utils/fsck.c:1145
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1148
+#: disk-utils/fsck.c:1150
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1165
+#: disk-utils/fsck.c:1167
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1179
+#: disk-utils/fsck.c:1181
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr ""
 
-#: disk-utils/fsck.c:1283
+#: disk-utils/fsck.c:1285
 msgid "Checking all file systems.\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1376
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1402
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1406
 msgid "Check and repair a Linux filesystem.\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1407
+#: disk-utils/fsck.c:1409
 msgid " -A         check all filesystems\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1410
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1411
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1412
 msgid " -M         do not check mounted filesystems\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1413
 msgid " -N         do not execute, just show what would be done\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1414
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1413
+#: disk-utils/fsck.c:1415
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1414
+#: disk-utils/fsck.c:1416
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1416
+#: disk-utils/fsck.c:1418
 msgid " -s         serialize the checking operations\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1417
+#: disk-utils/fsck.c:1419
 msgid " -T         do not show the title on startup\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1420
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1420
+#: disk-utils/fsck.c:1422
 msgid " -V         explain what is being done\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1426
+#: disk-utils/fsck.c:1428
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr ""
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1473
 msgid "too many devices"
 msgstr ""
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1485
 msgid "Is /proc mounted?"
 msgstr ""
 
-#: disk-utils/fsck.c:1491
+#: disk-utils/fsck.c:1493
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr ""
 
-#: disk-utils/fsck.c:1495
+#: disk-utils/fsck.c:1497
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr ""
 
-#: disk-utils/fsck.c:1503 disk-utils/fsck.c:1606 misc-utils/exch.c:91
+#: disk-utils/fsck.c:1505 disk-utils/fsck.c:1608 misc-utils/exch.c:91
 #: misc-utils/kill.c:386 misc-utils/kill.c:426 sys-utils/eject.c:280
 #: sys-utils/hwclock.c:1526
 msgid "too many arguments"
 msgstr "მეტისმეტად ბევრი არგუმენტი"
 
-#: disk-utils/fsck.c:1510 disk-utils/fsck.c:1594 disk-utils/fsck.c:1602
+#: disk-utils/fsck.c:1512 disk-utils/fsck.c:1596 disk-utils/fsck.c:1604
 #, fuzzy
 #| msgid "too many arguments"
 msgid "too many options"
 msgstr "მეტისმეტად ბევრი არგუმენტი"
 
-#: disk-utils/fsck.c:1560 disk-utils/fsck.c:1563
+#: disk-utils/fsck.c:1562 disk-utils/fsck.c:1565
 msgid "invalid argument of -r"
 msgstr ""
 
-#: disk-utils/fsck.c:1575
+#: disk-utils/fsck.c:1577
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr ""
 
-#: disk-utils/fsck.c:1582 misc-utils/kill.c:469 misc-utils/kill.c:485
+#: disk-utils/fsck.c:1584 misc-utils/kill.c:469 misc-utils/kill.c:485
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr ""
 
-#: disk-utils/fsck.c:1617
+#: disk-utils/fsck.c:1619
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr ""
 
-#: disk-utils/fsck.c:1672
+#: disk-utils/fsck.c:1674
 msgid "the -l option can be used with one device only -- ignore"
 msgstr ""
 
@@ -3098,7 +3098,7 @@ msgid ""
 "                      specifying -V more than once will cause a dry-run\n"
 msgstr ""
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1503
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
 #: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
@@ -5157,6 +5157,7 @@ msgstr ""
 
 #: include/closestream.h:74 include/closestream.h:76 login-utils/vipw.c:272
 #: login-utils/vipw.c:291 sys-utils/rtcwake.c:313 term-utils/setterm.c:822
+#: text-utils/hexdump.c:241
 msgid "write error"
 msgstr "ჩაწერის შეცდომა"
 
@@ -6560,7 +6561,7 @@ msgstr ""
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr ""
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2563
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2569
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr ""
 
@@ -6893,14 +6894,14 @@ msgstr ""
 msgid "Start sector %ju out of range."
 msgstr ""
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2421 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2427 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr ""
 
 #: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
-#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2430
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2436
 msgid "No free sectors available."
 msgstr ""
 
@@ -6974,7 +6975,7 @@ msgstr ""
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr ""
 
-#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2327
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2333
 msgid "No errors detected."
 msgstr ""
 
@@ -6988,7 +6989,7 @@ msgstr ""
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr ""
 
-#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2347
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2353
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -7059,7 +7060,7 @@ msgstr ""
 msgid "Cannot write sector %jd: seek failed"
 msgstr ""
 
-#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1297
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1303
 msgid "Disk identifier"
 msgstr "დისკის იდენტიფიკატორი"
 
@@ -7099,7 +7100,7 @@ msgstr ""
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3259 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3265 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "მოწყობილობა"
@@ -7120,333 +7121,333 @@ msgstr ""
 msgid "End-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3275 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr ""
 
-#: libfdisk/src/gpt.c:692
+#: libfdisk/src/gpt.c:693
 msgid "failed to allocate GPT header"
 msgstr ""
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:803
 msgid "First LBA specified by script is out of range."
 msgstr ""
 
-#: libfdisk/src/gpt.c:814
+#: libfdisk/src/gpt.c:815
 msgid "Last LBA specified by script is out of range."
 msgstr ""
 
-#: libfdisk/src/gpt.c:955
+#: libfdisk/src/gpt.c:956
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:980
+#: libfdisk/src/gpt.c:981
 msgid "gpt: stat() failed"
 msgstr ""
 
-#: libfdisk/src/gpt.c:990
+#: libfdisk/src/gpt.c:991
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1254
+#: libfdisk/src/gpt.c:1260
 msgid "GPT Header"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1259
+#: libfdisk/src/gpt.c:1265
 msgid "GPT Entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1265
+#: libfdisk/src/gpt.c:1271
 msgid "GPT Backup Entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1271
+#: libfdisk/src/gpt.c:1277
 msgid "GPT Backup Header"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1304
+#: libfdisk/src/gpt.c:1310
 msgid "First usable LBA"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1309
+#: libfdisk/src/gpt.c:1315
 msgid "Last usable LBA"
 msgstr ""
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1315
+#: libfdisk/src/gpt.c:1321
 msgid "Alternative LBA"
 msgstr ""
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1321
+#: libfdisk/src/gpt.c:1327
 msgid "Partition entries starting LBA"
 msgstr ""
 
 #. TRANSLATORS: The end of the array of partition entries.
-#: libfdisk/src/gpt.c:1327
+#: libfdisk/src/gpt.c:1333
 msgid "Partition entries ending LBA"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1334
+#: libfdisk/src/gpt.c:1340
 msgid "Allocated partition entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1676
+#: libfdisk/src/gpt.c:1682
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1692
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1702
+#: libfdisk/src/gpt.c:1708
 msgid "The backup GPT table is not on the end of the device."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1705
+#: libfdisk/src/gpt.c:1711
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1715
 msgid "Failed to recalculate backup GPT table location"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1870
+#: libfdisk/src/gpt.c:1876
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1875
+#: libfdisk/src/gpt.c:1881
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1975
+#: libfdisk/src/gpt.c:1981
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1990
 msgid "Failed to translate partition name, name not changed."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1992
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2015
+#: libfdisk/src/gpt.c:2021
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2022
+#: libfdisk/src/gpt.c:2028
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2221
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2251
+#: libfdisk/src/gpt.c:2257
 msgid "Disk does not contain a valid backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2256
+#: libfdisk/src/gpt.c:2262
 msgid "Invalid primary header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2260
+#: libfdisk/src/gpt.c:2266
 msgid "Invalid backup header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2271
 msgid "Invalid partition entry checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2276
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2274
+#: libfdisk/src/gpt.c:2280
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2279
+#: libfdisk/src/gpt.c:2285
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2283
+#: libfdisk/src/gpt.c:2289
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2288
+#: libfdisk/src/gpt.c:2294
 msgid "Disk is too small to hold all data."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2298
+#: libfdisk/src/gpt.c:2304
 msgid "Primary and backup header mismatch."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2310
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2311
+#: libfdisk/src/gpt.c:2317
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2318
+#: libfdisk/src/gpt.c:2324
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2328
+#: libfdisk/src/gpt.c:2334
 #, c-format
 msgid "Header version: %s"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2329
+#: libfdisk/src/gpt.c:2335
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2339
+#: libfdisk/src/gpt.c:2345
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] ""
 msgstr[1] ""
 
-#: libfdisk/src/gpt.c:2426
+#: libfdisk/src/gpt.c:2432
 msgid "All partitions are already in use."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2477
+#: libfdisk/src/gpt.c:2483
 msgid "No enough free sectors available."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2491 libfdisk/src/gpt.c:2518
+#: libfdisk/src/gpt.c:2497 libfdisk/src/gpt.c:2524
 #, c-format
 msgid "Sector %ju already used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2592
+#: libfdisk/src/gpt.c:2598
 #, c-format
 msgid "Could not create partition %zu"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2599
+#: libfdisk/src/gpt.c:2605
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2606
+#: libfdisk/src/gpt.c:2612
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2754
 #, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2776
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2778
+#: libfdisk/src/gpt.c:2784
 msgid "Failed to parse your UUID."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2792
+#: libfdisk/src/gpt.c:2798
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2812
+#: libfdisk/src/gpt.c:2818
 msgid "Not enough space for new partition table!"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2823
+#: libfdisk/src/gpt.c:2829
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2828
+#: libfdisk/src/gpt.c:2834
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2874
+#: libfdisk/src/gpt.c:2880
 msgid "The partition entry size is zero."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2882
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2900
+#: libfdisk/src/gpt.c:2906
 msgid "Cannot allocate memory!"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2929
+#: libfdisk/src/gpt.c:2935
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3039
+#: libfdisk/src/gpt.c:3045
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3089
+#: libfdisk/src/gpt.c:3095
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3104
+#: libfdisk/src/gpt.c:3110
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3117
+#: libfdisk/src/gpt.c:3123
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3118
+#: libfdisk/src/gpt.c:3124
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3122
+#: libfdisk/src/gpt.c:3128
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3123
+#: libfdisk/src/gpt.c:3129
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:3266
+#: libfdisk/src/gpt.c:3272
 msgid "Type-UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:3267
+#: libfdisk/src/gpt.c:3273
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3268 login-utils/chfn.c:181 login-utils/chfn.c:183
+#: libfdisk/src/gpt.c:3274 login-utils/chfn.c:181 login-utils/chfn.c:183
 #: login-utils/chfn.c:341 sys-utils/lsipc.c:184
 msgid "Name"
 msgstr ""
@@ -7929,317 +7930,317 @@ msgstr ""
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: libmount/src/context.c:3092
+#: libmount/src/context.c:3109
 #, c-format
 msgid "operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1555
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1541
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "%s is already mounted"
 msgstr ""
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1565
 #, c-format
 msgid "can't find in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1550
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "can't find mount point in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1553
+#: libmount/src/context_mount.c:1571
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1581
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr ""
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 #| msgid "filesystem type"
 msgid "no valid filesystem type specified"
 msgstr "ფაილური სისტემის ტიპი"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "can't find %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "no mount source specified"
 msgstr ""
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr ""
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "failed to parse mount options"
 msgstr ""
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1612
 #, fuzzy, c-format
 #| msgid "failed to execute %s"
 msgid "failed to set up loop device for %s"
 msgstr "%s-ის შესრულების შეცდომა"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1602 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
 #, c-format
 msgid "locking failed"
 msgstr ""
 
-#: libmount/src/context_mount.c:1606 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr ""
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1628
 #, fuzzy, c-format
 #| msgid "filesystem size used"
 msgid "filesystem already mounted"
 msgstr "გამოყენებული ფაილური სისტემის ზომა"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "mount failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1641
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr ""
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1647
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr ""
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1665
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr ""
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1677
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr ""
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 #| msgid "%s failed"
 msgid "%s() failed: "
 msgstr "%s -ის შეცდომა"
 
-#: libmount/src/context_mount.c:1699 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "წვდომა აკრძალულია"
 
-#: libmount/src/context_mount.c:1701 libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
 #, c-format
 msgid "mount point is not a directory"
 msgstr ""
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "must be superuser to use mount"
 msgstr ""
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "mount point is busy"
 msgstr ""
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1735
 #, c-format
 msgid "%s already mounted on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1739
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr ""
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "mount point does not exist"
 msgstr ""
 
-#: libmount/src/context_mount.c:1729
+#: libmount/src/context_mount.c:1747
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr ""
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1752
 #, c-format
 msgid "special device %s does not exist"
 msgstr ""
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1765
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1757
+#: libmount/src/context_mount.c:1775
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr ""
 
-#: libmount/src/context_mount.c:1759
+#: libmount/src/context_mount.c:1777
 #, c-format
 msgid "not mount point or bad option"
 msgstr ""
 
-#: libmount/src/context_mount.c:1762
+#: libmount/src/context_mount.c:1780
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1766
+#: libmount/src/context_mount.c:1784
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 
-#: libmount/src/context_mount.c:1770
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1795
 #, c-format
 msgid "mount table full"
 msgstr ""
 
-#: libmount/src/context_mount.c:1782
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "can't read superblock on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1807
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr ""
 
-#: libmount/src/context_mount.c:1792
+#: libmount/src/context_mount.c:1810
 #, c-format
 msgid "unknown filesystem type"
 msgstr ""
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1819
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr ""
 
-#: libmount/src/context_mount.c:1804
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1825
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr ""
 
-#: libmount/src/context_mount.c:1809
+#: libmount/src/context_mount.c:1827
 #, c-format
 msgid "%s is not a block device"
 msgstr ""
 
-#: libmount/src/context_mount.c:1816
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "%s is not a valid block device"
 msgstr ""
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1842
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1826
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr ""
 
-#: libmount/src/context_mount.c:1828
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr ""
 
-#: libmount/src/context_mount.c:1830
+#: libmount/src/context_mount.c:1848
 #, c-format
 msgid "bind %s failed"
 msgstr ""
 
-#: libmount/src/context_mount.c:1839
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "no medium found on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr ""
 
-#: libmount/src/context_mount.c:1855
+#: libmount/src/context_mount.c:1873
 #, fuzzy, c-format
 #| msgid "%s failed"
 msgid "%s() failed: %m"
@@ -8306,13 +8307,13 @@ msgid "umount(2) system call failed: %m"
 msgstr ""
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:348 libmount/src/hook_idmap.c:378
+#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr ""
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:286
+#: libmount/src/hook_loopdev.c:295
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr ""
@@ -8983,7 +8984,7 @@ msgstr ""
 msgid " -s, --shell <path>  define the shell to log in to"
 msgstr ""
 
-#: login-utils/login.c:1380 term-utils/agetty.c:3143
+#: login-utils/login.c:1380 term-utils/agetty.c:3141
 #, fuzzy
 #| msgid "failed to resize partition"
 msgid "failed to initialize path context"
@@ -9012,12 +9013,12 @@ msgid "groups initialization failed: %m"
 msgstr ""
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1106 sys-utils/unshare.c:1316
+#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() -ის შეცდომა"
 
 #: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
-#: sys-utils/unshare.c:1108 sys-utils/unshare.c:1319
+#: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() -ის შეცდომა"
 
@@ -9564,7 +9565,7 @@ msgid "cannot create child process"
 msgstr ""
 
 #: login-utils/su-common.c:609 sys-utils/nsenter.c:887
-#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1285
+#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "საქაღალდეში გადასვლის შეცდომა: %s"
@@ -12641,7 +12642,7 @@ msgid "invalid sigmask format: %s"
 msgstr ""
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:413 sys-utils/setpriv.c:463
-#: sys-utils/unshare.c:1025
+#: sys-utils/unshare.c:1024
 #, c-format
 msgid "unknown signal: %s"
 msgstr ""
@@ -14189,7 +14190,7 @@ msgstr ""
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr ""
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1400
+#: misc-utils/uuidd.c:452 text-utils/more.c:1402
 msgid "poll failed"
 msgstr ""
 
@@ -16913,7 +16914,7 @@ msgid "%s: unmounting"
 msgstr ""
 
 #: sys-utils/eject.c:671 sys-utils/mount.c:52 sys-utils/umount.c:121
-#: text-utils/more.c:1279
+#: text-utils/more.c:1281
 msgid "drop permissions failed"
 msgstr ""
 
@@ -19117,7 +19118,7 @@ msgid "sigfillset failed"
 msgstr "sigfillset -ის შეცდომა"
 
 #: sys-utils/irqtop.c:251 sys-utils/setpgid.c:81 sys-utils/setpgid.c:85
-#: sys-utils/unshare.c:1141
+#: sys-utils/unshare.c:1140
 msgid "sigprocmask failed"
 msgstr "sigprocmask -ის შეცდომა"
 
@@ -21331,7 +21332,7 @@ msgstr ""
 msgid "%s is a mountpoint\n"
 msgstr ""
 
-#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:745
+#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:744
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr ""
@@ -21544,11 +21545,11 @@ msgstr "initgroups -ის შეცდომა"
 msgid "failed to parse file descriptor"
 msgstr "სკრიპტის თავსართის დაყენების შეცდომა"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1040
+#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr ""
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1044
+#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr ""
 
@@ -21609,7 +21610,7 @@ msgid "can not get process stat"
 msgstr "\"%s\"-სთან წვდომის შეცდომა"
 
 #: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
-#: sys-utils/unshare.c:1104 sys-utils/unshare.c:1314
+#: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "setgroups -ის შეცდომა"
 
@@ -23710,252 +23711,252 @@ msgstr ""
 msgid "no line matching user \"%s\" in %s"
 msgstr ""
 
-#: sys-utils/unshare.c:650
+#: sys-utils/unshare.c:649
 #, c-format
 msgid "%s too large for kernel 4k limit"
 msgstr ""
 
-#: sys-utils/unshare.c:656
+#: sys-utils/unshare.c:655
 #, fuzzy, c-format
 #| msgid "failed to open: %s"
 msgid "failed to open %s"
 msgstr "გახსნის შეცდომა: %s"
 
-#: sys-utils/unshare.c:658
+#: sys-utils/unshare.c:657
 #, fuzzy, c-format
 #| msgid "Failed to write script %s"
 msgid "failed to write %s"
 msgstr "სკრიპტის (%s) ჩაწერის შეცდომა"
 
-#: sys-utils/unshare.c:730
+#: sys-utils/unshare.c:729
 #, fuzzy, c-format
 #| msgid "cannot open %s"
 msgid "cannot open %s/register"
 msgstr "%s გახსნა ვერ მოხერხდა"
 
-#: sys-utils/unshare.c:733
+#: sys-utils/unshare.c:732
 #, fuzzy, c-format
 #| msgid "write failed: %s"
 msgid "write failed %s/register"
 msgstr "ჩაწერის შეცდომა: %s"
 
-#: sys-utils/unshare.c:749
+#: sys-utils/unshare.c:748
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr ""
 
-#: sys-utils/unshare.c:752
+#: sys-utils/unshare.c:751
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:753
+#: sys-utils/unshare.c:752
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:754
+#: sys-utils/unshare.c:753
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:755
+#: sys-utils/unshare.c:754
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:756
+#: sys-utils/unshare.c:755
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:757
+#: sys-utils/unshare.c:756
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:758
+#: sys-utils/unshare.c:757
 msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:759
+#: sys-utils/unshare.c:758
 msgid " -T, --time[=<file>]       unshare time namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:761
+#: sys-utils/unshare.c:760
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:762
+#: sys-utils/unshare.c:761
 msgid " --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:763
+#: sys-utils/unshare.c:762
 msgid " -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:764
+#: sys-utils/unshare.c:763
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:766
+#: sys-utils/unshare.c:765
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
 msgstr ""
 
-#: sys-utils/unshare.c:767
+#: sys-utils/unshare.c:766
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
 msgstr ""
 
-#: sys-utils/unshare.c:769
+#: sys-utils/unshare.c:768
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:770
+#: sys-utils/unshare.c:769
 msgid " -G, --setgid <gid>        set gid in entered namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:771
+#: sys-utils/unshare.c:770
 msgid " --map-user <uid>|<name>   map current user to uid (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:772
+#: sys-utils/unshare.c:771
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:773
+#: sys-utils/unshare.c:772
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:774
+#: sys-utils/unshare.c:773
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:775
+#: sys-utils/unshare.c:774
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:776
+#: sys-utils/unshare.c:775
 msgid " --map-subids              map the first block of user IDs owned by euid (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:777
+#: sys-utils/unshare.c:776
 msgid ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           map count users from outeruid to inneruid (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:779
+#: sys-utils/unshare.c:778
 msgid ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           map count groups from outergid to innergid (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:781
+#: sys-utils/unshare.c:780
 msgid " --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:783
+#: sys-utils/unshare.c:782
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr ""
 
-#: sys-utils/unshare.c:784
+#: sys-utils/unshare.c:783
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
 msgstr ""
 
-#: sys-utils/unshare.c:786
+#: sys-utils/unshare.c:785
 msgid " --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"
 msgstr ""
 
-#: sys-utils/unshare.c:788
+#: sys-utils/unshare.c:787
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr ""
 
-#: sys-utils/unshare.c:789
+#: sys-utils/unshare.c:788
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgstr ""
 
-#: sys-utils/unshare.c:791
+#: sys-utils/unshare.c:790
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
 msgstr ""
 
-#: sys-utils/unshare.c:792
+#: sys-utils/unshare.c:791
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
 msgstr ""
 
-#: sys-utils/unshare.c:1013
+#: sys-utils/unshare.c:1012
 #, fuzzy
 #| msgid "Failed to parse size."
 msgid "failed to parse owner"
 msgstr "ზომის დამუშავების შეცდომა."
 
-#: sys-utils/unshare.c:1054
+#: sys-utils/unshare.c:1053
 msgid "failed to parse monotonic offset"
 msgstr ""
 
-#: sys-utils/unshare.c:1058
+#: sys-utils/unshare.c:1057
 msgid "failed to parse boottime offset"
 msgstr ""
 
-#: sys-utils/unshare.c:1081
+#: sys-utils/unshare.c:1080
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr ""
 
-#: sys-utils/unshare.c:1111
+#: sys-utils/unshare.c:1110
 msgid "unshare failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1134
+#: sys-utils/unshare.c:1133
 #, fuzzy
 #| msgid "sigfillset failed"
 msgid "sigaction SIGTERM failed"
 msgstr "sigfillset -ის შეცდომა"
 
-#: sys-utils/unshare.c:1136
+#: sys-utils/unshare.c:1135
 #, fuzzy
 #| msgid "sigfillset failed"
 msgid "sigaction SIGINT failed"
 msgstr "sigfillset -ის შეცდომა"
 
-#: sys-utils/unshare.c:1148
+#: sys-utils/unshare.c:1147
 msgid "sigprocmask block failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1155
+#: sys-utils/unshare.c:1154
 #, fuzzy
 #| msgid "open failed"
 msgid "pidfd_open failed"
 msgstr "გახსნის შეცდომა"
 
-#: sys-utils/unshare.c:1169
+#: sys-utils/unshare.c:1168
 msgid "sigprocmask restore failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1211
+#: sys-utils/unshare.c:1210
 #, fuzzy
 #| msgid "sigfillset failed"
 msgid "signal handler reset failed"
 msgstr "sigfillset -ის შეცდომა"
 
-#: sys-utils/unshare.c:1216
+#: sys-utils/unshare.c:1215
 msgid "sigprocmask unblock failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1220
+#: sys-utils/unshare.c:1219
 msgid "child exit failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1259
+#: sys-utils/unshare.c:1258
 msgid "options --setgroups=allow and --map-group are mutually exclusive"
 msgstr ""
 
-#: sys-utils/unshare.c:1274 sys-utils/unshare.c:1301 sys-utils/unshare.c:1307
+#: sys-utils/unshare.c:1273 sys-utils/unshare.c:1300 sys-utils/unshare.c:1306
 #, c-format
 msgid "mount %s failed"
 msgstr ""
 
-#: sys-utils/unshare.c:1281
+#: sys-utils/unshare.c:1280
 #, c-format
 msgid "cannot change root directory to '%s'"
 msgstr ""
 
-#: sys-utils/unshare.c:1297
+#: sys-utils/unshare.c:1296
 #, c-format
 msgid "cannot change %s filesystem propagation"
 msgstr ""
@@ -24388,7 +24389,7 @@ msgstr ""
 #: term-utils/agetty.c:615 term-utils/agetty.c:786 term-utils/agetty.c:969
 #: term-utils/agetty.c:1218 term-utils/agetty.c:1497 term-utils/agetty.c:1515
 #: term-utils/agetty.c:1552 term-utils/agetty.c:1562 term-utils/agetty.c:1604
-#: term-utils/agetty.c:1932 term-utils/agetty.c:2340 term-utils/agetty.c:3023
+#: term-utils/agetty.c:1930 term-utils/agetty.c:2338 term-utils/agetty.c:3021
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr ""
@@ -24478,234 +24479,234 @@ msgstr ""
 msgid "failed to create reload file: %s: %m"
 msgstr ""
 
-#: term-utils/agetty.c:1996
+#: term-utils/agetty.c:1994
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2018
+#: term-utils/agetty.c:2016
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:2052
+#: term-utils/agetty.c:2050
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:2055
+#: term-utils/agetty.c:2053
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2058
+#: term-utils/agetty.c:2056
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2061
+#: term-utils/agetty.c:2059
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2062
 #, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr ""
 
-#: term-utils/agetty.c:2225
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2294
+#: term-utils/agetty.c:2292
 #, c-format
 msgid "%s: input overrun"
 msgstr ""
 
-#: term-utils/agetty.c:2336 term-utils/agetty.c:2344
+#: term-utils/agetty.c:2334 term-utils/agetty.c:2342
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2433
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr ""
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2478
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2482
 msgid "Open a terminal and set its mode.\n"
 msgstr ""
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2485
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2486
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2487
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr ""
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2488
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr ""
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2489
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr ""
 
-#: term-utils/agetty.c:2492
+#: term-utils/agetty.c:2490
 msgid "     --show-issue           display issue file and exit\n"
 msgstr ""
 
-#: term-utils/agetty.c:2493
+#: term-utils/agetty.c:2491
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:2494
+#: term-utils/agetty.c:2492
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr ""
 
-#: term-utils/agetty.c:2495
+#: term-utils/agetty.c:2493
 msgid " -i, --noissue              do not display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:2496
+#: term-utils/agetty.c:2494
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:2497
+#: term-utils/agetty.c:2495
 #, fuzzy
 #| msgid " -v, --verbose                 verbose mode\n"
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -v, --verbose                 დამატებითი ინფორმაციის გამოტანის რეჟიმი\n"
 
-#: term-utils/agetty.c:2498
+#: term-utils/agetty.c:2496
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:2499
+#: term-utils/agetty.c:2497
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr ""
 
-#: term-utils/agetty.c:2500
+#: term-utils/agetty.c:2498
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
-#: term-utils/agetty.c:2501
+#: term-utils/agetty.c:2499
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2502
+#: term-utils/agetty.c:2500
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr ""
 
-#: term-utils/agetty.c:2503
+#: term-utils/agetty.c:2501
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2504
+#: term-utils/agetty.c:2502
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2505
+#: term-utils/agetty.c:2503
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr ""
 
-#: term-utils/agetty.c:2506
+#: term-utils/agetty.c:2504
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr ""
 
-#: term-utils/agetty.c:2507
+#: term-utils/agetty.c:2505
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:2508
+#: term-utils/agetty.c:2506
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:2509
+#: term-utils/agetty.c:2507
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:2510
+#: term-utils/agetty.c:2508
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr ""
 
-#: term-utils/agetty.c:2511
+#: term-utils/agetty.c:2509
 msgid "     --nohints              do not print hints\n"
 msgstr ""
 
-#: term-utils/agetty.c:2512
+#: term-utils/agetty.c:2510
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr ""
 
-#: term-utils/agetty.c:2513
+#: term-utils/agetty.c:2511
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:2514
+#: term-utils/agetty.c:2512
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2515
+#: term-utils/agetty.c:2513
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:2516
+#: term-utils/agetty.c:2514
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr ""
 
-#: term-utils/agetty.c:2517
+#: term-utils/agetty.c:2515
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr ""
 
-#: term-utils/agetty.c:2518
+#: term-utils/agetty.c:2516
 msgid "     --nice <number>        run login with this priority\n"
 msgstr ""
 
-#: term-utils/agetty.c:2519
+#: term-utils/agetty.c:2517
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr ""
 
-#: term-utils/agetty.c:2520
+#: term-utils/agetty.c:2518
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr ""
 
-#: term-utils/agetty.c:2959
+#: term-utils/agetty.c:2957
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] ""
 msgstr[1] ""
 
-#: term-utils/agetty.c:3110
+#: term-utils/agetty.c:3108
 #, c-format
 msgid "checkname failed: %m"
 msgstr ""
 
-#: term-utils/agetty.c:3122
+#: term-utils/agetty.c:3120
 #, c-format
 msgid "cannot touch file %s"
 msgstr ""
 
-#: term-utils/agetty.c:3126
+#: term-utils/agetty.c:3124
 msgid "--reload is unsupported on your system"
 msgstr ""
 
-#: term-utils/agetty.c:3149
+#: term-utils/agetty.c:3147
 #, fuzzy
 #| msgid "failed to set script header"
 msgid "failed to open credentials directory"
@@ -25416,7 +25417,7 @@ msgstr ""
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr ""
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr ""
@@ -25454,30 +25455,30 @@ msgstr ""
 msgid "%s is logged in more than once; writing to %s"
 msgstr ""
 
-#: term-utils/write.c:385
+#: term-utils/write.c:386
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr ""
 
-#: term-utils/write.c:389
+#: term-utils/write.c:390
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr ""
 
-#: term-utils/write.c:400
+#: term-utils/write.c:402
 msgid "carefulputc failed"
 msgstr ""
 
-#: term-utils/write.c:438
+#: term-utils/write.c:440
 msgid "you have write permission turned off"
 msgstr ""
 
-#: term-utils/write.c:461
+#: term-utils/write.c:463
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr ""
 
-#: term-utils/write.c:467
+#: term-utils/write.c:469
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr ""
@@ -25575,20 +25576,20 @@ msgid ""
 " -l, --lines NUM        buffer at least NUM lines\n"
 msgstr ""
 
-#: text-utils/col.c:495
+#: text-utils/col.c:498
 #, c-format
 msgid "warning: can't back up %s."
 msgstr ""
 
-#: text-utils/col.c:497
+#: text-utils/col.c:500
 msgid "past first line"
 msgstr ""
 
-#: text-utils/col.c:498
+#: text-utils/col.c:501
 msgid "-- line already flushed"
 msgstr ""
 
-#: text-utils/col.c:564
+#: text-utils/col.c:567
 msgid "bad -l argument"
 msgstr ""
 
@@ -25917,7 +25918,7 @@ msgstr ""
 msgid "<length> and <offset>"
 msgstr ""
 
-#: text-utils/hexdump-display.c:535
+#: text-utils/hexdump-display.c:540
 msgid "all input file arguments failed"
 msgstr ""
 
@@ -26025,82 +26026,82 @@ msgid ""
 "\n"
 msgstr ""
 
-#: text-utils/more.c:736
+#: text-utils/more.c:738
 #, c-format
 msgid "--More--"
 msgstr ""
 
-#: text-utils/more.c:738
+#: text-utils/more.c:740
 #, c-format
 msgid "(Next file: %s)"
 msgstr ""
 
-#: text-utils/more.c:743 text-utils/more.c:749
+#: text-utils/more.c:745 text-utils/more.c:751
 #, c-format
 msgid "(END)"
 msgstr ""
 
-#: text-utils/more.c:754
+#: text-utils/more.c:756
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr ""
 
-#: text-utils/more.c:959
+#: text-utils/more.c:961
 msgid ""
 "\n"
 "...Skipping "
 msgstr ""
 
-#: text-utils/more.c:963
+#: text-utils/more.c:965
 msgid "...Skipping to file "
 msgstr ""
 
-#: text-utils/more.c:965
+#: text-utils/more.c:967
 msgid "...Skipping back to file "
 msgstr ""
 
-#: text-utils/more.c:1127
+#: text-utils/more.c:1129
 msgid "Line too long"
 msgstr "ხაზი ძალიან გრძელია"
 
-#: text-utils/more.c:1170
+#: text-utils/more.c:1172
 msgid "No previous command to substitute for"
 msgstr ""
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr ""
 
-#: text-utils/more.c:1283
+#: text-utils/more.c:1285
 msgid "exec failed\n"
 msgstr "გაშვების შეცდომა\n"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1295
 msgid "can't fork\n"
 msgstr ""
 
-#: text-utils/more.c:1506
+#: text-utils/more.c:1508
 msgid "...skipping\n"
 msgstr ""
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1545
 msgid ""
 "\n"
 "Pattern not found\n"
 msgstr ""
 
-#: text-utils/more.c:1547 text-utils/pg.c:1040 text-utils/pg.c:1188
+#: text-utils/more.c:1549 text-utils/pg.c:1040 text-utils/pg.c:1188
 msgid "Pattern not found"
 msgstr ""
 
-#: text-utils/more.c:1566
+#: text-utils/more.c:1568
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1574
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -26124,48 +26125,48 @@ msgid ""
 ".                       Repeat previous command\n"
 msgstr ""
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1640
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] ""
 msgstr[1] ""
 
-#: text-utils/more.c:1662
+#: text-utils/more.c:1664
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] ""
 msgstr[1] ""
 
-#: text-utils/more.c:1778
+#: text-utils/more.c:1780
 msgid ""
 "\n"
 "***Back***\n"
 "\n"
 msgstr ""
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1799
 #, c-format
 msgid "\"%s\" line %d"
 msgstr ""
 
-#: text-utils/more.c:1800
+#: text-utils/more.c:1802
 #, c-format
 msgid "[Not a file] line %d"
 msgstr ""
 
-#: text-utils/more.c:1806
+#: text-utils/more.c:1808
 msgid "No previous regular expression"
 msgstr "წინა რეგულარული გამოსახულება არ არსებობს"
 
-#: text-utils/more.c:1833 text-utils/more.c:1870
+#: text-utils/more.c:1835 text-utils/more.c:1872
 #, fuzzy
 #| msgid "number of sectors"
 msgid "Command not available in secure mode"
 msgstr "სექტორების რიცხვი"
 
-#: text-utils/more.c:1884
+#: text-utils/more.c:1886
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr ""

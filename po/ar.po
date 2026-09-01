@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-06-16 12:05+0200\n"
+"POT-Creation-Date: 2026-09-01 13:07+0200\n"
 "PO-Revision-Date: 2026-03-25 14:29+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: Arabic <(nothing)>\n"
@@ -48,7 +48,7 @@ msgstr "المعطيات غير كافية"
 #: disk-utils/blockdev.c:497 disk-utils/cfdisk.c:2838 disk-utils/delpart.c:68
 #: disk-utils/fdformat.c:240 disk-utils/fdisk.c:1047 disk-utils/fdisk.c:1386
 #: disk-utils/fdisk-list.c:403 disk-utils/fdisk-list.c:444
-#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1481
+#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1483
 #: disk-utils/fsck.cramfs.c:159 disk-utils/fsck.cramfs.c:547
 #: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:217
 #: disk-utils/mkfs.cramfs.c:182 disk-utils/mkfs.cramfs.c:664
@@ -76,12 +76,12 @@ msgstr "المعطيات غير كافية"
 #: sys-utils/setpriv.c:271 sys-utils/setpriv.c:650 sys-utils/setpriv.c:682
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
-#: sys-utils/unshare.c:726 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3119 term-utils/mesg.c:156 term-utils/script.c:393
+#: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
+#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:419 text-utils/colcrt.c:286
+#: term-utils/scriptreplay.c:314 term-utils/wall.c:420 text-utils/colcrt.c:286
 #: text-utils/more.c:469 text-utils/rev.c:167 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -326,7 +326,7 @@ msgid "Quit program without writing changes"
 msgstr "اخرج من البرنامج دون كتابة التغييرات"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3264 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3270 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "النوع"
@@ -908,7 +908,7 @@ msgid "Using default response %c."
 msgstr "استخدام الاستجابة المبدئية %c."
 
 #: disk-utils/fdisk.c:241 disk-utils/fdisk.c:315 disk-utils/fdisk.c:392
-#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2586
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2592
 msgid "Value out of range."
 msgstr "القيمة خارج النطاق."
 
@@ -1115,7 +1115,7 @@ msgid "cannot read"
 msgstr "لا يمكن القراءة"
 
 #: disk-utils/fdisk.c:1025 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
-#: libfdisk/src/gpt.c:2506
+#: libfdisk/src/gpt.c:2512
 msgid "First sector"
 msgstr "القطاع الأول"
 
@@ -1277,7 +1277,7 @@ msgstr "يجب استخدام خصائص الجهاز (حجم القطاع وا�
 #: sys-utils/mount.c:1045 sys-utils/mount.c:1117 sys-utils/mountpoint.c:264
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:285 sys-utils/swapon.c:1043
 #: sys-utils/switch_root.c:271 sys-utils/umount.c:629 term-utils/setterm.c:1189
-#: text-utils/col.c:583 text-utils/more.c:2196
+#: text-utils/col.c:586 text-utils/more.c:2198
 msgid "bad usage"
 msgstr "استخدام سيء"
 
@@ -1354,7 +1354,7 @@ msgid "Alignment offset: %lu bytes"
 msgstr "إزاحة المحاذاة: %lu بايت"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:263
-#: disk-utils/fsck.c:1268 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
+#: disk-utils/fsck.c:1270 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
 #: misc-utils/findmnt.c:1716 misc-utils/lsblk.c:2212 misc-utils/lsblk.c:2266
 #: misc-utils/lslocks.c:1011 sys-utils/lsns.c:1424
 msgid "failed to allocate iterator"
@@ -1428,22 +1428,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "مدخلات جدول التقسيم ليست مرتبة حسب ترتيب القرص."
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
-#: libfdisk/src/gpt.c:3260 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3266 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "بداية"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
-#: libfdisk/src/gpt.c:3261 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3267 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "نهاية"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
-#: libfdisk/src/gpt.c:3262 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3268 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "قطاعات"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
-#: libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "حجم"
 
@@ -1973,50 +1973,50 @@ msgstr "%s: فشل تحليل fstab"
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
 #: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
-#: sys-utils/unshare.c:699 sys-utils/unshare.c:1164
+#: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
 msgstr "فشل التفريع (fork)"
 
-#: disk-utils/fsck.c:702
+#: disk-utils/fsck.c:704
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: فشل التنفيذ"
 
-#: disk-utils/fsck.c:792
+#: disk-utils/fsck.c:794
 msgid "wait: no more child process?!?"
 msgstr "انتظار: لا يوجد المزيد من العمليات الابنة؟!؟"
 
-#: disk-utils/fsck.c:795 lib/pager.c:305 sys-utils/flock.c:462
-#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1198
+#: disk-utils/fsck.c:797 lib/pager.c:305 sys-utils/flock.c:462
+#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1197
 msgid "waitpid failed"
 msgstr "فشل waitpid"
 
-#: disk-utils/fsck.c:813
+#: disk-utils/fsck.c:815
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "تحذير... %s للجهاز %s خرج مع الإشارة %d."
 
-#: disk-utils/fsck.c:819
+#: disk-utils/fsck.c:821
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: الحالة هي %x، لا ينبغي أن يحدث هذا أبداً."
 
-#: disk-utils/fsck.c:865
+#: disk-utils/fsck.c:867
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "انتهى بـ %s (حالة الخروج %d)\n"
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "fsck.%s not found; ignore %s"
 msgstr "fsck.%s غير موجود؛ تجاهل %s"
 
-#: disk-utils/fsck.c:949
+#: disk-utils/fsck.c:951
 #, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "خطأ %d (%s) أثناء تنفيذ fsck.%s لـ %s"
 
-#: disk-utils/fsck.c:1015
+#: disk-utils/fsck.c:1017
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -2024,78 +2024,78 @@ msgstr ""
 "يجب أن تُسبق إما كافة أنواع أنظمة الملفات الممرة لـ -t أو لا شيء منها\n"
 "بـ 'no' أو '!'."
 
-#: disk-utils/fsck.c:1131
+#: disk-utils/fsck.c:1133
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: يتخطى سطراً سيئاً في /etc/fstab: وصل ربط برقم تمرير fsck غير صفري"
 
-#: disk-utils/fsck.c:1143
+#: disk-utils/fsck.c:1145
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: يتخطى جهازاً غير موجود\n"
 
-#: disk-utils/fsck.c:1148
+#: disk-utils/fsck.c:1150
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: جهاز غير موجود (يمكن استخدام خيار fstab \"nofail\" لتخطي هذا الجهاز)\n"
 
-#: disk-utils/fsck.c:1165
+#: disk-utils/fsck.c:1167
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: يتخطى نوع نظام ملفات غير معروف\n"
 
-#: disk-utils/fsck.c:1179
+#: disk-utils/fsck.c:1181
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "تعذر فحص %s: fsck.%s غير موجود"
 
-#: disk-utils/fsck.c:1283
+#: disk-utils/fsck.c:1285
 msgid "Checking all file systems.\n"
 msgstr "يفحص كافة أنظمة الملفات.\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1376
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--انتظار-- (التمريرة %d)\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1402
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [خيارات] -- [خيارات-نظام-الملفات] [<نظام-الملفات> ...]\n"
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1406
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "يفحص ويصلح نظام ملفات لينكس.\n"
 
-#: disk-utils/fsck.c:1407
+#: disk-utils/fsck.c:1409
 msgid " -A         check all filesystems\n"
 msgstr " -A         يفحص كافة أنظمة الملفات\n"
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1410
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  يعرض شريط التقدم؛ واصف الملف مخصص لواجهات المستخدم الرسومية\n"
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1411
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         يقفل الجهاز لضمان الوصول الحصري\n"
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1412
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         لا يفحص أنظمة الملفات الموصولة\n"
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1413
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         لا ينفذ، يظهر فقط ما الذي سيُفعل\n"
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1414
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         يفحص أنظمة الملفات بالتوازي، بما في ذلك الجذر\n"
 
-#: disk-utils/fsck.c:1413
+#: disk-utils/fsck.c:1415
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         يتخطى نظام ملفات الجذر؛ مفيد فقط مع '-A'\n"
 
-#: disk-utils/fsck.c:1414
+#: disk-utils/fsck.c:1416
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
@@ -2103,15 +2103,15 @@ msgstr ""
 " -r [<fd>]  يقدم تقريراً بالإحصائيات لكل جهاز فُحص؛\n"
 "‎            واصف الملف مخصص لواجهات المستخدم الرسومية\n"
 
-#: disk-utils/fsck.c:1416
+#: disk-utils/fsck.c:1418
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         يجعل عمليات الفحص متسلسلة\n"
 
-#: disk-utils/fsck.c:1417
+#: disk-utils/fsck.c:1419
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         لا يظهر العنوان عند بدء التشغيل\n"
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1420
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -2119,62 +2119,62 @@ msgstr ""
 " -t <نوع>  ‎يحدد أنواع أنظمة الملفات المراد فحصها؛\n"
 "‎            يسمح لـ <نوع> أن يكون قائمة مفصولة بفواصل\n"
 
-#: disk-utils/fsck.c:1420
+#: disk-utils/fsck.c:1422
 msgid " -V         explain what is being done\n"
 msgstr " -V         يشرح ما الذي يُفعل حالياً\n"
 
-#: disk-utils/fsck.c:1426
+#: disk-utils/fsck.c:1428
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "انظر أوامر fsck.* المحددة لخيارات نظام الملفات المتاحة."
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1473
 msgid "too many devices"
 msgstr "أجهزة كثيرة جداً"
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1485
 msgid "Is /proc mounted?"
 msgstr "هل /proc موصول؟"
 
-#: disk-utils/fsck.c:1491
+#: disk-utils/fsck.c:1493
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "يجب أن تكون جذراً (root) لمسح أنظمة الملفات المطابقة: %s"
 
-#: disk-utils/fsck.c:1495
+#: disk-utils/fsck.c:1497
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "تعذر العثور على نظام ملفات مطابق: %s"
 
-#: disk-utils/fsck.c:1503 disk-utils/fsck.c:1606 misc-utils/exch.c:91
+#: disk-utils/fsck.c:1505 disk-utils/fsck.c:1608 misc-utils/exch.c:91
 #: misc-utils/kill.c:386 misc-utils/kill.c:426 sys-utils/eject.c:280
 #: sys-utils/hwclock.c:1526
 msgid "too many arguments"
 msgstr "وسطاء كثيرة جداً"
 
-#: disk-utils/fsck.c:1510 disk-utils/fsck.c:1594 disk-utils/fsck.c:1602
+#: disk-utils/fsck.c:1512 disk-utils/fsck.c:1596 disk-utils/fsck.c:1604
 msgid "too many options"
 msgstr "خيارات كثيرة جداً"
 
-#: disk-utils/fsck.c:1560 disk-utils/fsck.c:1563
+#: disk-utils/fsck.c:1562 disk-utils/fsck.c:1565
 msgid "invalid argument of -r"
 msgstr "وسيط غير صالح لـ -r"
 
-#: disk-utils/fsck.c:1575
+#: disk-utils/fsck.c:1577
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr "الخيار '%s' يمكن تحديده مرة واحدة فقط"
 
-#: disk-utils/fsck.c:1582 misc-utils/kill.c:469 misc-utils/kill.c:485
+#: disk-utils/fsck.c:1584 misc-utils/kill.c:469 misc-utils/kill.c:485
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "الخيار '%s' يتطلب وسيطاً"
 
-#: disk-utils/fsck.c:1617
+#: disk-utils/fsck.c:1619
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "وسيط غير صالح لـ -r: %d"
 
-#: disk-utils/fsck.c:1672
+#: disk-utils/fsck.c:1674
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "يمكن استخدام الخيار -l مع جهاز واحد فقط -- تجاهل"
 
@@ -3132,7 +3132,7 @@ msgstr ""
 " -V, --verbose      شرح ما يجري؛\n"
 "                      تحديد -V أكثر من مرة يؤدي إلى تشغيل تجريبي\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1503
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
 #: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
@@ -5232,6 +5232,7 @@ msgstr "الميزات:"
 
 #: include/closestream.h:74 include/closestream.h:76 login-utils/vipw.c:272
 #: login-utils/vipw.c:291 sys-utils/rtcwake.c:313 term-utils/setterm.c:822
+#: text-utils/hexdump.c:241
 msgid "write error"
 msgstr "خطأ كتابة"
 
@@ -6602,7 +6603,7 @@ msgstr "الأسطوانة الأولى"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "الأسطوانة الأخيرة، أسطوانات +/- أو حجم +/- {K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2563
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2569
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "القطاع الأخير، قطاعات +/- أو حجم +/- {K,M,G,T,P}"
 
@@ -6943,14 +6944,14 @@ msgstr "علامة غير صالحة 0x%02x%02x لـ EBR (للقسم %zu) ستص
 msgid "Start sector %ju out of range."
 msgstr "قطاع البداية %ju خارج النطاق."
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2421 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2427 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "القسم %zu معرف بالفعل. احذفه قبل إعادة إضافته."
 
 #: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
-#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2430
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2436
 msgid "No free sectors available."
 msgstr "لا توجد قطاعات فارغة متاحة."
 
@@ -7024,7 +7025,7 @@ msgstr "القسم %zu: فارغ."
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "القسم المنطقي %zu: ليس بالكامل داخل القسم %zu."
 
-#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2327
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2333
 msgid "No errors detected."
 msgstr "لا يوجد أخطاء مكتشفة."
 
@@ -7038,7 +7039,7 @@ msgstr "إجمالي القطاعات المخصصة %ju أكبر من الحد 
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "المتبقي %ju قطاع غير مخصص بحجم %ld بايت."
 
-#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2347
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2353
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -7113,7 +7114,7 @@ msgstr "نوع قسم غير صالح `%c'."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "لا يمكن كتابة القطاع %jd: فشل البحث"
 
-#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1297
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1303
 msgid "Disk identifier"
 msgstr "معرف القرص"
 
@@ -7153,7 +7154,7 @@ msgstr "علامة الإقلاع على القسم %zu مفعلة الآن."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "علامة الإقلاع على القسم %zu معطلة الآن."
 
-#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3259 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3265 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "الجهاز"
@@ -7174,201 +7175,201 @@ msgstr "بداية-C/H/S"
 msgid "End-C/H/S"
 msgstr "نهاية-C/H/S"
 
-#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3275 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "السمات"
 
-#: libfdisk/src/gpt.c:692
+#: libfdisk/src/gpt.c:693
 msgid "failed to allocate GPT header"
 msgstr "فشل في تخصيص رأس GPT"
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:803
 msgid "First LBA specified by script is out of range."
 msgstr "أول LBA محدد بواسطة السكريبت خارج النطاق."
 
-#: libfdisk/src/gpt.c:814
+#: libfdisk/src/gpt.c:815
 msgid "Last LBA specified by script is out of range."
 msgstr "آخر LBA محدد بواسطة السكريبت خارج النطاق."
 
-#: libfdisk/src/gpt.c:955
+#: libfdisk/src/gpt.c:956
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "عدم تطابق حجم GPT PMBR (%<PRIu64> != %<PRIu64>) سيصحح عند الكتابة."
 
-#: libfdisk/src/gpt.c:980
+#: libfdisk/src/gpt.c:981
 msgid "gpt: stat() failed"
 msgstr "gpt: فشل stat()"
 
-#: libfdisk/src/gpt.c:990
+#: libfdisk/src/gpt.c:991
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: لا يمكن التعامل مع ملفات بالوضع %o"
 
-#: libfdisk/src/gpt.c:1254
+#: libfdisk/src/gpt.c:1260
 msgid "GPT Header"
 msgstr "رأس GPT"
 
-#: libfdisk/src/gpt.c:1259
+#: libfdisk/src/gpt.c:1265
 msgid "GPT Entries"
 msgstr "مدخلات GPT"
 
-#: libfdisk/src/gpt.c:1265
+#: libfdisk/src/gpt.c:1271
 msgid "GPT Backup Entries"
 msgstr "مدخلات GPT الاحتياطية"
 
-#: libfdisk/src/gpt.c:1271
+#: libfdisk/src/gpt.c:1277
 msgid "GPT Backup Header"
 msgstr "رأس GPT الاحتياطي"
 
-#: libfdisk/src/gpt.c:1304
+#: libfdisk/src/gpt.c:1310
 msgid "First usable LBA"
 msgstr "أول LBA قابل للاستخدام"
 
-#: libfdisk/src/gpt.c:1309
+#: libfdisk/src/gpt.c:1315
 msgid "Last usable LBA"
 msgstr "آخر LBA قابل للاستخدام"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1315
+#: libfdisk/src/gpt.c:1321
 msgid "Alternative LBA"
 msgstr "LBA بديل"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1321
+#: libfdisk/src/gpt.c:1327
 msgid "Partition entries starting LBA"
 msgstr "LBA لبداية مدخلات الأقسام"
 
 #. TRANSLATORS: The end of the array of partition entries.
-#: libfdisk/src/gpt.c:1327
+#: libfdisk/src/gpt.c:1333
 msgid "Partition entries ending LBA"
 msgstr "LBA لنهاية مدخلات الأقسام"
 
-#: libfdisk/src/gpt.c:1334
+#: libfdisk/src/gpt.c:1340
 msgid "Allocated partition entries"
 msgstr "مدخلات الأقسام المخصصة"
 
-#: libfdisk/src/gpt.c:1676
+#: libfdisk/src/gpt.c:1682
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "جدول GPT الاحتياطي تالف، ولكن الرئيسي يبدو جيداً، لذا سيستخدم هو."
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1692
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "جدول GPT الأساسي تالف، ولكن النسخة الاحتياطية تبدو سليمة، لذا سيتخذ استخدامها."
 
-#: libfdisk/src/gpt.c:1702
+#: libfdisk/src/gpt.c:1708
 msgid "The backup GPT table is not on the end of the device."
 msgstr "جدول GPT الاحتياطي ليس في نهاية الجهاز."
 
-#: libfdisk/src/gpt.c:1705
+#: libfdisk/src/gpt.c:1711
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "جدول GPT الاحتياطي ليس في نهاية الجهاز. يصحح الكتابة هذا الخلل."
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1715
 msgid "Failed to recalculate backup GPT table location"
 msgstr "فشل إعادة حساب موقع جدول GPT الاحتياطي"
 
-#: libfdisk/src/gpt.c:1870
+#: libfdisk/src/gpt.c:1876
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "بت سمة GPT غير مدعوم '%s'"
 
-#: libfdisk/src/gpt.c:1875
+#: libfdisk/src/gpt.c:1881
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "فشل تحليل سلسلة سمات GPT '%s'"
 
-#: libfdisk/src/gpt.c:1975
+#: libfdisk/src/gpt.c:1981
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "تغير معرف القسم (UUID) من %s إلى %s."
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1990
 msgid "Failed to translate partition name, name not changed."
 msgstr "فشلت ترجمة اسم القسم، لم يتغير الاسم."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1992
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "تغير اسم القسم من '%s' إلى '%.*s'."
 
-#: libfdisk/src/gpt.c:2015
+#: libfdisk/src/gpt.c:2021
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "بداية القسم تتجاوز FirstUsableLBA نزولاً."
 
-#: libfdisk/src/gpt.c:2022
+#: libfdisk/src/gpt.c:2028
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "نهاية القسم تتجاوز LastUsableLBA صعوداً."
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2221
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr "يحتوي الجهاز على MBR هجين -- يكتب GPT فقط."
 
-#: libfdisk/src/gpt.c:2251
+#: libfdisk/src/gpt.c:2257
 msgid "Disk does not contain a valid backup header."
 msgstr "لا يحتوي القرص على ترويسة احتياطية صالحة."
 
-#: libfdisk/src/gpt.c:2256
+#: libfdisk/src/gpt.c:2262
 msgid "Invalid primary header CRC checksum."
 msgstr "مجموع التحقق (CRC) للترویسة الأساسية غير صالح."
 
-#: libfdisk/src/gpt.c:2260
+#: libfdisk/src/gpt.c:2266
 msgid "Invalid backup header CRC checksum."
 msgstr "مجموع التحقق (CRC) للترویسة الاحتياطية غير صالح."
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2271
 msgid "Invalid partition entry checksum."
 msgstr "مجموع التحقق لمدخلة القسم غير صالح."
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2276
 msgid "Invalid primary header LBA sanity checks."
 msgstr "فحوصات سلامة LBA للترويسة الأساسية غير صالحة."
 
-#: libfdisk/src/gpt.c:2274
+#: libfdisk/src/gpt.c:2280
 msgid "Invalid backup header LBA sanity checks."
 msgstr "فحوصات سلامة LBA للترويسة الاحتياطية غير صالحة."
 
-#: libfdisk/src/gpt.c:2279
+#: libfdisk/src/gpt.c:2285
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "عدم تطابق MyLBA مع الموقع الحقيقي عند الترويسة الأساسية."
 
-#: libfdisk/src/gpt.c:2283
+#: libfdisk/src/gpt.c:2289
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "عدم تطابق MyLBA مع الموقع الحقيقي عند الترويسة الاحتياطية."
 
-#: libfdisk/src/gpt.c:2288
+#: libfdisk/src/gpt.c:2294
 msgid "Disk is too small to hold all data."
 msgstr "القرص صغير جداً ولا يتسع لكل البيانات."
 
-#: libfdisk/src/gpt.c:2298
+#: libfdisk/src/gpt.c:2304
 msgid "Primary and backup header mismatch."
 msgstr "عدم تطابق بين الترويسة الأساسية والاحتياطية."
 
-#: libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2310
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "القسم %u يتداخل مع القسم %u."
 
-#: libfdisk/src/gpt.c:2311
+#: libfdisk/src/gpt.c:2317
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "القسم %u أكبر من سعة القرص."
 
-#: libfdisk/src/gpt.c:2318
+#: libfdisk/src/gpt.c:2324
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "ينتهي القسم %u قبل أن يبدأ."
 
-#: libfdisk/src/gpt.c:2328
+#: libfdisk/src/gpt.c:2334
 #, c-format
 msgid "Header version: %s"
 msgstr "إصدار الترويسة: %s"
 
-#: libfdisk/src/gpt.c:2329
+#: libfdisk/src/gpt.c:2335
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "يستخدم %zu من أصل %zu قسماً."
 
-#: libfdisk/src/gpt.c:2339
+#: libfdisk/src/gpt.c:2345
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -7379,132 +7380,132 @@ msgstr[3] "يتوفر إجمالي %ju قطاع حر في %u قطع (أكبره�
 msgstr[4] "يتوفر إجمالي %ju قطاع حر في %u قطعة (أكبرها %s)."
 msgstr[5] "يتوفر إجمالي %ju قطاع حر في %u قطعة (أكبرها %s)."
 
-#: libfdisk/src/gpt.c:2426
+#: libfdisk/src/gpt.c:2432
 msgid "All partitions are already in use."
 msgstr "كل الأقسام مستخدمة بالفعل."
 
-#: libfdisk/src/gpt.c:2477
+#: libfdisk/src/gpt.c:2483
 msgid "No enough free sectors available."
 msgstr "لا تتوفر قطاعات حرة كافية."
 
-#: libfdisk/src/gpt.c:2491 libfdisk/src/gpt.c:2518
+#: libfdisk/src/gpt.c:2497 libfdisk/src/gpt.c:2524
 #, c-format
 msgid "Sector %ju already used."
 msgstr "القطاع %ju مستخدم بالفعل."
 
-#: libfdisk/src/gpt.c:2592
+#: libfdisk/src/gpt.c:2598
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "تعذر إنشاء القسم %zu"
 
-#: libfdisk/src/gpt.c:2599
+#: libfdisk/src/gpt.c:2605
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "آخر قطاع GPT قابل للاستخدام هو %ju، ولكن المطلوب هو %ju."
 
-#: libfdisk/src/gpt.c:2606
+#: libfdisk/src/gpt.c:2612
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "أول قطاع GPT قابل للاستخدام هو %ju، ولكن المطلوب هو %ju."
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "أنشئت تسمية قرص GPT جديدة (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2754
 #, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
 msgstr "أقصى عدد للأقسام هو %zu (المبدئي هو %zu)."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2776
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "أدخل معرف القرص (UUID) الجديد (بصيغة 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2778
+#: libfdisk/src/gpt.c:2784
 msgid "Failed to parse your UUID."
 msgstr "فشل تحليل معرف الـ UUID الخاص بك."
 
-#: libfdisk/src/gpt.c:2792
+#: libfdisk/src/gpt.c:2798
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "تغير معرف القرص من %s إلى %s."
 
-#: libfdisk/src/gpt.c:2812
+#: libfdisk/src/gpt.c:2818
 msgid "Not enough space for new partition table!"
 msgstr "لا توجد مساحة كافية لجدول أقسام جديد!"
 
-#: libfdisk/src/gpt.c:2823
+#: libfdisk/src/gpt.c:2829
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "القسم رقم %zu خارج النطاق (أدنى بداية هي %<PRIu64> قطاعاً)"
 
-#: libfdisk/src/gpt.c:2828
+#: libfdisk/src/gpt.c:2834
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "القسم رقم %zu خارج النطاق (أقصى نهاية هي %<PRIu64> قطاعاً)"
 
-#: libfdisk/src/gpt.c:2874
+#: libfdisk/src/gpt.c:2880
 msgid "The partition entry size is zero."
 msgstr "حجم مدخلة القسم صفر."
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2882
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "يجب أن يكون رقم القسم أصغر من %zu."
 
-#: libfdisk/src/gpt.c:2900
+#: libfdisk/src/gpt.c:2906
 msgid "Cannot allocate memory!"
 msgstr "تعذر تخصيص ذاكرة!"
 
-#: libfdisk/src/gpt.c:2929
+#: libfdisk/src/gpt.c:2935
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
 msgstr "تغير طول جدول الأقسام من %<PRIu32> إلى %<PRIu32>."
 
-#: libfdisk/src/gpt.c:3039
+#: libfdisk/src/gpt.c:3045
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "تغيرت سمات القسم %zu إلى 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:3089
+#: libfdisk/src/gpt.c:3095
 msgid "Enter GUID specific bit"
 msgstr "أدخل البت الخاص بـ GUID"
 
-#: libfdisk/src/gpt.c:3104
+#: libfdisk/src/gpt.c:3110
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "فشل تبديل البت غير المدعوم %lu"
 
-#: libfdisk/src/gpt.c:3117
+#: libfdisk/src/gpt.c:3123
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "البت الخاص بـ GUID رقم %d في القسم %zu مفعل الآن."
 
-#: libfdisk/src/gpt.c:3118
+#: libfdisk/src/gpt.c:3124
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "البت الخاص بـ GUID رقم %d في القسم %zu معطل الآن."
 
-#: libfdisk/src/gpt.c:3122
+#: libfdisk/src/gpt.c:3128
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "العلم %s في القسم %zu مفعل الآن."
 
-#: libfdisk/src/gpt.c:3123
+#: libfdisk/src/gpt.c:3129
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "العلم %s في القسم %zu معطل الآن."
 
-#: libfdisk/src/gpt.c:3266
+#: libfdisk/src/gpt.c:3272
 msgid "Type-UUID"
 msgstr "نوع-UUID"
 
-#: libfdisk/src/gpt.c:3267
+#: libfdisk/src/gpt.c:3273
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3268 login-utils/chfn.c:181 login-utils/chfn.c:183
+#: libfdisk/src/gpt.c:3274 login-utils/chfn.c:181 login-utils/chfn.c:183
 #: login-utils/chfn.c:341 sys-utils/lsipc.c:184
 msgid "Name"
 msgstr "الاسم"
@@ -8008,313 +8009,313 @@ msgstr "تعذر جلب %s: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "حالة الولوج الصامت: فشل استعادة المعرفات الأصلية"
 
-#: libmount/src/context.c:3092
+#: libmount/src/context.c:3109
 #, c-format
 msgid "operation failed: %m"
 msgstr "فشلت العملية: %m"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "تحذير: فشل تطبيق أعلام الانتشار"
 
-#: libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "تحذير: المصدر محمي ضد الكتابة، رُكب للقراءة فقط"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1555
 #, c-format
 msgid "operation permitted for root only"
 msgstr "العملية مسموح بها للجذر (root) فقط"
 
-#: libmount/src/context_mount.c:1541
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s مركّب بالفعل"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1565
 #, c-format
 msgid "can't find in %s"
 msgstr "تعذر العثور في %s"
 
-#: libmount/src/context_mount.c:1550
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "تعذر العثور على نقطة التركيب في %s"
 
-#: libmount/src/context_mount.c:1553
+#: libmount/src/context_mount.c:1571
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "تعذر العثور على مصدر التركيب %s في %s"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "رُصد أكثر من نظام ملفات على %s؛ استخدم -t <النوع> أو wipefs(8)"
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1581
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "فشل تحديد نوع نظام الملفات"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1582
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "لم يحدد نوع نظام ملفات صالح"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "can't find %s"
 msgstr "تعذر العثور على %s"
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "no mount source specified"
 msgstr "لم يحدد مصدر للتركيب"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "فشل تحليل خيارات التركيب '%s': %m"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "فشل تحليل خيارات التركيب '%s'"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "فشل تحليل خيارات التركيب: %m"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "failed to parse mount options"
 msgstr "فشل تحليل خيارات التركيب"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "failed to set up loop device for %s"
 msgstr "فشل إعداد جهاز الحلقة (loop) لـ %s"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "يوجد جهاز حلقة (loop) متداخل لـ %s"
 
-#: libmount/src/context_mount.c:1602 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
 #, c-format
 msgid "locking failed"
 msgstr "فشل القفل"
 
-#: libmount/src/context_mount.c:1606 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "فشل تبديل مساحة الأسماء"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "filesystem already mounted"
 msgstr "نظام الملفات مركّب بالفعل"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "mount failed: %m"
 msgstr "فشل التركيب: %m"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1641
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "رُكب نظام الملفات، لكن فشل تطبيق الأعلام"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1647
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "رُكب نظام الملفات، لكن فشل تحديث جدول تركيب مساحة المستخدم"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "رُكب نظام الملفات، لكن فشل إعادة تبديل مساحة الأسماء"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "رُكب نظام الملفات، لكن فشل تغيير الملكية: %m"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1665
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "رُكب نظام الملفات، لكن فشل تغيير الوضع: %m"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "رُكب نظام الملفات، لكن فشل إرفاق idmapping"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1677
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "رُكب نظام الملفات، لكن فشلت أي عملية لاحقة: %m"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s() failed: "
 msgstr "فشل ()%s: "
 
-#: libmount/src/context_mount.c:1699 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "رُفض الإذن"
 
-#: libmount/src/context_mount.c:1701 libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
 #, c-format
 msgid "mount point is not a directory"
 msgstr "نقطة التركيب ليست دليلاً"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "يجب أن تكون مستخدماً خارقاً لاستخدام mount"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "mount point is busy"
 msgstr "نقطة التركيب مشغولة"
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1735
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s مركّب بالفعل على %s"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1739
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s مركّب بالفعل أو نقطة التركيب مشغولة"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "mount point does not exist"
 msgstr "نقطة التركيب غير موجودة"
 
-#: libmount/src/context_mount.c:1729
+#: libmount/src/context_mount.c:1747
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "نقطة التركيب هي وصلة رمزية لا تؤدي لمكان"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1752
 #, c-format
 msgid "special device %s does not exist"
 msgstr "الجهاز الخاص %s غير موجود"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1765
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "الجهاز الخاص %s غير موجود (بادئة المسار ليست دليلاً)"
 
-#: libmount/src/context_mount.c:1757
+#: libmount/src/context_mount.c:1775
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "نقطة التركيب ليست مركبة أو خيار سيء"
 
-#: libmount/src/context_mount.c:1759
+#: libmount/src/context_mount.c:1777
 #, c-format
 msgid "not mount point or bad option"
 msgstr "ليست نقطة تركيب أو خيار سيء"
 
-#: libmount/src/context_mount.c:1762
+#: libmount/src/context_mount.c:1780
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "خيار سيء؛ نقل تركيب يقع تحت تركيب مشترك غير مدعوم"
 
-#: libmount/src/context_mount.c:1766
+#: libmount/src/context_mount.c:1784
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "خيار سيء؛ لعدة أنظمة ملفات (مثل nfs و cifs) قد تحتاج لبرنامج مساعد /sbin/mount.<نوع>"
 
-#: libmount/src/context_mount.c:1770
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "نوع نظام ملفات خاطئ، خيار سيء، كتلة فائقة (superblock) سيئة على %s، صفحة رموز مفقودة أو برنامج مساعد، أو خطأ آخر"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1795
 #, c-format
 msgid "mount table full"
 msgstr "جدول التركيب ممتلئ"
 
-#: libmount/src/context_mount.c:1782
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "تعذر قراءة الكتلة الفائقة على %s"
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1807
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "نوع نظام ملفات غير معروف '%s'"
 
-#: libmount/src/context_mount.c:1792
+#: libmount/src/context_mount.c:1810
 #, c-format
 msgid "unknown filesystem type"
 msgstr "نوع نظام ملفات غير معروف"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1819
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s ليس جهاز كتل، وفشل (2)stat؟"
 
-#: libmount/src/context_mount.c:1804
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "النواة لا تتعرف على %s كجهاز كتل؛ ربما استخدام \"modprobe driver\" ضروري"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1825
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s ليس جهاز كتل؛ جرب \"-o loop\""
 
-#: libmount/src/context_mount.c:1809
+#: libmount/src/context_mount.c:1827
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s ليس جهاز كتل"
 
-#: libmount/src/context_mount.c:1816
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s ليس جهاز كتل صالح"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1842
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "تعذر تركيب %s للقراءة فقط"
 
-#: libmount/src/context_mount.c:1826
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s محمي ضد الكتابة ولكن طُلب وضع قراءة-كتابة صريح"
 
-#: libmount/src/context_mount.c:1828
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "تعذر إعادة تركيب %s قراءة-كتابة، فهو محمي ضد الكتابة"
 
-#: libmount/src/context_mount.c:1830
+#: libmount/src/context_mount.c:1848
 #, c-format
 msgid "bind %s failed"
 msgstr "فشل ربط %s"
 
-#: libmount/src/context_mount.c:1839
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "no medium found on %s"
 msgstr "لم يعثر على وسيط في %s"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "تعذر التركيب؛ غالباً نظام ملفات تالف على %s"
 
-#: libmount/src/context_mount.c:1855
+#: libmount/src/context_mount.c:1873
 #, c-format
 msgid "%s() failed: %m"
 msgstr "فشل ()%s: %m"
@@ -8380,13 +8381,13 @@ msgid "umount(2) system call failed: %m"
 msgstr "فشل استدعاء النظام umount(2): %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:348 libmount/src/hook_idmap.c:378
+#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "e تعذر ضبط ID-mapping: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:286
+#: libmount/src/hook_loopdev.c:295
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "e عقدة الجهاز %s (%u:%u) مفقودة"
@@ -9062,7 +9063,7 @@ msgstr " -H                  إخفاء اسم المضيف في مطالبة ا
 msgid " -s, --shell <path>  define the shell to log in to"
 msgstr " -s, --shell <مسار>  ‎تحديد الصدفة المراد الولوج إليها"
 
-#: login-utils/login.c:1380 term-utils/agetty.c:3143
+#: login-utils/login.c:1380 term-utils/agetty.c:3141
 msgid "failed to initialize path context"
 msgstr "فشل تهيئة سياق المسار"
 
@@ -9088,12 +9089,12 @@ msgid "groups initialization failed: %m"
 msgstr "فشل تهيئة المجموعات: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1106 sys-utils/unshare.c:1316
+#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "فشل setgid()"
 
 #: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
-#: sys-utils/unshare.c:1108 sys-utils/unshare.c:1319
+#: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "فشل setuid()"
 
@@ -9635,7 +9636,7 @@ msgid "cannot create child process"
 msgstr "يتعذر إنشاء عملية ابن"
 
 #: login-utils/su-common.c:609 sys-utils/nsenter.c:887
-#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1285
+#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "يتعذر تغيير الدليل إلى %s"
@@ -12675,7 +12676,7 @@ msgid "invalid sigmask format: %s"
 msgstr "تنسيق قناع الإشارة غير صالح: %s"
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:413 sys-utils/setpriv.c:463
-#: sys-utils/unshare.c:1025
+#: sys-utils/unshare.c:1024
 #, c-format
 msgid "unknown signal: %s"
 msgstr "إشارة مجهولة: %s"
@@ -14198,7 +14199,7 @@ msgstr "لا يوجد واصفات ملفات مستلمة، تحقق من حا�
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "عدد واصفات الملفات المستلمة كبير جداً، تحقق من uuidd.socket"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1400
+#: misc-utils/uuidd.c:452 text-utils/more.c:1402
 msgid "poll failed"
 msgstr "فشل الاقتراع (poll)"
 
@@ -16944,7 +16945,7 @@ msgid "%s: unmounting"
 msgstr "%s: يجري فك الوصل"
 
 #: sys-utils/eject.c:671 sys-utils/mount.c:52 sys-utils/umount.c:121
-#: text-utils/more.c:1279
+#: text-utils/more.c:1281
 msgid "drop permissions failed"
 msgstr "فشل إسقاط الصلاحيات"
 
@@ -19144,7 +19145,7 @@ msgid "sigfillset failed"
 msgstr "فشل sigfillset"
 
 #: sys-utils/irqtop.c:251 sys-utils/setpgid.c:81 sys-utils/setpgid.c:85
-#: sys-utils/unshare.c:1141
+#: sys-utils/unshare.c:1140
 msgid "sigprocmask failed"
 msgstr "فشل sigprocmask"
 
@@ -21374,7 +21375,7 @@ msgstr "%s لا يمثل نقطة وصل\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s يمثل نقطة وصل\n"
 
-#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:745
+#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:744
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr " %s [خيارات] [<‎برنامج> [<‎معاملات>...]]\n"
@@ -21548,11 +21549,11 @@ msgstr "فشل كتابة cgroup.procs"
 msgid "failed to parse file descriptor"
 msgstr "فشل تحليل واصف الملف"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1040
+#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "فشل تحليل معرف المستخدم (uid)"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1044
+#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "فشل تحليل معرف المجموعة (gid)"
 
@@ -21607,7 +21608,7 @@ msgid "can not get process stat"
 msgstr "تعذر جلب حالة العملية"
 
 #: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
-#: sys-utils/unshare.c:1104 sys-utils/unshare.c:1314
+#: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "فشل setgroups"
 
@@ -23758,80 +23759,80 @@ msgstr "فشل تحليل خريطة subid"
 msgid "no line matching user \"%s\" in %s"
 msgstr "لا يوجد سطر يطابق المستخدم \"%s\" في %s"
 
-#: sys-utils/unshare.c:650
+#: sys-utils/unshare.c:649
 #, c-format
 msgid "%s too large for kernel 4k limit"
 msgstr "%s كبير جداً بالنسبة لحد النواة‏ 4k"
 
-#: sys-utils/unshare.c:656
+#: sys-utils/unshare.c:655
 #, c-format
 msgid "failed to open %s"
 msgstr "فشل فتح %s"
 
-#: sys-utils/unshare.c:658
+#: sys-utils/unshare.c:657
 #, c-format
 msgid "failed to write %s"
 msgstr "فشلت كتابة %s"
 
-#: sys-utils/unshare.c:730
+#: sys-utils/unshare.c:729
 #, c-format
 msgid "cannot open %s/register"
 msgstr "تعذر فتح ‎%s/register"
 
-#: sys-utils/unshare.c:733
+#: sys-utils/unshare.c:732
 #, c-format
 msgid "write failed %s/register"
 msgstr "فشلت الكتابة ‎%s/register"
 
-#: sys-utils/unshare.c:749
+#: sys-utils/unshare.c:748
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr "تشغيل برنامج مع بعض نطاقات التسمية غير المشتركة مع الأصل.\n"
 
-#: sys-utils/unshare.c:752
+#: sys-utils/unshare.c:751
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr " -m, --mount[=<ملف>]      عدم مشاركة نطاق تسمية الوصلات\n"
 
-#: sys-utils/unshare.c:753
+#: sys-utils/unshare.c:752
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<ملف>]        عدم مشاركة نطاق تسمية UTS (اسم المضيف إلخ)\n"
 
-#: sys-utils/unshare.c:754
+#: sys-utils/unshare.c:753
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr " -i, --ipc[=<ملف>]        عدم مشاركة نطاق تسمية System V IPC\n"
 
-#: sys-utils/unshare.c:755
+#: sys-utils/unshare.c:754
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr " -n, --net[=<ملف>]        عدم مشاركة نطاق تسمية الشبكة\n"
 
-#: sys-utils/unshare.c:756
+#: sys-utils/unshare.c:755
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr " -p, --pid[=<ملف>]        عدم مشاركة نطاق تسمية معرفات العمليات (pid)\n"
 
-#: sys-utils/unshare.c:757
+#: sys-utils/unshare.c:756
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr " -U, --user[=<ملف>]       عدم مشاركة نطاق تسمية المستخدمين\n"
 
-#: sys-utils/unshare.c:758
+#: sys-utils/unshare.c:757
 msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
 msgstr " -C, --cgroup[=<ملف>]     عدم مشاركة نطاق تسمية cgroup\n"
 
-#: sys-utils/unshare.c:759
+#: sys-utils/unshare.c:758
 msgid " -T, --time[=<file>]       unshare time namespace\n"
 msgstr " -T, --time[=<ملف>]       عدم مشاركة نطاق تسمية الوقت\n"
 
-#: sys-utils/unshare.c:761
+#: sys-utils/unshare.c:760
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr " --mount-proc[=<دليل>]      وصل نظام ملفات proc أولاً (يتضمن --mount)\n"
 
-#: sys-utils/unshare.c:762
+#: sys-utils/unshare.c:761
 msgid " --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"
 msgstr " --mount-binfmt[=<دليل>]    وصل نظام ملفات binfmt أولاً (يتضمن --user و --mount)\n"
 
-#: sys-utils/unshare.c:763
+#: sys-utils/unshare.c:762
 msgid " -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"
 msgstr " -l, --load-interp <ملف>  ‎تحميل تعريف binfmt في نطاق التسمية (يتضمن --mount-binfmt)\n"
 
-#: sys-utils/unshare.c:764
+#: sys-utils/unshare.c:763
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
@@ -23839,47 +23840,47 @@ msgstr ""
 " --propagation slave|shared|private|unchanged\n"
 "                           تعديل انتشار الوصل في نطاق تسمية الوصلات\n"
 
-#: sys-utils/unshare.c:766
+#: sys-utils/unshare.c:765
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
 msgstr " -R, --root <دليل>          ‎تشغيل الأمر مع تعيين دليل الجذر إلى الدليل المعطى\n"
 
-#: sys-utils/unshare.c:767
+#: sys-utils/unshare.c:766
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
 msgstr " -w, --wd <دليل>            ‎تغيير دليل العمل إلى الدليل المعطى\n"
 
-#: sys-utils/unshare.c:769
+#: sys-utils/unshare.c:768
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
 msgstr " -S, --setuid <uid>        تعيين معرف المستخدم (uid) في نطاق التسمية المدخل\n"
 
-#: sys-utils/unshare.c:770
+#: sys-utils/unshare.c:769
 msgid " -G, --setgid <gid>        set gid in entered namespace\n"
 msgstr " -G, --setgid <gid>        تعيين معرف المجموعة (gid) في نطاق التسمية المدخل\n"
 
-#: sys-utils/unshare.c:771
+#: sys-utils/unshare.c:770
 msgid " --map-user <uid>|<name>   map current user to uid (implies --user)\n"
 msgstr " --map-user <uid>|<اسم>   ‎تخطيط المستخدم الحالي إلى معرف مستخدم (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:772
+#: sys-utils/unshare.c:771
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
 msgstr " --map-group <gid>|<اسم>  ‎تخطيط المجموعة الحالية إلى معرف مجموعة (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:773
+#: sys-utils/unshare.c:772
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       تخطيط المستخدم الحالي إلى الجذر (root) (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:774
+#: sys-utils/unshare.c:773
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
 msgstr " -c, --map-current-user    تخطيط المستخدم الحالي لنفسه (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:775
+#: sys-utils/unshare.c:774
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr " --map-auto                تخطيط المستخدمين والمجموعات آلياً (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:776
+#: sys-utils/unshare.c:775
 msgid " --map-subids              map the first block of user IDs owned by euid (implies --user)\n"
 msgstr " --map-subids              خطط أول كتلة من معرفات المستخدمين المملوكة بواسطة euid (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:777
+#: sys-utils/unshare.c:776
 msgid ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           map count users from outeruid to inneruid (implies --user)\n"
@@ -23887,7 +23888,7 @@ msgstr ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           تخطيط عدد المستخدمين من outeruid إلى inneruid (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:779
+#: sys-utils/unshare.c:778
 msgid ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           map count groups from outergid to innergid (implies --user)\n"
@@ -23895,15 +23896,15 @@ msgstr ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           تخطيط عدد المجموعات من outergid إلى innergid (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:781
+#: sys-utils/unshare.c:780
 msgid " --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"
 msgstr " --owner <uid>:<gid>       عيّن مالك مساحة أسماء المستخدم (يتضمن --user)\n"
 
-#: sys-utils/unshare.c:783
+#: sys-utils/unshare.c:782
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr " -f, --fork                تفرع (fork) قبل إطلاق البرنامج المعطى\n"
 
-#: sys-utils/unshare.c:784
+#: sys-utils/unshare.c:783
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
@@ -23911,93 +23912,93 @@ msgstr ""
 " --kill-child[=<اسم_إشارة>]  عند الانتهاء، اقتل الابن المتفرع (يتضمن --fork)\n"
 "‎                             مبدئي إلى SIGKILL\n"
 
-#: sys-utils/unshare.c:786
+#: sys-utils/unshare.c:785
 msgid " --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"
 msgstr " --forward-signals         مرر إشارات SIGTERM و SIGINT للابن (يتضمن --fork)\n"
 
-#: sys-utils/unshare.c:788
+#: sys-utils/unshare.c:787
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr " --setgroups allow|deny    التحكم في استدعاء النظام setgroups في نطاقات أسماء المستخدمين\n"
 
-#: sys-utils/unshare.c:789
+#: sys-utils/unshare.c:788
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgstr " --keep-caps               الإبقاء على القدرات الممنوحة في نطاقات أسماء المستخدمين\n"
 
-#: sys-utils/unshare.c:791
+#: sys-utils/unshare.c:790
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
 msgstr " --monotonic <إزاحة>      ‎ضبط إزاحة الساعة الرتيبة (بالثواني) في نطاقات أسماء الوقت\n"
 
-#: sys-utils/unshare.c:792
+#: sys-utils/unshare.c:791
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
 msgstr " --boottime <إزاحة>       ‎ضبط إزاحة وقت الإقلاع (بالثواني) في نطاقات أسماء الوقت\n"
 
-#: sys-utils/unshare.c:1013
+#: sys-utils/unshare.c:1012
 msgid "failed to parse owner"
 msgstr "فشل تحليل المالك"
 
-#: sys-utils/unshare.c:1054
+#: sys-utils/unshare.c:1053
 msgid "failed to parse monotonic offset"
 msgstr "فشل تحليل الإزاحة الرتيبة"
 
-#: sys-utils/unshare.c:1058
+#: sys-utils/unshare.c:1057
 msgid "failed to parse boottime offset"
 msgstr "فشل تحليل إزاحة وقت الإقلاع"
 
-#: sys-utils/unshare.c:1081
+#: sys-utils/unshare.c:1080
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr "الخياران --monotonic و --boottime يتطلبان إلغاء مشاركة نطاق أسماء الوقت (-T)"
 
-#: sys-utils/unshare.c:1111
+#: sys-utils/unshare.c:1110
 msgid "unshare failed"
 msgstr "فشل إلغاء المشاركة"
 
-#: sys-utils/unshare.c:1134
+#: sys-utils/unshare.c:1133
 msgid "sigaction SIGTERM failed"
 msgstr "فشل sigaction لـ SIGTERM"
 
-#: sys-utils/unshare.c:1136
+#: sys-utils/unshare.c:1135
 msgid "sigaction SIGINT failed"
 msgstr "فشل sigaction لـ SIGINT"
 
-#: sys-utils/unshare.c:1148
+#: sys-utils/unshare.c:1147
 msgid "sigprocmask block failed"
 msgstr "فشل حظر sigprocmask"
 
-#: sys-utils/unshare.c:1155
+#: sys-utils/unshare.c:1154
 msgid "pidfd_open failed"
 msgstr "فشل pidfd_open"
 
-#: sys-utils/unshare.c:1169
+#: sys-utils/unshare.c:1168
 msgid "sigprocmask restore failed"
 msgstr "فشلت استعادة sigprocmask"
 
-#: sys-utils/unshare.c:1211
+#: sys-utils/unshare.c:1210
 msgid "signal handler reset failed"
 msgstr "فشلت إعادة ضبط معالج الإشارة"
 
-#: sys-utils/unshare.c:1216
+#: sys-utils/unshare.c:1215
 msgid "sigprocmask unblock failed"
 msgstr "فشل إلغاء حظر sigprocmask"
 
-#: sys-utils/unshare.c:1220
+#: sys-utils/unshare.c:1219
 msgid "child exit failed"
 msgstr "فشل خروج العملية الابن"
 
-#: sys-utils/unshare.c:1259
+#: sys-utils/unshare.c:1258
 msgid "options --setgroups=allow and --map-group are mutually exclusive"
 msgstr "الخياران --setgroups=allow و --map-group متعارضان"
 
-#: sys-utils/unshare.c:1274 sys-utils/unshare.c:1301 sys-utils/unshare.c:1307
+#: sys-utils/unshare.c:1273 sys-utils/unshare.c:1300 sys-utils/unshare.c:1306
 #, c-format
 msgid "mount %s failed"
 msgstr "فشل وصل %s"
 
-#: sys-utils/unshare.c:1281
+#: sys-utils/unshare.c:1280
 #, c-format
 msgid "cannot change root directory to '%s'"
 msgstr "يتعذر تغيير الدليل الجذري إلى '%s'"
 
-#: sys-utils/unshare.c:1297
+#: sys-utils/unshare.c:1296
 #, c-format
 msgid "cannot change %s filesystem propagation"
 msgstr "يتعذر تغيير انتشار نظام ملفات %s"
@@ -24440,7 +24441,7 @@ msgstr "%s: تعذر تنفيذ %s: %m"
 #: term-utils/agetty.c:615 term-utils/agetty.c:786 term-utils/agetty.c:969
 #: term-utils/agetty.c:1218 term-utils/agetty.c:1497 term-utils/agetty.c:1515
 #: term-utils/agetty.c:1552 term-utils/agetty.c:1562 term-utils/agetty.c:1604
-#: term-utils/agetty.c:1932 term-utils/agetty.c:2340 term-utils/agetty.c:3023
+#: term-utils/agetty.c:1930 term-utils/agetty.c:2338 term-utils/agetty.c:3021
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "فشل تخصيص الذاكرة: %m"
@@ -24530,32 +24531,32 @@ msgstr "تعذر فتح ملف إصدار نظام التشغيل"
 msgid "failed to create reload file: %s: %m"
 msgstr "فشل إنشاء ملف إعادة التحميل: %s: %m"
 
-#: term-utils/agetty.c:1996
+#: term-utils/agetty.c:1994
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "فشل الحصول على سمات الطرفية: %m"
 
-#: term-utils/agetty.c:2018
+#: term-utils/agetty.c:2016
 msgid "[press ENTER to login]"
 msgstr "[اضغط ENTER للولوج]"
 
-#: term-utils/agetty.c:2052
+#: term-utils/agetty.c:2050
 msgid "Num Lock off"
 msgstr "إيقاف Num Lock"
 
-#: term-utils/agetty.c:2055
+#: term-utils/agetty.c:2053
 msgid "Num Lock on"
 msgstr "تشغيل Num Lock"
 
-#: term-utils/agetty.c:2058
+#: term-utils/agetty.c:2056
 msgid "Caps Lock on"
 msgstr "تشغيل Caps Lock"
 
-#: term-utils/agetty.c:2061
+#: term-utils/agetty.c:2059
 msgid "Scroll Lock on"
 msgstr "تشغيل Scroll Lock"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2062
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -24564,32 +24565,32 @@ msgstr ""
 "تلميحة: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2225
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: قراءة: %m"
 
-#: term-utils/agetty.c:2294
+#: term-utils/agetty.c:2292
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: تجاوز سعة المدخلات"
 
-#: term-utils/agetty.c:2336 term-utils/agetty.c:2344
+#: term-utils/agetty.c:2334 term-utils/agetty.c:2342
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: تحويل محارف غير صالح لاسم الولوج"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: محرف غير صالح 0x%x في اسم الولوج"
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2433
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: فشل ضبط سمات الطرفية: %m"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2478
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -24598,147 +24599,147 @@ msgstr ""
 " %1$s [خيارات] <‎سطر> [<‎معدل_بود>,...] [<‎نوع_الطرفية>]\n"
 " %1$s [خيارات] <‎معدل_بود>,... <‎سطر> [<‎نوع_الطرفية>]\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2482
 msgid "Open a terminal and set its mode.\n"
 msgstr "فتح طرفية وضبط نمطها.\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2485
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                افتراض tty بـ 8 بتات\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2486
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <مستخدم>     ‎ولوج المستخدم المحدد آلياً\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2487
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              عدم تصفير نمط التحكم\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2488
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               استخدام‎ -r <اسم_المضيف> للولوج(1)\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2489
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <قائمة>    ‎عرض ملفات أو مجلدات الإصدار (issue)\n"
 
-#: term-utils/agetty.c:2492
+#: term-utils/agetty.c:2490
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           عرض ملف الإصدار والخروج\n"
 
-#: term-utils/agetty.c:2493
+#: term-utils/agetty.c:2491
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         تفعيل التحكم في التدفق عبر العتاد\n"
 
-#: term-utils/agetty.c:2494
+#: term-utils/agetty.c:2492
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <اسم_مضيف>      ‎تحديد مضيف الولوج\n"
 
-#: term-utils/agetty.c:2495
+#: term-utils/agetty.c:2493
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              عدم عرض ملف الإصدار\n"
 
-#: term-utils/agetty.c:2496
+#: term-utils/agetty.c:2494
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <سلسلة_محارف> ‎ضبط سلسلة التهيئة\n"
 
-#: term-utils/agetty.c:2497
+#: term-utils/agetty.c:2495
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              عدم مسح الشاشة قبل الطلب\n"
 
-#: term-utils/agetty.c:2498
+#: term-utils/agetty.c:2496
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ملف> ‎تحديد برنامج الولوج\n"
 
-#: term-utils/agetty.c:2499
+#: term-utils/agetty.c:2497
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<وضع>]  التحكم في علامة الخط المحلي\n"
 
-#: term-utils/agetty.c:2500
+#: term-utils/agetty.c:2498
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         استخراج معدل بود أثناء الاتصال\n"
 
-#: term-utils/agetty.c:2501
+#: term-utils/agetty.c:2499
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           عدم المطالبة بالولوج\n"
 
-#: term-utils/agetty.c:2502
+#: term-utils/agetty.c:2500
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            عدم طباعة سطر جديد قبل الإصدار\n"
 
-#: term-utils/agetty.c:2503
+#: term-utils/agetty.c:2501
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <خيارات> ‎خيارات تمرر إلى برنامج الولوج\n"
 
-#: term-utils/agetty.c:2504
+#: term-utils/agetty.c:2502
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          الانتظار لأي مفتاح قبل الولوج\n"
 
-#: term-utils/agetty.c:2505
+#: term-utils/agetty.c:2503
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <دليل>         ‎تغيير الجذر إلى المجلد\n"
 
-#: term-utils/agetty.c:2506
+#: term-utils/agetty.c:2504
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               إنهاء الاتصال افتراضياً على tty\n"
 
-#: term-utils/agetty.c:2507
+#: term-utils/agetty.c:2505
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            محاولة الاحتفاظ بمعدل بود بعد الانقطاع\n"
 
-#: term-utils/agetty.c:2508
+#: term-utils/agetty.c:2506
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <رقم>     ‎مهلة عملية الولوج\n"
 
-#: term-utils/agetty.c:2509
+#: term-utils/agetty.c:2507
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          اكتشاف حالة الأحرف الكبيرة للطرفية\n"
 
-#: term-utils/agetty.c:2510
+#: term-utils/agetty.c:2508
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              انتظار محرف العودة (carriage-return)\n"
 
-#: term-utils/agetty.c:2511
+#: term-utils/agetty.c:2509
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              لا تطبع تلميحات\n"
 
-#: term-utils/agetty.c:2512
+#: term-utils/agetty.c:2510
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           لن يظهر اسم المضيف إطلاقاً\n"
 
-#: term-utils/agetty.c:2513
+#: term-utils/agetty.c:2511
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        إظهار اسم المضيف الكامل (FQDN)\n"
 
-#: term-utils/agetty.c:2514
+#: term-utils/agetty.c:2512
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <سلسلة_محارف> ‎محارف مسح (backspace) إضافية\n"
 
-#: term-utils/agetty.c:2515
+#: term-utils/agetty.c:2513
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <سلسلة_محارف>  ‎محارف إنهاء (kill) إضافية\n"
 
-#: term-utils/agetty.c:2516
+#: term-utils/agetty.c:2514
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <مجلد>    ‎تغيير المجلد قبل الولوج\n"
 
-#: term-utils/agetty.c:2517
+#: term-utils/agetty.c:2515
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <رقم>       ‎ثواني الانتظار قبل إظهار المحث\n"
 
-#: term-utils/agetty.c:2518
+#: term-utils/agetty.c:2516
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <رقم>        ‎تشغيل الولوج بهذه الأولوية\n"
 
-#: term-utils/agetty.c:2519
+#: term-utils/agetty.c:2517
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               إعادة تحميل المحثات في نسخ agetty التي تعمل\n"
 
-#: term-utils/agetty.c:2520
+#: term-utils/agetty.c:2518
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          عرض سرعات الباود (baud rates) المدعومة\n"
 
-#: term-utils/agetty.c:2959
+#: term-utils/agetty.c:2957
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
@@ -24749,21 +24750,21 @@ msgstr[3] "%d مستخدمين"
 msgstr[4] "%d مستخدماً"
 msgstr[5] "%d مستخدم"
 
-#: term-utils/agetty.c:3110
+#: term-utils/agetty.c:3108
 #, c-format
 msgid "checkname failed: %m"
 msgstr "فشل checkname: %m"
 
-#: term-utils/agetty.c:3122
+#: term-utils/agetty.c:3120
 #, c-format
 msgid "cannot touch file %s"
 msgstr "يتعذر تحديث (touch) الملف %s"
 
-#: term-utils/agetty.c:3126
+#: term-utils/agetty.c:3124
 msgid "--reload is unsupported on your system"
 msgstr "--reload غير مدعوم في نظامك"
 
-#: term-utils/agetty.c:3149
+#: term-utils/agetty.c:3147
 msgid "failed to open credentials directory"
 msgstr "فشل فتح مجلد بيانات الاستيثاق"
 
@@ -25473,7 +25474,7 @@ msgstr "يتعذر جلب معرف المستخدم (uid) من passwd"
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "رسالة بث من %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "لا يمكن قراءة %s - استخدم المدخل القياسي (stdin)."
@@ -25511,30 +25512,30 @@ msgstr "الرسائل معطلة لدى %s"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s مسجل الدخول أكثر من مرة؛ تجري الكتابة إلى %s"
 
-#: term-utils/write.c:385
+#: term-utils/write.c:386
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "رسالة من %s@%s (باسم %s) على %s الساعة %02d:%02d ..."
 
-#: term-utils/write.c:389
+#: term-utils/write.c:390
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "رسالة من %s@%s على %s الساعة %02d:%02d ..."
 
-#: term-utils/write.c:400
+#: term-utils/write.c:402
 msgid "carefulputc failed"
 msgstr "فشل carefulputc"
 
-#: term-utils/write.c:438
+#: term-utils/write.c:440
 msgid "you have write permission turned off"
 msgstr "صلاحية الكتابة لديك معطلة"
 
-#: term-utils/write.c:461
+#: term-utils/write.c:463
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s غير مسجل الدخول على %s"
 
-#: term-utils/write.c:467
+#: term-utils/write.c:469
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "الرسائل معطلة لدى %s على %s"
@@ -25643,20 +25644,20 @@ msgstr ""
 " -x, --spaces           تحويل علامات الجدولة إلى مسافات\n"
 " -l, --lines عدد        ‎تخزين ما لا يقل عن (عدد) من الأسطر\n"
 
-#: text-utils/col.c:495
+#: text-utils/col.c:498
 #, c-format
 msgid "warning: can't back up %s."
 msgstr "تحذير: لا يمكن الرجوع للخلف في %s."
 
-#: text-utils/col.c:497
+#: text-utils/col.c:500
 msgid "past first line"
 msgstr "تجاوز السطر الأول"
 
-#: text-utils/col.c:498
+#: text-utils/col.c:501
 msgid "-- line already flushed"
 msgstr "-- السطر أفرغ بالفعل"
 
-#: text-utils/col.c:564
+#: text-utils/col.c:567
 msgid "bad -l argument"
 msgstr "معطى -l سيئ"
 
@@ -25980,7 +25981,7 @@ msgstr " -v, --no-squeezing        أخرج الأسطر المتطابقة\n"
 msgid "<length> and <offset>"
 msgstr "<الطول> و <الإزاحة>"
 
-#: text-utils/hexdump-display.c:535
+#: text-utils/hexdump-display.c:540
 msgid "all input file arguments failed"
 msgstr "فشلت كل معطيات ملفات المدخلات"
 
@@ -26094,27 +26095,27 @@ msgstr ""
 "*** %s: دليل ***\n"
 "\n"
 
-#: text-utils/more.c:736
+#: text-utils/more.c:738
 #, c-format
 msgid "--More--"
 msgstr "--المزيد--"
 
-#: text-utils/more.c:738
+#: text-utils/more.c:740
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(الملف التالي: %s)"
 
-#: text-utils/more.c:743 text-utils/more.c:749
+#: text-utils/more.c:745 text-utils/more.c:751
 #, c-format
 msgid "(END)"
 msgstr "(النهاية)"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:756
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[اضغط مسافة للاستمرار، 'q' للخروج.]"
 
-#: text-utils/more.c:959
+#: text-utils/more.c:961
 msgid ""
 "\n"
 "...Skipping "
@@ -26122,40 +26123,40 @@ msgstr ""
 "\n"
 "...تخطي "
 
-#: text-utils/more.c:963
+#: text-utils/more.c:965
 msgid "...Skipping to file "
 msgstr "...تخطي إلى الملف "
 
-#: text-utils/more.c:965
+#: text-utils/more.c:967
 msgid "...Skipping back to file "
 msgstr "...تخطي للخلف إلى الملف "
 
-#: text-utils/more.c:1127
+#: text-utils/more.c:1129
 msgid "Line too long"
 msgstr "السطر طويل جداً"
 
-#: text-utils/more.c:1170
+#: text-utils/more.c:1172
 msgid "No previous command to substitute for"
 msgstr "لا يوجد أمر سابق للاستبدال به"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[استخدم q أو Q للخروج]"
 
-#: text-utils/more.c:1283
+#: text-utils/more.c:1285
 msgid "exec failed\n"
 msgstr "فشل التنفيذ\n"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1295
 msgid "can't fork\n"
 msgstr "تعذر التفريع\n"
 
-#: text-utils/more.c:1506
+#: text-utils/more.c:1508
 msgid "...skipping\n"
 msgstr "...تخطي\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1545
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -26163,11 +26164,11 @@ msgstr ""
 "\n"
 "النمط غير موجود\n"
 
-#: text-utils/more.c:1547 text-utils/pg.c:1040 text-utils/pg.c:1188
+#: text-utils/more.c:1549 text-utils/pg.c:1040 text-utils/pg.c:1188
 msgid "Pattern not found"
 msgstr "النمط غير موجود"
 
-#: text-utils/more.c:1566
+#: text-utils/more.c:1568
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -26175,7 +26176,7 @@ msgstr ""
 "معظم الأوامر تُسبق اختيارياً بمعطى رقم صحيح. القيم المبدئية بين أقواس.\n"
 "النجمة (*) تشير إلى أن المعطى يصبح القيمة المبدئية الجديدة.\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1574
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -26218,7 +26219,7 @@ msgstr ""
 ":f                      اعرض اسم الملف الحالي ورقم السطر\n"
 "‎.                       كرر الأمر السابق\n"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1640
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
@@ -26229,7 +26230,7 @@ msgstr[3] "...للخلف %d صفحات"
 msgstr[4] "...للخلف %d صفحة"
 msgstr[5] "...للخلف %d صفحة"
 
-#: text-utils/more.c:1662
+#: text-utils/more.c:1664
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
@@ -26240,7 +26241,7 @@ msgstr[3] "...تخطي %d أسطر"
 msgstr[4] "...تخطي %d سطراً"
 msgstr[5] "...تخطي %d سطراً"
 
-#: text-utils/more.c:1778
+#: text-utils/more.c:1780
 msgid ""
 "\n"
 "***Back***\n"
@@ -26250,25 +26251,25 @@ msgstr ""
 "***للخلف***\n"
 "\n"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1799
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" السطر %d"
 
-#: text-utils/more.c:1800
+#: text-utils/more.c:1802
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[ليس ملفاً] السطر %d"
 
-#: text-utils/more.c:1806
+#: text-utils/more.c:1808
 msgid "No previous regular expression"
 msgstr "لا يوجد تعبير نمطي سابق"
 
-#: text-utils/more.c:1833 text-utils/more.c:1870
+#: text-utils/more.c:1835 text-utils/more.c:1872
 msgid "Command not available in secure mode"
 msgstr "الأمر غير متاح في الوضع الآمن"
 
-#: text-utils/more.c:1884
+#: text-utils/more.c:1886
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[اضغط 'h' للحصول على تعليمات.]"

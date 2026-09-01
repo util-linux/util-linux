@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-06-16 12:05+0200\n"
+"POT-Creation-Date: 2026-09-01 13:07+0200\n"
 "PO-Revision-Date: 2026-03-26 00:51+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
@@ -49,7 +49,7 @@ msgstr "불충분한 인자"
 #: disk-utils/blockdev.c:497 disk-utils/cfdisk.c:2838 disk-utils/delpart.c:68
 #: disk-utils/fdformat.c:240 disk-utils/fdisk.c:1047 disk-utils/fdisk.c:1386
 #: disk-utils/fdisk-list.c:403 disk-utils/fdisk-list.c:444
-#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1481
+#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1483
 #: disk-utils/fsck.cramfs.c:159 disk-utils/fsck.cramfs.c:547
 #: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:217
 #: disk-utils/mkfs.cramfs.c:182 disk-utils/mkfs.cramfs.c:664
@@ -77,12 +77,12 @@ msgstr "불충분한 인자"
 #: sys-utils/setpriv.c:271 sys-utils/setpriv.c:650 sys-utils/setpriv.c:682
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
-#: sys-utils/unshare.c:726 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3119 term-utils/mesg.c:156 term-utils/script.c:393
+#: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
+#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:419 text-utils/colcrt.c:286
+#: term-utils/scriptreplay.c:314 term-utils/wall.c:420 text-utils/colcrt.c:286
 #: text-utils/more.c:469 text-utils/rev.c:167 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -327,7 +327,7 @@ msgid "Quit program without writing changes"
 msgstr "바뀐 내용을 기록하지 않고 프로그램을 끝냅니다"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3264 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3270 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "영역형식"
@@ -909,7 +909,7 @@ msgid "Using default response %c."
 msgstr "기본 입력값 %c을(를) 사용합니다."
 
 #: disk-utils/fdisk.c:241 disk-utils/fdisk.c:315 disk-utils/fdisk.c:392
-#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2586
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2592
 msgid "Value out of range."
 msgstr "범위를 넘어선 값."
 
@@ -1116,7 +1116,7 @@ msgid "cannot read"
 msgstr "읽을 수 없음"
 
 #: disk-utils/fdisk.c:1025 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
-#: libfdisk/src/gpt.c:2506
+#: libfdisk/src/gpt.c:2512
 msgid "First sector"
 msgstr "처음 섹터"
 
@@ -1278,7 +1278,7 @@ msgstr "장치 속성(섹터 크기와 수치 사양)은 지정한 장치 하나
 #: sys-utils/mount.c:1045 sys-utils/mount.c:1117 sys-utils/mountpoint.c:264
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:285 sys-utils/swapon.c:1043
 #: sys-utils/switch_root.c:271 sys-utils/umount.c:629 term-utils/setterm.c:1189
-#: text-utils/col.c:583 text-utils/more.c:2196
+#: text-utils/col.c:586 text-utils/more.c:2198
 msgid "bad usage"
 msgstr "잘못된 사용법"
 
@@ -1355,7 +1355,7 @@ msgid "Alignment offset: %lu bytes"
 msgstr "정렬 오프셋: %lu 바이트"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:263
-#: disk-utils/fsck.c:1268 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
+#: disk-utils/fsck.c:1270 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
 #: misc-utils/findmnt.c:1716 misc-utils/lsblk.c:2212 misc-utils/lsblk.c:2266
 #: misc-utils/lslocks.c:1011 sys-utils/lsns.c:1424
 msgid "failed to allocate iterator"
@@ -1429,22 +1429,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "분할 영역 배치 항목이 디스크 순서에 맞지 않습니다."
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
-#: libfdisk/src/gpt.c:3260 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3266 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "시작"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
-#: libfdisk/src/gpt.c:3261 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3267 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "종단"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
-#: libfdisk/src/gpt.c:3262 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3268 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "섹터"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
-#: libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "크기"
 
@@ -1975,50 +1975,50 @@ msgstr "%s: fstab 해석 실패"
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
 #: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
-#: sys-utils/unshare.c:699 sys-utils/unshare.c:1164
+#: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
 msgstr "포킹 실패"
 
-#: disk-utils/fsck.c:702
+#: disk-utils/fsck.c:704
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: 실행 실패"
 
-#: disk-utils/fsck.c:792
+#: disk-utils/fsck.c:794
 msgid "wait: no more child process?!?"
 msgstr "wait: 더 이상의 하위 프로세스가 없는지?!?"
 
-#: disk-utils/fsck.c:795 lib/pager.c:305 sys-utils/flock.c:462
-#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1198
+#: disk-utils/fsck.c:797 lib/pager.c:305 sys-utils/flock.c:462
+#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1197
 msgid "waitpid failed"
 msgstr "waitpid 실패"
 
-#: disk-utils/fsck.c:813
+#: disk-utils/fsck.c:815
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "경고... %2$s 장치의 %1$s을(를) %3$d 시그널로 나갔습니다."
 
-#: disk-utils/fsck.c:819
+#: disk-utils/fsck.c:821
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: %x 상태, 있어서는 안 될 상황입니다."
 
-#: disk-utils/fsck.c:865
+#: disk-utils/fsck.c:867
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "%s(으)로 끝남 (종료 상태: %d)\n"
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "fsck.%s not found; ignore %s"
 msgstr "fsck.%s이(가) 없습니다. %s 무시함"
 
-#: disk-utils/fsck.c:949
+#: disk-utils/fsck.c:951
 #, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "%4$s에 대해 fsck.%3$s 실행 중 오류 %1$d(%2$s)"
 
-#: disk-utils/fsck.c:1015
+#: disk-utils/fsck.c:1017
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
@@ -2026,78 +2026,78 @@ msgstr ""
 "파일 시스템 형식의 전체를 또는 빈 정보를 'no'또는 '!'를 앞에 붙여야 하는\n"
 "-t 옵션에 전달했습니다."
 
-#: disk-utils/fsck.c:1131
+#: disk-utils/fsck.c:1133
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: /etc/fstab의 불량 행 무시: 0값이 아닌 fsck 전달 번호로 마운트를 바인딩했습니다"
 
-#: disk-utils/fsck.c:1143
+#: disk-utils/fsck.c:1145
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: 무존재 장치 무시함\n"
 
-#: disk-utils/fsck.c:1148
+#: disk-utils/fsck.c:1150
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: 무존재 장치 (\"nofail\" fstab 옵션을 이 장치에 사용합니다)\n"
 
-#: disk-utils/fsck.c:1165
+#: disk-utils/fsck.c:1167
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: 알 수 없는 파일 시스템 형식 무시함\n"
 
-#: disk-utils/fsck.c:1179
+#: disk-utils/fsck.c:1181
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "%s 검사 불가: fsck. %s이(가) 없습니다"
 
-#: disk-utils/fsck.c:1283
+#: disk-utils/fsck.c:1285
 msgid "Checking all file systems.\n"
 msgstr "모든 파일 시스템을 검사합니다.\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1376
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--대기-- (%d회 성공)\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1402
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [옵션] -- [파일시스템-옵션] [파일시스템 ...]\n"
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1406
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "리눅스 파일 시스템을 검사하고 복구합니다.\n"
 
-#: disk-utils/fsck.c:1407
+#: disk-utils/fsck.c:1409
 msgid " -A         check all filesystems\n"
 msgstr " -A             모든 파일 시스템 검사\n"
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1410
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [파일서술자]    진행 표시줄 표시. <파일서술자>는 GUI용\n"
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1411
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l             동시 접근 방지 보장 목적으로 장치 잠금\n"
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1412
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M             마운트한 파일 시스템 검사하지 않음\n"
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1413
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N             실행하지 않고 어떤 항목을 완료할 지 표시\n"
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1414
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P             루트도 마찬가지로 파일 시스템을 동시에 검사\n"
 
-#: disk-utils/fsck.c:1413
+#: disk-utils/fsck.c:1415
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R             루트 파일 시스템 진행 무시. '-A' 옵션에만 해당합니다\n"
 
-#: disk-utils/fsck.c:1414
+#: disk-utils/fsck.c:1416
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
@@ -2105,15 +2105,15 @@ msgstr ""
 " -r [파일서술자]  검사한 각 장치의 통계를 보고합니다.\n"
 "                <파일서술자>는 GUI용입니다\n"
 
-#: disk-utils/fsck.c:1416
+#: disk-utils/fsck.c:1418
 msgid " -s         serialize the checking operations\n"
 msgstr " -s             검사 동작을 직렬화합니다\n"
 
-#: disk-utils/fsck.c:1417
+#: disk-utils/fsck.c:1419
 msgid " -T         do not show the title on startup\n"
 msgstr " -T             시작시 제목 표시 안함\n"
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1420
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -2121,62 +2121,62 @@ msgstr ""
 " -t <형식>      검사할 파일 시스템 형식을 지정합니다.\n"
 "                  <형식>은 쉼표로 구분한 값을 허용합니다\n"
 
-#: disk-utils/fsck.c:1420
+#: disk-utils/fsck.c:1422
 msgid " -V         explain what is being done\n"
 msgstr " -V             완료한 항목을 설명합니다\n"
 
-#: disk-utils/fsck.c:1426
+#: disk-utils/fsck.c:1428
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "존재하는 fs-옵션을 보려면 각각의 fsck.* 명령 결과를 살펴보십시오."
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1473
 msgid "too many devices"
 msgstr "장치가 너무 많습니다"
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1485
 msgid "Is /proc mounted?"
 msgstr "/proc 파일 시스템을 마운트했습니까?"
 
-#: disk-utils/fsck.c:1491
+#: disk-utils/fsck.c:1493
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "일치하는 파일 시스템을 검사하려면 root 계정으로 실행하십시오: %s"
 
-#: disk-utils/fsck.c:1495
+#: disk-utils/fsck.c:1497
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "일치하는 파일 시스템이 없습니다: %s"
 
-#: disk-utils/fsck.c:1503 disk-utils/fsck.c:1606 misc-utils/exch.c:91
+#: disk-utils/fsck.c:1505 disk-utils/fsck.c:1608 misc-utils/exch.c:91
 #: misc-utils/kill.c:386 misc-utils/kill.c:426 sys-utils/eject.c:280
 #: sys-utils/hwclock.c:1526
 msgid "too many arguments"
 msgstr "인자가 너무 많습니다"
 
-#: disk-utils/fsck.c:1510 disk-utils/fsck.c:1594 disk-utils/fsck.c:1602
+#: disk-utils/fsck.c:1512 disk-utils/fsck.c:1596 disk-utils/fsck.c:1604
 msgid "too many options"
 msgstr "옵션이' 너무 많습니다"
 
-#: disk-utils/fsck.c:1560 disk-utils/fsck.c:1563
+#: disk-utils/fsck.c:1562 disk-utils/fsck.c:1565
 msgid "invalid argument of -r"
 msgstr "-r의 인자가 부적절합니다"
 
-#: disk-utils/fsck.c:1575
+#: disk-utils/fsck.c:1577
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr "'%s' 옵션은 한번만 지정할 수 있습니다"
 
-#: disk-utils/fsck.c:1582 misc-utils/kill.c:469 misc-utils/kill.c:485
+#: disk-utils/fsck.c:1584 misc-utils/kill.c:469 misc-utils/kill.c:485
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "'%s' 옵션에 인자가 필요합니다"
 
-#: disk-utils/fsck.c:1617
+#: disk-utils/fsck.c:1619
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "-r의 인자가 부적절합니다: %d"
 
-#: disk-utils/fsck.c:1672
+#: disk-utils/fsck.c:1674
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l 옵션은 하나의 장치에만 활용할 수 있습니다 -- 무시함"
 
@@ -3134,7 +3134,7 @@ msgstr ""
 " -V, --verbose      완료한 작업 항목을 설명합니다.\n"
 "                      -V 옵션을 여러번 지정하면 시험 동작을 진행합니다\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1503
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
 #: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
@@ -5209,6 +5209,7 @@ msgstr "기능:"
 
 #: include/closestream.h:74 include/closestream.h:76 login-utils/vipw.c:272
 #: login-utils/vipw.c:291 sys-utils/rtcwake.c:313 term-utils/setterm.c:822
+#: text-utils/hexdump.c:241
 msgid "write error"
 msgstr "기록 오류"
 
@@ -6579,7 +6580,7 @@ msgstr "첫번째 실린더"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "최종 실린더, +/-실린더 또는 +/-크기{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2563
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2569
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "최종 섹터, +/-섹터 또는 +/-크기{K,M,G,T,P}"
 
@@ -6910,14 +6911,14 @@ msgstr "(분할 영역 %3$zu번) EBR에 부적절한 플래그 0x%1$02x%2$02x은
 msgid "Start sector %ju out of range."
 msgstr "%ju 시작 섹터가 범위를 벗어납니다."
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2421 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2427 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "분할 영역 %zu번을 이미 지정했습니다.  다시 추가하기 전 삭제하십시오."
 
 #: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
-#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2430
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2436
 msgid "No free sectors available."
 msgstr "여분 섹터가 없습니다."
 
@@ -6991,7 +6992,7 @@ msgstr "분할 영역 %zu번: 비어있음."
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "%zu 논리 분할 영역: %zu 분할 영역의 전체를 차지하지 않음."
 
-#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2327
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2333
 msgid "No errors detected."
 msgstr "발견한 오류가 없습니다."
 
@@ -7005,7 +7006,7 @@ msgstr "전체 할당 섹터 수 %ju은(는) 최대 섹터 수 %ju 보다 많습
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "%2$ld-바이트 단위 %1$ju 섹터가 남았습니다."
 
-#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2347
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2353
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -7075,7 +7076,7 @@ msgstr "부적절한 분할 영역 형식 `%c'."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "%jd 섹터 기록할 수 없음: 탐색 실패"
 
-#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1297
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1303
 msgid "Disk identifier"
 msgstr "디스크 식별자"
 
@@ -7115,7 +7116,7 @@ msgstr "분할 영역 %zu번의 부팅 플래그를 설정했습니다."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "분할 영역 %zu번의 부팅 플래그를 해제했습니다."
 
-#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3259 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3265 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "장치"
@@ -7136,332 +7137,332 @@ msgstr "시작-C/H/S"
 msgid "End-C/H/S"
 msgstr "종단-C/H/S"
 
-#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3275 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "속성"
 
-#: libfdisk/src/gpt.c:692
+#: libfdisk/src/gpt.c:693
 msgid "failed to allocate GPT header"
 msgstr "GPT 헤더 할당 실패"
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:803
 msgid "First LBA specified by script is out of range."
 msgstr "스크립트에서 지정한 처음 LDA가 범위를 벗어납니다."
 
-#: libfdisk/src/gpt.c:814
+#: libfdisk/src/gpt.c:815
 msgid "Last LBA specified by script is out of range."
 msgstr "스크립트에서 지정한 최종 LBA가 범위를 벗어납니다."
 
-#: libfdisk/src/gpt.c:955
+#: libfdisk/src/gpt.c:956
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "GPT PMBR의 용량 불일치(%<PRIu64> != %<PRIu64>)는 기록 단계에서 수정합니다."
 
-#: libfdisk/src/gpt.c:980
+#: libfdisk/src/gpt.c:981
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() 실패"
 
-#: libfdisk/src/gpt.c:990
+#: libfdisk/src/gpt.c:991
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: %o 모드로는 파일을 처리할 수 없습니다"
 
-#: libfdisk/src/gpt.c:1254
+#: libfdisk/src/gpt.c:1260
 msgid "GPT Header"
 msgstr "GPT 헤더"
 
-#: libfdisk/src/gpt.c:1259
+#: libfdisk/src/gpt.c:1265
 msgid "GPT Entries"
 msgstr "GPT 항목"
 
-#: libfdisk/src/gpt.c:1265
+#: libfdisk/src/gpt.c:1271
 msgid "GPT Backup Entries"
 msgstr "GPT 백업 항목"
 
-#: libfdisk/src/gpt.c:1271
+#: libfdisk/src/gpt.c:1277
 msgid "GPT Backup Header"
 msgstr "GPT 백업 헤더"
 
-#: libfdisk/src/gpt.c:1304
+#: libfdisk/src/gpt.c:1310
 msgid "First usable LBA"
 msgstr "처음 가용 LBA"
 
-#: libfdisk/src/gpt.c:1309
+#: libfdisk/src/gpt.c:1315
 msgid "Last usable LBA"
 msgstr "최종 가용 LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1315
+#: libfdisk/src/gpt.c:1321
 msgid "Alternative LBA"
 msgstr "대체 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1321
+#: libfdisk/src/gpt.c:1327
 msgid "Partition entries starting LBA"
 msgstr "분할 영역 항목 시작 LBA"
 
 #. TRANSLATORS: The end of the array of partition entries.
-#: libfdisk/src/gpt.c:1327
+#: libfdisk/src/gpt.c:1333
 msgid "Partition entries ending LBA"
 msgstr "분할 영역 항목 종결 LBA"
 
-#: libfdisk/src/gpt.c:1334
+#: libfdisk/src/gpt.c:1340
 msgid "Allocated partition entries"
 msgstr "할당 분할 영역 항목"
 
-#: libfdisk/src/gpt.c:1676
+#: libfdisk/src/gpt.c:1682
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "백업 GPT 배치가 깨졌습니다만, 주 배치는 괜찮은 것 같으니 이를 사용하겠습니다."
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1692
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "주 GPT 배치가 깨졌습니다만, 백업 배치는 괜찮은 것 같으니 이를 사용하겠습니다."
 
-#: libfdisk/src/gpt.c:1702
+#: libfdisk/src/gpt.c:1708
 msgid "The backup GPT table is not on the end of the device."
 msgstr "백업 GPT 배치가 장치 끝에 없습니다."
 
-#: libfdisk/src/gpt.c:1705
+#: libfdisk/src/gpt.c:1711
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "백업 GPT 배치가 장치 끝에 없습니다. 이 문제는 배치 기록시 수정합니다."
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1715
 msgid "Failed to recalculate backup GPT table location"
 msgstr "백업 GPT 배치 위치 재계산 실패"
 
-#: libfdisk/src/gpt.c:1870
+#: libfdisk/src/gpt.c:1876
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "지원하지 않는 '%s' GPT 속성 비트"
 
-#: libfdisk/src/gpt.c:1875
+#: libfdisk/src/gpt.c:1881
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "GPT 속성 문자열 '%s' 해석 실패"
 
-#: libfdisk/src/gpt.c:1975
+#: libfdisk/src/gpt.c:1981
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "분할 영역 UUID를 %s에서 %s(으)로 바꾸었습니다."
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1990
 msgid "Failed to translate partition name, name not changed."
 msgstr "분할 영역 이름 변환 실패. 이름을 바꾸지 않았습니다."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1992
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "분할 영역 이름을 '%s'에서 '%.*s'(으)로 바꾸었습니다."
 
-#: libfdisk/src/gpt.c:2015
+#: libfdisk/src/gpt.c:2021
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "분할 영역 시작 점이 FirstUsableLBA 영역에 있습니다."
 
-#: libfdisk/src/gpt.c:2022
+#: libfdisk/src/gpt.c:2028
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "분할 영역 종단 점이 LastUsableLBA 영역에 있습니다."
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2221
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr "장치에 합성 MBR이 들어있습니다 -- GPT 전용으로 기록합니다."
 
-#: libfdisk/src/gpt.c:2251
+#: libfdisk/src/gpt.c:2257
 msgid "Disk does not contain a valid backup header."
 msgstr "디스크에 적절한 백업 헤더가 없습니다."
 
-#: libfdisk/src/gpt.c:2256
+#: libfdisk/src/gpt.c:2262
 msgid "Invalid primary header CRC checksum."
 msgstr "부적절한 주 헤더 CRC 검사합."
 
-#: libfdisk/src/gpt.c:2260
+#: libfdisk/src/gpt.c:2266
 msgid "Invalid backup header CRC checksum."
 msgstr "부적절한 백업 헤더 CRC 검사합."
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2271
 msgid "Invalid partition entry checksum."
 msgstr "부적절한 분할 영역 항목 검사함."
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2276
 msgid "Invalid primary header LBA sanity checks."
 msgstr "부적절한 주 헤더 LBA 무결설 검사."
 
-#: libfdisk/src/gpt.c:2274
+#: libfdisk/src/gpt.c:2280
 msgid "Invalid backup header LBA sanity checks."
 msgstr "부적절한 백업 헤더 LBA 무결성 검사."
 
-#: libfdisk/src/gpt.c:2279
+#: libfdisk/src/gpt.c:2285
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "주 헤더의 MyLBA가 실제 위치와 일치하지 않습니다."
 
-#: libfdisk/src/gpt.c:2283
+#: libfdisk/src/gpt.c:2289
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "백업 헤더의 MyLBA가 실제 위치와 일치하지 않습니다."
 
-#: libfdisk/src/gpt.c:2288
+#: libfdisk/src/gpt.c:2294
 msgid "Disk is too small to hold all data."
 msgstr "모든 데이터를 가지고 있기에 디스크 용량이 너무 적습니다."
 
-#: libfdisk/src/gpt.c:2298
+#: libfdisk/src/gpt.c:2304
 msgid "Primary and backup header mismatch."
 msgstr "주 헤더와 백업 헤더가 일치하지 않습니다."
 
-#: libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2310
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "분할 영역 %u번이 분할 영역 %u번과 겹칩니다."
 
-#: libfdisk/src/gpt.c:2311
+#: libfdisk/src/gpt.c:2317
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "분할 영역 %u번이 디스크 용량보다 큽니다."
 
-#: libfdisk/src/gpt.c:2318
+#: libfdisk/src/gpt.c:2324
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "분할 영역 %u번이 시작하기도 전에 끝났습니다."
 
-#: libfdisk/src/gpt.c:2328
+#: libfdisk/src/gpt.c:2334
 #, c-format
 msgid "Header version: %s"
 msgstr "헤더 버전: %s"
 
-#: libfdisk/src/gpt.c:2329
+#: libfdisk/src/gpt.c:2335
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "분할 영역 %2$zu개를 벗어나는 %1$zu번을 사용합니다."
 
-#: libfdisk/src/gpt.c:2339
+#: libfdisk/src/gpt.c:2345
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "총 %ju 섹터가 %u 세그먼트에 있습니다 (가장 큰 값: %s)."
 
-#: libfdisk/src/gpt.c:2426
+#: libfdisk/src/gpt.c:2432
 msgid "All partitions are already in use."
 msgstr "모든 분할 영역을 이미 활용하고 있습니다."
 
-#: libfdisk/src/gpt.c:2477
+#: libfdisk/src/gpt.c:2483
 msgid "No enough free sectors available."
 msgstr "충분한 여분 섹터가 없습니다."
 
-#: libfdisk/src/gpt.c:2491 libfdisk/src/gpt.c:2518
+#: libfdisk/src/gpt.c:2497 libfdisk/src/gpt.c:2524
 #, c-format
 msgid "Sector %ju already used."
 msgstr "%ju 섹터를 이미 활용하고 있습니다."
 
-#: libfdisk/src/gpt.c:2592
+#: libfdisk/src/gpt.c:2598
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "분할 영역 %zu번을 만들 수 없습니다"
 
-#: libfdisk/src/gpt.c:2599
+#: libfdisk/src/gpt.c:2605
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "마지막 가용 GPT 섹터는 %ju지만, %ju을(를) 요청했습니다."
 
-#: libfdisk/src/gpt.c:2606
+#: libfdisk/src/gpt.c:2612
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "처음 가용 GPT 섹터는 %ju지만, %ju을(를) 요청했습니다."
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "새 GPT 디스크 레이블을 만들었습니다 (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2754
 #, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
 msgstr "최대 분할 영역 수는 %zu 입니다 (기본 %zu개)."
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2776
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "새 디스크 UUID(8-4-4-4-12 형식)를 입력하십시오"
 
-#: libfdisk/src/gpt.c:2778
+#: libfdisk/src/gpt.c:2784
 msgid "Failed to parse your UUID."
 msgstr "UUID 해석에 실패했습니다."
 
-#: libfdisk/src/gpt.c:2792
+#: libfdisk/src/gpt.c:2798
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "디스크 ID가 %s에서 %s(으)로 바뀌었습니다."
 
-#: libfdisk/src/gpt.c:2812
+#: libfdisk/src/gpt.c:2818
 msgid "Not enough space for new partition table!"
 msgstr "새 분할 영역 배치에 여분 공간이 없습니다!"
 
-#: libfdisk/src/gpt.c:2823
+#: libfdisk/src/gpt.c:2829
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "분할 영역 #%zu번이 범위를 벗어납니다 (최소 시작점은 %<PRIu64> 섹터)"
 
-#: libfdisk/src/gpt.c:2828
+#: libfdisk/src/gpt.c:2834
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "분할 영역 #%zu번이 범위를 벗어납니다 (최대 종단점은 %<PRIu64> 섹터)"
 
-#: libfdisk/src/gpt.c:2874
+#: libfdisk/src/gpt.c:2880
 msgid "The partition entry size is zero."
 msgstr "분할 영역 항목 크기가 0입니다."
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2882
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "분할 영역 갯수는 %zu 보다 작아야 합니다."
 
-#: libfdisk/src/gpt.c:2900
+#: libfdisk/src/gpt.c:2906
 msgid "Cannot allocate memory!"
 msgstr "메모리를 할당할 수 없습니다!"
 
-#: libfdisk/src/gpt.c:2929
+#: libfdisk/src/gpt.c:2935
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
 msgstr "분할 영역 배치 길이가 %<PRIu32>에서 %<PRIu32>(으)로 바뀌었습니다."
 
-#: libfdisk/src/gpt.c:3039
+#: libfdisk/src/gpt.c:3045
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "분할 영역 %zu번의 속성 값이 0x%016<PRIx64>(으)로 바뀌었습니다."
 
-#: libfdisk/src/gpt.c:3089
+#: libfdisk/src/gpt.c:3095
 msgid "Enter GUID specific bit"
 msgstr "GUID 지정 비트 값을 입력하십시오"
 
-#: libfdisk/src/gpt.c:3104
+#: libfdisk/src/gpt.c:3110
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "지원하지 않는 비트 값 %lu 전환 실패"
 
-#: libfdisk/src/gpt.c:3117
+#: libfdisk/src/gpt.c:3123
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "분할 영역 %2$zu번의 GUID 지정 비트 %1$d을(를) 켰습니다."
 
-#: libfdisk/src/gpt.c:3118
+#: libfdisk/src/gpt.c:3124
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "분할 영역 %2$zu번의 GUID 지정 비트 %1$d을(를) 껐습니다."
 
-#: libfdisk/src/gpt.c:3122
+#: libfdisk/src/gpt.c:3128
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "분할 영역 %2$zu의 %1$s 플래그를 켰습니다."
 
-#: libfdisk/src/gpt.c:3123
+#: libfdisk/src/gpt.c:3129
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "분할 영역 %2$zu의 %1$s 플래그를 껐습니다."
 
-#: libfdisk/src/gpt.c:3266
+#: libfdisk/src/gpt.c:3272
 msgid "Type-UUID"
 msgstr "형식 UUID"
 
-#: libfdisk/src/gpt.c:3267
+#: libfdisk/src/gpt.c:3273
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3268 login-utils/chfn.c:181 login-utils/chfn.c:183
+#: libfdisk/src/gpt.c:3274 login-utils/chfn.c:181 login-utils/chfn.c:183
 #: login-utils/chfn.c:341 sys-utils/lsipc.c:184
 msgid "Name"
 msgstr "이름"
@@ -7950,313 +7951,313 @@ msgstr "%s을(를) 가져올 수 없음: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "hush 로그인 상태: 원본 ID 복원 실패"
 
-#: libmount/src/context.c:3092
+#: libmount/src/context.c:3109
 #, c-format
 msgid "operation failed: %m"
 msgstr "처리 실패: %m"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "경고: 전달 플래그 적용 실패"
 
-#: libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "경고: 원본 쓰기 방지. 읽기 전용으로 마운트했습니다"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1555
 #, c-format
 msgid "operation permitted for root only"
 msgstr "루트 사용자만 처리를 허용합니다"
 
-#: libmount/src/context_mount.c:1541
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s을(를) 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1565
 #, c-format
 msgid "can't find in %s"
 msgstr "%s에서 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1550
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s에 마운트 지점이 없습니다"
 
-#: libmount/src/context_mount.c:1553
+#: libmount/src/context_mount.c:1571
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s에 %1$s 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "%s에서 더 많은 파일 시스템을 찾았습니다. -t <형식> 또는 wipefs(8)를 사용하십시오"
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1581
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "파일 시스템 형식 확인 실패"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1582
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "적절한 파일 시스템 형식을 지정하지 않았습니다"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "can't find %s"
 msgstr "%s을(를) 찾을 수 없음"
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "no mount source specified"
 msgstr "지정한 마운트 원본이 없습니다"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "'%s' 마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "'%s' 마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "마운트 옵션 해석 실패: %m"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "failed to parse mount options"
 msgstr "마운트 옵션 해석 실패"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "failed to set up loop device for %s"
 msgstr "%s 루프 장치 설정에 실패했습니다"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s에 겹치는 루프 장치가 있습니다"
 
-#: libmount/src/context_mount.c:1602 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
 #, c-format
 msgid "locking failed"
 msgstr "잠금 실패"
 
-#: libmount/src/context_mount.c:1606 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "이름 영역 전환 실패"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "filesystem already mounted"
 msgstr "파일 시스템을 이미 마운트했습니다"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "mount failed: %m"
 msgstr "마운트 실패: %m"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1641
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "파일 시스템을 마운트했지만, 플래그 적용에 실패했습니다"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1647
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "파일 시스템을 마운트했지만, 사용자 영역 마운트 배치 업데이트에 실패했습니다"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "파일 시스템을 마운트했지만, 이름 영역 복귀 전환에 실패했습니다"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "파일 시스템을 마운트했지만, 소유자 전환에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1665
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "파일 시스템을 마운트했지만, 권한 변경에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "파일 시스템을 마운트했지만, ID 대응 연결에 실패했습니다"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1677
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "파일 시스템을 마운트했지만, 이후 처리 동작에 실패했습니다: %m"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s() failed: "
 msgstr "%s() 실패: "
 
-#: libmount/src/context_mount.c:1699 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "권한 거부"
 
-#: libmount/src/context_mount.c:1701 libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
 #, c-format
 msgid "mount point is not a directory"
 msgstr "마운트 지점이 디렉터리가 아닙니다"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "마운트는 최고 관리자만 가능합니다"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "mount point is busy"
 msgstr "마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1735
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s을(를) 이미 %s에 마운트 했습니다"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1739
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s을(를) 이미 마운트했거나 마운트 지점이 사용중입니다"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "mount point does not exist"
 msgstr "마운트 지점 없음"
 
-#: libmount/src/context_mount.c:1729
+#: libmount/src/context_mount.c:1747
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "마운트 지점이 그 어떤 곳도 가리키지 않는 심볼릭 링크입니다"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1752
 #, c-format
 msgid "special device %s does not exist"
 msgstr "%s 특수 장치 없음"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1765
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "%s 특수 장치가 없습니다 (경로 접두사가 디렉터리가 아님)"
 
-#: libmount/src/context_mount.c:1757
+#: libmount/src/context_mount.c:1775
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "마운트 지점을 마운트하지 않았거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1759
+#: libmount/src/context_mount.c:1777
 #, c-format
 msgid "not mount point or bad option"
 msgstr "마운트 지점이 아니거나 옵션이 잘못되었습니다"
 
-#: libmount/src/context_mount.c:1762
+#: libmount/src/context_mount.c:1780
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "잘못된 옵션. 공유 마운트의 마운트 위치 이동을 지원하지 않음"
 
-#: libmount/src/context_mount.c:1766
+#: libmount/src/context_mount.c:1784
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "잘못된 옵션. 여러 파일 시스템(예: nfs, cifs)에 대해 /sbin/mount.<type> 보조 프로그램이 필요합니다."
 
-#: libmount/src/context_mount.c:1770
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "잘못된 파일 시스템 형식, 불량 옵션, %s에 불량 수퍼블록, 코드 페이지 또는 보조 프로그램 누락, 또는 기타 오류"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1795
 #, c-format
 msgid "mount table full"
 msgstr "마운트 배치가 가득찼습니다"
 
-#: libmount/src/context_mount.c:1782
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s의 수퍼블록을 읽을 수 없습니다"
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1807
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "알 수 없는 '%s' 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1792
+#: libmount/src/context_mount.c:1810
 #, c-format
 msgid "unknown filesystem type"
 msgstr "알 수 없는 파일 시스템 형식"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1819
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s은(는) 블록 장치가 아닙니다. stat(2)에 실패했습니까?"
 
-#: libmount/src/context_mount.c:1804
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "커널에서 %s 장치를 블록 장치로 인식하지 않습니다. 아마도 \"modprobe driver\" 명령 실행이 필요한 것 같습니다"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1825
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s은(는) 블록 장치가 아닙니다. \"-o loop\"를 입력하십시오"
 
-#: libmount/src/context_mount.c:1809
+#: libmount/src/context_mount.c:1827
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s은(는) 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1816
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s은(는) 적절한 블록 장치가 아닙니다"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1842
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s을(를) 읽기 전용으로 마운트할 수 없습니다"
 
-#: libmount/src/context_mount.c:1826
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s은(는) 쓰기 방지 상태이나, 분명한 읽기-쓰기 모드를 요청했습니다"
 
-#: libmount/src/context_mount.c:1828
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s을(를) 읽기-쓰기로 재마운트할 수 없습니다. 쓰기 방지 상태"
 
-#: libmount/src/context_mount.c:1830
+#: libmount/src/context_mount.c:1848
 #, c-format
 msgid "bind %s failed"
 msgstr "%s 바인딩 실패"
 
-#: libmount/src/context_mount.c:1839
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s에 미디어가 없습니다"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "마운트할 수 없음. %s의 파일 시스템이 깨진 것 같습니다"
 
-#: libmount/src/context_mount.c:1855
+#: libmount/src/context_mount.c:1873
 #, c-format
 msgid "%s() failed: %m"
 msgstr "%s() 실패: %m"
@@ -8322,13 +8323,13 @@ msgid "umount(2) system call failed: %m"
 msgstr "umount(2) 시스템 호출 실패: %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:348 libmount/src/hook_idmap.c:378
+#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "e ID-대응 값을 설정할 수 없습니다: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:286
+#: libmount/src/hook_loopdev.c:295
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "e %s (%u:%u) 장치 노드를 분실했습니다"
@@ -9004,7 +9005,7 @@ msgstr " -H                  로그인 프롬프트에서 호스트 이름을 �
 msgid " -s, --shell <path>  define the shell to log in to"
 msgstr " -s, --shell <경로>  로그인 대상 셸을 지정합니다"
 
-#: login-utils/login.c:1380 term-utils/agetty.c:3143
+#: login-utils/login.c:1380 term-utils/agetty.c:3141
 msgid "failed to initialize path context"
 msgstr "경로 컨텍스트 초기화 실패"
 
@@ -9030,12 +9031,12 @@ msgid "groups initialization failed: %m"
 msgstr "그룹 초기화 실패: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1106 sys-utils/unshare.c:1316
+#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() 실패"
 
 #: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
-#: sys-utils/unshare.c:1108 sys-utils/unshare.c:1319
+#: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() 실패"
 
@@ -9577,7 +9578,7 @@ msgid "cannot create child process"
 msgstr "하위 프로세스를 만들 수 없습니다"
 
 #: login-utils/su-common.c:609 sys-utils/nsenter.c:887
-#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1285
+#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "%s 디렉터리로 위치를 바꿀 수 없습니다"
@@ -12591,7 +12592,7 @@ msgid "invalid sigmask format: %s"
 msgstr "부적절한 sigmask 형식: %s"
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:413 sys-utils/setpriv.c:463
-#: sys-utils/unshare.c:1025
+#: sys-utils/unshare.c:1024
 #, c-format
 msgid "unknown signal: %s"
 msgstr "알 수 없는 시그널: %s"
@@ -14104,7 +14105,7 @@ msgstr "수신한 파일 서술자가 없습니다. systemctl status uuidd.socke
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "너무 많은 파일 서술자를 받았습니다. uuidd.socket을 확인하십시오"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1400
+#: misc-utils/uuidd.c:452 text-utils/more.c:1402
 msgid "poll failed"
 msgstr "폴링 실패"
 
@@ -16825,7 +16826,7 @@ msgid "%s: unmounting"
 msgstr "%s: 마운트 해제 중"
 
 #: sys-utils/eject.c:671 sys-utils/mount.c:52 sys-utils/umount.c:121
-#: text-utils/more.c:1279
+#: text-utils/more.c:1281
 msgid "drop permissions failed"
 msgstr "권한 드롭 실패"
 
@@ -19020,7 +19021,7 @@ msgid "sigfillset failed"
 msgstr "sigfillset 실패"
 
 #: sys-utils/irqtop.c:251 sys-utils/setpgid.c:81 sys-utils/setpgid.c:85
-#: sys-utils/unshare.c:1141
+#: sys-utils/unshare.c:1140
 msgid "sigprocmask failed"
 msgstr "sigprocmask 실패"
 
@@ -21225,7 +21226,7 @@ msgstr "%s은(는) 마운트 지점이 아닙니다\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s은(는) 마운트 지점입니다\n"
 
-#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:745
+#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:744
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr " %s [옵션] [프로그램 [인자 ...]]\n"
@@ -21399,11 +21400,11 @@ msgstr "cgroup.procs 기록 실패"
 msgid "failed to parse file descriptor"
 msgstr "파일 서술자 해석에 실패했습니다"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1040
+#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "UID 해석 실패"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1044
+#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "GID 해석 실패"
 
@@ -21458,7 +21459,7 @@ msgid "can not get process stat"
 msgstr "프로세스 상태 정보를 가져올 수 없습니다"
 
 #: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
-#: sys-utils/unshare.c:1104 sys-utils/unshare.c:1314
+#: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "setgroups 실패"
 
@@ -23612,80 +23613,80 @@ msgstr "SUBID 맵 해석 실패"
 msgid "no line matching user \"%s\" in %s"
 msgstr "%2$s에 \"%1$s\" 사용자와 일치하는 행 없음"
 
-#: sys-utils/unshare.c:650
+#: sys-utils/unshare.c:649
 #, c-format
 msgid "%s too large for kernel 4k limit"
 msgstr "커널 4k 제한에 대해 %s이(가) 너무 큽니다"
 
-#: sys-utils/unshare.c:656
+#: sys-utils/unshare.c:655
 #, c-format
 msgid "failed to open %s"
 msgstr "%s 열기 실패"
 
-#: sys-utils/unshare.c:658
+#: sys-utils/unshare.c:657
 #, c-format
 msgid "failed to write %s"
 msgstr "%s 기록 실패"
 
-#: sys-utils/unshare.c:730
+#: sys-utils/unshare.c:729
 #, c-format
 msgid "cannot open %s/register"
 msgstr "%s/레지스터를 열 수 없습니다"
 
-#: sys-utils/unshare.c:733
+#: sys-utils/unshare.c:732
 #, c-format
 msgid "write failed %s/register"
 msgstr "%s/레지스터 기록에 실패했습니다"
 
-#: sys-utils/unshare.c:749
+#: sys-utils/unshare.c:748
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr "상위 요소와 공유하지 않는 일부 이름 영역에서 프로그램을 실행합니다.\n"
 
-#: sys-utils/unshare.c:752
+#: sys-utils/unshare.c:751
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr " -m, --mount[=<파일>]      이름 영역 마운트 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:753
+#: sys-utils/unshare.c:752
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<파일>]        (호스트 이름 등) UTS 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:754
+#: sys-utils/unshare.c:753
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr " -i, --ipc[=<파일>]        System V IPC 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:755
+#: sys-utils/unshare.c:754
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr " -n, --net[=<파일>]        네트워크 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:756
+#: sys-utils/unshare.c:755
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr " -p, --pid[=<파일>]        PID 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:757
+#: sys-utils/unshare.c:756
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr " -U, --user[=<파일>]       사용자 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:758
+#: sys-utils/unshare.c:757
 msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
 msgstr " -C, --cgroup[=<파일>]     cgroup 이름 영역 공유를 해제합니다\n"
 
-#: sys-utils/unshare.c:759
+#: sys-utils/unshare.c:758
 msgid " -T, --time[=<file>]       unshare time namespace\n"
 msgstr " -T, --time[=<파일>]       시간 이름 영역 공유를 해제합니다.\n"
 
-#: sys-utils/unshare.c:761
+#: sys-utils/unshare.c:760
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr " --mount-proc[=<디렉터리>] 우선 proc 파일 시스템을 마운트합니다 (--mount 생략)\n"
 
-#: sys-utils/unshare.c:762
+#: sys-utils/unshare.c:761
 msgid " --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"
 msgstr " --mount-binfmt[=<디렉터리>]    binfmt 파일 시스템을 우선 마운트합니다 (--user 및 --mount 생략)\n"
 
-#: sys-utils/unshare.c:763
+#: sys-utils/unshare.c:762
 msgid " -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"
 msgstr " -l, --load-interp <파일>  이름 영역에 binfmt 정의를 불러옵니다 (--mount-binfmt 생략)\n"
 
-#: sys-utils/unshare.c:764
+#: sys-utils/unshare.c:763
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
@@ -23693,47 +23694,47 @@ msgstr ""
 " --propagation slave|shared|private|unchanged\n"
 "                           마운트 이름 영역의 마운트 전달을 수정합니다\n"
 
-#: sys-utils/unshare.c:766
+#: sys-utils/unshare.c:765
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
 msgstr " -R, --root <디렉터리>     <디렉터리>로 지정한 루트 디렉터리에서 명령을 실행합니다\n"
 
-#: sys-utils/unshare.c:767
+#: sys-utils/unshare.c:766
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
 msgstr " -w, --wd <디렉터리>       작업 디렉터리를 지정 <디렉터리>로 바꿉니다\n"
 
-#: sys-utils/unshare.c:769
+#: sys-utils/unshare.c:768
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
 msgstr " -S, --setuid <UID>        진입한 이름 영역의 UID를 설정합니다\n"
 
-#: sys-utils/unshare.c:770
+#: sys-utils/unshare.c:769
 msgid " -G, --setgid <gid>        set gid in entered namespace\n"
 msgstr " -G, --setgid <GID>        진입한 이름 영역의 GID를 설정합니다\n"
 
-#: sys-utils/unshare.c:771
+#: sys-utils/unshare.c:770
 msgid " --map-user <uid>|<name>   map current user to uid (implies --user)\n"
 msgstr " --map-user <UID>|<이름>   현재 사용자를 지정 UID에 대응 설정합니다(--user 생략)\n"
 
-#: sys-utils/unshare.c:772
+#: sys-utils/unshare.c:771
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
 msgstr " --map-group=<GID>|<이름>  현재 그룹을 GID에 대응 설정합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:773
+#: sys-utils/unshare.c:772
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       현재 사용자를 루트 사용자로 매핑합니다 ( --user 생략)\n"
 
-#: sys-utils/unshare.c:774
+#: sys-utils/unshare.c:773
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
 msgstr " -c, --map-current-user    현재 사용자를 그 자신으로 매핑합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:775
+#: sys-utils/unshare.c:774
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr " --map-auto                사용자와 그룹을 자동으로 매핑합니다 ( --user 생략)\n"
 
-#: sys-utils/unshare.c:776
+#: sys-utils/unshare.c:775
 msgid " --map-subids              map the first block of user IDs owned by euid (implies --user)\n"
 msgstr " --map-subids              euid가 소유한 사용자 ID 첫 블록을 매핑합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:777
+#: sys-utils/unshare.c:776
 msgid ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           map count users from outeruid to inneruid (implies --user)\n"
@@ -23741,7 +23742,7 @@ msgstr ""
 " --map-users <내부UID>:<외부UID>:<계수>\n"
 "                           외부UID부터 내부UID 범위의 사용자 계수를 대응 지정합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:779
+#: sys-utils/unshare.c:778
 msgid ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           map count groups from outergid to innergid (implies --user)\n"
@@ -23749,15 +23750,15 @@ msgstr ""
 " --map-groups <내부GID>:<외부GID>:<계수>\n"
 "                           내부GID에서 외부GID 까지의 그룹 수를 대응 지정합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:781
+#: sys-utils/unshare.c:780
 msgid " --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"
 msgstr " --owner <uid>:<gid>       사용자 이름 영역 소유자를 지정합니다 (--user 생략)\n"
 
-#: sys-utils/unshare.c:783
+#: sys-utils/unshare.c:782
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr " -f, --fork                <프로그램>을 실행하기 전 포킹합니다\n"
 
-#: sys-utils/unshare.c:784
+#: sys-utils/unshare.c:783
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
@@ -23765,93 +23766,93 @@ msgstr ""
 " --kill-child[=<시그널이름>]  강제 종료시, 포킹한 하위 프로세스도 끝냅니다 (--fork 생략)\n"
 "                             기본 값은 SIGKILL 입니다\n"
 
-#: sys-utils/unshare.c:786
+#: sys-utils/unshare.c:785
 msgid " --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"
 msgstr " --forward-signals         SIGTERM과 SIGINT 시그널을 하위 프로세스에 전달 (--fork 생략)\n"
 
-#: sys-utils/unshare.c:788
+#: sys-utils/unshare.c:787
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr " --setgroups allow|deny    사용자 이름 영역의 setgroups syscall을 제어합니다\n"
 
-#: sys-utils/unshare.c:789
+#: sys-utils/unshare.c:788
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgstr " --keep-caps               사용자 이름 영역에서 허용한 권한을 유지합니다\n"
 
-#: sys-utils/unshare.c:791
+#: sys-utils/unshare.c:790
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
 msgstr " --monotonic <오프셋>      시간 이름 영역에서 시계 모노토닉 오프셋 (초)을 설정합니다\n"
 
-#: sys-utils/unshare.c:792
+#: sys-utils/unshare.c:791
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
 msgstr " --boottime <오프셋>       시간 이름 영역에서 시계 부트타임 오프셋(초)을 설정합니다\n"
 
-#: sys-utils/unshare.c:1013
+#: sys-utils/unshare.c:1012
 msgid "failed to parse owner"
 msgstr "소유자 정보 해석 실패"
 
-#: sys-utils/unshare.c:1054
+#: sys-utils/unshare.c:1053
 msgid "failed to parse monotonic offset"
 msgstr "모노토닉 오프셋 해석 실패"
 
-#: sys-utils/unshare.c:1058
+#: sys-utils/unshare.c:1057
 msgid "failed to parse boottime offset"
 msgstr "부팅 타임 오프셋 해석 실패"
 
-#: sys-utils/unshare.c:1081
+#: sys-utils/unshare.c:1080
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr "--monotonic 옵션과 --boottime 옵션은 비공유 시간 이름 영역(-T)이 필요합니다"
 
-#: sys-utils/unshare.c:1111
+#: sys-utils/unshare.c:1110
 msgid "unshare failed"
 msgstr "unshare 실패"
 
-#: sys-utils/unshare.c:1134
+#: sys-utils/unshare.c:1133
 msgid "sigaction SIGTERM failed"
 msgstr "SIGTERM 시그널 동작 실패"
 
-#: sys-utils/unshare.c:1136
+#: sys-utils/unshare.c:1135
 msgid "sigaction SIGINT failed"
 msgstr "SIGINT 시그널 동작 실패"
 
-#: sys-utils/unshare.c:1148
+#: sys-utils/unshare.c:1147
 msgid "sigprocmask block failed"
 msgstr "sigprocmask 중단 실패"
 
-#: sys-utils/unshare.c:1155
+#: sys-utils/unshare.c:1154
 msgid "pidfd_open failed"
 msgstr "pidfd_open 실패"
 
-#: sys-utils/unshare.c:1169
+#: sys-utils/unshare.c:1168
 msgid "sigprocmask restore failed"
 msgstr "sigprocmask 복원 실패"
 
-#: sys-utils/unshare.c:1211
+#: sys-utils/unshare.c:1210
 msgid "signal handler reset failed"
 msgstr "시그널 핸들러 초기화 실패"
 
-#: sys-utils/unshare.c:1216
+#: sys-utils/unshare.c:1215
 msgid "sigprocmask unblock failed"
 msgstr "sigprocmask 중단취소 실패"
 
-#: sys-utils/unshare.c:1220
+#: sys-utils/unshare.c:1219
 msgid "child exit failed"
 msgstr "하위 프로세스 종료 실패"
 
-#: sys-utils/unshare.c:1259
+#: sys-utils/unshare.c:1258
 msgid "options --setgroups=allow and --map-group are mutually exclusive"
 msgstr "--setgroups=allow 옵션과 --map-group 옵션은 혼용할 수 없습니다"
 
-#: sys-utils/unshare.c:1274 sys-utils/unshare.c:1301 sys-utils/unshare.c:1307
+#: sys-utils/unshare.c:1273 sys-utils/unshare.c:1300 sys-utils/unshare.c:1306
 #, c-format
 msgid "mount %s failed"
 msgstr "%s 마운트 실패"
 
-#: sys-utils/unshare.c:1281
+#: sys-utils/unshare.c:1280
 #, c-format
 msgid "cannot change root directory to '%s'"
 msgstr "'%s'(으)로 루트 디렉터리를 전환할 수 없습니다"
 
-#: sys-utils/unshare.c:1297
+#: sys-utils/unshare.c:1296
 #, c-format
 msgid "cannot change %s filesystem propagation"
 msgstr "%s 파일 시스템 전달을 변경할 수 없습니다"
@@ -24279,7 +24280,7 @@ msgstr "%s: %s을(를) 실행할 수 없음: %m"
 #: term-utils/agetty.c:615 term-utils/agetty.c:786 term-utils/agetty.c:969
 #: term-utils/agetty.c:1218 term-utils/agetty.c:1497 term-utils/agetty.c:1515
 #: term-utils/agetty.c:1552 term-utils/agetty.c:1562 term-utils/agetty.c:1604
-#: term-utils/agetty.c:1932 term-utils/agetty.c:2340 term-utils/agetty.c:3023
+#: term-utils/agetty.c:1930 term-utils/agetty.c:2338 term-utils/agetty.c:3021
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "메모리 할당 실패: %m"
@@ -24369,32 +24370,32 @@ msgstr "os-release 파일을 열 수 없습니다"
 msgid "failed to create reload file: %s: %m"
 msgstr "다시 불러오기 파일 만들기 실패: %s: %m"
 
-#: term-utils/agetty.c:1996
+#: term-utils/agetty.c:1994
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "터미널 속성 확인 실패: %m"
 
-#: term-utils/agetty.c:2018
+#: term-utils/agetty.c:2016
 msgid "[press ENTER to login]"
 msgstr "[로그인 하려면 ENTER를 누르십시오]"
 
-#: term-utils/agetty.c:2052
+#: term-utils/agetty.c:2050
 msgid "Num Lock off"
 msgstr "Num Lock 끔"
 
-#: term-utils/agetty.c:2055
+#: term-utils/agetty.c:2053
 msgid "Num Lock on"
 msgstr "Num Lock 켬"
 
-#: term-utils/agetty.c:2058
+#: term-utils/agetty.c:2056
 msgid "Caps Lock on"
 msgstr "Caps Lock 켬"
 
-#: term-utils/agetty.c:2061
+#: term-utils/agetty.c:2059
 msgid "Scroll Lock on"
 msgstr "Scroll Lock 켬"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2062
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -24403,32 +24404,32 @@ msgstr ""
 "힌트: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2225
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 읽음: %m"
 
-#: term-utils/agetty.c:2294
+#: term-utils/agetty.c:2292
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 입력 초과"
 
-#: term-utils/agetty.c:2336 term-utils/agetty.c:2344
+#: term-utils/agetty.c:2334 term-utils/agetty.c:2342
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: 로그인 이름에 잘못된 문자 변환"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: 로그인 이름에 잘못된 0x%x 문자"
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2433
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 터미널 속성 지정 실패: %m"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2478
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -24437,167 +24438,167 @@ msgstr ""
 " %1$s [옵션] <회선> [보전송율, ...] [터미널형식]\n"
 " %1$s [옵션] <보전송율>,... <회선> [터미널형식]\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2482
 msgid "Open a terminal and set its mode.\n"
 msgstr "터미널을 열어 지정 모드로 설정합니다.\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2485
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                8-bit tty로 가정합니다\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2486
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <사용자>   지정 사용자로 자동으로 로그인합니다.\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2487
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              제어 모드를 초기화하지 않습니다\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2488
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1)에 -r <호스트이름>을 사용합니다\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2489
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <목록>    issue 파일 또는 디렉터리를 표시합니다\n"
 
-#: term-utils/agetty.c:2492
+#: term-utils/agetty.c:2490
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           issue 파일을 표시하고 빠져나갑니다\n"
 
-#: term-utils/agetty.c:2493
+#: term-utils/agetty.c:2491
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         하드웨어 흐름 제어 동작을 켭니다\n"
 
-#: term-utils/agetty.c:2494
+#: term-utils/agetty.c:2492
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <호스트이름>      로그인 호스트를 지정합니다\n"
 
-#: term-utils/agetty.c:2495
+#: term-utils/agetty.c:2493
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue 파일을 표시하지 않습니다\n"
 
-#: term-utils/agetty.c:2496
+#: term-utils/agetty.c:2494
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <문자열> 초기 문자열을 지정합니다\n"
 
-#: term-utils/agetty.c:2497
+#: term-utils/agetty.c:2495
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J  --noclear              프롬프트를 띄우기 전 화면을 지우지 않습니다\n"
 
-#: term-utils/agetty.c:2498
+#: term-utils/agetty.c:2496
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <파일> 로그인 프로그램을 지정합니다\n"
 
-#: term-utils/agetty.c:2499
+#: term-utils/agetty.c:2497
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<모드>]  로컬 라인 플래그를 다룹니다\n"
 
-#: term-utils/agetty.c:2500
+#: term-utils/agetty.c:2498
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         연결하는 동안 정확한 보 전송율을 설정합니다\n"
 
-#: term-utils/agetty.c:2501
+#: term-utils/agetty.c:2499
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           로그인을 묻지 않습니다\n"
 
-#: term-utils/agetty.c:2502
+#: term-utils/agetty.c:2500
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N  --nonewline            issue 출력 전 개행 문자를 출력하지 않습니다\n"
 
-#: term-utils/agetty.c:2503
+#: term-utils/agetty.c:2501
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <옵션> 로그인할 때 전달할 옵션입니다\n"
 
-#: term-utils/agetty.c:2504
+#: term-utils/agetty.c:2502
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          로그인 전 키 입력을 기다립니다\n"
 
-#: term-utils/agetty.c:2505
+#: term-utils/agetty.c:2503
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <디렉터리>    루트 위치를 지정 디렉터리로 전환합니다\n"
 
-#: term-utils/agetty.c:2506
+#: term-utils/agetty.c:2504
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty에서 가상으로 연결을 끊습니다\n"
 
-#: term-utils/agetty.c:2507
+#: term-utils/agetty.c:2505
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            터미널 중단 후 보 전송율 유지를 시도합니다\n"
 
-#: term-utils/agetty.c:2508
+#: term-utils/agetty.c:2506
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <숫자>       로그인 프로세스 제한 시간\n"
 
-#: term-utils/agetty.c:2509
+#: term-utils/agetty.c:2507
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          대문자 터미널을 감지합니다\n"
 
-#: term-utils/agetty.c:2510
+#: term-utils/agetty.c:2508
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              캐리지 리턴 대기\n"
 
-#: term-utils/agetty.c:2511
+#: term-utils/agetty.c:2509
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              힌트를 출력하지 않습니다\n"
 
-#: term-utils/agetty.c:2512
+#: term-utils/agetty.c:2510
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           호스트 이름을 보여주지 않습니다\n"
 
-#: term-utils/agetty.c:2513
+#: term-utils/agetty.c:2511
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        완전한 호스트 이름을 표시합니다\n"
 
-#: term-utils/agetty.c:2514
+#: term-utils/agetty.c:2512
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <문자열> 추가 백스페이스 문자\n"
 
-#: term-utils/agetty.c:2515
+#: term-utils/agetty.c:2513
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <문자열>  추가 kill 문자\n"
 
-#: term-utils/agetty.c:2516
+#: term-utils/agetty.c:2514
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <디렉터리>     로그인 전 지정 디렉터리로 이동합니다\n"
 
-#: term-utils/agetty.c:2517
+#: term-utils/agetty.c:2515
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <숫자>         묻기 전 지정 초 만큼 대기합니다\n"
 
-#: term-utils/agetty.c:2518
+#: term-utils/agetty.c:2516
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <숫자>          지정 우선 순위로 로그인을 실행합니다\n"
 
-#: term-utils/agetty.c:2519
+#: term-utils/agetty.c:2517
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               실행중인 agetty 인스턴스의 프롬프트를 다시 불러옵니다\n"
 
-#: term-utils/agetty.c:2520
+#: term-utils/agetty.c:2518
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          지원하는 모든 보 전송율을 표시합니다\n"
 
-#: term-utils/agetty.c:2959
+#: term-utils/agetty.c:2957
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "사용자 %d명"
 
-#: term-utils/agetty.c:3110
+#: term-utils/agetty.c:3108
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname 실패: %m"
 
-#: term-utils/agetty.c:3122
+#: term-utils/agetty.c:3120
 #, c-format
 msgid "cannot touch file %s"
 msgstr "%s 파일의 날짜 정보를 업데이트할 수 없습니다"
 
-#: term-utils/agetty.c:3126
+#: term-utils/agetty.c:3124
 msgid "--reload is unsupported on your system"
 msgstr "--reload 옵션은 시스템에서 지원하지 않습니다"
 
-#: term-utils/agetty.c:3149
+#: term-utils/agetty.c:3147
 msgid "failed to open credentials directory"
 msgstr "인증 디렉터리 열기 실패"
 
@@ -25311,7 +25312,7 @@ msgstr "passwd UID를 가져올 수 없습니다"
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s 사용자가 %s 터미널에서 보낸 전체 메시지 (%s):"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s을(를) 읽지 않습니다. 표준 입력 스트림을 활용합니다."
@@ -25349,30 +25350,30 @@ msgstr "%s 사용자가 메시지를 껐습니다"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s 사용자가 1회 이상 로그인했습니다. %s에 기록함"
 
-#: term-utils/write.c:385
+#: term-utils/write.c:386
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "%s@%s 사용자(이름: %s)가 %s 터미널에서 %02d:%02d에 보낸 메시지 ..."
 
-#: term-utils/write.c:389
+#: term-utils/write.c:390
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "%s@%s 사용자가 %s 터미널에서 %02d:%02d에 보낸 메시지 ..."
 
-#: term-utils/write.c:400
+#: term-utils/write.c:402
 msgid "carefulputc failed"
 msgstr "carefulputc 실패"
 
-#: term-utils/write.c:438
+#: term-utils/write.c:440
 msgid "you have write permission turned off"
 msgstr "쓰기 권한을 껐습니다"
 
-#: term-utils/write.c:461
+#: term-utils/write.c:463
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s 사용자는 %s에 로그인하지 않았습니다"
 
-#: term-utils/write.c:467
+#: term-utils/write.c:469
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "%s 사용자는 %s에 메시지를 껐습니다"
@@ -25481,20 +25482,20 @@ msgstr ""
 " -x, --spaces           탭을 공백으로 변환\n"
 " -l, --lines <숫자>     최소 <숫자>행만큼 버퍼링\n"
 
-#: text-utils/col.c:495
+#: text-utils/col.c:498
 #, c-format
 msgid "warning: can't back up %s."
 msgstr "경고: %s 백업할 수 없습니다."
 
-#: text-utils/col.c:497
+#: text-utils/col.c:500
 msgid "past first line"
 msgstr "이전 첫번째 행"
 
-#: text-utils/col.c:498
+#: text-utils/col.c:501
 msgid "-- line already flushed"
 msgstr "-- 이 행은 이미 소거했습니다"
 
-#: text-utils/col.c:564
+#: text-utils/col.c:567
 msgid "bad -l argument"
 msgstr "잘못된 -l 인자"
 
@@ -25820,7 +25821,7 @@ msgstr " -v, --no-squeezing        행을 동일하게 출력\n"
 msgid "<length> and <offset>"
 msgstr "<길이>와 <오프셋>"
 
-#: text-utils/hexdump-display.c:535
+#: text-utils/hexdump-display.c:540
 msgid "all input file arguments failed"
 msgstr "전체 입력 파일 인자 실패"
 
@@ -25934,27 +25935,27 @@ msgstr ""
 "*** %s: 디렉터리 ***\n"
 "\n"
 
-#: text-utils/more.c:736
+#: text-utils/more.c:738
 #, c-format
 msgid "--More--"
 msgstr "--More--"
 
-#: text-utils/more.c:738
+#: text-utils/more.c:740
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(다음 파일: %s)"
 
-#: text-utils/more.c:743 text-utils/more.c:749
+#: text-utils/more.c:745 text-utils/more.c:751
 #, c-format
 msgid "(END)"
 msgstr "(끝)"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:756
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[계속하려면 space, 나가려면 'q']"
 
-#: text-utils/more.c:959
+#: text-utils/more.c:961
 msgid ""
 "\n"
 "...Skipping "
@@ -25962,40 +25963,40 @@ msgstr ""
 "\n"
 "...건너뛰는 중 "
 
-#: text-utils/more.c:963
+#: text-utils/more.c:965
 msgid "...Skipping to file "
 msgstr "...파일로 건너뛰는 중 "
 
-#: text-utils/more.c:965
+#: text-utils/more.c:967
 msgid "...Skipping back to file "
 msgstr "...파일로 되돌아가는 중 "
 
-#: text-utils/more.c:1127
+#: text-utils/more.c:1129
 msgid "Line too long"
 msgstr "줄이 너무 깁니다"
 
-#: text-utils/more.c:1170
+#: text-utils/more.c:1172
 msgid "No previous command to substitute for"
 msgstr "대체할 이전 명령이 없습니다"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[나가려면 q 또는 Q 입력]"
 
-#: text-utils/more.c:1283
+#: text-utils/more.c:1285
 msgid "exec failed\n"
 msgstr "실행 실패\n"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1295
 msgid "can't fork\n"
 msgstr "포킹할 수 없음\n"
 
-#: text-utils/more.c:1506
+#: text-utils/more.c:1508
 msgid "...skipping\n"
 msgstr "...건너뛰는 중\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1545
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -26003,11 +26004,11 @@ msgstr ""
 "\n"
 "패턴이 없습니다\n"
 
-#: text-utils/more.c:1547 text-utils/pg.c:1040 text-utils/pg.c:1188
+#: text-utils/more.c:1549 text-utils/pg.c:1040 text-utils/pg.c:1188
 msgid "Pattern not found"
 msgstr "패턴이 없습니다"
 
-#: text-utils/more.c:1566
+#: text-utils/more.c:1568
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -26015,7 +26016,7 @@ msgstr ""
 "대부분 명령은 정수 인자 k 앞에 붙습니다.  기본값은 괄호안에 표시했습니다.\n"
 "별표 (*)는 새 기본값 인자를 나타냅니다.\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1574
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -26058,19 +26059,19 @@ msgstr ""
 ":f                      현재 파일 이름과 행 번호 표시\n"
 ".                       이전 명령 반복\n"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1640
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...뒤로 %d 페이지"
 
-#: text-utils/more.c:1662
+#: text-utils/more.c:1664
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...%d 행 건너뛰는 중"
 
-#: text-utils/more.c:1778
+#: text-utils/more.c:1780
 msgid ""
 "\n"
 "***Back***\n"
@@ -26080,25 +26081,25 @@ msgstr ""
 "***뒤로***\n"
 "\n"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1799
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" %d행"
 
-#: text-utils/more.c:1800
+#: text-utils/more.c:1802
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[파일 아님] %d 행"
 
-#: text-utils/more.c:1806
+#: text-utils/more.c:1808
 msgid "No previous regular expression"
 msgstr "이전 정규 표현식이 없습니다"
 
-#: text-utils/more.c:1833 text-utils/more.c:1870
+#: text-utils/more.c:1835 text-utils/more.c:1872
 msgid "Command not available in secure mode"
 msgstr "안전 모드에서 사용할 수 있는 명령이 없습니다"
 
-#: text-utils/more.c:1884
+#: text-utils/more.c:1886
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[사용법은 'h' 키를 누르십시오.]"

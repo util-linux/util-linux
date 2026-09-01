@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-06-16 12:05+0200\n"
+"POT-Creation-Date: 2026-09-01 13:07+0200\n"
 "PO-Revision-Date: 2026-04-13 12:32+0300\n"
 "Last-Translator: Toomas Soome <tsoome@me.com>\n"
 "Language-Team: Estonian <linux-ee@lists.eenet.ee>\n"
@@ -50,7 +50,7 @@ msgstr "argumente on puudu"
 #: disk-utils/blockdev.c:497 disk-utils/cfdisk.c:2838 disk-utils/delpart.c:68
 #: disk-utils/fdformat.c:240 disk-utils/fdisk.c:1047 disk-utils/fdisk.c:1386
 #: disk-utils/fdisk-list.c:403 disk-utils/fdisk-list.c:444
-#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1481
+#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1483
 #: disk-utils/fsck.cramfs.c:159 disk-utils/fsck.cramfs.c:547
 #: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:217
 #: disk-utils/mkfs.cramfs.c:182 disk-utils/mkfs.cramfs.c:664
@@ -78,12 +78,12 @@ msgstr "argumente on puudu"
 #: sys-utils/setpriv.c:271 sys-utils/setpriv.c:650 sys-utils/setpriv.c:682
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
-#: sys-utils/unshare.c:726 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3119 term-utils/mesg.c:156 term-utils/script.c:393
+#: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
+#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:419 text-utils/colcrt.c:286
+#: term-utils/scriptreplay.c:314 term-utils/wall.c:420 text-utils/colcrt.c:286
 #: text-utils/more.c:469 text-utils/rev.c:167 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -328,7 +328,7 @@ msgid "Quit program without writing changes"
 msgstr "Välju programmist muutusi salvestamata"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3264 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3270 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "Tüüp"
@@ -916,7 +916,7 @@ msgid "Using default response %c."
 msgstr "Kasutan vaikimisi väärtust %d\n"
 
 #: disk-utils/fdisk.c:241 disk-utils/fdisk.c:315 disk-utils/fdisk.c:392
-#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2586
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2592
 #, fuzzy
 #| msgid "Value out of range.\n"
 msgid "Value out of range."
@@ -1163,7 +1163,7 @@ msgid "cannot read"
 msgstr "fork ei õnnestunud"
 
 #: disk-utils/fdisk.c:1025 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
-#: libfdisk/src/gpt.c:2506
+#: libfdisk/src/gpt.c:2512
 #, fuzzy
 #| msgid "First %s"
 msgid "First sector"
@@ -1354,7 +1354,7 @@ msgstr "Hoiatus: -b võtit (sektori suuruse seadmine) tuleks kasutada ainult üh
 #: sys-utils/mount.c:1045 sys-utils/mount.c:1117 sys-utils/mountpoint.c:264
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:285 sys-utils/swapon.c:1043
 #: sys-utils/switch_root.c:271 sys-utils/umount.c:629 term-utils/setterm.c:1189
-#: text-utils/col.c:583 text-utils/more.c:2196
+#: text-utils/col.c:586 text-utils/more.c:2198
 #, fuzzy
 #| msgid "one bad page\n"
 msgid "bad usage"
@@ -1456,7 +1456,7 @@ msgid "Alignment offset: %lu bytes"
 msgstr "Joonduse nihe: %lu baiti"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:263
-#: disk-utils/fsck.c:1268 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
+#: disk-utils/fsck.c:1270 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
 #: misc-utils/findmnt.c:1716 misc-utils/lsblk.c:2212 misc-utils/lsblk.c:2266
 #: misc-utils/lslocks.c:1011 sys-utils/lsns.c:1424
 #, fuzzy
@@ -1540,23 +1540,23 @@ msgstr ""
 "Partitsioonitabeli kirjed on füüsilisest erinevas järjekorras\n"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
-#: libfdisk/src/gpt.c:3260 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3266 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 #, fuzzy
 msgid "Start"
 msgstr "Algus"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
-#: libfdisk/src/gpt.c:3261 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3267 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "End"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
-#: libfdisk/src/gpt.c:3262 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3268 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "Sektorid"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
-#: libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 #, fuzzy
 msgid "Size"
 msgstr "Maht"
@@ -2249,53 +2249,53 @@ msgstr "seek ei õnnestunud tabelite kirjutamisel"
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
 #: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
-#: sys-utils/unshare.c:699 sys-utils/unshare.c:1164
+#: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 #, fuzzy
 msgid "fork failed"
 msgstr "fork ei õnnestunud\n"
 
-#: disk-utils/fsck.c:702
+#: disk-utils/fsck.c:704
 #, fuzzy, c-format
 msgid "%s: execute failed"
 msgstr "seek ei õnnestunud"
 
-#: disk-utils/fsck.c:792
+#: disk-utils/fsck.c:794
 #, fuzzy
 msgid "wait: no more child process?!?"
 msgstr "oota: rohkem alamprotsesse pole?!?"
 
-#: disk-utils/fsck.c:795 lib/pager.c:305 sys-utils/flock.c:462
-#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1198
+#: disk-utils/fsck.c:797 lib/pager.c:305 sys-utils/flock.c:462
+#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1197
 #, fuzzy
 msgid "waitpid failed"
 msgstr "setuid() ei õnnestunud"
 
-#: disk-utils/fsck.c:813
+#: disk-utils/fsck.c:815
 #, fuzzy, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "Hoiatus... %s seadme %s jaoks lõppes signaaliga %d."
 
-#: disk-utils/fsck.c:819
+#: disk-utils/fsck.c:821
 #, fuzzy, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: olek on %x, ei tohiks kunagi juhtuda."
 
-#: disk-utils/fsck.c:865
+#: disk-utils/fsck.c:867
 #, fuzzy, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "Lõpetasin %s (väljumise olek %d)\n"
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:936
 #, fuzzy, c-format
 msgid "fsck.%s not found; ignore %s"
 msgstr "fsck.%s ei leitud; ignoreerin %s"
 
-#: disk-utils/fsck.c:949
+#: disk-utils/fsck.c:951
 #, fuzzy, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "viga %d (%s) fsck.%s käivitamisel %s jaoks"
 
-#: disk-utils/fsck.c:1015
+#: disk-utils/fsck.c:1017
 #, fuzzy
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
@@ -2304,88 +2304,88 @@ msgstr ""
 "Kõik või mitte ükski -t-le antud failisüsteemi tüüpidest peavad olema\n"
 "eesliidetud 'no' või '!'-ga."
 
-#: disk-utils/fsck.c:1131
+#: disk-utils/fsck.c:1133
 #, fuzzy, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: jätan vahele vigase rea failis /etc/fstab: bind ühendus nullist erineva fsck-läbimise numbriga"
 
-#: disk-utils/fsck.c:1143
+#: disk-utils/fsck.c:1145
 #, fuzzy, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: jätan vahele mitteolemasoleva seadme\n"
 
-#: disk-utils/fsck.c:1148
+#: disk-utils/fsck.c:1150
 #, fuzzy, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: mitteolemasolev seade (\"nofail\" fstab valik võimaldab selle seadme vahele jätta)\n"
 
-#: disk-utils/fsck.c:1165
+#: disk-utils/fsck.c:1167
 #, fuzzy, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: disk-utils/fsck.c:1179
+#: disk-utils/fsck.c:1181
 #, fuzzy, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "ei saa kontrollida %s: fsck.%s ei leitud"
 
-#: disk-utils/fsck.c:1283
+#: disk-utils/fsck.c:1285
 #, fuzzy
 msgid "Checking all file systems.\n"
 msgstr "Pealesunnitud kontroll failisüsteemil %s\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1376
 #, fuzzy, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--ootan-- (käik %d)\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1402
 #, fuzzy, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [valikud] -- [fs-valikud] [<failisüsteem> ...]\n"
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1406
 #, fuzzy
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Pealesunnitud kontroll failisüsteemil %s\n"
 
-#: disk-utils/fsck.c:1407
+#: disk-utils/fsck.c:1409
 #, fuzzy
 msgid " -A         check all filesystems\n"
 msgstr "Pealesunnitud kontroll failisüsteemil %s\n"
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1410
 #, fuzzy
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  kuva edenemisriba; failikirjeldaja on GUI-de jaoks\n"
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1411
 #, fuzzy
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         lukusta seade eksklusiivse juurdepääsu tagamiseks\n"
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1412
 #, fuzzy
 #| msgid "  t          Change the filesystem type"
 msgid " -M         do not check mounted filesystems\n"
 msgstr "  t          Muuta jooksva partitsiooni failisüsteemi tüüpi"
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1413
 #, fuzzy
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         ära täida, näita ainult mida tehaks\n"
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1414
 #, fuzzy
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         kontrolli failisüsteeme paralleelselt, kaasa arvatud juur\n"
 
-#: disk-utils/fsck.c:1413
+#: disk-utils/fsck.c:1415
 #, fuzzy
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R         jäta juurfailisüsteem vahele; kasulik ainult koos '-A'-ga\n"
 
-#: disk-utils/fsck.c:1414
+#: disk-utils/fsck.c:1416
 #, fuzzy
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
@@ -2394,18 +2394,18 @@ msgstr ""
 " -r [<fd>]  raport statistika iga kontrollitud seadme kohta;\n"
 "            failikirjeldaja on GUI-de jaoks\n"
 
-#: disk-utils/fsck.c:1416
+#: disk-utils/fsck.c:1418
 #, fuzzy
 #| msgid "  d          Delete the current partition"
 msgid " -s         serialize the checking operations\n"
 msgstr "  d          Kustutada jooksev partitsioon"
 
-#: disk-utils/fsck.c:1417
+#: disk-utils/fsck.c:1419
 #, fuzzy
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         ära näita pealkirja käivitumisel\n"
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1420
 #, fuzzy
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
@@ -2414,71 +2414,71 @@ msgstr ""
 " -t <tüüp>  määra kontrollitavad failisüsteemi tüübid;\n"
 "            <tüüp> võib olla komaga eraldatud loend\n"
 
-#: disk-utils/fsck.c:1420
+#: disk-utils/fsck.c:1422
 #, fuzzy
 msgid " -V         explain what is being done\n"
 msgstr " -V         selgita mida tehakse\n"
 
-#: disk-utils/fsck.c:1426
+#: disk-utils/fsck.c:1428
 #, fuzzy
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "Vaata saadaolevate fs-valikute jaoks konkreetseid fsck.* käske."
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1473
 #, fuzzy
 msgid "too many devices"
 msgstr "%s pole flopiseade\n"
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1485
 #, fuzzy
 #| msgid "%s is mounted.\t "
 msgid "Is /proc mounted?"
 msgstr "%s on monteeritud. "
 
-#: disk-utils/fsck.c:1491
+#: disk-utils/fsck.c:1493
 #, fuzzy, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "Monteerin lahti kõik allesjäänud failisüsteemid"
 
-#: disk-utils/fsck.c:1495
+#: disk-utils/fsck.c:1497
 #, fuzzy, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "Monteerin lahti kõik allesjäänud failisüsteemid"
 
-#: disk-utils/fsck.c:1503 disk-utils/fsck.c:1606 misc-utils/exch.c:91
+#: disk-utils/fsck.c:1505 disk-utils/fsck.c:1608 misc-utils/exch.c:91
 #: misc-utils/kill.c:386 misc-utils/kill.c:426 sys-utils/eject.c:280
 #: sys-utils/hwclock.c:1526
 #, fuzzy
 msgid "too many arguments"
 msgstr "%s: Tundmatu argument: %s\n"
 
-#: disk-utils/fsck.c:1510 disk-utils/fsck.c:1594 disk-utils/fsck.c:1602
+#: disk-utils/fsck.c:1512 disk-utils/fsck.c:1596 disk-utils/fsck.c:1604
 #, fuzzy
 #| msgid "too many partitions\n"
 msgid "too many options"
 msgstr "Liiga palju partitsioone\n"
 
-#: disk-utils/fsck.c:1560 disk-utils/fsck.c:1563
+#: disk-utils/fsck.c:1562 disk-utils/fsck.c:1565
 #, fuzzy
 msgid "invalid argument of -r"
 msgstr "vigane arv: %s\n"
 
-#: disk-utils/fsck.c:1575
+#: disk-utils/fsck.c:1577
 #, fuzzy, c-format
 msgid "option '%s' may be specified only once"
 msgstr "valikut '%s' võib määrata ainult üks kord"
 
-#: disk-utils/fsck.c:1582 misc-utils/kill.c:469 misc-utils/kill.c:485
+#: disk-utils/fsck.c:1584 misc-utils/kill.c:469 misc-utils/kill.c:485
 #, fuzzy, c-format
 msgid "option '%s' requires an argument"
 msgstr "võti `%s' vajab argumenti\n"
 
-#: disk-utils/fsck.c:1617
+#: disk-utils/fsck.c:1619
 #, fuzzy, c-format
 msgid "invalid argument of -r: %d"
 msgstr "vigane arv: %s\n"
 
-#: disk-utils/fsck.c:1672
+#: disk-utils/fsck.c:1674
 #, fuzzy
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l valikut saab kasutada ainult ühe seadmega -- ignoreerin"
@@ -3520,7 +3520,7 @@ msgstr ""
 " -V, --verbose      selgita mida tehakse;\n"
 "                      -V rohkem kui üks kord määrates teostatakse kuivkäik\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1503
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
 #: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
@@ -5926,6 +5926,7 @@ msgstr "omadused:"
 
 #: include/closestream.h:74 include/closestream.h:76 login-utils/vipw.c:272
 #: login-utils/vipw.c:291 sys-utils/rtcwake.c:313 term-utils/setterm.c:822
+#: text-utils/hexdump.c:241
 #, fuzzy
 #| msgid "write error on %s\n"
 msgid "write error"
@@ -7582,7 +7583,7 @@ msgstr "silinder"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "Viimane silinder, +/-silindrid või +/-suurus{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2563
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2569
 #, fuzzy
 #| msgid "Last %s or +size or +sizeM or +sizeK"
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
@@ -7995,7 +7996,7 @@ msgstr ""
 msgid "Start sector %ju out of range."
 msgstr "Väärtus on piiridest väljas\n"
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2421 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2427 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, fuzzy, c-format
 #| msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
@@ -8003,7 +8004,7 @@ msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Partitsioon %d on juba olemas. Kustutage see enne uuesti lisamist\n"
 
 #: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
-#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2430
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2436
 #, fuzzy
 #| msgid "No free sectors available\n"
 msgid "No free sectors available."
@@ -8092,7 +8093,7 @@ msgstr "Partitsioon (a-%c): "
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Loogiline partitsioon %d pole üleni partitsioonis %d\n"
 
-#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2327
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2333
 #, fuzzy
 msgid "No errors detected."
 msgstr "Vigu ei tuvastatud."
@@ -8107,7 +8108,7 @@ msgstr "Kogu kasutataud sektorite arv %d on suurem kui sektorite koguarv %d\n"
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "%d vaba sektorit\n"
 
-#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2347
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2353
 #, fuzzy, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -8202,7 +8203,7 @@ msgstr "Vigane partitsiooni number tüübile `%c'\n"
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Ei suuda kettale kirjutada"
 
-#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1297
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1303
 #, fuzzy
 msgid "Disk identifier"
 msgstr "Ketta identifikaator"
@@ -8259,7 +8260,7 @@ msgstr "Vahetada buuditavuse lippu jooksval partitsioonil"
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Vahetada buuditavuse lippu jooksval partitsioonil"
 
-#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3259 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3265 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "Seade"
@@ -8283,323 +8284,323 @@ msgstr "Algus-S/P/R"
 msgid "End-C/H/S"
 msgstr "Lõpp-S/P/R"
 
-#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3275 libfdisk/src/sgi.c:1171
 #, fuzzy
 msgid "Attrs"
 msgstr "Atribuudid"
 
-#: libfdisk/src/gpt.c:692
+#: libfdisk/src/gpt.c:693
 #, fuzzy
 msgid "failed to allocate GPT header"
 msgstr "ei jätku mälu kaartide puhvritele"
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:803
 #, fuzzy
 msgid "First LBA specified by script is out of range."
 msgstr "Skripti poolt määratud esimene LBA on väljaspool vahemikku."
 
-#: libfdisk/src/gpt.c:814
+#: libfdisk/src/gpt.c:815
 #, fuzzy
 msgid "Last LBA specified by script is out of range."
 msgstr "Skripti poolt määratud viimane LBA on väljaspool vahemikku."
 
-#: libfdisk/src/gpt.c:955
+#: libfdisk/src/gpt.c:956
 #, fuzzy, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "GPT PMBR suuruse ebakõla (%<PRIu64> != %<PRIu64>) parandatakse kirjutamise käigus."
 
-#: libfdisk/src/gpt.c:980
+#: libfdisk/src/gpt.c:981
 #, fuzzy
 msgid "gpt: stat() failed"
 msgstr "kataloogi stat() ei õnnestunud\n"
 
-#: libfdisk/src/gpt.c:990
+#: libfdisk/src/gpt.c:991
 #, fuzzy, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: ei suuda käsitleda faile režiimis %o"
 
-#: libfdisk/src/gpt.c:1254
+#: libfdisk/src/gpt.c:1260
 #, fuzzy
 msgid "GPT Header"
 msgstr "GPT päis"
 
-#: libfdisk/src/gpt.c:1259
+#: libfdisk/src/gpt.c:1265
 #, fuzzy
 msgid "GPT Entries"
 msgstr "GPT kirjed"
 
-#: libfdisk/src/gpt.c:1265
+#: libfdisk/src/gpt.c:1271
 #, fuzzy
 msgid "GPT Backup Entries"
 msgstr "GPT varukirjed"
 
-#: libfdisk/src/gpt.c:1271
+#: libfdisk/src/gpt.c:1277
 #, fuzzy
 msgid "GPT Backup Header"
 msgstr "GPT varupäis"
 
-#: libfdisk/src/gpt.c:1304
+#: libfdisk/src/gpt.c:1310
 #, fuzzy
 msgid "First usable LBA"
 msgstr "Esimene kasutatav LBA"
 
-#: libfdisk/src/gpt.c:1309
+#: libfdisk/src/gpt.c:1315
 #, fuzzy
 msgid "Last usable LBA"
 msgstr "Viimane kasutatav LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1315
+#: libfdisk/src/gpt.c:1321
 #, fuzzy
 msgid "Alternative LBA"
 msgstr "Alternatiivne LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1321
+#: libfdisk/src/gpt.c:1327
 #, fuzzy
 #| msgid "Partition ends before sector 0"
 msgid "Partition entries starting LBA"
 msgstr "Partitsioon lõppeb enne sektorit 0"
 
 #. TRANSLATORS: The end of the array of partition entries.
-#: libfdisk/src/gpt.c:1327
+#: libfdisk/src/gpt.c:1333
 #, fuzzy
 #| msgid "Partition ends after end-of-disk"
 msgid "Partition entries ending LBA"
 msgstr "Partitsioon lõppeb pärast ketta lõppu"
 
-#: libfdisk/src/gpt.c:1334
+#: libfdisk/src/gpt.c:1340
 #, fuzzy
 msgid "Allocated partition entries"
 msgstr "Loogilised partitsioonid on füüsilisest erinevas järjestuses"
 
-#: libfdisk/src/gpt.c:1676
+#: libfdisk/src/gpt.c:1682
 #, fuzzy
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Varukoopia GPT-tabel on rikutud, kuid esmane tundub korras olevat, seega kasutatakse seda."
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1692
 #, fuzzy
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Esmane GPT-tabel on rikutud, kuid varukoopia tundub korras, seega kasutatakse seda."
 
-#: libfdisk/src/gpt.c:1702
+#: libfdisk/src/gpt.c:1708
 #, fuzzy
 msgid "The backup GPT table is not on the end of the device."
 msgstr "Varukoopia GPT-tabel ei ole seadme lõpus."
 
-#: libfdisk/src/gpt.c:1705
+#: libfdisk/src/gpt.c:1711
 #, fuzzy
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "Varukoopia GPT-tabel ei ole seadme lõpus. See probleem parandatakse kirjutamisel."
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1715
 #, fuzzy
 msgid "Failed to recalculate backup GPT table location"
 msgstr "Varukoopia GPT-tabeli asukoha ümberarvutamine ebaõnnestus"
 
-#: libfdisk/src/gpt.c:1870
+#: libfdisk/src/gpt.c:1876
 #, fuzzy, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "toetamata GPT atribuudibit '%s'"
 
-#: libfdisk/src/gpt.c:1875
+#: libfdisk/src/gpt.c:1881
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libfdisk/src/gpt.c:1975
+#: libfdisk/src/gpt.c:1981
 #, fuzzy, c-format
 #| msgid "Partition Table for %s\n"
 msgid "Partition UUID changed from %s to %s."
 msgstr "Partitsioonitabel kettal %s\n"
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1990
 #, fuzzy
 msgid "Failed to translate partition name, name not changed."
 msgstr "Partitsiooni nime tõlkimine ebaõnnestus, nimi ei muutunud."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1992
 #, fuzzy, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Partitsiooni nimi muudeti '%s'-lt '%.*s'-ks."
 
-#: libfdisk/src/gpt.c:2015
+#: libfdisk/src/gpt.c:2021
 #, fuzzy
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Partitsiooni algus on allpool FirstUsableLBA-d."
 
-#: libfdisk/src/gpt.c:2022
+#: libfdisk/src/gpt.c:2028
 #, fuzzy
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Partitsiooni lõpp ületab LastUsableLBA-d."
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2221
 #, fuzzy
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr "Seade sisaldab hübriid-MBR-i -- kirjutan ainult GPT-d."
 
-#: libfdisk/src/gpt.c:2251
+#: libfdisk/src/gpt.c:2257
 #, fuzzy
 #| msgid "Disk %s doesn't contain a valid partition table\n"
 msgid "Disk does not contain a valid backup header."
 msgstr "Seade %s ei sisalda äratuntavat partitsioonitabelit\n"
 
-#: libfdisk/src/gpt.c:2256
+#: libfdisk/src/gpt.c:2262
 #, fuzzy
 msgid "Invalid primary header CRC checksum."
 msgstr "Vigane esmase päise CRC kontrollsumma."
 
-#: libfdisk/src/gpt.c:2260
+#: libfdisk/src/gpt.c:2266
 #, fuzzy
 msgid "Invalid backup header CRC checksum."
 msgstr "Vigane varupäise CRC kontrollsumma."
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2271
 #, fuzzy
 #| msgid "Invalid partition number for type `%c'\n"
 msgid "Invalid partition entry checksum."
 msgstr "Vigane partitsiooni number tüübile `%c'\n"
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2276
 #, fuzzy
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Vigased esmase päise LBA tervisekontrollid."
 
-#: libfdisk/src/gpt.c:2274
+#: libfdisk/src/gpt.c:2280
 #, fuzzy
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Vigased varupäise LBA tervisekontrollid."
 
-#: libfdisk/src/gpt.c:2279
+#: libfdisk/src/gpt.c:2285
 #, fuzzy
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA ei ühti tegeliku asukohaga esmasel päisel."
 
-#: libfdisk/src/gpt.c:2283
+#: libfdisk/src/gpt.c:2289
 #, fuzzy
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA ei ühti tegeliku asukohaga varupäisel."
 
-#: libfdisk/src/gpt.c:2288
+#: libfdisk/src/gpt.c:2294
 #, fuzzy
 msgid "Disk is too small to hold all data."
 msgstr "Ketas on liiga väike kõigi andmete hoidmiseks."
 
-#: libfdisk/src/gpt.c:2298
+#: libfdisk/src/gpt.c:2304
 #, fuzzy
 msgid "Primary and backup header mismatch."
 msgstr "Esmane ja varupäis ei ühti."
 
-#: libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2310
 #, fuzzy, c-format
 #| msgid "Warning: partition %d overlaps partition %d.\n"
 msgid "Partition %u overlaps with partition %u."
 msgstr "Hoiatus: partitsioon %d kattub partitsiooniga %d\n"
 
-#: libfdisk/src/gpt.c:2311
+#: libfdisk/src/gpt.c:2317
 #, fuzzy, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Partitsioon %u on ketta jaoks liiga suur."
 
-#: libfdisk/src/gpt.c:2318
+#: libfdisk/src/gpt.c:2324
 #, fuzzy, c-format
 #| msgid "Partition ends before sector 0"
 msgid "Partition %u ends before it starts."
 msgstr "Partitsioon lõppeb enne sektorit 0"
 
-#: libfdisk/src/gpt.c:2328
+#: libfdisk/src/gpt.c:2334
 #, fuzzy, c-format
 msgid "Header version: %s"
 msgstr "%s paketist %s\n"
 
-#: libfdisk/src/gpt.c:2329
+#: libfdisk/src/gpt.c:2335
 #, fuzzy, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "Kasutan %zu partitsiooni %zu-st."
 
-#: libfdisk/src/gpt.c:2339
+#: libfdisk/src/gpt.c:2345
 #, fuzzy, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Kokku %ju vaba sektorit on saadaval %u segmendis."
 msgstr[1] "Kokku %ju vaba sektorit on saadaval %u segmendis (suurim on %s)."
 
-#: libfdisk/src/gpt.c:2426
+#: libfdisk/src/gpt.c:2432
 #, fuzzy
 #| msgid "This partition is already in use"
 msgid "All partitions are already in use."
 msgstr "See partitsioon on juba olemas"
 
-#: libfdisk/src/gpt.c:2477
+#: libfdisk/src/gpt.c:2483
 #, fuzzy
 #| msgid "No free sectors available\n"
 msgid "No enough free sectors available."
 msgstr "Vabad sektorid on otsas\n"
 
-#: libfdisk/src/gpt.c:2491 libfdisk/src/gpt.c:2518
+#: libfdisk/src/gpt.c:2497 libfdisk/src/gpt.c:2524
 #, fuzzy, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor%d on juba kasutusel\n"
 
-#: libfdisk/src/gpt.c:2592
+#: libfdisk/src/gpt.c:2598
 #, fuzzy, c-format
 #| msgid "Don't create a partition"
 msgid "Could not create partition %zu"
 msgstr "Ära loo partitsiooni"
 
-#: libfdisk/src/gpt.c:2599
+#: libfdisk/src/gpt.c:2605
 #, fuzzy, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Viimane kasutatav GPT-sektor on %ju, kuid nõutakse %ju."
 
-#: libfdisk/src/gpt.c:2606
+#: libfdisk/src/gpt.c:2612
 #, fuzzy, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Esimene kasutatav GPT-sektor on %ju, kuid nõutakse %ju."
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2751
 #, fuzzy, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Loodi uus GPT kettasilt (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2754
 #, fuzzy, c-format
 #| msgid "The maximum number of partitions has been created\n"
 msgid "The maximal number of partitions is %zu (default is %zu)."
 msgstr "Maksimaalne arv partitsioone on juba loodud\n"
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2776
 #, fuzzy
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Sisesta uus ketta UUID (formaadis 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2778
+#: libfdisk/src/gpt.c:2784
 #, fuzzy
 msgid "Failed to parse your UUID."
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libfdisk/src/gpt.c:2792
+#: libfdisk/src/gpt.c:2798
 #, fuzzy, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Ketta identifikaator muudeti %s-lt %s-ks."
 
-#: libfdisk/src/gpt.c:2812
+#: libfdisk/src/gpt.c:2818
 #, fuzzy
 msgid "Not enough space for new partition table!"
 msgstr "Trükkida lihtsalt tabel"
 
-#: libfdisk/src/gpt.c:2823
+#: libfdisk/src/gpt.c:2829
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partitsioon #%zu on väljaspool vahemikku (minimaalne algus on %<PRIu64> sektorit)"
 
-#: libfdisk/src/gpt.c:2828
+#: libfdisk/src/gpt.c:2834
 #, fuzzy, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partitsioon #%zu on väljaspool vahemikku (maksimaalne lõpp on %<PRIu64> sektorit)"
 
-#: libfdisk/src/gpt.c:2874
+#: libfdisk/src/gpt.c:2880
 #, fuzzy
 #| msgid ""
 #| "\n"
@@ -8609,72 +8610,72 @@ msgstr ""
 "\n"
 "Buutpartitsiooni ei eksisteeri\n"
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2882
 #, fuzzy, c-format
 #| msgid "The maximum number of partitions has been created\n"
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "Maksimaalne arv partitsioone on juba loodud\n"
 
-#: libfdisk/src/gpt.c:2900
+#: libfdisk/src/gpt.c:2906
 #, fuzzy
 #| msgid "Unable to allocate any more memory\n"
 msgid "Cannot allocate memory!"
 msgstr "Mälu sai otsa\n"
 
-#: libfdisk/src/gpt.c:2929
+#: libfdisk/src/gpt.c:2935
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
 msgstr "Partitsioonitabeli pikkus muudeti %<PRIu32>-lt %<PRIu32>-ks."
 
-#: libfdisk/src/gpt.c:3039
+#: libfdisk/src/gpt.c:3045
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Partitsiooni %zu atribuudid muudeti 0x%016<PRIx64>-ks."
 
-#: libfdisk/src/gpt.c:3089
+#: libfdisk/src/gpt.c:3095
 #, fuzzy
 msgid "Enter GUID specific bit"
 msgstr "Sisesta GUID-spetsiifiline bitt"
 
-#: libfdisk/src/gpt.c:3104
+#: libfdisk/src/gpt.c:3110
 #, fuzzy, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "toetamata biti %lu vahetamine ebaõnnestus"
 
-#: libfdisk/src/gpt.c:3117
+#: libfdisk/src/gpt.c:3123
 #, fuzzy, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID-spetsiifiline bitt %d partitsioonil %zu on nüüd lubatud."
 
-#: libfdisk/src/gpt.c:3118
+#: libfdisk/src/gpt.c:3124
 #, fuzzy, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID-spetsiifiline bitt %d partitsioonil %zu on nüüd keelatud."
 
-#: libfdisk/src/gpt.c:3122
+#: libfdisk/src/gpt.c:3128
 #, fuzzy, c-format
 #| msgid "This partition is unusable"
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "See partitsioon pole kasutatav"
 
-#: libfdisk/src/gpt.c:3123
+#: libfdisk/src/gpt.c:3129
 #, fuzzy, c-format
 #| msgid "This partition is unusable"
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "See partitsioon pole kasutatav"
 
-#: libfdisk/src/gpt.c:3266
+#: libfdisk/src/gpt.c:3272
 #, fuzzy
 #| msgid "Type"
 msgid "Type-UUID"
 msgstr "Tüüp"
 
-#: libfdisk/src/gpt.c:3267
+#: libfdisk/src/gpt.c:3273
 #, fuzzy
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3268 login-utils/chfn.c:181 login-utils/chfn.c:183
+#: libfdisk/src/gpt.c:3274 login-utils/chfn.c:181 login-utils/chfn.c:183
 #: login-utils/chfn.c:341 sys-utils/lsipc.c:184
 msgid "Name"
 msgstr "Nimi"
@@ -9361,200 +9362,200 @@ msgstr "Ei suutnud avada %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr "vaikne sisselogimise olek: algupäraste ID-de taastamine ebaõnnestus"
 
-#: libmount/src/context.c:3092
+#: libmount/src/context.c:3109
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "Ei suuda avada faili `%s'"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1518
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "HOIATUS: levitamislippude rakendamine ebaõnnestus"
 
-#: libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1534
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "HOIATUS: allikas on kirjutuskaitstud, ühendatud kirjutuskaitsega"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1555
 #, fuzzy, c-format
 msgid "operation permitted for root only"
 msgstr "toiming on lubatud ainult root-kasutajale"
 
-#: libmount/src/context_mount.c:1541
+#: libmount/src/context_mount.c:1559
 #, fuzzy, c-format
 #| msgid "%s is mounted.\t "
 msgid "%s is already mounted"
 msgstr "%s on monteeritud. "
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1565
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "%s: ei suuda lugeda %s\n"
 
-#: libmount/src/context_mount.c:1550
+#: libmount/src/context_mount.c:1568
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "ei leia ühenduspunkti failis %s"
 
-#: libmount/src/context_mount.c:1553
+#: libmount/src/context_mount.c:1571
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "shutdown: Ei suuda lahti monteerida kataloogi %s: %s\n"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1576
 #, fuzzy, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "%s-il tuvastati rohkem failisüsteeme; kasuta -t <tüüp> või wipefs(8)"
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1581
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "ioctl() abil kella lugemine %s kaudu ei õnnestunud"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1582
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "--date parameeter on puudu\n"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1589
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: ei suuda lugeda %s\n"
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1591
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "--date parameeter on puudu\n"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1602
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1603
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1606
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1607
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1612
 #, fuzzy, c-format
 msgid "failed to set up loop device for %s"
 msgstr "stat(%s) ei õnnestunud"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1616
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s jaoks on olemas kattuvaid silmusseadmeid"
 
-#: libmount/src/context_mount.c:1602 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
 #, fuzzy, c-format
 #| msgid "malloc failed"
 msgid "locking failed"
 msgstr "Mälu sai otsa"
 
 # XXX stat'ida
-#: libmount/src/context_mount.c:1606 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "ei suuda stat'ida seadet %s"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1628
 #, fuzzy, c-format
 #| msgid "Filesystem state=%d\n"
 msgid "filesystem already mounted"
 msgstr "Failisüsteemi olek=%d\n"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1631
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "Ei suuda avada faili `%s'"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1641
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "failisüsteem ühendati, kuid lippude rakendamine ebaõnnestus"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1647
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "failisüsteem ühendati, kuid kasutajaruumi ühendamistabeli uuendamine ebaõnnestus"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1653
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "failisüsteem ühendati, kuid nimeruumi tagasi lülitamine ebaõnnestus"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1659
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "failisüsteem ühendati, kuid omaniku muutmine ebaõnnestus: %m"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1665
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "failisüsteem ühendati, kuid režiimi muutmine ebaõnnestus: %m"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1671
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "failisüsteem ühendati, kuid ID-kaardistamise lisamine ebaõnnestus"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1677
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "failisüsteem ühendati, kuid järgnev toiming ebaõnnestus: %m"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1698
 #, fuzzy, c-format
 msgid "%s() failed: "
 msgstr "seek ei õnnestunud"
 
-#: libmount/src/context_mount.c:1699 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
 #, fuzzy, c-format
 #| msgid "permission denied for id"
 msgid "permission denied"
 msgstr "identifikaatorile pole õigusi"
 
-#: libmount/src/context_mount.c:1701 libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "juurkataloogi i-kirje ei kirjelda kataloogi"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1721
 #, fuzzy, c-format
 #| msgid "Must be superuser to set system clock.\n"
 msgid "must be superuser to use mount"
 msgstr "Kella seadmiseks peab olema root\n"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "ühenduspunkt on hõivatud"
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1735
 #, fuzzy, c-format
 #| msgid "%s: read error on %s\n"
 msgid "%s already mounted on %s"
 msgstr "%s: lugemise viga failis %s\n"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1739
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s on juba ühendatud või ühenduspunkt on hõivatud"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1744
 #, fuzzy, c-format
 #| msgid ""
 #| "\n"
@@ -9564,126 +9565,126 @@ msgstr ""
 "\n"
 "Buutpartitsiooni ei eksisteeri\n"
 
-#: libmount/src/context_mount.c:1729
+#: libmount/src/context_mount.c:1747
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "ühenduspunkt on sümboolne link mitte kuhugi"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1752
 #, fuzzy, c-format
 #| msgid "%s: user \"%s\" does not exist.\n"
 msgid "special device %s does not exist"
 msgstr "%s: Kasutajat \"%s\" pole olemas\n"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1765
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "erilseade %s ei ole olemas (tee eesliide ei ole kataloog)"
 
-#: libmount/src/context_mount.c:1757
+#: libmount/src/context_mount.c:1775
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "ühenduspunkt pole ühendatud või vigane valik"
 
-#: libmount/src/context_mount.c:1759
+#: libmount/src/context_mount.c:1777
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "ei ole ühenduspunkt või vigane valik"
 
-#: libmount/src/context_mount.c:1762
+#: libmount/src/context_mount.c:1780
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "vigane valik; ühenduse teisaldamine jagatud ühenduse all ei ole toetatud"
 
-#: libmount/src/context_mount.c:1766
+#: libmount/src/context_mount.c:1784
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "vigane valik; mõnede failisüsteemide jaoks (nt nfs, cifs) võib vaja minna /sbin/mount.<tüüp> abiprogrammi"
 
-#: libmount/src/context_mount.c:1770
+#: libmount/src/context_mount.c:1788
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "vale fs-tüüp, vigane valik, vigane superblokk seadmel %s, puuduv koodileht või abiprogramm, või muu viga"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1795
 #, fuzzy, c-format
 msgid "mount table full"
 msgstr "ühendamistabel on täis"
 
-#: libmount/src/context_mount.c:1782
+#: libmount/src/context_mount.c:1800
 #, fuzzy, c-format
 #| msgid "unable to read super block"
 msgid "can't read superblock on %s"
 msgstr "ei suuda lugeda superplokki"
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1807
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: libmount/src/context_mount.c:1792
+#: libmount/src/context_mount.c:1810
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1819
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s pole flopiseade\n"
 
-#: libmount/src/context_mount.c:1804
+#: libmount/src/context_mount.c:1822
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "kernel ei tunne %s blokiseadmena; võib-olla on vajalik \"modprobe draiver\""
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1825
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s pole flopiseade\n"
 
-#: libmount/src/context_mount.c:1809
+#: libmount/src/context_mount.c:1827
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "%s pole flopiseade\n"
 
-#: libmount/src/context_mount.c:1816
+#: libmount/src/context_mount.c:1834
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "%s pole flopiseade\n"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1842
 #, fuzzy, c-format
 #| msgid "cannot open %s read-write\n"
 msgid "cannot mount %s read-only"
 msgstr "ei suuda avada seadet %s lugemiseks ja kirjutamiseks\n"
 
-#: libmount/src/context_mount.c:1826
+#: libmount/src/context_mount.c:1844
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s on kirjutuskaitstud, kuid taotleti eksplitsiitset loe-kirjuta režiimi"
 
-#: libmount/src/context_mount.c:1828
+#: libmount/src/context_mount.c:1846
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount: ei suuda avada seadet %s kiiruse seadmiseks"
 
-#: libmount/src/context_mount.c:1830
+#: libmount/src/context_mount.c:1848
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "exec ei õnnestunud\n"
 
-#: libmount/src/context_mount.c:1839
+#: libmount/src/context_mount.c:1857
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "shutdown: Ei suuda lahti monteerida kataloogi %s: %s\n"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1864
 #, fuzzy, c-format
 #| msgid "will not try to make filesystem on '%s'"
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "ei ürita luua failisüsteemi seadmele `%s'"
 
-#: libmount/src/context_mount.c:1855
+#: libmount/src/context_mount.c:1873
 #, fuzzy, c-format
 msgid "%s() failed: %m"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
@@ -9751,13 +9752,13 @@ msgid "umount(2) system call failed: %m"
 msgstr "umount(2) süsteemikutse ebaõnnestus: %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:348 libmount/src/hook_idmap.c:378
+#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
 #, fuzzy, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "ei saa seada ID-kaardistamist: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:286
+#: libmount/src/hook_loopdev.c:295
 #, fuzzy, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "seadme sõlm %s (%u:%u) on kadunud"
@@ -10539,7 +10540,7 @@ msgstr " -H                  peida hosti nimi sisselogimise viipas"
 msgid " -s, --shell <path>  define the shell to log in to"
 msgstr " -s, --shell <tee>   määra kest, millesse sisse logida"
 
-#: login-utils/login.c:1380 term-utils/agetty.c:3143
+#: login-utils/login.c:1380 term-utils/agetty.c:3141
 #, fuzzy
 msgid "failed to initialize path context"
 msgstr "ei jätku mälu kaartide puhvritele"
@@ -10568,14 +10569,14 @@ msgid "groups initialization failed: %m"
 msgstr "gruppide lähtestamine ebaõnnestus: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1106 sys-utils/unshare.c:1316
+#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 #, fuzzy
 #| msgid "setuid() failed"
 msgid "setgid() failed"
 msgstr "setuid() ei õnnestunud"
 
 #: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
-#: sys-utils/unshare.c:1108 sys-utils/unshare.c:1319
+#: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() ei õnnestunud"
 
@@ -11257,7 +11258,7 @@ msgid "cannot create child process"
 msgstr "alamprotsessi loomine ebaõnnestus"
 
 #: login-utils/su-common.c:609 sys-utils/nsenter.c:887
-#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1285
+#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, fuzzy, c-format
 #| msgid "cannot get size of %s"
 msgid "cannot change directory to %s"
@@ -14873,7 +14874,7 @@ msgid "invalid sigmask format: %s"
 msgstr "vigane identifikaator"
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:413 sys-utils/setpriv.c:463
-#: sys-utils/unshare.c:1025
+#: sys-utils/unshare.c:1024
 #, fuzzy, c-format
 #| msgid "%s: unknown signal %s\n"
 msgid "unknown signal: %s"
@@ -16697,7 +16698,7 @@ msgstr "ühtegi failideskriptorit ei saadud, kontrollige systemctl status uuidd.
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "liiga palju failideskriptoreid saadud, kontrollige uuidd.socket"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1400
+#: misc-utils/uuidd.c:452 text-utils/more.c:1402
 #, fuzzy
 #| msgid "malloc failed"
 msgid "poll failed"
@@ -19846,7 +19847,7 @@ msgid "%s: unmounting"
 msgstr "%s: lahtisidumine"
 
 #: sys-utils/eject.c:671 sys-utils/mount.c:52 sys-utils/umount.c:121
-#: text-utils/more.c:1279
+#: text-utils/more.c:1281
 #, fuzzy
 #| msgid "newgrp: Permission denied"
 msgid "drop permissions failed"
@@ -22362,7 +22363,7 @@ msgid "sigfillset failed"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
 
 #: sys-utils/irqtop.c:251 sys-utils/setpgid.c:81 sys-utils/setpgid.c:85
-#: sys-utils/unshare.c:1141
+#: sys-utils/unshare.c:1140
 #, fuzzy
 msgid "sigprocmask failed"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
@@ -25049,7 +25050,7 @@ msgstr "juurkataloogi i-kirje ei kirjelda kataloogi"
 msgid "%s is a mountpoint\n"
 msgstr "%s on monteeritud. "
 
-#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:745
+#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:744
 #, fuzzy, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr "Kasutamine: %s [ võtmed ] seade ...\n"
@@ -25258,12 +25259,12 @@ msgstr "%s avamine ei õnnestunud"
 msgid "failed to parse file descriptor"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1040
+#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
 #, fuzzy
 msgid "failed to parse uid"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1044
+#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
 #, fuzzy
 msgid "failed to parse gid"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
@@ -25329,7 +25330,7 @@ msgid "can not get process stat"
 msgstr "Ei suuda avada faili %s\n"
 
 #: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
-#: sys-utils/unshare.c:1104 sys-utils/unshare.c:1314
+#: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 #, fuzzy
 msgid "setgroups failed"
 msgstr "setuid() ei õnnestunud"
@@ -27851,94 +27852,94 @@ msgstr "%s: Avamine ei õnnestunud: %s\n"
 msgid "no line matching user \"%s\" in %s"
 msgstr "ühtegi kasutajale \"%s\" vastavat rida %s-s ei leitud"
 
-#: sys-utils/unshare.c:650
+#: sys-utils/unshare.c:649
 #, fuzzy, c-format
 msgid "%s too large for kernel 4k limit"
 msgstr "%s on liiga suur kerneli 4k piirangu jaoks"
 
-#: sys-utils/unshare.c:656
+#: sys-utils/unshare.c:655
 #, fuzzy, c-format
 #| msgid "%s: failed to open: %s\n"
 msgid "failed to open %s"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/unshare.c:658
+#: sys-utils/unshare.c:657
 #, fuzzy, c-format
 msgid "failed to write %s"
 msgstr "Ei suuda lugeda seadet %s\n"
 
-#: sys-utils/unshare.c:730
+#: sys-utils/unshare.c:729
 #, fuzzy, c-format
 #| msgid "cannot open %s read-write\n"
 msgid "cannot open %s/register"
 msgstr "ei suuda avada seadet %s lugemiseks ja kirjutamiseks\n"
 
-#: sys-utils/unshare.c:733
+#: sys-utils/unshare.c:732
 #, fuzzy, c-format
 msgid "write failed %s/register"
 msgstr "ploki kirjutamine ei õnnestunud"
 
-#: sys-utils/unshare.c:749
+#: sys-utils/unshare.c:748
 #, fuzzy
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr "Käivita programm mõnede vanemaprotsessiga jagamata nimerumidega.\n"
 
-#: sys-utils/unshare.c:752
+#: sys-utils/unshare.c:751
 #, fuzzy
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr " -m, --mount[=<fail>]      eralda haakimiste nimeruum\n"
 
-#: sys-utils/unshare.c:753
+#: sys-utils/unshare.c:752
 #, fuzzy
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<fail>]        eralda UTS nimeruum (hostinimi jm)\n"
 
-#: sys-utils/unshare.c:754
+#: sys-utils/unshare.c:753
 #, fuzzy
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr " -i, --ipc[=<fail>]        eralda System V IPC nimeruum\n"
 
-#: sys-utils/unshare.c:755
+#: sys-utils/unshare.c:754
 #, fuzzy
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr " -n, --net[=<fail>]        eralda võrgu nimeruum\n"
 
-#: sys-utils/unshare.c:756
+#: sys-utils/unshare.c:755
 #, fuzzy
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr " -p, --pid[=<fail>]        eralda PID-i nimeruum\n"
 
-#: sys-utils/unshare.c:757
+#: sys-utils/unshare.c:756
 #, fuzzy
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr " -U, --user[=<fail>]       eralda kasutaja nimeruum\n"
 
-#: sys-utils/unshare.c:758
+#: sys-utils/unshare.c:757
 #, fuzzy
 msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
 msgstr " -C, --cgroup[=<fail>]     eralda cgroup-i nimeruum\n"
 
-#: sys-utils/unshare.c:759
+#: sys-utils/unshare.c:758
 #, fuzzy
 msgid " -T, --time[=<file>]       unshare time namespace\n"
 msgstr " -T, --time[=<fail>]       eralda aja nimeruum\n"
 
-#: sys-utils/unshare.c:761
+#: sys-utils/unshare.c:760
 #, fuzzy
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr " --mount-proc[=<kataloog>] haagi esmalt proc-failisüsteem (tähendab --mount)\n"
 
-#: sys-utils/unshare.c:762
+#: sys-utils/unshare.c:761
 #, fuzzy
 msgid " --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"
 msgstr " --mount-binfmt[=<kataloog>] haagi esmalt binfmt-failisüsteem (tähendab --user ja --mount)\n"
 
-#: sys-utils/unshare.c:763
+#: sys-utils/unshare.c:762
 #, fuzzy
 msgid " -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"
 msgstr " -l, --load-interp <fail>  laadi binfmt definitsioon nimerumisse (tähendab --mount-binfmt)\n"
 
-#: sys-utils/unshare.c:764
+#: sys-utils/unshare.c:763
 #, fuzzy
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
@@ -27947,57 +27948,57 @@ msgstr ""
 " --propagation slave|shared|private|unchanged\n"
 "                           muuda haakimise levitamist haakimiste nimerumis\n"
 
-#: sys-utils/unshare.c:766
+#: sys-utils/unshare.c:765
 #, fuzzy
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
 msgstr " -R, --root <kataloog>     käivita käsk juurkataloogiga seatud <kataloog>\n"
 
-#: sys-utils/unshare.c:767
+#: sys-utils/unshare.c:766
 #, fuzzy
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
 msgstr " -w, --wd <kataloog>       muuda töökataloogi <kataloog>\n"
 
-#: sys-utils/unshare.c:769
+#: sys-utils/unshare.c:768
 #, fuzzy
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
 msgstr " -S, --setuid <uid>        sea UID sisestatud nimerumis\n"
 
-#: sys-utils/unshare.c:770
+#: sys-utils/unshare.c:769
 #, fuzzy
 msgid " -G, --setgid <gid>        set gid in entered namespace\n"
 msgstr " -G, --setgid <gid>        sea GID sisestatud nimerumis\n"
 
-#: sys-utils/unshare.c:771
+#: sys-utils/unshare.c:770
 #, fuzzy
 msgid " --map-user <uid>|<name>   map current user to uid (implies --user)\n"
 msgstr " --map-user <uid>|<nimi>   vastenda praegune kasutaja UID-ga (tähendab --user)\n"
 
-#: sys-utils/unshare.c:772
+#: sys-utils/unshare.c:771
 #, fuzzy
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
 msgstr " --map-group <gid>|<nimi>  vastenda praegune grupp GID-ga (tähendab --user)\n"
 
-#: sys-utils/unshare.c:773
+#: sys-utils/unshare.c:772
 #, fuzzy
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       vastenda praegune kasutaja juurkasutajale (tähendab --user)\n"
 
-#: sys-utils/unshare.c:774
+#: sys-utils/unshare.c:773
 #, fuzzy
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
 msgstr " -c, --map-current-user    vastenda praegune kasutaja iseendale (tähendab --user)\n"
 
-#: sys-utils/unshare.c:775
+#: sys-utils/unshare.c:774
 #, fuzzy
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr " --map-auto                vastenda kasutajad ja grupid automaatselt (tähendab --user)\n"
 
-#: sys-utils/unshare.c:776
+#: sys-utils/unshare.c:775
 #, fuzzy
 msgid " --map-subids              map the first block of user IDs owned by euid (implies --user)\n"
 msgstr " --map-subids              vastenda esimene euid-le kuuluv kasutaja-ID-de plokk (tähendab --user)\n"
 
-#: sys-utils/unshare.c:777
+#: sys-utils/unshare.c:776
 #, fuzzy
 msgid ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
@@ -28006,7 +28007,7 @@ msgstr ""
 " --map-users <siseuid>:<välisuid>:<arv>\n"
 "                           vastenda arv kasutajat välisuid-lt siseuid-le (tähendab --user)\n"
 
-#: sys-utils/unshare.c:779
+#: sys-utils/unshare.c:778
 #, fuzzy
 msgid ""
 " --map-groups <innergid>:<outergid>:<count>\n"
@@ -28015,17 +28016,17 @@ msgstr ""
 " --map-groups <sisegid>:<välisgid>:<arv>\n"
 "                           vastenda arv gruppi välisgid-lt sisegid-le (tähendab --user)\n"
 
-#: sys-utils/unshare.c:781
+#: sys-utils/unshare.c:780
 #, fuzzy
 msgid " --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"
 msgstr " --owner <uid>:<gid>       sea kasutaja nimeruum omanik (tähendab --user)\n"
 
-#: sys-utils/unshare.c:783
+#: sys-utils/unshare.c:782
 #, fuzzy
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr " -f, --fork                hargne enne <programmi> käivitamist\n"
 
-#: sys-utils/unshare.c:784
+#: sys-utils/unshare.c:783
 #, fuzzy
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
@@ -28034,117 +28035,117 @@ msgstr ""
 " --kill-child[=<signaali_nimi>]  suremisel tapa hargnenud alamprotsess (tähendab --fork)\n"
 "                             vaikimisi SIGKILL\n"
 
-#: sys-utils/unshare.c:786
+#: sys-utils/unshare.c:785
 #, fuzzy
 msgid " --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"
 msgstr " --forward-signals         edasta SIGTERM ja SIGINT alamprotsessile (tähendab --fork)\n"
 
-#: sys-utils/unshare.c:788
+#: sys-utils/unshare.c:787
 #, fuzzy
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr " --setgroups allow|deny    kontrolli setgroups süsteemikutset kasutaja nimerumides\n"
 
-#: sys-utils/unshare.c:789
+#: sys-utils/unshare.c:788
 #, fuzzy
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgstr " --keep-caps               säilita kasutaja nimerumides antud võimekused\n"
 
-#: sys-utils/unshare.c:791
+#: sys-utils/unshare.c:790
 #, fuzzy
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
 msgstr " --monotonic <nihe>        sea monotoonne kellanihke (sekundid) ajanimerumides\n"
 
-#: sys-utils/unshare.c:792
+#: sys-utils/unshare.c:791
 #, fuzzy
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
 msgstr " --boottime <nihe>         sea käivitusaja kellanihke (sekundid) ajanimerumides\n"
 
-#: sys-utils/unshare.c:1013
+#: sys-utils/unshare.c:1012
 #, fuzzy
 msgid "failed to parse owner"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/unshare.c:1054
+#: sys-utils/unshare.c:1053
 #, fuzzy
 msgid "failed to parse monotonic offset"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/unshare.c:1058
+#: sys-utils/unshare.c:1057
 #, fuzzy
 msgid "failed to parse boottime offset"
 msgstr "%s: Avamine ei õnnestunud: %s\n"
 
-#: sys-utils/unshare.c:1081
+#: sys-utils/unshare.c:1080
 #, fuzzy
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr "valikud --monotonic ja --boottime nõuavad aja nimeruum eraldamist (-T)"
 
-#: sys-utils/unshare.c:1111
+#: sys-utils/unshare.c:1110
 #, fuzzy
 msgid "unshare failed"
 msgstr "seek ei õnnestunud"
 
-#: sys-utils/unshare.c:1134
+#: sys-utils/unshare.c:1133
 #, fuzzy
 msgid "sigaction SIGTERM failed"
 msgstr "sigaction SIGTERM ebaõnnestus"
 
-#: sys-utils/unshare.c:1136
+#: sys-utils/unshare.c:1135
 #, fuzzy
 msgid "sigaction SIGINT failed"
 msgstr "fsync ei õnnestunud"
 
-#: sys-utils/unshare.c:1148
+#: sys-utils/unshare.c:1147
 #, fuzzy
 #| msgid "malloc failed"
 msgid "sigprocmask block failed"
 msgstr "Mälu sai otsa"
 
-#: sys-utils/unshare.c:1155
+#: sys-utils/unshare.c:1154
 #, fuzzy
 msgid "pidfd_open failed"
 msgstr "Ei suuda avada faili `%s'"
 
-#: sys-utils/unshare.c:1169
+#: sys-utils/unshare.c:1168
 #, fuzzy
 msgid "sigprocmask restore failed"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
 
-#: sys-utils/unshare.c:1211
+#: sys-utils/unshare.c:1210
 #, fuzzy
 msgid "signal handler reset failed"
 msgstr "signaali käitleja lähtestamine ebaõnnestus"
 
-#: sys-utils/unshare.c:1216
+#: sys-utils/unshare.c:1215
 #, fuzzy
 #| msgid "malloc failed"
 msgid "sigprocmask unblock failed"
 msgstr "Mälu sai otsa"
 
-#: sys-utils/unshare.c:1220
+#: sys-utils/unshare.c:1219
 #, fuzzy
 #| msgid "exec failed\n"
 msgid "child exit failed"
 msgstr "exec ei õnnestunud\n"
 
-#: sys-utils/unshare.c:1259
+#: sys-utils/unshare.c:1258
 #, fuzzy
 msgid "options --setgroups=allow and --map-group are mutually exclusive"
 msgstr "valikud --setgroups=allow ja --map-group on vastastikku välistavad"
 
-#: sys-utils/unshare.c:1274 sys-utils/unshare.c:1301 sys-utils/unshare.c:1307
+#: sys-utils/unshare.c:1273 sys-utils/unshare.c:1300 sys-utils/unshare.c:1306
 #, fuzzy, c-format
 #| msgid "open() of %s failed"
 msgid "mount %s failed"
 msgstr "%s avamine ei õnnestunud"
 
-#: sys-utils/unshare.c:1281
+#: sys-utils/unshare.c:1280
 #, fuzzy, c-format
 #| msgid "cannot get size of %s"
 msgid "cannot change root directory to '%s'"
 msgstr "ei suuda kindlaks teha seadme %s mahtu"
 
-#: sys-utils/unshare.c:1297
+#: sys-utils/unshare.c:1296
 #, fuzzy, c-format
 msgid "cannot change %s filesystem propagation"
 msgstr "%s failisüsteemi levitamist ei saa muuta"
@@ -28652,7 +28653,7 @@ msgstr "%s: ei suuda käivitada programmi %s: %m"
 #: term-utils/agetty.c:615 term-utils/agetty.c:786 term-utils/agetty.c:969
 #: term-utils/agetty.c:1218 term-utils/agetty.c:1497 term-utils/agetty.c:1515
 #: term-utils/agetty.c:1552 term-utils/agetty.c:1562 term-utils/agetty.c:1604
-#: term-utils/agetty.c:1932 term-utils/agetty.c:2340 term-utils/agetty.c:3023
+#: term-utils/agetty.c:1930 term-utils/agetty.c:2338 term-utils/agetty.c:3021
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "ei jätku mälu kaartide puhvritele"
@@ -28751,37 +28752,37 @@ msgstr "ei suuda avada seadet %s lugemiseks ja kirjutamiseks\n"
 msgid "failed to create reload file: %s: %m"
 msgstr "ioctl() abil kella lugemine %s kaudu ei õnnestunud"
 
-#: term-utils/agetty.c:1996
+#: term-utils/agetty.c:1994
 #, fuzzy, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "ei suuda kindlaks teha seadme %s mahtu"
 
-#: term-utils/agetty.c:2018
+#: term-utils/agetty.c:2016
 #, fuzzy
 msgid "[press ENTER to login]"
 msgstr "[vajuta ENTER sisselogimiseks]"
 
-#: term-utils/agetty.c:2052
+#: term-utils/agetty.c:2050
 #, fuzzy
 msgid "Num Lock off"
 msgstr "Num Lock väljas"
 
-#: term-utils/agetty.c:2055
+#: term-utils/agetty.c:2053
 #, fuzzy
 msgid "Num Lock on"
 msgstr "Num Lock sees"
 
-#: term-utils/agetty.c:2058
+#: term-utils/agetty.c:2056
 #, fuzzy
 msgid "Caps Lock on"
 msgstr "Caps Lock sees"
 
-#: term-utils/agetty.c:2061
+#: term-utils/agetty.c:2059
 #, fuzzy
 msgid "Scroll Lock on"
 msgstr "Scroll Lock sees"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2062
 #, fuzzy, c-format
 #| msgid "type: %s\n"
 msgid ""
@@ -28789,32 +28790,32 @@ msgid ""
 "\n"
 msgstr "tüüp: %s\n"
 
-#: term-utils/agetty.c:2225
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: read: %m"
 
-#: term-utils/agetty.c:2294
+#: term-utils/agetty.c:2292
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: sisendi ületäitumine"
 
-#: term-utils/agetty.c:2336 term-utils/agetty.c:2344
+#: term-utils/agetty.c:2334 term-utils/agetty.c:2342
 #, fuzzy, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: vigane märgiteisendus sisselogimisnimel"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 #, fuzzy, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: vigane märk 0x%x sisselogimisnimes"
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2433
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "ei suuda kindlaks teha seadme %s mahtu"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2478
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -28823,182 +28824,182 @@ msgstr ""
 " %1$s [valikud] <liin> [<baud_kiirus>,...] [<termtüüp>]\n"
 " %1$s [valikud] <baud_kiirus>,... <liin> [<termtüüp>]\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2482
 #, fuzzy
 msgid "Open a terminal and set its mode.\n"
 msgstr "Ava terminal ja sea selle režiim.\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2485
 #, fuzzy
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                eelda 8-bitist tty-d\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2486
 #, fuzzy
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <kasutaja> logi määratud kasutaja automaatselt sisse\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2487
 #, fuzzy
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              ära lähtesta juhtimisrežiimi\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2488
 #, fuzzy
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               kasuta -r <hostinimi> login(1) jaoks\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2489
 #, fuzzy
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <loend>   kuva issue-failid või kataloogid\n"
 
-#: term-utils/agetty.c:2492
+#: term-utils/agetty.c:2490
 #, fuzzy
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           kuva issue-fail ja välju\n"
 
-#: term-utils/agetty.c:2493
+#: term-utils/agetty.c:2491
 #, fuzzy
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         luba riistvara voogude juhtimine\n"
 
-#: term-utils/agetty.c:2494
+#: term-utils/agetty.c:2492
 #, fuzzy
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <hostinimi>     määra sisselogimise host\n"
 
-#: term-utils/agetty.c:2495
+#: term-utils/agetty.c:2493
 #, fuzzy
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              ära kuva issue-faili\n"
 
-#: term-utils/agetty.c:2496
+#: term-utils/agetty.c:2494
 #, fuzzy
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <string> sea initsialiseerimisstring\n"
 
-#: term-utils/agetty.c:2497
+#: term-utils/agetty.c:2495
 #, fuzzy
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              ära puhasta ekraani enne viibet\n"
 
-#: term-utils/agetty.c:2498
+#: term-utils/agetty.c:2496
 #, fuzzy
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <fail> määra sisselogimisprogramm\n"
 
-#: term-utils/agetty.c:2499
+#: term-utils/agetty.c:2497
 #, fuzzy
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<režiim>] halda kohaliku liini lippu\n"
 
-#: term-utils/agetty.c:2500
+#: term-utils/agetty.c:2498
 #, fuzzy
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         eralda baud-kiirus ühenduse ajal\n"
 
-#: term-utils/agetty.c:2501
+#: term-utils/agetty.c:2499
 #, fuzzy
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ära küsi sisselogimist\n"
 
-#: term-utils/agetty.c:2502
+#: term-utils/agetty.c:2500
 #, fuzzy
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            ära prindi reavahetust enne issue-faili\n"
 
-#: term-utils/agetty.c:2503
+#: term-utils/agetty.c:2501
 #, fuzzy
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <val>  login-le edastatavad valikud\n"
 
-#: term-utils/agetty.c:2504
+#: term-utils/agetty.c:2502
 #, fuzzy
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          oota enne sisselogimist suvalist klahvi\n"
 
-#: term-utils/agetty.c:2505
+#: term-utils/agetty.c:2503
 #, fuzzy
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <kataloog>    muuda juurkataloog selleks kataloogiks\n"
 
-#: term-utils/agetty.c:2506
+#: term-utils/agetty.c:2504
 #, fuzzy
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               katkesta ühendus tty-ga virtuaalselt\n"
 
-#: term-utils/agetty.c:2507
+#: term-utils/agetty.c:2505
 #, fuzzy
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            proovi baud-kiirust pärast katkestust säilitada\n"
 
-#: term-utils/agetty.c:2508
+#: term-utils/agetty.c:2506
 #, fuzzy
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <arv>        sisselogimisprotsessi aegumine\n"
 
-#: term-utils/agetty.c:2509
+#: term-utils/agetty.c:2507
 #, fuzzy
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          tuvasta suurtähtedega terminal\n"
 
-#: term-utils/agetty.c:2510
+#: term-utils/agetty.c:2508
 #, fuzzy
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              oota vankri-tagastust\n"
 
-#: term-utils/agetty.c:2511
+#: term-utils/agetty.c:2509
 #, fuzzy
 msgid "     --nohints              do not print hints\n"
 msgstr "            Esimene  Viimane\n"
 
-#: term-utils/agetty.c:2512
+#: term-utils/agetty.c:2510
 #, fuzzy
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           hostinimi ei kuvata üldse\n"
 
-#: term-utils/agetty.c:2513
+#: term-utils/agetty.c:2511
 #, fuzzy
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        kuva täielik hostinimi\n"
 
-#: term-utils/agetty.c:2514
+#: term-utils/agetty.c:2512
 #, fuzzy
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <string> lisatavad tagasilükkemärgid\n"
 
-#: term-utils/agetty.c:2515
+#: term-utils/agetty.c:2513
 #, fuzzy
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <string>  lisatavad kustutamismärgid\n"
 
-#: term-utils/agetty.c:2516
+#: term-utils/agetty.c:2514
 #, fuzzy
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <kataloog>     muuda kataloog enne sisselogimist\n"
 
-#: term-utils/agetty.c:2517
+#: term-utils/agetty.c:2515
 #, fuzzy
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <arv>          oota sekundeid enne viibet\n"
 
-#: term-utils/agetty.c:2518
+#: term-utils/agetty.c:2516
 #, fuzzy
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <arv>           käivita sisselogimine selle prioriteediga\n"
 
-#: term-utils/agetty.c:2519
+#: term-utils/agetty.c:2517
 #, fuzzy
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               laadi viibad töötavatele agetty-eksemplaridele uuesti\n"
 
-#: term-utils/agetty.c:2520
+#: term-utils/agetty.c:2518
 #, fuzzy
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          kuva toetatud baud-kiirused\n"
 
-#: term-utils/agetty.c:2959
+#: term-utils/agetty.c:2957
 #, fuzzy, c-format
 #| msgid "user"
 msgid "%d user"
@@ -29006,23 +29007,23 @@ msgid_plural "%d users"
 msgstr[0] "kasutaja"
 msgstr[1] "kasutaja"
 
-#: term-utils/agetty.c:3110
+#: term-utils/agetty.c:3108
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "chdir () kataloogi /dev ei õnnestunud: %m"
 
-#: term-utils/agetty.c:3122
+#: term-utils/agetty.c:3120
 #, fuzzy, c-format
 #| msgid "Cannot open file '%s'"
 msgid "cannot touch file %s"
 msgstr "Ei suuda avada faili `%s'"
 
-#: term-utils/agetty.c:3126
+#: term-utils/agetty.c:3124
 #, fuzzy
 msgid "--reload is unsupported on your system"
 msgstr "--reload ei ole sinu süsteemis toetatud"
 
-#: term-utils/agetty.c:3149
+#: term-utils/agetty.c:3147
 #, fuzzy
 msgid "failed to open credentials directory"
 msgstr "volituste kataloogi avamine ebaõnnestus"
@@ -29860,7 +29861,7 @@ msgstr "ei suuda kindlaks teha seadme %s mahtu"
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Teade kõigile kasutajalt %s@%s"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:416
 #, fuzzy, c-format
 #| msgid "%s: will not read %s - use stdin.\n"
 msgid "will not read %s - use stdin."
@@ -29905,36 +29906,36 @@ msgstr "write: %s keeldub teadetest\n"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "write: %s on sisse logitud rohkem kui ühest kohast, kasutan tema terminali %s\n"
 
-#: term-utils/write.c:385
+#: term-utils/write.c:386
 #, fuzzy, c-format
 #| msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "Teade kasutajalt %s@%s (%s) terminalil %s kell %s..."
 
-#: term-utils/write.c:389
+#: term-utils/write.c:390
 #, fuzzy, c-format
 #| msgid "Message from %s@%s on %s at %s ..."
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "Teade kasutajalt %s@%s terminalil %s kell %s..."
 
-#: term-utils/write.c:400
+#: term-utils/write.c:402
 #, fuzzy
 msgid "carefulputc failed"
 msgstr "Mälu sai otsa"
 
-#: term-utils/write.c:438
+#: term-utils/write.c:440
 #, fuzzy
 #| msgid "write: you have write permission turned off.\n"
 msgid "you have write permission turned off"
 msgstr "write: Sul on kirjutamisõigus välja lülitatud\n"
 
-#: term-utils/write.c:461
+#: term-utils/write.c:463
 #, fuzzy, c-format
 #| msgid "write: %s is not logged in on %s.\n"
 msgid "%s is not logged in on %s"
 msgstr "write: %s pole terminalilt %s sisse logitud\n"
 
-#: term-utils/write.c:467
+#: term-utils/write.c:469
 #, fuzzy, c-format
 #| msgid "write: %s has messages disabled on %s\n"
 msgid "%s has messages disabled on %s"
@@ -30059,22 +30060,22 @@ msgstr ""
 " -x, --spaces           teisenda tabeldused tühikuteks\n"
 " -l, --lines ARV        puhverda vähemalt ARV rida\n"
 
-#: text-utils/col.c:495
+#: text-utils/col.c:498
 #, fuzzy, c-format
 msgid "warning: can't back up %s."
 msgstr "hoiatus: ei suuda %s varundada."
 
-#: text-utils/col.c:497
+#: text-utils/col.c:500
 #, fuzzy
 msgid "past first line"
 msgstr "esimesest reast möödas"
 
-#: text-utils/col.c:498
+#: text-utils/col.c:501
 #, fuzzy
 msgid "-- line already flushed"
 msgstr "-- rida on juba tühjendatud"
 
-#: text-utils/col.c:564
+#: text-utils/col.c:567
 #, fuzzy
 msgid "bad -l argument"
 msgstr "Liiga palju argumente\n"
@@ -30466,7 +30467,7 @@ msgstr " -v, --no-squeezing        väljunda identsed read\n"
 msgid "<length> and <offset>"
 msgstr "<pikkus> ja <nihe>"
 
-#: text-utils/hexdump-display.c:535
+#: text-utils/hexdump-display.c:540
 #, fuzzy
 msgid "all input file arguments failed"
 msgstr "Liiga palju argumente\n"
@@ -30599,27 +30600,27 @@ msgstr ""
 "*** %s: kataloog ***\n"
 "\n"
 
-#: text-utils/more.c:736
+#: text-utils/more.c:738
 #, fuzzy, c-format
 msgid "--More--"
 msgstr "--Veel--"
 
-#: text-utils/more.c:738
+#: text-utils/more.c:740
 #, fuzzy, c-format
 msgid "(Next file: %s)"
 msgstr "(Järgmine fail: %s)"
 
-#: text-utils/more.c:743 text-utils/more.c:749
+#: text-utils/more.c:745 text-utils/more.c:751
 #, fuzzy, c-format
 msgid "(END)"
 msgstr "(LÕPP)"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:756
 #, fuzzy, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Vajuta tühikut jätkamiseks, 'q' väljumiseks.]"
 
-#: text-utils/more.c:959
+#: text-utils/more.c:961
 #, fuzzy
 msgid ""
 "\n"
@@ -30628,46 +30629,46 @@ msgstr ""
 "\n"
 "...Vahelejätmine "
 
-#: text-utils/more.c:963
+#: text-utils/more.c:965
 #, fuzzy
 msgid "...Skipping to file "
 msgstr "...Jätan vahele kuni failini "
 
-#: text-utils/more.c:965
+#: text-utils/more.c:967
 #, fuzzy
 msgid "...Skipping back to file "
 msgstr "...Jätan vahele tagasi failini "
 
-#: text-utils/more.c:1127
+#: text-utils/more.c:1129
 #, fuzzy
 msgid "Line too long"
 msgstr "Rida on liiga pikk"
 
-#: text-utils/more.c:1170
+#: text-utils/more.c:1172
 #, fuzzy
 msgid "No previous command to substitute for"
 msgstr "Pole eelmist käsku asendamiseks"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 #, fuzzy, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Kasuta q või Q väljumiseks]"
 
-#: text-utils/more.c:1283
+#: text-utils/more.c:1285
 msgid "exec failed\n"
 msgstr "exec ei õnnestunud\n"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1295
 #, fuzzy
 msgid "can't fork\n"
 msgstr "ei saa hargata\n"
 
-#: text-utils/more.c:1506
+#: text-utils/more.c:1508
 #, fuzzy
 msgid "...skipping\n"
 msgstr "...vahelejätmine\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1545
 #, fuzzy
 msgid ""
 "\n"
@@ -30676,12 +30677,12 @@ msgstr ""
 "\n"
 "Mustrit ei leitud\n"
 
-#: text-utils/more.c:1547 text-utils/pg.c:1040 text-utils/pg.c:1188
+#: text-utils/more.c:1549 text-utils/pg.c:1040 text-utils/pg.c:1188
 #, fuzzy
 msgid "Pattern not found"
 msgstr "Mustrit ei leitud"
 
-#: text-utils/more.c:1566
+#: text-utils/more.c:1568
 #, fuzzy
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -30690,7 +30691,7 @@ msgstr ""
 "Enamik käske võib eelneda täisarv-argument k. Vaikimisi on sulgudes.\n"
 "Täht (*) näitab, et argument saab uueks vaikimisi.\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1574
 #, fuzzy, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -30733,21 +30734,21 @@ msgstr ""
 ":f                      Kuva praeguse faili nimi ja rea number\n"
 ".                       Korda eelmist käsku\n"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1640
 #, fuzzy, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...tagasi %d leht"
 msgstr[1] "...tagasi %d lehte"
 
-#: text-utils/more.c:1662
+#: text-utils/more.c:1664
 #, fuzzy, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...vahelejätmine %d rida"
 msgstr[1] "...vahelejätmine %d rida"
 
-#: text-utils/more.c:1778
+#: text-utils/more.c:1780
 #, fuzzy
 msgid ""
 "\n"
@@ -30758,27 +30759,27 @@ msgstr ""
 "***Tagasi***\n"
 "\n"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1799
 #, fuzzy, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" rida %d"
 
-#: text-utils/more.c:1800
+#: text-utils/more.c:1802
 #, fuzzy, c-format
 msgid "[Not a file] line %d"
 msgstr "[Pole fail] rida %d"
 
-#: text-utils/more.c:1806
+#: text-utils/more.c:1808
 #, fuzzy
 msgid "No previous regular expression"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
 
-#: text-utils/more.c:1833 text-utils/more.c:1870
+#: text-utils/more.c:1835 text-utils/more.c:1872
 #, fuzzy
 msgid "Command not available in secure mode"
 msgstr "Käsk pole turvarežiimis saadaval"
 
-#: text-utils/more.c:1884
+#: text-utils/more.c:1886
 #, fuzzy, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Vajuta 'h' juhiste saamiseks.]"

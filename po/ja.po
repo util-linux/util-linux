@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-06-16 12:05+0200\n"
+"POT-Creation-Date: 2026-09-01 13:07+0200\n"
 "PO-Revision-Date: 2026-04-09 16:49+0900\n"
 "Last-Translator: YOSHIDA Hideki <hideki@acm.org>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -62,7 +62,7 @@ msgstr "十分な引数がありません"
 #: disk-utils/blockdev.c:497 disk-utils/cfdisk.c:2838 disk-utils/delpart.c:68
 #: disk-utils/fdformat.c:240 disk-utils/fdisk.c:1047 disk-utils/fdisk.c:1386
 #: disk-utils/fdisk-list.c:403 disk-utils/fdisk-list.c:444
-#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1481
+#: disk-utils/fdisk-list.c:467 disk-utils/fsck.c:1483
 #: disk-utils/fsck.cramfs.c:159 disk-utils/fsck.cramfs.c:547
 #: disk-utils/isosize.c:60 disk-utils/mkfs.bfs.c:217
 #: disk-utils/mkfs.cramfs.c:182 disk-utils/mkfs.cramfs.c:664
@@ -90,12 +90,12 @@ msgstr "十分な引数がありません"
 #: sys-utils/setpriv.c:271 sys-utils/setpriv.c:650 sys-utils/setpriv.c:682
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
-#: sys-utils/unshare.c:726 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3119 term-utils/mesg.c:156 term-utils/script.c:393
+#: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
+#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
-#: term-utils/scriptreplay.c:314 term-utils/wall.c:419 text-utils/colcrt.c:286
+#: term-utils/scriptreplay.c:314 term-utils/wall.c:420 text-utils/colcrt.c:286
 #: text-utils/more.c:469 text-utils/rev.c:167 text-utils/ul.c:638
 #, c-format
 msgid "cannot open %s"
@@ -340,7 +340,7 @@ msgid "Quit program without writing changes"
 msgstr "変更を書き込まずにプログラムを終了します"
 
 #: disk-utils/cfdisk.c:203 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1031
-#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3264 libfdisk/src/sgi.c:1170
+#: libfdisk/src/dos.c:2849 libfdisk/src/gpt.c:3270 libfdisk/src/sgi.c:1170
 #: libfdisk/src/sun.c:1140
 msgid "Type"
 msgstr "タイプ"
@@ -923,7 +923,7 @@ msgid "Using default response %c."
 msgstr "既定の回答 %c であるものとみなします。"
 
 #: disk-utils/fdisk.c:241 disk-utils/fdisk.c:315 disk-utils/fdisk.c:392
-#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2586
+#: libfdisk/src/dos.c:1495 libfdisk/src/gpt.c:2592
 msgid "Value out of range."
 msgstr "範囲外の値です。"
 
@@ -1130,7 +1130,7 @@ msgid "cannot read"
 msgstr "読み取れません"
 
 #: disk-utils/fdisk.c:1025 libfdisk/src/bsd.c:258 libfdisk/src/dos.c:1073
-#: libfdisk/src/gpt.c:2506
+#: libfdisk/src/gpt.c:2512
 msgid "First sector"
 msgstr "最初のセクタ"
 
@@ -1292,7 +1292,7 @@ msgstr "デバイスのプロパティ (セクタサイズ及びジオメトリ)
 #: sys-utils/mount.c:1045 sys-utils/mount.c:1117 sys-utils/mountpoint.c:264
 #: sys-utils/pivot_root.c:66 sys-utils/swapoff.c:285 sys-utils/swapon.c:1043
 #: sys-utils/switch_root.c:271 sys-utils/umount.c:629 term-utils/setterm.c:1189
-#: text-utils/col.c:583 text-utils/more.c:2196
+#: text-utils/col.c:586 text-utils/more.c:2198
 msgid "bad usage"
 msgstr "指定が間違っています"
 
@@ -1370,7 +1370,7 @@ msgid "Alignment offset: %lu bytes"
 msgstr "アライメントオフセット: %lu バイト"
 
 #: disk-utils/fdisk-list.c:130 disk-utils/fdisk-list.c:263
-#: disk-utils/fsck.c:1268 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
+#: disk-utils/fsck.c:1270 disk-utils/sfdisk.c:1399 lsfd-cmd/lsfd.c:2384
 #: misc-utils/findmnt.c:1716 misc-utils/lsblk.c:2212 misc-utils/lsblk.c:2266
 #: misc-utils/lslocks.c:1011 sys-utils/lsns.c:1424
 msgid "failed to allocate iterator"
@@ -1444,22 +1444,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "パーティション情報の項目がディスクの順序と一致しません。"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1026 libfdisk/src/dos.c:2843
-#: libfdisk/src/gpt.c:3260 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
+#: libfdisk/src/gpt.c:3266 libfdisk/src/sgi.c:1164 libfdisk/src/sun.c:1134
 msgid "Start"
 msgstr "開始位置"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1027 libfdisk/src/dos.c:2844
-#: libfdisk/src/gpt.c:3261 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
+#: libfdisk/src/gpt.c:3267 libfdisk/src/sgi.c:1165 libfdisk/src/sun.c:1135
 msgid "End"
 msgstr "終了位置"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1028 libfdisk/src/dos.c:2845
-#: libfdisk/src/gpt.c:3262 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
+#: libfdisk/src/gpt.c:3268 libfdisk/src/sgi.c:1166 libfdisk/src/sun.c:1136
 msgid "Sectors"
 msgstr "セクタ"
 
 #: disk-utils/fdisk-list.c:254 libfdisk/src/bsd.c:1030 libfdisk/src/dos.c:2847
-#: libfdisk/src/gpt.c:3263 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
+#: libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1168 libfdisk/src/sun.c:1138
 msgid "Size"
 msgstr "サイズ"
 
@@ -1990,127 +1990,127 @@ msgstr "%s: fstab の解析に失敗しました"
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
 #: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
-#: sys-utils/unshare.c:699 sys-utils/unshare.c:1164
+#: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
 msgstr "子プロセスの起動に失敗"
 
-#: disk-utils/fsck.c:702
+#: disk-utils/fsck.c:704
 #, c-format
 msgid "%s: execute failed"
 msgstr "%s: 実行に失敗しました"
 
-#: disk-utils/fsck.c:792
+#: disk-utils/fsck.c:794
 msgid "wait: no more child process?!?"
 msgstr "wait: 既に子プロセスがなくなっています?!?"
 
-#: disk-utils/fsck.c:795 lib/pager.c:305 sys-utils/flock.c:462
-#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1198
+#: disk-utils/fsck.c:797 lib/pager.c:305 sys-utils/flock.c:462
+#: sys-utils/swapon.c:379 sys-utils/unshare.c:251 sys-utils/unshare.c:1197
 msgid "waitpid failed"
 msgstr "waitpid に失敗しました"
 
-#: disk-utils/fsck.c:813
+#: disk-utils/fsck.c:815
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "警告... デバイス %2$s に対する %1$s が、シグナル %3$d で終了しました。"
 
-#: disk-utils/fsck.c:819
+#: disk-utils/fsck.c:821
 #, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s: 状態は %x ですが、これは発生しないはずの値です。"
 
-#: disk-utils/fsck.c:865
+#: disk-utils/fsck.c:867
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "%s が完了しました (終了ステータス %d)\n"
 
-#: disk-utils/fsck.c:934
+#: disk-utils/fsck.c:936
 #, c-format
 msgid "fsck.%s not found; ignore %s"
 msgstr "fsck.%s が見つかりません。%s を無視します"
 
-#: disk-utils/fsck.c:949
+#: disk-utils/fsck.c:951
 #, c-format
 msgid "error %d (%s) while executing fsck.%s for %s"
 msgstr "エラー %d (%s) が発生、fsck.%s を %s で実行中でした"
 
-#: disk-utils/fsck.c:1015
+#: disk-utils/fsck.c:1017
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'."
 msgstr "-t でファイルシステムのタイプを指定する際、リストの一部だけに否定演算子 ('no' または '!') を付けることはできません。"
 
-#: disk-utils/fsck.c:1131
+#: disk-utils/fsck.c:1133
 #, c-format
 msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s: /etc/fstab 内の不正な行を読み飛ばしています: fsck pass number がゼロ以外の値になっている bind mount が存在しています"
 
-#: disk-utils/fsck.c:1143
+#: disk-utils/fsck.c:1145
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: 存在しないデバイスを読み飛ばしています\n"
 
-#: disk-utils/fsck.c:1148
+#: disk-utils/fsck.c:1150
 #, c-format
 msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr "%s: 存在しないデバイスです (\"nofail\" fstab オプションを利用することで、このデバイスを読み飛ばすことができます)\n"
 
-#: disk-utils/fsck.c:1165
+#: disk-utils/fsck.c:1167
 #, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "%s: 不明なファイルシステムタイプを読み飛ばしています\n"
 
-#: disk-utils/fsck.c:1179
+#: disk-utils/fsck.c:1181
 #, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "%s をチェックできません: fsck.%s が見つかりません"
 
-#: disk-utils/fsck.c:1283
+#: disk-utils/fsck.c:1285
 msgid "Checking all file systems.\n"
 msgstr "すべてのファイルシステムを検査します。\n"
 
-#: disk-utils/fsck.c:1374
+#: disk-utils/fsck.c:1376
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--待機中-- (パス %d)\n"
 
-#: disk-utils/fsck.c:1400
+#: disk-utils/fsck.c:1402
 #, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
 msgstr " %s [オプション] -- [ファイルシステムオプション] [<ファイルシステム> ...]\n"
 
-#: disk-utils/fsck.c:1404
+#: disk-utils/fsck.c:1406
 msgid "Check and repair a Linux filesystem.\n"
 msgstr "Linux のファイルシステムを検査/修正します。\n"
 
-#: disk-utils/fsck.c:1407
+#: disk-utils/fsck.c:1409
 msgid " -A         check all filesystems\n"
 msgstr " -A         すべてのファイルシステムを検査します\n"
 
-#: disk-utils/fsck.c:1408
+#: disk-utils/fsck.c:1410
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 msgstr " -C [<fd>]  進捗を表示します; <fd> は GUI の場合に指定します\n"
 
-#: disk-utils/fsck.c:1409
+#: disk-utils/fsck.c:1411
 msgid " -l         lock the device to guarantee exclusive access\n"
 msgstr " -l         排他アクセスを保証するため、デバイスをロック(施錠)します\n"
 
-#: disk-utils/fsck.c:1410
+#: disk-utils/fsck.c:1412
 msgid " -M         do not check mounted filesystems\n"
 msgstr " -M         マウント済みのファイルシステムはチェックしません\n"
 
-#: disk-utils/fsck.c:1411
+#: disk-utils/fsck.c:1413
 msgid " -N         do not execute, just show what would be done\n"
 msgstr " -N         実際には何も実行せず、何が行われるかだけを表示します\n"
 
-#: disk-utils/fsck.c:1412
+#: disk-utils/fsck.c:1414
 msgid " -P         check filesystems in parallel, including root\n"
 msgstr " -P         ルートファイルシステムを含め、チェックを並列で処理します\n"
 
-#: disk-utils/fsck.c:1413
+#: disk-utils/fsck.c:1415
 msgid " -R         skip root filesystem; useful only with '-A'\n"
 msgstr " -R          ルートファイルシステムを飛ばす; '-A' と併用した場合に便利です\n"
 
-#: disk-utils/fsck.c:1414
+#: disk-utils/fsck.c:1416
 msgid ""
 " -r [<fd>]  report statistics for each device checked;\n"
 "            file descriptor is for GUIs\n"
@@ -2118,15 +2118,15 @@ msgstr ""
 " -r [<fd>]  チェックした個々のデバイスに対して統計情報を報告します\n"
 "            ファイル記述子 <fd> は GUI の場合に指定します\n"
 
-#: disk-utils/fsck.c:1416
+#: disk-utils/fsck.c:1418
 msgid " -s         serialize the checking operations\n"
 msgstr " -s         チェック処理を逐次的に行います\n"
 
-#: disk-utils/fsck.c:1417
+#: disk-utils/fsck.c:1419
 msgid " -T         do not show the title on startup\n"
 msgstr " -T         起動時にタイトルを表示しないようにします\n"
 
-#: disk-utils/fsck.c:1418
+#: disk-utils/fsck.c:1420
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "            <type> is allowed to be a comma-separated list\n"
@@ -2134,62 +2134,62 @@ msgstr ""
 " -t <タイプ> チェック対象のファイルシステムを指定します;\n"
 "             <タイプ> はカンマ区切りのリストで指定します\n"
 
-#: disk-utils/fsck.c:1420
+#: disk-utils/fsck.c:1422
 msgid " -V         explain what is being done\n"
 msgstr " -V         何が行われるのかを詳しく表示します\n"
 
-#: disk-utils/fsck.c:1426
+#: disk-utils/fsck.c:1428
 msgid "See the specific fsck.* commands for available fs-options."
 msgstr "ファイルシステム固有のオプションについては、 fsck.* コマンドのヘルプをお読みください。"
 
-#: disk-utils/fsck.c:1471
+#: disk-utils/fsck.c:1473
 msgid "too many devices"
 msgstr "デバイスが多すぎます"
 
-#: disk-utils/fsck.c:1483
+#: disk-utils/fsck.c:1485
 msgid "Is /proc mounted?"
 msgstr "/proc をマウントしていますか？"
 
-#: disk-utils/fsck.c:1491
+#: disk-utils/fsck.c:1493
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "該当するファイルシステムをチェックするには、 root でなければなりません: %s"
 
-#: disk-utils/fsck.c:1495
+#: disk-utils/fsck.c:1497
 #, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "該当するファイルシステムが見つかりません: %s"
 
-#: disk-utils/fsck.c:1503 disk-utils/fsck.c:1606 misc-utils/exch.c:91
+#: disk-utils/fsck.c:1505 disk-utils/fsck.c:1608 misc-utils/exch.c:91
 #: misc-utils/kill.c:386 misc-utils/kill.c:426 sys-utils/eject.c:280
 #: sys-utils/hwclock.c:1526
 msgid "too many arguments"
 msgstr "引数が多すぎます"
 
-#: disk-utils/fsck.c:1510 disk-utils/fsck.c:1594 disk-utils/fsck.c:1602
+#: disk-utils/fsck.c:1512 disk-utils/fsck.c:1596 disk-utils/fsck.c:1604
 msgid "too many options"
 msgstr "オプションが多すぎます"
 
-#: disk-utils/fsck.c:1560 disk-utils/fsck.c:1563
+#: disk-utils/fsck.c:1562 disk-utils/fsck.c:1565
 msgid "invalid argument of -r"
 msgstr "-r の引数が正しくありません"
 
-#: disk-utils/fsck.c:1575
+#: disk-utils/fsck.c:1577
 #, c-format
 msgid "option '%s' may be specified only once"
 msgstr "オプション '%s' は一度だけ指定できます"
 
-#: disk-utils/fsck.c:1582 misc-utils/kill.c:469 misc-utils/kill.c:485
+#: disk-utils/fsck.c:1584 misc-utils/kill.c:469 misc-utils/kill.c:485
 #, c-format
 msgid "option '%s' requires an argument"
 msgstr "オプション '%s' には引数が必要です"
 
-#: disk-utils/fsck.c:1617
+#: disk-utils/fsck.c:1619
 #, c-format
 msgid "invalid argument of -r: %d"
 msgstr "-r の引数が正しくありません: %d"
 
-#: disk-utils/fsck.c:1672
+#: disk-utils/fsck.c:1674
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l オプションは 1 つのデバイスのみを指定した場合にのみ有効です -- エラーを無視しています"
 
@@ -3147,7 +3147,7 @@ msgstr ""
 " -V, --verbose      何が行われるのかを詳しく表示します;\n"
 "                      2 つ以上 -V を指定すると、実際には何も行わないようになります。\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1503
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
 #: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
@@ -5225,6 +5225,7 @@ msgstr "対応機能:"
 
 #: include/closestream.h:74 include/closestream.h:76 login-utils/vipw.c:272
 #: login-utils/vipw.c:291 sys-utils/rtcwake.c:313 term-utils/setterm.c:822
+#: text-utils/hexdump.c:241
 msgid "write error"
 msgstr "書き込みエラーです"
 
@@ -6595,7 +6596,7 @@ msgstr "最初のシリンダ"
 msgid "Last cylinder, +/-cylinders or +/-size{K,M,G,T,P}"
 msgstr "最後のシリンダ, +/-シリンダ番号または +/-サイズ{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2563
+#: libfdisk/src/bsd.c:296 libfdisk/src/dos.c:1471 libfdisk/src/gpt.c:2569
 msgid "Last sector, +/-sectors or +/-size{K,M,G,T,P}"
 msgstr "最終セクタ, +/-セクタ番号 または +/-サイズ{K,M,G,T,P}"
 
@@ -6926,14 +6927,14 @@ msgstr "無効なフラグ 0x%02x%02x がパーティション %zu の EBR に�
 msgid "Start sector %ju out of range."
 msgstr "開始セクタ番号 %ju が範囲外の値です。"
 
-#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2421 libfdisk/src/sgi.c:846
+#: libfdisk/src/dos.c:1306 libfdisk/src/gpt.c:2427 libfdisk/src/sgi.c:846
 #: libfdisk/src/sun.c:532
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "パーティション %zu は定義済みです。再追加を行うには、まず削除してください。"
 
 #: libfdisk/src/dos.c:1321 libfdisk/src/dos.c:1347 libfdisk/src/dos.c:1405
-#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2430
+#: libfdisk/src/dos.c:1437 libfdisk/src/gpt.c:2436
 msgid "No free sectors available."
 msgstr "利用可能な空きセクタがありません。"
 
@@ -7007,7 +7008,7 @@ msgstr "パーティション %zu: 空き領域。"
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "論理パーティション %zu: パーティション %zu 内に収まっていません。"
 
-#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2327
+#: libfdisk/src/dos.c:1847 libfdisk/src/gpt.c:2333
 msgid "No errors detected."
 msgstr "エラーは検出されませんでした。"
 
@@ -7021,7 +7022,7 @@ msgstr "割り当て済みセクタの合計値 %ju が、最大値 %ju より�
 msgid "Remaining %ju unallocated %ld-byte sectors."
 msgstr "未割り当ての %2$ld バイトセクタが %1$ju 個あります。"
 
-#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2347
+#: libfdisk/src/dos.c:1856 libfdisk/src/gpt.c:2353
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -7091,7 +7092,7 @@ msgstr "パーティションの種類 `%c' が正しくありません。"
 msgid "Cannot write sector %jd: seek failed"
 msgstr "セクタ %jd に書き込めません: シークに失敗しました"
 
-#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1297
+#: libfdisk/src/dos.c:2282 libfdisk/src/gpt.c:1303
 msgid "Disk identifier"
 msgstr "ディスク識別子"
 
@@ -7131,7 +7132,7 @@ msgstr "パーティション %zu の起動フラグを有効にしました。"
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "パーティション %zu の起動フラグを無効にしました。"
 
-#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3259 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2841 libfdisk/src/gpt.c:3265 libfdisk/src/sgi.c:1163
 #: libfdisk/src/sun.c:1133
 msgid "Device"
 msgstr "デバイス"
@@ -7152,332 +7153,332 @@ msgstr "始点 シリンダ/ヘッド/セクタ"
 msgid "End-C/H/S"
 msgstr "終点 シリンダ/ヘッド/セクタ"
 
-#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3269 libfdisk/src/sgi.c:1171
+#: libfdisk/src/dos.c:2854 libfdisk/src/gpt.c:3275 libfdisk/src/sgi.c:1171
 msgid "Attrs"
 msgstr "属性"
 
-#: libfdisk/src/gpt.c:692
+#: libfdisk/src/gpt.c:693
 msgid "failed to allocate GPT header"
 msgstr "GPTヘッダの割り当てに失敗しました"
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:803
 msgid "First LBA specified by script is out of range."
 msgstr "最初のLBAのスクリプトでの指定が範囲外です。"
 
-#: libfdisk/src/gpt.c:814
+#: libfdisk/src/gpt.c:815
 msgid "Last LBA specified by script is out of range."
 msgstr "最後のLBAのスクリプトでの指定が範囲外です。"
 
-#: libfdisk/src/gpt.c:955
+#: libfdisk/src/gpt.c:956
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by write."
 msgstr "GPT PMBR のサイズが合致していません (%<PRIu64> != %<PRIu64>) が、w (書き込み) コマンドで修正されます。"
 
-#: libfdisk/src/gpt.c:980
+#: libfdisk/src/gpt.c:981
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() に失敗しました"
 
-#: libfdisk/src/gpt.c:990
+#: libfdisk/src/gpt.c:991
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: モード %o が設定されたファイルを扱うことができません"
 
-#: libfdisk/src/gpt.c:1254
+#: libfdisk/src/gpt.c:1260
 msgid "GPT Header"
 msgstr "GPT ヘッダ"
 
-#: libfdisk/src/gpt.c:1259
+#: libfdisk/src/gpt.c:1265
 msgid "GPT Entries"
 msgstr "GPT エントリー"
 
-#: libfdisk/src/gpt.c:1265
+#: libfdisk/src/gpt.c:1271
 msgid "GPT Backup Entries"
 msgstr "GPT バックアップ エントリー"
 
-#: libfdisk/src/gpt.c:1271
+#: libfdisk/src/gpt.c:1277
 msgid "GPT Backup Header"
 msgstr "GPT バックアップ ヘッダ"
 
-#: libfdisk/src/gpt.c:1304
+#: libfdisk/src/gpt.c:1310
 msgid "First usable LBA"
 msgstr "先頭の使用可能な LBA"
 
-#: libfdisk/src/gpt.c:1309
+#: libfdisk/src/gpt.c:1315
 msgid "Last usable LBA"
 msgstr "最後の使用可能な LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1315
+#: libfdisk/src/gpt.c:1321
 msgid "Alternative LBA"
 msgstr "代替 LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1321
+#: libfdisk/src/gpt.c:1327
 msgid "Partition entries starting LBA"
 msgstr "パーティション項目が始まる LBA"
 
 #. TRANSLATORS: The end of the array of partition entries.
-#: libfdisk/src/gpt.c:1327
+#: libfdisk/src/gpt.c:1333
 msgid "Partition entries ending LBA"
 msgstr "パーティション項目が終わる LBA"
 
-#: libfdisk/src/gpt.c:1334
+#: libfdisk/src/gpt.c:1340
 msgid "Allocated partition entries"
 msgstr "割り当てたパーティション項目"
 
-#: libfdisk/src/gpt.c:1676
+#: libfdisk/src/gpt.c:1682
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "バックアップの GPT テーブルは破損しているようです、しかしプライマリテーブルは大丈夫のようですので、そちらを使用します。"
 
-#: libfdisk/src/gpt.c:1686
+#: libfdisk/src/gpt.c:1692
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "プライマリの GPT テーブルは破損しているようです、しかしバックアップテーブルは大丈夫のようですので、そちらを使用します。"
 
-#: libfdisk/src/gpt.c:1702
+#: libfdisk/src/gpt.c:1708
 msgid "The backup GPT table is not on the end of the device."
 msgstr "GPTテーブルのバックアップがデバイスの終端にありません。"
 
-#: libfdisk/src/gpt.c:1705
+#: libfdisk/src/gpt.c:1711
 msgid "The backup GPT table is not on the end of the device. This problem will be corrected by write."
 msgstr "GPTテーブルのバックアップがデバイスの終端にありません。この問題は、書き込むと修正されます。"
 
-#: libfdisk/src/gpt.c:1709
+#: libfdisk/src/gpt.c:1715
 msgid "Failed to recalculate backup GPT table location"
 msgstr "バックアップGPTテーブルの位置の再計算に失敗しました"
 
-#: libfdisk/src/gpt.c:1870
+#: libfdisk/src/gpt.c:1876
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "未対応の GPT 属性ビット '%s' です"
 
-#: libfdisk/src/gpt.c:1875
+#: libfdisk/src/gpt.c:1881
 #, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "GPT属性文字列 '%s' の処理に失敗しました"
 
-#: libfdisk/src/gpt.c:1975
+#: libfdisk/src/gpt.c:1981
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "パーティション UUID を `%s' から `%s' に変更しました。"
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1990
 msgid "Failed to translate partition name, name not changed."
 msgstr "パーティション名の変換に失敗しました、名前は変更していません。"
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1992
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "パーティションの名前を `%s' から `%.*s' に変更しました。"
 
-#: libfdisk/src/gpt.c:2015
+#: libfdisk/src/gpt.c:2021
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "パーティションの開始位置が FirstUsableLBA よりも前にあります。"
 
-#: libfdisk/src/gpt.c:2022
+#: libfdisk/src/gpt.c:2028
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "パーティションの終了位置が LastUsableLBA よりも後にあります。"
 
-#: libfdisk/src/gpt.c:2215
+#: libfdisk/src/gpt.c:2221
 msgid "The device contains hybrid MBR -- writing GPT only."
 msgstr "デバイスがハイブリッド MBR を含んでいます -- GPT のみを書き込みます。"
 
-#: libfdisk/src/gpt.c:2251
+#: libfdisk/src/gpt.c:2257
 msgid "Disk does not contain a valid backup header."
 msgstr "ディスクには有効なバックアップヘッダが含まれていません。"
 
-#: libfdisk/src/gpt.c:2256
+#: libfdisk/src/gpt.c:2262
 msgid "Invalid primary header CRC checksum."
 msgstr "プライマリヘッダの CRC チェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2260
+#: libfdisk/src/gpt.c:2266
 msgid "Invalid backup header CRC checksum."
 msgstr "バックアップヘッダの CRC チェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2265
+#: libfdisk/src/gpt.c:2271
 msgid "Invalid partition entry checksum."
 msgstr "パーティション項目のチェックサムが正しくありません。"
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2276
 msgid "Invalid primary header LBA sanity checks."
 msgstr "プライマリヘッダの LBA がチェックに合格しませんでした。"
 
-#: libfdisk/src/gpt.c:2274
+#: libfdisk/src/gpt.c:2280
 msgid "Invalid backup header LBA sanity checks."
 msgstr "バックアップヘッダの LBA がチェックに合格しませんでした。"
 
-#: libfdisk/src/gpt.c:2279
+#: libfdisk/src/gpt.c:2285
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "プライマリヘッダにある MyLBA の値が、実際の位置とは異なっています。"
 
-#: libfdisk/src/gpt.c:2283
+#: libfdisk/src/gpt.c:2289
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "バックアップにある MyLBA の値が、実際の位置とは異なっています。"
 
-#: libfdisk/src/gpt.c:2288
+#: libfdisk/src/gpt.c:2294
 msgid "Disk is too small to hold all data."
 msgstr "すべてのデータを収めるには、ディスクが小さすぎます。"
 
-#: libfdisk/src/gpt.c:2298
+#: libfdisk/src/gpt.c:2304
 msgid "Primary and backup header mismatch."
 msgstr "プライマリヘッダとバックアップヘッダの内容が合致していません。"
 
-#: libfdisk/src/gpt.c:2304
+#: libfdisk/src/gpt.c:2310
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "パーティション %u は、パーティション %u と重複しています。"
 
-#: libfdisk/src/gpt.c:2311
+#: libfdisk/src/gpt.c:2317
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "パーティション %u はディスクに比べて大きすぎます。"
 
-#: libfdisk/src/gpt.c:2318
+#: libfdisk/src/gpt.c:2324
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "パーティション %u は開始位置よりも前で終わってしまっています。"
 
-#: libfdisk/src/gpt.c:2328
+#: libfdisk/src/gpt.c:2334
 #, c-format
 msgid "Header version: %s"
 msgstr "ヘッダバージョン: %s"
 
-#: libfdisk/src/gpt.c:2329
+#: libfdisk/src/gpt.c:2335
 #, c-format
 msgid "Using %zu out of %zu partitions."
 msgstr "%2$zu 個のパーティションのうち、 %1$zu 個を使用しています。"
 
-#: libfdisk/src/gpt.c:2339
+#: libfdisk/src/gpt.c:2345
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "合計 %ju 個の空きセクタが %u セグメント(最大 %s)内に、あります。"
 
-#: libfdisk/src/gpt.c:2426
+#: libfdisk/src/gpt.c:2432
 msgid "All partitions are already in use."
 msgstr "すべてのパーティションが使用済みです。"
 
-#: libfdisk/src/gpt.c:2477
+#: libfdisk/src/gpt.c:2483
 msgid "No enough free sectors available."
 msgstr "十分な空きセクタがありません。"
 
-#: libfdisk/src/gpt.c:2491 libfdisk/src/gpt.c:2518
+#: libfdisk/src/gpt.c:2497 libfdisk/src/gpt.c:2524
 #, c-format
 msgid "Sector %ju already used."
 msgstr "セクタ %ju は既に使用済みです。"
 
-#: libfdisk/src/gpt.c:2592
+#: libfdisk/src/gpt.c:2598
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "パーティション %zu を作成できませんでした"
 
-#: libfdisk/src/gpt.c:2599
+#: libfdisk/src/gpt.c:2605
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "最後の使用可能な GPT セクターは %ju ですが、 %ju を要求されました。"
 
-#: libfdisk/src/gpt.c:2606
+#: libfdisk/src/gpt.c:2612
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "最初の使用可能なの GPT セクターは %ju ですが、 %ju を要求されました。"
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2751
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "新しい GPT ディスクラベル (GUID: %s) を作成しました。"
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2754
 #, c-format
 msgid "The maximal number of partitions is %zu (default is %zu)."
 msgstr "パーティションの最大数は %zu です（%zu が既定値）。"
 
-#: libfdisk/src/gpt.c:2770
+#: libfdisk/src/gpt.c:2776
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "新しいディスク UUID を (8-4-4-4-12 形式で) 入力してください"
 
-#: libfdisk/src/gpt.c:2778
+#: libfdisk/src/gpt.c:2784
 msgid "Failed to parse your UUID."
 msgstr "UUID の解析に失敗しました。"
 
-#: libfdisk/src/gpt.c:2792
+#: libfdisk/src/gpt.c:2798
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "ディスク識別子を `%s' から `%s' に変更しました。"
 
-#: libfdisk/src/gpt.c:2812
+#: libfdisk/src/gpt.c:2818
 msgid "Not enough space for new partition table!"
 msgstr "新しくパーティションを作成するための十分な空き領域がありません！"
 
-#: libfdisk/src/gpt.c:2823
+#: libfdisk/src/gpt.c:2829
 #, c-format
 msgid "Partition #%zu out of range (minimal start is %<PRIu64> sectors)"
 msgstr "パーティション #%zu の範囲が間違っています（最小開始セクターは %<PRIu64>セクターです）"
 
-#: libfdisk/src/gpt.c:2828
+#: libfdisk/src/gpt.c:2834
 #, c-format
 msgid "Partition #%zu out of range (maximal end is %<PRIu64> sectors)"
 msgstr "パーティション #%zu の範囲が間違っています（最大終了セクターは %<PRIu64>セクターです）"
 
-#: libfdisk/src/gpt.c:2874
+#: libfdisk/src/gpt.c:2880
 msgid "The partition entry size is zero."
 msgstr "パーティション項目サイズが 0 です。"
 
-#: libfdisk/src/gpt.c:2876
+#: libfdisk/src/gpt.c:2882
 #, c-format
 msgid "The number of the partition has to be smaller than %zu."
 msgstr "パーティション数は %zu より小さい必要があります。"
 
-#: libfdisk/src/gpt.c:2900
+#: libfdisk/src/gpt.c:2906
 msgid "Cannot allocate memory!"
 msgstr "メモリの割り当てに失敗しました!"
 
-#: libfdisk/src/gpt.c:2929
+#: libfdisk/src/gpt.c:2935
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu32>."
 msgstr "パーティションテーブルの長さを %<PRIu32> から %<PRIu32> に変更しました。"
 
-#: libfdisk/src/gpt.c:3039
+#: libfdisk/src/gpt.c:3045
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "パーティション %zu の属性を 0x%016<PRIx64> に変更しました。"
 
-#: libfdisk/src/gpt.c:3089
+#: libfdisk/src/gpt.c:3095
 msgid "Enter GUID specific bit"
 msgstr "GUID 固有ビットを入力してください"
 
-#: libfdisk/src/gpt.c:3104
+#: libfdisk/src/gpt.c:3110
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "サポートされていないビット %lu を変更できませんでした"
 
-#: libfdisk/src/gpt.c:3117
+#: libfdisk/src/gpt.c:3123
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID 固有ビット %d をパーティション %zu で有効にしました。"
 
-#: libfdisk/src/gpt.c:3118
+#: libfdisk/src/gpt.c:3124
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID 固有ビット %d をパーティション %zu で無効にしました。"
 
-#: libfdisk/src/gpt.c:3122
+#: libfdisk/src/gpt.c:3128
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "%s フラグ (パーティション %zu) を有効にしました。"
 
-#: libfdisk/src/gpt.c:3123
+#: libfdisk/src/gpt.c:3129
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "%s フラグ (パーティション %zu) を無効にしました。"
 
-#: libfdisk/src/gpt.c:3266
+#: libfdisk/src/gpt.c:3272
 msgid "Type-UUID"
 msgstr "パーティションの種類 (UUID)"
 
-#: libfdisk/src/gpt.c:3267
+#: libfdisk/src/gpt.c:3273
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:3268 login-utils/chfn.c:181 login-utils/chfn.c:183
+#: libfdisk/src/gpt.c:3274 login-utils/chfn.c:181 login-utils/chfn.c:183
 #: login-utils/chfn.c:341 sys-utils/lsipc.c:184
 msgid "Name"
 msgstr "名前"
@@ -7968,313 +7969,313 @@ msgstr "%s を取り込むことができませんでした: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "ハッシュログイン状態: オリジナルの ID の復元に失敗しました"
 
-#: libmount/src/context.c:3092
+#: libmount/src/context.c:3109
 #, c-format
 msgid "operation failed: %m"
 msgstr "処理に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1500
+#: libmount/src/context_mount.c:1518
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "警告: 伝播フラグの適用に失敗しました"
 
-#: libmount/src/context_mount.c:1516
+#: libmount/src/context_mount.c:1534
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "警告: ソースは書き込み禁止です、読み込み専用でマウントします"
 
-#: libmount/src/context_mount.c:1537
+#: libmount/src/context_mount.c:1555
 #, c-format
 msgid "operation permitted for root only"
 msgstr "この操作を実行できるのは root だけです"
 
-#: libmount/src/context_mount.c:1541
+#: libmount/src/context_mount.c:1559
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s はマウント済みです"
 
-#: libmount/src/context_mount.c:1547
+#: libmount/src/context_mount.c:1565
 #, c-format
 msgid "can't find in %s"
 msgstr "%s 内に見つかりません"
 
-#: libmount/src/context_mount.c:1550
+#: libmount/src/context_mount.c:1568
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "%s 内にマウントポイントが見つかりません"
 
-#: libmount/src/context_mount.c:1553
+#: libmount/src/context_mount.c:1571
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "%2$s 内にマウント元 %1$s が見つかりません"
 
-#: libmount/src/context_mount.c:1558
+#: libmount/src/context_mount.c:1576
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "複数のファイルシステムが %s に検出されました; -t <type> で指定するか wipefs(8) を実行してください"
 
-#: libmount/src/context_mount.c:1563
+#: libmount/src/context_mount.c:1581
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "ファイルシステムの判別に失敗しました"
 
-#: libmount/src/context_mount.c:1564
+#: libmount/src/context_mount.c:1582
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "有効なファイルシステムタイプが指定されていません"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1589
 #, c-format
 msgid "can't find %s"
 msgstr "%s が見つかりません"
 
-#: libmount/src/context_mount.c:1573
+#: libmount/src/context_mount.c:1591
 #, c-format
 msgid "no mount source specified"
 msgstr "マウント対象が指定されていません"
 
-#: libmount/src/context_mount.c:1584
+#: libmount/src/context_mount.c:1602
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "マウントオプションの解釈に失敗しました '%s': %m"
 
-#: libmount/src/context_mount.c:1585
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "マウントオプションの解釈に失敗しました '%s'"
 
-#: libmount/src/context_mount.c:1588
+#: libmount/src/context_mount.c:1606
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "マウントオプションの解釈に失敗しました: %m"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1607
 #, c-format
 msgid "failed to parse mount options"
 msgstr "マウントオプションの解釈に失敗しました"
 
-#: libmount/src/context_mount.c:1594
+#: libmount/src/context_mount.c:1612
 #, c-format
 msgid "failed to set up loop device for %s"
 msgstr "%s 用のループバックデバイスの設定に失敗しました"
 
-#: libmount/src/context_mount.c:1598
+#: libmount/src/context_mount.c:1616
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s 用の重複するループバックデバイスが存在します"
 
-#: libmount/src/context_mount.c:1602 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
 #, c-format
 msgid "locking failed"
 msgstr "ロックに失敗しました"
 
-#: libmount/src/context_mount.c:1606 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "名前空間を切り替えられません"
 
-#: libmount/src/context_mount.c:1610
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "filesystem already mounted"
 msgstr "ファイルシステムはマウント済みです"
 
-#: libmount/src/context_mount.c:1613
+#: libmount/src/context_mount.c:1631
 #, c-format
 msgid "mount failed: %m"
 msgstr "マウントに失敗しました: %m"
 
-#: libmount/src/context_mount.c:1623
+#: libmount/src/context_mount.c:1641
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "ファイルシステムをマウントしましたが、フラグを適用できませんでした"
 
-#: libmount/src/context_mount.c:1629
+#: libmount/src/context_mount.c:1647
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "ファイルシステムをマウントしましたが、 ユーザー空間のマウントテーブルの更新が失敗しました"
 
-#: libmount/src/context_mount.c:1635
+#: libmount/src/context_mount.c:1653
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "ファイルシステムをマウントしましたが、名前空間を元に戻せませんでした"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1659
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "ファイルシステムをマウントしましたが、所有者を変更できませんでした: %m"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1665
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "ファイルシステムをマウントしましたが、モードを変更できませんでした: %m"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "ファイルシステムをマウントしましたが、idmapping を設定できませんでした"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1677
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "ファイルシステムをマウントしましたが、続く操作が失敗しました: %m"
 
-#: libmount/src/context_mount.c:1680
+#: libmount/src/context_mount.c:1698
 #, c-format
 msgid "%s() failed: "
 msgstr "%s() に失敗しました: "
 
-#: libmount/src/context_mount.c:1699 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "アクセスが拒否されました"
 
-#: libmount/src/context_mount.c:1701 libmount/src/context_mount.c:1742
+#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
 #, c-format
 msgid "mount point is not a directory"
 msgstr "マウントポイントがディレクトリではありません"
 
-#: libmount/src/context_mount.c:1703
+#: libmount/src/context_mount.c:1721
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "mount を使用するにはスーパーユーザでなければなりません"
 
-#: libmount/src/context_mount.c:1710
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "mount point is busy"
 msgstr "マウントポイントは使用中です"
 
-#: libmount/src/context_mount.c:1717
+#: libmount/src/context_mount.c:1735
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s は %s にマウント済みです"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1739
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s はマウント済み、もしくはマウントポイントが使用中です"
 
-#: libmount/src/context_mount.c:1726
+#: libmount/src/context_mount.c:1744
 #, c-format
 msgid "mount point does not exist"
 msgstr "マウントポイントが存在しません"
 
-#: libmount/src/context_mount.c:1729
+#: libmount/src/context_mount.c:1747
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "マウントポイントは存在しない場所を指すシンボリックリンクです"
 
-#: libmount/src/context_mount.c:1734
+#: libmount/src/context_mount.c:1752
 #, c-format
 msgid "special device %s does not exist"
 msgstr "スペシャルデバイス %s が存在しません"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1765
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "スペシャルデバイス %s が存在しません (パスプレフィクスがディレクトリではありません)"
 
-#: libmount/src/context_mount.c:1757
+#: libmount/src/context_mount.c:1775
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "マウントポイントにはマウントされていないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1759
+#: libmount/src/context_mount.c:1777
 #, c-format
 msgid "not mount point or bad option"
 msgstr "マウントポイントではないか、オプション設定が正しくありません"
 
-#: libmount/src/context_mount.c:1762
+#: libmount/src/context_mount.c:1780
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "間違ったオプション設定; 共有マウント内のマウントを移動する処理には、対応していません。"
 
-#: libmount/src/context_mount.c:1766
+#: libmount/src/context_mount.c:1784
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr "間違ったオプション設定; (nfs, cifs など)ファイルシステムによっては /sbin/mount.<タイプ> のヘルパープログラムが必要です"
 
-#: libmount/src/context_mount.c:1770
+#: libmount/src/context_mount.c:1788
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "ファイルシステムタイプ, オプション, %s 上のスーパーブロック, 必要なコードページ指定／ヘルパープログラムなど、何かが間違っています。"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1795
 #, c-format
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: libmount/src/context_mount.c:1782
+#: libmount/src/context_mount.c:1800
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "%s のスーパーブロックを読み込むことができません"
 
-#: libmount/src/context_mount.c:1789
+#: libmount/src/context_mount.c:1807
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "未知のファイルシステムタイプ '%s' です"
 
-#: libmount/src/context_mount.c:1792
+#: libmount/src/context_mount.c:1810
 #, c-format
 msgid "unknown filesystem type"
 msgstr "未知のファイルシステムタイプです"
 
-#: libmount/src/context_mount.c:1801
+#: libmount/src/context_mount.c:1819
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s はブロックデバイスではありません (そのために stat(2) が失敗した可能性があります)"
 
-#: libmount/src/context_mount.c:1804
+#: libmount/src/context_mount.c:1822
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "このカーネルは %s をブロックデバイスとして認識していません;おそらく `modprobe ドライバ' を実行する必要があります"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1825
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s はブロックデバイスではありません (`-o loop' を指定すると解決できるかもしれません)"
 
-#: libmount/src/context_mount.c:1809
+#: libmount/src/context_mount.c:1827
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s はブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1816
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s は正常なブロックデバイスではありません"
 
-#: libmount/src/context_mount.c:1824
+#: libmount/src/context_mount.c:1842
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s を読み込み専用でマウントできません"
 
-#: libmount/src/context_mount.c:1826
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s は書き込み禁止ですが、明示的に読み書きモードが指定されています"
 
-#: libmount/src/context_mount.c:1828
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s を読み書き可能な状態で再マウントできません、ライトプロテクトされています"
 
-#: libmount/src/context_mount.c:1830
+#: libmount/src/context_mount.c:1848
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s が失敗しました"
 
-#: libmount/src/context_mount.c:1839
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "no medium found on %s"
 msgstr "%s にメディアが挿入されていません"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "マウントできません; おそらく %s のファイルシステムが壊れています"
 
-#: libmount/src/context_mount.c:1855
+#: libmount/src/context_mount.c:1873
 #, c-format
 msgid "%s() failed: %m"
 msgstr "%s() に失敗しました: %m"
@@ -8340,13 +8341,13 @@ msgid "umount(2) system call failed: %m"
 msgstr "umount(2) システムコールが失敗しました: %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:348 libmount/src/hook_idmap.c:378
+#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "e ID マッピングを設定できません: %m"
 
 #. TRANSLATORS: Do not translate "e ". It is a message classifier.
-#: libmount/src/hook_loopdev.c:286
+#: libmount/src/hook_loopdev.c:295
 #, c-format
 msgid "e device node %s (%u:%u) is lost"
 msgstr "e デバイスノード %s (%u:%u) がありません"
@@ -9023,7 +9024,7 @@ msgstr " -H                  ホスト名をログインプロンプトに出さ
 msgid " -s, --shell <path>  define the shell to log in to"
 msgstr " -s, --shell <パス>  ログインするシェルを設定します"
 
-#: login-utils/login.c:1380 term-utils/agetty.c:3143
+#: login-utils/login.c:1380 term-utils/agetty.c:3141
 msgid "failed to initialize path context"
 msgstr "パスコンテキストの準備に失敗しました"
 
@@ -9049,12 +9050,12 @@ msgid "groups initialization failed: %m"
 msgstr "グループの準備に失敗しました: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1106 sys-utils/unshare.c:1316
+#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() に失敗しました"
 
 #: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
-#: sys-utils/unshare.c:1108 sys-utils/unshare.c:1319
+#: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() に失敗しました"
 
@@ -9597,7 +9598,7 @@ msgid "cannot create child process"
 msgstr "子プロセスを作成できません"
 
 #: login-utils/su-common.c:609 sys-utils/nsenter.c:887
-#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1285
+#: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "ディレクトリを %s に変更できません"
@@ -12628,7 +12629,7 @@ msgid "invalid sigmask format: %s"
 msgstr "無効なシグナルマスク形式: %s"
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:413 sys-utils/setpriv.c:463
-#: sys-utils/unshare.c:1025
+#: sys-utils/unshare.c:1024
 #, c-format
 msgid "unknown signal: %s"
 msgstr "不明なシグナルです: %s"
@@ -14141,7 +14142,7 @@ msgstr "ファイル記述子を受信できませんでした。systemctl statu
 msgid "too many file descriptors received, check uuidd.socket"
 msgstr "ファイル記述子を使用しすぎている状態です。uuidd.socket　を確認してください"
 
-#: misc-utils/uuidd.c:452 text-utils/more.c:1400
+#: misc-utils/uuidd.c:452 text-utils/more.c:1402
 msgid "poll failed"
 msgstr "poll() がエラーを返しました"
 
@@ -16871,7 +16872,7 @@ msgid "%s: unmounting"
 msgstr "%s: アンマウントしています"
 
 #: sys-utils/eject.c:671 sys-utils/mount.c:52 sys-utils/umount.c:121
-#: text-utils/more.c:1279
+#: text-utils/more.c:1281
 msgid "drop permissions failed"
 msgstr "権限を落とせませんでした"
 
@@ -19066,7 +19067,7 @@ msgid "sigfillset failed"
 msgstr "sigfillset に失敗しました"
 
 #: sys-utils/irqtop.c:251 sys-utils/setpgid.c:81 sys-utils/setpgid.c:85
-#: sys-utils/unshare.c:1141
+#: sys-utils/unshare.c:1140
 msgid "sigprocmask failed"
 msgstr "sigprocmask に失敗しました"
 
@@ -21271,7 +21272,7 @@ msgstr "%s はマウントポイントではありません\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s はマウントポイントです\n"
 
-#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:745
+#: sys-utils/nsenter.c:94 sys-utils/setarch.c:150 sys-utils/unshare.c:744
 #, c-format
 msgid " %s [options] [<program> [<argument>...]]\n"
 msgstr " %s [オプション] [<プログラム> [<引数>...]]\n"
@@ -21445,11 +21446,11 @@ msgstr "cgroup.procs に書き込めません"
 msgid "failed to parse file descriptor"
 msgstr "ファイルディスクリプタの解析に失敗しました"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1040
+#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "uid の解釈に失敗しました"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1044
+#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "gid の解釈に失敗しました"
 
@@ -21504,7 +21505,7 @@ msgid "can not get process stat"
 msgstr "プロセスの stat を取得できません"
 
 #: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
-#: sys-utils/unshare.c:1104 sys-utils/unshare.c:1314
+#: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "setgroups に失敗しました"
 
@@ -23657,89 +23658,89 @@ msgstr "subid マップの解釈に失敗しました"
 msgid "no line matching user \"%s\" in %s"
 msgstr "ユーザ \"%s\" に該当する行が %s にありません"
 
-#: sys-utils/unshare.c:650
+#: sys-utils/unshare.c:649
 #, c-format
 msgid "%s too large for kernel 4k limit"
 msgstr "%s がカーネルの 4k 上限に収まりません"
 
-#: sys-utils/unshare.c:656
+#: sys-utils/unshare.c:655
 #, c-format
 msgid "failed to open %s"
 msgstr "%s を開けません"
 
-#: sys-utils/unshare.c:658
+#: sys-utils/unshare.c:657
 #, c-format
 msgid "failed to write %s"
 msgstr "%s の書き込みに失敗しました"
 
-#: sys-utils/unshare.c:730
+#: sys-utils/unshare.c:729
 #, c-format
 msgid "cannot open %s/register"
 msgstr "%s/register を開くことができません"
 
-#: sys-utils/unshare.c:733
+#: sys-utils/unshare.c:732
 #, c-format
 msgid "write failed %s/register"
 msgstr "%s/register の書き込みに失敗しました"
 
-#: sys-utils/unshare.c:749
+#: sys-utils/unshare.c:748
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr "親プロセスのネームスペースの一部の共有を解除してプログラムを実行します。\n"
 
-#: sys-utils/unshare.c:752
+#: sys-utils/unshare.c:751
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr " -m, --mount[=<file>]      マウントネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:753
+#: sys-utils/unshare.c:752
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<file>]        UTS ネームスペース (ホスト名など) の共有を解除します\n"
 
-#: sys-utils/unshare.c:754
+#: sys-utils/unshare.c:753
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr " -i, --ipc[=<file>]        System V IPC ネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:755
+#: sys-utils/unshare.c:754
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr " -n, --net[=<file>]        ネットワークネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:756
+#: sys-utils/unshare.c:755
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr " -p, --pid[=<file>]        PID ネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:757
+#: sys-utils/unshare.c:756
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr " -U, --user[=<file>]       ユーザネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:758
+#: sys-utils/unshare.c:757
 msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
 msgstr " -C, --cgroup[=<file>]     cgroup ネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:759
+#: sys-utils/unshare.c:758
 msgid " -T, --time[=<file>]       unshare time namespace\n"
 msgstr " -T, --time[=<file>]       タイムネームスペースの共有を解除します\n"
 
-#: sys-utils/unshare.c:761
+#: sys-utils/unshare.c:760
 msgid " --mount-proc[=<dir>]      mount proc filesystem first (implies --mount)\n"
 msgstr ""
 " --mount-proc[=<ディレクトリ>]\n"
 "                           proc ファイルシステムを最初にマウントします\n"
 "                             (これには --mount の意味を含みます)\n"
 
-#: sys-utils/unshare.c:762
+#: sys-utils/unshare.c:761
 msgid " --mount-binfmt[=<dir>]    mount binfmt filesystem first (implies --user and --mount)\n"
 msgstr ""
 " --mount-binfmt[=<ディレクトリ>]\n"
 "                           binfmt ファイルシステムを最初にマウントします\n"
 "                             (これには --user と --mount の意味を含みます)\n"
 
-#: sys-utils/unshare.c:763
+#: sys-utils/unshare.c:762
 msgid " -l, --load-interp <file>  load binfmt definition in the namespace (implies --mount-binfmt)\n"
 msgstr ""
 " -l, --load-interp <ファイル>\n"
 "                           binfmt の定義をネームスペースに読み込みます\n"
 "                             (これには --mount-binfmt の意味を含みます)\n"
 
-#: sys-utils/unshare.c:764
+#: sys-utils/unshare.c:763
 msgid ""
 " --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
@@ -23747,47 +23748,47 @@ msgstr ""
 " --propagation slave|shared|private|unchanged\n"
 "                           マウントネームスペースでマウント伝播を変更します\n"
 
-#: sys-utils/unshare.c:766
+#: sys-utils/unshare.c:765
 msgid " -R, --root <dir>          run the command with root directory set to <dir>\n"
 msgstr " -R, --root <ディレクトリ> ルートディレクトリを <ディレクトリ> にしてコマンドを実行します\n"
 
-#: sys-utils/unshare.c:767
+#: sys-utils/unshare.c:766
 msgid " -w, --wd <dir>            change working directory to <dir>\n"
 msgstr " -w, --wd <ディレクトリ>   作業用のディレクトリを <ディレクトリ> に変更します\n"
 
-#: sys-utils/unshare.c:769
+#: sys-utils/unshare.c:768
 msgid " -S, --setuid <uid>        set uid in entered namespace\n"
 msgstr " -S, --setuid <uid>        関連付けたネームスペースで uid を設定します\n"
 
-#: sys-utils/unshare.c:770
+#: sys-utils/unshare.c:769
 msgid " -G, --setgid <gid>        set gid in entered namespace\n"
 msgstr " -G, --setgid <gid>        関連付けたネームスペースで gid を設定します\n"
 
-#: sys-utils/unshare.c:771
+#: sys-utils/unshare.c:770
 msgid " --map-user <uid>|<name>   map current user to uid (implies --user)\n"
 msgstr " --map-user <uid>|<name>   現在のユーザを uid にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:772
+#: sys-utils/unshare.c:771
 msgid " --map-group <gid>|<name>  map current group to gid (implies --user)\n"
 msgstr " --map-group <gid>|<name>  現在のグループを gid にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:773
+#: sys-utils/unshare.c:772
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       現在のユーザを root にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:774
+#: sys-utils/unshare.c:773
 msgid " -c, --map-current-user    map current user to itself (implies --user)\n"
 msgstr " -c, --map-current-user    現在のユーザを同じユーザにマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:775
+#: sys-utils/unshare.c:774
 msgid " --map-auto                map users and groups automatically (implies --user)\n"
 msgstr " --map-auto                ユーザとグループを自動的にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:776
+#: sys-utils/unshare.c:775
 msgid " --map-subids              map the first block of user IDs owned by euid (implies --user)\n"
 msgstr " --map-subids              euid に属するユーザ ID の最初のブロックをマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:777
+#: sys-utils/unshare.c:776
 msgid ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           map count users from outeruid to inneruid (implies --user)\n"
@@ -23795,7 +23796,7 @@ msgstr ""
 " --map-users <inneruid>:<outeruid>:<count>\n"
 "                           count 人のユーザを outeruid から inneruid にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:779
+#: sys-utils/unshare.c:778
 msgid ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           map count groups from outergid to innergid (implies --user)\n"
@@ -23803,15 +23804,15 @@ msgstr ""
 " --map-groups <innergid>:<outergid>:<count>\n"
 "                           count 個のグループを outergid から innergid にマップします(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:781
+#: sys-utils/unshare.c:780
 msgid " --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"
 msgstr " --owner <uid>:<gid>       ユーザネームスペースのオーナーを設定します(--user の意味を含みます)\n"
 
-#: sys-utils/unshare.c:783
+#: sys-utils/unshare.c:782
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr " -f, --fork                fork してから <プログラム> を起動します\n"
 
-#: sys-utils/unshare.c:784
+#: sys-utils/unshare.c:783
 msgid ""
 " --kill-child[=<signame>]  when dying, kill the forked child (implies --fork)\n"
 "                             defaults to SIGKILL\n"
@@ -23819,93 +23820,93 @@ msgstr ""
 " --kill-child[=<signame>]  終了時に、fork した子プロセスにシグナルを送ります(--fork の意味を含みます)\n"
 "                             既定値は SIGKILL です\n"
 
-#: sys-utils/unshare.c:786
+#: sys-utils/unshare.c:785
 msgid " --forward-signals         forward SIGTERM and SIGINT to child (implies --fork)\n"
 msgstr " --forward-signals         SIGTERM および SIGINT を子プロセスに転送します(--fork の意味を含みます)\n"
 
-#: sys-utils/unshare.c:788
+#: sys-utils/unshare.c:787
 msgid " --setgroups allow|deny    control the setgroups syscall in user namespaces\n"
 msgstr " --setgroups allow|deny    ユーザネームスペースで setgroups システムコールを制御します\n"
 
-#: sys-utils/unshare.c:789
+#: sys-utils/unshare.c:788
 msgid " --keep-caps               retain capabilities granted in user namespaces\n"
 msgstr " --keep-caps               ユーザネームスペースで許可されたケーパビリティを維持します\n"
 
-#: sys-utils/unshare.c:791
+#: sys-utils/unshare.c:790
 msgid " --monotonic <offset>      set clock monotonic offset (seconds) in time namespaces\n"
 msgstr " --monotonic <オフセット>  タイムネームスペースでクロックの単調増加オフセット(秒単位)を設定します\n"
 
-#: sys-utils/unshare.c:792
+#: sys-utils/unshare.c:791
 msgid " --boottime <offset>       set clock boottime offset (seconds) in time namespaces\n"
 msgstr " --boottime <オフセット>   タイムネームスペースでクロックのブート時刻オフセット(秒単位)を設定します\n"
 
-#: sys-utils/unshare.c:1013
+#: sys-utils/unshare.c:1012
 msgid "failed to parse owner"
 msgstr "owner の解釈に失敗しました"
 
-#: sys-utils/unshare.c:1054
+#: sys-utils/unshare.c:1053
 msgid "failed to parse monotonic offset"
 msgstr "単調増加オフセットの解釈に失敗しました"
 
-#: sys-utils/unshare.c:1058
+#: sys-utils/unshare.c:1057
 msgid "failed to parse boottime offset"
 msgstr "ブート時刻オフセットの解釈に失敗しました"
 
-#: sys-utils/unshare.c:1081
+#: sys-utils/unshare.c:1080
 msgid "options --monotonic and --boottime require unsharing of a time namespace (-T)"
 msgstr "--monotonic および --boottime オプションにはタイムネームスペースの共有解除(-T)が必要です"
 
-#: sys-utils/unshare.c:1111
+#: sys-utils/unshare.c:1110
 msgid "unshare failed"
 msgstr "共有の解除に失敗しました"
 
-#: sys-utils/unshare.c:1134
+#: sys-utils/unshare.c:1133
 msgid "sigaction SIGTERM failed"
 msgstr "sigaction SIGTERM に失敗しました"
 
-#: sys-utils/unshare.c:1136
+#: sys-utils/unshare.c:1135
 msgid "sigaction SIGINT failed"
 msgstr "sigaction SIGINT に失敗しました"
 
-#: sys-utils/unshare.c:1148
+#: sys-utils/unshare.c:1147
 msgid "sigprocmask block failed"
 msgstr "sigprocmask によるブロックに失敗しました"
 
-#: sys-utils/unshare.c:1155
+#: sys-utils/unshare.c:1154
 msgid "pidfd_open failed"
 msgstr "pidfd_open に失敗しました"
 
-#: sys-utils/unshare.c:1169
+#: sys-utils/unshare.c:1168
 msgid "sigprocmask restore failed"
 msgstr "sigprocmask の復元に失敗しました"
 
-#: sys-utils/unshare.c:1211
+#: sys-utils/unshare.c:1210
 msgid "signal handler reset failed"
 msgstr "シグナルハンドラのリセットに失敗しました"
 
-#: sys-utils/unshare.c:1216
+#: sys-utils/unshare.c:1215
 msgid "sigprocmask unblock failed"
 msgstr "sigprocmask によるブロック解除に失敗しました"
 
-#: sys-utils/unshare.c:1220
+#: sys-utils/unshare.c:1219
 msgid "child exit failed"
 msgstr "子プロセスの終了に失敗しました"
 
-#: sys-utils/unshare.c:1259
+#: sys-utils/unshare.c:1258
 msgid "options --setgroups=allow and --map-group are mutually exclusive"
 msgstr "--setgroups=allow と --map-group のオプションは、同時に使用することができません"
 
-#: sys-utils/unshare.c:1274 sys-utils/unshare.c:1301 sys-utils/unshare.c:1307
+#: sys-utils/unshare.c:1273 sys-utils/unshare.c:1300 sys-utils/unshare.c:1306
 #, c-format
 msgid "mount %s failed"
 msgstr "%s のマウントに失敗しました"
 
-#: sys-utils/unshare.c:1281
+#: sys-utils/unshare.c:1280
 #, c-format
 msgid "cannot change root directory to '%s'"
 msgstr "ルートディレクトリを '%s' に変更できません"
 
-#: sys-utils/unshare.c:1297
+#: sys-utils/unshare.c:1296
 #, c-format
 msgid "cannot change %s filesystem propagation"
 msgstr "%s のファイルシステム伝播を変更できません"
@@ -24333,7 +24334,7 @@ msgstr "%s: %s を実行できません: %m"
 #: term-utils/agetty.c:615 term-utils/agetty.c:786 term-utils/agetty.c:969
 #: term-utils/agetty.c:1218 term-utils/agetty.c:1497 term-utils/agetty.c:1515
 #: term-utils/agetty.c:1552 term-utils/agetty.c:1562 term-utils/agetty.c:1604
-#: term-utils/agetty.c:1932 term-utils/agetty.c:2340 term-utils/agetty.c:3023
+#: term-utils/agetty.c:1930 term-utils/agetty.c:2338 term-utils/agetty.c:3021
 #, c-format
 msgid "failed to allocate memory: %m"
 msgstr "メモリの割り当てに失敗しました: %m"
@@ -24423,32 +24424,32 @@ msgstr "os-release ファイルを開くことができません"
 msgid "failed to create reload file: %s: %m"
 msgstr "リロードファイル %s の作成に失敗しました: %m"
 
-#: term-utils/agetty.c:1996
+#: term-utils/agetty.c:1994
 #, c-format
 msgid "failed to get terminal attributes: %m"
 msgstr "端末の属性取得に失敗しました: %m"
 
-#: term-utils/agetty.c:2018
+#: term-utils/agetty.c:2016
 msgid "[press ENTER to login]"
 msgstr "[Enter を押すとログインできます]"
 
-#: term-utils/agetty.c:2052
+#: term-utils/agetty.c:2050
 msgid "Num Lock off"
 msgstr "Num Lock は無効な状態です"
 
-#: term-utils/agetty.c:2055
+#: term-utils/agetty.c:2053
 msgid "Num Lock on"
 msgstr "Num Lock が有効な状態です"
 
-#: term-utils/agetty.c:2058
+#: term-utils/agetty.c:2056
 msgid "Caps Lock on"
 msgstr "Caps Lock が有効な状態です"
 
-#: term-utils/agetty.c:2061
+#: term-utils/agetty.c:2059
 msgid "Scroll Lock on"
 msgstr "Scroll Lock が有効な状態です"
 
-#: term-utils/agetty.c:2064
+#: term-utils/agetty.c:2062
 #, c-format
 msgid ""
 "Hint: %s\n"
@@ -24457,32 +24458,32 @@ msgstr ""
 "ヒント: %s\n"
 "\n"
 
-#: term-utils/agetty.c:2225
+#: term-utils/agetty.c:2223
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: 読み込み: %m"
 
-#: term-utils/agetty.c:2294
+#: term-utils/agetty.c:2292
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: 入力が溢れました"
 
-#: term-utils/agetty.c:2336 term-utils/agetty.c:2344
+#: term-utils/agetty.c:2334 term-utils/agetty.c:2342
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr "%s: ログイン名の文字変換が失敗しました"
 
-#: term-utils/agetty.c:2350
+#: term-utils/agetty.c:2348
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr "%s: ログイン名に不正な文字 0x%x が含まれています"
 
-#: term-utils/agetty.c:2435
+#: term-utils/agetty.c:2433
 #, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "%s: 端末属性の設定に失敗しました: %m"
 
-#: term-utils/agetty.c:2480
+#: term-utils/agetty.c:2478
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
@@ -24491,167 +24492,167 @@ msgstr ""
 " %1$s [オプション] <回線> [<ボーレート>,...] [端末タイプ]\n"
 " %1$s [オプション] <ボーレート>,... 回線 [端末タイプ]\n"
 
-#: term-utils/agetty.c:2484
+#: term-utils/agetty.c:2482
 msgid "Open a terminal and set its mode.\n"
 msgstr "端末を開き、モードを指定します。\n"
 
-#: term-utils/agetty.c:2487
+#: term-utils/agetty.c:2485
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr " -8, --8bits                端末が 8 ビットであるものとみなします\n"
 
-#: term-utils/agetty.c:2488
+#: term-utils/agetty.c:2486
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr " -a, --autologin <ユーザ>   指定したユーザで自動ログインします\n"
 
-#: term-utils/agetty.c:2489
+#: term-utils/agetty.c:2487
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr " -c, --noreset              制御モードをリセットしないようにします\n"
 
-#: term-utils/agetty.c:2490
+#: term-utils/agetty.c:2488
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr " -E, --remote               login(1) に対して -r <ホスト名> を設定します\n"
 
-#: term-utils/agetty.c:2491
+#: term-utils/agetty.c:2489
 msgid " -f, --issue-file <list>    display issue files or directories\n"
 msgstr " -f, --issue-file <リスト>  issue ファイルまたはディレクトリを表示します\n"
 
-#: term-utils/agetty.c:2492
+#: term-utils/agetty.c:2490
 msgid "     --show-issue           display issue file and exit\n"
 msgstr "     --show-issue           issue ファイルを表示して終了します\n"
 
-#: term-utils/agetty.c:2493
+#: term-utils/agetty.c:2491
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr " -h, --flow-control         ハードウェアフロー制御を有効にします\n"
 
-#: term-utils/agetty.c:2494
+#: term-utils/agetty.c:2492
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -H, --host <ホスト名>      ログインホストを指定します\n"
 
-#: term-utils/agetty.c:2495
+#: term-utils/agetty.c:2493
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -i, --noissue              issue ファイルを表示しないようにします\n"
 
-#: term-utils/agetty.c:2496
+#: term-utils/agetty.c:2494
 msgid " -I, --init-string <string> set init string\n"
 msgstr " -I, --init-string <文字列> 初期化文字列を指定します\n"
 
-#: term-utils/agetty.c:2497
+#: term-utils/agetty.c:2495
 msgid " -J, --noclear              do not clear the screen before prompt\n"
 msgstr " -J, --noclear              プロンプトの表示前に画面消去を行いません\n"
 
-#: term-utils/agetty.c:2498
+#: term-utils/agetty.c:2496
 msgid " -l, --login-program <file> specify login program\n"
 msgstr " -l, --login-program <ファイル> ログインプログラムを指定します\n"
 
-#: term-utils/agetty.c:2499
+#: term-utils/agetty.c:2497
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr " -L, --local-line[=<モード>] ローカル回線フラグを設定します\n"
 
-#: term-utils/agetty.c:2500
+#: term-utils/agetty.c:2498
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr " -m, --extract-baud         接続時にボーレートを取得します\n"
 
-#: term-utils/agetty.c:2501
+#: term-utils/agetty.c:2499
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr " -n, --skip-login           ログインプロンプトを表示しないようにします\n"
 
-#: term-utils/agetty.c:2502
+#: term-utils/agetty.c:2500
 msgid " -N, --nonewline            do not print a newline before issue\n"
 msgstr " -N, --nonewline            issue を表示する前に、改行を表示しないようにします\n"
 
-#: term-utils/agetty.c:2503
+#: term-utils/agetty.c:2501
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -o, --login-options <オプション> login コマンドに渡すオプションを指定します\n"
 
-#: term-utils/agetty.c:2504
+#: term-utils/agetty.c:2502
 msgid " -p, --login-pause          wait for any key before the login\n"
 msgstr " -p, --login-pause          ログイン前に任意のキーが入力されるのを待つようにします\n"
 
-#: term-utils/agetty.c:2505
+#: term-utils/agetty.c:2503
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -r, --chroot <ディレクトリ> 指定したディレクトリをルートにします\n"
 
-#: term-utils/agetty.c:2506
+#: term-utils/agetty.c:2504
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -R, --hangup               tty を擬似的にハングアップするようにします\n"
 
-#: term-utils/agetty.c:2507
+#: term-utils/agetty.c:2505
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr " -s, --keep-baud            break 後もボーレートを維持するようにします\n"
 
-#: term-utils/agetty.c:2508
+#: term-utils/agetty.c:2506
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr " -t, --timeout <数値>       ログイン処理の制限時間を指定します\n"
 
-#: term-utils/agetty.c:2509
+#: term-utils/agetty.c:2507
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr " -U, --detect-case          大文字のみを使用する端末を検出するようにします\n"
 
-#: term-utils/agetty.c:2510
+#: term-utils/agetty.c:2508
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr " -w, --wait-cr              キャリッジリターンを待機します\n"
 
-#: term-utils/agetty.c:2511
+#: term-utils/agetty.c:2509
 msgid "     --nohints              do not print hints\n"
 msgstr "     --nohints              ヒントを表示しないようにします\n"
 
-#: term-utils/agetty.c:2512
+#: term-utils/agetty.c:2510
 msgid "     --nohostname           no hostname at all will be shown\n"
 msgstr "     --nohostname           ホスト名を全く表示しないようにします\n"
 
-#: term-utils/agetty.c:2513
+#: term-utils/agetty.c:2511
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr "     --long-hostname        完全修飾ホスト名を表示します\n"
 
-#: term-utils/agetty.c:2514
+#: term-utils/agetty.c:2512
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr "     --erase-chars <文字列> 追加のバックスペース文字を指定します\n"
 
-#: term-utils/agetty.c:2515
+#: term-utils/agetty.c:2513
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr "     --kill-chars <文字列>  追加の kill 文字を指定します\n"
 
-#: term-utils/agetty.c:2516
+#: term-utils/agetty.c:2514
 msgid "     --chdir <directory>    chdir before the login\n"
 msgstr "     --chdir <ディレクトリ>  ログインする前にディレクトリを変更します\n"
 
-#: term-utils/agetty.c:2517
+#: term-utils/agetty.c:2515
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "     --delay <秒数>         プロンプトを表示する前に指定した秒数待ちます\n"
 
-#: term-utils/agetty.c:2518
+#: term-utils/agetty.c:2516
 msgid "     --nice <number>        run login with this priority\n"
 msgstr "     --nice <優先度>        login を指定した優先度で実行します\n"
 
-#: term-utils/agetty.c:2519
+#: term-utils/agetty.c:2517
 msgid "     --reload               reload prompts on running agetty instances\n"
 msgstr "     --reload               実行中の agetty インスタンスをリロードします\n"
 
-#: term-utils/agetty.c:2520
+#: term-utils/agetty.c:2518
 msgid "     --list-speeds          display supported baud rates\n"
 msgstr "     --list-speeds          設定可能なボーレートを表示します\n"
 
-#: term-utils/agetty.c:2959
+#: term-utils/agetty.c:2957
 #, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "%d ユーザ"
 
-#: term-utils/agetty.c:3110
+#: term-utils/agetty.c:3108
 #, c-format
 msgid "checkname failed: %m"
 msgstr "checkname に失敗しました: %m"
 
-#: term-utils/agetty.c:3122
+#: term-utils/agetty.c:3120
 #, c-format
 msgid "cannot touch file %s"
 msgstr "ファイル %s にアクセスできません"
 
-#: term-utils/agetty.c:3126
+#: term-utils/agetty.c:3124
 msgid "--reload is unsupported on your system"
 msgstr "--reload はあなたのシステムではサポートされていません"
 
-#: term-utils/agetty.c:3149
+#: term-utils/agetty.c:3147
 msgid "failed to open credentials directory"
 msgstr "認証情報ディレクトリを開けませんでした"
 
@@ -25366,7 +25367,7 @@ msgstr "passwd uid を取得できません"
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "%s@%s から流れてきた全体周知メッセージ (%s) (%s):"
 
-#: term-utils/wall.c:415
+#: term-utils/wall.c:416
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "%s からは読み込みません - 標準入力をお使いください。"
@@ -25404,30 +25405,30 @@ msgstr "%s はメッセージを無効にしています"
 msgid "%s is logged in more than once; writing to %s"
 msgstr "%s は複数ログインしています; %s に書き込みます"
 
-#: term-utils/write.c:385
+#: term-utils/write.c:386
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
 msgstr "%s@%s (ユーザ %s) が %s で %02d:%02d に流したメッセージ ..."
 
-#: term-utils/write.c:389
+#: term-utils/write.c:390
 #, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
 msgstr "%s@%s が %s で %02d:%02d に流したメッセージ ..."
 
-#: term-utils/write.c:400
+#: term-utils/write.c:402
 msgid "carefulputc failed"
 msgstr "carefulputc に失敗しました"
 
-#: term-utils/write.c:438
+#: term-utils/write.c:440
 msgid "you have write permission turned off"
 msgstr "書き込み権限を無効にしたままになっています"
 
-#: term-utils/write.c:461
+#: term-utils/write.c:463
 #, c-format
 msgid "%s is not logged in on %s"
 msgstr "%s は %s にログインしていません"
 
-#: term-utils/write.c:467
+#: term-utils/write.c:469
 #, c-format
 msgid "%s has messages disabled on %s"
 msgstr "%s は %s でメッセージを無効にしています"
@@ -25536,20 +25537,20 @@ msgstr ""
 " -x, --spaces           タブをスペースに変換します\n"
 " -l, --lines <数値>     少なくとも <数値> 行分だけバッファするようにします\n"
 
-#: text-utils/col.c:495
+#: text-utils/col.c:498
 #, c-format
 msgid "warning: can't back up %s."
 msgstr "警告: バックアップできません: %s"
 
-#: text-utils/col.c:497
+#: text-utils/col.c:500
 msgid "past first line"
 msgstr "最初の行以前"
 
-#: text-utils/col.c:498
+#: text-utils/col.c:501
 msgid "-- line already flushed"
 msgstr "行は既に書き込まれてしまったため"
 
-#: text-utils/col.c:564
+#: text-utils/col.c:567
 msgid "bad -l argument"
 msgstr "-l 引数が正しくありません"
 
@@ -25873,7 +25874,7 @@ msgstr " -v, --no-squeezing         同一行を出力\n"
 msgid "<length> and <offset>"
 msgstr "<長さ> と <オフセット>"
 
-#: text-utils/hexdump-display.c:535
+#: text-utils/hexdump-display.c:540
 msgid "all input file arguments failed"
 msgstr "全ての入力ファイル引数が正しくありません"
 
@@ -25987,27 +25988,27 @@ msgstr ""
 "*** %s: ディレクトリです ***\n"
 "\n"
 
-#: text-utils/more.c:736
+#: text-utils/more.c:738
 #, c-format
 msgid "--More--"
 msgstr "--続きます--"
 
-#: text-utils/more.c:738
+#: text-utils/more.c:740
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(次のファイル: %s)"
 
-#: text-utils/more.c:743 text-utils/more.c:749
+#: text-utils/more.c:745 text-utils/more.c:751
 #, c-format
 msgid "(END)"
 msgstr "(終了)"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:756
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[スペースキーで続行、 'q' で終了します]"
 
-#: text-utils/more.c:959
+#: text-utils/more.c:961
 msgid ""
 "\n"
 "...Skipping "
@@ -26015,40 +26016,40 @@ msgstr ""
 "\n"
 "...飛ばしています "
 
-#: text-utils/more.c:963
+#: text-utils/more.c:965
 msgid "...Skipping to file "
 msgstr "...下記の数だけファイルを飛ばします "
 
-#: text-utils/more.c:965
+#: text-utils/more.c:967
 msgid "...Skipping back to file "
 msgstr "...下記の数だけファイルを戻します "
 
-#: text-utils/more.c:1127
+#: text-utils/more.c:1129
 msgid "Line too long"
 msgstr "行が長すぎます"
 
-#: text-utils/more.c:1170
+#: text-utils/more.c:1172
 msgid "No previous command to substitute for"
 msgstr "以前に実行したコマンドがありません"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[終了するには q または Q を押して下さい]"
 
-#: text-utils/more.c:1283
+#: text-utils/more.c:1285
 msgid "exec failed\n"
 msgstr "実行に失敗しました\n"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1295
 msgid "can't fork\n"
 msgstr "子プロセスを起動できません\n"
 
-#: text-utils/more.c:1506
+#: text-utils/more.c:1508
 msgid "...skipping\n"
 msgstr "...飛ばしています\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1545
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -26056,11 +26057,11 @@ msgstr ""
 "\n"
 "パターンが見つかりません\n"
 
-#: text-utils/more.c:1547 text-utils/pg.c:1040 text-utils/pg.c:1188
+#: text-utils/more.c:1549 text-utils/pg.c:1040 text-utils/pg.c:1188
 msgid "Pattern not found"
 msgstr "パターンが見つかりません"
 
-#: text-utils/more.c:1566
+#: text-utils/more.c:1568
 msgid ""
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
@@ -26068,7 +26069,7 @@ msgstr ""
 "ほとんどのコマンドの前には、整数を指定することができます (下記の説明では、 k と表記しています) 。整数を指定しない場合の既定値は、 [] 内に書かれた値です。\n"
 "また、アスタリスク (*) が書かれている場合は、引数が新しい既定値になることを表わしています。\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1574
 #, c-format
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -26111,19 +26112,19 @@ msgstr ""
 ":f                      現在のファイル名と行番号を表示します\n"
 ".                       直前のコマンドを繰り返します\n"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1640
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "... %d ページ戻ります"
 
-#: text-utils/more.c:1662
+#: text-utils/more.c:1664
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "... %d 行飛ばします"
 
-#: text-utils/more.c:1778
+#: text-utils/more.c:1780
 msgid ""
 "\n"
 "***Back***\n"
@@ -26133,25 +26134,25 @@ msgstr ""
 "***戻る***\n"
 "\n"
 
-#: text-utils/more.c:1797
+#: text-utils/more.c:1799
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" %d 行"
 
-#: text-utils/more.c:1800
+#: text-utils/more.c:1802
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[非ファイル] %d 行"
 
-#: text-utils/more.c:1806
+#: text-utils/more.c:1808
 msgid "No previous regular expression"
 msgstr "以前に使用した正規表現はありません"
 
-#: text-utils/more.c:1833 text-utils/more.c:1870
+#: text-utils/more.c:1835 text-utils/more.c:1872
 msgid "Command not available in secure mode"
 msgstr "セキュアモードではコマンドは使えません"
 
-#: text-utils/more.c:1884
+#: text-utils/more.c:1886
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "['h' キーで操作方法を表示します]"
