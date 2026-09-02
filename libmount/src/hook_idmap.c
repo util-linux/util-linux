@@ -23,6 +23,7 @@
 
 #include "strutils.h"
 #include "all-io.h"
+#include "fileutils.h"
 #include "namespace.h"
 
 #include "mountP.h"
