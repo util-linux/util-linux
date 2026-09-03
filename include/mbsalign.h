@@ -53,7 +53,8 @@ extern size_t mbs_nwidth(const char *buf, size_t bufsz);
 extern size_t mbs_width(const char *s);
 
 extern char *mbs_safe_encode(const char *s, size_t *width);
-extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz, const char *safechars);
+extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, size_t bufsiz, const char *safechars,
+                  const char *unsafechars);
 extern size_t mbs_safe_encode_size(size_t bytes);
 extern size_t mbs_safe_decode_size(const char *s);
 
