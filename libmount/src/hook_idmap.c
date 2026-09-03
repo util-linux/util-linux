@@ -32,7 +32,7 @@
 # include <linux/nsfs.h>
 #endif
 
-#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 
 typedef enum idmap_type_t {
 	ID_TYPE_UID,	/* uidmap entry */
@@ -317,7 +317,6 @@ static int hook_mount_post(
 	 * Once a mount has been attached to the filesystem it can't be
 	 * idmapped anymore. So create a new detached mount.
 	 */
-#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	{
 		struct libmnt_sysapi *api = mnt_context_get_sysapi(cxt);
 
@@ -327,7 +326,6 @@ static int hook_mount_post(
 			DBG_OBJ(HOOK, hs, ul_debug(" reuse tree FD"));
 		}
 	}
-#endif
 	if (fd_tree < 0)
 		fd_tree = mnt_open_tree(AT_FDCWD, target,
 			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
@@ -544,4 +542,4 @@ const struct libmnt_hookset hookset_idmap =
 	.deinit = hookset_deinit
 };
 
-#endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
+#endif /* USE_LIBMOUNT_MOUNTFD_SUPPORT */

@@ -826,6 +826,7 @@ Set _mountpoint_'s mode after mounting.
 
 *X-mount.idmap*=__id-type__:__id-mount__:__id-host__:__id-range__ [__id-type__:__id-mount__:__id-host__:__id-range__], *X-mount.idmap*=__file__::
 Use this option to create an idmapped mount.
+This feature requires the new file-descriptor-based mount API (available since Linux 5.2).
 An idmapped mount allows the ownership of all files located under a mount to be changed according to the ID-mapping associated with a user namespace.
 The ownership change is tied to the lifetime of, and localized to, the relevant mount.
 The relevant ID-mapping can be specified in two ways:
