@@ -243,13 +243,27 @@ int main(int argc, char **argv)
 	return ret;
 }
 
+void free_colorlist(struct list_head *head)
+{
+	struct list_head *p, *pn;
+
+	if (!head)
+		return;
+	list_for_each_safe(p, pn, head) {
+		struct hexdump_clr *clr = list_entry(p, struct hexdump_clr, colorlist);
+
+		free(clr->str);
+		free(clr);
+	}
+	free(head);
+}
+
 void hex_free(struct hexdump *hex)
 {
-	struct list_head *p, *pn, *q, *qn, *r, *rn, *s, *sn;
+	struct list_head *p, *pn, *q, *qn, *r, *rn;
 	struct hexdump_fs *fs;
 	struct hexdump_fu *fu;
 	struct hexdump_pr *pr;
-	struct hexdump_clr *clr;
 
 	list_for_each_safe(p, pn, &hex->fshead) {
 		fs = list_entry(p, struct hexdump_fs, fslist);
@@ -257,14 +271,7 @@ void hex_free(struct hexdump *hex)
 			fu = list_entry(q, struct hexdump_fu, fulist);
 			list_for_each_safe(r, rn, &fu->prlist) {
 				pr = list_entry(r, struct hexdump_pr, prlist);
-				if (pr->colorlist) {
-					list_for_each_safe(s, sn, pr->colorlist) {
-						clr = list_entry (s, struct hexdump_clr, colorlist);
-						free(clr->str);
-						free(clr);
-					}
-					free(pr->colorlist);
-				}
+				free_colorlist(pr->colorlist);
 				free(pr->fmt);
 				free(pr);
 			}
