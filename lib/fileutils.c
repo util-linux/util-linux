@@ -501,10 +501,10 @@ FILE *fopen_at_no_link(int dir, const char *filename,
 }
 #endif /* HAVE_OPENAT */
 
+#if defined(SYS_openat2)
 int ul_openat_resolve(int dirfd, const char *path, int flags,
 		      mode_t mode, unsigned long long resolve)
 {
-#if defined(SYS_openat2)
 	struct open_how how = {
 		.flags = (__u64) flags,
 		.mode = (__u64) mode,
@@ -512,11 +512,19 @@ int ul_openat_resolve(int dirfd, const char *path, int flags,
 	};
 
 	return syscall(SYS_openat2, dirfd, path, &how, sizeof(how));
+}
 #else
+int ul_openat_resolve(
+		int dirfd __attribute__((__unused__)),
+		const char *path __attribute__((__unused__)),
+		int flags __attribute__((__unused__)),
+		mode_t mode __attribute__((__unused__)),
+		unsigned long long resolve __attribute__((__unused__)))
+{
 	errno = ENOSYS;
 	return -1;
-#endif
 }
+#endif
 
 int ul_open_no_symlinks(const char *path, int flags, mode_t mode)
 {
