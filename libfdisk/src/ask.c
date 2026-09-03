@@ -60,6 +60,9 @@ void fdisk_reset_ask(struct fdisk_ask *ask)
 	if (fdisk_is_ask(ask, MENU))
 		fdisk_ask_menu_reset_items(ask);
 
+	if (fdisk_is_ask(ask, STRING))
+		free(ask->data.str.result);
+
 	memset(ask, 0, sizeof(*ask));
 	ask->refcount = refcount;
 }
