@@ -474,7 +474,7 @@ FILE *fopen_at_no_link(int dir, const char *filename,
 	 * guarding against here. The test for the hard link is done below
 	 * with fstat()...
 	 */
-	fd = openat(dir, filename, ((flags & ~O_TRUNC) | O_NOFOLLOW), perm);
+	fd = openat(dir, filename, ((flags & ~O_TRUNC) | O_NOFOLLOW | O_CLOEXEC), perm);
 	if (fd < 0)
 		return NULL;
 

@@ -98,7 +98,7 @@ static char *get_gshadow_pwd(const char *groupname)
 	if (groupname == NULL || *groupname == '\0')
 		return NULL;
 
-	f = fopen(_PATH_GSHADOW, "r");
+	f = fopen(_PATH_GSHADOW, "r" UL_CLOEXECSTR);
 	if (!f)
 		return NULL;
 

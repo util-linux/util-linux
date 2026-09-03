@@ -602,7 +602,7 @@ ll2_import_lastlog(struct ll2_context *context, const char *lastlog_file,
 	if (retval != 0)
 		return retval;
 
-	ll_fp = fopen(lastlog_file, "r");
+	ll_fp = fopen(lastlog_file, "r" UL_CLOEXECSTR);
 	if (ll_fp == NULL) {
 		if (error && asprintf(error, "Failed to open '%s': %m",
 				     lastlog_file) < 0)

@@ -103,7 +103,7 @@ static int recursiveRemove(int fd)
 			if (S_ISDIR(sb.st_mode)) {
 				int cfd;
 
-				cfd = openat(dfd, d->d_name, O_RDONLY);
+				cfd = openat(dfd, d->d_name, O_RDONLY | O_CLOEXEC);
 				if (cfd >= 0)
 					recursiveRemove(cfd);	/* it closes cfd too */
 				isdir = 1;
@@ -170,7 +170,7 @@ static int switchroot(const char *newroot)
 		return -1;
 	}
 
-	cfd = open("/", O_RDONLY);
+	cfd = open("/", O_RDONLY | O_CLOEXEC);
 	if (cfd < 0) {
 		warn(_("cannot open %s"), "/");
 		goto fail;

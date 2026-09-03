@@ -418,7 +418,7 @@ static struct map_range read_subid_range(char *filename, uid_t uid, int identity
 	if (!pw)
 		errx(EXIT_FAILURE, _("you (user %u) don't exist."), uid);
 
-	idmap = fopen(filename, "r");
+	idmap = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!idmap)
 		err(EXIT_FAILURE, _("could not open '%s'"), filename);
 
@@ -482,7 +482,7 @@ static void read_kernel_map(struct map_range **chain, char *filename)
 	size_t size = 0;
 	FILE *idmap;
 
-	idmap = fopen(filename, "r");
+	idmap = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!idmap)
 		err(EXIT_FAILURE, _("could not open '%s'"), filename);
 
