@@ -379,13 +379,15 @@ static int get_ns_ino(const char *path, ino_t *ino)
 static void open_cgroup_procs(void)
 {
 	char *buf = NULL, *path = NULL, *p;
-	int cgroup_fd = 0;
+	int cgroup_fd = -1;
 	char fdpath[PATH_MAX];
 
 	open_target_fd(&cgroup_fd, "cgroup", optarg);
 
 	if (read_all_alloc(cgroup_fd, &buf) < 1)
 		err(EXIT_FAILURE, _("failed to get cgroup path"));
+
+	close(cgroup_fd);
 
 	p = strtok(buf, "\n");
 	if (p)
@@ -816,8 +818,11 @@ int main(int argc, char *argv[])
 	}
 
 	// Join into the target cgroup
-	if (cgroup_procs_fd >= 0)
+	if (cgroup_procs_fd >= 0) {
 		join_into_cgroup();
+		close(cgroup_procs_fd);
+		cgroup_procs_fd = -1;
+	}
 
 	if (uid_gid_fd >= 0) {
 		struct stat st;
