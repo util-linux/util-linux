@@ -5477,6 +5477,9 @@ static void sighandler_nop(int si _U_)
 		}							\
 									\
 		for (size_t i = 0; i < n_fdescs; i++) {			\
+			if (fdescs[i].fd >= FD_SETSIZE)			\
+				errx(EXIT_FAILURE,			\
+				     "fd %d exceeds FD_SETSIZE; use -w poll/ppoll", fdescs[i].fd); \
 			if (fdescs[i].mx_modes & MX_READ) {		\
 				n = max(n, fdescs[i].fd + 1);		\
 				FD_SET(fdescs[i].fd, &readfds);		\
