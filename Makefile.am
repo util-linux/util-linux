@@ -352,6 +352,9 @@ checkmans:
 checkxalloc:
 	@ $(top_srcdir)/tools/checkxalloc.sh
 
+checkcloexec:
+	@ $(top_srcdir)/tools/checkcloexec.sh
+
 checkdecl:
 	@ $(top_srcdir)/tools/checkdecl.sh
 
