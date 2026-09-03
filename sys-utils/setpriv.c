@@ -300,7 +300,7 @@ static void dump_label(const char *name)
 	ssize_t len;
 	int fd, e;
 
-	fd = open(_PATH_PROC_ATTR_CURRENT, O_RDONLY);
+	fd = open(_PATH_PROC_ATTR_CURRENT, O_RDONLY | O_CLOEXEC);
 	if (fd == -1) {
 		warn(_("cannot open %s"), _PATH_PROC_ATTR_CURRENT);
 		return;
@@ -690,7 +690,7 @@ static void do_selinux_label(const char *label)
 	if (access(_PATH_SYS_SELINUX, F_OK) != 0)
 		errx(SETPRIV_EXIT_PRIVERR, _("SELinux is not running"));
 
-	fd = open(_PATH_PROC_ATTR_EXEC, O_RDWR);
+	fd = open(_PATH_PROC_ATTR_EXEC, O_RDWR | O_CLOEXEC);
 	if (fd == -1)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
@@ -718,10 +718,10 @@ static void do_apparmor_profile(const char *label)
 	 * See https://github.com/torvalds/linux/blob/master/Documentation/userspace-api/lsm.rst
 	 */
 	path = _PATH_PROC_ATTR_APPARMOR_EXEC;
-	f = fopen(path, "r+");
+	f = fopen(path, "r+" UL_CLOEXECSTR);
 	if (!f) {
 		path = _PATH_PROC_ATTR_EXEC;
-		f = fopen(path, "r+");
+		f = fopen(path, "r+" UL_CLOEXECSTR);
 	}
 	if (!f)
 		err(SETPRIV_EXIT_PRIVERR,
@@ -741,7 +741,7 @@ static void do_seccomp_filter(const char *file)
 	char *filter;
 	struct sock_fprog prog = {};
 
-	fd = open(file, O_RDONLY);
+	fd = open(file, O_RDONLY | O_CLOEXEC);
 	if (fd == -1)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot open %s"), file);

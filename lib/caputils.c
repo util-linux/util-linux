@@ -53,7 +53,7 @@ static int cap_last_by_bsearch(int *ret)
 
 static int cap_last_by_procfs(int *ret)
 {
-	FILE *f = fopen(_PATH_PROC_CAPLASTCAP, "r");
+	FILE *f = fopen(_PATH_PROC_CAPLASTCAP, "r" UL_CLOEXECSTR);
 	int rc = -EINVAL;
 
 	*ret = 0;

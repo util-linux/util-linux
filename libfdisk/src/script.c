@@ -167,7 +167,7 @@ struct fdisk_script *fdisk_new_script_from_file(struct fdisk_context *cxt,
 	assert(filename);
 
 	DBG(SCRIPT, ul_debug("opening %s", filename));
-	f = fopen(filename, "r");
+	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f)
 		return NULL;
 
@@ -1714,7 +1714,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 		err(EXIT_FAILURE, "mkstemp() failed");
 	if (ul_write_all(fd, data, size) != 0)
 		err(EXIT_FAILURE, "write() failed");
-	f = fopen(name, "r");
+	f = fopen(name, "r" UL_CLOEXECSTR);
 	if (!f)
 		err(EXIT_FAILURE, "cannot open %s", name);
 
@@ -1770,7 +1770,7 @@ static int test_read(struct fdisk_test *ts __attribute__((unused)),
 	struct fdisk_context *cxt;
 	FILE *f;
 
-	if (!(f = fopen(filename, "r")))
+	if (!(f = fopen(filename, "r" UL_CLOEXECSTR)))
 		err(EXIT_FAILURE, "%s: cannot open", filename);
 
 	cxt = fdisk_new_context();

@@ -307,7 +307,7 @@ int mnt_monitor_enable_fanotify(struct libmnt_monitor *mn, int enable, int ns)
 		 * and will be closed by fanotify_free_data() (called from
 		 * free_monitor_entry()).
 		 */
-		data->ns_fd = open(_PATH_PROC_NSDIR "/mnt", O_RDONLY);
+		data->ns_fd = open(_PATH_PROC_NSDIR "/mnt", O_RDONLY | O_CLOEXEC);
 		if (data->ns_fd < 0)
 			goto err;
 

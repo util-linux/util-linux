@@ -162,7 +162,7 @@ static PyObject *Table_write_file(TableObject *self, PyObject *args, PyObject *k
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	if (!(f = fopen(path, "w")))
+	if (!(f = fopen(path, "w" UL_CLOEXECSTR)))
 		return UL_RaiseExc(errno);
 	rc = mnt_table_write_file(self->tab, f);
 	fclose(f);

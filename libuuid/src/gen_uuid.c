@@ -166,7 +166,7 @@ static int get_node_id(unsigned char *node_id)
 #define ifreq_size(i) sizeof(struct ifreq)
 #endif /* HAVE_SA_LEN */
 
-	sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
+	sd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, IPPROTO_IP);
 	if (sd < 0) {
 		return -1;
 	}
@@ -487,7 +487,7 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	if (sizeof(UUIDD_SOCKET_PATH) > sizeof(srv_addr.sun_path))
 		return -1;
 
-	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+	if ((s = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) < 0)
 		return -1;
 
 	srv_addr.sun_family = AF_UNIX;

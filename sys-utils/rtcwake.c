@@ -141,7 +141,7 @@ static int is_wakeup_enabled(const char *devname)
 	if (ul_startswith(devname, "/dev/"))
 		skip = 5;
 	snprintf(buf, sizeof buf, SYS_WAKEUP_PATH_TEMPLATE, devname + skip);
-	f = fopen(buf, "r");
+	f = fopen(buf, "r" UL_CLOEXECSTR);
 	if (!f) {
 		warn(_("cannot open %s"), buf);
 		return 0;
@@ -263,7 +263,7 @@ static char **get_sys_power_states(struct rtcwake_control *ctl)
 		char buf[256] = { 0 };
 		ssize_t ss;
 
-		fd = open(SYS_POWER_STATE_PATH, O_RDONLY);
+		fd = open(SYS_POWER_STATE_PATH, O_RDONLY | O_CLOEXEC);
 		if (fd < 0)
 			goto nothing;
 		ss = read(fd, &buf, sizeof(buf) - 1);
@@ -298,7 +298,7 @@ static void wait_stdin(struct rtcwake_control *ctl)
 
 static void suspend_system(struct rtcwake_control *ctl)
 {
-	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
+	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w" UL_CLOEXECSTR);
 
 	if (!f) {
 		warn(_("cannot open %s"), SYS_POWER_STATE_PATH);
@@ -321,7 +321,7 @@ static int read_clock_mode(struct rtcwake_control *ctl)
 	FILE *fp;
 	char linebuf[ADJTIME_ZONE_BUFSIZ];
 
-	fp = fopen(ctl->adjfile, "r");
+	fp = fopen(ctl->adjfile, "r" UL_CLOEXECSTR);
 	if (!fp)
 		return -1;
 	/* skip two lines */

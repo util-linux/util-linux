@@ -397,7 +397,7 @@ static int swap_rewrite_signature(const struct swap_device *dev)
 	assert(dev->path);
 	assert(dev->pagesize);
 
-	fd = open(dev->path, O_WRONLY);
+	fd = open(dev->path, O_WRONLY | O_CLOEXEC);
 	if (fd == -1) {
 		warn(_("cannot open %s"), dev->path);
 		return -1;
@@ -540,7 +540,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 	assert(dev);
 	assert(dev->path);
 
-	fd = open(dev->path, O_RDONLY);
+	fd = open(dev->path, O_RDONLY | O_CLOEXEC);
 	if (fd == -1) {
 		warn(_("cannot open %s"), dev->path);
 		goto err;

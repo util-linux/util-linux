@@ -138,7 +138,7 @@ static int init_crypto_api(struct ul_fileeq *eq)
 	assert(sizeof(sa.salg_name) > strlen(eq->method->kname) + 1);
 	memcpy(&sa.salg_name, eq->method->kname, strlen(eq->method->kname) + 1);
 
-	if ((eq->fd_api = socket(AF_ALG, SOCK_SEQPACKET, 0)) < 0)
+	if ((eq->fd_api = socket(AF_ALG, SOCK_SEQPACKET | SOCK_CLOEXEC, 0)) < 0)
 		goto fail;
 	if (bind(eq->fd_api, (struct sockaddr *) &sa, sizeof(sa)) != 0)
 		goto fail;
@@ -341,7 +341,7 @@ static int get_fd(struct ul_fileeq *eq, struct ul_fileeq_data *data, off_t *off)
 
 	if (data->fd < 0) {
 		DBG_OBJ(DATA, data, ul_debug("open: %s", data->name));
-		data->fd = open(data->name, O_RDONLY);
+		data->fd = open(data->name, O_RDONLY | O_CLOEXEC);
 		if (data->fd < 0)
 			return data->fd;
 
