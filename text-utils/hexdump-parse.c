@@ -503,8 +503,10 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 		hcnext->fmt = color_sequence_from_colorname(clr);
 		free(clr);
 
-		if (!hcnext->fmt)
+		if (!hcnext->fmt) {
+			free_colorlist(ret_head);
 			return NULL;
+		}
 
 		/* only colorize this specific value */
 		if (*cfmt == ':') {
