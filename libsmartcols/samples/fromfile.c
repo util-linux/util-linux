@@ -345,7 +345,7 @@ int main(int argc, char *argv[])
 	n = 0;
 
 	while (optind < argc) {
-		FILE *f = fopen(argv[optind], "r");
+		FILE *f = fopen(argv[optind], "r" UL_CLOEXECSTR);
 
 		if (!f)
 			err(EXIT_FAILURE, "%s: open failed", argv[optind]);

@@ -98,7 +98,7 @@ void logindefs_load_file(const char *filename)
 	FILE *f;
 	char buf[BUFSIZ];
 
-	f = fopen(filename, "r");
+	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f)
 		return;
 
@@ -522,7 +522,7 @@ int get_hushlogin_status(struct passwd *pwd, const char *override_home, int forc
 			if (st.st_size == 0)
 				return 1;	/* for all accounts */
 
-			f = fopen(file, "r");
+			f = fopen(file, "r" UL_CLOEXECSTR);
 			if (!f)
 				continue;	/* ignore errors... */
 

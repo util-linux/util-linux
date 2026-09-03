@@ -505,7 +505,7 @@ static int colors_read_schemes(struct ul_color_ctl *cc)
 
 	DBG(SCHEME, ul_debug("reading file '%s'", cc->sfile));
 
-	f = fopen(cc->sfile, "r");
+	f = fopen(cc->sfile, "r" UL_CLOEXECSTR);
 	if (!f) {
 		rc = -errno;
 		goto done;

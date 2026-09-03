@@ -462,7 +462,7 @@ static void checkf(struct more_control *ctl, char *fs)
 	ctl->file_size = 0;
 	fflush(NULL);
 
-	ctl->current_file = fopen(fs, "r");
+	ctl->current_file = fopen(fs, "r" UL_CLOEXECSTR);
 	if (ctl->current_file == NULL) {
 		if (ctl->clear_line_ends)
 			putp(ctl->erase_line);

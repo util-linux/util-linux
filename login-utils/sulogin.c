@@ -577,7 +577,7 @@ static struct passwd *getrootpwent(int try_manually)
 	pwd.pw_uid = 0;
 	pwd.pw_gid = 0;
 
-	if ((fp = fopen(_PATH_PASSWD, "r")) == NULL) {
+	if ((fp = fopen(_PATH_PASSWD, "r" UL_CLOEXECSTR)) == NULL) {
 		warn(_("cannot open %s"), _PATH_PASSWD);
 		return &pwd;
 	}
@@ -614,7 +614,7 @@ static struct passwd *getrootpwent(int try_manually)
 	 * The password is invalid. If there is a shadow password, try it.
 	 */
 	*pwd.pw_passwd = '\0';
-	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r")) == NULL) {
+	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r" UL_CLOEXECSTR)) == NULL) {
 		warn(_("cannot open %s"), _PATH_PASSWD);
 		return &pwd;
 	}
@@ -1160,7 +1160,7 @@ int main(int argc, char **argv)
 			tcinit(con);
 			continue;
 		}
-		if ((con->fd = open(con->tty, O_RDWR | O_NOCTTY | O_NONBLOCK)) < 0)
+		if ((con->fd = open(con->tty, O_RDWR | O_NOCTTY | O_NONBLOCK | O_CLOEXEC)) < 0)
 			continue;
 		openfd |= (1 << con->fd);
 		tcinit(con);

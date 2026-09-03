@@ -1212,7 +1212,7 @@ static void pgfile(FILE *f, const char *name)
 				while (*++p == ' ') ;
 				if (*p == '\0')
 					goto newcmd;
-				save = fopen(p, "wb");
+				save = fopen(p, "wb" UL_CLOEXECSTR);
 				if (save == NULL) {
 					cmd.count = errno;
 					mesg(_("cannot open "));
@@ -1378,7 +1378,7 @@ static void pgfile(FILE *f, const char *name)
 						fclose(find);
 						if (isatty(0) == 0) {
 							close(0);
-							open(tty, O_RDONLY);
+							open(tty, O_RDONLY); /* NOCLOEXEC: fd becomes stdin for execl'd shell */
 						} else {
 							fclose(f);
 						}
@@ -1519,7 +1519,7 @@ static int parse_arguments(int arg, int argc, char **argv)
 		if (strcmp(argv[arg], "-") == 0)
 			input = stdin;
 		else {
-			input = fopen(argv[arg], "r");
+			input = fopen(argv[arg], "r" UL_CLOEXECSTR);
 			if (input == NULL) {
 				warn("%s", argv[arg]);
 				exitstatus++;

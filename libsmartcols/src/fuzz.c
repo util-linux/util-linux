@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "c.h"
 #include "libsmartcols.h"
 
 static void process_string(const char *str)
@@ -37,7 +38,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 int main(int argc, char **argv)
 {
 	for (int i = 1; i < argc; i++) {
-		FILE *f = fopen(argv[i], "r");
+		FILE *f = fopen(argv[i], "r" UL_CLOEXECSTR);
 		char *buf;
 		long len;
 		size_t n;

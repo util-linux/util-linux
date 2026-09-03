@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 	{
 		int i;
 
-		dbf = fopen(DEBUG_OUTPUT, "w");
+		dbf = fopen(DEBUG_OUTPUT, "w" UL_CLOEXECSTR);
 		for (i = 1; i < argc; i++) {
 			if (i > 1)
 				debug(" ");

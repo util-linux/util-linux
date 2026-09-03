@@ -365,7 +365,8 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 	assert(api->fd_tree >= 0);
 
 	if (api->fd_fs < 0) {
-		api->fd_fs = fspick(api->fd_tree, "", FSPICK_EMPTY_PATH |
+		api->fd_fs = fspick(api->fd_tree, "", FSPICK_CLOEXEC |
+						      FSPICK_EMPTY_PATH |
 						      FSPICK_NO_AUTOMOUNT);
 		hookset_set_syscall_status(cxt, "fspick", api->fd_fs >= 0);
 		if (api->fd_fs < 0)

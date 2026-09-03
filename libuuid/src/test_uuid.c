@@ -73,7 +73,7 @@ static int check_uuids_in_file(const char *file)
 	FILE *f;
 	uuid_t uuidBits;
 
-	if ((f = fopen(file, "r")) == NULL) {
+	if ((f = fopen(file, "r" UL_CLOEXECSTR)) == NULL) {
 		warn("%s", file);
 		return 1;
 	}

@@ -275,7 +275,7 @@ int open_blkdev_or_file(const struct stat *st, const char *name, const int oflag
 	int fd;
 
 	if (S_ISBLK(st->st_mode)) {
-		fd = open(name, oflag | O_EXCL);
+		fd = open(name, oflag | O_EXCL | O_CLOEXEC);
 	} else
 		fd = open(name, oflag);
 	if (-1 < fd && !is_same_inode(fd, st)) {
