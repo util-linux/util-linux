@@ -405,9 +405,12 @@ isint:				cs[3] = '\0';
 					/* "cut out" the color_unit(s) */
 					a = strchr(p2, '[');
 					p2 = strrchr(p2, ']');
-					if (a++ && p2)
-						pr->colorlist = color_fmt(xstrndup(a, p2++ - a), pr->bcnt);
-					else
+					if (a++ && p2) {
+						char *cfmt = xstrndup(a, p2++ - a);
+
+						pr->colorlist = color_fmt(cfmt, pr->bcnt);
+						free(cfmt);
+					} else
 						badconv(p2);
 				}
 				/* we don't want colors, quietly skip over them */
@@ -572,6 +575,10 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 				while (hcnext->range > (size_t) bcnt) {
 					hc = xcalloc(1, sizeof(struct hexdump_clr));
 					memcpy(hc, hcnext, sizeof(struct hexdump_clr));
+
+					/* the string is owned by every node; clone
+					 * it to avoid double-free in hex_free() */
+					hc->str = hcnext->str ? xstrdup(hcnext->str) : NULL;
 
 					hc->range = bcnt;
 

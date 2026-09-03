@@ -263,6 +263,7 @@ void hex_free(struct hexdump *hex)
 						free(clr->str);
 						free(clr);
 					}
+					free(pr->colorlist);
 				}
 				free(pr->fmt);
 				free(pr);
