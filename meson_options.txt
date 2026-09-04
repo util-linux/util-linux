@@ -34,6 +34,8 @@ option('widechar',    type : 'feature',
        description : 'compile with wide character support')
 option('translate-docs', type : 'feature',
        description : 'translate documentation')
+option('fuse',           type : 'feature',
+       description : 'build the test_mkfds helper with libfuse')
 
 # enable building of various programs and features ("build-" prefix)
 
