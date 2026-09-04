@@ -139,6 +139,7 @@ static pid_t namespace_target_pid = 0;
 static int root_fd = -1;
 static int wd_fd = -1;
 static int env_fd = -1;
+static int env_dir_fd = -1;
 static int uid_gid_fd = -1;
 static int cgroup_procs_fd = -1;
 
@@ -166,7 +167,7 @@ static inline struct namespace_file *__next_nsfile(struct namespace_file *n, int
 #define get_nsfile(_ns)			__next_nsfile(NULL, _ns, 0)
 #define get_enabled_nsfile(_ns)		__next_nsfile(NULL, _ns, 1)
 
-static void open_target_fd(int *fd, const char *type, const char *path)
+static int open_target_fd(int *fd, const char *type, const char *path, bool quiet)
 {
 	char pathbuf[PATH_MAX];
 
@@ -175,17 +176,43 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 			 namespace_target_pid, type);
 		path = pathbuf;
 	}
-	if (!path)
+	if (!path) {
+		if (quiet)
+			return -1;
 		errx(EXIT_FAILURE,
 		     _("neither filename nor target pid supplied for %s"),
 		     type);
+	}
 
 	if (*fd >= 0)
 		close(*fd);
 
 	*fd = open(path, O_RDONLY | O_CLOEXEC);
-	if (*fd < 0)
+	if (*fd < 0) {
+		if (quiet)
+			return -1;
 		err(EXIT_FAILURE, _("cannot open %s"), path);
+	}
+	return *fd;
+}
+
+/* Read the environment from @fd and replace our own with it. Closes @fd. */
+static void setenv_from_fd(int fd)
+{
+	struct ul_env_list *ls;
+
+	ls = env_list_from_fd(fd);
+	if (!ls && errno)
+		err(EXIT_FAILURE, _("failed to get environment variables"));
+#ifdef HAVE_CLEARENV
+	clearenv();
+#else
+	environ = NULL;
+#endif
+	if (ls && env_list_setenv(ls, 0) < 0)
+		err(EXIT_FAILURE, _("failed to set environment variables"));
+	env_list_free(ls);
+	close(fd);
 }
 
 #ifdef USE_NAMESPACE_ID_SUPPORT
@@ -269,7 +296,7 @@ static void enable_nsfile(struct namespace_file *n, const char *path)
 			open_target_fd_by_nsid(&n->fd, path + 1);
 		else
 #endif
-			open_target_fd(&n->fd, n->name, path);
+			open_target_fd(&n->fd, n->name, path, false);
 	}
 	n->enabled = true;
 }
@@ -335,7 +362,7 @@ static void open_namespaces(int namespaces)
 
 	while ((n = next_enabled_nsfile(n, namespaces))) {
 		if (n->fd < 0)
-			open_target_fd(&n->fd, n->name, NULL);
+			open_target_fd(&n->fd, n->name, NULL, false);
 	}
 }
 
@@ -402,7 +429,7 @@ static void open_parent_user_ns_fd(int pid_fd)
 
 	/* try directly open the NS */
 	if (fd < 0) {
-		open_target_fd(&fd, "ns/user", NULL);
+		open_target_fd(&fd, "ns/user", NULL, false);
 		islocal = true;
 	}
 
@@ -473,7 +500,7 @@ static void open_cgroup_procs(void)
 	int cgroup_fd = 0;
 	char fdpath[PATH_MAX];
 
-	open_target_fd(&cgroup_fd, "cgroup", optarg);
+	open_target_fd(&cgroup_fd, "cgroup", optarg, false);
 
 	if (ul_read_all_alloc(cgroup_fd, &buf) < 1)
 		err(EXIT_FAILURE, _("failed to get cgroup path"));
@@ -721,7 +748,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			if (optarg)
-				open_target_fd(&root_fd, "root", optarg);
+				open_target_fd(&root_fd, "root", optarg, false);
 			else
 				do_rd = true;
 			break;
@@ -729,7 +756,7 @@ int main(int argc, char *argv[])
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
-				open_target_fd(&wd_fd, "cwd", optarg);
+				open_target_fd(&wd_fd, "cwd", optarg, false);
 			} else
 				do_wd = true;
 			break;
@@ -825,13 +852,11 @@ int main(int argc, char *argv[])
 	}
 
 	if (do_rd)
-		open_target_fd(&root_fd, "root", NULL);
+		open_target_fd(&root_fd, "root", NULL, false);
 	if (do_wd)
-		open_target_fd(&wd_fd, "cwd", NULL);
-	if (do_env)
-		open_target_fd(&env_fd, "environ", NULL);
+		open_target_fd(&wd_fd, "cwd", NULL, false);
 	if (do_uid || do_gid)
-		open_target_fd(&uid_gid_fd, "", NULL);
+		open_target_fd(&uid_gid_fd, "", NULL, false);
 	if (do_join_cgroup) {
 		if (!is_cgroup2())
 			errx(EXIT_FAILURE, _("--join-cgroup is only supported in cgroup v2"));
@@ -864,6 +889,25 @@ int main(int argc, char *argv[])
 		 * let's complain only if both fail */
 		if (setgroups(0, NULL) != 0)
 			setgroups_nerrs++;
+	}
+
+	/*
+	 * Read the target's environment now that we know whether the
+	 * credentials will be changed, and while /proc is still ours (this runs
+	 * before any setns()).
+	 */
+	if (do_env && open_target_fd(&env_fd, "environ", NULL, true) < 0) {
+		/*
+		 * The environ file is owned by the target's UID as mapped in our
+		 * user namespace, so it may only become readable once we run with
+		 * the requested UID. Keep a descriptor on our own /proc/<pid> so
+		 * the retry does not depend on the target's mount namespace.
+		 */
+		if ((errno != EACCES && errno != EPERM)
+		    || !(force_uid || force_gid))
+			err(EXIT_FAILURE, _("cannot open /proc/%d/environ"),
+			    namespace_target_pid);
+		open_target_fd(&env_dir_fd, "", NULL, false);
 	}
 
 	/*
@@ -930,20 +974,8 @@ int main(int argc, char *argv[])
 
 	/* Pass environment variables of the target process to the spawned process */
 	if (env_fd >= 0) {
-		struct ul_env_list *ls;
-
-		ls = env_list_from_fd(env_fd);
-		if (!ls && errno)
-			err(EXIT_FAILURE, _("failed to get environment variables"));
-#ifdef HAVE_CLEARENV
-		clearenv();
-#else
-		environ = NULL;
-#endif
-		if (ls && env_list_setenv(ls, 0) < 0)
-			err(EXIT_FAILURE, _("failed to set environment variables"));
-		env_list_free(ls);
-		close(env_fd);
+		setenv_from_fd(env_fd);
+		env_fd = -1;
 	}
 
 	// Join into the target cgroup
@@ -975,6 +1007,18 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("setgid() failed"));
 		if (force_uid && setuid(uid) < 0)		/* change UID */
 			err(EXIT_FAILURE, _("setuid() failed"));
+	}
+
+	/* Retry the environ read that was not permitted before the UID change */
+	if (env_dir_fd >= 0) {
+		int fd = openat(env_dir_fd, "environ", O_RDONLY);
+
+		if (fd < 0)
+			err(EXIT_FAILURE, _("cannot open /proc/%d/environ"),
+			    namespace_target_pid);
+		close(env_dir_fd);
+		env_dir_fd = -1;
+		setenv_from_fd(fd);
 	}
 
 	if (keepcaps && (namespaces & CLONE_NEWUSER))
