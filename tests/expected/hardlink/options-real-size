@@ -5,5 +5,6 @@ Linked:                   1 files
 Compared: [Redacted] files
 Saved:                    8 KiB
 Duration: [Redacted]
+file-a st_blocks: non-zero
 file-a links: 2
 sparse-a links: 1
