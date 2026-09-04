@@ -39,7 +39,7 @@ int openvmcp(void)
 	return open(VMCP_DEVICE_NODE, O_RDWR | O_NOCTTY);
 }
 
-void clearvmcp(void)
+static void clearvmcp(void)
 {
 	if (more) {
 		free(more);
