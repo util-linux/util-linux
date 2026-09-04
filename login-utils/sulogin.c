@@ -1217,22 +1217,12 @@ int main(int argc, char **argv)
 				if (con->flags & (CON_3215|CON_3270)) {
 					vmcpfd = openvmcp();
 					if (vmcpfd >= 0) {
-						char *msg = queryspool(vmcpfd);
-						if (msg) {
-							parsespool(msg);
-							free(msg);
-						}
-						stopspool(vmcpfd);
+						vmcp_stop_console_logging(vmcpfd);
 					}
 				}
 				if (con->flags & CON_3215) {
 					if (vmcpfd >= 0) {
-						char *msg = queryterm(vmcpfd);
-						if (msg) {
-							parseterm(msg);
-							free(msg);
-						}
-						setterm(vmcpfd, "0");
+						vmcp_prepare_terminal_for_password(vmcpfd);
 						warning3215(vmcpfd);
 					}
 				}
@@ -1241,15 +1231,8 @@ int main(int argc, char **argv)
 
 				answer = getpasswd(con);
 #if defined(__s390__) || defined(__s390x__)
-				if (vmcpfd >= 0) {
-					if (con->flags & CON_3215)
-						restoreterm(vmcpfd);
-					if (con->flags & (CON_3215|CON_3270))
-						restorespool(vmcpfd);
-					clearvmcp();
-					close(vmcpfd);
-					vmcpfd = -1;
-				}
+				vmcp_restore_and_close(vmcpfd, con->flags);
+				vmcpfd = -1;
 #endif
 				if (answer == NULL)
 					break;

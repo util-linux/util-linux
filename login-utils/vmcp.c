@@ -78,7 +78,7 @@ static char *askvmcp(int fd, const char *question)
 	return ret;
 }
 
-char *queryterm(int fd)
+static char *queryterm(int fd)
 {
 	const char *question = "QUERY TERMINAL";
 	/* Reset cached terminal state before reparsing a fresh QUERY TERMINAL reply. */
@@ -86,7 +86,7 @@ char *queryterm(int fd)
 	return askvmcp(fd, question);
 }
 
-char *queryspool(int fd)
+static char *queryspool(int fd)
 {
 	const char *question = "QUERY VIRTUAL CONSOLE";
 	return askvmcp(fd, question);
@@ -103,13 +103,8 @@ static int writevmcp(int fd, char *instruction)
 
 	if (ioctl(fd, VMCP_SETBUF, &buffersize) == -1)
 		goto out;
-	do {
-		rc = write(fd, instruction, strlen(instruction));
-		if (rc < 0) {
-			if (errno != EINTR)
-				goto out;
-		}
-	} while (rc < 0);
+	if (ul_write_all(fd, instruction, strlen(instruction)) != 0)
+		goto out;
 	if (ioctl(fd, VMCP_GETCODE, &rc) == -1)
 		goto out;
 	if (ioctl(fd, VMCP_GETSIZE, &buffersize) == -1)
@@ -120,7 +115,7 @@ static int writevmcp(int fd, char *instruction)
 	return ret;
 }
 
-int setterm(int fd, char *tout)
+static int setterm(int fd, char *tout)
 {
 	char *instruction;
 	int ret = -1;
@@ -134,7 +129,7 @@ int setterm(int fd, char *tout)
 	return ret;
 }
 
-int restoreterm(int fd)
+static int restoreterm(int fd)
 {
 	char *instruction;
 	int ret = -1;
@@ -150,7 +145,7 @@ int restoreterm(int fd)
 	return ret;
 }
 
-int stopspool(int fd)
+static int stopspool(int fd)
 {
 	char *instruction = "SPOOL CONSOLE STOP";
 	if (!spooling)
@@ -158,7 +153,7 @@ int stopspool(int fd)
 	return writevmcp(fd, instruction);
 }
 
-int restorespool(int fd)
+static int restorespool(int fd)
 {
 	char *instruction = "SPOOL CONSOLE START";
 	if (!spooling)
@@ -166,7 +161,7 @@ int restorespool(int fd)
 	return writevmcp(fd, instruction);
 }
 
-void parseterm(char *msg)
+static void parseterm(char *msg)
 {
 	char *token;
 
@@ -185,7 +180,7 @@ void parseterm(char *msg)
 	}
 }
 
-void parsespool(char *msg)
+static void parsespool(char *msg)
 {
 	spooling = 0;
 	if (strstr(msg, " TERM START ") != NULL)
@@ -203,5 +198,40 @@ void warning3215(int fd)
 	 */
 	(void)writevmcp(fd, "MESSAGE * WARNING: 3215 mode. Password visible!");
 	(void)writevmcp(fd, "MESSAGE * Ensure nobody is watching the screen.");
+}
+
+/* Query spool state, parse it, and stop logging */
+void vmcp_stop_console_logging(int fd)
+{
+	char *msg = queryspool(fd);
+	if (msg) {
+		parsespool(msg);
+		free(msg);
+	}
+	stopspool(fd);
+}
+
+/* Query terminal state, parse it, and configure for password input */
+void vmcp_prepare_terminal_for_password(int fd)
+{
+	char *msg = queryterm(fd);
+	if (msg) {
+		parseterm(msg);
+		free(msg);
+	}
+	setterm(fd, "0");
+}
+
+/* Restore terminal and spool states, cleanup, and close fd */
+void vmcp_restore_and_close(int fd, int flags)
+{
+	if (fd < 0)
+		return;
+	if (flags & CON_3215)
+		restoreterm(fd);
+	if (flags & (CON_3215|CON_3270))
+		restorespool(fd);
+	clearvmcp();
+	close(fd);
 }
 #endif

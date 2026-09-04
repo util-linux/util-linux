@@ -15,14 +15,8 @@
 
 #if defined(__s390__) || defined(__s390x__)
 extern int openvmcp(void);
-extern void clearvmcp(void);
-extern char* queryterm(int fd);
-extern char* queryspool(int fd);
-extern int setterm(int fd, char *tout);
-extern int stopspool(int fd);
-extern int restoreterm(int fd);
-extern int restorespool(int fd);
-extern void parseterm(char *msg);
-extern void parsespool(char *msg);
 extern void warning3215(int fd);
+extern void vmcp_stop_console_logging(int fd);
+extern void vmcp_prepare_terminal_for_password(int fd);
+extern void vmcp_restore_and_close(int fd, int flags);
 #endif

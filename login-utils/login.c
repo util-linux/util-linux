@@ -188,30 +188,12 @@ static struct s390con s390_console_spool_stop(int fd)
 	if (con.flags & (CON_3215|CON_3270)) {
 		con.vmcpfd = openvmcp();
 		if (con.vmcpfd >= 0) {
-			char *msg = queryspool(con.vmcpfd);
-			if (msg) {
-				parsespool(msg);
-				free(msg);
-			}
-			/*
-			 * Avoid that console log during
-			 * password input
-			 */
-			stopspool(con.vmcpfd);
+			vmcp_stop_console_logging(con.vmcpfd);
 		}
 	}
 	if (con.flags & CON_3215) {
 		if (con.vmcpfd >= 0) {
-			char *msg = queryterm(con.vmcpfd);
-			if (msg) {
-				parseterm(msg);
-				free(msg);
-			}
-			/*
-			 * Avoid that CLEAR has to be pressed for
-			 * password input
-			 */
-			setterm(con.vmcpfd, "0");
+			vmcp_prepare_terminal_for_password(con.vmcpfd);
 # ifdef WARN_WITH_VMCP
 			warning3215(con.vmcpfd);
 # endif
@@ -222,15 +204,8 @@ static struct s390con s390_console_spool_stop(int fd)
 
 static void s390_console_spool_restore(struct s390con *con)
 {
-	if (con->vmcpfd >= 0) {
-		if (con->flags & CON_3215)
-			restoreterm(con->vmcpfd);
-		if (con->flags & (CON_3215|CON_3270))
-			restorespool(con->vmcpfd);
-		clearvmcp();
-		close(con->vmcpfd);
-		con->vmcpfd = -1;
-	}
+	vmcp_restore_and_close(con->vmcpfd, con->flags);
+	con->vmcpfd = -1;
 }
 # define PREPARE_CONSOLE(fd)	struct s390con con = s390_console_spool_stop(fd)
 # define RESTORE_CONSOLE()	s390_console_spool_restore(&con)
