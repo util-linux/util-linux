@@ -22,6 +22,7 @@
 #include <sys/ioctl.h>
 #include "all-io.h"
 #include "vmcp.h"
+#include "sulogin-consoles.h"
 
 #if defined(__s390__) || defined(__s390x__)
 
