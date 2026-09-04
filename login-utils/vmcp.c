@@ -23,31 +23,6 @@
 #include "all-io.h"
 #include "vmcp.h"
 
-int isinteger(const char *str)
-{
-	int errs = errno, ret = 1;
-	long __attribute__ ((__unused__)) val;
-	char *endptr;
-
-	errno = 0;
-	val = strtol(str, &endptr, 10);
-
-	/* Check if no digits were found at all */
-	if (str == endptr)
-		ret = 0;
-
-	/* Check for overflow or underflow */
-	if (errno == ERANGE)
-		ret = 0;
-
-	/* Check for trailing non-numeric characters (e.g., "123abc") */
-	if (*endptr != '\0')
-		ret = 0;
-
-	errno = errs;
-	return ret;
-}
-
 #if defined(__s390__) || defined(__s390x__)
 
 #define	VMCP_DEVICE_NODE	"/dev/vmcp"

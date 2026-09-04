@@ -13,7 +13,6 @@
  *
  */
 
-extern int isinteger(const char *str);
 #if defined(__s390__) || defined(__s390x__)
 extern int openvmcp(void);
 extern void clearvmcp(void);
