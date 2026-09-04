@@ -85,6 +85,10 @@
 #include "pwdutils.h"
 
 #include "logindefs.h"
+#include "vmcp.h"
+#if defined(__s390__) || defined(__s390x__)
+# include "sulogin-consoles.h"	/* For CON_3215, CON_3270, and CON_SCLP */
+#endif
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 # include "shells.h"
@@ -163,6 +167,51 @@ static int is_consoletty(int fd)
 	}
 	return 0;
 }
+#endif
+
+#if defined(__s390__) || defined(__s390x__)
+/* Avoid that passwords are logged on the hypervisors console log */
+
+struct s390con {
+	int flags;
+	int vmcpfd;
+};
+
+static struct s390con s390_console_spool_stop(int fd)
+{
+	struct stat stb;
+	struct s390con con = { .flags = 0, .vmcpfd = -1 };
+
+	if ((fstat(fd, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
+		con.flags |= get_s390_con_flags(stb.st_rdev);
+	}
+	if (con.flags & (CON_3215|CON_3270)) {
+		con.vmcpfd = openvmcp();
+		if (con.vmcpfd >= 0) {
+			vmcp_stop_console_logging(con.vmcpfd);
+		}
+	}
+	if (con.flags & CON_3215) {
+		if (con.vmcpfd >= 0) {
+			vmcp_prepare_terminal_for_password(con.vmcpfd);
+# ifdef WARN_WITH_VMCP
+			warning3215(con.vmcpfd);
+# endif
+		}
+	}
+	return con;
+}
+
+static void s390_console_spool_restore(struct s390con *con)
+{
+	vmcp_restore_and_close(con->vmcpfd, con->flags);
+	con->vmcpfd = -1;
+}
+# define PREPARE_CONSOLE(fd)	struct s390con con = s390_console_spool_stop(fd)
+# define RESTORE_CONSOLE()	s390_console_spool_restore(&con)
+#else
+# define PREPARE_CONSOLE(fd)	/* */
+# define RESTORE_CONSOLE()	/* */
 #endif
 
 /*
@@ -1584,8 +1633,11 @@ int main(int argc, char **argv)
 	/* login -f, then the user has already been authenticated */
 	cxt.noauth = cxt.noauth && getuid() == 0 ? 1 : 0;
 
-	if (!cxt.noauth)
+	if (!cxt.noauth) {
+		PREPARE_CONSOLE(0);
 		loginpam_auth(&cxt);
+		RESTORE_CONSOLE();
+        }
 
 	/*
 	 * Authentication may be skipped (for example, during krlogin, rlogin,

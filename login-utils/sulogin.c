@@ -66,6 +66,7 @@
 #include "strutils.h"
 #include "ttyutils.h"
 #include "sulogin-consoles.h"
+#include "vmcp.h"
 #define CONMAX		16
 
 static unsigned int timeout;
@@ -222,7 +223,7 @@ static void tcinit(struct console *con)
 #endif
 
 #ifdef KDGKBMODE
-	if (!(con->flags & CON_SERIAL)
+	if (!(con->flags & (CON_SERIAL|CON_3215|CON_3270|CON_SCLP))
 	    && ioctl(fd, KDGKBMODE, &mode) < 0)
 		con->flags |= CON_SERIAL;
 	errno = 0;
@@ -269,6 +270,13 @@ static void tcinit(struct console *con)
 		}
 	}
 
+#if defined(__s390__) || defined(__s390x__)
+	if (con->flags & (CON_3215|CON_3270)) {
+		setlocale(LC_CTYPE, "POSIX");
+		setlocale(LC_MESSAGES, "POSIX");
+		goto setattr;
+	}
+#endif
 	/* Handle lines other than virtual consoles here */
 #if defined(KDGKBMODE) || defined(TIOCGSERIAL)
 	if (con->flags & CON_SERIAL)
@@ -296,7 +304,7 @@ static void tcinit(struct console *con)
 		cfsetospeed(tio, ospeed);
 
 #ifdef HAVE_STRUCT_TERMIOS_C_LINE
-		tio->c_line         = 0;
+		tio->c_line	 = 0;
 #endif
 		tio->c_cc[VTIME]    = 0;
 		tio->c_cc[VMIN]     = 1;
@@ -368,6 +376,10 @@ static void tcfinal(struct console *con)
 		free(term);
 	}
 
+#if defined(__s390__) || defined(__s390x__)
+	if (con->flags & (CON_3215|CON_3270))
+		return;
+#endif
 	if (!(con->flags & CON_SERIAL) || (con->flags & CON_NOTTY))
 		return;
 
@@ -987,9 +999,9 @@ static void usage(void)
 	fputs(_("Single-user login.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -p, --login-shell        start a login shell\n"
+	fputs(_(" -p, --login-shell	start a login shell\n"
 		" -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
-		" -e, --force              examine password files directly if getpwnam(3) fails\n"),
+		" -e, --force	      examine password files directly if getpwnam(3) fails\n"),
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -1016,8 +1028,8 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "login-shell",  no_argument,       NULL, 'p' },
 		{ "timeout",      required_argument, NULL, 't' },
-		{ "force",        no_argument,       NULL, 'e' },
-		{ "help",         no_argument,       NULL, 'h' },
+		{ "force",	no_argument,       NULL, 'e' },
+		{ "help",	 no_argument,       NULL, 'h' },
 		{ "version",      no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -1201,10 +1213,29 @@ int main(int argc, char **argv)
 				char *answer;
 				int doshell = 0;
 				int deny = !opt_e && locked_account_password(pwd->pw_passwd);
-
+#if defined(__s390__) || defined(__s390x__)
+				int vmcpfd = -1;
+				if (con->flags & (CON_3215|CON_3270)) {
+					vmcpfd = openvmcp();
+					if (vmcpfd >= 0) {
+						vmcp_stop_console_logging(vmcpfd);
+					}
+				}
+				if (con->flags & CON_3215) {
+					if (vmcpfd >= 0) {
+						vmcp_prepare_terminal_for_password(vmcpfd);
+						warning3215(vmcpfd);
+					}
+				}
+#endif
 				doprompt(passwd, con, deny);
 
-				if ((answer = getpasswd(con)) == NULL)
+				answer = getpasswd(con);
+#if defined(__s390__) || defined(__s390x__)
+				vmcp_restore_and_close(vmcpfd, con->flags);
+				vmcpfd = -1;
+#endif
+				if (answer == NULL)
 					break;
 				if (deny) {
 #ifdef HAVE_EXPLICIT_BZERO

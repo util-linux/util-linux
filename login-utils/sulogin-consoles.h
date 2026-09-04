@@ -39,6 +39,10 @@ struct console {
 #define	CON_SERIAL	0x0001
 #define	CON_NOTTY	0x0002
 #define	CON_EIO		0x0004
+#define	CON_CONSDEV	0x0008	/* Last on the kernel command line */
+#define	CON_3215	0x0010	/* s390x 3215 halfduplex console */
+#define	CON_3270	0x0020  /* s390x 3270 console */
+#define	CON_SCLP	0x0040	/* s390x sclp terminals */
 	pid_t pid;
 	struct chardata cp;
 	struct termios tio;
@@ -47,6 +51,23 @@ struct console {
 	char *user_tty_context;
 #endif
 };
+
+#if defined(__s390__) || defined(__s390x__)
+static inline uint32_t get_s390_con_flags(dev_t dev)
+{
+	unsigned int maj = major(dev);
+	unsigned int min = minor(dev);
+
+	if (maj == 4 && min == 64)
+		return CON_3215;
+	else if (maj == 4 && min >= 65)
+		return CON_SCLP;
+	else if (maj == 227 && min >= 1)
+		return CON_3270;
+
+	return 0;
+}
+#endif
 
 extern int detect_consoles(const char *device, int fallback,
 			   struct list_head *consoles);
