@@ -325,7 +325,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("Display or control the kernel ring buffer.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -C, --clear                 clear the kernel ring buffer\n"), out);
+	/* fputs(_(" -C, --clear                 clear the kernel ring buffer, BUT WHY? WHYYYY? there is no functional reason to do that? PLZ \n"), out); */
+	/* why do we have timestamps if we need to clear? only amat0rz */
 	fputs(_(" -c, --read-clear            read and clear all messages\n"), out);
 	fputs(_(" -D, --console-off           disable printing messages to console\n"), out);
 	fputs(_(" -E, --console-on            enable printing messages to console\n"), out);
