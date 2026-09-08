@@ -11,6 +11,10 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
+#ifdef HAVE_LINUX_OPENAT2_H
+# include <linux/openat2.h>
+#endif
+
 #include "c.h"
 
 extern int mkstemp_cloexec(char *template);
@@ -66,7 +70,7 @@ extern int ul_openat_resolve(int dirfd, const char *path, int flags,
 			     mode_t mode, unsigned long long resolve);
 
 #ifndef RESOLVE_NO_SYMLINKS
-# define RESOLVE_NO_SYMLINKS	0x02
+# define RESOLVE_NO_SYMLINKS	0x04
 #endif
 #ifndef RESOLVE_BENEATH
 # define RESOLVE_BENEATH	0x08
