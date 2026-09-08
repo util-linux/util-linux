@@ -8,7 +8,7 @@
 
 == NAME
 
-fsfreeze - suspend access to a filesystem (Ext3/4, ReiserFS, JFS, XFS)
+fsfreeze - suspend access to a filesystem
 
 == SYNOPSIS
 
@@ -40,7 +40,7 @@ include::man-common/help-version.adoc[]
 
 == FILESYSTEM SUPPORT
 
-This command will work only if filesystem supports has support for freezing. List of these filesystems include (2016-12-18) *btrfs*, *ext2/3/4*, *f2fs*, *jfs*, *nilfs2*, *reiserfs*, and *xfs*. Previous list may be incomplete, as more filesystems get support. If in doubt easiest way to know if a filesystem has support is create a small loopback mount and test freezing it.
+This command will work only if the filesystem has support for freezing. List of these filesystems include (2026-09-08) *btrfs*, *ext2/3/4*, *f2fs*, *gfs2*, *jfs*, *nilfs2*, and *xfs*. Previous list may be incomplete, as more filesystems get support. If in doubt easiest way to know if a filesystem has support is create a small loopback mount and test freezing it.
 
 == NOTES
 
