@@ -17,10 +17,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#ifdef HAVE_LINUX_OPENAT2_H
-# include <linux/openat2.h>
-#endif
-
 #include "c.h"
 #include "all-io.h"
 #include "fileutils.h"
