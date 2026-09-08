@@ -990,7 +990,7 @@ int main(int argc, char *argv[])
 	if (uid_gid_fd >= 0) {
 		struct stat st;
 
-		if (fstat(uid_gid_fd, &st) > 0)
+		if (fstat(uid_gid_fd, &st) < 0)
 			err(EXIT_FAILURE, _("can not get process stat"));
 
 		close(uid_gid_fd);
