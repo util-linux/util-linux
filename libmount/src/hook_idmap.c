@@ -40,10 +40,22 @@ typedef enum idmap_type_t {
 	ID_TYPE_UIDGID,	/* uidmap and gidmap entry */
 } idmap_type_t;
 
+/*
+ * struct id_map keeps one ID-mapping entry. The IDs are written to
+ * /proc/<pid>/{u,g}id_map as "<inner> <outer> <range>", which is the
+ * kernel's "ID-inside-ns ID-outside-ns length" format (the same order
+ * as unshare --map-users and mount --map-users).
+ *
+ * Note that for an idmapped mount the kernel resolves the mapping
+ * downwards (see map_id_down() and make_vfsuid() in the kernel), so
+ * 'inner' is the ID stored in the filesystem and 'outer' is the ID
+ * visible in the mount. For example "1000 2000 1" makes a file owned
+ * by 1000 on disk appear as owned by 2000.
+ */
 struct id_map {
 	idmap_type_t map_type;
-	uint32_t nsid;
-	uint32_t hostid;
+	uint32_t inner;
+	uint32_t outer;
 	uint32_t range;
 	struct list_head map_head;
 };
@@ -152,7 +164,7 @@ static int map_ids(struct list_head *idmap, pid_t pid)
 			left = sizeof(mapbuf) - (pos - mapbuf);
 			fill = snprintf(pos, left,
 					"%" PRIu32 " %" PRIu32 " %" PRIu32 "\n",
-					map->nsid, map->hostid, map->range);
+					map->inner, map->outer, map->range);
 			/*
 			 * The kernel only takes <= 4k for writes to
 			 * /proc/<pid>/{g,u}id_map
@@ -436,7 +448,7 @@ static int hook_prepare_options(
 
 	/*
 	 * This is an explicit ID-mapping list of the form:
-	 * [id-type]:id-mount:id-host:id-range [...]
+	 * [id-type]:inner:outer:range [...]
 	 *
 	 * We split the list into separate ID-mapping entries. The individual
 	 * ID-mapping entries are separated by ' '.
@@ -448,23 +460,23 @@ static int hook_prepare_options(
 	     tok = strtok_r(NULL, " ", &saveptr)) {
 		struct id_map *idmap;
 		idmap_type_t map_type;
-		uint32_t nsid = UINT_MAX, hostid = UINT_MAX, range = UINT_MAX;
+		uint32_t inner = UINT_MAX, outer = UINT_MAX, range = UINT_MAX;
 
 		if (ul_startswith(tok, "b:")) {
-			/* b:id-mount:id-host:id-range */
+			/* b:inner:outer:range */
 			map_type = ID_TYPE_UIDGID;
 			tok += 2;
 		} else if (ul_startswith(tok, "g:")) {
-			/* g:id-mount:id-host:id-range */
+			/* g:inner:outer:range */
 			map_type = ID_TYPE_GID;
 			tok += 2;
 		} else if (ul_startswith(tok, "u:")) {
-			/* u:id-mount:id-host:id-range */
+			/* u:inner:outer:range */
 			map_type = ID_TYPE_UID;
 			tok += 2;
 		} else {
 			/*
-			 * id-mount:id-host:id-range
+			 * inner:outer:range
 			 *
 			 * If the user didn't specify it explicitly then they
 			 * want this to be both a gid- and uidmap.
@@ -472,9 +484,9 @@ static int hook_prepare_options(
 			map_type = ID_TYPE_UIDGID;
 		}
 
-		/* id-mount:id-host:id-range */
-		rc = sscanf(tok, "%" PRIu32 ":%" PRIu32 ":%" PRIu32, &nsid,
-			    &hostid, &range);
+		/* inner:outer:range */
+		rc = sscanf(tok, "%" PRIu32 ":%" PRIu32 ":%" PRIu32, &inner,
+			    &outer, &range);
 		if (rc != 3)
 			goto err;
 
@@ -483,8 +495,8 @@ static int hook_prepare_options(
 			goto err;
 
 		idmap->map_type = map_type;
-		idmap->nsid = nsid;
-		idmap->hostid = hostid;
+		idmap->inner = inner;
+		idmap->outer = outer;
 		idmap->range = range;
 		INIT_LIST_HEAD(&idmap->map_head);
 		list_add_tail(&idmap->map_head, &hd->id_map);

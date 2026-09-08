@@ -385,7 +385,7 @@ Move a subtree to some other place. See above, the subsection *The move operatio
 Allow to make a target directory (mountpoint) if it does not exist yet. Alias to "-o X-mount.mkdir[=mode]", the default mode is 0755. For more details see *X-mount.mkdir* below.
 
 *--map-groups*, *--map-users* _inner_:_outer_:_count_::
-Add the specified user/group mapping to an *X-mount.idmap* map. These options can be given multiple times to build up complete mappings for users and groups. For more details see *X-mount.idmap* below.
+Add the specified user/group mapping to an *X-mount.idmap* map. The _inner_ ID is the starting ID as stored in the filesystem and the _outer_ ID is the starting ID as it appears in the new mount. These options can be given multiple times to build up complete mappings for users and groups. For more details see *X-mount.idmap* below.
 
 *--map-users* /proc/_PID_/ns/user::
 Use the specified user namespace for user and group mapping in an id-mapped mount. This is an alias for "-o X-mount.idmap=/proc/_PID_/ns/user" and cannot be used twice nor together with the _inner_:_outer_:_count_ option format above. For more details see *X-mount.idmap* below.
@@ -824,7 +824,7 @@ Set _mountpoint_'s ownership after mounting. Names resolved in the target mount 
 *X-mount.mode*=_mode_::
 Set _mountpoint_'s mode after mounting.
 
-*X-mount.idmap*=__id-type__:__id-mount__:__id-host__:__id-range__ [__id-type__:__id-mount__:__id-host__:__id-range__], *X-mount.idmap*=__file__::
+*X-mount.idmap*=__type__:__inner__:__outer__:__range__ [__type__:__inner__:__outer__:__range__], *X-mount.idmap*=__file__::
 Use this option to create an idmapped mount.
 This feature requires the new file-descriptor-based mount API (available since Linux 5.2).
 An idmapped mount allows the ownership of all files located under a mount to be changed according to the ID-mapping associated with a user namespace.
@@ -833,17 +833,17 @@ The relevant ID-mapping can be specified in two ways:
 +
 * A user can specify the ID-mapping directly.
 +
-The ID-mapping must be specified using the syntax __id-type__:__id-mount__:__id-host__:__id-range__.
-Specifying *u* as the __id-type__ prefix creates a UID-mapping, *g* creates a GID-mapping and omitting __id-type__ or specifying *b* creates both a UID- and GID-mapping.
-The __id-mount__ parameter indicates the starting ID in the new mount.
-The __id-host__ parameter indicates the starting ID in the filesystem.
-The __id-range__ parameter indicates how many IDs are to be mapped.
+The ID-mapping must be specified using the syntax __type__:__inner__:__outer__:__range__.
+Specifying *u* as the __type__ prefix creates a UID-mapping, *g* creates a GID-mapping and omitting __type__ or specifying *b* creates both a UID- and GID-mapping.
+The __inner__ and __outer__ IDs are given in the same order as in _/proc/[pid]/uid_map_ (see *user_namespaces*(7)) and for *--map-users* above.
+For an idmapped mount this means that __inner__ is the starting ID as stored in the filesystem, and __outer__ is the starting ID as it appears in the new mount.
+The __range__ parameter indicates how many IDs are to be mapped.
 It is possible to specify multiple ID-mappings.
 +
 The individual ID mappings must be separated by spaces. Please note that in the __/etc/fstab__ file, spaces are interpreted as separators between fields. To avoid this, you must escape them using \040. For example, X-mount.idmap=0:0:1\040500:1000:1.
 +
-For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 5000:1000:2* creates an idmapped mount where
-UID 0 is mapped to UID 1000, GID 1 is mapped to GID 1001, GID 2 is mapped to GID 1002, UID and GID 1000 are mapped to 5000, and UID and GID 1001 are mapped to 5001 in the mount.
+For example, the ID-mapping *X-mount.idmap=u:1000:0:1 g:1001:1:2 5000:1000:2* creates an idmapped mount where a file owned by
+UID 1000 in the filesystem appears as owned by UID 0 in the mount, GID 1001 appears as GID 1, GID 1002 appears as GID 2, UID and GID 5000 appear as 1000, and UID and GID 5001 appear as 1001.
 +
 When an ID-mapping is specified directly, a new user namespace will be allocated with the requested ID-mapping.
 The newly created user namespace will be attached to the mount.
