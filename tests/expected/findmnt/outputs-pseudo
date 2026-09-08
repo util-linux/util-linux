@@ -1,7 +1,8 @@
 TARGET                       SOURCE           FSTYPE                OPTIONS
 /proc                        /proc            proc                  rw,relatime
-`-/proc/sys/fs/binfmt_misc   systemd-1        autofs                rw,relatime,fd=25,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
-  `-/proc/sys/fs/binfmt_misc none             binfmt_misc           rw,relatime
+|-/proc/sys/fs/binfmt_misc   systemd-1        autofs                rw,relatime,fd=25,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+| `-/proc/sys/fs/binfmt_misc none             binfmt_misc           rw,relatime
+`-/proc/bus/usb              /proc/bus/usb    usbfs                 rw,relatime
 /sys                         /sys             sysfs                 rw,relatime
 |-/sys/fs/cgroup             tmpfs            tmpfs                 rw,nosuid,nodev,noexec,relatime,mode=755
 | |-/sys/fs/cgroup/systemd   cgroup           cgroup                rw,nosuid,nodev,noexec,relatime,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd
