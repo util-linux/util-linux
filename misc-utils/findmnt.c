@@ -314,7 +314,8 @@ static int is_tabdiff_column(int id)
  */
 int is_listall_mode(unsigned int flags)
 {
-	if ((flags & FL_DF || flags & FL_REAL || flags & FL_PSEUDO) && !(flags & FL_ALL))
+	if ((flags & (FL_DF | FL_REAL | FL_PSEUDO | FL_NET | FL_LOCAL))
+	    && !(flags & FL_ALL))
 		return 0;
 
 	return (!is_defined_match(COL_SOURCE) &&
@@ -1240,6 +1241,12 @@ static int match_func(struct libmnt_fs *fs,
 	if ((findmnt->flags & FL_PSEUDO) && !mnt_fs_is_pseudofs(fs))
 	    return rc;
 
+	if ((findmnt->flags & FL_NET) && !mnt_fs_is_netfs(fs))
+	    return rc;
+
+	if ((findmnt->flags & FL_LOCAL) && mnt_fs_is_netfs(fs))
+	    return rc;
+
 	if ((findmnt->flags & FL_SHADOWED)) {
 		struct libmnt_table *tb = NULL;
 
@@ -1556,6 +1563,8 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -i, --invert           invert the sense of matching\n"), out);
 	fputs(_("     --id <num>         filter by mount node ID\n"), out);
 	fputs(_("     --uniq-id <num>    filter by mount node 64-bit ID (requires --kernel=listmount)\n"), out);
+	fputs(_("     --local            print only local (non-network) filesystems\n"), out);
+	fputs(_("     --net              print only network filesystems\n"), out);
 	fputs(_("     --pseudo           print only pseudo-filesystems\n"), out);
 	fputs(_(" -Q, --filter <expr>    apply display filter\n"), out);
 	fputs(_(" -M, --mountpoint <dir> the mountpoint directory\n"), out);
@@ -1774,6 +1783,8 @@ int main(int argc, char *argv[])
 		FINDMNT_OPT_OUTPUT_ALL,
 		FINDMNT_OPT_PSEUDO,
 		FINDMNT_OPT_REAL,
+		FINDMNT_OPT_NET,
+		FINDMNT_OPT_LOCAL,
 		FINDMNT_OPT_VFS_ALL,
 		FINDMNT_OPT_SHADOWED,
 		FINDMNT_OPT_HYPERLINK,
@@ -1826,6 +1837,8 @@ int main(int argc, char *argv[])
 		{ "tree",	    no_argument,       NULL, FINDMNT_OPT_TREE	 },
 		{ "real",	    no_argument,       NULL, FINDMNT_OPT_REAL	 },
 		{ "pseudo",	    no_argument,       NULL, FINDMNT_OPT_PSEUDO	 },
+		{ "net",	    no_argument,       NULL, FINDMNT_OPT_NET	 },
+		{ "local",	    no_argument,       NULL, FINDMNT_OPT_LOCAL	 },
 		{ "vfs-all",	    no_argument,       NULL, FINDMNT_OPT_VFS_ALL },
 		{ "shadowed",       no_argument,       NULL, FINDMNT_OPT_SHADOWED },
 		{ "hyperlink",      optional_argument, NULL, FINDMNT_OPT_HYPERLINK },
@@ -1846,6 +1859,7 @@ int main(int argc, char *argv[])
 		{ 'p','x' },			/* poll,verify */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
 		{ FINDMNT_OPT_PSEUDO, FINDMNT_OPT_REAL },
+		{ FINDMNT_OPT_NET, FINDMNT_OPT_LOCAL },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -2028,6 +2042,12 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_REAL:
 			findmnt.flags |= FL_REAL;
+			break;
+		case FINDMNT_OPT_NET:
+			findmnt.flags |= FL_NET;
+			break;
+		case FINDMNT_OPT_LOCAL:
+			findmnt.flags |= FL_LOCAL;
 			break;
 		case FINDMNT_OPT_VFS_ALL:
 			findmnt.flags |= FL_VFS_ALL;

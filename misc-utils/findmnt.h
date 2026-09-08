@@ -3,6 +3,7 @@
 
 /* flags */
 enum {
+	FL_NET		= (1 << 0),
 	FL_EVALUATE	= (1 << 1),
 	FL_CANONICALIZE = (1 << 2),
 	FL_FIRSTONLY	= (1 << 3),
@@ -25,6 +26,7 @@ enum {
 	FL_DELETED      = (1 << 21),
 	FL_SHELLVAR     = (1 << 22),
 	FL_DF_INODES	= (1 << 23),
+	FL_LOCAL	= (1 << 24),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 25),
