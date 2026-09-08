@@ -6,6 +6,7 @@ Linked:                   1 files
 Compared: [Redacted] files
 Saved:                    4 KiB
 Duration: [Redacted]
-sparse-a blocks: 0
+sparse-a st_blocks: zero
+real-a st_blocks: non-zero
 sparse-a inode: unique
 real-a links: 2
