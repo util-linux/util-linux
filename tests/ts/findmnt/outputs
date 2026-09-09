@@ -45,6 +45,24 @@ ts_init_subtest "pseudo"
 $TS_CMD_FINDMNT --pseudo --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest "net"
+$TS_CMD_FINDMNT --net --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "local"
+$TS_CMD_FINDMNT --local --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "real-local"
+$TS_CMD_FINDMNT --real --local --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "net-local"
+# expected fail (mutually exclusive)
+$TS_CMD_FINDMNT --net --local --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>&1
+echo "rc=$?" >>"$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "invert-pseudo"
 $TS_CMD_FINDMNT --invert --pseudo --tab-file "$TS_SELF/files/mountinfo" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 ts_finalize_subtest

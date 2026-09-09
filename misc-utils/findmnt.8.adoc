@@ -97,6 +97,9 @@ The optional argument _method_ is supported only for the long variant (*--kernel
 *-l*, *--list*::
 Use the list output format. This output format is automatically enabled if the output is restricted by the *-t*, *-O*, *-S* or *-T* option and the option *--submounts* is not used or if more that one source file (the option *-F*) is specified.
 
+*--local*::
+Print only local filesystems, i.e. exclude network filesystems like NFS or CIFS. Note that pseudo filesystems (proc, sysfs, tmpfs, ...) are local too; use *--real* in addition to exclude them. This option is mutually exclusive with *--net*.
+
 *-M*, *--mountpoint* _path_::
 Explicitly define the mountpoint file or directory. See also *--target*.
 
@@ -108,6 +111,9 @@ Use alternative namespace _/proc/<tid>/mountinfo_ rather than the default _/proc
 
 *-n*, *--noheadings*::
 Do not print a header line.
+
+*--net*::
+Print only network filesystems (NFS, CIFS, ...). This option is mutually exclusive with *--local*.
 
 *-O*, *--options* _list_::
 Limit the set of printed filesystems. More than one option may be specified in a comma-separated list. The *-t* and *-O* options are cumulative in effect. It is different from *-t* in that each option is matched exactly; a leading _no_ at the beginning does not have global meaning. The "no" can used for individual items in the list. The "no" prefix interpretation can be disabled by "{plus}" prefix.
@@ -162,7 +168,7 @@ Use raw output format. All potentially unsafe characters are hex-escaped (\x<cod
 Note that column SOURCES, use multi-line cells. In these cases, the column may produce more strings on the same line.
 
 *--real*::
-Print only real filesystems.
+Print only real filesystems, i.e. exclude pseudo filesystems. This option is mutually exclusive with *--pseudo*, but it may be combined with *--local* or *--net*, for example *--real --local* prints only local real filesystems.
 
 *-S*, *--source* _spec_::
 Explicitly define the mount source. Supported specifications are _device_, __maj__**:**_min_, **LABEL=**__label__, **UUID=**__uuid__, **PARTLABEL=**__label__ and **PARTUUID=**__uuid__.
