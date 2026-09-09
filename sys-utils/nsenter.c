@@ -1016,7 +1016,7 @@ int main(int argc, char *argv[])
 
 	/* Retry the environ read that was not permitted before the UID change */
 	if (env_dir_fd >= 0) {
-		int fd = openat(env_dir_fd, "environ", O_RDONLY);
+		int fd = openat(env_dir_fd, "environ", O_RDONLY | O_CLOEXEC);
 
 		if (fd < 0)
 			err(EXIT_FAILURE, _("cannot open /proc/%d/environ"),
