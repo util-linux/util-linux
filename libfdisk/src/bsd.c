@@ -666,7 +666,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 	struct fdisk_bsd_label *l = self_label(cxt);
 	char *name = d->d_type == BSD_DTYPE_SCSI ? "sd" : "wd";
 	char buf[BUFSIZ];
-	char *res, *dp, *p;
+	char *res = NULL, *dp, *p;
 	int rc;
 	fdisk_sector_t sector;
 
