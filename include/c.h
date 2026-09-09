@@ -567,7 +567,7 @@ static inline void print_features(const char *const*features, const char *prefix
 static inline int fputsln(const char *s, FILE *stream) {
 	if (fputs(s, stream) == EOF)
 		return EOF;
-	return fputc('\n', stdout);
+	return fputc('\n', stream);
 }
 
 /*
