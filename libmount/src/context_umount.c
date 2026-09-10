@@ -994,7 +994,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		/* on helper= mount option based helper */
 		rc = prepare_helper_from_option(cxt, "helper");
 		if (rc < 0)
-			return rc;
+			goto end;
 		if (!cxt->helper)
 			/* on fstype based helper */
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
@@ -1016,10 +1016,11 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 
 	if (rc) {
 		DBG(CXT, ul_debugobj(cxt, "umount: preparing failed"));
-		return rc;
+		goto end;
 	}
 	cxt->flags |= MNT_FL_PREPARED;
 
+end:
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 

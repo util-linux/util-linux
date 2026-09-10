@@ -956,8 +956,10 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 
 	/* before mount stage */
 	rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_PRE);
-	if (rc)
-		return rc;
+	if (rc) {
+		res = rc;
+		goto end;
+	}
 
 	/* mount stage */
 	type = mnt_fs_get_fstype(cxt->fs);
@@ -975,9 +977,10 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	if (res == 0 && !is_mount_stage_failed(cxt)) {
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_MOUNT_POST);
 		if (rc)
-			return rc;
+			res = rc;
 	}
 
+end:
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 
@@ -1511,7 +1514,7 @@ static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
 		return -MNT_ERR_NAMESPACE;
 
 	if (!dir)
-		return 0;
+		goto done;
 	if (mnt_context_get_mountinfo(cxt, &tb) || !tb)
 		goto done;
 
