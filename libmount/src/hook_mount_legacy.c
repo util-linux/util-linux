@@ -16,6 +16,7 @@
  */
 
 #include "mountP.h"
+#include "fileutils.h"
 
 /* mount(2) flags for additional propagation changes etc. */
 struct hook_data {
@@ -208,6 +209,8 @@ static int hook_mount(struct libmnt_context *cxt,
 	unsigned long flags = 0;
 	struct libmnt_optlist *ol = NULL;
 	const char *src, *target, *type, *options = NULL;
+	char tgtfdpath[UL_FDPATH_BUFSIZ], srcfdpath[UL_FDPATH_BUFSIZ];
+	int fd_src = -1;
 
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
@@ -220,6 +223,31 @@ static int hook_mount(struct libmnt_context *cxt,
 		return -EINVAL;
 	if (!src)
 		src = "none";
+
+	/* For non-root users mount(2) the already pinned target FD rather
+	 * than the path. mount(2) resolves the path for the second time and
+	 * the result does not have to be the directory we have verified. The
+	 * kernel follows the /proc/ link directly to the pinned directory,
+	 * and mountinfo still reports the real mountpoint path.
+	 *
+	 * Fallback to the path if /proc is not available; mount(2) is racy by
+	 * design, let's harden it where we can.
+	 */
+	if (mnt_context_target_fd_required(cxt)) {
+		int fd = mnt_context_get_target_fd(cxt);
+		struct stat st;
+
+		if (fd < 0)
+			return -errno;
+		if (!ul_fd_mkpath(tgtfdpath, sizeof(tgtfdpath), fd))
+			return -errno;
+
+		if (stat(tgtfdpath, &st) == 0)
+			target = tgtfdpath;
+		else
+			DBG_OBJ(HOOK, hs, ul_debug("  %s not accessible, "
+					"using target path", tgtfdpath));
+	}
 
 	/* FS specific mount options/data */
 	if (cxt->flags & MNT_FL_MOUNTDATA)
@@ -234,6 +262,38 @@ static int hook_mount(struct libmnt_context *cxt,
 	if (rc)
 		return rc;
 
+	/* The source of a bind or move operation is a pathname resolved by
+	 * mount(2) too, so for non-root users pin it in the same way as the
+	 * target. Otherwise a symlink in the source path is followed and the
+	 * kernel attaches something else than the directory from fstab.
+	 *
+	 * This is what the new mount API already does for the very same
+	 * operations, see init_sysapi() and mnt_context_open_tree() where
+	 * open_tree() is called with RESOLVE_NO_SYMLINKS. A /dev/ source is
+	 * not affected, such a path is canonicalized and verified to stay in
+	 * /dev/ by mnt_context_prepare_srcpath() before we get here.
+	 */
+	if (mnt_context_target_fd_required(cxt)
+	    && (flags & (MS_BIND | MS_MOVE))
+	    && !(flags & MS_REMOUNT)
+	    && mnt_fs_get_srcpath(cxt->fs)) {
+		struct stat st;
+
+		fd_src = ul_open_no_symlinks(src, O_PATH | O_CLOEXEC, 0);
+		if (fd_src < 0)
+			return -errno;
+		if (!ul_fd_mkpath(srcfdpath, sizeof(srcfdpath), fd_src)) {
+			rc = -errno;
+			goto done;
+		}
+
+		if (stat(srcfdpath, &st) == 0)
+			src = srcfdpath;
+		else
+			DBG_OBJ(HOOK, hs, ul_debug("  %s not accessible, "
+					"using source path", srcfdpath));
+	}
+
 	DBG_OBJ(HOOK, hs, ul_debug("  mount(2) "
 		"[source=%s, target=%s, type=%s, flags=0x%08lx, options=%s]",
 		src, target, type, flags,
@@ -243,7 +303,7 @@ static int hook_mount(struct libmnt_context *cxt,
 	if (mount(src, target, type, flags, options)) {
 		mnt_context_syscall_save_status(cxt, "mount", 0);
 		rc = -cxt->syscall_status;
-		return rc;
+		goto done;
 	}
 
 	if (mnt_optlist_is_move(ol))
@@ -253,23 +313,18 @@ static int hook_mount(struct libmnt_context *cxt,
 
 	cxt->syscall_status = 0;
 
-	/* re-open to point to the mounted filesystem root */
+	/* Re-open to point to the mounted filesystem root and read the mount
+	 * IDs for utab.
+	 *
+	 * Note that mount(2) returns no handle to the new mount, so there is no
+	 * ID to verify the re-opened FD with; the path is resolved for the
+	 * second time and we have to trust the result. This is a limitation of
+	 * the old API, the new mount API knows the ID from the detached tree FD
+	 * before it's attached. */
 	rc = mnt_context_finalize_target(cxt);
-
-	/* Fetch mount IDs for utab. Note that IDs are not 100% robust
-	 * with mount(2) -- another process could overmount the target
-	 * between mount(2) and our statx() call. */
-	if (rc == 0 && cxt->fs && cxt->update && mnt_update_is_ready(cxt->update)) {
-		mnt_fs_fetch_ids(cxt->fs, cxt->fd_target);
-		if (cxt->fs->id || cxt->fs->uniq_id) {
-			struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
-			if (fs) {
-				fs->id = cxt->fs->id;
-				fs->uniq_id = cxt->fs->uniq_id;
-			}
-		}
-	}
-
+done:
+	if (fd_src >= 0)
+		close(fd_src);
 	return rc;
 }
 
