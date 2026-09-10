@@ -42,7 +42,7 @@ for PROTOCOL in $(printf "%d" 0x10) 10000; do
 	coproc MKFDS { "$TS_HELPER_MKFDS" mapped-packet-socket $FD \
 					  interface=${INTERFACE} socktype=${SOCKTYPE} protocol=${PROTOCOL}; }
 	if read -u ${MKFDS[0]} PID; then
-	    EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and (MODE == "-w-")'
+	    EXPR='(ASSOC == "shm") and (STTYPE == "SOCK") and ((MODE == "-w-") or (MODE == "rw-"))'
 	    ${TS_CMD_LSFD} --pid "$PID" -r --noheadings --output SOCK.PROTONAME --filter "${EXPR}"
 	    echo 'SOCK.PROTONAME': $?
 
