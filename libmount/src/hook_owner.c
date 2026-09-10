@@ -79,11 +79,26 @@ static int hook_post(
 	}
 
 	if (!rc && hd->mode != (mode_t) -1) {
-		char buf[sizeof(_PATH_PROC_FDDIR) + 1 + sizeof(stringify_value(INT_MAX))];
+		int x = -1;
 
-		snprintf(buf, sizeof(buf), _PATH_PROC_FDDIR "/%d", fd);
-		DBG(CXT, ul_debugobj(cxt, " chmod(%s, %04o)", buf, hd->mode));
-		if (chmod(buf, hd->mode) == -1)
+		/* The target is pinned by an O_PATH descriptor, so fchmod() is
+		 * not usable. fchmodat2() with an empty path does not resolve
+		 * anything, it operates directly on the pinned dentry. */
+#ifdef HAVE_FCHMODAT2
+		DBG(CXT, ul_debugobj(cxt, " fchmodat2(%s, %04o)", target, hd->mode));
+		x = fchmodat2(fd, "", hd->mode, AT_EMPTY_PATH);
+		if (x == -1 && (errno == ENOSYS || errno == EINVAL))
+#endif
+		{
+			/* fallback for kernels without fchmodat2() (< 6.6) */
+			char buf[UL_FDPATH_BUFSIZ];
+
+			if (ul_fd_mkpath(buf, sizeof(buf), fd)) {
+				DBG(CXT, ul_debugobj(cxt, " chmod(%s, %04o)", buf, hd->mode));
+				x = chmod(buf, hd->mode);
+			}
+		}
+		if (x == -1)
 			rc = -MNT_ERR_CHMOD;
 	}
 

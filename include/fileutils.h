@@ -119,6 +119,15 @@ static inline int statx(int fd, const char *restrict path, int flags,
 #  define HAVE_STATX 1
 # endif /* SYS_statx */
 
+# if !defined(HAVE_FCHMODAT2) && defined(SYS_fchmodat2)
+static inline int fchmodat2(int dirfd, const char *path, mode_t mode,
+			    unsigned int flags)
+{
+	return syscall(SYS_fchmodat2, dirfd, path, mode, flags);
+}
+#  define HAVE_FCHMODAT2 1
+# endif /* SYS_fchmodat2 */
+
 # if !defined(HAVE_COPY_FILE_RANGE) && defined(SYS_copy_file_range)
 static inline ssize_t copy_file_range(int fd_in, off_t *off_in,
 			int fd_out, off_t *off_out, size_t size, unsigned int flags)

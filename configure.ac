@@ -616,6 +616,7 @@ AC_CHECK_FUNCS([ \
 	err \
 	errx \
 	explicit_bzero \
+	fchmodat2 \
 	__fpending \
 	__fpurge \
 	fpurge \

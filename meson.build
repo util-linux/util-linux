@@ -634,6 +634,7 @@ funcs = '''
         errx
         explicit_bzero
         fallocate
+        fchmodat2
         fnmatch
         fseeko
         fsconfig
