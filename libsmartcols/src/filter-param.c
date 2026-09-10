@@ -139,18 +139,22 @@ static int is_unsafe_regex(const char *pattern)
 	size_t i, len = strlen(pattern);
 
 	for (i = 0; i + 1 < len; i++) {
-		if ((pattern[i] == '+' || pattern[i] == '*')
-		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*'))
+		/* Reject consecutive ERE quantifiers.  glibc's regcomp() can recurse
+		 * deeply while normalizing malformed runs such as "a???". */
+		if ((pattern[i] == '+' || pattern[i] == '*' || pattern[i] == '?')
+		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*' ||
+			    pattern[i + 1] == '?'))
 			return 1;
 
 		if (pattern[i] == ')'
-		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*')) {
+		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*' ||
+			    pattern[i + 1] == '?')) {
 			int j;
 
 			for (j = (int) i - 1; j >= 0; j--) {
 				if (pattern[j] == '(')
 					break;
-				if (pattern[j] == '+' || pattern[j] == '*')
+				if (pattern[j] == '+' || pattern[j] == '*' || pattern[j] == '?')
 					return 1;
 			}
 		}
