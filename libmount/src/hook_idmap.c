@@ -371,7 +371,7 @@ static int hook_mount_post(
 			rc = move_mount(fd_tree, "", AT_FDCWD, target, mmflags);
 
 		if (rc == 0)
-			rc = mnt_context_reopen_target_fd(cxt);
+			rc = mnt_context_finalize_target(cxt);
 		if (rc < 0) {
 			mnt_context_syscall_save_status(cxt, "move_mount", 0);
 			if (!mnt_context_read_mesgs(cxt, fd_tree)) {

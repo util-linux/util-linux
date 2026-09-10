@@ -254,7 +254,7 @@ static int hook_mount(struct libmnt_context *cxt,
 	cxt->syscall_status = 0;
 
 	/* re-open to point to the mounted filesystem root */
-	rc = mnt_context_reopen_target_fd(cxt);
+	rc = mnt_context_finalize_target(cxt);
 
 	/* Fetch mount IDs for utab. Note that IDs are not 100% robust
 	 * with mount(2) -- another process could overmount the target
