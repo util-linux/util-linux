@@ -705,7 +705,7 @@ extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 extern int mnt_context_target_fd_required(struct libmnt_context *cxt);
 extern int mnt_context_get_target_fd(struct libmnt_context *cxt);
 extern void mnt_context_close_target_fd(struct libmnt_context *cxt);
-extern int mnt_context_reopen_target_fd(struct libmnt_context *cxt);
+extern int mnt_context_finalize_target(struct libmnt_context *cxt);
 
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);

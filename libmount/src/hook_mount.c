@@ -329,21 +329,11 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		/* cleanup after fail (libmount may only try the FS type) */
 		close_sysapi_fds(api);
 
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
-	if (!rc && cxt->fs) {
-		struct statx st;
-
-		rc = statx(api->fd_tree, "", AT_EMPTY_PATH, STATX_MNT_ID, &st);
-		if (rc == 0) {
-			cxt->fs->id = (int) st.stx_mnt_id;
-			if (cxt->update) {
-				struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
-				if (fs)
-					fs->id = cxt->fs->id;
-			}
-		}
-	}
-#endif
+	/* Read the IDs of the new mount while it's still detached, they are
+	 * used to verify the target after move_mount(), see
+	 * mnt_context_finalize_target() which also stores them to utab. */
+	if (!rc && cxt->fs)
+		mnt_fs_fetch_ids(cxt->fs, api->fd_tree);
 
 done:
 	DBG(HOOK, ul_debugobj(hs, "create FS done [rc=%d, id=%d]", rc, cxt->fs ? cxt->fs->id : -1));
@@ -524,6 +514,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		void *data __attribute__((__unused__)))
 {
 	struct libmnt_sysapi *api;
+	struct libmnt_optlist *ol;
 	unsigned int flags;
 	const char *target;
 	int rc = 0;
@@ -567,19 +558,19 @@ static int hook_attach_target(struct libmnt_context *cxt,
 
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
 
-	if (rc == 0) {
-		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+	if (rc != 0)
+		return -errno;
 
-		if (ol && mnt_optlist_is_move(ol))
-			mnt_fs_mark_moved(cxt->fs);
-		else
-			mnt_fs_mark_attached(cxt->fs);
+	ol = mnt_context_get_optlist(cxt);
+	if (ol && mnt_optlist_is_move(ol))
+		mnt_fs_mark_moved(cxt->fs);
+	else
+		mnt_fs_mark_attached(cxt->fs);
 
-		/* re-open to point to the mounted filesystem root */
-		rc = mnt_context_reopen_target_fd(cxt);
-	}
-
-	return rc == 0 ? 0 : -errno;
+	/* re-open to point to the mounted filesystem root; the function
+	 * already returns a negative error code, for example -EPERM when
+	 * the mount does not match the pinned target */
+	return mnt_context_finalize_target(cxt);
 }
 
 static inline int fsopen_is_supported(void)

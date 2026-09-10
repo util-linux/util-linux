@@ -21,6 +21,7 @@
 #include "mountP.h"
 #include "strutils.h"
 #include "strv.h"
+#include "fileutils.h"
 
 #if defined(HAVE_SMACK)
 static int is_option(const char *name, const char *const *names)
@@ -523,8 +524,29 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 			return rc;
 	}
 
-	if (cxt->helper)
-		return exec_helper(cxt);
+	if (cxt->helper) {
+		rc = exec_helper(cxt);
+
+		/* The helper has done the mount, so the target FD pinned by
+		 * prepare_target() still refers to the directory which is
+		 * covered by the new mount now. Re-open it, otherwise the
+		 * MNT_STAGE_POST hooks would work with the underlying
+		 * directory -- X-mount.owner=, X-mount.group= and
+		 * X-mount.mode= would modify the mount point itself and the
+		 * change would survive umount.
+		 *
+		 * The helper mounts outside of libmount and gives us no handle
+		 * to the new mount, so there is no ID to verify the re-opened
+		 * FD with and none for utab either; mnt_context_finalize_target()
+		 * reads the IDs from the new mount point, the same way as for
+		 * classic mount(2).
+		 */
+		if (rc == 0
+		    && mnt_context_helper_executed(cxt)
+		    && mnt_context_get_helper_status(cxt) == 0)
+			rc = mnt_context_finalize_target(cxt);
+		return rc;
+	}
 
 	if (try_type) {
 		ol = mnt_context_get_optlist(cxt);
@@ -699,6 +721,51 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	return rc;
 }
 
+/*
+ * Pin the target for non-root users.
+ *
+ * The target comes from fstab, but any component of the path may be a symlink
+ * controlled by the user. mnt_resolve_path() would follow it with root
+ * privileges and the mount would end up somewhere else. Open the path as it is
+ * with RESOLVE_NO_SYMLINKS instead, and then use the name the kernel gives to
+ * the pinned directory as the canonical target.
+ *
+ * The name is symlink free and normalized, and it's the same name the kernel
+ * later reports in mountinfo -- utab and non-root umount rely on that.
+ */
+static int pin_target(struct libmnt_context *cxt)
+{
+	const char *tgt;
+	char *path;
+	int fd, rc = 0;
+
+	fd = mnt_context_get_target_fd(cxt);
+	if (fd < 0) {
+		rc = -errno;
+		DBG_OBJ(CXT, cxt, ul_debug("failed to pin target [rc=%d]", rc));
+
+		/* the kernel refuses a symlink in the path with ELOOP, which
+		 * is confusing without a hint about the new restriction */
+		if (rc == -ELOOP)
+			mnt_context_sprintf_mesg(cxt, _("e symbolic links in the "
+				"mount point path are not allowed for non-root users"));
+		return rc;
+	}
+
+	path = ul_fd_get_path(fd);
+	if (!path) {
+		DBG_OBJ(CXT, cxt, ul_debug("failed to read pinned target path"));
+		return -errno;
+	}
+
+	tgt = mnt_fs_get_target(cxt->fs);
+	if (!tgt || strcmp(path, tgt) != 0)
+		rc = mnt_fs_set_target(cxt->fs, path);
+
+	free(path);
+	return rc;
+}
+
 static int prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt, *prefix;
@@ -742,8 +809,11 @@ static int prepare_target(struct libmnt_context *cxt)
 	if (!ns_old)
 		return -MNT_ERR_NAMESPACE;
 
-	/* canonicalize the path */
-	if (rc == 0 && !mnt_context_is_xnocanonicalize(cxt, "target")) {
+	/* canonicalize the path; for non-root users this is done later from
+	 * the pinned target FD, see pin_target() */
+	if (rc == 0
+	    && !mnt_context_target_fd_required(cxt)
+	    && !mnt_context_is_xnocanonicalize(cxt, "target")) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
 
 		if (cache) {
@@ -756,12 +826,8 @@ static int prepare_target(struct libmnt_context *cxt)
 	if (rc == 0)
 		rc = mnt_context_call_hooks(cxt, MNT_STAGE_PREP_TARGET);
 
-	if (rc == 0
-	    && mnt_context_target_fd_required(cxt)
-	    && mnt_context_get_target_fd(cxt) < 0) {
-		DBG(CXT, ul_debugobj(cxt, "failed to pin target"));
-		rc = -errno;
-	}
+	if (rc == 0 && mnt_context_target_fd_required(cxt))
+		rc = pin_target(cxt);
 
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;

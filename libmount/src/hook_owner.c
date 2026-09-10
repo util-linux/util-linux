@@ -60,8 +60,10 @@ static int hook_post(
 	if (!target)
 		return 0;
 
-	/* fd_target is pinned in restricted mode (see prepare_target()),
-	 * for root open it here to keep chmod/chown fd-based too */
+	/* fd_target is pinned in restricted mode (see prepare_target()) and
+	 * re-opened once the filesystem is attached, so it refers to the root
+	 * of the new mount and not to the directory covered by it; for root
+	 * open it here to keep chmod/chown fd-based too */
 	if (mnt_context_target_fd_required(cxt))
 		fd = mnt_context_get_target_fd(cxt);
 	else
