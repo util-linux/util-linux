@@ -498,6 +498,7 @@ struct libmnt_context
 	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
 	int	helper_status;	/* helper wait(2) status */
 	int	helper_exec_status; /* 1: not called yet, 0: success, <0: -errno */
+	int	helper_errno;	/* errno from helper's failed execv(), 0 if unknown/none */
 
 	pid_t	*children;	/* "mount -a --fork" PIDs */
 	int	nchildren;	/* number of children */
