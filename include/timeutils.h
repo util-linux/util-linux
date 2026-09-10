@@ -43,6 +43,8 @@ typedef uint64_t nsec_t;
 #define USEC_PER_YEAR	(31557600ULL*USEC_PER_SEC)
 #define NSEC_PER_YEAR	(31557600ULL*NSEC_PER_SEC)
 
+#define TIME_T_MAX	((time_t) ((1ULL << (sizeof(time_t) * 8 - 1)) - 1))
+
 #define FORMAT_TIMESTAMP_MAX ((4*4+1)+11+9+4+1)	/* weekdays can be unicode */
 #define FORMAT_TIMESTAMP_RELATIVE_MAX 256
 #define FORMAT_TIMESPAN_MAX 64

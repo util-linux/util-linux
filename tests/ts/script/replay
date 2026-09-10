@@ -95,4 +95,32 @@ NUMBER=123 $TS_CMD_SCRIPTLIVE \
 sed -i 's/^[[:alnum:][:punct:][:blank:]]*[\$\#] /prompt> /g' "$TS_OUTPUT"
 ts_finalize_subtest
 
+
+#
+# Delays that no producer emits
+#
+ts_init_subtest "invalid-timing"
+BAD_TIMING="$TS_OUTDIR/${TS_TESTNAME}-bad-timing"
+BAD_LOG="$TS_OUTDIR/${TS_TESTNAME}-bad-typescript"
+echo "hello world" >"$BAD_LOG"
+
+# --maxdelay keeps the clamped delay from stopping the test for a few
+# billion years; the refused delays never get that far.
+function replay_delay {
+	echo "=== $1" >>"$TS_OUTPUT"
+	echo "O $1 12" >"$BAD_TIMING"
+	$TS_CMD_SCRIPTREPLAY \
+		--log-out "$BAD_LOG" \
+		--log-timing "$BAD_TIMING" \
+		--maxdelay 0.01 \
+		</dev/null >/dev/null 2>/dev/null
+	echo "rc=$?" >>"$TS_OUTPUT"
+}
+
+replay_delay "-1.000000"			# negative seconds
+replay_delay "9223372036854775807.000000"	# clamped, would overflow time_t
+replay_delay "1.-00001"				# negative microseconds
+ts_finalize_subtest
+
+
 ts_finalize

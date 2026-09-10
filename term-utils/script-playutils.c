@@ -15,6 +15,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
+#include "timeutils.h"
 #include "script-playutils.h"
 
 UL_DEBUG_DEFINE_MASK(scriptreplay);
@@ -92,10 +93,27 @@ static int ignore_line(FILE *f)
 	return 0;
 }
 
-/* incretemt @a by @b */
+/* The timing file may be an untrusted input (for example a log attached to a
+ * bug report), so the delay read from it has to be bounded. The bound only
+ * needs to keep now + delay inside time_t for the users of the delay, see
+ * timeradd() in scriptlive.c.
+ */
+#define REPLAY_MAX_DELAY_SEC	(TIME_T_MAX / 2)
+
+/* increment @a by @b, saturate rather than overflow time_t. Both are delays,
+ * so they are non-negative and within the bound, see set_delay().
+ */
 static inline void timerinc(struct timeval *a, struct timeval *b)
 {
 	struct timeval res;
+
+	/* +1 for the carry timeradd() may produce from tv_usec */
+	if (a->tv_sec + 1 > REPLAY_MAX_DELAY_SEC - b->tv_sec) {
+		DBG(TIMING, ul_debug(" saturate accumulated delay"));
+		a->tv_sec = REPLAY_MAX_DELAY_SEC;
+		a->tv_usec = 0;
+		return;
+	}
 
 	timeradd(a, b, &res);
 	a->tv_sec = res.tv_sec;
@@ -314,6 +332,26 @@ void replay_toggle_pause(struct replay_setup *setup)
 	setup->pause = !setup->pause;
 }
 
+/* Store a delay read from the timing file. Refuse values that no producer
+ * emits, and clamp large ones -- rejecting the whole file would make an
+ * otherwise readable typescript unviewable.
+ */
+static int set_delay(struct timeval *tv, int64_t sec, int64_t usec)
+{
+	if (sec < 0 || usec < 0 || usec > 999999)
+		return -EINVAL;
+
+	if (sec > REPLAY_MAX_DELAY_SEC) {
+		DBG(TIMING, ul_debug(" clamp delay %"PRId64, sec));
+		sec = REPLAY_MAX_DELAY_SEC;
+		usec = 0;
+	}
+
+	tv->tv_sec = (time_t) sec;
+	tv->tv_usec = (suseconds_t) usec;
+	return 0;
+}
+
 static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 {
 	int rc = 0;
@@ -328,10 +366,7 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 		if (rc != 4 || nl != '\n')
 			rc = -EINVAL;
 		else
-			rc = 0;
-
-		step->delay.tv_sec = (time_t) sec;
-		step->delay.tv_usec = (suseconds_t) usec;
+			rc = set_delay(&step->delay, sec, usec);
 		break;
 
 	case 'S': /* signal */
@@ -344,8 +379,9 @@ static int read_multistream_step(struct replay_step *step, FILE *f, char type)
 		if (rc != 2)
 			break;
 
-		step->delay.tv_sec = (time_t) sec;
-		step->delay.tv_usec = (suseconds_t) usec;
+		rc = set_delay(&step->delay, sec, usec);
+		if (rc)
+			break;
 
 		rc = fscanf(f, "%128s", buf);		/* name */
 		if (rc != 1)
