@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Regression test for reporting the reason a mount.<type> helper could not
+# be exec'd (e.g. a dangling #! interpreter, or a non-executable helper).
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mount.<type> helper exec failure reason"
+
+NOENT_HELPER="/sbin/mount.ulhelperfail"
+EACCES_HELPER="/sbin/mount.ulhelperperm"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+
+ts_skip_nonroot
+
+# Helper whose #! interpreter does not exist -- execve() fails with ENOENT
+# even though the helper file itself exists and is executable.
+cat > "$NOENT_HELPER" <<EOF
+#!/usr/local/lib/util-linux-test-nonexistent-interpreter
+echo "should never run"
+EOF
+chmod 0755 "$NOENT_HELPER"
+
+# Helper that exists but is not executable -- execve() fails with EACCES.
+cat > "$EACCES_HELPER" <<EOF
+#!/bin/sh
+echo "should never run"
+EOF
+chmod 0644 "$EACCES_HELPER"
+
+ts_init_subtest "noent"
+$TS_CMD_MOUNT -t ulhelperfail /foo /bar &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "eacces"
+$TS_CMD_MOUNT -t ulhelperperm /foo /bar &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+rm -f "$NOENT_HELPER" "$EACCES_HELPER"
+
+ts_finalize
