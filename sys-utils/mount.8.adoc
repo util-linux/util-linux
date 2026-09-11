@@ -188,7 +188,9 @@ For more details, see *fstab*(5). Only the user that mounted a filesystem can un
 
 The *user* mount option is accepted if no username is specified. If used in the format *user=someone*, the option is silently ignored and visible only for external mount helpers (/sbin/mount.<type>) for compatibility with some network filesystems.
 
-WARNING: When using the legacy *mount*(2) syscall (on older kernels without the new mount API), the mount target path is resolved by the kernel at syscall time. This means there is an inherent time-of-check-to-time-of-use (TOCTOU) window between the permission verification and the actual mount operation. If an ancestor directory of the mount target is writable by the unprivileged user, a path component could be swapped to redirect the mount to an unintended location. The new mount API (available since Linux 5.2) eliminates this issue by using file-descriptor-based target resolution. Administrators should ensure that mount target paths for *user* mounts do not traverse directories writable by unprivileged users.
+For unprivileged users the mount target from _fstab_ is opened before the filesystem is attached and the mount operation uses this file descriptor rather than the path, so the path is not resolved for the second time by the kernel. Symbolic links are not followed in the target path at all, a _fstab_ entry with a symbolic link in the mount point path is unusable for unprivileged users and the mount fails.
+
+WARNING: When the new mount API is not available (Linux before 5.2, or *mount*(8) compiled without the support for it), the legacy *mount*(2) syscall is used. In this case the pinned target is referenced by a _/proc/self/fd/_ path, which requires a mounted _/proc_ filesystem. Without _/proc_ the target path is resolved by the kernel again and the inherent time-of-check-to-time-of-use (TOCTOU) window between the verification and the mount operation remains; if an ancestor directory of the mount target is writable by the unprivileged user, a path component could be swapped to redirect the mount to an unintended location. Administrators should ensure that mount target paths for *user* mounts do not traverse directories writable by unprivileged users.
 
 For mount source paths, *mount*(8) only canonicalizes (resolves symlinks) paths starting with _/dev/_ for unprivileged users and verifies the result stays within _/dev/_. Source paths outside _/dev/_ (e.g. disk images in user-writable directories) are kept as-is from _fstab_.
 
@@ -802,7 +804,7 @@ Allows disabling of canonicalization for mount source and target paths. By defau
 +
 The command-line option *--no-canonicalize* overrides this mount option and affects all path and tag conversions in all situations, but for backward compatibility, it does not modify *open_tree*(2) syscall flags and does not allow the bind-mount over a symbolic link use case.
 +
-Note that *mount*(8) ignores this option for unprivileged (non-root) users. Target paths are always canonicalized in restricted mode to ensure safe resolution. Source paths are only canonicalized when starting with _/dev/_.
+Note that *mount*(8) ignores this option for unprivileged (non-root) users. In restricted mode symbolic links are not followed in the target path at all, so a mount with a symbolic link in the target fails. Source paths are only canonicalized when starting with _/dev/_. See section "Non-superuser mounts" above for more details.
 
 *X-mount.noloop*::
 Do not create and mount a loop device, even if the source of the mount is a regular file.

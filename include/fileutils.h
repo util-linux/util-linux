@@ -16,6 +16,7 @@
 #endif
 
 #include "c.h"
+#include "pathnames.h"
 
 extern int mkstemp_cloexec(char *template);
 
@@ -121,6 +122,15 @@ static inline int statx(int fd, const char *restrict path, int flags,
 #  define HAVE_STATX 1
 # endif /* SYS_statx */
 
+# if !defined(HAVE_FCHMODAT2) && defined(SYS_fchmodat2)
+static inline int fchmodat2(int dirfd, const char *path, mode_t mode,
+			    unsigned int flags)
+{
+	return syscall(SYS_fchmodat2, dirfd, path, mode, flags);
+}
+#  define HAVE_FCHMODAT2 1
+# endif /* SYS_fchmodat2 */
+
 # if !defined(HAVE_COPY_FILE_RANGE) && defined(SYS_copy_file_range)
 static inline ssize_t copy_file_range(int fd_in, off_t *off_in,
 			int fd_out, off_t *off_out, size_t size, unsigned int flags)
@@ -140,7 +150,12 @@ extern void ul_close_all_fds(unsigned int first, unsigned int last);
 #define UL_COPY_WRITE_ERROR (-2)
 int ul_copy_file(int from, int to);
 
+/* Size of the buffer for ul_fd_mkpath() */
+#define UL_FDPATH_BUFSIZ	(sizeof(_PATH_PROC_FDDIR) + sizeof(stringify_value(INT_MAX)))
+
 extern int ul_reopen(int fd, int flags);
+extern char *ul_fd_mkpath(char *buf, size_t bufsz, int fd);
+extern char *ul_fd_get_path(int fd);
 extern char *ul_basename(char *path);
 
 extern char *ul_restricted_path_oper(const char *path,

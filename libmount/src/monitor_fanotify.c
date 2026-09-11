@@ -24,6 +24,7 @@
 
 #include "strutils.h"
 #include "pathnames.h"
+#include "fileutils.h"
 
 #include <sys/fanotify.h>
 #include <sys/epoll.h>
@@ -318,7 +319,12 @@ int mnt_monitor_enable_fanotify(struct libmnt_monitor *mn, int enable, int ns)
 		if (!me->path)
 			goto err;
 	} else {
-		if (asprintf(&me->path, _PATH_PROC_FDDIR "/%d", data->ns_fd) < 0)
+		char buf[UL_FDPATH_BUFSIZ];
+
+		if (!ul_fd_mkpath(buf, sizeof(buf), data->ns_fd))
+			goto err;
+		me->path = strdup(buf);
+		if (!me->path)
 			goto err;
 	}
 
