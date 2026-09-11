@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# Copyright (C) 2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="fstrim"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_FSTRIM"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_HEXDUMP"
+ts_check_prog "filefrag"
+ts_check_prog "dd"
+ts_check_prog "mkfs.ext4"
+ts_check_prog "awk"
+
+PHY_BLOCK_SIZE=512
+FS_BLOCK_SIZE=1024
+
+[ ! -d "$TS_MOUNTPOINT" ] && mkdir -p "$TS_MOUNTPOINT" 2>"$TS_ERRLOG"
+export TEST_FILE_PATH="${TS_MOUNTPOINT}/util-linux-test.txt"
+
+# the lbpu setting enables the UNMAP SCSI command which is what allows us
+# to tell the underlying storage device to reclaim the unused data blocks
+# via fstrim's FITRIM ioctl call.
+ts_scsi_debug_init sector_size="$PHY_BLOCK_SIZE" ptype=0 dev_size_mb=64 lbpu=1
+DEV="$TS_DEVICE"
+
+mkfs.ext4 -L UL_TEST_FS -b $FS_BLOCK_SIZE "$DEV" &>/dev/null ||
+	ts_die "failed to make ext4 on $DEV"
+
+"$TS_CMD_MOUNT" "$DEV" "$TS_MOUNTPOINT" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+udevadm settle --timeout 3
+if ! ts_is_mounted "$DEV"; then
+	ts_die "could not find $DEV in /proc/mounts"
+fi
+
+echo -n "UTIL-LINUX FSTRIM TEST FILE" >"$TEST_FILE_PATH"
+# This sync is needed so we flush dirty pages, allocate blocks and write
+# data on disk
+sync -f "$TEST_FILE_PATH"
+
+EXTENTS="$(filefrag -v -b"${PHY_BLOCK_SIZE}" "$TEST_FILE_PATH" 2>>"$TS_ERRLOG" |
+	awk '$0 ~ ENVIRON["TEST_FILE_PATH"]":"' |
+	cut -d' ' -f 2)"
+
+# In this test we only care about trimming a tiny file that is not fragmented
+# i.e. it has one single file extent
+if (( EXTENTS  != 1 )); then
+	cleanup
+	ts_die "found $EXTENTS extents instead of just 1"
+fi
+
+PHY_OFFSET=$(filefrag -v -b"${PHY_BLOCK_SIZE}" "$TEST_FILE_PATH" 2>>"$TS_ERRLOG" |
+	awk '/^ *0:/ {print $4}' | sed 's/\.\..*//')
+
+# filefrag -b reports PHY_OFFSET in units of BLOCK_SIZE bytes, but fstrim's
+# --offset/--length take a plain byte value. Convert to bytes and align to
+# the filesystem's block size, since FITRIM only discards blocks that
+# are within the given range.
+PHY_OFFSET_BYTES=$(( PHY_OFFSET * PHY_BLOCK_SIZE ))
+# This calculation is a floor-alignment idiom which rounds down to
+# the nearest multiple of the filesystem block size, so we get the
+# start of the filesystem block in which the freed file extent sits.
+TRIM_OFFSET=$(( (PHY_OFFSET_BYTES / FS_BLOCK_SIZE) * FS_BLOCK_SIZE ))
+
+if ! rm "$TEST_FILE_PATH" 2>>"$TS_ERRLOG"; then
+	"$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
+	ts_die "failed to remove test file"
+fi
+# Lets mark the blocks as truly free by flushing the fs journal
+sync -f "$TS_MOUNTPOINT"
+
+ts_log "Data on disk after file deletion"
+# iflag=direct makes it so that we bypass the page cache and read whats on disk
+dd if="$DEV" skip="$PHY_OFFSET" bs=$PHY_BLOCK_SIZE \
+	iflag=direct count=1 status=none 2>>"$TS_ERRLOG" \
+		| "$TS_CMD_HEXDUMP" -C >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+ts_log "Data on disk after trimming"
+
+"$TS_CMD_FSTRIM" --offset "$TRIM_OFFSET" --length "$FS_BLOCK_SIZE" \
+	--verbose "$TS_MOUNTPOINT" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+dd if="$DEV" skip="$PHY_OFFSET" bs=$PHY_BLOCK_SIZE \
+	iflag=direct count=1 status=none 2>>"$TS_ERRLOG" \
+		| "$TS_CMD_HEXDUMP" -C >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+
+
+"$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
+sed -i "s@$TS_MOUNTPOINT@<mountpoint>@" "$TS_OUTPUT"
+
+ts_finalize

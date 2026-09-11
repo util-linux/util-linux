@@ -105,6 +105,7 @@ TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"${ts_commandsdir}findmnt"}
 TS_CMD_FSCKCRAMFS=${TS_CMD_FSCKCRAMFS:-"${ts_commandsdir}fsck.cramfs"}
 TS_CMD_FSCKMINIX=${TS_CMD_FSCKMINIX:-"${ts_commandsdir}fsck.minix"}
 TS_CMD_FSFREEZE=${TS_CMD_FSFREEZE-"${ts_commandsdir}fsfreeze"}
+TS_CMD_FSTRIM=${TS_CMD_FSTRIM-"${ts_commandsdir}fstrim"}
 TS_CMD_GETOPT=${TS_CMD_GETOPT-"${ts_commandsdir}getopt"}
 TS_CMD_GETINO=${TS_CMD_GETINO-"${ts_commandsdir}getino"}
 TS_CMD_HARDLINK=${TS_CMD_HARDLINK-"${ts_commandsdir}hardlink"}
