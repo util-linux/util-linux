@@ -64,7 +64,7 @@ if [ -n "$res" ]; then
 fi
 ts_finalize_subtest
 
-
+# UL_TESTCOVERAGE_MANUAL_VALIDATION=--cgroupns --mntns --netns --pidfs --pidns --timens --utsns
 function do_ns_check() {
   local ns_name="$1"
   local unshare_opts="$2"
