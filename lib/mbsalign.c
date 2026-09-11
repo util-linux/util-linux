@@ -45,12 +45,21 @@ size_t mbs_nwidth(const char *buf, size_t bufsz)
 		if (*p == '\033') {
 			p++;
 
-			/* try detect "\e[x;ym" and skip on success */
-			if (*p && *p == '[') {
-				const char *e = p;
-				while (*e && e < last && *e != 'm')
+			/* try detect a CSI sequence "\e[" and skip on success;
+			 * it is parameter bytes (0x30-0x3f), then intermediate
+			 * bytes (0x20-0x2f), terminated by a final byte
+			 * (0x40-0x7e). None of them occupies a cell. */
+			if (*p == '[') {
+				const char *e = p + 1;
+
+				while (e <= last && (unsigned char) *e >= 0x30
+						 && (unsigned char) *e <= 0x3f)
 					e++;
-				if (*e == 'm')
+				while (e <= last && (unsigned char) *e >= 0x20
+						 && (unsigned char) *e <= 0x2f)
+					e++;
+				if (e <= last && (unsigned char) *e >= 0x40
+					       && (unsigned char) *e <= 0x7e)
 					p = e + 1;
 			}
 			/* try detect SCS sequences "\e(X", "\e)X", "\e*X", "\e+X" and skip on success */
