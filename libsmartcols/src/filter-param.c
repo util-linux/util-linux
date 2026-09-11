@@ -131,52 +131,6 @@ struct filter_node *filter_new_param(
 	return (struct filter_node *) n;
 }
 
-/* Consecutive ERE quantifiers (a++, a**), nested group repetitions
- * ((a+)+, (a*)*), and large interval bounds ({,N} where N is huge)
- * cause glibc regcomp() to allocate gigabytes for the NFA. */
-static int is_unsafe_regex(const char *pattern)
-{
-	size_t i, len = strlen(pattern);
-
-	for (i = 0; i + 1 < len; i++) {
-		if ((pattern[i] == '+' || pattern[i] == '*')
-		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*'))
-			return 1;
-
-		if (pattern[i] == ')'
-		    && (pattern[i + 1] == '+' || pattern[i + 1] == '*')) {
-			int j;
-
-			for (j = (int) i - 1; j >= 0; j--) {
-				if (pattern[j] == '(')
-					break;
-				if (pattern[j] == '+' || pattern[j] == '*')
-					return 1;
-			}
-		}
-
-		/* reject large ERE interval bounds like {,32232} or {1,9999} */
-		if (pattern[i] == '{') {
-			const char *p = &pattern[i + 1];
-
-			while (*p && *p != '}') {
-				if (*p >= '0' && *p <= '9') {
-					unsigned long val;
-					char *end = NULL;
-
-					errno = 0;
-					val = strtoul(p, &end, 10);
-					if (errno || val > SCOLS_FILTER_MAX_REPCNT)
-						return 1;
-					p = end;
-				} else
-					p++;
-			}
-		}
-	}
-	return 0;
-}
-
 int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 {
 	int rc;
@@ -189,14 +143,21 @@ int filter_compile_param(struct libscols_filter *fltr, struct filter_param *n)
 		return -EINVAL;
 	if (strlen(n->val.str) > SCOLS_FILTER_MAX_REGSZ)
 		return -EINVAL;
-	if (is_unsafe_regex(n->val.str))
-		return -EINVAL;
 
 	n->re = calloc(1, sizeof(regex_t));
 	if (!n->re)
 		return -ENOMEM;
 
+#ifdef FUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION
+	/* Small but perfectly valid EREs make glibc regcomp() exhaust memory
+	 * or the stack; "((a?){950}){950}" is enough. That happens inside libc
+	 * and the pattern always comes from whoever runs the tool, so keep
+	 * regcomp() out of the fuzzing surface and let the fuzzer explore the
+	 * filter parser instead. */
+	rc = regcomp(n->re, "", REG_NOSUB | REG_EXTENDED);
+#else
 	rc = regcomp(n->re, n->val.str, REG_NOSUB | REG_EXTENDED);
+#endif
 	if (rc) {
 		size_t size = regerror(rc, n->re, NULL, 0);
 
