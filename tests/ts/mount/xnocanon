@@ -27,6 +27,7 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
 
+$TS_CMD_MOUNT --version | grep -q 'fd-based' || ts_skip "no fd-based API"
 [ "$("$TS_HELPER_SYSINFO" fsopen-ok)" == "1" ] || ts_skip "no fs-API"
 
 [ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT
