@@ -139,6 +139,14 @@ function progress_status() {
 	printf "\033[2K\rtesting program %d out of %d ('%s')" "$counter" "$num_total_progs" "$prog"
 }
 
+function opts_from_manual_validation() {
+	local opts
+	local ts="$1"
+	opts="$(awk -F= '/UL_TESTCOVERAGE_MANUAL_VALIDATION/ {print $2}' "$ts")"
+
+	echo " $opts " | tr ' ' '\n'
+}
+
 function get_full_cmdline() {
 	local test_script_path="$1"
 
@@ -190,8 +198,9 @@ function get_test_scripts_l_opts() {
 	# Look for all options in $prog test scripts
 	for ts in $test_scripts; do
 		found="$(get_full_cmdline "${ts}" \
-			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
-			| uniq)"
+			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' )"
+
+		found+="$(opts_from_manual_validation "$ts")"
 
 		if [ -n "$found" ]; then
 			opts+="$(printf -- '\n%s' "$found")"
