@@ -330,6 +330,7 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	cxt->syscall_status = 1;		/* means not called yet */
 	cxt->helper_exec_status = 1;
 	cxt->helper_status = 0;
+	cxt->helper_errno = 0;
 	return 0;
 }
 
