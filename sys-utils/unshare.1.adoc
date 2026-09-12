@@ -142,6 +142,18 @@ Run the program only after the current effective user and group IDs have been ma
 *-c*, *--map-current-user*::
 Run the program only after the current effective user and group IDs have been mapped to the same UID and GID in the newly created user namespace. This option implies *--setgroups=deny* and *--user*. This option is equivalent to *--map-user=$(id -ru) --map-group=$(id -rg)*.
 
+*--map-foreign*::
+Map the foreign user ID range 1:1 into the new user namespace using *systemd-nsresourced.service*(8), so that processes inside can access files owned by that range. This option implies *--user* and *--map-current-user*.
+
+*systemd-nsresourced.service*(8) always maps the current uid and gid, so *--map-current-user* is enabled by default.
+The *--map-root-user* option is also supported.
++
+Unlike the other mapping options, the maps are installed by *systemd-nsresourced.service*(8) rather than by *unshare* itself. Since they are written by a privileged process, *--setgroups=deny* is _not_ implied; use *--setgroups=deny* explicitly if that is required.
++
+The remaining mapping options (*--map-user*, *--map-group*, *--map-users*, *--map-groups*, *--map-auto*, *--map-subids*) and *--owner* cannot be combined with *--map-foreign*.
++
+This option requires *unshare* to be built against systemd 257 or newer; mapping the foreign UID range additionally requires a *systemd-nsresourced.service*(8) that supports it.
+
 *--owner* __uid__**:**__gid__::
 Set the owner user and group when creating a user namespace. These determine which user in the parent namespace has CAP_SYS_ADMIN in the new child namespace and can *setns*(2) into it. This option allows a privileged user to create a namespace on behalf of an unprivileged one, using its privileges to map ids and/or bind mount the namespace into the filesystem. It implies *--user*.
 
@@ -235,6 +247,22 @@ $ ls -ln --time-style=+ file
 -rw-r--r-- 1 100000 100000 0  file
 ....
 
+The following example maps the current user to uid 0 and the foreign uid range 1:1 using *systemd-nsresourced.service*(8).
+
+....
+$ id -u
+1000
+$ id -u foreign-0
+2147352576
+$ unshare --user --map-foreign --map-root-user
+# id -u
+0
+# cat /proc/self/uid_map
+         0       1000          1
+2147352576 2147352576      65536
+# exit
+....
+
 The first of the following commands creates a new persistent UTS namespace and modifies the hostname as seen in that namespace. The namespace is then entered with *nsenter*(1) in order to display the modified hostname; this step demonstrates that the UTS namespace continues to exist even though the namespace had no member processes after the *unshare* command terminated. The namespace is then destroyed by removing the bind mount.
 
 ....
@@ -326,7 +354,8 @@ mailto:kzak@redhat.com[Karel Zak]
 *clone*(2),
 *unshare*(2),
 *namespaces*(7),
-*mount*(8)
+*mount*(8),
+*systemd-nsresourced.service*(8)
 
 include::man-common/bugreports.adoc[]
 

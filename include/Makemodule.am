@@ -26,6 +26,7 @@ dist_noinst_HEADERS += \
 	include/dl-econf.h \
 	include/dl-selinux.h \
 	include/dl-systemd.h \
+	include/dl-systemd-varlink.h \
 	include/dl-utils.h \
 	include/encode.h \
 	include/env.h \
