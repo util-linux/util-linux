@@ -69,6 +69,8 @@ last_manadocs = files('last.1.adoc')
 
 login_sources = files(
   'login.c',
+  'vmcp.c',
+  'vmcp.h',
 )
 login_manadocs = files('login.1.adoc')
 
@@ -76,6 +78,8 @@ sulogin_sources = files(
   'sulogin.c',
   'sulogin-consoles.c',
   'sulogin-consoles.h',
+  'vmcp.c',
+  'vmcp.h',
 )
 sulogin_manadocs = files('sulogin.8.adoc')
 
