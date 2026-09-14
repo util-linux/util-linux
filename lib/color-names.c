@@ -74,7 +74,7 @@ int color_is_sequence(const char *color)
 
 		if (len >= 4 &&
 		    *(color + 1) == '[' &&
-		    isdigit(*(color + 2)) &&
+		    isdigit((unsigned char)*(color + 2)) &&
 		    *(color + len - 1) == 'm')
 		return 1;
 	}
@@ -94,7 +94,7 @@ static int __color_canonicalize(const char *str, char **seq)
 	*seq = NULL;
 
 	/* convert color names like "red" to the real sequence */
-	if (*str != '\\' && !strchr(str, ';') && isalpha(*str)) {
+	if (*str != '\\' && !strchr(str, ';') && isalpha((unsigned char)*str)) {
 		const char *s = color_sequence_from_colorname(str);
 
 		if (s) {
