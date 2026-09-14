@@ -34,6 +34,7 @@ DUMP_DIR="$TS_OUTDIR/sysfs-dumps"
 mkdir -p "$DUMP_DIR"
 tar --no-same-owner -C "$DUMP_DIR" -jxf "$DUMP_FILENAME"
 
+# UL_TESTCOVERAGE_MANUAL_VALIDATION=--verbose --disable --enable --zone --blocks
 do_chmem() {
         "$TS_CMD_CHMEM" --sysroot "${DUMP_DIR}/${DUMP_NAME}" "${@}" >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 }
@@ -76,7 +77,6 @@ mem_block="memory${index}"
 # otherwise chmem will complain about a zone mismatch
 chmod u+w "${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/valid_zones"
 echo "Movable" >"${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/valid_zones"
-
 
 do_chmem --verbose --disable "$range_str"
 path_mem_state="${DUMP_DIR}/${DUMP_NAME}/${_PATH_SYS_MEM}/${mem_block}/state"
