@@ -71,6 +71,7 @@ call_cal "Julian - Monday-based year with week numbers" -1mjw $MYYEAR
 call_cal "Julian - Sunday-based year with week numbers" -1sjw $MYYEAR
 call_cal "Julian - Saturday-based year with week numbers" -1tjw $MYYEAR
 
+# UL_TESTCOVERAGE_MANUAL_VALIDATION= --iso
 ts_init_subtest "week-iso"
 call_cal_simple "Gregorian - address by week number" --week=40 --iso $MYYEAR
 ts_finalize_subtest
