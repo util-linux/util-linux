@@ -48,7 +48,9 @@ char *ul_canonicalize_dm_name_prefixed(const char *prefix, const char *ptname)
 
 	/* read "<name>\n" from sysfs */
 	if (fgets(name, sizeof(name), f) && (sz = strlen(name)) > 1) {
-		name[sz - 1] = '\0';
+		if (name[sz - 1] == '\n')
+			name[sz - 1] = '\0';
+
 		snprintf(path, sizeof(path), _PATH_DEV_MAPPER "/%s", name);
 
 		if ((prefix && *prefix) || access(path, F_OK) == 0)
