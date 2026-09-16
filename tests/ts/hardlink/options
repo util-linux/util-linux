@@ -120,7 +120,7 @@ else
 	truncate -s 1M "$SPDIR"/sparse-a
 	truncate -s 1M "$SPDIR"/sparse-b
 	dd if=/dev/urandom of="$SPDIR"/real-a bs=4096 count=1 2>/dev/null
-	cp "$SPDIR"/real-a "$SPDIR"/real-b
+	cp -p "$SPDIR"/real-a "$SPDIR"/real-b
 	$TS_CMD_HARDLINK -v "$SPDIR" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	summary_clean
 	echo "sparse-a st_blocks: $(test "$(stat -c %b "$SPDIR"/sparse-a)" -gt 0 && echo non-zero || echo zero)" >> "$TS_OUTPUT"
@@ -139,7 +139,7 @@ else
 	rm -rf "$SPDIR"
 	mkdir -p "$SPDIR"
 	dd if=/dev/urandom of="$SPDIR"/file-a bs=4096 count=2 2>/dev/null
-	cp "$SPDIR"/file-a "$SPDIR"/file-b
+	cp -p "$SPDIR"/file-a "$SPDIR"/file-b
 	truncate -s 1M "$SPDIR"/sparse-a
 	truncate -s 1M "$SPDIR"/sparse-b
 	$TS_CMD_HARDLINK --real-size --minimum-size 4096 "$SPDIR" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
