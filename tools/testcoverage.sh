@@ -139,6 +139,31 @@ function progress_status() {
 	printf "\033[2K\rtesting program %d out of %d ('%s')" "$counter" "$num_total_progs" "$prog"
 }
 
+function opts_from_manual_validation() {
+	local opts
+	local ts="$1"
+	opts="$(awk -F= '/UL_TESTCOVERAGE_MANUAL_VALIDATION/ {print $2}' "$ts")"
+
+	echo " $opts " | tr ' ' '\n'
+}
+
+function get_full_cmdline() {
+	local test_script_path="$1"
+
+	awk -v pat="^.*TS_CMD_${prog^^}" '
+	{
+		if (multiline || $0 ~ pat) {
+			print_flag = 1
+		} else {
+			print_flag = 0
+		}
+
+		multiline = (print_flag && $0 ~ /\\[[:space:]]*$/)
+
+		if (print_flag) print
+	}' "$test_script_path"
+}
+
 # Since we do "cross-testing", we check if $prog is being tested
 # in other program's test scripts and store the found options too.
 function get_cross_test_long_opts() {
@@ -147,15 +172,13 @@ function get_cross_test_long_opts() {
 	test_scripts="$2"
 
 	[[ -z "$test_scripts" ]] && has_ts=0
-	# shellcheck disable=SC2016
-	regex="$( printf '\$TS_CMD_%s[[:space:]]+.*([[:space:]])*--(?![^[:alnum:]])[A-Za-z-.0-9_]*' "${prog^^}" )"
 
-	for t in $ALL_TEST_SCRIPTS; do
+	for ts in $ALL_TEST_SCRIPTS; do
 		# If the program has a test subdirectory we have probably
 		# already traversed it, so no need to do it again.
-		[[ "$has_ts" == 1 && "$t" =~ \/"$prog"\/ ]] && continue
+		[[ "$has_ts" == 1 && "$ts" =~ \/"$prog"\/ ]] && continue
 
-		found="$(grep -P -o "$regex" "${t}" \
+		found="$(get_full_cmdline "${ts}" \
 			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
 			| uniq)"
 
@@ -174,9 +197,10 @@ function get_test_scripts_l_opts() {
 
 	# Look for all options in $prog test scripts
 	for ts in $test_scripts; do
-		found="$(grep -P -o '[[:space:]]--(?![^[:alnum:]])[A-Za-z-.0-9_]*' "${ts}" \
-			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
-			| uniq)"
+		found="$(get_full_cmdline "${ts}" \
+			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' )"
+
+		found+="$(opts_from_manual_validation "$ts")"
 
 		if [ -n "$found" ]; then
 			opts+="$(printf -- '\n%s' "$found")"

@@ -79,6 +79,8 @@ for dump_name in $(find "$TS_SELF"/dumps/ -type f -maxdepth 1 -name "*.tar.bz2" 
 
     cpu_list="${cpu_start}-${cpu_end}"
 
+    # UL_TESTCOVERAGE_MANUAL_VALIDATION= --disable --enable --deconfigure
+    # UL_TESTCOVERAGE_MANUAL_VALIDATION= --dispatch --rescan --configure
     print_ts_section_title "disable"
     do_chcpu "${sysroot}" --disable "$cpu_list"
     print_cpus_sys_interface "${sysroot}" "online" "$cpu_start" "$cpu_end"

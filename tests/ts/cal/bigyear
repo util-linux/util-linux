@@ -49,6 +49,7 @@ function call_cal {
 	ts_finalize_subtest
 }
 
+# UL_TESTCOVERAGE_MANUAL_VALIDATION= --one --sunday --julian 
 call_cal "Gregorian - Monday-based month" -1m $MYMONTH
 call_cal "Gregorian - Sunday-based month" -1s $MYMONTH
 call_cal "Gregorian - Saturday-based month" -1t $MYMONTH

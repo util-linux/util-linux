@@ -39,6 +39,7 @@ USETERM=$( ts_has_option "useterm" "$*" )
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
 
+# UL_TESTCOVERAGE_MANUAL_VALIDATION= --color --vertical --week
 ts_init_subtest "first-day"
 call_cal --color=always 1 1 1
 ts_finalize_subtest
