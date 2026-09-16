@@ -177,7 +177,11 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		}
 	}
 
-	*bytes = blkdev_find_size(fd);
+	off_t size = blkdev_find_size(fd);
+	if (size < 0)
+		return -1;
+
+	*bytes = (unsigned long)size;
 	return 0;
 }
 
