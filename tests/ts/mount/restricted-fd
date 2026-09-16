@@ -1,0 +1,66 @@
+#!/bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="restricted target file descriptor"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_prog "getent"
+ts_check_prog "strace"
+ts_check_test_command "$TS_CMD_MOUNTSTATIC"
+ts_check_test_command "$TS_CMD_UMOUNT"
+
+grep -q 'nodev[[:space:]]*tmpfs' /proc/filesystems || \
+	ts_skip "tmpfs unsupported"
+getent passwd "$TS_TESTUSER" &> /dev/null || \
+	ts_skip "$TS_TESTUSER user is missing"
+[ -w /etc/fstab ] || ts_skip "/etc/fstab is not writable"
+[ -d /proc/self/fd ] || ts_skip "/proc/self/fd is unavailable"
+
+TRACE="$TS_OUTDIR/${TS_TESTNAME}.strace"
+TS_FSTAB=/etc/fstab
+
+cleanup() {
+	$TS_CMD_UMOUNT "$TS_MOUNTPOINT" &> /dev/null
+	ts_fstab_clean
+	rm -f "$TRACE"
+}
+trap cleanup EXIT
+
+mkdir -p "$TS_MOUNTPOINT"
+chmod 0755 "$TS_MOUNTPOINT"
+
+ts_init_suid "$TS_CMD_MOUNTSTATIC"
+[ -u "$TS_CMD_MOUNTSTATIC" ] || ts_skip "cannot setup suid test"
+
+ts_fstab_add "none" "$TS_MOUNTPOINT" "tmpfs" "user,noauto"
+
+if ! strace -f -qq -s 4096 -e trace=openat2,mount,move_mount \
+	-u "$TS_TESTUSER" -o "$TRACE" -- \
+	"$TS_CMD_MOUNTSTATIC" "$TS_MOUNTPOINT" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"; then
+	grep -q "must be superuser to use mount" "$TS_ERRLOG" && \
+		ts_skip "cannot execute suid mount under strace"
+	cat "$TRACE" >> "$TS_ERRLOG"
+	ts_die "restricted mount failed"
+fi
+
+if ! grep -Eq \
+	'mount\([^,]+, "/proc/self/fd/[0-9]+"|move_mount\([^,]+, "", [0-9]+, "", [^)]*MOVE_MOUNT_T_EMPTY_PATH' \
+	"$TRACE"; then
+	cat "$TRACE" >> "$TS_ERRLOG"
+	ts_die "restricted mount did not use the pinned target"
+fi
+
+$TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" || \
+	ts_die "cannot unmount test filesystem"
+ts_fstab_clean
+
+trap - EXIT
+cleanup
+
+ts_log "Success"
+ts_finalize
