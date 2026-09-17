@@ -63,7 +63,7 @@ overwrite the same line. The other modes are *never* and *always*.
 Speed up the replay displaying this _number_ of times. The argument is a floating-point number. It's called divisor because it divides the timings by this factor. This option overrides old-style arguments.
 
 *-m*, *--maxdelay* _number_::
-Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay.
+Set the maximum delay between updates to _number_ of seconds. The argument is a floating-point number. This can be used to avoid long pauses in the typescript replay. The value 0 means no limit; this is the default.
 
 *--summary*::
 Display details about the session recorded in the specified timing file and
