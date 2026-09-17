@@ -293,7 +293,7 @@ static int lookup_umount_fs_by_statfs(struct libmnt_context *cxt, const char *tg
 		DBG_OBJ(CXT, cxt, ul_debug("  trying fstatfs()"));
 
 		/* O_PATH avoids triggering automount points. */
-		fd = open(tgt, O_PATH);
+		fd = open(tgt, O_PATH | O_CLOEXEC);
 		if (fd >= 0) {
 			if (fstatfs(fd, &vfs) == 0)
 				type = mnt_statfs_get_fstype(&vfs);
@@ -996,7 +996,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		/* on helper= mount option based helper */
 		rc = prepare_helper_from_option(cxt, "helper");
 		if (rc < 0)
-			return rc;
+			goto end;
 		if (!cxt->helper)
 			/* on fstype based helper */
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
@@ -1018,10 +1018,11 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 
 	if (rc) {
 		DBG_OBJ(CXT, cxt, ul_debug("umount: preparing failed"));
-		return rc;
+		goto end;
 	}
 	cxt->flags |= MNT_FL_PREPARED;
 
+end:
 	if (!mnt_context_switch_ns(cxt, ns_old))
 		return -MNT_ERR_NAMESPACE;
 

@@ -305,6 +305,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{"one", no_argument, NULL, '1'},
 		{"three", no_argument, NULL, '3'},
+		{"saturday", no_argument, NULL, 't'},
 		{"sunday", no_argument, NULL, 's'},
 		{"monday", no_argument, NULL, 'm'},
 		{"julian", no_argument, NULL, 'j'},
@@ -338,7 +339,7 @@ int main(int argc, char **argv)
  * The traditional Unix cal utility starts the week at Sunday,
  * while ISO 8601 starts at Monday. We read the start day from
  * the locale database, which can be overridden with the
- * -s (Sunday) or -m (Monday) options.
+ * -t (Saturday), -s (Sunday) or -m (Monday) options.
  */
 #if HAVE_DECL__NL_TIME_WEEK_1STDAY
 	/*
@@ -369,7 +370,7 @@ int main(int argc, char **argv)
 		ctl.weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % DAYS_IN_WEEK;
 	}
 #endif
-	while ((ch = getopt_long(argc, argv, "13mjn:sSywYvc:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "13mjn:stSywYvc:Vh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -380,6 +381,9 @@ int main(int argc, char **argv)
 		case '3':
 			ctl.num_months = 3;
 			ctl.span_months = 1;
+			break;
+		case 't':
+			ctl.weekstart = SATURDAY;
 			break;
 		case 's':
 			ctl.weekstart = SUNDAY;		/* default */
@@ -726,13 +730,8 @@ static void cal_fill_month(struct cal_month *month, const struct cal_control *ct
 		j = 1;
 	month_days = j + days_in_month[leap_year(ctl, month->year)][month->month];
 
-	/* True when Sunday is not first day in the output week. */
-	if (ctl->weekstart) {
-		first_week_day -= ctl->weekstart;
-		if (first_week_day < 0)
-			first_week_day = DAYS_IN_WEEK - ctl->weekstart;
-		month_days += ctl->weekstart - 1;
-	}
+	/* Offset when Sunday is not first day in the output week. */
+	first_week_day = (first_week_day - ctl->weekstart + DAYS_IN_WEEK) % DAYS_IN_WEEK;
 
 	/* Fill day array. */
 	for (i = 0; i < MAXDAYS; i++) {
@@ -873,7 +872,14 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 	int reqday, week_line, d;
 	int skip;
 	struct cal_month *i;
-	int firstwork = ctl->weekstart == SUNDAY ? 1 : 0;	/* first workday in week */
+	int firstwork;	/* first workday in week */
+
+	if (ctl->weekstart == SUNDAY)
+		firstwork = 1;
+	else if (ctl->weekstart == SATURDAY)
+		firstwork = 2;
+	else
+		firstwork = 0;
 
 	/* Let's keep sequence cached rather than search it for each day */
 	const char *seq_wo_start = cal_get_color_sequence(CAL_COLOR_WORKDAY);
@@ -966,7 +972,14 @@ cal_vert_output_months(struct cal_month *month, const struct cal_control *ctl)
 	int i, reqday, week, d;
 	int skip;
 	struct cal_month *m;
-	int firstwork = ctl->weekstart == SUNDAY ? 1 : 0;       /* first workday in week */
+	int firstwork;	/* first workday in week */
+
+	if (ctl->weekstart == SUNDAY)
+		firstwork = 1;
+	else if (ctl->weekstart == SATURDAY)
+		firstwork = 2;
+	else
+		firstwork = 0;
 
 	const char *seq_wo_start = cal_get_color_sequence(CAL_COLOR_WORKDAY);
 	const char *seq_wo_end = cal_get_color_disable_sequence(CAL_COLOR_WORKDAY);
@@ -1227,7 +1240,8 @@ static int week_number(int day, int month, int32_t year, const struct cal_contro
 		/* WEEK_NUM_US: Jan 1 is always First week, that may
 		 * begin previous year.  That means there is very seldom
 		 * more than 52 weeks, */
-		fday = wday + 6;
+		int wday_offset = (wday - ctl->weekstart + DAYS_IN_WEEK) % DAYS_IN_WEEK;
+		fday = 6 + wday_offset;
 	}
 	/* For julian dates the month can be set to 1, the global julian
 	 * variable cannot be relied upon here, because we may recurse
@@ -1261,22 +1275,25 @@ static int week_number(int day, int month, int32_t year, const struct cal_contro
  *      return the yday of the first day in a given week inside
  *      the given year. This may be something other than Monday
  *      for ISO-8601 modes. For North American numbering this
- *      always returns a Sunday.
+ *      returns the first day of the week based on weekstart.
  */
 static int week_to_day(const struct cal_control *ctl)
 {
 	int yday, wday;
 
 	wday = day_in_week(ctl, 1, JANUARY, ctl->req.year);
-	yday = ctl->req.week * DAYS_IN_WEEK - wday;
+
+	if (ctl->weektype & WEEK_NUM_ISO) {
+		yday = ctl->req.week * DAYS_IN_WEEK - wday;
+		yday -= (wday >= FRIDAY ? -2 : 5);
+	} else {
+		int wday_offset = (wday - ctl->weekstart + DAYS_IN_WEEK) % DAYS_IN_WEEK;
+		yday = ctl->req.week * DAYS_IN_WEEK - (6 + wday_offset);
+	}
 
 	if (ctl->req.year == ctl->reform_year && yday >= YDAY_AFTER_MISSING)
 		yday += NUMBER_MISSING_DAYS;
 
-	if (ctl->weektype & WEEK_NUM_ISO)
-		yday -= (wday >= FRIDAY ? -2 : 5);
-	else
-		yday -= 6;	/* WEEK_NUM_US */
 	if (yday <= 0)
 		return 1;
 
@@ -1363,6 +1380,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -3, --three           show three months spanning the date\n"), out);
 	fputs(_(" -n, --months <num>    show num months starting with date's month\n"), out);
 	fputs(_(" -S, --span            span the date when displaying multiple months\n"), out);
+	fputs(_(" -t, --saturday        Saturday as first day of week\n"), out);
 	fputs(_(" -s, --sunday          Sunday as first day of week\n"), out);
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
 	fputs(_(" -j, --julian          use day-of-year for all calendars\n"), out);

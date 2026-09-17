@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
-				dump = fopen(optarg, "w");
+				dump = fopen(optarg, "w" UL_CLOEXECSTR);
 				if (!dump)
 					err(EXIT_FAILURE, _("Could not open %s"), optarg);
 			} else {

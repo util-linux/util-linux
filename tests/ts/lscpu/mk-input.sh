@@ -36,6 +36,7 @@ fi
 
 $CP /sys/devices/system/cpu/* $TS_DUMP
 $CP /sys/devices/system/node/*/cpumap $TS_DUMP
+$CP /sys/devices/cpu* $TS_DUMP
 
 if [ -e "/sys/kernel/cpu_byteorder" ]; then
 	$CP /sys/kernel/cpu_byteorder $TS_DUMP

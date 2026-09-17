@@ -2,7 +2,7 @@ CPU(s):                          8
 On-line CPU(s) list:             0-7
 Vendor ID:                       ARM
 Model name:                      Cortex-A510
-Model:                           1
+Model:                           0xd46
 Thread(s) per core:              1
 Core(s) per socket:              3
 Socket(s):                       1
@@ -14,7 +14,7 @@ CPU min MHz:                     307.2000
 BogoMIPS:                        38.40
 Flags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 asimdfhm dit uscat ilrcpc flagm ssbs sb paca pacg dcpodp flagm2 frint i8mm bf16 bti
 Model name:                      Cortex-A710
-Model:                           0
+Model:                           0xd47
 Thread(s) per core:              1
 Core(s) per socket:              2
 Socket(s):                       1
@@ -25,7 +25,7 @@ CPU min MHz:                     499.2000
 BogoMIPS:                        38.40
 Flags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 asimdfhm dit uscat ilrcpc flagm ssbs sb paca pacg dcpodp flagm2 frint i8mm bf16 bti
 Model name:                      Cortex-A715
-Model:                           0
+Model:                           0xd4d
 Thread(s) per core:              1
 Core(s) per socket:              2
 Socket(s):                       1
@@ -36,7 +36,7 @@ CPU min MHz:                     499.2000
 BogoMIPS:                        38.40
 Flags:                           fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm jscvt fcma lrcpc dcpop sha3 sm3 sm4 asimddp sha512 asimdfhm dit uscat ilrcpc flagm ssbs sb paca pacg dcpodp flagm2 frint i8mm bf16 bti
 Model name:                      Cortex-X3
-Model:                           0
+Model:                           0xd4e
 Thread(s) per core:              1
 Core(s) per socket:              1
 Socket(s):                       1

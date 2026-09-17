@@ -302,13 +302,19 @@ static int hook_create_mount(struct libmnt_context *cxt,
 
 		if (fd >= 0 && api->subdir) {
 			/*
-			 * subdir for Linux >= 6.15, see hook_subdir.c for more details.
+			 * Subdir for Linux >= 6.15, see hook_subdir.c for
+			 * more details.
+			 *
+			 * Use mnt_open_tree() to safely resolve the subdir
+			 * path within the detached tree (no symlink following,
+			 * no escape via ".."), then clone with open_tree().
 			 */
 			DBG_OBJ(HOOK, hs, ul_debug("opening subdir (detached) '%s'", api->subdir));
-			int sub_fd = open_tree(fd, api->subdir,
-					AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW |
+			int sub_fd = mnt_open_tree(fd, api->subdir,
+					AT_NO_AUTOMOUNT |
 					AT_RECURSIVE | OPEN_TREE_CLOEXEC |
-					OPEN_TREE_CLONE);
+					OPEN_TREE_CLONE,
+					RESOLVE_NO_SYMLINKS | RESOLVE_BENEATH);
 			hookset_set_syscall_status(cxt, "open_tree", sub_fd >= 0);
 			close(fd);
 			fd = sub_fd;
@@ -323,17 +329,11 @@ static int hook_create_mount(struct libmnt_context *cxt,
 		/* cleanup after fail (libmount may only try the FS type) */
 		close_sysapi_fds(api);
 
-	if (!rc && cxt->fs) {
+	/* Read the IDs of the new mount while it's still detached, they are
+	 * used to verify the target after move_mount(), see
+	 * mnt_context_finalize_target() which also stores them to utab. */
+	if (!rc && cxt->fs)
 		mnt_fs_fetch_ids(cxt->fs, api->fd_tree);
-
-		if ((cxt->fs->id || cxt->fs->uniq_id) && cxt->update) {
-			struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
-			if (fs) {
-				fs->id = cxt->fs->id;
-				fs->uniq_id = cxt->fs->uniq_id;
-			}
-		}
-	}
 
 done:
 	DBG_OBJ(HOOK, hs, ul_debug("create FS done [rc=%d, id=%d, uniq=%" PRIu64 "]",
@@ -359,7 +359,8 @@ static int hook_reconfigure_mount(struct libmnt_context *cxt,
 	assert(api->fd_tree >= 0);
 
 	if (api->fd_fs < 0) {
-		api->fd_fs = fspick(api->fd_tree, "", FSPICK_EMPTY_PATH |
+		api->fd_fs = fspick(api->fd_tree, "", FSPICK_CLOEXEC |
+						      FSPICK_EMPTY_PATH |
 						      FSPICK_NO_AUTOMOUNT);
 		hookset_set_syscall_status(cxt, "fspick", api->fd_fs >= 0);
 		if (api->fd_fs < 0)
@@ -516,6 +517,7 @@ static int hook_attach_target(struct libmnt_context *cxt,
 		void *data __attribute__((__unused__)))
 {
 	struct libmnt_sysapi *api;
+	struct libmnt_optlist *ol;
 	unsigned int flags;
 	const char *target;
 	int rc = 0;
@@ -559,19 +561,19 @@ static int hook_attach_target(struct libmnt_context *cxt,
 
 	hookset_set_syscall_status(cxt, "move_mount", rc == 0);
 
-	if (rc == 0) {
-		struct libmnt_optlist *ol = mnt_context_get_optlist(cxt);
+	if (rc != 0)
+		return -errno;
 
-		if (ol && mnt_optlist_is_move(ol))
-			mnt_fs_mark_moved(cxt->fs);
-		else
-			mnt_fs_mark_attached(cxt->fs);
+	ol = mnt_context_get_optlist(cxt);
+	if (ol && mnt_optlist_is_move(ol))
+		mnt_fs_mark_moved(cxt->fs);
+	else
+		mnt_fs_mark_attached(cxt->fs);
 
-		/* re-open to point to the mounted filesystem root */
-		rc = mnt_context_reopen_target_fd(cxt);
-	}
-
-	return rc == 0 ? 0 : -errno;
+	/* re-open to point to the mounted filesystem root; the function
+	 * already returns a negative error code, for example -EPERM when
+	 * the mount does not match the pinned target */
+	return mnt_context_finalize_target(cxt);
 }
 
 static inline int fsopen_is_supported(void)

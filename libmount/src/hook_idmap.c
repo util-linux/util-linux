@@ -23,6 +23,7 @@
 
 #include "strutils.h"
 #include "all-io.h"
+#include "fileutils.h"
 #include "namespace.h"
 
 #include "mountP.h"
@@ -31,7 +32,7 @@
 # include <linux/nsfs.h>
 #endif
 
-#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 
 typedef enum idmap_type_t {
 	ID_TYPE_UID,	/* uidmap entry */
@@ -39,10 +40,22 @@ typedef enum idmap_type_t {
 	ID_TYPE_UIDGID,	/* uidmap and gidmap entry */
 } idmap_type_t;
 
+/*
+ * struct id_map keeps one ID-mapping entry. The IDs are written to
+ * /proc/<pid>/{u,g}id_map as "<inner> <outer> <range>", which is the
+ * kernel's "ID-inside-ns ID-outside-ns length" format (the same order
+ * as unshare --map-users and mount --map-users).
+ *
+ * Note that for an idmapped mount the kernel resolves the mapping
+ * downwards (see map_id_down() and make_vfsuid() in the kernel), so
+ * 'inner' is the ID stored in the filesystem and 'outer' is the ID
+ * visible in the mount. For example "1000 2000 1" makes a file owned
+ * by 1000 on disk appear as owned by 2000.
+ */
 struct id_map {
 	idmap_type_t map_type;
-	uint32_t nsid;
-	uint32_t hostid;
+	uint32_t inner;
+	uint32_t outer;
 	uint32_t range;
 	struct list_head map_head;
 };
@@ -151,7 +164,7 @@ static int map_ids(struct list_head *idmap, pid_t pid)
 			left = sizeof(mapbuf) - (pos - mapbuf);
 			fill = snprintf(pos, left,
 					"%" PRIu32 " %" PRIu32 " %" PRIu32 "\n",
-					map->nsid, map->hostid, map->range);
+					map->inner, map->outer, map->range);
 			/*
 			 * The kernel only takes <= 4k for writes to
 			 * /proc/<pid>/{g,u}id_map
@@ -316,7 +329,6 @@ static int hook_mount_post(
 	 * Once a mount has been attached to the filesystem it can't be
 	 * idmapped anymore. So create a new detached mount.
 	 */
-#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	{
 		struct libmnt_sysapi *api = mnt_context_get_sysapi(cxt);
 
@@ -326,11 +338,12 @@ static int hook_mount_post(
 			DBG_OBJ(HOOK, hs, ul_debug(" reuse tree FD"));
 		}
 	}
-#endif
 	if (fd_tree < 0)
-		fd_tree = open_tree(-1, target,
+		fd_tree = mnt_open_tree(AT_FDCWD, target,
 			    OPEN_TREE_CLONE | OPEN_TREE_CLOEXEC |
-			    (recursive ? AT_RECURSIVE : 0));
+			    (recursive ? AT_RECURSIVE : 0),
+			    mnt_context_is_restricted(cxt) ?
+				RESOLVE_NO_SYMLINKS : 0);
 	if (fd_tree < 0) {
 		DBG_OBJ(HOOK, hs, ul_debug(" failed to open tree"));
 		mnt_context_syscall_save_status(cxt, "open_tree", 0);
@@ -354,23 +367,53 @@ static int hook_mount_post(
 	if (is_private) {
 		unsigned int mmflags = MOVE_MOUNT_F_EMPTY_PATH;
 
-		/* Unmount the old, non-idmapped mount we just cloned and idmapped. */
-		umount2(target, MNT_DETACH);
-
+		/* Unmount the old, non-idmapped mount we just cloned and
+		 * idmapped, and attach the clone to the target. */
 		if (mnt_context_target_fd_required(cxt)) {
+			char fdpath[UL_FDPATH_BUFSIZ];
 			int fd_tgt = mnt_context_get_target_fd(cxt);
 
 			if (fd_tgt < 0) {
 				rc = -errno;
 				goto done;
 			}
+
+			/* The pinned FD refers to the root of the mount we are
+			 * going to detach, so umount2() through the FD rather
+			 * than resolve the target path for the second time.
+			 * See reopen_target_fd() for the umount2() lookup
+			 * semantics. */
+			if (ul_fd_mkpath(fdpath, sizeof(fdpath), fd_tgt))
+				umount2(fdpath, MNT_DETACH);
+			else
+				umount2(target, MNT_DETACH);
+
+			/* The FD now points into the detached mount and
+			 * move_mount() would fail with ENOENT, re-open it to
+			 * get the mount point directory again. */
+			mnt_context_close_target_fd(cxt);
+			fd_tgt = mnt_context_get_target_fd(cxt);
+			if (fd_tgt < 0) {
+				rc = -errno;
+				goto done;
+			}
+
 			mmflags |= MOVE_MOUNT_T_EMPTY_PATH;
 			rc = move_mount(fd_tree, "", fd_tgt, "", mmflags);
-		} else
+		} else {
+			umount2(target, MNT_DETACH);
 			rc = move_mount(fd_tree, "", AT_FDCWD, target, mmflags);
+		}
 
-		if (rc == 0)
-			rc = mnt_context_reopen_target_fd(cxt);
+		if (rc == 0) {
+			/* The mount at the target is the idmapped clone now.
+			 * The ID of the mount we have just replaced is obsolete,
+			 * read the new one from the clone before the target FD
+			 * is re-opened and verified. */
+			mnt_fs_fetch_ids(cxt->fs, fd_tree);
+
+			rc = mnt_context_finalize_target(cxt);
+		}
 		if (rc < 0) {
 			mnt_context_syscall_save_status(cxt, "move_mount", 0);
 			if (!mnt_context_read_mesgs(cxt, fd_tree)) {
@@ -435,7 +478,7 @@ static int hook_prepare_options(
 
 	/*
 	 * This is an explicit ID-mapping list of the form:
-	 * [id-type]:id-mount:id-host:id-range [...]
+	 * [id-type]:inner:outer:range [...]
 	 *
 	 * We split the list into separate ID-mapping entries. The individual
 	 * ID-mapping entries are separated by ' '.
@@ -447,23 +490,23 @@ static int hook_prepare_options(
 	     tok = strtok_r(NULL, " ", &saveptr)) {
 		struct id_map *idmap;
 		idmap_type_t map_type;
-		uint32_t nsid = UINT_MAX, hostid = UINT_MAX, range = UINT_MAX;
+		uint32_t inner = UINT_MAX, outer = UINT_MAX, range = UINT_MAX;
 
 		if (ul_startswith(tok, "b:")) {
-			/* b:id-mount:id-host:id-range */
+			/* b:inner:outer:range */
 			map_type = ID_TYPE_UIDGID;
 			tok += 2;
 		} else if (ul_startswith(tok, "g:")) {
-			/* g:id-mount:id-host:id-range */
+			/* g:inner:outer:range */
 			map_type = ID_TYPE_GID;
 			tok += 2;
 		} else if (ul_startswith(tok, "u:")) {
-			/* u:id-mount:id-host:id-range */
+			/* u:inner:outer:range */
 			map_type = ID_TYPE_UID;
 			tok += 2;
 		} else {
 			/*
-			 * id-mount:id-host:id-range
+			 * inner:outer:range
 			 *
 			 * If the user didn't specify it explicitly then they
 			 * want this to be both a gid- and uidmap.
@@ -471,9 +514,9 @@ static int hook_prepare_options(
 			map_type = ID_TYPE_UIDGID;
 		}
 
-		/* id-mount:id-host:id-range */
-		rc = sscanf(tok, "%" PRIu32 ":%" PRIu32 ":%" PRIu32, &nsid,
-			    &hostid, &range);
+		/* inner:outer:range */
+		rc = sscanf(tok, "%" PRIu32 ":%" PRIu32 ":%" PRIu32, &inner,
+			    &outer, &range);
 		if (rc != 3)
 			goto err;
 
@@ -482,8 +525,8 @@ static int hook_prepare_options(
 			goto err;
 
 		idmap->map_type = map_type;
-		idmap->nsid = nsid;
-		idmap->hostid = hostid;
+		idmap->inner = inner;
+		idmap->outer = outer;
 		idmap->range = range;
 		INIT_LIST_HEAD(&idmap->map_head);
 		list_add_tail(&idmap->map_head, &hd->id_map);
@@ -541,4 +584,4 @@ const struct libmnt_hookset hookset_idmap =
 	.deinit = hookset_deinit
 };
 
-#endif /* HAVE_MOUNTFD_API && HAVE_LINUX_MOUNT_H */
+#endif /* USE_LIBMOUNT_MOUNTFD_SUPPORT */

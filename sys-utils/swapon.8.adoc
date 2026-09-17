@@ -209,6 +209,12 @@ Since version 2.41, the command *mkswap --file* can create a new swap file with 
 
 Swap over *NFS* may not work.
 
+=== Encryption
+
+Swap can be encrypted by using a dm-crypt device as the swap device.
+
+A filesystem-level encrypted file can also be used as swap, but only if a loop device is set up on top of it (see *losetup*(8)) and that loop device is used as the swap device. Using a filesystem-level encrypted file directly as a swap file is unsupported.
+
 === Suspend
 
 *swapon* automatically detects and rewrites a swap space signature with old software suspend data (e.g., *S1SUSPEND*, *S2SUSPEND*, ...). The problem is that if we don't do it, then we get data corruption the next time an attempt at unsuspending is made.

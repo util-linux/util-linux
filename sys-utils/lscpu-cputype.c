@@ -686,6 +686,13 @@ int lscpu_read_cpuinfo(struct lscpu_cxt *cxt)
 				lscpu_add_cputype(cxt, pr->curr_type);
 			}
 
+			/* On PowerPC, "model" contains the machine/server
+			 * model rather than the CPU model; use revision */
+			if (pattern->id == PAT_MODEL
+			    && pr->curr_type->revision
+			    && strstr(pr->curr_type->revision, "pvr"))
+				break;
+
 			strdup_to_offset(pr->curr_type, pattern->offset, value);
 			break;
 		case CPUINFO_LINE_CACHE:

@@ -400,7 +400,7 @@ static void motd(void)
 			done += motddir(file);
 #endif
 		if (S_ISREG(st.st_mode) && st.st_size > 0) {
-			int fd = open(file, O_RDONLY, 0);
+			int fd = open(file, O_RDONLY | O_CLOEXEC, 0);
 			if (fd >= 0) {
 				ul_copy_file(fd, fileno(stdout));
 				close(fd);
@@ -457,7 +457,7 @@ static void open_tty(const char *tty)
 {
 	int i, fd, flags;
 
-	fd = open(tty, O_RDWR | O_NONBLOCK);
+	fd = open(tty, O_RDWR | O_NONBLOCK | O_CLOEXEC);
 	if (fd == -1) {
 		syslog(LOG_ERR, _("FATAL: can't reopen tty: %m"));
 		sleepexit(EXIT_FAILURE);
@@ -702,7 +702,7 @@ static void log_lastlog(struct login_context *cxt)
 	sa.sa_handler = SIG_IGN;
 	sigaction(SIGXFSZ, &sa, &oldsa_xfsz);
 
-	fd = open(_PATH_LASTLOG, O_RDWR, 0);
+	fd = open(_PATH_LASTLOG, O_RDWR | O_CLOEXEC, 0);
 	if (fd < 0)
 		goto done;
 	offset = cxt->pwd->pw_uid * sizeof(ll);

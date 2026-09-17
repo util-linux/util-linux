@@ -45,7 +45,7 @@ static const struct libmnt_hookset *const hooksets[] =
 	&hookset_mount,
 #endif
 	&hookset_mount_legacy,
-#if defined(HAVE_MOUNTFD_API) && defined(HAVE_LINUX_MOUNT_H)
+#ifdef USE_LIBMOUNT_MOUNTFD_SUPPORT
 	&hookset_idmap,
 #endif
 	&hookset_owner

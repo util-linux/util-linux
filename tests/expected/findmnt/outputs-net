@@ -1,0 +1,2 @@
+TARGET      SOURCE          FSTYPE OPTIONS
+/mnt/sounds //foo.home/bar/ cifs   rw,relatime,unc=\\foo.home\bar,username=kzak,domain=SRGROUP,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.111.1,posixpaths,serverino,acl,rsize=16384,wsize=57344

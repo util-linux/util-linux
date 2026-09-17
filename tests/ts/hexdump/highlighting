@@ -273,4 +273,13 @@ $TS_CMD_HEXDUMP "${OPTS[@]}" "${ADDRFMT[@]}" \
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
 
+# string match with an offset range spanning multiple print units
+# (regression: color_fmt() clones shared clr->str causing double-free)
+ts_init_subtest "1b_char-range-clone"
+printf 'AAA' | \
+$TS_CMD_HEXDUMP "${OPTS[@]}" "${ADDRFMT[@]}" \
+	-e '1/1 "%3_c_L[red:A@0-2] " "\n"' \
+	&> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize

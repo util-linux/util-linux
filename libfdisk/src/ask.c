@@ -612,8 +612,9 @@ char *fdisk_ask_string_get_result(struct fdisk_ask *ask)
  * @ask: ask instance
  * @result: pointer to allocated buffer with string
  *
- * You don't have to care about the @result deallocation, libfdisk is going to
- * deallocate the result when destroy @ask instance.
+ * The @ask instance does not own the @result buffer and it never deallocates
+ * it. The buffer is returned to the fdisk_ask_string() caller which is
+ * responsible for the deallocation.
  *
  * Returns: 0 on success, <0 on error
  */
@@ -628,7 +629,7 @@ int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result)
  * fdisk_ask_string:
  * @cxt: context:
  * @query: question string
- * @result: returns allocated buffer
+ * @result: returns allocated buffer, or NULL on error
  *
  * High-level API to ask for strings. Don't forget to deallocate the @result.
  *
@@ -642,6 +643,9 @@ int fdisk_ask_string(struct fdisk_context *cxt,
 	int rc;
 
 	assert(cxt);
+	assert(result);
+
+	*result = NULL;
 
 	ask = fdisk_new_ask();
 	if (!ask)

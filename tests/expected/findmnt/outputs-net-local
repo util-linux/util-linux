@@ -1,0 +1,2 @@
+findmnt: options --net and --local cannot be combined
+rc=1

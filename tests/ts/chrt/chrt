@@ -75,7 +75,8 @@ function cleanup_output {
 	sed -i -e 's/pid [0-9]*/<removed>/' "$TS_OUTPUT"
 }
 
-
+# UL_TESTCOVERAGE_MANUAL_VALIDATION= --fifo --batch --sched-runtime --other --ext
+# UL_TESTCOVERAGE_MANUAL_VALIDATION= --rr --idle --sched-period --sched-deadline
 ts_init_subtest "fifo"
 if skip_policy SCHED_FIFO --fifo 1; then
 	do_chrt --fifo 1

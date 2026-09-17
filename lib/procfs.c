@@ -572,7 +572,7 @@ static int test_one_process(int argc, char *argv[], const char *prefix)
 static int test_isprocfs(int argc, char *argv[])
 {
 	const char *name = argc > 1 ? argv[1] : "/proc";
-	int fd = open(name, O_RDONLY);
+	int fd = open(name, O_RDONLY | O_CLOEXEC);
 	int is = 0;
 
 	if (fd >= 0) {

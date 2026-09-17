@@ -48,12 +48,19 @@ test_kill_pidfdino_SOURCES = tests/helpers/test_kill_pidfdino.c
 test_kill_pidfdino_LDADD = $(LDADD) libcommon.la
 
 if LINUX
+if !OSS_FUZZ
 check_PROGRAMS += test_mkfds
 test_mkfds_SOURCES = tests/helpers/test_mkfds.c tests/helpers/test_mkfds.h \
 	tests/helpers/test_mkfds_ppoll.c
 test_mkfds_LDFLAGS = -static
 test_mkfds_LDADD = $(LDADD) $(MQ_LIBS) libsmartcols.la
 test_mkfds_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+if HAVE_FUSE
+test_mkfds_SOURCES += tests/helpers/test_mkfds_hungfs.c
+test_mkfds_LDADD += $(FUSE_LIBS)
+test_mkfds_CFLAGS += $(FUSE_CFLAGS)
+endif
+endif
 
 check_PROGRAMS += test_enosys
 test_enosys_SOURCES = tests/helpers/test_enosys.c

@@ -398,6 +398,14 @@ static int is_subdir_required(struct libmnt_context *cxt, int *rc, char **subdir
 		return 0;
 	}
 
+	/* use relative path; absolute would escape dirfd-based resolution */
+	while (*dir == '/')
+		dir++;
+	if (!*dir) {
+		DBG(HOOK, ul_debug("X-mount.subdir is root, ignoring"));
+		return 0;
+	}
+
 	*rc = mnt_optlist_get_flags(ol, &flags, cxt->map_linux, 0);
 	if (*rc)
 		return 0;

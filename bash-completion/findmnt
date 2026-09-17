@@ -135,6 +135,8 @@ _findmnt_module()
 				--tree
 				--real
 				--pseudo
+				--net
+				--local
 				--list-columns
 				--bytes
 				--filter

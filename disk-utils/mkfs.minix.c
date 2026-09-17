@@ -677,6 +677,11 @@ static void get_list_blocks(struct fs_control *ctl, char *filename)
 			errx(MKFS_EX_ERROR, _("%s: cannot read badblocks file"),
 					ctl->device_name);
 		}
+		if (blockno < (unsigned long) get_first_zone() ||
+		    blockno >= get_nzones())
+			errx(MKFS_EX_ERROR,
+			     _("%s: bad block number %lu is outside of the file system"),
+			     ctl->device_name, blockno);
 		mark_zone(blockno);
 		ctl->fs_bad_blocks++;
 	}

@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="inherit environment from a target in a user namespace"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_NSENTER"
+ts_check_test_command "$TS_CMD_UNSHARE"
+ts_check_prog "newuidmap"
+ts_check_prog "newgidmap"
+
+# The target's environ is only unreadable to the caller when the caller is
+# unprivileged and the target's UID maps to a different one.
+[ "$(id -u)" -eq 0 ] && ts_skip "test needs an unprivileged caller"
+grep -q "^$(id -un):" /etc/subuid 2>/dev/null || ts_skip "no /etc/subuid entry"
+grep -q "^$(id -un):" /etc/subgid 2>/dev/null || ts_skip "no /etc/subgid entry"
+
+ts_cd "$TS_OUTDIR"
+
+PIDFILE="$TS_OUTDIR/$(basename "$0").pid"
+rm -f "$PIDFILE"
+
+# Target runs as UID 0 inside its own user namespace, so its /proc/<pid>/environ
+# is owned by a subuid and is not readable by us.
+UL_TEST_ENV=inherited "$TS_CMD_UNSHARE" \
+	--map-auto --map-current-user --setuid=0 --setgid=0 -- \
+	/bin/sh -c 'echo $$; sleep 30' > "$PIDFILE" 2>>"$TS_ERRLOG" &
+TARGET_SHELL=$!
+trap 'kill $TARGET_SHELL &>/dev/null' EXIT
+
+for _ in $(seq 1 50); do
+	read -r TARGET_PID < "$PIDFILE" 2>/dev/null && [ -n "$TARGET_PID" ] && break
+	sleep 0.1
+done
+
+if [ -z "${TARGET_PID:-}" ] || [ ! -d "/proc/$TARGET_PID" ]; then
+	ts_skip "cannot set up an unprivileged user namespace"
+fi
+
+if [ -r "/proc/$TARGET_PID/environ" ]; then
+	ts_skip "target environ is readable, mapping does not exercise this"
+fi
+
+"$TS_CMD_NSENTER" --user --setuid=0 --setgid=0 --target="$TARGET_PID" --env -- \
+	/bin/sh -c 'echo "UL_TEST_ENV=${UL_TEST_ENV:-UNSET}"' >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+echo "rc=$?" >>"$TS_OUTPUT"
+
+kill $TARGET_SHELL &>/dev/null
+wait $TARGET_SHELL &>/dev/null
+rm -f "$PIDFILE"
+
+ts_finalize
