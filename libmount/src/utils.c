@@ -109,7 +109,7 @@ static int fstype_cmp(const void *v1, const void *v2)
  */
 static int safer_stat(const char *target, struct stat *st, int nofollow)
 {
-	int rc = ul_safe_stat(target, st, nofollow);
+	int rc = ul_safe_stat(target, st, nofollow, 0);
 
 	if (rc == 0 ||
 	    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))

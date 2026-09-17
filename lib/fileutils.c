@@ -741,11 +741,38 @@ int main(int argc, char *argv[])
 }
 #endif
 
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX)
+void ul_statx_to_stat(const struct statx *stx, struct stat *st, int all_basic)
+{
+	memset(st, 0, sizeof(*st));
+	st->st_ino  = stx->stx_ino;
+	st->st_dev  = makedev(stx->stx_dev_major, stx->stx_dev_minor);
+	st->st_rdev = makedev(stx->stx_rdev_major, stx->stx_rdev_minor);
+	st->st_mode = stx->stx_mode;
+	if (all_basic) {
+		st->st_nlink = stx->stx_nlink;
+		st->st_uid = stx->stx_uid;
+		st->st_gid = stx->stx_gid;
+		st->st_size = stx->stx_size;
+		st->st_blksize = stx->stx_blksize;
+		st->st_blocks = stx->stx_blocks;
+		st->st_atim.tv_sec = stx->stx_atime.tv_sec;
+		st->st_atim.tv_nsec = stx->stx_atime.tv_nsec;
+		st->st_mtim.tv_sec = stx->stx_mtime.tv_sec;
+		st->st_mtim.tv_nsec = stx->stx_mtime.tv_nsec;
+		st->st_ctim.tv_sec = stx->stx_ctime.tv_sec;
+		st->st_ctim.tv_nsec = stx->stx_ctime.tv_nsec;
+	}
+}
+#endif
+
 /* This very simplified stat() alternative uses cached VFS data and does not
  * directly ask the filesystem for details. It requires a kernel that supports
- * statx() with AT_STATX_DONT_SYNC. It's usable only for file type, rdev and ino!
+ * statx() with AT_STATX_DONT_SYNC.
  */
-int ul_safe_stat(const char *target, struct stat *st, int nofollow __attribute__((__unused__)))
+int ul_safe_stat(const char *target, struct stat *st,
+		 int nofollow __attribute__((__unused__)),
+		 int all_basic __attribute__((__unused__)))
 {
 	assert(target);
 	assert(st);
@@ -763,16 +790,15 @@ int ul_safe_stat(const char *target, struct stat *st, int nofollow __attribute__
 					| AT_NO_AUTOMOUNT
 					| (nofollow ? AT_SYMLINK_NOFOLLOW : 0),
 				/* mask */
-				STATX_TYPE
-					| STATX_MODE
-					| STATX_INO,
+				all_basic
+					? STATX_BASIC_STATS
+					: (STATX_TYPE
+						| STATX_MODE
+						| STATX_INO),
 				&stx);
-		if (rc == 0) {
-			st->st_ino  = stx.stx_ino;
-			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
-			st->st_rdev = makedev(stx.stx_rdev_major, stx.stx_rdev_minor);
-			st->st_mode = stx.stx_mode;
-		}
+		if (rc == 0)
+			ul_statx_to_stat(&stx, st, all_basic);
+
 		return rc;
 	}
 #else
