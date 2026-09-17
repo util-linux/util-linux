@@ -170,4 +170,6 @@ static inline bool is_dotdir_dirent(const struct dirent *d)
 			|| (d->d_name[1] == '.' && d->d_name[2] == 0)));
 }
 
+int ul_safe_stat(const char *target, struct stat *st, int nofollow);
+
 #endif /* UTIL_LINUX_FILEUTILS */

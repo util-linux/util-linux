@@ -740,3 +740,43 @@ int main(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 #endif
+
+/* This very simplified stat() alternative uses cached VFS data and does not
+ * directly ask the filesystem for details. It requires a kernel that supports
+ * statx() with AT_STATX_DONT_SYNC. It's usable only for file type, rdev and ino!
+ */
+int ul_safe_stat(const char *target, struct stat *st, int nofollow __attribute__((__unused__)))
+{
+	assert(target);
+	assert(st);
+
+	memset(st, 0, sizeof(struct stat));
+
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	{
+		int rc;
+		struct statx stx = { 0 };
+
+		rc = statx(AT_FDCWD, target,
+				/* flags */
+				AT_STATX_DONT_SYNC
+					| AT_NO_AUTOMOUNT
+					| (nofollow ? AT_SYMLINK_NOFOLLOW : 0),
+				/* mask */
+				STATX_TYPE
+					| STATX_MODE
+					| STATX_INO,
+				&stx);
+		if (rc == 0) {
+			st->st_ino  = stx.stx_ino;
+			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
+			st->st_rdev = makedev(stx.stx_rdev_major, stx.stx_rdev_minor);
+			st->st_mode = stx.stx_mode;
+		}
+		return rc;
+	}
+#else
+	errno = ENOSYS;
+	return -1;
+#endif
+}
