@@ -56,6 +56,7 @@ dl_utils_c = files('dl-utils.c')
 dl_cryptsetup_c = files('dl-cryptsetup.c')
 dl_selinux_c = files('dl-selinux.c')
 dl_systemd_c = files('dl-systemd.c')
+dl_systemd_varlink_c = files('dl-systemd-varlink.c')
 dl_econf_c = files('dl-econf.c')
 
 logindefs_c = files('logindefs.c')
