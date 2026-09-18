@@ -230,6 +230,8 @@ int main(const int argc, char **argv)
 			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
