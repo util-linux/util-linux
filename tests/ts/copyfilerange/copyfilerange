@@ -55,6 +55,20 @@ EOF
 cat c >"$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "ranges-read-error"
+mkdir ranges-read-error
+if "$TS_CMD_COPYFILERANGE" a i --ranges ranges-read-error &>/dev/null; then
+	echo "exit status: zero" >"$TS_OUTPUT"
+else
+	echo "exit status: nonzero" >"$TS_OUTPUT"
+fi
+if [ -s i ]; then
+	echo "destination: nonempty" >>"$TS_OUTPUT"
+else
+	echo "destination: empty" >>"$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
 ts_init_subtest "previous-offset-preserved"
 "$TS_CMD_COPYFILERANGE" a d ::3 ::
 cat d >"$TS_OUTPUT"
@@ -80,6 +94,7 @@ ts_init_subtest "copy-from-beyond-file-size"
 cat h >>"$TS_OUTPUT"
 ts_finalize_subtest
 
-rm -f a b c d e f g ranges
+rm -f a b c d e f g i ranges
+rmdir ranges-read-error
 
 ts_finalize
