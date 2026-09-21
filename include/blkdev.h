@@ -121,10 +121,10 @@ int open_blkdev_or_file(const struct stat *st, const char *name, const int oflag
 off_t blkdev_find_size (int fd);
 
 /* get size in bytes */
-int blkdev_get_size(int fd, unsigned long long *bytes);
+int blkdev_get_size(int fd, uint64_t *bytes);
 
 /* get 512-byte sector count */
-int blkdev_get_sectors(int fd, unsigned long long *sectors);
+int blkdev_get_sectors(int fd, uint64_t *sectors);
 
 /* get hardware sector size */
 int blkdev_get_sector_size(int fd, int *sector_size);

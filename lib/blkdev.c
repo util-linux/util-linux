@@ -40,8 +40,8 @@
 #include "fileutils.h"
 #include "nls.h"
 
-static long
-blkdev_valid_offset (int fd, off_t offset) {
+static long blkdev_valid_offset(int fd, off_t offset)
+{
 	char ch;
 
 	if (lseek (fd, offset, 0) < 0)
@@ -57,11 +57,11 @@ int is_blkdev(int fd)
 	return (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode));
 }
 
-off_t
-blkdev_find_size (int fd) {
+off_t blkdev_find_size (int fd)
+{
 	off_t high, low = 0;
 
-	for (high = 1024; blkdev_valid_offset (fd, high); ) {
+	for (high = 1024; blkdev_valid_offset(fd, high); ) {
 		if (high == SINT_MAX(off_t)) {
 			errno = EFBIG;
 			return -1;
@@ -75,8 +75,7 @@ blkdev_find_size (int fd) {
 			high *= 2;
 	}
 
-	while (low < high - 1)
-	{
+	while (low < high - 1) {
 		off_t mid = (low + high) / 2;
 
 		if (blkdev_valid_offset (fd, mid))
@@ -89,8 +88,7 @@ blkdev_find_size (int fd) {
 }
 
 /* get size in bytes */
-int
-blkdev_get_size(int fd, unsigned long long *bytes)
+int blkdev_get_size(int fd, uint64_t *bytes)
 {
 #ifdef DKIOCGETBLOCKCOUNT
 	/* Apple Darwin */
@@ -110,7 +108,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		unsigned long size;
 
 		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-			*bytes = ((unsigned long long)size << 9);
+			*bytes = ((uint64_t) size) << 9;
 			return 0;
 		}
 	}
@@ -128,7 +126,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		struct floppy_struct this_floppy;
 
 		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
-			*bytes = ((unsigned long long) this_floppy.size) << 9;
+			*bytes = ((uint64_t) this_floppy.size) << 9;
 			return 0;
 		}
 	}
@@ -157,7 +155,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
 			pp = &lab.d_partitions[part];
 			if (pp->p_size) {
-				 *bytes = pp->p_size << 9;
+				 *bytes = ((uint64_t) pp->p_size) << 9;
 				 return 0;
 			}
 		}
@@ -168,7 +166,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		struct stat st;
 
 		if (fstat(fd, &st) == 0 && S_ISREG(st.st_mode)) {
-			*bytes = st.st_size;
+			*bytes = (uint64_t) st.st_size;
 			return 0;
 		}
 		if (!S_ISBLK(st.st_mode)) {
@@ -177,15 +175,18 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		}
 	}
 
-	*bytes = blkdev_find_size(fd);
+	off_t size = blkdev_find_size(fd);
+	if (size < 0)
+		return -1;
+
+	*bytes = (uint64_t) size;
 	return 0;
 }
 
 /* get 512-byte sector count */
-int
-blkdev_get_sectors(int fd, unsigned long long *sectors)
+int blkdev_get_sectors(int fd, uint64_t *sectors)
 {
-	unsigned long long bytes;
+	uint64_t bytes;
 
 	if (blkdev_get_size(fd, &bytes) == 0) {
 		*sectors = (bytes >> 9);
@@ -234,9 +235,7 @@ int blkdev_get_sector_size(int fd __attribute__((__unused__)), int *sector_size)
 int blkdev_get_physector_size(int fd, int *sector_size)
 {
 	if (ioctl(fd, BLKPBSZGET, sector_size) >= 0)
-    {
 		return 0;
-    }
 	return -1;
 }
 #else
@@ -256,7 +255,7 @@ int blkdev_is_misaligned(int fd)
 	int aligned;
 
 	if (ioctl(fd, BLKALIGNOFF, &aligned) < 0)
-		return 0;			/* probably kernel < 2.6.32 */
+		return 0; /* probably kernel < 2.6.32 */
 	/*
 	 * Note that kernel returns -1 as alignment offset if no compatible
 	 * sizes and alignments exist for stacked devices
@@ -291,12 +290,8 @@ int open_blkdev_or_file(const struct stat *st, const char *name, const int oflag
 #ifdef CDROM_GET_CAPABILITY
 int blkdev_is_cdrom(int fd)
 {
-	int ret;
-
-	if ((ret = ioctl(fd, CDROM_GET_CAPABILITY, NULL)) < 0)
-		return 0;
-
-	return ret;
+	int ret = ioctl(fd, CDROM_GET_CAPABILITY, NULL);
+	return ret < 0 ? 0 : ret;
 }
 #else
 int blkdev_is_cdrom(int fd __attribute__((__unused__)))
@@ -455,11 +450,10 @@ struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t 
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-int
-main(int argc, char **argv)
+
+int main(int argc, char **argv)
 {
-	unsigned long long bytes;
-	unsigned long long sectors;
+	uint64_t bytes, sectors;
 	int sector_size, phy_sector_size;
 	int fd;
 
@@ -480,8 +474,8 @@ main(int argc, char **argv)
 	if (blkdev_get_physector_size(fd, &phy_sector_size) < 0)
 		err(EXIT_FAILURE, "blkdev_get_physector_size() failed");
 
-	printf("          bytes: %llu\n", bytes);
-	printf("        sectors: %llu\n", sectors);
+	printf("          bytes: %" PRIu64 "\n", bytes);
+	printf("        sectors: %" PRIu64 "\n", sectors);
 	printf("    sector size: %d\n", sector_size);
 	printf("phy-sector size: %d\n", phy_sector_size);
 

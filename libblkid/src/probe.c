@@ -1149,7 +1149,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->devno = sb.st_rdev;
 
 	if (S_ISBLK(sb.st_mode)) {
-		if (blkdev_get_size(fd, (unsigned long long *) &devsiz)) {
+		if (blkdev_get_size(fd, &devsiz)) {
 			DBG(LOWPROBE, ul_debug("failed to get device size"));
 			goto err;
 		}

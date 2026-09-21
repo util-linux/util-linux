@@ -347,7 +347,7 @@ static void do_commands(int fd, char **argv, int d)
 		}
 
 		if (!strcmp(argv[i], "--getsz")) {
-			res = blkdev_get_sectors(fd, &llu);
+			res = blkdev_get_sectors(fd, (uint64_t *) &llu);
 			if (res == 0) {
 				if (verbose)
 					printf(_("get size in 512-byte sectors: "));
@@ -486,8 +486,7 @@ static int report_device(char *device, int quiet)
 	int ro, ssz, bsz;
 	int rc = 0;
 	long ra;
-	unsigned long long bytes;
-	uint64_t start = 0;
+	uint64_t bytes, start = 0;
 	char start_str[16] = { "\0" };
 	struct stat st;
 
@@ -523,7 +522,7 @@ static int report_device(char *device, int quiet)
 	    ioctl(fd, BLKSSZGET, &ssz) == 0 &&
 	    ioctl(fd, BLKBSZGET, &bsz) == 0 &&
 	    blkdev_get_size(fd, &bytes) == 0) {
-		printf("%s %5ld %5d %5d %s %15llu   %s\n",
+		printf("%s %5ld %5d %5d %s %15" PRIu64 "   %s\n",
 			ro ? "ro" : "rw", ra, ssz, bsz, start_str, bytes, device);
 	} else {
 		if (!quiet)

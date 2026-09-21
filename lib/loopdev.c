@@ -1295,8 +1295,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 		return -errno;
 	}
 	if (S_ISBLK(st.st_mode)) {
-		if (blkdev_get_size(file_fd,
-				(unsigned long long *) &expected_size)) {
+		if (blkdev_get_size(file_fd, &expected_size)) {
 			DBG_OBJ(CXT, lc, ul_debug("failed to determine device size"));
 			return -errno;
 		}
@@ -1320,7 +1319,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 		return -errno;
 	}
 
-	if (blkdev_get_size(dev_fd, (unsigned long long *) &size)) {
+	if (blkdev_get_size(dev_fd, &size)) {
 		DBG_OBJ(CXT, lc, ul_debug("failed to determine loopdev size"));
 		return -errno;
 	}
@@ -1343,7 +1342,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 			return -errno;
 		}
 
-		if (blkdev_get_size(dev_fd, (unsigned long long *) &size))
+		if (blkdev_get_size(dev_fd, &size))
 			return -errno;
 
 		if (expected_size != size) {

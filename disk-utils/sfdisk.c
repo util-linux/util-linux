@@ -818,7 +818,7 @@ static int get_size(const char *dev, int silent, uintmax_t *sz)
 		return -errno;
 	}
 
-	if (blkdev_get_sectors(fd, (unsigned long long *) sz) == -1) {
+	if (blkdev_get_sectors(fd, (uint64_t *) sz) == -1) {
 		if (!silent)
 			warn(_("Cannot get size of %s"), dev);
 		rc = -errno;

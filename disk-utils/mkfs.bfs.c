@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
+	if (blkdev_get_sectors(fd, (uint64_t *) &total_blocks) == -1) {
 		if (!user_specified_total_blocks)
 			err(EXIT_FAILURE, _("cannot get size of %s"), device);
 		total_blocks = user_specified_total_blocks;
