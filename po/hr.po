@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.41.2-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-09-01 13:07+0200\n"
+"POT-Creation-Date: 2026-09-21 09:33+0200\n"
 "PO-Revision-Date: 2025-09-16 11:20+0200\n"
 "Last-Translator: Božidar Putanec <bozidarp@yahoo.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -78,7 +78,7 @@ msgstr "nema dovoljno argumenata"
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
 #: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
+#: term-utils/agetty.c:3117 term-utils/mesg.c:157 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
@@ -853,10 +853,10 @@ msgstr "nevaljani argument - repair"
 #: login-utils/last.c:718 login-utils/utmpdump.c:144 misc-utils/namei.c:146
 #: misc-utils/rename.c:160 misc-utils/rename.c:225 sys-utils/blkdiscard.c:240
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:693 sys-utils/fallocate.c:270
-#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:535
+#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:537
 #: sys-utils/swapon.c:550 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:135 sys-utils/switch_root.c:140
-#: term-utils/mesg.c:144 term-utils/mesg.c:158 text-utils/more.c:473
+#: term-utils/mesg.c:145 term-utils/mesg.c:159 text-utils/more.c:473
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat() od %s nije uspio"
@@ -1997,7 +1997,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: nije uspjelo raščlaniti fstab"
 
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
-#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
+#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:557
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
 #: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
@@ -3174,8 +3174,8 @@ msgstr ""
 " -V, --verbose      objašnjava što radi;\n"
 "                      više od jedan V (npr. -VV) izvrši probu (dry-run)\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1590
+#: libmount/src/context_umount.c:1266 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -8127,388 +8127,392 @@ msgstr "nije (bilo) moguće dobiti %s: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "tihi prijavni status: nije uspjelo vratiti originalni ID"
 
-#: libmount/src/context.c:3109
+#: libmount/src/context.c:3195
 #, c-format
 msgid "operation failed: %m"
 msgstr "operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:750
+msgid "e symbolic links in the mount point path are not allowed for non-root users"
+msgstr ""
+
+#: libmount/src/context_mount.c:1587
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "UPOZORENJE: nije uspjelo primijeniti propagacijske flagove"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "UPOZORENJE: uređaj je zaštićen od pisanja; montiramo ga samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "operation permitted for root only"
 msgstr "samo root može koristiti ovu operaciju"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s je već montiran"
 
-#: libmount/src/context_mount.c:1565
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "can't find in %s"
 msgstr "ne može naći u %s"
 
-#: libmount/src/context_mount.c:1568
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "ne može naći točku montiranja u %s"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1640
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "ne može naći izvor montiranja %s u %s"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "na %s je pronađeno nekoliko datotečnih sustava; rabite -t <tip> ili wipefs(8)"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1650
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "nije uspjelo odrediti tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "nijedan valjani datotečni sustav nije specificiran"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1658
 #, c-format
 msgid "can't find %s"
 msgstr "ne može naći %s"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "no mount source specified"
 msgstr "ni jedan izvor montiranja nije specificiran"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "nije uspjelo raščlaniti opcije ‘%s’ za montiranje: %m"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1672
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "nije uspjelo raščlaniti opcije ‘%s’ za montiranje"
 
-#: libmount/src/context_mount.c:1606
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "nije uspjelo raščlaniti opcije za montiranje: %m"
 
-#: libmount/src/context_mount.c:1607
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "failed to parse mount options"
 msgstr "nije uspjelo raščlaniti opcije za montiranje"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1681
 #, fuzzy, c-format
 #| msgid "failed to setup loop device for %s"
 msgid "failed to set up loop device for %s"
 msgstr "nije uspjelo postaviti loop uređaj za %s"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1685
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "za %s postoji preklapajući loop-uređaj"
 
-#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1689 libmount/src/context_umount.c:1291
 #, c-format
 msgid "locking failed"
 msgstr "zaključavanje nije uspjelo"
 
-#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1693 libmount/src/context_umount.c:1297
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "nije uspjelo zamijeniti imenski prostor"
 
-#: libmount/src/context_mount.c:1628
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "filesystem already mounted"
 msgstr "datotečni sustav je već montiran"
 
-#: libmount/src/context_mount.c:1631
+#: libmount/src/context_mount.c:1700
 #, c-format
 msgid "mount failed: %m"
 msgstr "montiranje nije uspjelo: %m"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1710
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "datotečni sustav je montiran, ali nije uspjelo primijeniti zastavice"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je montiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "datotečni sustav je montiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "datotečni sustav je montiran, ali promjena vlasništva nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1734
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "datotečni sustav je montiran, ali promjena moda nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1671
+#: libmount/src/context_mount.c:1740
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "datotečni sustav je montiran, ali nije uspjelo prikvačiti idmapping"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1746
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je montiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1767
 #, c-format
 msgid "%s() failed: "
 msgstr "%s() je neuspješan"
 
-#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1786 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "pristup je odbijen"
 
-#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1788 libmount/src/context_mount.c:1829
 #, c-format
 msgid "mount point is not a directory"
 msgstr "točka montiranja nije direktorij"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1790
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "za koristiti mount morate biti superuser (root)"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1797
 #, c-format
 msgid "mount point is busy"
 msgstr "točka montiranja je zauzeta"
 
-#: libmount/src/context_mount.c:1735
+#: libmount/src/context_mount.c:1804
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s je već montiran na %s"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1808
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s je već montiran ili je točka montiranja zauzeta"
 
-#: libmount/src/context_mount.c:1744
+#: libmount/src/context_mount.c:1813
 #, c-format
 msgid "mount point does not exist"
 msgstr "točka montiranja ne postoji"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1816
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "točka montiranja je simbolična poveznica u ‘nikuda’"
 
-#: libmount/src/context_mount.c:1752
+#: libmount/src/context_mount.c:1821
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specijalni uređaj %s ne postoji"
 
-#: libmount/src/context_mount.c:1765
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specijalni uređaj %s ne postoji (prefiks staze nije direktorij)"
 
-#: libmount/src/context_mount.c:1775
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "točka montiranja nije montirana ili je dana loša opcija"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "not mount point or bad option"
 msgstr "nije točka montiranja ili je opcija loša"
 
-#: libmount/src/context_mount.c:1780
+#: libmount/src/context_mount.c:1849
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr "loša opcija; nije podržano premještanje montiranja ispod dijeljenog montiranja"
 
-#: libmount/src/context_mount.c:1784
+#: libmount/src/context_mount.c:1853
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "loša opcija; za nekoliko datotečnih sustava (npr. nfs, cifs) možda će vam\n"
 "zatrebati pomoćni program /sbin/mount.<tip>"
 
-#: libmount/src/context_mount.c:1788
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "krivi datotečni sustav / loša opcija / oštećeni superblok na %s,\n"
 "manjka codepage ili pomoćni program ili neka druga greška"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "mount table full"
 msgstr "tablica montiranja je popunjena"
 
-#: libmount/src/context_mount.c:1800
+#: libmount/src/context_mount.c:1869
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "ne može pročitati superblok na %s"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1876
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "nepoznati tip datotečnog sustava ‘%s’"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1879
 #, c-format
 msgid "unknown filesystem type"
 msgstr "nepoznati tip datotečnog sustava"
 
-#: libmount/src/context_mount.c:1819
+#: libmount/src/context_mount.c:1888
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s nije blok-uređaj, a poziv stat(2) nije uspješan?"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1891
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "jezgra (kernel) ne prepoznaje %s kao blok-uređaj; možda je potrebno izvršiti \"modprobe driver\""
 
-#: libmount/src/context_mount.c:1825
+#: libmount/src/context_mount.c:1894
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s nije blok-uređaj; probajte s \"-o loop\""
 
-#: libmount/src/context_mount.c:1827
+#: libmount/src/context_mount.c:1896
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s: nije blok-uređaj"
 
-#: libmount/src/context_mount.c:1834
+#: libmount/src/context_mount.c:1903
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s nije valjani blok-uređaj"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1911
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "ne može montirati %s samo-za-čitanje"
 
-#: libmount/src/context_mount.c:1844
+#: libmount/src/context_mount.c:1913
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s je zaštićen od pisanja, a eksplicitno je zatražen način za čitanje i pisanje"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1915
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "ne može remontirati %s za čitanje i pisanje jer je zaštićen od pisanja"
 
-#: libmount/src/context_mount.c:1848
+#: libmount/src/context_mount.c:1917
 #, c-format
 msgid "bind %s failed"
 msgstr "vezanje %s nije uspjelo"
 
-#: libmount/src/context_mount.c:1857
+#: libmount/src/context_mount.c:1926
 #, c-format
 msgid "no medium found on %s"
 msgstr "ni jedan medij nije nađen na %s"
 
-#: libmount/src/context_mount.c:1864
+#: libmount/src/context_mount.c:1933
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "ne može montirati; datotečni sustav na %s je vjerojatno oštećen"
 
-#: libmount/src/context_mount.c:1873
+#: libmount/src/context_mount.c:1942
 #, c-format
 msgid "%s() failed: %m"
 msgstr "%s() je neuspješan: %m"
 
-#: libmount/src/context_umount.c:1284 libmount/src/context_umount.c:1338
+#: libmount/src/context_umount.c:1285 libmount/src/context_umount.c:1339
 #, c-format
 msgid "not mounted"
 msgstr "nije montiran"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1301
 #, c-format
 msgid "umount failed: %m"
 msgstr "demontiranje nije uspjelo: %m"
 
-#: libmount/src/context_umount.c:1309
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr ""
 "datotečni sustav je demontiran, ali ažurirati tablicu montiranja u korisničkom\n"
 "prostoru nije uspjelo"
 
-#: libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "datotečni sustav je demontiran, ali povratak u imenski prostor nije uspio"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1323
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "datotečni sustav je demontiran, ali sljedeća operacija nije uspjela: %m"
 
-#: libmount/src/context_umount.c:1335
+#: libmount/src/context_umount.c:1336
 #, c-format
 msgid "invalid block device"
 msgstr "nevaljani blok-uređaj"
 
-#: libmount/src/context_umount.c:1341
+#: libmount/src/context_umount.c:1342
 #, c-format
 msgid "can't write superblock"
 msgstr "ne može zapisati superblok"
 
-#: libmount/src/context_umount.c:1344
+#: libmount/src/context_umount.c:1345
 #, c-format
 msgid "target is busy"
 msgstr "cilj je zauzet"
 
-#: libmount/src/context_umount.c:1347
+#: libmount/src/context_umount.c:1348
 #, c-format
 msgid "no mount point specified"
 msgstr "ni jedna točka montiranja nije specificirana"
 
-#: libmount/src/context_umount.c:1350
+#: libmount/src/context_umount.c:1351
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "za koristiti umount morate biti superuser (root)"
 
-#: libmount/src/context_umount.c:1353
+#: libmount/src/context_umount.c:1354
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blok-uređaji nisu dopušteni na datotečnom sustavu"
 
-#: libmount/src/context_umount.c:1356
+#: libmount/src/context_umount.c:1357
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "sustavski poziv umount(2) nije uspio: %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
+#: libmount/src/hook_idmap.c:361 libmount/src/hook_idmap.c:421
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "e ne može postaviti ID-mapping: %m"
@@ -9249,11 +9253,11 @@ msgid "groups initialization failed: %m"
 msgstr "inicijalizacija grupa nije uspjela: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
+#: sys-utils/nsenter.c:956 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() nije uspjela"
 
-#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
+#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:958
 #: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() nije uspjela"
@@ -9804,7 +9808,7 @@ msgstr "ne može postaviti rukovatelja signala potomka"
 msgid "cannot create child process"
 msgstr "ne može stvoriti potomka (dijete-proces)"
 
-#: login-utils/su-common.c:609 sys-utils/nsenter.c:887
+#: login-utils/su-common.c:609 sys-utils/nsenter.c:889
 #: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
@@ -9824,7 +9828,7 @@ msgstr ""
 msgid " ...killed.\n"
 msgstr " ...ubijena.\n"
 
-#: login-utils/su-common.c:726 sys-utils/nsenter.c:920
+#: login-utils/su-common.c:726 sys-utils/nsenter.c:922
 msgid "failed to set environment variables"
 msgstr "nije uspjelo postaviti varijablu okruženja"
 
@@ -11095,7 +11099,7 @@ msgstr ""
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "nepoznata ključna riječ u argumentu opcije -u <popis>: ‘%s’"
 
-#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:178
+#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:179
 #, c-format
 msgid "invalid argument: %s"
 msgstr "nevaljani argument: %s"
@@ -12964,7 +12968,7 @@ msgstr "nepoznati signal: %s"
 #: misc-utils/kill.c:428 misc-utils/kill.c:436 misc-utils/lsclocks.c:630
 #: misc-utils/lslocks.c:393 misc-utils/lslocks.c:1132 schedutils/chrt.c:515
 #: schedutils/ionice.c:180 schedutils/taskset.c:194 schedutils/uclampset.c:249
-#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:670
+#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:672
 #: sys-utils/prlimit.c:615 sys-utils/setarch.c:570 sys-utils/setpriv.c:474
 msgid "invalid PID argument"
 msgstr "nevaljani argument PID-a"
@@ -22036,86 +22040,86 @@ msgstr "fstat(%d)"
 msgid "ioctl(%d, SIOCGSKNS)"
 msgstr "ioctl(%d, SIOCGSKNS)"
 
-#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:481
+#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:483
 msgid "failed to get cgroup path"
 msgstr "nije uspjelo dobiti stazu od cgroup"
 
-#: sys-utils/nsenter.c:487
+#: sys-utils/nsenter.c:489
 msgid "failed to open cgroup.procs"
 msgstr "nije uspjelo otvoriti cgroup.procs"
 
-#: sys-utils/nsenter.c:499
+#: sys-utils/nsenter.c:501
 #, c-format
 msgid "statfs %s failed"
 msgstr "statfs od %s nije uspio"
 
-#: sys-utils/nsenter.c:512
+#: sys-utils/nsenter.c:514
 msgid "write cgroup.procs failed"
 msgstr "pisanje cgroup.procs nije uspjelo"
 
-#: sys-utils/nsenter.c:685
+#: sys-utils/nsenter.c:687
 msgid "failed to parse file descriptor"
 msgstr "nije uspjelo raščlaniti descriptor datoteke"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
+#: sys-utils/nsenter.c:706 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "nije uspjelo raščlaniti UID"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
+#: sys-utils/nsenter.c:713 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "nije uspjelo raščlaniti GID"
 
-#: sys-utils/nsenter.c:770
+#: sys-utils/nsenter.c:772
 msgid "no target PID specified for --follow-context"
 msgstr "nije specificiran ciljani PID za opciju --follow-context"
 
-#: sys-utils/nsenter.c:772
+#: sys-utils/nsenter.c:774
 #, c-format
 msgid "failed to get %d SELinux context"
 msgstr "nije uspjelo dobiti SELinux kontekst %d"
 
-#: sys-utils/nsenter.c:775
+#: sys-utils/nsenter.c:777
 #, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "nije uspjelo uspostaviti izvršni kontekst na ‘%s’"
 
-#: sys-utils/nsenter.c:795
+#: sys-utils/nsenter.c:797
 msgid "no target PID specified"
 msgstr "nije specificiran ciljani PID"
 
-#: sys-utils/nsenter.c:817
+#: sys-utils/nsenter.c:819
 msgid "--join-cgroup is only supported in cgroup v2"
 msgstr "--join-cgroup je podržano samo u cgroup v2"
 
-#: sys-utils/nsenter.c:833
+#: sys-utils/nsenter.c:835
 msgid "no namespace specified"
 msgstr "nije specificiran  imenski prostor"
 
-#: sys-utils/nsenter.c:875 sys-utils/nsenter.c:898
+#: sys-utils/nsenter.c:877 sys-utils/nsenter.c:900
 msgid "cannot open current working directory"
 msgstr "ne može otvoriti trenutni radni direktorij"
 
-#: sys-utils/nsenter.c:882
+#: sys-utils/nsenter.c:884
 msgid "change directory by root file descriptor failed"
 msgstr "nije uspjelo promijeniti trenutni direktorij pomoću deskriptora root direktorija"
 
-#: sys-utils/nsenter.c:885
+#: sys-utils/nsenter.c:887
 msgid "chroot failed"
 msgstr "chroot nije uspio"
 
-#: sys-utils/nsenter.c:905
+#: sys-utils/nsenter.c:907
 msgid "change directory by working directory file descriptor failed"
 msgstr "nije uspjelo promijeniti trenutni direktorij pomoću deskriptora radnog direktorija"
 
-#: sys-utils/nsenter.c:917
+#: sys-utils/nsenter.c:919
 msgid "failed to get environment variables"
 msgstr "nije uspjelo dobiti varijable okruženja"
 
-#: sys-utils/nsenter.c:933
+#: sys-utils/nsenter.c:938
 msgid "can not get process stat"
 msgstr "ne može dobiti status, stat, procesa"
 
-#: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
+#: sys-utils/nsenter.c:954 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
 #: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "neuspješna setgroups()"
@@ -25351,39 +25355,39 @@ msgstr "Kontrolira prava pisanja drugih korisnika po vašem terminalu.\n"
 msgid " -v, --verbose  explain what is being done\n"
 msgstr " -v, --verbose  objašnjava što radi\n"
 
-#: term-utils/mesg.c:130
+#: term-utils/mesg.c:130 term-utils/mesg.c:138
 msgid "no tty"
 msgstr "nema tty"
 
-#: term-utils/mesg.c:139
+#: term-utils/mesg.c:140
 #, c-format
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr "funkcija ttyname() nije uspjela -- pokušava se zaobići pomoću: %s"
 
-#: term-utils/mesg.c:146 term-utils/mesg.c:160 term-utils/write.c:119
+#: term-utils/mesg.c:147 term-utils/mesg.c:161 term-utils/write.c:119
 #, fuzzy, c-format
 #| msgid "/dev/%s: not a character device"
 msgid "%s: not a character device"
 msgstr "/dev/%s: nije znak-uređaj"
 
-#: term-utils/mesg.c:148
+#: term-utils/mesg.c:149
 msgid "is y"
 msgstr "je y (da)"
 
-#: term-utils/mesg.c:151
+#: term-utils/mesg.c:152
 msgid "is n"
 msgstr "je n (ne)"
 
-#: term-utils/mesg.c:165 term-utils/mesg.c:172
+#: term-utils/mesg.c:166 term-utils/mesg.c:173
 #, c-format
 msgid "change %s mode failed"
 msgstr "nije uspjelo promijeniti mȏd %s"
 
-#: term-utils/mesg.c:167
+#: term-utils/mesg.c:168
 msgid "write access to your terminal is allowed"
 msgstr "dopušteno je pisanje po vašem terminalu"
 
-#: term-utils/mesg.c:174
+#: term-utils/mesg.c:175
 msgid "write access to your terminal is denied"
 msgstr "nije dopušteno pisanje po vašem terminalu"
 

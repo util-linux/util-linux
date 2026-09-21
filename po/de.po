@@ -53,7 +53,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.42-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-09-01 13:07+0200\n"
+"POT-Creation-Date: 2026-09-21 09:33+0200\n"
 "PO-Revision-Date: 2026-03-29 20:16+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -118,7 +118,7 @@ msgstr "Nicht genug Argumente"
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
 #: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
+#: term-utils/agetty.c:3117 term-utils/mesg.c:157 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
@@ -908,10 +908,10 @@ msgstr "Ungültiges Argument - repair"
 #: login-utils/last.c:718 login-utils/utmpdump.c:144 misc-utils/namei.c:146
 #: misc-utils/rename.c:160 misc-utils/rename.c:225 sys-utils/blkdiscard.c:240
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:693 sys-utils/fallocate.c:270
-#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:535
+#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:537
 #: sys-utils/swapon.c:550 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:135 sys-utils/switch_root.c:140
-#: term-utils/mesg.c:144 term-utils/mesg.c:158 text-utils/more.c:473
+#: term-utils/mesg.c:145 term-utils/mesg.c:159 text-utils/more.c:473
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat für %s ist fehlgeschlagen"
@@ -2047,7 +2047,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: Einlesen der fstab ist fehlgeschlagen"
 
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
-#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
+#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:557
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
 #: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
@@ -3211,8 +3211,8 @@ msgstr ""
 " -V, --verbose      erklären was gemacht wird;\n"
 "                      wird mehr als ein -V angegeben, wird ein Probelauf ausgelöst\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1590
+#: libmount/src/context_umount.c:1266 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -8136,225 +8136,229 @@ msgstr "%s konnte nicht geholt werden: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "Status stille Anmeldung: Wiederherstellung der ursprünglichen IDs gescheitert"
 
-#: libmount/src/context.c:3109
+#: libmount/src/context.c:3195
 #, c-format
 msgid "operation failed: %m"
 msgstr "Operation fehlgeschlagen: %m"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:750
+msgid "e symbolic links in the mount point path are not allowed for non-root users"
+msgstr ""
+
+#: libmount/src/context_mount.c:1587
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "WARNUNG: Propagierungs-Flags konnten nicht angewendet werden"
 
 # That sounds somehow dumb.
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1603
 #, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "WARNUNG: die Quelle ist schreibgeschützt und wird daher im Nur-Lese-Modus eingehängt"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "operation permitted for root only"
 msgstr "die Operation kann nur vom Benutzer root ausgeführt werden"
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s ist bereits eingehängt"
 
-#: libmount/src/context_mount.c:1565
+#: libmount/src/context_mount.c:1634
 #, c-format
 msgid "can't find in %s"
 msgstr "konnte nicht in %s gefunden werden"
 
-#: libmount/src/context_mount.c:1568
+#: libmount/src/context_mount.c:1637
 #, c-format
 msgid "can't find mount point in %s"
 msgstr "Einhängepunkt konnte in %s nicht gefunden werden"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1640
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "Einhängequelle %s konnte nicht in %s gefunden werden"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr "es wurden weitere Dateisysteme auf %s gefunden; verwenden Sie -t <Typ> oder wipefs(8)"
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1650
 #, c-format
 msgid "failed to determine filesystem type"
 msgstr "Der Typ des Dateisystems konnte nicht bestimmt werden"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1651
 #, c-format
 msgid "no valid filesystem type specified"
 msgstr "es wurde kein gültiger Dateisystemtyp angegeben"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1658
 #, c-format
 msgid "can't find %s"
 msgstr "%s kann nicht gefunden werden"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1660
 #, c-format
 msgid "no mount source specified"
 msgstr "es wurde kein Einhängepunkt angegeben"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1671
 #, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "Einhängeoptionen »%s« konnten nicht eingelesen werden: %m"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1672
 #, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "Einhängeoptionen konnten nicht eingelesen werden: »%s«"
 
-#: libmount/src/context_mount.c:1606
+#: libmount/src/context_mount.c:1675
 #, c-format
 msgid "failed to parse mount options: %m"
 msgstr "Einhängeoptionen konnten nicht eingelesen werden: %m"
 
-#: libmount/src/context_mount.c:1607
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "failed to parse mount options"
 msgstr "Einhängeoptionen konnten nicht eingelesen werden"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1681
 #, c-format
 msgid "failed to set up loop device for %s"
 msgstr "das Loop-Gerät für %s konnte nicht eingerichtet werden"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1685
 #, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "für %s existieren sich überschneidende Loop-Geräte"
 
-#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1689 libmount/src/context_umount.c:1291
 #, c-format
 msgid "locking failed"
 msgstr "Sperren fehlgeschlagen"
 
-#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1693 libmount/src/context_umount.c:1297
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, c-format
 msgid "failed to switch namespace"
 msgstr "Namensraum konnte nicht gewechselt werden"
 
-#: libmount/src/context_mount.c:1628
+#: libmount/src/context_mount.c:1697
 #, c-format
 msgid "filesystem already mounted"
 msgstr "Dateisystem ist bereits eingehängt"
 
-#: libmount/src/context_mount.c:1631
+#: libmount/src/context_mount.c:1700
 #, c-format
 msgid "mount failed: %m"
 msgstr "das Einhängen ist fehlgeschlagen: %m"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1710
 #, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "Das Dateisystem war eingehängt, aber Flags konnten nicht angewendet werden"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1716
 #, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "das Dateisystem war eingehängt, aber die Einhängetabelle auf Anwendungsebene konnte nicht aktualisiert werden"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1722
 #, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "das Dateisystem war eingehängt, aber Zurückwechseln zum Namensraum ist fehlgeschlagen"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1728
 #, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "das Dateisystem war eingehängt, aber Ändern des Besitzers ist fehlgeschlagen: %m"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1734
 #, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "das Dateisystem war eingehängt, aber Ändern des Modus ist fehlgeschlagen: %m"
 
-#: libmount/src/context_mount.c:1671
+#: libmount/src/context_mount.c:1740
 #, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "das Dateisystem war eingehängt, aber idmapping ist fehlgeschlagen"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1746
 #, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "das Dateisystem wurde eingehängt, aber alle folgenden Operationen sind fehlgeschlagen: %m"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1767
 #, c-format
 msgid "%s() failed: "
 msgstr "%s() fehlgeschlagen: "
 
 # "mount: Zugriff verweigert"
-#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1786 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "Zugriff verweigert"
 
-#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1788 libmount/src/context_mount.c:1829
 #, c-format
 msgid "mount point is not a directory"
 msgstr "der Einhängepunkt ist kein Verzeichnis"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1790
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "»mount« darf nur der Administrator verwenden"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1797
 #, c-format
 msgid "mount point is busy"
 msgstr "Einhängepunkt wird benutzt"
 
-#: libmount/src/context_mount.c:1735
+#: libmount/src/context_mount.c:1804
 #, c-format
 msgid "%s already mounted on %s"
 msgstr "%s ist bereits auf %s eingehängt"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1808
 #, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "%s ist bereits eingehängt oder wird gerade benutzt"
 
-#: libmount/src/context_mount.c:1744
+#: libmount/src/context_mount.c:1813
 #, c-format
 msgid "mount point does not exist"
 msgstr "der Einhängepunkt ist nicht vorhanden"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1816
 #, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "der Einhängepunkt ist eine ins Leere zeigende symbolische Verknüpfung"
 
-#: libmount/src/context_mount.c:1752
+#: libmount/src/context_mount.c:1821
 #, c-format
 msgid "special device %s does not exist"
 msgstr "Spezialgerät %s ist nicht vorhanden"
 
-#: libmount/src/context_mount.c:1765
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "Spezialgerät %s ist nicht vorhanden (ein Pfadpräfix ist kein Verzeichnis)"
 
-#: libmount/src/context_mount.c:1775
+#: libmount/src/context_mount.c:1844
 #, c-format
 msgid "mount point not mounted or bad option"
 msgstr "Einhängepunkt ist noch nicht eingehängt oder es wurden ungültige Optionen angegeben"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1846
 #, c-format
 msgid "not mount point or bad option"
 msgstr "kein Einhängepunkt oder ungültige Optionen"
 
-#: libmount/src/context_mount.c:1780
+#: libmount/src/context_mount.c:1849
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
@@ -8362,161 +8366,161 @@ msgstr ""
 "       der unterhalb eines geteilten Einhängepunktes liegt, nicht\n"
 "       unterstützt wird."
 
-#: libmount/src/context_mount.c:1784
+#: libmount/src/context_mount.c:1853
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "Ungültige Option; für einige Dateisysteme (z.B. nfs, cifs) werden Sie\n"
 "       eventuell ein /sbin/mount.<Typ>-Hilfsprogramm benötigen"
 
-#: libmount/src/context_mount.c:1788
+#: libmount/src/context_mount.c:1857
 #, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr "Falscher Dateisystemtyp, ungültige Optionen, der Superblock von %s ist beschädigt, fehlende Kodierungsseite oder ein anderer Fehler"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "mount table full"
 msgstr "Einhängetabelle ist voll"
 
-#: libmount/src/context_mount.c:1800
+#: libmount/src/context_mount.c:1869
 #, c-format
 msgid "can't read superblock on %s"
 msgstr "Der Superblock von %s konnte nicht gelesen werden"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1876
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "unbekannter Dateisystemtyp »%s«"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1879
 #, c-format
 msgid "unknown filesystem type"
 msgstr "unbekannter Dateisystemtyp"
 
-#: libmount/src/context_mount.c:1819
+#: libmount/src/context_mount.c:1888
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s ist kein blockorientiertes Gerät und stat(2) schlägt fehl?"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1891
 #, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr "Der Kernel erkennt %s nicht als blockorientiertes Gerät (vielleicht hilft »modprobe Treiber«?)"
 
 # "versuchen"
-#: libmount/src/context_mount.c:1825
+#: libmount/src/context_mount.c:1894
 #, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s ist kein blockorientiertes Gerät, probieren Sie es mit »-o loop«"
 
-#: libmount/src/context_mount.c:1827
+#: libmount/src/context_mount.c:1896
 #, c-format
 msgid "%s is not a block device"
 msgstr "%s ist kein blockorientiertes Gerät"
 
-#: libmount/src/context_mount.c:1834
+#: libmount/src/context_mount.c:1903
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s ist kein gültiges blockorientiertes Gerät"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1911
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "%s konnte nicht im Lese-Schreib-Modus eingehängt werden, (Medium) ist schreibgeschützt."
 
-#: libmount/src/context_mount.c:1844
+#: libmount/src/context_mount.c:1913
 #, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s ist schreibgeschützt, es wurde aber ausdrücklich Lese-Schreib-Modus angefordert"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1915
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "%s konnte nicht im Lese-Schreib-Modus eingehängt werden, (Medium) ist schreibgeschützt."
 
-#: libmount/src/context_mount.c:1848
+#: libmount/src/context_mount.c:1917
 #, c-format
 msgid "bind %s failed"
 msgstr "bind %s ist fehlgeschlagen"
 
-#: libmount/src/context_mount.c:1857
+#: libmount/src/context_mount.c:1926
 #, c-format
 msgid "no medium found on %s"
 msgstr "kein Medium in %s gefunden"
 
-#: libmount/src/context_mount.c:1864
+#: libmount/src/context_mount.c:1933
 #, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "Einhängen nicht möglich; wahrscheinlich beschädigtes Dateisystem auf %s"
 
-#: libmount/src/context_mount.c:1873
+#: libmount/src/context_mount.c:1942
 #, c-format
 msgid "%s() failed: %m"
 msgstr "%s() fehlgeschlagen: %m"
 
-#: libmount/src/context_umount.c:1284 libmount/src/context_umount.c:1338
+#: libmount/src/context_umount.c:1285 libmount/src/context_umount.c:1339
 #, c-format
 msgid "not mounted"
 msgstr "nicht eingehängt"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1301
 #, c-format
 msgid "umount failed: %m"
 msgstr "umount ist fehlgeschlagen: %m"
 
-#: libmount/src/context_umount.c:1309
+#: libmount/src/context_umount.c:1310
 #, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "das Dateisystem war ausgehängt, aber die Einhängetabelle auf Anwendungsebene konnte nicht aktualisiert werden"
 
-#: libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1316
 #, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "das Dateisystem war ausgehängt, aber Zurückwechseln zum Namensraum ist fehlgeschlagen"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1323
 #, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "das Dateisystem wurde ausgehängt, aber alle folgenden Operationen sind fehlgeschlagen: %m"
 
-#: libmount/src/context_umount.c:1335
+#: libmount/src/context_umount.c:1336
 #, c-format
 msgid "invalid block device"
 msgstr "ungültiges blockorientiertes Gerät"
 
-#: libmount/src/context_umount.c:1341
+#: libmount/src/context_umount.c:1342
 #, c-format
 msgid "can't write superblock"
 msgstr "der Superblock kann nicht geschrieben werden"
 
-#: libmount/src/context_umount.c:1344
+#: libmount/src/context_umount.c:1345
 #, c-format
 msgid "target is busy"
 msgstr "das Ziel wird gerade benutzt"
 
-#: libmount/src/context_umount.c:1347
+#: libmount/src/context_umount.c:1348
 #, c-format
 msgid "no mount point specified"
 msgstr "kein Einhängepunkt angegeben"
 
-#: libmount/src/context_umount.c:1350
+#: libmount/src/context_umount.c:1351
 #, c-format
 msgid "must be superuser to unmount"
 msgstr "nur der Administrator kann umount ausführen"
 
-#: libmount/src/context_umount.c:1353
+#: libmount/src/context_umount.c:1354
 #, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "blockorientierte Geräte sind auf dem Dateisystem nicht erlaubt"
 
-#: libmount/src/context_umount.c:1356
+#: libmount/src/context_umount.c:1357
 #, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "mount(2) Systemaufruf ist fehlgeschlagen: %m"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
+#: libmount/src/hook_idmap.c:361 libmount/src/hook_idmap.c:421
 #, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "e ID-Zuweisung kann nicht gesetzt werden: %m"
@@ -9236,11 +9240,11 @@ msgid "groups initialization failed: %m"
 msgstr "Gruppeninitialisierung fehlgeschlagen: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
+#: sys-utils/nsenter.c:956 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() fehlgeschlagen"
 
-#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
+#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:958
 #: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() fehlgeschlagen"
@@ -9797,7 +9801,7 @@ msgstr "Kind-Signalhandler kann nicht festgelegt werden"
 msgid "cannot create child process"
 msgstr "Kindprozess konnte nicht erzeugt werden"
 
-#: login-utils/su-common.c:609 sys-utils/nsenter.c:887
+#: login-utils/su-common.c:609 sys-utils/nsenter.c:889
 #: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
@@ -9817,7 +9821,7 @@ msgstr ""
 msgid " ...killed.\n"
 msgstr " … beendet.\n"
 
-#: login-utils/su-common.c:726 sys-utils/nsenter.c:920
+#: login-utils/su-common.c:726 sys-utils/nsenter.c:922
 msgid "failed to set environment variables"
 msgstr "Umgebungsvariablen konnten nicht gesetzt werden"
 
@@ -11072,7 +11076,7 @@ msgstr "%s: ambivalentes Ergebnis (wahrscheinlich weitere Dateisysteme auf dem G
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "unbekanntes Schlüsselwort im Argument -u <Liste>: »%s«"
 
-#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:178
+#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:179
 #, c-format
 msgid "invalid argument: %s"
 msgstr "ungültiges Argument: %s"
@@ -12906,7 +12910,7 @@ msgstr "unbekanntes Signal: %s"
 #: misc-utils/kill.c:428 misc-utils/kill.c:436 misc-utils/lsclocks.c:630
 #: misc-utils/lslocks.c:393 misc-utils/lslocks.c:1132 schedutils/chrt.c:515
 #: schedutils/ionice.c:180 schedutils/taskset.c:194 schedutils/uclampset.c:249
-#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:670
+#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:672
 #: sys-utils/prlimit.c:615 sys-utils/setarch.c:570 sys-utils/setpriv.c:474
 msgid "invalid PID argument"
 msgstr "ungültiges PID-Argument"
@@ -22032,86 +22036,86 @@ msgstr "fstat(%d)"
 msgid "ioctl(%d, SIOCGSKNS)"
 msgstr "ioctl(%d, SIOCGSKNS)"
 
-#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:481
+#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:483
 msgid "failed to get cgroup path"
 msgstr "Cgroup-Pfad konnte nicht ermittelt werden"
 
-#: sys-utils/nsenter.c:487
+#: sys-utils/nsenter.c:489
 msgid "failed to open cgroup.procs"
 msgstr "cgroup.procs konnte nicht geöffnet werden"
 
-#: sys-utils/nsenter.c:499
+#: sys-utils/nsenter.c:501
 #, c-format
 msgid "statfs %s failed"
 msgstr "statfs für %s ist fehlgeschlagen"
 
-#: sys-utils/nsenter.c:512
+#: sys-utils/nsenter.c:514
 msgid "write cgroup.procs failed"
 msgstr "cgroup.procs konnte nicht geschrieben werden"
 
-#: sys-utils/nsenter.c:685
+#: sys-utils/nsenter.c:687
 msgid "failed to parse file descriptor"
 msgstr "Dateideskriptor konnte nicht ausgewertet werden"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
+#: sys-utils/nsenter.c:706 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "uid konnte nicht eingelesen werden"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
+#: sys-utils/nsenter.c:713 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "gid konnte nicht eingelesen werden"
 
-#: sys-utils/nsenter.c:770
+#: sys-utils/nsenter.c:772
 msgid "no target PID specified for --follow-context"
 msgstr "keine Ziel-PID für --follow-context angegeben"
 
-#: sys-utils/nsenter.c:772
+#: sys-utils/nsenter.c:774
 #, c-format
 msgid "failed to get %d SELinux context"
 msgstr "SELinux-Kontext %d konnte nicht ermittelt werden"
 
-#: sys-utils/nsenter.c:775
+#: sys-utils/nsenter.c:777
 #, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "Kontext für Ausführung konnte nicht auf »%s« gesetzt werden"
 
-#: sys-utils/nsenter.c:795
+#: sys-utils/nsenter.c:797
 msgid "no target PID specified"
 msgstr "keine Ziel-PID für angegeben"
 
-#: sys-utils/nsenter.c:817
+#: sys-utils/nsenter.c:819
 msgid "--join-cgroup is only supported in cgroup v2"
 msgstr "--join-cgroup wird nur in cgroup v2 unterstützt"
 
-#: sys-utils/nsenter.c:833
+#: sys-utils/nsenter.c:835
 msgid "no namespace specified"
 msgstr "kein Namensraum angegeben"
 
-#: sys-utils/nsenter.c:875 sys-utils/nsenter.c:898
+#: sys-utils/nsenter.c:877 sys-utils/nsenter.c:900
 msgid "cannot open current working directory"
 msgstr "aktuelles Arbeitsverzeichnis kann nicht geöffnet werden"
 
-#: sys-utils/nsenter.c:882
+#: sys-utils/nsenter.c:884
 msgid "change directory by root file descriptor failed"
 msgstr "Wechsel des Verzeichnisses durch den Dateideskriptor des Wurzelverzeichnisses ist fehlgeschlagen"
 
-#: sys-utils/nsenter.c:885
+#: sys-utils/nsenter.c:887
 msgid "chroot failed"
 msgstr "chroot fehlgeschlagen"
 
-#: sys-utils/nsenter.c:905
+#: sys-utils/nsenter.c:907
 msgid "change directory by working directory file descriptor failed"
 msgstr "Wechsel des Verzeichnisses durch den Dateideskriptor des Arbeitsverzeichnisses ist fehlgeschlagen"
 
-#: sys-utils/nsenter.c:917
+#: sys-utils/nsenter.c:919
 msgid "failed to get environment variables"
 msgstr "Umgebungsvariablen konnten nicht ermittelt werden"
 
-#: sys-utils/nsenter.c:933
+#: sys-utils/nsenter.c:938
 msgid "can not get process stat"
 msgstr "Prozessstatus konnte nicht ermittelt werden"
 
-#: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
+#: sys-utils/nsenter.c:954 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
 #: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "setgroups fehlgeschlagen"
@@ -25380,39 +25384,39 @@ msgstr "Schreibzugriff anderer Benutzer auf Ihr Terminal steuern.\n"
 msgid " -v, --verbose  explain what is being done\n"
 msgstr " -v, --verbose  erklären, was geschieht\n"
 
-#: term-utils/mesg.c:130
+#: term-utils/mesg.c:130 term-utils/mesg.c:138
 msgid "no tty"
 msgstr "kein TTY"
 
-#: term-utils/mesg.c:139
+#: term-utils/mesg.c:140
 #, c-format
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr "ttyname() fehlgeschlagen, es wird versucht, dies zu umgehen: %s"
 
-#: term-utils/mesg.c:146 term-utils/mesg.c:160 term-utils/write.c:119
+#: term-utils/mesg.c:147 term-utils/mesg.c:161 term-utils/write.c:119
 #, fuzzy, c-format
 #| msgid "/dev/%s: not a character device"
 msgid "%s: not a character device"
 msgstr "/dev/%s ist kein zeichenorientiertes Gerät"
 
-#: term-utils/mesg.c:148
+#: term-utils/mesg.c:149
 msgid "is y"
 msgstr "ist y"
 
-#: term-utils/mesg.c:151
+#: term-utils/mesg.c:152
 msgid "is n"
 msgstr "ist n"
 
-#: term-utils/mesg.c:165 term-utils/mesg.c:172
+#: term-utils/mesg.c:166 term-utils/mesg.c:173
 #, c-format
 msgid "change %s mode failed"
 msgstr "Ändern des %s Modus fehlgeschlagen"
 
-#: term-utils/mesg.c:167
+#: term-utils/mesg.c:168
 msgid "write access to your terminal is allowed"
 msgstr "Schreibzugriff auf Ihr Terminal ist erlaubt"
 
-#: term-utils/mesg.c:174
+#: term-utils/mesg.c:175
 msgid "write access to your terminal is denied"
 msgstr "Schreibzugriff auf Ihr Terminal wird verweigert"
 

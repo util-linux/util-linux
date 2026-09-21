@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-09-01 13:07+0200\n"
+"POT-Creation-Date: 2026-09-21 09:33+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -75,7 +75,7 @@ msgstr "không đủ đối số"
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
 #: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
+#: term-utils/agetty.c:3117 term-utils/mesg.c:157 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
@@ -889,10 +889,10 @@ msgstr "đối số không hợp lệ - sửa chữa (repair)"
 #: login-utils/last.c:718 login-utils/utmpdump.c:144 misc-utils/namei.c:146
 #: misc-utils/rename.c:160 misc-utils/rename.c:225 sys-utils/blkdiscard.c:240
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:693 sys-utils/fallocate.c:270
-#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:535
+#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:537
 #: sys-utils/swapon.c:550 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:135 sys-utils/switch_root.c:140
-#: term-utils/mesg.c:144 term-utils/mesg.c:158 text-utils/more.c:473
+#: term-utils/mesg.c:145 term-utils/mesg.c:159 text-utils/more.c:473
 #, c-format
 msgid "stat of %s failed"
 msgstr "gặp lỗi khi lỗi lấy thống kê tập tin %s"
@@ -2067,7 +2067,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: gặp lỗi khi phân tích fstab"
 
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
-#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
+#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:557
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
 #: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 msgid "fork failed"
@@ -3253,8 +3253,8 @@ msgstr ""
 " -V, --verbose      giải thích đang làm những gì;\n"
 "                      chỉ định -V nhiều hơn một sẽ thực hiện chạy thử\n"
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1590
+#: libmount/src/context_umount.c:1266 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, c-format
@@ -8395,390 +8395,394 @@ msgstr "Không mở được %s: %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr "trạng thái đăng nhập im lặng: phục hồi ID nguyên gốc gặp lỗi"
 
-#: libmount/src/context.c:3109
+#: libmount/src/context.c:3195
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "readlink gặp lỗi: %s"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:750
+msgid "e symbolic links in the mount point path are not allowed for non-root users"
+msgstr ""
+
+#: libmount/src/context_mount.c:1587
 #, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "CẢNH BÁO: gặp lỗi khi áp dụng các cờ lan truyền"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1603
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "%s được bảo vệ chống ghi nên chỉ gắn kiểu chỉ-đọc"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1628
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s đã gắn kết"
 
-#: libmount/src/context_mount.c:1565
+#: libmount/src/context_mount.c:1634
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "không tìm thấy %s trong %s"
 
-#: libmount/src/context_mount.c:1568
+#: libmount/src/context_mount.c:1637
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "không tìm thấy điểm gắn %s trong %s"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1640
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "không tìm thấy nguồn gắn %s trong %s"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1650
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: gặp lỗi khi xác định nguồn"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1651
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "chưa xác định tên tập tin"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1658
 #, c-format
 msgid "can't find %s"
 msgstr "không tìm thấy %s"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1660
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "chưa chỉ ra điểm gắn"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1671
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "gặp lỗi khi phân tích các tùy chọn gắn"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1672
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "gặp lỗi khi phân tích các tùy chọn gắn"
 
-#: libmount/src/context_mount.c:1606
+#: libmount/src/context_mount.c:1675
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "gặp lỗi khi phân tích các tùy chọn gắn"
 
-#: libmount/src/context_mount.c:1607
+#: libmount/src/context_mount.c:1676
 #, c-format
 msgid "failed to parse mount options"
 msgstr "gặp lỗi khi phân tích các tùy chọn gắn"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1681
 #, fuzzy, c-format
 msgid "failed to set up loop device for %s"
 msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1685
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s không phải là một thiết bị lp"
 
-#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1689 libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "đóng %s gặp lỗi"
 
-#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1693 libmount/src/context_umount.c:1297
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "trạng thái của thiết bị"
 
-#: libmount/src/context_mount.c:1628
+#: libmount/src/context_mount.c:1697
 #, fuzzy, c-format
 #| msgid "%s is already mounted"
 msgid "filesystem already mounted"
 msgstr "%s đã gắn kết"
 
-#: libmount/src/context_mount.c:1631
+#: libmount/src/context_mount.c:1700
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "mount (gắn) không thành công"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1710
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1716
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1722
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1734
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1671
+#: libmount/src/context_mount.c:1740
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1746
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1767
 #, fuzzy, c-format
 #| msgid "%s failed"
 msgid "%s() failed: "
 msgstr "%s gặp lỗi"
 
-#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1786 login-utils/newgrp.c:241
 #, c-format
 msgid "permission denied"
 msgstr "quyền truy cập bị từ chối"
 
-#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1788 libmount/src/context_mount.c:1829
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "điểm gắn %s không phải là một thư mục"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1790
 #, c-format
 msgid "must be superuser to use mount"
 msgstr "cần phải là siêu người dùng (root) để sử dụng lệnh mount"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1797
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s đang bận"
 
-#: libmount/src/context_mount.c:1735
+#: libmount/src/context_mount.c:1804
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: đã gắn %s trên %s\n"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1808
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr " %sđã gắn rồi hoặc %s đang bận"
 
-#: libmount/src/context_mount.c:1744
+#: libmount/src/context_mount.c:1813
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "điểm gắn %s không tồn tại"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1816
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "điểm gắn %s là một liên kết mềm không chỉ tới đâu"
 
-#: libmount/src/context_mount.c:1752
+#: libmount/src/context_mount.c:1821
 #, c-format
 msgid "special device %s does not exist"
 msgstr "thiết bị đặc biệt %s không tồn tại"
 
-#: libmount/src/context_mount.c:1765
+#: libmount/src/context_mount.c:1834
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "thiết bị đặc biệt %s không tồn tại (tiền tố của đường dẫn không phải là một thư mục)"
 
-#: libmount/src/context_mount.c:1775
+#: libmount/src/context_mount.c:1844
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s chưa gắn, hoặc tùy chọn sai"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1846
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr " %s không phải là điểm gắn, hoặc tùy chọn sai"
 
-#: libmount/src/context_mount.c:1780
+#: libmount/src/context_mount.c:1849
 #, fuzzy, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 "tùy chọn sai. Chú ý rằng di chuyển một mount ngụ dưới một\n"
 "       mount không chia sẻ thì không được hỗ trợ."
 
-#: libmount/src/context_mount.c:1784
+#: libmount/src/context_mount.c:1853
 #, fuzzy, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 "       (đối với vài hệ thống tập tin, v.d. nfs, cifs, có lẽ\n"
 "       bạn cần dùng ứng dụng bổ trợ “/sbin/mount.<kiểu>”."
 
-#: libmount/src/context_mount.c:1788
+#: libmount/src/context_mount.c:1857
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "sai kiểu hệ thống tập tin, tùy chọn sai, siêu khối sai trên %s,\n"
 "       thiếu trang mã hay chương trình bổ trợ, hoặc lỗi khác"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "mount table full"
 msgstr "bảng gắn bị đầy"
 
-#: libmount/src/context_mount.c:1800
+#: libmount/src/context_mount.c:1869
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "%s: không đọc được siêu khối"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1876
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "không hiểu kiểu hệ thống tập tin “%s”"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1879
 #, c-format
 msgid "unknown filesystem type"
 msgstr "không hiểu kiểu hệ thống tập tin"
 
-#: libmount/src/context_mount.c:1819
+#: libmount/src/context_mount.c:1888
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s không phải là một thiết bị khối, và stat (lấy trạng thái) không thành công?"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1891
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "hạt nhân không nhận ra %s như là thiết bị khối\n"
 "       (có thể thử “modprobe driver”.)"
 
-#: libmount/src/context_mount.c:1825
+#: libmount/src/context_mount.c:1894
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "%s: không phải là thiết bị khối (có thể hãy thử “-o loop”.)"
 
-#: libmount/src/context_mount.c:1827
+#: libmount/src/context_mount.c:1896
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "%s không phải thiết bị đặc biệt khối."
 
-#: libmount/src/context_mount.c:1834
+#: libmount/src/context_mount.c:1903
 #, c-format
 msgid "%s is not a valid block device"
 msgstr "%s: không phải là thiết bị khối thích hợp"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1911
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "không gắn được %s với chế độ chỉ-đọc"
 
-#: libmount/src/context_mount.c:1844
+#: libmount/src/context_mount.c:1913
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "%s được bảo vệ khỏi ghi nhưng đưa ra cờ “-w” (write, ghi)"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1915
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "không thể lắp lại %s đọc-ghi vì nó được bảo vệ chống ghi"
 
-#: libmount/src/context_mount.c:1848
+#: libmount/src/context_mount.c:1917
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "%s gặp lỗi"
 
-#: libmount/src/context_mount.c:1857
+#: libmount/src/context_mount.c:1926
 #, c-format
 msgid "no medium found on %s"
 msgstr "không tìm thấy vật chứa trên %s"
 
-#: libmount/src/context_mount.c:1864
+#: libmount/src/context_mount.c:1933
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "sẽ không thử tạo hệ thống tập tin trên “%s”"
 
-#: libmount/src/context_mount.c:1873
+#: libmount/src/context_mount.c:1942
 #, fuzzy, c-format
 #| msgid "%s failed"
 msgid "%s() failed: %m"
 msgstr "%s gặp lỗi"
 
-#: libmount/src/context_umount.c:1284 libmount/src/context_umount.c:1338
+#: libmount/src/context_umount.c:1285 libmount/src/context_umount.c:1339
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "%s: chưa gắn"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1301
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "mount (gắn) không thành công"
 
-#: libmount/src/context_umount.c:1309
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1323
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "%s: hệ thống tập tin đã bỏ gắn, nhưng lệnh mount(8) gặp lỗi"
 
-#: libmount/src/context_umount.c:1335
+#: libmount/src/context_umount.c:1336
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "%s: thiết bị khối không hợp lệ"
 
-#: libmount/src/context_umount.c:1341
+#: libmount/src/context_umount.c:1342
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "%s: không thể ghi siêu khối"
 
-#: libmount/src/context_umount.c:1344
+#: libmount/src/context_umount.c:1345
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "%s đang bận"
 
-#: libmount/src/context_umount.c:1347
+#: libmount/src/context_umount.c:1348
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "chưa chỉ ra điểm gắn"
 
-#: libmount/src/context_umount.c:1350
+#: libmount/src/context_umount.c:1351
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "%s: phải là siêu người dùng (root) để bỏ gắn"
 
-#: libmount/src/context_umount.c:1353
+#: libmount/src/context_umount.c:1354
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "%s: thiết bị khối không được thừa nhận trên hệ thống tập tin"
 
-#: libmount/src/context_umount.c:1356
+#: libmount/src/context_umount.c:1357
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "gặp lỗi khi mount(2)"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
+#: libmount/src/hook_idmap.c:361 libmount/src/hook_idmap.c:421
 #, fuzzy, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "không thể khóa %s"
@@ -9514,11 +9518,11 @@ msgid "groups initialization failed: %m"
 msgstr "sự khởi tạo nhóm gặp lỗi: %m"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
+#: sys-utils/nsenter.c:956 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 msgid "setgid() failed"
 msgstr "setgid() gặp lỗi"
 
-#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
+#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:958
 #: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "setuid() gặp lỗi"
@@ -10084,7 +10088,7 @@ msgstr "không đặt bộ tiếp hợp tín hiệu"
 msgid "cannot create child process"
 msgstr "không thể tạo tiến trình con"
 
-#: login-utils/su-common.c:609 sys-utils/nsenter.c:887
+#: login-utils/su-common.c:609 sys-utils/nsenter.c:889
 #: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, c-format
 msgid "cannot change directory to %s"
@@ -10104,7 +10108,7 @@ msgstr ""
 msgid " ...killed.\n"
 msgstr " …bị giết.\n"
 
-#: login-utils/su-common.c:726 sys-utils/nsenter.c:920
+#: login-utils/su-common.c:726 sys-utils/nsenter.c:922
 #, fuzzy
 msgid "failed to set environment variables"
 msgstr "gặp lỗi khi đặt giới hạn nguồn %s"
@@ -11526,7 +11530,7 @@ msgstr ""
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "không hiểu đối số: %s"
 
-#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:178
+#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:179
 #, c-format
 msgid "invalid argument: %s"
 msgstr "đối số không hợp lệ: %s"
@@ -13487,7 +13491,7 @@ msgstr "không hiểu tín hiệu: %s"
 #: misc-utils/kill.c:428 misc-utils/kill.c:436 misc-utils/lsclocks.c:630
 #: misc-utils/lslocks.c:393 misc-utils/lslocks.c:1132 schedutils/chrt.c:515
 #: schedutils/ionice.c:180 schedutils/taskset.c:194 schedutils/uclampset.c:249
-#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:670
+#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:672
 #: sys-utils/prlimit.c:615 sys-utils/setarch.c:570 sys-utils/setpriv.c:474
 msgid "invalid PID argument"
 msgstr "đối số PID không hợp lệ"
@@ -23113,98 +23117,98 @@ msgstr ""
 msgid "ioctl(%d, SIOCGSKNS)"
 msgstr ""
 
-#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:481
+#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:483
 #, fuzzy
 #| msgid "%s: failed to get device path"
 msgid "failed to get cgroup path"
 msgstr "%s: lỗi khi lấy đường dẫn thiết bị"
 
-#: sys-utils/nsenter.c:487
+#: sys-utils/nsenter.c:489
 #, fuzzy
 msgid "failed to open cgroup.procs"
 msgstr "lỗi mở %s"
 
-#: sys-utils/nsenter.c:499
+#: sys-utils/nsenter.c:501
 #, fuzzy, c-format
 #| msgid "stat of %s failed"
 msgid "statfs %s failed"
 msgstr "gặp lỗi khi lỗi lấy thống kê tập tin %s"
 
-#: sys-utils/nsenter.c:512
+#: sys-utils/nsenter.c:514
 #, fuzzy
 msgid "write cgroup.procs failed"
 msgstr "setgroups gặp lỗi"
 
-#: sys-utils/nsenter.c:685
+#: sys-utils/nsenter.c:687
 #, fuzzy
 #| msgid "invalid passphrase file descriptor"
 msgid "failed to parse file descriptor"
 msgstr "sai mật khẩu bộ mô tả tập tin"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
+#: sys-utils/nsenter.c:706 sys-utils/unshare.c:1039
 msgid "failed to parse uid"
 msgstr "gặp lỗi khi phân tích uid"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
+#: sys-utils/nsenter.c:713 sys-utils/unshare.c:1043
 msgid "failed to parse gid"
 msgstr "gặp lỗi khi phân tích gid"
 
-#: sys-utils/nsenter.c:770
+#: sys-utils/nsenter.c:772
 msgid "no target PID specified for --follow-context"
 msgstr ""
 
-#: sys-utils/nsenter.c:772
+#: sys-utils/nsenter.c:774
 #, fuzzy, c-format
 msgid "failed to get %d SELinux context"
 msgstr "không thể tạo ngữ cảnh SELinux mới"
 
-#: sys-utils/nsenter.c:775
+#: sys-utils/nsenter.c:777
 #, fuzzy, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "gặp lỗi khi đặt cá nhân thành %s"
 
-#: sys-utils/nsenter.c:795
+#: sys-utils/nsenter.c:797
 #, fuzzy
 msgid "no target PID specified"
 msgstr "nguồn được ghi nhiều hơn một lần"
 
-#: sys-utils/nsenter.c:817
+#: sys-utils/nsenter.c:819
 msgid "--join-cgroup is only supported in cgroup v2"
 msgstr ""
 
-#: sys-utils/nsenter.c:833
+#: sys-utils/nsenter.c:835
 #, fuzzy
 #| msgid "no filename specified"
 msgid "no namespace specified"
 msgstr "chưa xác định tên tập tin"
 
-#: sys-utils/nsenter.c:875 sys-utils/nsenter.c:898
+#: sys-utils/nsenter.c:877 sys-utils/nsenter.c:900
 msgid "cannot open current working directory"
 msgstr "không thể mở thư mục hoạt động hiện tại"
 
-#: sys-utils/nsenter.c:882
+#: sys-utils/nsenter.c:884
 msgid "change directory by root file descriptor failed"
 msgstr "thay đổi thư mục bởi mô tả tập tin gốc gặp lỗi"
 
-#: sys-utils/nsenter.c:885
+#: sys-utils/nsenter.c:887
 msgid "chroot failed"
 msgstr "chroot gặp lỗi"
 
-#: sys-utils/nsenter.c:905
+#: sys-utils/nsenter.c:907
 msgid "change directory by working directory file descriptor failed"
 msgstr "thay đổi thư mục bằng mô tả tập tin thư mục làm việc gặp lỗi"
 
-#: sys-utils/nsenter.c:917
+#: sys-utils/nsenter.c:919
 #, fuzzy
 msgid "failed to get environment variables"
 msgstr "gặp lỗi khi đặt giới hạn nguồn %s"
 
-#: sys-utils/nsenter.c:933
+#: sys-utils/nsenter.c:938
 #, fuzzy
 msgid "can not get process stat"
 msgstr "không thể truy cập %s"
 
-#: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
+#: sys-utils/nsenter.c:954 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
 #: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 msgid "setgroups failed"
 msgstr "setgroups gặp lỗi"
@@ -26591,39 +26595,39 @@ msgstr "Điều khiển truy cập ghi của các người dùng khác đến th
 msgid " -v, --verbose  explain what is being done\n"
 msgstr " -v, --verbose  giải thích đang làm những gì\n"
 
-#: term-utils/mesg.c:130
+#: term-utils/mesg.c:130 term-utils/mesg.c:138
 msgid "no tty"
 msgstr ""
 
-#: term-utils/mesg.c:139
+#: term-utils/mesg.c:140
 #, c-format
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr ""
 
-#: term-utils/mesg.c:146 term-utils/mesg.c:160 term-utils/write.c:119
+#: term-utils/mesg.c:147 term-utils/mesg.c:161 term-utils/write.c:119
 #, fuzzy, c-format
 #| msgid "/dev/%s: not a character device"
 msgid "%s: not a character device"
 msgstr "/dev/%s: không phải thiết bị ký tự"
 
-#: term-utils/mesg.c:148
+#: term-utils/mesg.c:149
 msgid "is y"
 msgstr "là c"
 
-#: term-utils/mesg.c:151
+#: term-utils/mesg.c:152
 msgid "is n"
 msgstr "là k"
 
-#: term-utils/mesg.c:165 term-utils/mesg.c:172
+#: term-utils/mesg.c:166 term-utils/mesg.c:173
 #, c-format
 msgid "change %s mode failed"
 msgstr "Gặp lỗi khi đổi chế độ %s"
 
-#: term-utils/mesg.c:167
+#: term-utils/mesg.c:168
 msgid "write access to your terminal is allowed"
 msgstr "quyền truy cập ghi tới thiết bị cuối của bạn là được phép"
 
-#: term-utils/mesg.c:174
+#: term-utils/mesg.c:175
 msgid "write access to your terminal is denied"
 msgstr "quyền truy cập ghi tới thiết bị cuối của bạn bị từ chối"
 

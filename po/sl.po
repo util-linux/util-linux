@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2026-09-01 13:07+0200\n"
+"POT-Creation-Date: 2026-09-21 09:33+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -76,7 +76,7 @@ msgstr "Preveè argumentov.\n"
 #: sys-utils/setpriv.c:701 sys-utils/swapon.c:402 sys-utils/swapon.c:545
 #: sys-utils/switch_root.c:175 sys-utils/unshare.c:117 sys-utils/unshare.c:132
 #: sys-utils/unshare.c:725 sys-utils/wdctl.c:422 sys-utils/zramctl.c:715
-#: term-utils/agetty.c:3117 term-utils/mesg.c:156 term-utils/script.c:393
+#: term-utils/agetty.c:3117 term-utils/mesg.c:157 term-utils/script.c:393
 #: term-utils/scriptlive.c:268 term-utils/scriptlive.c:271
 #: term-utils/scriptlive.c:274 term-utils/scriptreplay.c:305
 #: term-utils/scriptreplay.c:308 term-utils/scriptreplay.c:311
@@ -930,10 +930,10 @@ msgstr "neveljavni id: %s\n"
 #: login-utils/last.c:718 login-utils/utmpdump.c:144 misc-utils/namei.c:146
 #: misc-utils/rename.c:160 misc-utils/rename.c:225 sys-utils/blkdiscard.c:240
 #: sys-utils/blkzone.c:147 sys-utils/dmesg.c:693 sys-utils/fallocate.c:270
-#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:535
+#: sys-utils/fsfreeze.c:119 sys-utils/fstrim.c:78 sys-utils/nsenter.c:537
 #: sys-utils/swapon.c:550 sys-utils/switch_root.c:94
 #: sys-utils/switch_root.c:135 sys-utils/switch_root.c:140
-#: term-utils/mesg.c:144 term-utils/mesg.c:158 text-utils/more.c:473
+#: term-utils/mesg.c:145 term-utils/mesg.c:159 text-utils/more.c:473
 #, fuzzy, c-format
 msgid "stat of %s failed"
 msgstr "(Naslednja datoteka: %s)"
@@ -2170,7 +2170,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
 #: disk-utils/fsck.c:695 login-utils/login.c:1155 login-utils/sulogin.c:1244
-#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:555
+#: login-utils/vipw.c:200 sys-utils/flock.c:444 sys-utils/nsenter.c:557
 #: sys-utils/readprofile.c:74 sys-utils/swapon.c:352 sys-utils/unshare.c:301
 #: sys-utils/unshare.c:698 sys-utils/unshare.c:1163
 #, fuzzy
@@ -3363,8 +3363,8 @@ msgid ""
 "                      specifying -V more than once will cause a dry-run\n"
 msgstr ""
 
-#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1521
-#: libmount/src/context_umount.c:1265 login-utils/su-common.c:1265
+#: disk-utils/mkfs.c:140 include/c.h:380 libmount/src/context_mount.c:1590
+#: libmount/src/context_umount.c:1266 login-utils/su-common.c:1265
 #: login-utils/sulogin.c:943 login-utils/sulogin.c:947 sys-utils/flock.c:141
 #: sys-utils/rtcwake.c:632
 #, fuzzy, c-format
@@ -8640,385 +8640,389 @@ msgstr "%s ni mogoèe odpreti: %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: libmount/src/context.c:3109
+#: libmount/src/context.c:3195
 #, fuzzy, c-format
 msgid "operation failed: %m"
 msgstr "(Naslednja datoteka: %s)"
 
-#: libmount/src/context_mount.c:1518
+#: libmount/src/context_mount.c:750
+msgid "e symbolic links in the mount point path are not allowed for non-root users"
+msgstr ""
+
+#: libmount/src/context_mount.c:1587
 #, fuzzy, c-format
 msgid "WARNING: failed to apply propagation flags"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1534
+#: libmount/src/context_mount.c:1603
 #, fuzzy, c-format
 msgid "WARNING: source write-protected, mounted read-only"
 msgstr "mount: %s%s je za¹èitena pred pisanjem, priklapljam samo za branje"
 
-#: libmount/src/context_mount.c:1555
+#: libmount/src/context_mount.c:1624
 #, c-format
 msgid "operation permitted for root only"
 msgstr ""
 
-#: libmount/src/context_mount.c:1559
+#: libmount/src/context_mount.c:1628
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: libmount/src/context_mount.c:1565
+#: libmount/src/context_mount.c:1634
 #, fuzzy, c-format
 msgid "can't find in %s"
 msgstr "mount: %s ni mogoèe najti v %s"
 
-#: libmount/src/context_mount.c:1568
+#: libmount/src/context_mount.c:1637
 #, fuzzy, c-format
 msgid "can't find mount point in %s"
 msgstr "mount: %s ni mogoèe najti v %s"
 
-#: libmount/src/context_mount.c:1571
+#: libmount/src/context_mount.c:1640
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "mount: %s ni mogoèe najti v %s"
 
-#: libmount/src/context_mount.c:1576
+#: libmount/src/context_mount.c:1645
 #, c-format
 msgid "more filesystems detected on %s; use -t <type> or wipefs(8)"
 msgstr ""
 
-#: libmount/src/context_mount.c:1581
+#: libmount/src/context_mount.c:1650
 #, fuzzy, c-format
 msgid "failed to determine filesystem type"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1582
+#: libmount/src/context_mount.c:1651
 #, fuzzy, c-format
 msgid "no valid filesystem type specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: libmount/src/context_mount.c:1589
+#: libmount/src/context_mount.c:1658
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: ni mogoèe povezati %s: %s\n"
 
-#: libmount/src/context_mount.c:1591
+#: libmount/src/context_mount.c:1660
 #, fuzzy, c-format
 msgid "no mount source specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: libmount/src/context_mount.c:1602
+#: libmount/src/context_mount.c:1671
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s': %m"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1603
+#: libmount/src/context_mount.c:1672
 #, fuzzy, c-format
 msgid "failed to parse mount options '%s'"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1606
+#: libmount/src/context_mount.c:1675
 #, fuzzy, c-format
 msgid "failed to parse mount options: %m"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1607
+#: libmount/src/context_mount.c:1676
 #, fuzzy, c-format
 msgid "failed to parse mount options"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: libmount/src/context_mount.c:1612
+#: libmount/src/context_mount.c:1681
 #, fuzzy, c-format
 msgid "failed to set up loop device for %s"
 msgstr "izmenjalne naprave ni mogoèe previti"
 
-#: libmount/src/context_mount.c:1616
+#: libmount/src/context_mount.c:1685
 #, fuzzy, c-format
 msgid "overlapping loop device exists for %s"
 msgstr "%s: %s ni lp naprava.\n"
 
-#: libmount/src/context_mount.c:1620 libmount/src/context_umount.c:1290
+#: libmount/src/context_mount.c:1689 libmount/src/context_umount.c:1291
 #, fuzzy, c-format
 msgid "locking failed"
 msgstr "zagon ni uspel\n"
 
-#: libmount/src/context_mount.c:1624 libmount/src/context_umount.c:1296
+#: libmount/src/context_mount.c:1693 libmount/src/context_umount.c:1297
 #: sys-utils/umount.c:261 sys-utils/umount.c:277
 #, fuzzy, c-format
 msgid "failed to switch namespace"
 msgstr "stat imenika ni uspel\n"
 
-#: libmount/src/context_mount.c:1628
+#: libmount/src/context_mount.c:1697
 #, fuzzy, c-format
 msgid "filesystem already mounted"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: libmount/src/context_mount.c:1631
+#: libmount/src/context_mount.c:1700
 #, fuzzy, c-format
 msgid "mount failed: %m"
 msgstr "priklop ni uspel"
 
-#: libmount/src/context_mount.c:1641
+#: libmount/src/context_mount.c:1710
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to apply flags"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1647
+#: libmount/src/context_mount.c:1716
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to update userspace mount table"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1653
+#: libmount/src/context_mount.c:1722
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to switch namespace back"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1659
+#: libmount/src/context_mount.c:1728
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change ownership: %m"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1665
+#: libmount/src/context_mount.c:1734
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to change mode: %m"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1671
+#: libmount/src/context_mount.c:1740
 #, fuzzy, c-format
 msgid "filesystem was mounted, but failed to attach idmapping"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1677
+#: libmount/src/context_mount.c:1746
 #, fuzzy, c-format
 msgid "filesystem was mounted, but any subsequent operation failed: %m"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_mount.c:1698
+#: libmount/src/context_mount.c:1767
 #, fuzzy, c-format
 msgid "%s() failed: "
 msgstr "iskanje je bilo neuspe¹no"
 
-#: libmount/src/context_mount.c:1717 login-utils/newgrp.c:241
+#: libmount/src/context_mount.c:1786 login-utils/newgrp.c:241
 #, fuzzy, c-format
 msgid "permission denied"
 msgstr "mount: dostop zavrnjen"
 
-#: libmount/src/context_mount.c:1719 libmount/src/context_mount.c:1760
+#: libmount/src/context_mount.c:1788 libmount/src/context_mount.c:1829
 #, fuzzy, c-format
 msgid "mount point is not a directory"
 msgstr "mount: priklopna toèka %s ni imenik"
 
-#: libmount/src/context_mount.c:1721
+#: libmount/src/context_mount.c:1790
 #, fuzzy, c-format
 msgid "must be superuser to use mount"
 msgstr "mount: ukaz mount lahko uporablja samo sistemski skrbnik"
 
-#: libmount/src/context_mount.c:1728
+#: libmount/src/context_mount.c:1797
 #, fuzzy, c-format
 msgid "mount point is busy"
 msgstr "mount: %s je v rabi"
 
-#: libmount/src/context_mount.c:1735
+#: libmount/src/context_mount.c:1804
 #, fuzzy, c-format
 msgid "%s already mounted on %s"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: libmount/src/context_mount.c:1739
+#: libmount/src/context_mount.c:1808
 #, fuzzy, c-format
 msgid "%s already mounted or mount point busy"
 msgstr "mount: %s je ¾e priklopljen ali %s zaposlen"
 
-#: libmount/src/context_mount.c:1744
+#: libmount/src/context_mount.c:1813
 #, fuzzy, c-format
 msgid "mount point does not exist"
 msgstr "mount: priklopna toèka %s ne obstaja"
 
-#: libmount/src/context_mount.c:1747
+#: libmount/src/context_mount.c:1816
 #, fuzzy, c-format
 msgid "mount point is a symbolic link to nowhere"
 msgstr "mount: priklopna toèka %s je simbolna povezava do nièesar"
 
-#: libmount/src/context_mount.c:1752
+#: libmount/src/context_mount.c:1821
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount: posebna naprava %s ne obstaja"
 
-#: libmount/src/context_mount.c:1765
+#: libmount/src/context_mount.c:1834
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount: posebna naprava %s ne obstaja\n"
 "\t(pot ni imenik)\n"
 
-#: libmount/src/context_mount.c:1775
+#: libmount/src/context_mount.c:1844
 #, fuzzy, c-format
 msgid "mount point not mounted or bad option"
 msgstr "mount: %s ¹e ni priklopljen ali nepravilna izbira"
 
-#: libmount/src/context_mount.c:1777
+#: libmount/src/context_mount.c:1846
 #, fuzzy, c-format
 msgid "not mount point or bad option"
 msgstr "mount: %s ¹e ni priklopljen ali nepravilna izbira"
 
-#: libmount/src/context_mount.c:1780
+#: libmount/src/context_mount.c:1849
 #, c-format
 msgid "bad option; moving a mount residing under a shared mount is unsupported"
 msgstr ""
 
-#: libmount/src/context_mount.c:1784
+#: libmount/src/context_mount.c:1853
 #, c-format
 msgid "bad option; for several filesystems (e.g. nfs, cifs) you might need a /sbin/mount.<type> helper program"
 msgstr ""
 
-#: libmount/src/context_mount.c:1788
+#: libmount/src/context_mount.c:1857
 #, fuzzy, c-format
 msgid "wrong fs type, bad option, bad superblock on %s, missing codepage or helper program, or other error"
 msgstr ""
 "mount: napaèen tip dat. sistema, nepravilna izbira, po¹kodovan superblok na %s,\n"
 "\tmanjkajoèa kodna stran ali druge napake"
 
-#: libmount/src/context_mount.c:1795
+#: libmount/src/context_mount.c:1864
 #, c-format
 msgid "mount table full"
 msgstr "priklopna tabela je polna"
 
-#: libmount/src/context_mount.c:1800
+#: libmount/src/context_mount.c:1869
 #, fuzzy, c-format
 msgid "can't read superblock on %s"
 msgstr "mount: %s: superbloka ni mogoèe prebrati"
 
-#: libmount/src/context_mount.c:1807
+#: libmount/src/context_mount.c:1876
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount: neznan tip dat. sistema '%s'"
 
-#: libmount/src/context_mount.c:1810
+#: libmount/src/context_mount.c:1879
 #, fuzzy, c-format
 msgid "unknown filesystem type"
 msgstr "mount: neznan tip dat. sistema '%s'"
 
-#: libmount/src/context_mount.c:1819
+#: libmount/src/context_mount.c:1888
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount: %s ni bloèna naprava in stat ne uspe?"
 
-#: libmount/src/context_mount.c:1822
+#: libmount/src/context_mount.c:1891
 #, fuzzy, c-format
 msgid "the kernel does not recognize %s as a block device; maybe \"modprobe driver\" is necessary"
 msgstr ""
 "mount: jedro ne prepozna %s kot bloène naprave\n"
 "\t(mogoèe `insmod gonilnik'?)"
 
-#: libmount/src/context_mount.c:1825
+#: libmount/src/context_mount.c:1894
 #, fuzzy, c-format
 msgid "%s is not a block device; try \"-o loop\""
 msgstr "mount: %s ni bloèna naprava (poskusite `-o loop'?)"
 
-#: libmount/src/context_mount.c:1827
+#: libmount/src/context_mount.c:1896
 #, fuzzy, c-format
 msgid "%s is not a block device"
 msgstr "%s: ni bloèna naprava\n"
 
-#: libmount/src/context_mount.c:1834
+#: libmount/src/context_mount.c:1903
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount: %s ni veljavna bloèna naprava"
 
-#: libmount/src/context_mount.c:1842
+#: libmount/src/context_mount.c:1911
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount: %s%s ni moè priklopiti samo za branje"
 
-#: libmount/src/context_mount.c:1844
+#: libmount/src/context_mount.c:1913
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit read-write mode requested"
 msgstr "mount: %s%s je za¹èitena pred pisanjem ampak podana je `-w' zastavica"
 
-#: libmount/src/context_mount.c:1846
+#: libmount/src/context_mount.c:1915
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount: %s%s ni moè priklopiti samo za branje"
 
-#: libmount/src/context_mount.c:1848
+#: libmount/src/context_mount.c:1917
 #, fuzzy, c-format
 msgid "bind %s failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: libmount/src/context_mount.c:1857
+#: libmount/src/context_mount.c:1926
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: libmount/src/context_mount.c:1864
+#: libmount/src/context_mount.c:1933
 #, fuzzy, c-format
 msgid "cannot mount; probably corrupted filesystem on %s"
 msgstr "na '%s' ne bo poskusa narediti datoteèni sistem"
 
-#: libmount/src/context_mount.c:1873
+#: libmount/src/context_mount.c:1942
 #, fuzzy, c-format
 msgid "%s() failed: %m"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: libmount/src/context_umount.c:1284 libmount/src/context_umount.c:1338
+#: libmount/src/context_umount.c:1285 libmount/src/context_umount.c:1339
 #, fuzzy, c-format
 msgid "not mounted"
 msgstr "umount: %s: neuspe¹no iskanje"
 
-#: libmount/src/context_umount.c:1300
+#: libmount/src/context_umount.c:1301
 #, fuzzy, c-format
 msgid "umount failed: %m"
 msgstr "priklop ni uspel"
 
-#: libmount/src/context_umount.c:1309
+#: libmount/src/context_umount.c:1310
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to update userspace mount table"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_umount.c:1315
+#: libmount/src/context_umount.c:1316
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but failed to switch namespace back"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_umount.c:1322
+#: libmount/src/context_umount.c:1323
 #, fuzzy, c-format
 msgid "filesystem was unmounted, but any subsequent operation failed: %m"
 msgstr "mount: priklop ni uspel"
 
-#: libmount/src/context_umount.c:1335
+#: libmount/src/context_umount.c:1336
 #, fuzzy, c-format
 msgid "invalid block device"
 msgstr "umount: %s: neveljavna bloèna naprava"
 
-#: libmount/src/context_umount.c:1341
+#: libmount/src/context_umount.c:1342
 #, fuzzy, c-format
 msgid "can't write superblock"
 msgstr "mount: %s: superbloka ni mogoèe prebrati"
 
-#: libmount/src/context_umount.c:1344
+#: libmount/src/context_umount.c:1345
 #, fuzzy, c-format
 msgid "target is busy"
 msgstr "mount: %s je v rabi"
 
-#: libmount/src/context_umount.c:1347
+#: libmount/src/context_umount.c:1348
 #, fuzzy, c-format
 msgid "no mount point specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: libmount/src/context_umount.c:1350
+#: libmount/src/context_umount.c:1351
 #, fuzzy, c-format
 msgid "must be superuser to unmount"
 msgstr "umount: %s: samo sistemski skrbnik lahko odklaplja"
 
-#: libmount/src/context_umount.c:1353
+#: libmount/src/context_umount.c:1354
 #, fuzzy, c-format
 msgid "block devices are not permitted on filesystem"
 msgstr "umount: %s: na dat. sist. bloène naprave niso dovoljene"
 
-#: libmount/src/context_umount.c:1356
+#: libmount/src/context_umount.c:1357
 #, fuzzy, c-format
 msgid "umount(2) system call failed: %m"
 msgstr "priklop ni uspel"
 
 #. TRANSLATORS: Don't translate "e ". It's a message classifier.
-#: libmount/src/hook_idmap.c:350 libmount/src/hook_idmap.c:380
+#: libmount/src/hook_idmap.c:361 libmount/src/hook_idmap.c:421
 #, fuzzy, c-format
 msgid "e cannot set ID-mapping: %m"
 msgstr "ni mogoèe odpreti %s"
@@ -9763,12 +9767,12 @@ msgstr ""
 "Napaka pri zapiranju datoteke\n"
 
 #: login-utils/login.c:1654 login-utils/newgrp.c:231 login-utils/newgrp.c:243
-#: sys-utils/nsenter.c:951 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
+#: sys-utils/nsenter.c:956 sys-utils/unshare.c:1105 sys-utils/unshare.c:1315
 #, fuzzy
 msgid "setgid() failed"
 msgstr "klic setuid() ni uspel"
 
-#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:953
+#: login-utils/login.c:1681 login-utils/newgrp.c:247 sys-utils/nsenter.c:958
 #: sys-utils/unshare.c:1107 sys-utils/unshare.c:1318
 msgid "setuid() failed"
 msgstr "klic setuid() ni uspel"
@@ -10380,7 +10384,7 @@ msgstr "Signalnega upravljalnika ni mogoèe nastaviti"
 msgid "cannot create child process"
 msgstr "id-a %s ni mogoèe odstraniti (%s)\n"
 
-#: login-utils/su-common.c:609 sys-utils/nsenter.c:887
+#: login-utils/su-common.c:609 sys-utils/nsenter.c:889
 #: sys-utils/switch_root.c:190 sys-utils/unshare.c:1284
 #, fuzzy, c-format
 msgid "cannot change directory to %s"
@@ -10398,7 +10402,7 @@ msgstr ""
 msgid " ...killed.\n"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: login-utils/su-common.c:726 sys-utils/nsenter.c:920
+#: login-utils/su-common.c:726 sys-utils/nsenter.c:922
 #, fuzzy
 msgid "failed to set environment variables"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
@@ -11738,7 +11742,7 @@ msgstr ""
 msgid "unknown keyword in -u <list> argument: '%s'"
 msgstr "%s: neznan argument: %s\n"
 
-#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:178
+#: misc-utils/blkid.c:647 sys-utils/choom.c:118 term-utils/mesg.c:179
 #, fuzzy, c-format
 msgid "invalid argument: %s"
 msgstr "neveljavni id: %s\n"
@@ -13667,7 +13671,7 @@ msgstr "%s: neznan signal %s\n"
 #: misc-utils/kill.c:428 misc-utils/kill.c:436 misc-utils/lsclocks.c:630
 #: misc-utils/lslocks.c:393 misc-utils/lslocks.c:1132 schedutils/chrt.c:515
 #: schedutils/ionice.c:180 schedutils/taskset.c:194 schedutils/uclampset.c:249
-#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:670
+#: sys-utils/choom.c:101 sys-utils/lsns.c:1705 sys-utils/nsenter.c:672
 #: sys-utils/prlimit.c:615 sys-utils/setarch.c:570 sys-utils/setpriv.c:474
 #, fuzzy
 msgid "invalid PID argument"
@@ -23145,100 +23149,100 @@ msgstr ""
 msgid "ioctl(%d, SIOCGSKNS)"
 msgstr ""
 
-#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:481
+#: sys-utils/nsenter.c:475 sys-utils/nsenter.c:483
 #, fuzzy
 msgid "failed to get cgroup path"
 msgstr "izmenjalne naprave ni mogoèe previti"
 
-#: sys-utils/nsenter.c:487
+#: sys-utils/nsenter.c:489
 #, fuzzy
 msgid "failed to open cgroup.procs"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: sys-utils/nsenter.c:499
+#: sys-utils/nsenter.c:501
 #, fuzzy, c-format
 msgid "statfs %s failed"
 msgstr "(Naslednja datoteka: %s)"
 
-#: sys-utils/nsenter.c:512
+#: sys-utils/nsenter.c:514
 #, fuzzy
 msgid "write cgroup.procs failed"
 msgstr "Odpiranje %s ni uspelo"
 
-#: sys-utils/nsenter.c:685
+#: sys-utils/nsenter.c:687
 #, fuzzy
 msgid "failed to parse file descriptor"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: sys-utils/nsenter.c:704 sys-utils/unshare.c:1039
+#: sys-utils/nsenter.c:706 sys-utils/unshare.c:1039
 #, fuzzy
 msgid "failed to parse uid"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: sys-utils/nsenter.c:711 sys-utils/unshare.c:1043
+#: sys-utils/nsenter.c:713 sys-utils/unshare.c:1043
 #, fuzzy
 msgid "failed to parse gid"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: sys-utils/nsenter.c:770
+#: sys-utils/nsenter.c:772
 msgid "no target PID specified for --follow-context"
 msgstr ""
 
-#: sys-utils/nsenter.c:772
+#: sys-utils/nsenter.c:774
 #, fuzzy, c-format
 msgid "failed to get %d SELinux context"
 msgstr "zapis inodov ni uspel"
 
-#: sys-utils/nsenter.c:775
+#: sys-utils/nsenter.c:777
 #, fuzzy, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
 
-#: sys-utils/nsenter.c:795
+#: sys-utils/nsenter.c:797
 #, fuzzy
 msgid "no target PID specified"
 msgstr "Navedli ste veè stez, kot jih je na disku"
 
-#: sys-utils/nsenter.c:817
+#: sys-utils/nsenter.c:819
 msgid "--join-cgroup is only supported in cgroup v2"
 msgstr ""
 
-#: sys-utils/nsenter.c:833
+#: sys-utils/nsenter.c:835
 #, fuzzy
 msgid "no namespace specified"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: sys-utils/nsenter.c:875 sys-utils/nsenter.c:898
+#: sys-utils/nsenter.c:877 sys-utils/nsenter.c:900
 #, fuzzy
 msgid "cannot open current working directory"
 msgstr "Napaka pri spreminjanju naèina %s: %s\n"
 
-#: sys-utils/nsenter.c:882
+#: sys-utils/nsenter.c:884
 #, fuzzy
 msgid "change directory by root file descriptor failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: sys-utils/nsenter.c:885
+#: sys-utils/nsenter.c:887
 #, fuzzy
 msgid "chroot failed"
 msgstr "priklop ni uspel"
 
-#: sys-utils/nsenter.c:905
+#: sys-utils/nsenter.c:907
 #, fuzzy
 msgid "change directory by working directory file descriptor failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: sys-utils/nsenter.c:917
+#: sys-utils/nsenter.c:919
 #, fuzzy
 msgid "failed to get environment variables"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
 
-#: sys-utils/nsenter.c:933
+#: sys-utils/nsenter.c:938
 #, fuzzy
 msgid "can not get process stat"
 msgstr "Datoteke ,%s` ni mogoèe odpreti"
 
-#: sys-utils/nsenter.c:949 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
+#: sys-utils/nsenter.c:954 sys-utils/setpriv.c:1130 sys-utils/setpriv.c:1137
 #: sys-utils/unshare.c:1103 sys-utils/unshare.c:1313
 #, fuzzy
 msgid "setgroups failed"
@@ -26549,41 +26553,41 @@ msgstr ""
 msgid " -v, --verbose  explain what is being done\n"
 msgstr "  -V, --version                Izpi¹i informacije o razlièici\n"
 
-#: term-utils/mesg.c:130
+#: term-utils/mesg.c:130 term-utils/mesg.c:138
 msgid "no tty"
 msgstr ""
 
-#: term-utils/mesg.c:139
+#: term-utils/mesg.c:140
 #, c-format
 msgid "ttyname() failed, attempting to go around using: %s"
 msgstr ""
 
-#: term-utils/mesg.c:146 term-utils/mesg.c:160 term-utils/write.c:119
+#: term-utils/mesg.c:147 term-utils/mesg.c:161 term-utils/write.c:119
 #, fuzzy, c-format
 #| msgid "/dev/%s: not a character device"
 msgid "%s: not a character device"
 msgstr "/dev/%s: ni znakovna naprava"
 
-#: term-utils/mesg.c:148
+#: term-utils/mesg.c:149
 #, fuzzy
 msgid "is y"
 msgstr "je y\n"
 
-#: term-utils/mesg.c:151
+#: term-utils/mesg.c:152
 #, fuzzy
 msgid "is n"
 msgstr "je n\n"
 
-#: term-utils/mesg.c:165 term-utils/mesg.c:172
+#: term-utils/mesg.c:166 term-utils/mesg.c:173
 #, fuzzy, c-format
 msgid "change %s mode failed"
 msgstr "dodeljeni semaforji = %d\n"
 
-#: term-utils/mesg.c:167
+#: term-utils/mesg.c:168
 msgid "write access to your terminal is allowed"
 msgstr ""
 
-#: term-utils/mesg.c:174
+#: term-utils/mesg.c:175
 msgid "write access to your terminal is denied"
 msgstr ""
 
