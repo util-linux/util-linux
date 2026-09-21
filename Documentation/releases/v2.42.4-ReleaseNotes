@@ -1,0 +1,47 @@
+
+util-linux 2.42.4 Release Notes
+===============================
+
+This release enhances previously released security fixes and adds protection
+against symlink attacks in the legacy mount(2)-based code in libmount.
+
+
+Changes between v2.42.3 and v2.42.4:
+
+libblkid:
+    - minix don't detect erofs images as minix (by Clayton Craft)
+
+lib/fileutils:
+    - add safe FD-path and no-symlink helpers (by Karel Zak)
+    - fix RESOLVE_NO_SYMLINKS fallback value (by Karel Zak)
+    - fix unused parameter warnings without SYS_openat2 (by Karel Zak)
+
+libmount:
+    - add mnt_fs_fetch_ids() and populate uniq_id for utab (by Karel Zak)
+    - use fchmodat2() for X-mount.mode= (by Karel Zak)
+    - restore the original namespace on error paths (by Karel Zak)
+    - secure the idmapped mount replacement (by Karel Zak)
+    - pin the legacy mount target and bind/move source (by Karel Zak)
+    - harden restricted mount targets and post-mount handling (by Karel Zak)
+    - fix X-mount.idmap ID names in code and man page (by Karel Zak)
+    - use USE_LIBMOUNT_MOUNTFD_SUPPORT for idmap hook (by Karel Zak)
+    - add missing fileutils.h include to hook_idmap.c (by Karel Zak)
+
+mount:
+    - fix grammar and typo in X-mount.idmap documentation (by Karel Zak)
+
+nsenter:
+    - close cgroup.procs fd after join to prevent authority leak [CVE-2026-78408] (by Karel Zak)
+
+po:
+    - merge changes (by Karel Zak)
+    - update sv.po (from translationproject.org) (by Daniel Nylander)
+    - update nl.po (from translationproject.org) (by Benno Schulenberg)
+
+po-man:
+    - merge changes (by Karel Zak)
+    - update sv.po (from translationproject.org) (by Daniel Nylander)
+
+tools:
+    - add non-newmount.conf config-gen profile (by Karel Zak)
+
