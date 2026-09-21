@@ -711,7 +711,7 @@ static int find_super_magic(const struct fs_control *ctl)
 
 static void determine_device_blocks(struct fs_control *ctl, const struct stat *statbuf)
 {
-	unsigned long long dev_blocks = 0;
+	uint64_t dev_blocks = 0;
 
 	if (S_ISBLK(statbuf->st_mode)) {
 		int sectorsize;
@@ -730,8 +730,9 @@ static void determine_device_blocks(struct fs_control *ctl, const struct stat *s
 		ctl->fs_blocks = dev_blocks;
 	else if (dev_blocks < ctl->fs_blocks)
 		errx(MKFS_EX_ERROR,
-		     _("%s: requested blocks (%llu) exceeds available (%llu) blocks"),
-		     ctl->device_name, ctl->fs_blocks, dev_blocks);
+		     _("%s: requested blocks (%ju) exceeds available (%ju) blocks"),
+		     ctl->device_name, (uintmax_t) ctl->fs_blocks,
+		     (uintmax_t) dev_blocks);
 	if (ctl->fs_blocks < 10)
 		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl->device_name);
 	if (fs_version == 1 && ctl->fs_blocks > MINIX_MAX_INODES)

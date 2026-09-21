@@ -24,7 +24,7 @@
  */
 blkid_loff_t blkid_get_dev_size(int fd)
 {
-	unsigned long long bytes;
+	uint64_t bytes;
 
 	if (blkdev_get_size(fd, &bytes))
 		return 0;
