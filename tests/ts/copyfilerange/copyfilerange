@@ -75,6 +75,15 @@ else
 fi
 if [ -s i ]; then
 	echo "destination: nonempty" >>"$TS_OUTPUT"
+	{
+	    echo DEBUG
+	    ls -l a
+	    ls -l i
+	    echo cat a
+	    cat a
+	    echo cat i
+	    cat i
+	} >>"$TS_OUTPUT"
 else
 	echo "destination: empty" >>"$TS_OUTPUT"
 fi
