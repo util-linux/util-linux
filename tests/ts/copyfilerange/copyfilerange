@@ -105,7 +105,7 @@ ts_init_subtest "copy-from-beyond-file-size"
 cat h >>"$TS_OUTPUT"
 ts_finalize_subtest
 
-rm -f a b c d e f g i ranges
+rm -f a b c d e f g h i ranges
 rmdir ranges-read-error
 
 ts_finalize
