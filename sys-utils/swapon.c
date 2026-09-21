@@ -533,7 +533,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 	struct stat st;
 	int fd, sig;
 	char *hdr = NULL;
-	unsigned long long devsize = 0;
+	uint64_t devsize = 0;
 	int permMask;
 
 	assert(ctl);
@@ -568,7 +568,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 				dev->path);
 			goto err;
 		}
-		devsize = st.st_size;
+		devsize = (uint64_t) st.st_size;
 	}
 
 	if (S_ISBLK(st.st_mode) && blkdev_get_size(fd, &devsize)) {
@@ -594,7 +594,7 @@ static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 		int syspg = getpagesize();
 
 		if (ctl->verbose)
-			warnx(_("%s: pagesize=%u, swapsize=%llu, devsize=%llu"),
+			warnx(_("%s: pagesize=%u, swapsize=%llu, devsize=%" PRIu64),
 				dev->path, dev->pagesize, swapsize, devsize);
 
 		if (swapsize > devsize) {

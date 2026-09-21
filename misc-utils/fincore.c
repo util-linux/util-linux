@@ -409,7 +409,7 @@ static int fincore_name(struct fincore_control *ctl,
 	}
 
 	if (S_ISBLK(sb->st_mode)) {
-		rc = blkdev_get_size(fd, &st->file_size);
+		rc = blkdev_get_size(fd, (uint64_t *) &st->file_size);
 		if (rc)
 			warn(_("failed ioctl to get size: %s"), showname);
 	} else if (S_ISREG(sb->st_mode)) {

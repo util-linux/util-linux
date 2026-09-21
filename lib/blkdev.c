@@ -88,7 +88,7 @@ off_t blkdev_find_size (int fd)
 }
 
 /* get size in bytes */
-int blkdev_get_size(int fd, unsigned long long *bytes)
+int blkdev_get_size(int fd, uint64_t *bytes)
 {
 #ifdef DKIOCGETBLOCKCOUNT
 	/* Apple Darwin */
@@ -108,7 +108,7 @@ int blkdev_get_size(int fd, unsigned long long *bytes)
 		unsigned long size;
 
 		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-			*bytes = ((unsigned long long)size << 9);
+			*bytes = ((uint64_t) size) << 9;
 			return 0;
 		}
 	}
@@ -126,7 +126,7 @@ int blkdev_get_size(int fd, unsigned long long *bytes)
 		struct floppy_struct this_floppy;
 
 		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
-			*bytes = ((unsigned long long) this_floppy.size) << 9;
+			*bytes = ((uint64_t) this_floppy.size) << 9;
 			return 0;
 		}
 	}
@@ -155,7 +155,7 @@ int blkdev_get_size(int fd, unsigned long long *bytes)
 		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
 			pp = &lab.d_partitions[part];
 			if (pp->p_size) {
-				 *bytes = pp->p_size << 9;
+				 *bytes = ((uint64_t) pp->p_size) << 9;
 				 return 0;
 			}
 		}
@@ -166,7 +166,7 @@ int blkdev_get_size(int fd, unsigned long long *bytes)
 		struct stat st;
 
 		if (fstat(fd, &st) == 0 && S_ISREG(st.st_mode)) {
-			*bytes = st.st_size;
+			*bytes = (uint64_t) st.st_size;
 			return 0;
 		}
 		if (!S_ISBLK(st.st_mode)) {
@@ -179,14 +179,14 @@ int blkdev_get_size(int fd, unsigned long long *bytes)
 	if (size < 0)
 		return -1;
 
-	*bytes = (uint64_t)size;
+	*bytes = (uint64_t) size;
 	return 0;
 }
 
 /* get 512-byte sector count */
-int blkdev_get_sectors(int fd, unsigned long long *sectors)
+int blkdev_get_sectors(int fd, uint64_t *sectors)
 {
-	unsigned long long bytes;
+	uint64_t bytes;
 
 	if (blkdev_get_size(fd, &bytes) == 0) {
 		*sectors = (bytes >> 9);
@@ -453,8 +453,7 @@ struct blk_zone_report *blkdev_get_zonereport(int fd, uint64_t sector, uint32_t 
 
 int main(int argc, char **argv)
 {
-	unsigned long long bytes;
-	unsigned long long sectors;
+	uint64_t bytes, sectors;
 	int sector_size, phy_sector_size;
 	int fd;
 
@@ -475,8 +474,8 @@ int main(int argc, char **argv)
 	if (blkdev_get_physector_size(fd, &phy_sector_size) < 0)
 		err(EXIT_FAILURE, "blkdev_get_physector_size() failed");
 
-	printf("          bytes: %llu\n", bytes);
-	printf("        sectors: %llu\n", sectors);
+	printf("          bytes: %" PRIu64 "\n", bytes);
+	printf("        sectors: %" PRIu64 "\n", sectors);
 	printf("    sector size: %d\n", sector_size);
 	printf("phy-sector size: %d\n", phy_sector_size);
 

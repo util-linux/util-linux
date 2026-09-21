@@ -235,7 +235,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	if (cxt->geom.heads && cxt->geom.sectors) {
 		fdisk_sector_t llsectors;
 
-		if (blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &llsectors) == 0) {
+		if (blkdev_get_sectors(cxt->dev_fd, &llsectors) == 0) {
 			int sec_fac = cxt->sector_size / 512;
 			fdisk_sector_t llcyls;
 

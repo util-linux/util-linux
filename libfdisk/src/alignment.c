@@ -494,7 +494,7 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 		cxt->total_sectors = cxt->dev_st.st_size / cxt->sector_size;
 	else {
 		/* get number of 512-byte sectors, and convert it the real sectors */
-		if (!blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &nsects))
+		if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
 			cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
 		/* what the kernel/bios thinks the geometry is */
