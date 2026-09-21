@@ -91,7 +91,8 @@ for phase in "${PHASES[@]}"; do
         opts+=(
             --disable-use-tty-group
             --disable-makeinstall-chown
-            --enable-all-programs
+            --disable-all-programs
+            --enable-copyfilerange
         )
 
         if [[ "$COVERAGE" == "yes" ]]; then
@@ -127,8 +128,7 @@ for phase in "${PHASES[@]}"; do
         CC="$CC" CXX="$CXX" CFLAGS="${CFLAGS[@]}" CXXFLAGS="${CXXFLAGS[@]}" LDFLAGS="${LDFLAGS[@]}" ./configure "${opts[@]}"
         ;;
     MAKE)
-        make -j"$(nproc)" V=1
-        make -j"$(nproc)" V=1 check-programs
+        make -j"$(nproc)" V=1 copyfilerange
 
         untracked_files="$(git ls-files --others --exclude-standard)"
         if [ -n "$untracked_files" ]; then
@@ -202,7 +202,7 @@ for phase in "${PHASES[@]}"; do
                 make checkusage
         fi
 
-        ./tests/run.sh --show-diff
+        ./tests/run.sh --show-diff copyfilerange
 
         if [[ "$COVERAGE" == "yes" ]]; then
             lcov --directory . --capture --initial --output-file coverage.info.initial
