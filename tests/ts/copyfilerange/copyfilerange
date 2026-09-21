@@ -68,12 +68,13 @@ ts_finalize_subtest
 
 ts_init_subtest "ranges-read-error"
 mkdir ranges-read-error
-if "$TS_CMD_COPYFILERANGE" a i --ranges ranges-read-error &>/dev/null; then
+touch j
+if "$TS_CMD_COPYFILERANGE" a j --ranges ranges-read-error &>/dev/null; then
 	echo "exit status: zero" >"$TS_OUTPUT"
 else
 	echo "exit status: nonzero" >"$TS_OUTPUT"
 fi
-if [ -s i ]; then
+if [ -s j ]; then
 	echo "destination: nonempty" >>"$TS_OUTPUT"
 else
 	echo "destination: empty" >>"$TS_OUTPUT"
@@ -105,7 +106,7 @@ ts_init_subtest "copy-from-beyond-file-size"
 cat h >>"$TS_OUTPUT"
 ts_finalize_subtest
 
-rm -f a b c d e f g h i ranges
+rm -f a b c d e f g h i j ranges
 rmdir ranges-read-error
 
 ts_finalize
