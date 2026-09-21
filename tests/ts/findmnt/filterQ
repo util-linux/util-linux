@@ -75,4 +75,14 @@ $TS_CMD_FINDMNT --filter 'OPTIONS =~ "\<nosuid\>" && OPTIONS =~ "\<nodev\>" && O
 echo rc=$? >> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "types-nomatch"
+$TS_CMD_FINDMNT --filter 'FSTYPE == "xxxfs"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "types-nomatch-json"
+$TS_CMD_FINDMNT --json --filter 'FSTYPE == "xxxfs"' --kernel --tab-file "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize
