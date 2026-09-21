@@ -34,4 +34,9 @@ printf '%b' "\033[32mgreen\033(B\033[m|colored with SCS reset\n\033[31mred\033[m
 	| $TS_CMD_COLUMN --table --separator '|' --output-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest "csi"
+printf '%b' "\033[Khome|B\nxx|D\n\033[2Jred|E\n\033[?25lyy|F\n" \
+	| $TS_CMD_COLUMN --table --separator '|' --output-separator '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_finalize
