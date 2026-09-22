@@ -103,42 +103,17 @@ static int fstype_cmp(const void *v1, const void *v2)
 
 /* This very simplified stat() alternative uses cached VFS data and does not
  * directly ask the filesystem for details. It requires a kernel that supports
- * statx(). It's usable only for file type, rdev and ino!
+ * statx() with AT_STATX_DONT_SYNC. It's usable only for file type, rdev and ino!
+ *
+ * It falls back to traditional fstatat() or stat() when statx is unsupported.
  */
-static int safe_stat(const char *target, struct stat *st, int nofollow)
+static int safer_stat(const char *target, struct stat *st, int nofollow)
 {
-	assert(target);
-	assert(st);
+	int rc = ul_safe_stat(target, st, nofollow, 0);
 
-	memset(st, 0, sizeof(struct stat));
-
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
-	{
-		int rc;
-		struct statx stx = { 0 };
-
-		rc = statx(AT_FDCWD, target,
-				/* flags */
-				AT_STATX_DONT_SYNC
-					| AT_NO_AUTOMOUNT
-					| (nofollow ? AT_SYMLINK_NOFOLLOW : 0),
-				/* mask */
-				STATX_TYPE
-					| STATX_MODE
-					| STATX_INO,
-				&stx);
-		if (rc == 0) {
-			st->st_ino  = stx.stx_ino;
-			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
-			st->st_rdev = makedev(stx.stx_rdev_major, stx.stx_rdev_minor);
-			st->st_mode = stx.stx_mode;
-		}
-
-		if (rc == 0 ||
-		    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
-			return rc;
-	}
-#endif
+	if (rc == 0 ||
+	    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
+		return rc;
 
 #ifdef AT_NO_AUTOMOUNT
 	return fstatat(AT_FDCWD, target, st,
@@ -149,12 +124,12 @@ static int safe_stat(const char *target, struct stat *st, int nofollow)
 
 int mnt_safe_stat(const char *target, struct stat *st)
 {
-	return safe_stat(target, st, 0);
+	return safer_stat(target, st, 0);
 }
 
 int mnt_safe_lstat(const char *target, struct stat *st)
 {
-	return safe_stat(target, st, 1);
+	return safer_stat(target, st, 1);
 }
 
 /* Don't use access() or stat() here, we need a way how to check the path
@@ -163,7 +138,7 @@ int mnt_is_path(const char *target)
 {
 	struct stat st;
 
-	return safe_stat(target, &st, 0) == 0;
+	return safer_stat(target, &st, 0) == 0;
 }
 
 /*

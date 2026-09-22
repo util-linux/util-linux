@@ -20,6 +20,7 @@
  */
 #include "lsfd.h"		/* prototype decl for call_with_foreign_fd */
 #include "pidfd-utils.h"
+#include "fileutils.h"
 
 int call_with_foreign_fd_via_pidfd(int pidfd, int target_fd,
 				   int (*fn)(int, void*), void *data)
@@ -49,4 +50,84 @@ int call_with_foreign_fd(pid_t target_pid, int target_fd,
 
 	close(pidfd);
 	return r;
+}
+
+static bool dont_sync_available = false;
+
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+bool lsfd_init_stat_system(void)
+{
+	struct statx stx;
+
+	if (statx(AT_FDCWD, "/proc/self", AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx) == 0)
+		dont_sync_available = true;
+
+	return dont_sync_available;
+}
+#else
+bool lsfd_init_stat_system(void)
+{
+	return false;
+}
+#endif
+
+int lsfd_stat(const char *path, struct stat *sb)
+{
+	if (dont_sync_available)
+		return ul_safe_stat(path, sb, 0, 1);
+	return stat(path, sb);
+}
+
+int lsfd_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path)
+{
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	if (dont_sync_available) {
+		struct statx stx;
+		int rc;
+
+		rc = ul_path_statx(pc, &stx, flags | AT_NO_AUTOMOUNT | AT_STATX_DONT_SYNC,
+				   STATX_BASIC_STATS, path);
+		if (rc == 0)
+			ul_statx_to_stat(&stx, sb, 1);
+		return rc;
+	}
+#endif
+	return ul_path_stat(pc, sb, flags, path);
+}
+
+int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, ...)
+{
+	char buf[PATH_MAX];
+	va_list ap;
+	int rc;
+
+	va_start(ap, path);
+	rc = vsnprintf(buf, sizeof(buf), path, ap);
+	va_end(ap);
+
+	if (rc < 0 || (size_t)rc >= sizeof(buf)) {
+		errno = ENAMETOOLONG;
+		return -errno;
+	}
+
+	return lsfd_path_stat(pc, sb, flags, buf);
+}
+
+int lsfd_fstat(int fd, struct stat *sb)
+{
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
+	if (dont_sync_available) {
+		struct statx stx;
+		int rc;
+
+		/* AT_NO_AUTOMOUNT is not needed here because statx() with
+		 * AT_EMPTY_PATH on an already-open file descriptor operates
+		 * directly on the open file without pathname resolution. */
+		rc = statx(fd, "", AT_EMPTY_PATH | AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx);
+		if (rc == 0)
+			ul_statx_to_stat(&stx, sb, 1);
+		return rc;
+	}
+#endif
+	return fstat(fd, sb);
 }

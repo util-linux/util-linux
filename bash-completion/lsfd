@@ -40,6 +40,7 @@ _lsfd_module()
 	case $cur in
 		-*)
 			OPTS="
+				--abort-if-blockable
 				--noheadings
 				--output
 				--version
