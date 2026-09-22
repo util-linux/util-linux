@@ -17,11 +17,13 @@
  */
 #include <sys/wait.h>
 #include <sys/mount.h>
+#include <sys/eventfd.h>
 
 #include "mountP.h"
 #include "strutils.h"
 #include "strv.h"
 #include "fileutils.h"
+#include "all-io.h"
 
 #if defined(HAVE_SMACK)
 static int is_option(const char *name, const char *const *names)
@@ -383,6 +385,7 @@ static int exec_helper(struct libmnt_context *cxt)
 	char *namespace = NULL;
 	int rc;
 	pid_t pid;
+	int errfd = -1;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -396,6 +399,13 @@ static int exec_helper(struct libmnt_context *cxt)
 			getpid(), ns_tgt->fd) == -1) {
 		return -ENOMEM;
 	}
+
+	/* Diagnostic-only channel to learn the helper's execv() errno.
+	 * Best effort: this is purely optional and must never be able to
+	 * stall the mount itself, so the fd is non-blocking and errfd
+	 * simply stays at -1 (its initialized value) if eventfd() fails --
+	 * later code only uses it when errfd >= 0. */
+	errfd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK);
 
 	DBG_FLUSH;
 
@@ -462,6 +472,10 @@ static int exec_helper(struct libmnt_context *cxt)
 							i, args[i]));
 		DBG_FLUSH;
 		execv(cxt->helper, (char * const *) args);
+		if (errfd >= 0) {
+			uint64_t errsv = (uint64_t) errno;
+			ul_write_all(errfd, (char *) &errsv, sizeof(errsv));
+		}
 		_exit(MNT_EX_EXEC);
 	}
 	default:
@@ -477,20 +491,33 @@ static int exec_helper(struct libmnt_context *cxt)
 			cxt->helper_exec_status = rc = 0;
 
 			if (cxt->helper_status == MNT_EX_EXEC) {
+				uint64_t errsv = 0;
+				ssize_t len = -1;
+
+				if (errfd >= 0)
+					len = ul_read_all(errfd, (char *) &errsv, sizeof(errsv));
+				cxt->helper_errno = (len == (ssize_t) sizeof(errsv)) ? (int) errsv : 0;
+
 				rc = -MNT_ERR_EXEC;
-				DBG_OBJ(CXT, cxt, ul_debug("%s exec failed", cxt->helper));
+				DBG_OBJ(CXT, cxt, ul_debug("%s exec failed [errno=%d]",
+						cxt->helper, cxt->helper_errno));
 			}
 
 			DBG_OBJ(CXT, cxt, ul_debug("%s forked [status=%d, rc=%d]",
 				cxt->helper,
 				cxt->helper_status, rc));
 		}
+
+		if (errfd >= 0)
+			close(errfd);
 		break;
 	}
 
 	case -1:
 		cxt->helper_exec_status = rc = -errno;
 		DBG_OBJ(CXT, cxt, ul_debug("fork() failed"));
+		if (errfd >= 0)
+			close(errfd);
 		break;
 	}
 
@@ -1587,7 +1614,11 @@ int mnt_context_get_mount_excode(
 				snprintf(buf, bufsz, _("WARNING: failed to apply propagation flags"));
 				break;
 			case -MNT_ERR_EXEC:
-				snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
+				if (cxt->helper_errno) {
+					errno = cxt->helper_errno;
+					snprintf(buf, bufsz, _("failed to execute %s: %m"), cxt->helper);
+				} else
+					snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
 				break;
 			}
 		}
