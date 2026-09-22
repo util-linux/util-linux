@@ -1293,8 +1293,11 @@ int mnt_context_get_umount_excode(
 		 */
 		if (rc == -MNT_ERR_EXEC && buf) {
 			if (cxt->helper_errno) {
+				int errsv = errno;
+
 				errno = cxt->helper_errno;
 				snprintf(buf, bufsz, _("failed to execute %s: %m"), cxt->helper);
+				errno = errsv;
 			} else
 				snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
 		}

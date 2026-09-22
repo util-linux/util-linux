@@ -1615,8 +1615,11 @@ int mnt_context_get_mount_excode(
 				break;
 			case -MNT_ERR_EXEC:
 				if (cxt->helper_errno) {
+					int errsv = errno;
+
 					errno = cxt->helper_errno;
 					snprintf(buf, bufsz, _("failed to execute %s: %m"), cxt->helper);
+					errno = errsv;
 				} else
 					snprintf(buf, bufsz, _("failed to execute %s"), cxt->helper);
 				break;
