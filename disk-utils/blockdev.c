@@ -337,6 +337,10 @@ static void do_commands(int fd, char **argv, int d)
 	int verbose = 0;
 
 	for (i = 1; i < d; i++) {
+		/* Skip the "--" separator if present. */
+		if (!strcmp(argv[i], "--"))
+			continue;
+
 		if (!strcmp(argv[i], "-v")) {
 			verbose = 1;
 			continue;
