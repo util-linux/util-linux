@@ -218,9 +218,10 @@ include::man-common/help-version.adoc[]
 
 == EXIT STATUS
 
-The exit value is 0 if there is something to display, or 1 on any error
-(for example if no filesystem is found based on the user's filter
-specification, or the device path or mountpoint does not exist).
+The exit value is 0 if there is something to display, or 1 in case of any
+error. An exit value of 1 is also returned when there is nothing to show and a
+user-defined filter is used, or if the device path or mount point does not
+exist.
 
 == ENVIRONMENT
 

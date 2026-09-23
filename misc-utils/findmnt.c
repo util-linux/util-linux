@@ -1771,7 +1771,7 @@ int main(int argc, char *argv[])
 	int c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 	char *outarg = NULL;
-	size_t i;
+	size_t i, nfilters = 0;
 	int force_tree = 0, istree = 0;
 	int force_target = 0;
 
@@ -1942,6 +1942,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
+			nfilters++;
 			break;
 		case 'p':
 			if (optarg) {
@@ -1960,6 +1961,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'Q':
 			findmnt.filter = new_filter(optarg);
+			nfilters++;
 			break;
 		case 'm':		/* mtab */
 			tabtype = TABTYPE_MTAB;
@@ -1985,6 +1987,7 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 			set_match(COL_FSTYPE, optarg);
+			nfilters++;
 			break;
 		case 'r':
 			findmnt.flags &= ~FL_TREE;	/* disable the default */
@@ -2011,12 +2014,14 @@ int main(int argc, char *argv[])
 		case 'S':
 			set_source_match(optarg, &findmnt);
 			findmnt.flags |= FL_NOSWAPMATCH;
+			nfilters++;
 			break;
 		case 'M':
 			findmnt.flags |= FL_STRICTTARGET;
 			FALLTHROUGH;
 		case 'T':
 			set_match(COL_TARGET, optarg);
+			nfilters++;
 			force_target = 1;
 			break;
 		case 'U':
@@ -2039,21 +2044,26 @@ int main(int argc, char *argv[])
 			break;
 		case FINDMNT_OPT_PSEUDO:
 			findmnt.flags |= FL_PSEUDO;
+			nfilters++;
 			break;
 		case FINDMNT_OPT_REAL:
 			findmnt.flags |= FL_REAL;
+			nfilters++;
 			break;
 		case FINDMNT_OPT_NET:
 			findmnt.flags |= FL_NET;
+			nfilters++;
 			break;
 		case FINDMNT_OPT_LOCAL:
 			findmnt.flags |= FL_LOCAL;
+			nfilters++;
 			break;
 		case FINDMNT_OPT_VFS_ALL:
 			findmnt.flags |= FL_VFS_ALL;
 			break;
 		case FINDMNT_OPT_SHADOWED:
 			findmnt.flags |= FL_SHADOWED;
+			nfilters++;
 			break;
 		case FINDMNT_OPT_HYPERLINK:
 			if (hyperlinkwanted(optarg))
@@ -2065,6 +2075,7 @@ int main(int argc, char *argv[])
 
 				*id = strtos32_or_err(optarg, _("invalid id argument"));
 				set_match_data(COL_ID, (void *) id);
+				nfilters++;
 				break;
 			}
 		case FINDMNT_OPT_UNIQ_ID:
@@ -2073,6 +2084,7 @@ int main(int argc, char *argv[])
 
 				*id = strtou64_or_err(optarg, _("invalid uniq-id argument"));
 				set_match_data(COL_UNIQ_ID, (void *) id);
+				nfilters++;
 				break;
 			}
 		case 'H':
@@ -2139,8 +2151,10 @@ int main(int argc, char *argv[])
 
 	if (optind < argc)
 		set_source_match(argv[optind++], &findmnt);	/* dev/tag/mountpoint/maj:min */
-	if (optind < argc)
+	if (optind < argc) {
 		set_match(COL_TARGET, argv[optind++]);	/* mountpoint */
+		nfilters++;
+	}
 
 	if ((findmnt.flags & FL_SUBMOUNTS) && is_listall_mode(findmnt.flags))
 		/* don't care about submounts if list all mounts */
@@ -2255,8 +2269,12 @@ int main(int argc, char *argv[])
 	/*
 	 * Print the output table for non-poll modes
 	 */
-	if (!rc && !(findmnt.flags & FL_POLL))
-		scols_print_table(table);
+	if (!rc && !(findmnt.flags & FL_POLL)) {
+		if (scols_table_get_nlines(table))
+			scols_print_table(table);
+		else if (nfilters)
+			rc = 1; /* filters defined, found nothing */
+	}
 leave:
 	scols_unref_table(table);
 	scols_unref_filter(findmnt.filter);
