@@ -235,7 +235,8 @@ static long landlock_fs_access_to_mask(const char *str, size_t len)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-		if (strncmp(landlock_access_fs[i].type, str, len) == 0)
+		if (strlen(landlock_access_fs[i].type) == len
+				&& memcmp(landlock_access_fs[i].type, str, len) == 0)
 			return landlock_access_fs[i].value;
 	return -1;
 }
