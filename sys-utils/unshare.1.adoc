@@ -143,10 +143,9 @@ Run the program only after the current effective user and group IDs have been ma
 Run the program only after the current effective user and group IDs have been mapped to the same UID and GID in the newly created user namespace. This option implies *--setgroups=deny* and *--user*. This option is equivalent to *--map-user=$(id -ru) --map-group=$(id -rg)*.
 
 *--map-foreign*::
-Map the foreign user ID range 1:1 into the new user namespace using *systemd-nsresourced.service*(8), so that processes inside can access files owned by that range. This option implies *--user* and *--map-current-user*.
-
-*systemd-nsresourced.service*(8) always maps the current uid and gid, so *--map-current-user* is enabled by default.
-The *--map-root-user* option is also supported.
+Map the foreign user ID range 1:1 into the new user namespace using *systemd-nsresourced.service*(8), so that processes inside can access files owned by that range. This option implies *--user*.
++
+By default, *systemd-nsresourced.service*(8) maps the current user and group IDs to themselves, as *--map-current-user* would. Use *--map-root-user* to map them to root instead.
 +
 Unlike the other mapping options, the maps are installed by *systemd-nsresourced.service*(8) rather than by *unshare* itself. Since they are written by a privileged process, *--setgroups=deny* is _not_ implied; use *--setgroups=deny* explicitly if that is required.
 +

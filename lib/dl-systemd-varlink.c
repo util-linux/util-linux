@@ -23,7 +23,6 @@ static const struct ul_dlsym ul_systemd_varlink_symbols[] =
 	UL_DLSYM( ul_systemd_varlink_opers, sd_varlink_push_dup_fd ),
 	UL_DLSYM( ul_systemd_varlink_opers, sd_varlink_callb ),
 	UL_DLSYM( ul_systemd_varlink_opers, sd_varlink_close_unref ),
-	UL_DLSYM( ul_systemd_varlink_opers, sd_json_variant_unref ),
 };
 
 int ul_dlopen_libsystemd_varlink(void)

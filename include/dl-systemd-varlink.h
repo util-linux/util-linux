@@ -30,8 +30,6 @@ struct ul_systemd_varlink_opers {
 	int (*sd_varlink_push_dup_fd)(sd_varlink *, int);
 	int (*sd_varlink_callb)(sd_varlink *, const char *, sd_json_variant **, const char **, ...);
 	sd_varlink *(*sd_varlink_close_unref)(sd_varlink *);
-	/* sd-json */
-	sd_json_variant *(*sd_json_variant_unref)(sd_json_variant *);
 };
 
 typedef struct ul_systemd_varlink_opers ul_systemd_varlink_opers;

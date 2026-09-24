@@ -1174,7 +1174,7 @@ systemd_varlink_deps = []
 if have_systemd_varlink
   systemd_varlink_deps = systemd_deps
   if use_dlopen_systemd
-    systemd_varlink_sources = [dl_systemd_varlink_c] + common_dl_sources
+    systemd_varlink_sources = [dl_systemd_varlink_c]
   endif
 endif
 econf_sources = use_dlopen_econf ? [dl_econf_c] : []
@@ -2314,7 +2314,7 @@ endif
 opt = get_option('build-unshare').allowed()
 exe = executable(
   'unshare',
-  unshare_sources, systemd_varlink_sources,
+  unshare_sources, systemd_varlink_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
   dependencies : [mount_dep] + systemd_varlink_deps,
@@ -2330,7 +2330,7 @@ endif
 opt = opt and 'unshare' in static_programs
 exe = executable(
   'unshare.static',
-  unshare_sources, systemd_varlink_sources,
+  unshare_sources, systemd_varlink_sources, common_dl_sources,
   include_directories : includes,
   link_with : [lib_common],
   dependencies : [mount_dep] + systemd_varlink_deps,
