@@ -954,7 +954,7 @@ int ul_path_writef_string(struct path_cxt *pc, const char *str, const char *path
 
 int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path)
 {
-	char buf[sizeof(stringify_value(LLONG_MAX))];
+	char buf[UL_INT_STRSZ(int64_t)];
 	int rc, errsv;
 	int fd, len;
 
@@ -976,7 +976,7 @@ int ul_path_write_s64(struct path_cxt *pc, int64_t num, const char *path)
 
 int ul_path_write_u64(struct path_cxt *pc, uint64_t num, const char *path)
 {
-	char buf[sizeof(stringify_value(ULLONG_MAX))];
+	char buf[UL_INT_STRSZ(uint64_t)];
 	int rc, errsv;
 	int fd, len;
 

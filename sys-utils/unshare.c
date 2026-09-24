@@ -222,7 +222,7 @@ static int bind_ns_files(pid_t pid)
 
 static void settime(int64_t offset, clockid_t clk_id)
 {
-	char buf[sizeof(stringify_value(ULONG_MAX)) * 3];
+	char buf[UL_INT_STRSZ(clockid_t) + UL_INT_STRSZ(int64_t) + 4];
 	int fd, len;
 
 	len = snprintf(buf, sizeof(buf), "%d %" PRId64 " 0", clk_id, offset);

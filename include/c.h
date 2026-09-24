@@ -638,6 +638,19 @@ static inline int fputsln(const char *s, FILE *stream) {
 #define SINT_MIN(t) (-SINT_MAX(t) - (t)1)
 #define MAX_OF_UINT_TYPE(t) ~((t)0)
 
+/*
+ * Buffer size (including sign and '\0') sufficient to hold the decimal
+ * representation of any value of integer type @t. For example:
+ *
+ *	char buf[UL_INT_STRSZ(pid_t)];
+ *	snprintf(buf, sizeof(buf), "%d", pid);
+ *
+ * Do not use sizeof(stringify_value(INT_MAX)) for this purpose — it gives
+ * the length of the textual macro definition in libc, not the length of
+ * the printed decimal number.
+ */
+#define UL_INT_STRSZ(t)	(sizeof(t) * CHAR_BIT / 3 + 3)
+
 #ifndef INVALID_UID
 # define INVALID_UID ((uid_t) -1)
 #endif
