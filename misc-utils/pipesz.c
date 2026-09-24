@@ -26,20 +26,24 @@
 
 #include "closestream.h"	/* close_stdout_atexit */
 #include "optutils.h"		/* err_exclusive_options */
-#include "path.h"		/* ul_path_read_s32 */
+#include "path.h"		/* ul_path_read_u32 */
 #include "pathnames.h"		/* _PATH_PROC_PIPE_MAX_SIZE */
 #include "strutils.h"		/* strtos32_or_err strtosize_or_err */
 
 static char opt_check = 0;	/* --check */
 static char opt_get = 0;	/* --get */
 static char opt_quiet = 0;	/* --quiet */
-static int opt_size = -1;	/* --set <size> */
+static unsigned int opt_size = 0;	/* --set <size> */
+static char opt_size_set = 0;	/* --set was specified */
 static char opt_verbose = 0;	/* --verbose */
 
 /* fallback file for default size */
 #ifndef PIPESZ_DEFAULT_SIZE_FILE
 #define PIPESZ_DEFAULT_SIZE_FILE _PATH_PROC_PIPE_MAX_SIZE
 #endif
+
+/* the largest buffer the kernel accepts; it rejects larger sizes with EINVAL */
+#define PIPESZ_MAX_SIZE		(1U << 31)
 
 /* convenience macros, since pipesz is by default very lenient */
 #define check(FMT...) do {			\
@@ -50,17 +54,13 @@ static char opt_verbose = 0;	/* --verbose */
 	}					\
 } while (0)
 
-#define checkx(FMT...) do {			\
-	if (opt_check) {			\
-		errx(EXIT_FAILURE, FMT);	\
-	} else if (!opt_quiet) {		\
-		warnx(FMT);			\
-	}					\
-} while (0)
-
 static void __attribute__((__noreturn__)) usage(void)
 {
-	if (ul_path_read_s32(NULL, &opt_size, PIPESZ_DEFAULT_SIZE_FILE))
+	unsigned int def_size = 0;
+	int rc;
+
+	rc = ul_path_read_u32(NULL, &def_size, PIPESZ_DEFAULT_SIZE_FILE);
+	if (rc)
 		warn(_("cannot parse %s"), PIPESZ_DEFAULT_SIZE_FILE);
 
 	fputs(USAGE_HEADER, stdout);
@@ -73,8 +73,11 @@ static void __attribute__((__noreturn__)) usage(void)
 
 	fputs(USAGE_OPTIONS, stdout);
 	fputsln(_(" -g, --get          examine pipe buffers"), stdout);
-	fprintf(stdout,
-		_(" -s, --set <size>   the buffer size to be used (default: %d)\n"), opt_size);
+	if (rc)
+		fputsln(_(" -s, --set <size>   the buffer size to be used"), stdout);
+	else
+		fprintf(stdout,
+			_(" -s, --set <size>   the buffer size to be used (default: %u)\n"), def_size);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputsln(_(" -f, --file <path>  act on a file"), stdout);
@@ -97,24 +100,46 @@ static void __attribute__((__noreturn__)) usage(void)
 }
 
 /*
+ * interprets the result of an fcntl() pipe buffer size operation
+ *
+ * The kernel handles pipe buffer sizes as an unsigned int, but libc fcntl()
+ * returns an int. The maximum size, PIPESZ_MAX_SIZE, therefore comes back as
+ * a negative number and errno stays unchanged. Read such a result as
+ * unsigned. Set errno to 0 before the fcntl() call.
+ *
+ * returns FALSE on error, otherwise stores the size in res
+ */
+static char pipe_size_result(int ret, unsigned int *res)
+{
+	if (ret < 0 && errno != 0)
+		return FALSE;
+
+	*res = (unsigned int) ret;
+	return TRUE;
+}
+
+/*
  * performs F_GETPIPE_SZ and FIONREAD
  * outputs a table row
  */
 static void do_get(int fd, const char *name)
 {
-	int sz, used;
+	int ret;
+	unsigned int sz, used;
 
-	sz = fcntl(fd, F_GETPIPE_SZ);
-	if (sz < 0) {
+	errno = 0;
+	ret = fcntl(fd, F_GETPIPE_SZ);
+	if (!pipe_size_result(ret, &sz)) {
 		/* TRANSLATORS: '%s' refers to a file */
 		check(_("cannot get pipe buffer size of %s"), name);
 		return;
 	}
 
+	/* the kernel also reports the unread byte count as an unsigned int */
 	if (ioctl(fd, FIONREAD, &used))
 		used = 0;
 
-	printf("%s\t%d\t%d\n", name, sz, used);
+	printf("%s\t%u\t%u\n", name, sz, used);
 }
 
 /*
@@ -122,15 +147,17 @@ static void do_get(int fd, const char *name)
  */
 static void do_set(int fd, const char *name)
 {
-	int sz;
+	int ret;
+	unsigned int sz;
 
-	sz = fcntl(fd, F_SETPIPE_SZ, opt_size);
-	if (sz < 0)
+	errno = 0;
+	ret = fcntl(fd, F_SETPIPE_SZ, opt_size);
+	if (!pipe_size_result(ret, &sz))
 		/* TRANSLATORS: '%s' refers to a file */
 		check(_("cannot set pipe buffer size of %s"), name);
 	else if (opt_verbose)
-		/* TRANSLATORS: '%s' refers to a file, '%d' to a buffer size in bytes */
-		warnx(_("%s pipe buffer size set to %d"), name, sz);
+		/* TRANSLATORS: '%s' refers to a file, '%u' to a buffer size in bytes */
+		warnx(_("%s pipe buffer size set to %u"), name, sz);
 }
 
 /*
@@ -176,18 +203,13 @@ static void do_file(const char *path)
  */
 static char set_size_default(void)
 {
-	if (opt_size >= 0)
+	if (opt_size_set)
 		return TRUE;
 
-	if (ul_path_read_s32(NULL, &opt_size, PIPESZ_DEFAULT_SIZE_FILE)) {
+	/* the kernel stores this limit as an unsigned int too */
+	if (ul_path_read_u32(NULL, &opt_size, PIPESZ_DEFAULT_SIZE_FILE)) {
 		/* TRANSLATORS: '%s' refers to a system file */
 		check(_("cannot parse %s"), PIPESZ_DEFAULT_SIZE_FILE);
-		return FALSE;
-	}
-
-	if (opt_size < 0) {
-		/* TRANSLATORS: '%s' refers to a system file */
-		checkx(_("cannot parse %s"), PIPESZ_DEFAULT_SIZE_FILE);
 		return FALSE;
 	}
 
@@ -218,6 +240,7 @@ int main(int argc, char **argv)
 	};
 
 	int c, fd, n_opt_pipe = 0, n_opt_size = 0;
+	char size_clamped = FALSE;
 	uintmax_t sz;
 
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -258,7 +281,9 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			sz = strtosize_or_err(optarg, _("invalid size"));
-			opt_size = sz >= INT_MAX ? INT_MAX : (int)sz;
+			size_clamped = sz > PIPESZ_MAX_SIZE;
+			opt_size = size_clamped ? PIPESZ_MAX_SIZE : (unsigned int) sz;
+			opt_size_set = TRUE;
 			++n_opt_size;
 			break;
 		case 'v':
@@ -301,6 +326,11 @@ int main(int argc, char **argv)
 
 		if (!opt_quiet && n_opt_size > 1)
 			warnx(_("using last specified size"));
+
+		if (!opt_quiet && size_clamped)
+			/* TRANSLATORS: '%u' refers to a buffer size in bytes */
+			warnx(_("size reduced to the maximum of %u bytes"),
+			      PIPESZ_MAX_SIZE);
 
 		/* special behavior for --set */
 		if (!n_opt_pipe) {
