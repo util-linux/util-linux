@@ -183,8 +183,8 @@ static int is_gr_member(const char *login, const struct group_workspace *buf)
 			_("getgrouplist found more groups than sysconf allows"));
 	}
 
-	for (; ngroups >= 0; --ngroups) {
-		if (buf->requested_group == (gid_t) buf->groups[ngroups])
+	for (int i = 0; i < ngroups; i++) {
+		if (buf->requested_group == (gid_t) buf->groups[i])
 			return 1;
 	}
 
