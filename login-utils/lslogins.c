@@ -661,7 +661,7 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 		++n;
 	}
 
-	if (*len)
+	if (n < *len)
 		(*list)[n] = (*list)[--(*len)];
 
 	return 0;
