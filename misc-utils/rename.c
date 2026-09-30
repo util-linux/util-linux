@@ -254,7 +254,7 @@ static int do_copy(char *from, char *to, char *s, int verbose, int noact,
 	int ret = 1, res;
 	int src_fd = -1, dst_fd = -1;
 	ssize_t ssz;
-	struct stat sb;
+	struct stat sb, dst_sb;
 
 	if (faccessat(AT_FDCWD, s, F_OK, AT_SYMLINK_NOFOLLOW) != 0 &&
 	    errno != EINVAL) {
@@ -329,10 +329,26 @@ static int do_copy(char *from, char *to, char *s, int verbose, int noact,
 		goto done;
 	}
 
-	dst_fd = open(newname, O_WRONLY | O_CREAT | O_TRUNC | O_CLOEXEC,
+	dst_fd = open(newname, O_WRONLY | O_CREAT | O_CLOEXEC,
 		      sb.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
 	if (dst_fd < 0) {
 		warn(_("%s: create failed"), newname);
+		ret = 2;
+		goto done;
+	}
+	if (fstat(dst_fd, &dst_sb) == -1) {
+		warn(_("stat of %s failed"), newname);
+		ret = 2;
+		goto done;
+	}
+	if (dst_sb.st_dev == sb.st_dev && dst_sb.st_ino == sb.st_ino) {
+		warnx(_("%s and %s are the same file"), s, newname);
+		ret = 2;
+		goto done;
+	}
+	if (S_ISREG(dst_sb.st_mode) && dst_sb.st_size > 0 &&
+	    ftruncate(dst_fd, 0) != 0) {
+		warn(_("%s: truncate failed"), newname);
 		ret = 2;
 		goto done;
 	}

@@ -69,4 +69,13 @@ if [ "$(cat rename_copy_bar.3)" != "existing" ]; then
 fi
 rm -f rename_copy_foo.3 rename_copy_bar.3
 
+# Test 5: copy onto the same file (hard link)
+echo "original" > rename_copy_foo.4
+ln rename_copy_foo.4 rename_copy_bar.4
+$TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.4 >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ "$(cat rename_copy_foo.4)" != "original" ]; then
+	echo "error: copy onto the same file truncated it" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.4 rename_copy_bar.4
+
 ts_finalize
