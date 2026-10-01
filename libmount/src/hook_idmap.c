@@ -20,6 +20,7 @@
 #include <sys/wait.h>
 #include <sys/ioctl.h>
 #include <sys/mount.h>
+#include <signal.h>
 
 #include "strutils.h"
 #include "all-io.h"
