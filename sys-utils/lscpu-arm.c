@@ -157,6 +157,7 @@ static const struct id_part apm_part[] = {
 
 static const struct id_part qcom_part[] = {
     { 0x001, "Oryon" },
+    { 0x002, "Oryon-2", FL_FOLLOW_BIOS, "Snapdragon" },
     { 0x00f, "Scorpion" },
     { 0x02d, "Scorpion" },
     { 0x04d, "Krait" },
