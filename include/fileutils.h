@@ -170,4 +170,33 @@ static inline bool is_dotdir_dirent(const struct dirent *d)
 			|| (d->d_name[1] == '.' && d->d_name[2] == 0)));
 }
 
+/* Defined when we have everything the non-blocking statx() needs. Note that
+ * HAVE_STATX may be defined by the syscall wrapper above.
+ */
+#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && \
+    defined(AT_STATX_DONT_SYNC) && defined(AT_NO_AUTOMOUNT)
+# define HAVE_UL_SAFE_STATX	1
+# define HAVE_UL_SAFE_STAT	1
+#endif
+
+#ifdef HAVE_UL_SAFE_STATX
+/* statx() attribute masks. These are plain statx(2) mask values, so callers
+ * can combine them with STATX_* bits, for example:
+ *
+ *	ul_safe_stat(path, &st, 0, UL_STATX_ESSENTIAL | STATX_ATIME, NULL);
+ */
+# define UL_STATX_ESSENTIAL	(STATX_TYPE | STATX_MODE | STATX_INO)
+# define UL_STATX_BASIC		(STATX_BASIC_STATS)
+
+extern int ul_safe_statx(int dirfd, const char *path, int flags,
+			 unsigned int mask, struct statx *stx);
+extern void ul_statx_to_stat(const struct statx *stx, struct stat *st);
+#else
+# define UL_STATX_ESSENTIAL	0
+# define UL_STATX_BASIC		0
+#endif
+
+extern int ul_safe_stat(const char *target, struct stat *st, int nofollow,
+			unsigned int mask, unsigned int *retmask);
+
 #endif /* UTIL_LINUX_FILEUTILS */
