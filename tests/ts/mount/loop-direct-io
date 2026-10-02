@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="loop direct I/O"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_skip_nonroot
+ts_check_losetup
+ts_check_prog "mkfs.ext2"
+
+IMAGE=$(ts_image_init)
+DEVICE=
+
+cleanup()
+{
+	local device
+
+	$TS_CMD_UMOUNT "$TS_MOUNTPOINT" &> /dev/null
+	for device in $($TS_CMD_LOSETUP -j "$IMAGE" | cut -d: -f1); do
+		$TS_CMD_LOSETUP -d "$device" &> /dev/null
+	done
+}
+trap cleanup EXIT
+
+mkfs.ext2 -F "$IMAGE" &> /dev/null || ts_die "Cannot make filesystem"
+mkdir -p "$TS_MOUNTPOINT"
+
+for option in X-loopdev.direct-io X-loopdev.direct-io= X-loopdev.direct-io=invalid; do
+	$TS_CMD_MOUNT -o "$option" "$IMAGE" "$TS_MOUNTPOINT" &> /dev/null &&
+		ts_die "Accepted invalid option: $option"
+done
+[ -z "$($TS_CMD_LOSETUP -j "$IMAGE")" ] || ts_die "Invalid option left a loop device"
+ts_log "invalid options: OK"
+
+DEVICE=$($TS_CMD_LOSETUP --direct-io=on --find --show "$IMAGE" 2>> "$TS_ERRLOG") ||
+	ts_skip "backing filesystem does not support direct I/O"
+[ "$(cat "/sys/class/block/${DEVICE##*/}/loop/dio")" = 1 ] ||
+	ts_skip "loop direct I/O not supported"
+$TS_CMD_LOSETUP -d "$DEVICE" || ts_die "Cannot detach probe device"
+DEVICE=
+
+for mode in on off default; do
+	options=loop
+	expected=0
+	[ "$mode" = default ] || options+=",X-loopdev.direct-io=$mode"
+	[ "$mode" != on ] || expected=1
+	$TS_CMD_MOUNT -o "$options" "$IMAGE" "$TS_MOUNTPOINT" >> "$TS_ERRLOG" 2>&1 ||
+		ts_die "Cannot mount with mode $mode"
+	DEVICE=$($TS_CMD_LOSETUP -j "$IMAGE" | cut -d: -f1)
+	[ "$(cat "/sys/class/block/${DEVICE##*/}/loop/dio")" = "$expected" ] ||
+		ts_die "Wrong direct I/O mode: $mode"
+	$TS_CMD_UMOUNT "$TS_MOUNTPOINT" || ts_die "Cannot unmount"
+	DEVICE=
+	$TS_CMD_MOUNT -t ext2 -o "$options,invalid-fs-option" "$IMAGE" "$TS_MOUNTPOINT" &> /dev/null &&
+		ts_die "Accepted invalid filesystem option on new device"
+	[ -z "$($TS_CMD_LOSETUP -j "$IMAGE")" ] || ts_die "Failed mount left a new loop device"
+	ts_log "new device ($mode): OK"
+done
+
+for mode in on off; do
+	DEVICE=$($TS_CMD_LOSETUP --direct-io="$mode" --find --show "$IMAGE") ||
+		ts_die "Cannot set up device"
+	for options in "loop,X-loopdev.direct-io=$mode" loop; do
+		$TS_CMD_MOUNT -o "$options" "$IMAGE" "$TS_MOUNTPOINT" >> "$TS_ERRLOG" 2>&1 ||
+			ts_die "Cannot reuse device: $options"
+		$TS_CMD_UMOUNT "$TS_MOUNTPOINT" || ts_die "Cannot unmount reused device"
+	done
+	other=on
+	[ "$mode" != on ] || other=off
+	$TS_CMD_MOUNT -o "X-loopdev.direct-io=$other" "$IMAGE" "$TS_MOUNTPOINT" &> /dev/null &&
+		ts_die "Reused device with incompatible direct I/O mode"
+	$TS_CMD_MOUNT -t ext2 -o "X-loopdev.direct-io=$mode,invalid-fs-option" \
+		"$IMAGE" "$TS_MOUNTPOINT" &> /dev/null &&
+		ts_die "Accepted invalid filesystem option"
+	[ "$($TS_CMD_LOSETUP -j "$IMAGE" | cut -d: -f1)" = "$DEVICE" ] ||
+		ts_die "Failed mount detached or duplicated reused device"
+	expected=0
+	[ "$mode" != on ] || expected=1
+	[ "$(cat "/sys/class/block/${DEVICE##*/}/loop/dio")" = "$expected" ] ||
+		ts_die "Reuse changed direct I/O mode"
+	$TS_CMD_LOSETUP -d "$DEVICE" || ts_die "Cannot detach reused device"
+	DEVICE=
+	ts_log "reuse and failed mount ($mode): OK"
+done
+
+ts_finalize
