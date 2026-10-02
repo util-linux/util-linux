@@ -78,4 +78,10 @@ if [ "$(cat rename_copy_foo.4)" != "original" ]; then
 fi
 rm -f rename_copy_foo.4 rename_copy_bar.4
 
+# Test 6: destination is a symlink to a non-regular file
+echo "original" > rename_copy_foo.5
+ln -s /dev/null rename_copy_bar.5
+$TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.5 >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f rename_copy_foo.5 rename_copy_bar.5
+
 ts_finalize

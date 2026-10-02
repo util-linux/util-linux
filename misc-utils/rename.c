@@ -329,7 +329,7 @@ static int do_copy(char *from, char *to, char *s, int verbose, int noact,
 		goto done;
 	}
 
-	dst_fd = open(newname, O_WRONLY | O_CREAT | O_CLOEXEC,
+	dst_fd = open(newname, O_WRONLY | O_CREAT | O_CLOEXEC | O_NONBLOCK,
 		      sb.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO));
 	if (dst_fd < 0) {
 		warn(_("%s: create failed"), newname);
@@ -341,13 +341,17 @@ static int do_copy(char *from, char *to, char *s, int verbose, int noact,
 		ret = 2;
 		goto done;
 	}
-	if (dst_sb.st_dev == sb.st_dev && dst_sb.st_ino == sb.st_ino) {
+	if (is_same_inode(src_fd, &dst_sb)) {
 		warnx(_("%s and %s are the same file"), s, newname);
 		ret = 2;
 		goto done;
 	}
-	if (S_ISREG(dst_sb.st_mode) && dst_sb.st_size > 0 &&
-	    ftruncate(dst_fd, 0) != 0) {
+	if (!S_ISREG(dst_sb.st_mode)) {
+		warnx(_("%s: cannot copy (unsupported file type)"), newname);
+		ret = 2;
+		goto done;
+	}
+	if (dst_sb.st_size > 0 && ftruncate(dst_fd, 0) != 0) {
 		warn(_("%s: truncate failed"), newname);
 		ret = 2;
 		goto done;
