@@ -1,0 +1,2 @@
+lsfd: the kernel or build does not support statx with AT_STATX_DONT_SYNC
+RC: 2
