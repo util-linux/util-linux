@@ -90,6 +90,7 @@ struct hexdump {
   int stdout_errno;			/* errno from stdout error */
   ssize_t length;			/* max bytes to read */
   off_t skip;				/* bytes to skip */
+  int builtin_c;			/* built-in -C only: single-fwrite fast path */
   /* Sparse file optimization using FIEMAP (Linux only) */
   void *fiemap;				/* struct fiemap pointer */
   unsigned int current_extent;		/* current extent index for search */
