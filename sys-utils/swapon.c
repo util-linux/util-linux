@@ -59,6 +59,10 @@
 # define SWAP_FLAG_DISCARD_PAGES 0x40000 /* discard page-clusters after use */
 #endif
 
+#ifndef SWAP_FLAG_OFFLOAD_ONLY
+# define SWAP_FLAG_OFFLOAD_ONLY 0x80000 /* only use for proactive reclaim */
+#endif
+
 #define SWAP_FLAGS_DISCARD_VALID (SWAP_FLAG_DISCARD | SWAP_FLAG_DISCARD_ONCE | \
 				  SWAP_FLAG_DISCARD_PAGES)
 
@@ -123,6 +127,7 @@ struct swap_prop {
 	int discard;			/* discard policy */
 	int priority;			/* non-prioritized swap by default */
 	int no_fail;			/* skip device if not exist */
+	int offload_only;		/* exclude from pressure reclaim */
 };
 
 /* device description */
@@ -692,6 +697,8 @@ static int do_swapon(const struct swapon_ctl *ctl,
 		else
 			flags |= prop->discard;
 	}
+	if (prop->offload_only)
+		flags |= SWAP_FLAG_OFFLOAD_ONLY;
 
 	if (ctl->verbose)
 		printf(_("swapon %s\n"), dev.path);
@@ -723,6 +730,9 @@ static int parse_options(struct swap_prop *props, const char *options)
 
 	assert(props);
 	assert(options);
+
+	if (mnt_optstr_get_option(options, "offload-only", NULL, NULL) == 0)
+		props->offload_only = 1;
 
 	if (mnt_optstr_get_option(options, "nofail", NULL, NULL) == 0)
 		props->no_fail = 1;
@@ -842,6 +852,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --output-all         output all available columns\n"), out);
 	fputs(_("     --annotate[=<when>]  annotate columns with a tooltip (always|never|auto)\n"), out);
 	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
+	fputs(_("     --offload-only       exclude swap from pressure reclaim and hibernation\n"), out);
 	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
 	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
 	fputs(_(" -v, --verbose            verbose mode\n"), out);
@@ -882,6 +893,7 @@ int main(int argc, char *argv[])
 		BYTES_OPTION = CHAR_MAX + 1,
 		ANNOTATE_OPTION,
 		NOHEADINGS_OPTION,
+		OFFLOAD_ONLY_OPTION,
 		RAW_OPTION,
 		SHOW_OPTION,
 		OPT_LIST_TYPES
@@ -902,6 +914,7 @@ int main(int argc, char *argv[])
 		{ "output-all",   no_argument,       NULL, OPT_LIST_TYPES      },
 		{ "annotate",     optional_argument, NULL, ANNOTATE_OPTION     },
 		{ "noheadings",   no_argument,       NULL, NOHEADINGS_OPTION   },
+		{ "offload-only", no_argument,       NULL, OFFLOAD_ONLY_OPTION },
 		{ "raw",          no_argument,       NULL, RAW_OPTION          },
 		{ "bytes",        no_argument,       NULL, BYTES_OPTION        },
 		{ "fstab",        required_argument, NULL, 'T'                 },
@@ -977,6 +990,9 @@ int main(int argc, char *argv[])
 			break;
 		case 's':		/* status report */
 			ctl.summarize = 1;
+			break;
+		case OFFLOAD_ONLY_OPTION:
+			ctl.props.offload_only = 1;
 			break;
 		case 'v':		/* be chatty */
 			ctl.verbose = 1;
