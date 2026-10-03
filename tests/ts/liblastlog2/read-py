@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Copyright (C) 2024 Georg Pfuetzenreuter <mail+linux@georg-pfuetzenreuter.net>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="read-py"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_init_py lastlog2
+
+ts_check_test_command $TS_HELPER_PYLASTLOG2
+
+$PYTHON $TS_HELPER_PYLASTLOG2 || ts_failed "returned an error"
+
+ts_finalize
