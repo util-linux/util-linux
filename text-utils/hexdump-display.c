@@ -395,6 +395,63 @@ static void bpad(struct hexdump_pr *pr)
 		;
 }
 
+/*
+ * Fast path for the built-in -C format: build the whole line in a
+ * static buffer and emit it with one fwrite().
+ */
+static char linebuf[128];
+
+static void
+emit_builtin_c(unsigned char *bp)
+{
+	static const char hexdig[] = "0123456789abcdef";
+	size_t len = 0;
+	size_t i;
+
+	if (eaddress && address >= eaddress) {
+		for (i = 0; i < 8; i++)
+			linebuf[len++] = ' ';
+	} else
+		len += snprintf(linebuf, sizeof(linebuf),
+				  "%08llx", (long long) address);
+
+	linebuf[len++] = ' ';
+	linebuf[len++] = ' ';
+
+	for (i = 0; i < 16; i++) {
+		if (i == 8) {
+			linebuf[len++] = ' ';
+			linebuf[len++] = ' ';
+		}
+		if (eaddress && address + (off_t) i >= eaddress) {
+			linebuf[len++] = ' ';
+			linebuf[len++] = ' ';
+		} else {
+			unsigned char b = bp[i];
+
+			linebuf[len++] = hexdig[b >> 4];
+			linebuf[len++] = hexdig[b & 0x0f];
+		}
+		if (i != 7 && i != 15)
+			linebuf[len++] = ' ';
+	}
+
+	linebuf[len++] = ' ';
+	linebuf[len++] = ' ';
+	linebuf[len++] = '|';
+
+	for (i = 0; i < 16; i++) {
+		if (eaddress && address + (off_t) i >= eaddress)
+			continue;
+		linebuf[len++] = isprint(bp[i]) ? (char) bp[i] : '.';
+	}
+
+	linebuf[len++] = '|';
+	linebuf[len++] = '\n';
+
+	fwrite(linebuf, 1, len, stdout);
+}
+
 void display(struct hexdump *hex)
 {
 	register struct list_head *fs;
@@ -410,49 +467,53 @@ void display(struct hexdump *hex)
 	while ((bp = get(hex)) != NULL) {
 		ssize_t rem = hex->blocksize;
 
-		fs = &hex->fshead; savebp = bp; saveaddress = address;
+		if (hex->builtin_c && !colors_wanted()) {
+			emit_builtin_c(bp);
+		} else {
+			fs = &hex->fshead; savebp = bp; saveaddress = address;
 
-		list_for_each(p, fs) {
-			fss = list_entry(p, struct hexdump_fs, fslist);
+			list_for_each(p, fs) {
+				fss = list_entry(p, struct hexdump_fs, fslist);
 
-			list_for_each(q, &fss->fulist) {
-				fu = list_entry(q, struct hexdump_fu, fulist);
+				list_for_each(q, &fss->fulist) {
+					fu = list_entry(q, struct hexdump_fu, fulist);
 
-				if (fu->flags&F_IGNORE)
-					break;
+					if (fu->flags&F_IGNORE)
+						break;
 
-				cnt = fu->reps;
+					cnt = fu->reps;
 
-				while (cnt && rem >= 0) {
-					list_for_each(r, &fu->prlist) {
-						pr = list_entry(r, struct hexdump_pr, prlist);
+					while (cnt && rem >= 0) {
+						list_for_each(r, &fu->prlist) {
+							pr = list_entry(r, struct hexdump_pr, prlist);
 
-						if (eaddress && address >= eaddress
-						    && !(pr->flags&(F_TEXT|F_BPAD)))
-							bpad(pr);
+							if (eaddress && address >= eaddress
+							    && !(pr->flags&(F_TEXT|F_BPAD)))
+								bpad(pr);
 
-						if (cnt == 1 && pr->nospace) {
-							savech = *pr->nospace;
-							*pr->nospace = '\0';
-							print(pr, bp);
-							*pr->nospace = savech;
-						} else
-							print(pr, bp);
+							if (cnt == 1 && pr->nospace) {
+								savech = *pr->nospace;
+								*pr->nospace = '\0';
+								print(pr, bp);
+								*pr->nospace = savech;
+							} else
+								print(pr, bp);
 
-						address += pr->bcnt;
+							address += pr->bcnt;
 
-						rem -= pr->bcnt;
-						if (rem < 0)
-							break;
+							rem -= pr->bcnt;
+							if (rem < 0)
+								break;
 
-						bp += pr->bcnt;
+							bp += pr->bcnt;
+						}
+						--cnt;
 					}
-					--cnt;
 				}
+				bp = savebp;
+				rem = hex->blocksize;
+				address = saveaddress;
 			}
-			bp = savebp;
-			rem = hex->blocksize;
-			address = saveaddress;
 		}
 		if (ferror(stdout)) {
 			hex->stdout_errno = errno;
