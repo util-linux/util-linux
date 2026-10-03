@@ -1,0 +1,94 @@
+//po4a: entry man manual
+= fdsend(1)
+:doctype: manpage
+:man manual: User Commands
+:man source: util-linux {release-version}
+:page-layout: base
+:command: fdsend
+
+== NAME
+
+fdsend - send a file descriptor to another process via Unix socket
+
+== SYNOPSIS
+
+*fdsend* [options] *--fd* _fd_ _SOCKSPEC_
+
+== DESCRIPTION
+
+*fdsend* sends a file descriptor to another process using a Unix domain socket
+(SCM_RIGHTS). _SOCKSPEC_ is either a path starting with '/' or a short name
+under /run/user/UID/fdsend/ (or /run/fdsend/ for root).
+
+== OPTIONS
+
+*-f*, *--fd* _num_::
+  File descriptor to send (required).
+
+*-p*, *--pid* _pid_[:ino]::
+  Process whose fd to send, optionally with a pidfd inode for safe
+  validation. When the _pid:ino_ form is used, the pidfd inode must
+  match the target process, preventing PID reuse races. (default: 
+  current process)
+
+*-b*, *--blocking*::
+  For path-based sockets, wait for the socket file to appear before connecting.
+  For abstract sockets, retry connecting until the receiver is available.
+
+*-a*, *--abstract*::
+  Treat _SOCKSPEC_ as an abstract Unix socket name (Linux). No path resolution;
+  the name is used as-is in the kernel abstract namespace. Abstract sockets do
+  not have filesystem permission controls; any process in the same network
+  namespace that knows the socket name may connect to it.
+
+*-d*, *--dup*::
+  Duplicate the fd from the target process using pidfd_getfd(2). The duplicated
+  fd shares the file offset and status flags with the original fd in the target
+  process. If not specified, a new, independent fd is opened via
+  open(/proc/PID/fd/FD) instead.
+
+*-m*, *--mode* _mode_::
+  Open mode for /proc/PID/fd/FD when not using *--dup*. Accepted values
+  are *r+* (read-write, default), *r* (read-only), and *w* (write-only).
+
+include::man-common/help-version.adoc[]
+
+== EXAMPLES
+
+*fdsend --fd 3 mysock*::
+  Send file descriptor 3 to the path-based socket named _mysock_ under the
+  per-user socket directory.
+
+*fdsend --abstract --fd 3 mysock*::
+  Send file descriptor 3 to the abstract Unix socket named _mysock_.
+
+*fdsend --pid 1234 --dup --fd 5 mysock*::
+  Duplicate file descriptor 5 from process 1234 (shared offset), then send it to
+  _mysock_.
+
+*fdsend --pid 1234:67890 --dup --fd 5 mysock*::
+  Same as above, but validate that the pidfd inode matches 67890 to ensure PID
+  1234 has not been reused by a different process since the inode was obtained.
+
+*fdsend --pid 1234 --mode r --fd 5 mysock*::
+  Open file descriptor 5 from process 1234 in read-only mode and send it to
+  _mysock_.
+
+== EXIT STATUS
+
+*0*::
+  Success
+*1*::
+  Unspecified failure
+
+== SEE ALSO
+
+*fdrecv*(1)
+
+include::man-common/bugreports.adoc[]
+
+include::man-common/footer.adoc[]
+
+ifdef::translation[]
+include::man-common/translation.adoc[]
+endif::[]
