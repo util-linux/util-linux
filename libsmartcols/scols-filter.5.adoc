@@ -115,10 +115,10 @@ The filter expression string is limited to 1024 bytes. The number of nodes
 (parameters and operators) in a single expression is limited to 256.
 
 Regular expression patterns used with the `=~` and `!~` operators are limited to
-256 bytes. Patterns with consecutive quantifiers (e.g., `a++`, `a**`), nested
-group repetitions (e.g., `(a+)+`), or interval repetitions with bounds larger
-than 1024 (e.g., `{,9999}`) are rejected because they can cause excessive
-memory consumption in the POSIX regex compiler.
+256 bytes. The patterns are compiled by the POSIX regex implementation of the
+system C library, where complex patterns may require a considerable amount of
+memory and stack. The filter is always compiled in the process of the user who
+executes the command; use *prlimit*(1) to restrict the resources if necessary.
 
 == AUTHORS
 
