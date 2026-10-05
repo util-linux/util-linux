@@ -670,11 +670,150 @@ int ul_open_no_symlinks(const char *path, int flags, mode_t mode)
 	return fd;
 }
 
+#ifdef HAVE_UL_SAFE_STATX
+/* statx() that never asks the filesystem and never triggers an automount, so
+ * it cannot block on a hung NFS server or FUSE daemon. AT_EMPTY_PATH is added
+ * to @flags when @path is NULL or empty.
+ *
+ * Note that statx(2) is not obliged to return all the attributes the caller
+ * asked for; the caller has to check stx_mask.
+ *
+ * The @stx is always zeroized, so it never contains stale data on error.
+ *
+ * Returns 0 on success, otherwise negative errno (and errno is set too).
+ */
+int ul_safe_statx(int dirfd, const char *path, int flags,
+		  unsigned int mask, struct statx *stx)
+{
+	assert(stx);
+
+	memset(stx, 0, sizeof(*stx));
+
+	flags |= AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
+
+#ifdef AT_EMPTY_PATH
+	if (!path || !*path)
+		flags |= AT_EMPTY_PATH;
+#endif
+	if (statx(dirfd, path ? path : "", flags, mask, stx) != 0)
+		return -errno;
+
+	return 0;
+}
+
+/* Converts @stx to @st. statx(2) is not obliged to return everything the
+ * caller asked for -- especially with AT_STATX_DONT_SYNC -- so copy only the
+ * attributes advertised by stx_mask and leave the rest zeroed. Callers that
+ * care have to check stx_mask themselves.
+ */
+void ul_statx_to_stat(const struct statx *stx, struct stat *st)
+{
+	memset(st, 0, sizeof(*st));
+
+	/* no bit in stx_mask, always returned by the kernel */
+	st->st_dev     = makedev(stx->stx_dev_major, stx->stx_dev_minor);
+	st->st_rdev    = makedev(stx->stx_rdev_major, stx->stx_rdev_minor);
+	st->st_blksize = stx->stx_blksize;
+
+	/* st_mode mixes two independently reported things */
+	if (stx->stx_mask & STATX_TYPE)
+		st->st_mode |= stx->stx_mode & S_IFMT;
+	if (stx->stx_mask & STATX_MODE)
+		st->st_mode |= stx->stx_mode & ~S_IFMT;
+
+	if (stx->stx_mask & STATX_INO)
+		st->st_ino = stx->stx_ino;
+	if (stx->stx_mask & STATX_NLINK)
+		st->st_nlink = stx->stx_nlink;
+	if (stx->stx_mask & STATX_UID)
+		st->st_uid = stx->stx_uid;
+	if (stx->stx_mask & STATX_GID)
+		st->st_gid = stx->stx_gid;
+	if (stx->stx_mask & STATX_SIZE)
+		st->st_size = stx->stx_size;
+	if (stx->stx_mask & STATX_BLOCKS)
+		st->st_blocks = stx->stx_blocks;
+
+	if (stx->stx_mask & STATX_ATIME) {
+		st->st_atim.tv_sec  = stx->stx_atime.tv_sec;
+		st->st_atim.tv_nsec = stx->stx_atime.tv_nsec;
+	}
+	if (stx->stx_mask & STATX_MTIME) {
+		st->st_mtim.tv_sec  = stx->stx_mtime.tv_sec;
+		st->st_mtim.tv_nsec = stx->stx_mtime.tv_nsec;
+	}
+	if (stx->stx_mask & STATX_CTIME) {
+		st->st_ctim.tv_sec  = stx->stx_ctime.tv_sec;
+		st->st_ctim.tv_nsec = stx->stx_ctime.tv_nsec;
+	}
+}
+#endif
+
+/* This very simplified stat() alternative uses cached VFS data and does not
+ * directly ask the filesystem for details. It requires a kernel that supports
+ * statx() with AT_STATX_DONT_SYNC.
+ *
+ * @mask is a statx(2) attribute mask, see UL_STATX_*. UL_STATX_ESSENTIAL is
+ * always added to it, so zero is a valid request for the minimum. Attributes
+ * the kernel did not return are zero in @st.
+ *
+ * The optional @retmask returns the mask of the attributes the kernel really
+ * provided. Note that it may be less than requested (that's the whole point
+ * of AT_STATX_DONT_SYNC), but also more, because the kernel returns whatever
+ * it has cheaply at hand.
+ *
+ * Returns 0 on success, otherwise negative errno (and errno is set too).
+ * -EOPNOTSUPP means the kernel did not provide the essential attributes and
+ * the caller should fall back to stat().
+ */
+int ul_safe_stat(const char *target, struct stat *st,
+		 int nofollow __attribute__((__unused__)),
+		 unsigned int mask __attribute__((__unused__)),
+		 unsigned int *retmask)
+{
+	assert(target);
+	assert(st);
+
+	memset(st, 0, sizeof(struct stat));
+	if (retmask)
+		*retmask = 0;
+
+#ifdef HAVE_UL_SAFE_STAT
+	{
+		struct statx stx = { 0 };
+		int rc;
+
+		mask |= UL_STATX_ESSENTIAL;
+
+		rc = ul_safe_statx(AT_FDCWD, target,
+				nofollow ? AT_SYMLINK_NOFOLLOW : 0, mask, &stx);
+		if (rc)
+			return rc;
+
+		ul_statx_to_stat(&stx, st);
+
+		if (retmask)
+			*retmask = stx.stx_mask;
+
+		if ((stx.stx_mask & UL_STATX_ESSENTIAL) != UL_STATX_ESSENTIAL) {
+			errno = EOPNOTSUPP;
+			return -EOPNOTSUPP;
+		}
+
+		return 0;
+	}
+#else
+	errno = ENOSYS;
+	return -ENOSYS;
+#endif
+}
+
+
 #ifdef TEST_PROGRAM_FILEUTILS
 int main(int argc, char *argv[])
 {
 	if (argc < 2)
-		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file,open-no-symlinks}",
+		errx(EXIT_FAILURE, "Usage %s --{mkstemp,close-fds,copy-file,open-no-symlinks,safe-stat}",
 				argv[0]);
 
 	if (strcmp(argv[1], "--mkstemp") == 0) {
@@ -736,6 +875,89 @@ int main(int argc, char *argv[])
 		printf("%s\n", name);
 		free(name);
 		close(fd);
+
+	} else if (strcmp(argv[1], "--safe-stat") == 0) {
+		unsigned int mask = 0, retmask = 0;
+		int nofollow = 0;
+		struct stat st, ref;
+		int rc, i;
+
+		if (argc < 3)
+			errx(EXIT_FAILURE, "no path specified");
+
+		for (i = 3; i < argc; i++) {
+			if (strcmp(argv[i], "--nofollow") == 0)
+				nofollow = 1;
+			else if (strcmp(argv[i], "--basic") == 0)
+				mask |= UL_STATX_BASIC;
+		}
+
+		printf("%s:\n", argv[2]);
+
+		rc = ul_safe_stat(argv[2], &st, nofollow, mask, &retmask);
+
+		/* the function returns -errno and it sets errno too */
+		printf("      rc: %d\n", rc);
+		printf("   errno: %d\n", rc ? errno : 0);
+		if (rc)
+			return EXIT_FAILURE;
+
+		printf("    type: %s\n", S_ISDIR(st.st_mode)  ? "dir" :
+					 S_ISREG(st.st_mode)  ? "reg" :
+					 S_ISLNK(st.st_mode)  ? "lnk" :
+					 S_ISBLK(st.st_mode)  ? "blk" :
+					 S_ISCHR(st.st_mode)  ? "chr" :
+					 S_ISFIFO(st.st_mode) ? "fifo" :
+					 S_ISSOCK(st.st_mode) ? "sock" : "unknown");
+
+		/* The attribute values depend on the system, so compare them
+		 * with the classic stat() rather than print them. Only the
+		 * attributes advertised by @retmask are comparable, the rest
+		 * is zero in @st.
+		 */
+		if (nofollow ? lstat(argv[2], &ref) : stat(argv[2], &ref))
+			err(EXIT_FAILURE, "%s", argv[2]);
+
+		printf("  st_dev: %s\n", st.st_dev == ref.st_dev ? "OK" : "FAILED");
+		printf(" st_rdev: %s\n", st.st_rdev == ref.st_rdev ? "OK" : "FAILED");
+#ifdef HAVE_UL_SAFE_STAT
+		{
+			/* Report all the attributes we asked for, so that
+			 * the output does not depend on how generous the
+			 * kernel is; it may return more than requested.
+			 *
+			 * An attribute missing in @retmask is zero in @st by
+			 * design, there is nothing to compare and it's not a
+			 * failure.
+			 */
+			unsigned int emask = mask | UL_STATX_ESSENTIAL;
+
+# define RESULT(bit, x)	(!(retmask & (bit)) || (x) ? "OK" : "FAILED")
+
+			if (emask & STATX_TYPE)
+				printf("  S_IFMT: %s\n", RESULT(STATX_TYPE,
+					(st.st_mode & S_IFMT) == (ref.st_mode & S_IFMT)));
+			if (emask & STATX_MODE)
+				printf(" st_mode: %s\n", RESULT(STATX_MODE,
+					(st.st_mode & ~S_IFMT) == (ref.st_mode & ~S_IFMT)));
+			if (emask & STATX_INO)
+				printf("  st_ino: %s\n",
+					RESULT(STATX_INO, st.st_ino == ref.st_ino));
+			if (emask & STATX_NLINK)
+				printf("st_nlink: %s\n",
+					RESULT(STATX_NLINK, st.st_nlink == ref.st_nlink));
+			if (emask & STATX_UID)
+				printf("  st_uid: %s\n",
+					RESULT(STATX_UID, st.st_uid == ref.st_uid));
+			if (emask & STATX_GID)
+				printf("  st_gid: %s\n",
+					RESULT(STATX_GID, st.st_gid == ref.st_gid));
+			if (emask & STATX_SIZE)
+				printf(" st_size: %s\n",
+					RESULT(STATX_SIZE, st.st_size == ref.st_size));
+# undef RESULT
+		}
+#endif
 	}
 	return EXIT_SUCCESS;
 }

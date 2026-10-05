@@ -29,7 +29,6 @@
 #include "canonicalize.h"
 #include "env.h"
 #include "match.h"
-#include "fileutils.h"
 #include "statfs_magic.h"
 #include "sysfs.h"
 #include "namespace.h"
@@ -103,43 +102,25 @@ static int fstype_cmp(const void *v1, const void *v2)
 
 /* This very simplified stat() alternative uses cached VFS data and does not
  * directly ask the filesystem for details. It requires a kernel that supports
- * statx(). It's usable only for file type, rdev and ino!
+ * statx(); if that's unusable it falls back to the classic stat().
+ *
+ * Only st_mode, st_ino, st_dev and st_rdev are usable, the rest of the
+ * struct stat is undefined (zero on the statx() path).
+ *
+ * Returns 0 on success, otherwise negative errno on the statx() path and -1
+ * (with errno set) on the stat() fallback path. Callers should check for
+ * non-zero rather than for a specific value.
  */
 static int safe_stat(const char *target, struct stat *st, int nofollow)
 {
-	assert(target);
-	assert(st);
+	int rc = ul_safe_stat(target, st, nofollow, 0, NULL);
 
-	memset(st, 0, sizeof(struct stat));
+	if (rc == 0)
+		return 0;
+	if (rc != -EOPNOTSUPP && rc != -ENOSYS && rc != -EINVAL)
+		return rc;
 
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(AT_STATX_DONT_SYNC)
-	{
-		int rc;
-		struct statx stx = { 0 };
-
-		rc = statx(AT_FDCWD, target,
-				/* flags */
-				AT_STATX_DONT_SYNC
-					| AT_NO_AUTOMOUNT
-					| (nofollow ? AT_SYMLINK_NOFOLLOW : 0),
-				/* mask */
-				STATX_TYPE
-					| STATX_MODE
-					| STATX_INO,
-				&stx);
-		if (rc == 0) {
-			st->st_ino  = stx.stx_ino;
-			st->st_dev  = makedev(stx.stx_dev_major, stx.stx_dev_minor);
-			st->st_rdev = makedev(stx.stx_rdev_major, stx.stx_rdev_minor);
-			st->st_mode = stx.stx_mode;
-		}
-
-		if (rc == 0 ||
-		    (errno != EOPNOTSUPP && errno != ENOSYS && errno != EINVAL))
-			return rc;
-	}
-#endif
-
+	/* statx() unusable, fallback to the classic stat() */
 #ifdef AT_NO_AUTOMOUNT
 	return fstatat(AT_FDCWD, target, st,
 			AT_NO_AUTOMOUNT | (nofollow ? AT_SYMLINK_NOFOLLOW : 0));
@@ -267,34 +248,34 @@ int mnt_is_readonly(const char *path)
 	return 0;
 }
 
-#if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
+#if defined(HAVE_UL_SAFE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 static int get_mnt_id(	int fd, const char *path,
 			uint64_t *uniq_id, int *id)
 {
 	int rc;
 	struct statx sx = { 0 };
-	int flags = AT_STATX_DONT_SYNC | AT_NO_AUTOMOUNT;
 
-	if (!path || !*path)
-		flags |= AT_EMPTY_PATH;
-
+	/* Note that the kernel silently ignores unsupported mask bits rather
+	 * than returning an error, so the only way to detect an unsupported
+	 * attribute is to check stx_mask in the reply.
+	 */
 	if (id) {
-		rc = statx(fd, path ? path : "", flags,
-				STATX_MNT_ID, &sx);
+		rc = ul_safe_statx(fd, path, 0, STATX_MNT_ID, &sx);
 		if (rc)
 			return rc;
+		if (!(sx.stx_mask & STATX_MNT_ID))
+			return -ENOSYS;		/* kernel < 5.8 */
 		*id = sx.stx_mnt_id;
 	}
 	if (uniq_id) {
 # ifdef STATX_MNT_ID_UNIQUE
-		errno = 0;
-		rc = statx(fd, path ? path : "", flags,
-				STATX_MNT_ID_UNIQUE, &sx);
-
-		if (rc && errno == EINVAL)
-			return -ENOSYS;		/* *_ID_UNIQUE unsupported? */
+		rc = ul_safe_statx(fd, path, 0, STATX_MNT_ID_UNIQUE, &sx);
 		if (rc)
 			return rc;
+		/* Old kernels reply with the non-unique STATX_MNT_ID, don't
+		 * mistake it for the unique one. */
+		if (!(sx.stx_mask & STATX_MNT_ID_UNIQUE))
+			return -ENOSYS;		/* kernel < 6.8 */
 		*uniq_id = sx.stx_mnt_id;
 # else
 		return -ENOSYS;
@@ -302,7 +283,7 @@ static int get_mnt_id(	int fd, const char *path,
 	}
 	return 0;
 }
-#else /* HAVE_STATX && HAVE_STRUCT_STATX && AVE_STRUCT_STATX_STX_MNT_ID */
+#else /* HAVE_UL_SAFE_STATX && HAVE_STRUCT_STATX_STX_MNT_ID */
 static int get_mnt_id(	int fd __attribute__((__unused__)),
 			const char *path __attribute__((__unused__)),
 			uint64_t *uniq_id __attribute__((__unused__)),
@@ -325,7 +306,8 @@ int mnt_id_from_fd(int fd, uint64_t *uniq_id, int *id)
  *
  * Converts @path to ID.
  *
- * Returns: 0 on success, <0 on error
+ * Returns: 0 on success, <0 on error; -ENOSYS if the kernel does not provide
+ * the requested ID.
  *
  * Since: 2.41
  */

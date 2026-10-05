@@ -1,0 +1,3 @@
+.../nonexistent:
+      rc: -2
+   errno: 2
