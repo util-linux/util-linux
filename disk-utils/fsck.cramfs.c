@@ -152,7 +152,7 @@ static int get_superblock_endianness(uint32_t magic)
 static void test_super(int *start)
 {
 	struct stat st;
-	unsigned long long length;
+	uint64_t length;
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)

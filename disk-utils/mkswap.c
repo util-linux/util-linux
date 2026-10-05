@@ -363,7 +363,7 @@ done:
 /* return size in pages */
 static unsigned long long get_size(const struct mkswap_control *ctl)
 {
-	unsigned long long size;
+	uint64_t size;
 
 	if (ctl->file && ctl->filesz)
 		size = ctl->filesz;
@@ -373,7 +373,7 @@ static unsigned long long get_size(const struct mkswap_control *ctl)
 			err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
 		if (blkdev_get_size(fd, &size) < 0)
 			err(EXIT_FAILURE, _("cannot determine size of %s"), ctl->devname);
-		if ((unsigned long long) ctl->offset > size)
+		if ((uint64_t) ctl->offset > size)
 			errx(EXIT_FAILURE, _("offset larger than file size"));
 		close(fd);
 	}
