@@ -2,3 +2,7 @@ test_strutils: invalid size '-1' value
 test_strutils: invalid size '' value
 test_strutils: invalid size ' ' value
 test_strutils: invalid size '1 ' value
+test_strutils: invalid size '18.44674407370955162EB' value
+test_strutils: invalid size '18.9EB' value
+test_strutils: invalid size '0.5ZiB' value
+test_strutils: invalid size '20.5EiB' value
