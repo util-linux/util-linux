@@ -75,6 +75,7 @@ struct libmnt_context *mnt_new_context(void)
 
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
+	INIT_LIST_HEAD(&cxt->config_entries);
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
@@ -123,6 +124,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_set_target_ns(cxt, NULL);
 
 	free(cxt->children);
+	mnt_free_config(cxt);
 
 	DBG_OBJ(CXT, cxt, ul_debug("free"));
 	free(cxt);
