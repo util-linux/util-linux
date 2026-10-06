@@ -920,6 +920,11 @@ extern const char *mnt_context_get_target(struct libmnt_context *cxt);
 extern const char *mnt_context_get_fstype(struct libmnt_context *cxt);
 extern const char *mnt_context_get_target_prefix(struct libmnt_context *cxt);
 
+extern const char *mnt_config_get_value(struct libmnt_context *cxt,
+				const char *dir,
+				const char *name,
+				const char *key);
+
 extern void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt);
 extern void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt);
 extern void *mnt_context_get_fs_userdata(struct libmnt_context *cxt);
