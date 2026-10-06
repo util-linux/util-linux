@@ -17,7 +17,6 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "match.h"
-#include "mountutils.h"
 
 #include "findmnt.h"
 
@@ -462,8 +461,6 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 	}
 
 	if (realtype) {
-		const char *mounttype;
-
 		isswap = strcmp(realtype, "swap") == 0;
 		vfy->no_fsck = strcmp(realtype, "xfs") == 0
 				|| strcmp(realtype, "btrfs") == 0;
@@ -478,12 +475,10 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 			goto done;
 		}
 
-		mounttype = ul_fstype_to_mounttype(realtype) ? : realtype;
-
 		if (!isswap
 		    && (!type || isauto)
-		    && !is_supported_filesystem(vfy, mounttype)) {
-			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), mounttype);
+		    && !is_supported_filesystem(vfy, realtype)) {
+			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
 			goto done;
 		}
 
