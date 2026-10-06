@@ -76,6 +76,7 @@ struct libmnt_context *mnt_new_context(void)
 
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
+	INIT_LIST_HEAD(&cxt->config_entries);
 
 	/* unrestricted only when the current credentials are fully root */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -124,6 +125,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_set_target_ns(cxt, NULL);
 
 	free(cxt->children);
+	mnt_free_config(cxt);
 
 	DBG_OBJ(CXT, cxt, ul_debug("free"));
 	free(cxt);
