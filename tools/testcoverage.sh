@@ -12,7 +12,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# Copyright (C) 2025 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
+# Copyright (C) 2025-2026 Christian Goeschel Ndjomouo <cgoesc2@wgu.edu>
 #
 # This script uses a heuristic approach to determine an approx.
 # test coverage of all util-linux tools. It does this by simply
@@ -26,31 +26,34 @@
 
 top_srcdir="$(realpath -qLs "${1:-.}")"
 if [ -d "${top_srcdir}" ]; then
-        shift 1
+	shift 1
 else
-        echo "directory '${top_srcdir}' not found" >&2
-        exit 1
+	echo "directory '${top_srcdir}' not found" >&2
+	exit 1
 fi
 
 # shellcheck disable=SC2329
 function cleanup() {
 	rm -f "$TMP_COVERAGE_RAW_REPORT_FILE"
 	rm -f "$TMP_COVERAGE_SUMMARY_REPORT_FILE"
+	rm -fr "$TESTCOVERAGE_CACHE_DIR"
 	[ -t 1 ] && printf "\033[2K\r"
 	exit 0
 }
 
-trap cleanup SIGTERM SIGHUP SIGINT
+trap cleanup SIGTERM SIGHUP SIGINT EXIT
 
 if ! type mktemp >/dev/null 2>&1; then
 	echo "missing dependency 'mktemp'"
 	exit 1
 else
+	TESTCOVERAGE_CACHE_DIR="$(mktemp -d "$PWD/testcoverage-cache-dir-XXXXXXX")"
 	TMP_COVERAGE_RAW_REPORT_FILE="$(mktemp "$PWD/test-coverage-raw-report-XXXXXXXX")"
 	TMP_COVERAGE_SUMMARY_REPORT_FILE="$(mktemp "$PWD/test-coverage-summary-report-XXXXXXXX")"
 fi
 
-# Global option flags
+# Global variables
+OPT_PARALLEL=0
 OPT_SHOW_MISSING_OPTS=0
 OPT_SAVE_REPORT=0
 
@@ -59,8 +62,8 @@ top_testdir="${top_srcdir}/tests/ts"
 
 # We skip these programs because they do not make use of 'struct option longopts[]'
 # which is passed to getopt(3) for command line argument parsing.
-unsupported_programs=$(grep 'unsupported_programs=' "${top_srcdir}"/tools/get-options.sh \
-								| cut -d '=' -f 2 | tr -d "\'" )
+unsupported_programs=$(grep 'unsupported_programs=' "${top_srcdir}"/tools/get-options.sh |
+	cut -d '=' -f 2 | tr -d "\'")
 
 # These are programs that we do not need to check on
 ignore_programs=""
@@ -77,8 +80,8 @@ program_test_subdirs="$(ls -1 ${top_testdir} | tr '\n' ' ')"
 
 # All registered test scripts for all programs
 ALL_TEST_SCRIPTS="$(find "${top_testdir}/" -maxdepth 2 -type f -executable \
-			-exec realpath -qLs {} \; 2>/dev/null |
-			tr '\n' ' ')"
+	-exec realpath -qLs {} \; 2>/dev/null |
+	tr '\n' ' ')"
 
 function usage() {
 	cat <<EOF
@@ -90,6 +93,7 @@ Generate a test coverage report for util-linux programs.
 Options:
  -h, --help             	display this help
  -m, --show-missing-opts	display missing long options
+ -p, --parallel			multiprocess analysis
  -s, --save-report		save the report file
 
 EOF
@@ -122,7 +126,7 @@ function get_opts_from_src() {
 	prog="$1"
 
 	long_opts="$(TOP_SRCDIR="${top_srcdir}" "${top_srcdir}"/tools/get-options.sh "$prog" |
-					sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
+		sed -e 's/^$//' -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')"
 
 	[[ "$?" != "0" || -z "$long_opts" ]] && return 1
 
@@ -178,9 +182,9 @@ function get_cross_test_long_opts() {
 		# already traversed it, so no need to do it again.
 		[[ "$has_ts" == 1 && "$ts" =~ \/"$prog"\/ ]] && continue
 
-		found="$(get_full_cmdline "${ts}" \
-			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' \
-			| uniq)"
+		found="$(get_full_cmdline "${ts}" |
+			grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' |
+			uniq)"
 
 		if [ -n "$found" ]; then
 			opts+="$(printf -- '\n%s' "$found")"
@@ -197,8 +201,8 @@ function get_test_scripts_l_opts() {
 
 	# Look for all options in $prog test scripts
 	for ts in $test_scripts; do
-		found="$(get_full_cmdline "${ts}" \
-			| grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*' )"
+		found="$(get_full_cmdline "${ts}" |
+			grep -P -o -- '--(?![^[:alnum:]])[A-Za-z-.0-9_]*')"
 
 		found+="$(opts_from_manual_validation "$ts")"
 
@@ -223,7 +227,7 @@ function print_long_opts_summary() {
 	# reason for this is to avoid running a for loop for each option.
 	# shellcheck disable=SC2059
 	l_opts_regex="$(printf -- "$ts_l_opts" | awk -v RS="" \
-			'{gsub (/\n/,"$|")} {printf "%s", $1}')"
+		'{gsub (/\n/,"$|")} {printf "%s", $1}')"
 
 	# valid long options found in the test scripts
 	valid_ts_l_opts="$(echo "${prog_l_opts}" | grep -o -E -- "${l_opts_regex}")"
@@ -231,14 +235,29 @@ function print_long_opts_summary() {
 	# Amount of found valid long options in the test scripts
 	ts_l_opts_cnt="$(echo "${valid_ts_l_opts}" | wc -l)"
 
-	percentage="$(get_share "$prog_l_opts_cnt" "$ts_l_opts_cnt")%"
+	percentage="$(get_share "$prog_l_opts_cnt" "$ts_l_opts_cnt")"
 
 	if [[ "${OPT_SHOW_MISSING_OPTS}" == 1 ]]; then
-		missing_l_opts="$( comm -23 <(echo "${prog_l_opts}") \
-					<(echo "${valid_ts_l_opts}") | tr '\n' ' ')"
+		missing_l_opts="$(comm -23 <(echo "${prog_l_opts}") \
+			<(echo "${valid_ts_l_opts}") | tr '\n' ' ')"
 	fi
 
 	echo "$prog|$percentage% ($ts_l_opts_cnt/$prog_l_opts_cnt)|$missing_l_opts|$notes"
+}
+
+function find_all_summary_files() {
+	find "${TESTCOVERAGE_CACHE_DIR}" -maxdepth 1 -mindepth 1 -type f \
+		-name '*.testcoverage.summary' 2>/dev/null | sort
+}
+
+function count_untested_progs() {
+	grep -oE '(no long options found in test|missing test subdirectory)' \
+		"$TMP_COVERAGE_SUMMARY_REPORT_FILE" | wc -l
+}
+
+function concatenate_summary_files() {
+	# shellcheck disable=SC2046
+	cat $(find_all_summary_files) >>"$TMP_COVERAGE_RAW_REPORT_FILE"
 }
 
 function print_report() {
@@ -253,13 +272,13 @@ function print_report() {
 	echo ""
 	echo ""
 
-	column  --output-width 80 \
-	--output-separator "    " \
-	--table-column name=UTILITY,left,wrap \
-	--table-column name="TEST COVERAGE",right,wrap \
-	--table-column name="MISSING OPTIONS",left,wrap \
-	--table-column name="NOTES",left,noextreme \
-	-s '|' -t "${TMP_COVERAGE_RAW_REPORT_FILE}" >>"${TMP_COVERAGE_SUMMARY_REPORT_FILE}"
+	column --output-width 80 \
+		--output-separator "    " \
+		--table-column name=UTILITY,left,wrap \
+		--table-column name="TEST COVERAGE",right,wrap \
+		--table-column name="MISSING OPTIONS",left,wrap \
+		--table-column name="NOTES",left,noextreme \
+		-s '|' -t "${TMP_COVERAGE_RAW_REPORT_FILE}" >>"${TMP_COVERAGE_SUMMARY_REPORT_FILE}"
 
 	cat "${TMP_COVERAGE_SUMMARY_REPORT_FILE}"
 
@@ -273,21 +292,121 @@ function calculate_test_coverage() {
 
 	share_ts_progs="$(get_share "$num_total_progs" "$num_tested_progs")"
 
-	printf "%-45s%.2f%% (%d/%d)\n" "Total share of tested programs:"\
-				"$share_ts_progs" "$num_tested_progs" "$num_total_progs"
+	printf "%-45s%.2f%% (%d/%d)\n" "Total share of tested programs:" \
+		"$share_ts_progs" "$num_tested_progs" "$num_total_progs"
 
 	percentages="$(cat "${TMP_COVERAGE_RAW_REPORT_FILE}" |
-						cut -d '|' -f 2 | grep -E -o '[0-9]*\.[0-9]*')"
+		cut -d '|' -f 2 | grep -E -o '[0-9]*\.[0-9]*')"
 
-	avg_ts_coverage="$( echo "${percentages}" | awk -v progs="$num_total_progs" \
-						'{ sum += $1 } END { print sum / progs }' )"
+	avg_ts_coverage="$(echo "${percentages}" | awk -v progs="$num_total_progs" \
+		'{ sum += $1 } END { print sum / progs }')"
 
 	printf "%-45s%.2f%%\n" "Overall test coverage:" "$avg_ts_coverage"
 }
 
-function generate_report() {
+function get_all_test_scripts() {
+	local dir_name
+	dir_name="$1"
+
+	find "${top_testdir}/${dir_name}" -maxdepth 1 -type f -executable \
+		-exec grep -l 'ts_init' {} \; 2>/dev/null |
+		tr '\n' ' '
+}
+
+function analyze_tool() {
+	local progname dir_name
 	local percentage frac notes
-	local has_ts_dir has_ts
+	progname="$1"
+	# TODO: Uppercase global variables
+	dir_name="${real_prog_ts_dir[$progname]:-$progname}"
+
+	summary_filepath="${TESTCOVERAGE_CACHE_DIR}/${progname}.testcoverage.summary"
+
+	# Test whether the program is supported by tools/get-options.sh.
+	# If it isn't, we will not be able to get an exact list of long
+	# options from the program's source code, so we skip the check.
+	#
+	# In this case, we will also assume that all long options are
+	# tested, it is up to the developer to ensure this is correct.
+	if [[ "$progname" =~ $unsupported_programs ]]; then
+		percentage=100.00
+		frac=1/1
+		notes="skipped check (not supported by tools/get-options.sh)"
+
+		echo "$progname|${percentage}% (${frac})|-|${notes}" >>"${summary_filepath}"
+		return 0
+	fi
+
+	if ! echo "$program_test_subdirs" | grep -E " $dir_name " &>/dev/null; then
+		percentage=0.00
+		frac=0/0
+		notes="missing test subdirectory, "
+		has_ts_dir=0
+	else
+		has_ts_dir=1
+	fi
+
+	if [[ "$has_ts_dir" == 1 ]]; then
+		test_scripts="$(get_all_test_scripts "$dir_name")"
+	fi
+
+	if [[ -z "$test_scripts" ]]; then
+		percentage=0.00
+		frac=0/0
+		notes+="no test scripts found"
+		has_ts=0
+	else
+		has_ts=1
+	fi
+
+	# get the real long options from the program's source code
+	prog_l_opts="$(get_opts_from_src "$progname")"
+	if [[ "$?" != 0 || -z "${prog_l_opts}" ]]; then
+		percentage=0.00
+		frac=0/0
+		notes="failed to get long options from source code"
+
+		echo "$progname|${percentage}% (${frac})|-|${notes}" >>"${summary_filepath}"
+		return 1
+	fi
+
+	# we don't need --help and --version
+	prog_l_opts="$(echo "$prog_l_opts" | grep --invert-match -E -- '--help|--version')"
+	if [[ -z "${prog_l_opts}" ]]; then
+		percentage=100.00
+		frac=0/0
+		notes="no long options to test"
+
+		echo "$progname|$percentage% ($frac)|-|$notes" >>"${summary_filepath}"
+		return 0
+	fi
+
+	# get long options from the program's tests scripts
+	if [[ $has_ts == 1 ]]; then
+		ts_l_opts="$(get_test_scripts_l_opts "$progname" "$test_scripts")"
+	fi
+
+	# get long options from cross tests in other program scripts
+	ts_l_opts+="$(get_cross_test_long_opts "$progname" | sort | uniq)"
+	if [[ -z "${ts_l_opts}" ]]; then
+		percentage=0.00
+		frac=0/0
+		notes="no long options found in test script(s)"
+
+		prog_l_opts="$(echo "$prog_l_opts" | tr '\n' ' ')"
+
+		if [[ "${OPT_SHOW_MISSING_OPTS}" != 1 ]]; then
+			prog_l_opts='-'
+		fi
+
+		echo "$progname|${percentage}% (${frac})|${prog_l_opts}|${notes}" >>"${summary_filepath}"
+		return 1
+	fi
+
+	print_long_opts_summary "$progname" "$prog_l_opts" "$ts_l_opts" "$notes" >>"${summary_filepath}"
+}
+
+function generate_report() {
 	local num_total_progs num_tested_progs
 	all_programs="$1"
 
@@ -295,142 +414,46 @@ function generate_report() {
 
 	echo "Generating report ..."
 
-	error=0
 	counter=0
+
+	max_cpus=$(nproc)
 	for prog in $all_programs; do
-		percentage=''
-		frac=''
-		notes=''
-		dirname="$prog"
 		((counter++))
-
 		[ -t 1 ] && progress_status "$prog" "$num_total_progs" "$counter"
-
 		[[ -n "$ignore_programs" && "$prog" =~ $ignore_programs ]] && continue
 
-		# Test whether the program is supported by tools/get-options.sh.
-		# If it isn't, we will not be able to get an exact list of long
-		# options from the program's source code, so we skip the check.
-		#
-		# In this case, we will also assume that all long options are
-		# tested, it is up to the developer to ensure this is correct.
-		if [[ "$prog" =~ $unsupported_programs ]]; then
-			percentage=100.00
-			frac=1/1
-			notes="skipped check (not supported by tools/get-options.sh)"
-
-			echo "$prog|${percentage}% (${frac})|-|${notes}" >>"${TMP_COVERAGE_RAW_REPORT_FILE}"
-			tested_programs+=" $prog"
-			continue
-		fi
-
-		# Some test directories are shared between programs
-		dirname=${real_prog_ts_dir[$prog]:-$dirname}
-
-		if ! echo "$program_test_subdirs" | grep -E " $dirname " &>/dev/null; then
-			percentage=0.00
-			frac=0/0
-			notes="missing test subdirectory, "
-			has_ts_dir=0
-			error=1
+		if [[ "$OPT_PARALLEL" == "1" ]]; then
+			while (($(jobs -rp | wc -l) >= max_cpus)); do
+				wait -n
+			done
+			analyze_tool "$prog" &
 		else
-			has_ts_dir=1
+			analyze_tool "$prog"
 		fi
-
-		if [[ "$has_ts_dir" == 1 ]]; then
-			test_scripts="$(find "${top_testdir}/${dirname}" -maxdepth 1 -type f -executable \
-							-exec grep -l 'ts_init' {} \; 2>/dev/null | tr '\n' ' ')"
-		fi
-
-		if [[ -z "$test_scripts" ]]; then
-			percentage=0.00
-			frac=0/0
-			notes+="no test scripts found"
-			has_ts=0
-			error=1
-		else
-			has_ts=1
-		fi
-
-		# get the real long options from the program's source code
-		prog_l_opts="$(get_opts_from_src "$prog")"
-		if [[ "$?" != 0 || -z "${prog_l_opts}" ]]; then
-			percentage=0.00
-			frac=0/0
-			notes="failed to get long options from source code"
-
-			echo "$prog|${percentage}% (${frac})|-|${notes}" >>"${TMP_COVERAGE_RAW_REPORT_FILE}"
-			error=1
-			continue
-		fi
-
-		# we don't need --help and --version
-		prog_l_opts="$(echo "$prog_l_opts" | grep --invert-match -E -- '--help|--version')"
-
-		if [[ -z "${prog_l_opts}" ]]; then
-			percentage=100.00
-			frac=0/0
-			notes="no long options to test"
-
-			echo "$prog|$percentage% ($frac)|-|$notes" >>"${TMP_COVERAGE_RAW_REPORT_FILE}"
-			continue
-		fi
-
-		# get long options from the program's tests scripts
-		if [[ $has_ts == 1 ]]; then
-			ts_l_opts="$(get_test_scripts_l_opts "$prog" "$test_scripts")"
-		fi
-
-		# get long options from cross tests in other program scripts
-		ts_l_opts+="$(get_cross_test_long_opts "$prog")"
-
-		ts_l_opts="$(echo "$ts_l_opts" | sort | uniq)"
-
-		if [[ -z "${ts_l_opts}" ]]; then
-			percentage=0.00
-			frac=0/0
-			notes="no long options found in test script(s)"
-
-			prog_l_opts="$(echo "$prog_l_opts" | tr '\n' ' ')"
-
-			if [[ "${OPT_SHOW_MISSING_OPTS}" != 1 ]]; then
-				prog_l_opts='-'
-			fi
-
-			echo "$prog|${percentage}% (${frac})|${prog_l_opts}|${notes}" >>"${TMP_COVERAGE_RAW_REPORT_FILE}"
-			error=1
-			continue
-		fi
-
-		tested_programs+=" $prog"
-
-		print_long_opts_summary "$prog" "$prog_l_opts" "$ts_l_opts" "$notes" >>"${TMP_COVERAGE_RAW_REPORT_FILE}"
 	done
+	[[ "$OPT_PARALLEL" == "1" ]] && wait
 
-	num_tested_progs="$(echo "$tested_programs" | wc -w)"
+	num_tested_progs="$(find_all_summary_files | wc -l)"
 
+	concatenate_summary_files
 	print_report
+	calculate_test_coverage "$num_total_progs" "$((num_total_progs - $(count_untested_progs)))"
 
-	calculate_test_coverage "$num_total_progs" "$num_tested_progs"
-
-	if [[ "${OPT_SAVE_REPORT}" != 1 ]]; then
-		rm -f "${TMP_COVERAGE_SUMMARY_REPORT_FILE}"
-	else
-		printf "%-45s%s\n" "Saved report file:" "${TMP_COVERAGE_SUMMARY_REPORT_FILE}"
+	if [[ "${OPT_SAVE_REPORT}" == "1" ]]; then
+		saved_filepath="${PWD}/util-linux.testcoverage-summary.$(date +%Y-%m-%d_%H-%M).txt"
+		cp "${TMP_COVERAGE_SUMMARY_REPORT_FILE}" "$saved_filepath"
+		printf "%-45s%s\n" "Saved report file:" "${saved_filepath}"
 	fi
 
-	rm -f "${TMP_COVERAGE_RAW_REPORT_FILE}"
-
-	return $error
+	return 0
 }
 
 function main() {
 	all_programs="$(extract_programs)"
-	shortopts="hms"
-	longopts="help,save-report,show-missing-opts"
+	shortopts="hmps"
+	longopts="help,parallel,save-report,show-missing-opts"
 
 	OPTS="$(getopt -l "${longopts}" -o "${shortopts}" -- "$@")"
-
 	# shellcheck disable=SC2181
 	[[ "$?" != 0 ]] && {
 		echo "getopt(1) error"
@@ -441,16 +464,21 @@ function main() {
 
 	while true; do
 		case "$1" in
-		'-h'|'--help')
+		'-h' | '--help')
 			usage
 			exit 0
 			;;
-		'-m'|'--show-missing-opts')
+		'-m' | '--show-missing-opts')
 			OPT_SHOW_MISSING_OPTS=1
 			shift
 			continue
 			;;
-		'-s'|'--save-report')
+		'-p' | '--parallel')
+			OPT_PARALLEL=1
+			shift
+			continue
+			;;
+		'-s' | '--save-report')
 			OPT_SAVE_REPORT=1
 			shift
 			;;
