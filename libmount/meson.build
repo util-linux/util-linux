@@ -157,6 +157,7 @@ endif
 
 libmount_tests = [
   'cache',
+  'config',
   'context',
   'lock',
   'optstr',
