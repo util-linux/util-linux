@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="mounttype config"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_BLKID"
+
+ts_skip_nonroot
+ts_check_losetup
+ts_check_prog "mkfs.ext2"
+
+ETC_DIR="$TS_OUTDIR/${TS_TESTNAME}-etc"
+
+# The config files are read from the test directory; the same code path as
+# in production, see safe_getenv() in libmount/src/config.c.
+export LIBMOUNT_CONFIG_ETCDIR="$ETC_DIR"
+
+rm -rf "$ETC_DIR"
+mkdir -p "$ETC_DIR/mount/fs.d"
+echo "mounttype = ext2nonexist" > "$ETC_DIR/mount/fs.d/ext2.conf"
+
+ts_device_init
+DEVICE=$TS_LODEV
+
+mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
+ts_udevadm_settle "$DEVICE"
+ts_device_has "TYPE" "ext2" $DEVICE || ts_die "Cannot find ext2 on $DEVICE"
+
+ts_init_subtest "detected"
+mkdir -p $TS_MOUNTPOINT
+# the type is detected, so the configured driver name is used for the syscall
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 \
+	| sed -e "s|$DEVICE|DEVICE|" -e "s|$TS_MOUNTPOINT|MOUNTPOINT|" >> "$TS_OUTPUT"
+ts_is_mounted $DEVICE \
+	&& echo "ERROR: $DEVICE is mounted" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "explicit"
+mkdir -p $TS_MOUNTPOINT
+# "-t ext2" is a request from the user, the config file is not applied to it
+$TS_CMD_MOUNT -t ext2 $DEVICE $TS_MOUNTPOINT 2>&1 \
+	| sed -e "s|$DEVICE|DEVICE|" -e "s|$TS_MOUNTPOINT|MOUNTPOINT|" >> "$TS_OUTPUT"
+if ts_is_mounted $DEVICE; then
+	echo "mounted as $(findmnt -no FSTYPE $TS_MOUNTPOINT)" >> "$TS_OUTPUT"
+	$TS_CMD_UMOUNT $TS_MOUNTPOINT
+else
+	echo "ERROR: $DEVICE is not mounted" >> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
+rm -rf "$ETC_DIR"
+ts_device_deinit $DEVICE
+
+ts_finalize
