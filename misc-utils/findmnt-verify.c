@@ -23,6 +23,7 @@
 struct verify_context {
 	struct libmnt_fs	*fs;
 	struct libmnt_table	*tb;
+	struct libmnt_context	*cxt;	/* only to read the mount config */
 
 	char	**fs_ary;
 	size_t	fs_num;
@@ -461,6 +462,8 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 	}
 
 	if (realtype) {
+		const char *mounttype;
+
 		isswap = strcmp(realtype, "swap") == 0;
 		vfy->no_fsck = strcmp(realtype, "xfs") == 0
 				|| strcmp(realtype, "btrfs") == 0;
@@ -475,10 +478,18 @@ static int verify_fstype(struct verify_context *vfy, struct findmnt *findmnt)
 			goto done;
 		}
 
+		/* the kernel driver may be configured to a different name */
+		if (!vfy->cxt)
+			vfy->cxt = mnt_new_context();
+		mounttype = mnt_config_get_value(vfy->cxt, "fs.d", realtype,
+						 "mounttype");
+		if (!mounttype)
+			mounttype = realtype;
+
 		if (!isswap
 		    && (!type || isauto)
-		    && !is_supported_filesystem(vfy, realtype)) {
-			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
+		    && !is_supported_filesystem(vfy, mounttype)) {
+			verify_warn(vfy, _("on-disk %s seems unsupported by the current kernel"), mounttype);
 			goto done;
 		}
 
@@ -589,6 +600,7 @@ done:
 		fprintf(stdout, _("Success, no errors or warnings detected\n"));
 
 
+	mnt_free_context(vfy.cxt);
 	free_proc_filesystems(&vfy);
 
 	return rc != 0 ? rc : vfy.nerrors + findmnt->parse_nerrors;
