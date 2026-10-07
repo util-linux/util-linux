@@ -21,6 +21,7 @@
 
 struct hook_data {
 	int loopdev_fd;
+	bool reused;
 };
 
 static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd);
@@ -138,7 +139,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 {
 	const char *backing_file, *loopdev = NULL;
 	struct loopdev_cxt lc;
-	int rc = 0, lo_flags = 0;
+	int rc = 0, lo_flags = 0, direct_io = -1;
 	uint64_t offset = 0, sizelimit = 0;
 	bool reuse = FALSE;
 	struct libmnt_opt *opt, *loopopt = NULL;
@@ -152,6 +153,19 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	if (mnt_optlist_is_rdonly(ol)) {
 		DBG_OBJ(LOOP, cxt, ul_debug("enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
+	}
+
+	opt = mnt_optlist_get_named(ol, "X-loopdev.direct-io", cxt->map_userspace);
+	if (opt) {
+		const char *value = mnt_opt_get_value(opt);
+
+		if (value && strcmp(value, "on") == 0) {
+			direct_io = 1;
+			lo_flags |= LO_FLAGS_DIRECT_IO;
+		} else if (value && strcmp(value, "off") == 0)
+			direct_io = 0;
+		else
+			return -MNT_ERR_MOUNTOPT;
 	}
 
 	/*
@@ -257,6 +271,13 @@ static int setup_loopdev(struct libmnt_context *cxt,
 				goto done;
 			}
 
+			if (direct_io != -1 && !!loopcxt_is_dio(&lc) != direct_io) {
+				DBG_OBJ(LOOP, cxt, ul_debug("%s has incompatible direct I/O mode",
+						loopcxt_get_device(&lc)));
+				rc = -MNT_ERR_LOOPOVERLAP;
+				goto done;
+			}
+
 			/* This is no more supported, but check to be safe. */
 			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type) == 0
 			    && lc_encrypt_type != LO_CRYPT_NONE) {
@@ -350,6 +371,7 @@ static int setup_loopdev(struct libmnt_context *cxt,
 	} while (1);
 
 success:
+	hd->reused = reuse;
 	if (!rc)
 		rc = mnt_fs_set_source(cxt->fs, loopcxt_get_device(&lc));
 
@@ -407,6 +429,9 @@ static int delete_loopdev(struct libmnt_context *cxt, struct hook_data *hd)
 		close(hd->loopdev_fd);
 		hd->loopdev_fd = -1;
 	}
+
+	if (hd && hd->reused)
+		return 0;
 
 	rc = loopdev_detach(src);	/* see lib/loopdev.c */
 
