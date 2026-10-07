@@ -303,3 +303,37 @@ void mnt_free_config(struct libmnt_context *cxt)
 		free_confentry(en);
 	}
 }
+
+#ifdef TEST_PROGRAM
+
+static int test_read_config(struct libmnt_test *ts __attribute__((unused)),
+			    int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	const char *val;
+
+	if (argc != 4)
+		return -1;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	val = mnt_config_get_value(cxt, argv[1], argv[2], argv[3]);
+	printf("%s\n", val ? : "(not found)");
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	struct libmnt_test tss[] = {
+	{ "--read-config",  test_read_config,  "<dir> <name> <key>  read config value" },
+	{ NULL }
+	};
+
+	return mnt_run_test(tss, argc, argv);
+}
+
+#endif /* TEST_PROGRAM */

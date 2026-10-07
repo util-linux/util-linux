@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="config"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+TESTPROG="$TS_HELPER_LIBMOUNT_CONFIG"
+
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
+TESTDIR="$TS_OUTDIR/${TS_TESTNAME}-root"
+ETC_DIR="$TESTDIR/etc"
+RUN_DIR="$TESTDIR/run"
+USR_DIR="$TESTDIR/usr"
+
+export LIBMOUNT_CONFIG_ETCDIR="$ETC_DIR"
+export LIBMOUNT_CONFIG_RUNDIR="$RUN_DIR"
+export LIBMOUNT_CONFIG_USRDIR="$USR_DIR"
+
+cleanup_dirs()
+{
+	rm -rf "$ETC_DIR" "$RUN_DIR" "$USR_DIR"
+	mkdir -p "$ETC_DIR/mount/fs.d" "$RUN_DIR/mount/fs.d" "$USR_DIR/mount/fs.d"
+}
+
+ts_init_subtest "basic"
+cleanup_dirs
+echo "mounttype = ntfs3" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "not-found"
+cleanup_dirs
+echo "mounttype = ntfs3" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs nokey >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "no-file"
+cleanup_dirs
+ts_run $TESTPROG --read-config fs.d xfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "comments"
+cleanup_dirs
+printf "# this is a comment\nmounttype = ntfs3\t# trailing comment\n\n" \
+	> "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "multiple-keys"
+cleanup_dirs
+printf "mounttype = ntfs3\nhelper = ntfs-3g\n" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_run $TESTPROG --read-config fs.d ntfs helper >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "priority"
+cleanup_dirs
+echo "mounttype = from-usr" > "$USR_DIR/mount/fs.d/ntfs.conf"
+echo "mounttype = from-run" > "$RUN_DIR/mount/fs.d/ntfs.conf"
+echo "mounttype = from-etc" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+rm -f "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+rm -f "$RUN_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "replace"
+cleanup_dirs
+# the main file is used as a whole, it does not inherit keys from a
+# lower-priority main file
+printf "mounttype = ntfs3\nhelper = ntfs-3g\n" > "$USR_DIR/mount/fs.d/ntfs.conf"
+printf "helper = none\n" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+ts_run $TESTPROG --read-config fs.d ntfs helper >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "dropin"
+if [ "$("$TS_HELPER_SYSINFO" scandirat-ok)" != "1" ]; then
+	ts_skip "no scandirat"
+else
+	cleanup_dirs
+	mkdir -p "$ETC_DIR/mount/fs.d/ntfs.conf.d"
+	# drop-ins add keys which the main file does not define, but the
+	# main file keeps priority for the keys it does define
+	printf "mounttype = ntfs3\n" > "$USR_DIR/mount/fs.d/ntfs.conf"
+	printf "mounttype = ignored\nhelper = none\n" \
+		> "$ETC_DIR/mount/fs.d/ntfs.conf.d/50-local.conf"
+	ts_run $TESTPROG --read-config fs.d ntfs helper >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "unsafe"
+cleanup_dirs
+echo "mounttype = ntfs3" > "$ETC_DIR/mount/fs.d/ntfs.conf"
+chmod g+w "$ETC_DIR/mount/fs.d/ntfs.conf"
+# a group-writable config file has to be ignored
+ts_run $TESTPROG --read-config fs.d ntfs mounttype >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+rm -rf "$TESTDIR"
+
+ts_finalize
