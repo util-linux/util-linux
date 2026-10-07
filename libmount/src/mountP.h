@@ -543,6 +543,7 @@ struct libmnt_context
 #define MNT_FL_ONLYONCE		(1 << 15)
 #define MNT_FL_EXCL		(1 << 16)
 #define MNT_FL_BENEATH		(1 << 17)
+#define MNT_FL_FSTYPE_EXPLICIT	(1 << 18)	/* fstype from -t or fstab, not from the system */
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* fstab merged to cxt->fs */
@@ -702,6 +703,8 @@ extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);
 extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
+extern int mnt_context_is_explicit_fstype(struct libmnt_context *cxt);
+extern const char *mnt_context_get_mounttype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
 				      const char *name, const char *type);
 extern int mnt_context_prepare_update(struct libmnt_context *cxt);
