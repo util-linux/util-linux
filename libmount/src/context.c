@@ -1354,6 +1354,12 @@ const char *mnt_context_get_target_prefix(struct libmnt_context *cxt)
  */
 int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
 {
+	/* the type has been requested by the user */
+	if (fstype)
+		cxt->flags |= MNT_FL_FSTYPE_EXPLICIT;
+	else
+		cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
+
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
 }
 
@@ -2366,16 +2372,60 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		goto done;
 
 	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
-	if (rc == 0 && type)
+	if (rc == 0 && type) {
 		__mnt_fs_set_fstype_ptr(cxt->fs, type);
-	else
+		/* the type comes from the system, not from the user */
+		cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
+	} else
 		free(type);
 done:
-	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s [rc=%d]",
-				mnt_fs_get_fstype(cxt->fs), rc));
+	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s, mount type: %s [rc=%d]",
+				mnt_fs_get_fstype(cxt->fs),
+				mnt_context_get_mounttype(cxt), rc));
 	return rc;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");
+}
+
+/*
+ * Returns 1 if the filesystem type has been requested by the user (by
+ * "-t <type>" or in fstab), and 0 if it comes from the system -- detected by
+ * libblkid/udev on mount, or reported by the kernel on umount.
+ *
+ * The mount configuration (fs.d/<type>.conf) is applied to the types provided
+ * by the system only, so that a type requested by the user is always used
+ * as-is. Note that the caller has to check that there is any type at all.
+ */
+int mnt_context_is_explicit_fstype(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_FSTYPE_EXPLICIT ? 1 : 0;
+}
+
+/*
+ * Returns the kernel filesystem driver name to use for the mount syscall.
+ *
+ * This is the filesystem type itself, unless the type comes from the system
+ * and the configuration maps it to another driver, for example
+ *
+ *	/etc/mount/fs.d/ntfs.conf:  mounttype = ntfs3
+ *
+ * Note that this is the driver name, it is not used to search for the
+ * /sbin/mount.<type> helper. See mnt_context_prepare_helper().
+ */
+const char *mnt_context_get_mounttype(struct libmnt_context *cxt)
+{
+	const char *type, *x;
+
+	if (!cxt || !cxt->fs)
+		return NULL;
+
+	type = mnt_fs_get_fstype(cxt->fs);
+	if (!type || mnt_context_is_explicit_fstype(cxt))
+		return type;
+
+	x = mnt_config_get_value(cxt, "fs.d", type, "mounttype");
+
+	return x ? x : type;
 }
 
 /*
@@ -2663,8 +2713,12 @@ static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned l
 	if (!rc)
 		rc = mnt_fs_set_target(cxt->fs, mnt_fs_get_target(fs));
 
-	if (!rc && !mnt_fs_get_fstype(cxt->fs))
+	if (!rc && !mnt_fs_get_fstype(cxt->fs) && mnt_fs_get_fstype(fs)) {
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
+		/* the type has been requested in fstab */
+		if (!rc)
+			cxt->flags |= MNT_FL_FSTYPE_EXPLICIT;
+	}
 
 	if (!rc && !mnt_fs_get_root(cxt->fs) && mnt_fs_get_root(fs))
 		rc = mnt_fs_set_root(cxt->fs, mnt_fs_get_root(fs));
