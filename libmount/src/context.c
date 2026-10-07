@@ -2432,6 +2432,15 @@ const char *mnt_context_get_mounttype(struct libmnt_context *cxt)
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @type. The @act is MNT_ACT_{MOUNT,UMOUNT}.
  *
+ * The name may be redirected by the configuration, for example
+ *
+ *	/etc/mount/fs.d/ntfs.conf:  helper = ntfs-3g
+ *
+ * makes mount(8) execute /sbin/mount.ntfs-3g for a detected "ntfs". The
+ * reserved name "none" means that no helper is used at all, so that the
+ * filesystem is mounted by the kernel driver even if /sbin/mount.<fstype>
+ * is installed.
+ *
  * Returns: 0 on success or negative number in case of error. Note that success
  * does not mean that there is any usable helper, you have to check cxt->helper.
  */
@@ -2459,6 +2468,19 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 
 	if (type && strchr(type, ','))
 		return 0;			/* type is fstype pattern */
+
+	/* The configuration is keyed by the filesystem type we really have:
+	 * the type detected by libblkid/udev on mount, and the type reported
+	 * by the kernel on umount. */
+	if (type && !mnt_context_is_explicit_fstype(cxt)) {
+		const char *x = mnt_config_get_value(cxt, "fs.d", type, "helper");
+
+		if (x) {
+			DBG_OBJ(CXT, cxt, ul_debug("config: %s helper %s -> %s",
+						name, type, x));
+			type = x;
+		}
+	}
 
 	if (mnt_context_is_nohelpers(cxt)
 	    || !type
