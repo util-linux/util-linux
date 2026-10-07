@@ -476,7 +476,7 @@ The argument following the *-t* is used to indicate the filesystem type. The fil
 +
 The programs *mount* and *umount*(8) support filesystem subtypes. The subtype is defined by a '.subtype' suffix. For example 'fuse.sshfs'. It's recommended to use subtype notation rather than add any prefix to the mount source (for example 'sshfs#example.com' is deprecated).
 +
-If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. The filesystem type is determined using *udev* metadata first, then by direct device probing via *libblkid*(3) for root users. If neither method identifies the type, *mount* will fall back to trying all types listed in _/etc/filesystems_, or if that file does not exist, _/proc/filesystems_. Types labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_) are skipped. If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*.
+If no *-t* option is given, or if the *auto* type is specified, *mount* will try to guess the desired type. The filesystem type is determined using *udev* metadata first, then by direct device probing via *libblkid*(3) for root users. If neither method identifies the type, *mount* will fall back to trying all types listed in _/etc/filesystems_, or if that file does not exist, _/proc/filesystems_. Types labeled "nodev" (e.g. _devpts_, _proc_ and _nfs_) are skipped. If _/etc/filesystems_ ends in a line with a single {asterisk}, mount will read _/proc/filesystems_ afterwards. While trying, all filesystem types will be mounted with the mount option *silent*. For types determined this way, the kernel driver and the external helper can be overridden by configuration files; see *CONFIG FILE* below.
 //TRANSLATORS: Keep {asterisk} untranslated.
 +
 For unprivileged (non-root) users, direct device probing via *libblkid*(3) is disabled and filesystem type detection relies exclusively on *udev* metadata. This means file images that are not registered with *udev* require an explicit filesystem type in _fstab_.
@@ -1761,6 +1761,120 @@ The command *mount* does not pass the mount options *unbindable*, *runbindable*,
 
 The exit status value of the helper is returned as the exit status of *mount*(8). The value 126 is sed if the mount helper program is found, but the execl() failed.
 
+== CONFIG FILE
+
+*mount* and *umount*(8) read their configuration from
+
+____
+_/etc/mount/_
+
+_/run/mount/_
+
+_/usr/lib/mount/_
+____
+
+Files in _/etc_ take priority over _/run_, which takes priority over
+_/usr/lib_. The first file found is the one which is used, and it is used as a
+whole; a file in _/etc_ therefore *replaces* the file shipped by the
+distribution in _/usr/lib_ rather than modifying it.
+
+This is how a distribution provides its defaults and how the administrator
+overrides them: the distribution ships _/usr/lib/mount/fs.d/_**__type__**_.conf_
+and the administrator writes _/etc/mount/fs.d/_**__type__**_.conf_, which has
+to contain all the settings that should be in effect, as the file provided by
+the distribution is not used at all anymore.
+
+Settings can be added in drop-in directories named after the file with a
+_.d_ suffix, for example _fs.d/ntfs.conf.d/50-local.conf_. The drop-ins are
+collected from all three locations, where a drop-in in _/etc_ shadows a
+drop-in with the same name in _/run_ or _/usr/lib_.
+
+The main file is evaluated first and the drop-ins after it in the alphabetical
+order of their names. The first file which defines a setting wins, so the main
+file has priority over all drop-ins, and a drop-in has priority over the
+drop-ins which sort after it. This means that drop-ins can only add settings
+which the main file does not define.
+
+Only regular files owned by root and not writable by group or others are used.
+
+The format is _key_ = _value_, one setting per line; everything after a '#' is
+ignored.
+
+The configuration is split into subdirectories according to what it applies
+to. Currently the only supported subdirectory is _fs.d_.
+
+=== Filesystem type configuration
+
+____
+_/etc/mount/fs.d/_**__type__**_.conf_
+____
+
+The name of a filesystem and the name of the kernel driver that implements it
+are not necessarily the same, and more than one implementation may be
+available. For example an NTFS filesystem can be mounted by the *ntfs3* kernel
+driver or by the *ntfs-3g* FUSE helper. Which one is used is a decision for the
+distribution or the system administrator, and it is configured per filesystem
+type, where _type_ is the name of the filesystem. The supported keys are:
+
+*mounttype*::
+Name of the kernel filesystem driver to use for the *mount*(2) or *fsopen*(2)
+syscall instead of the filesystem type. For example
++
+----
+# /etc/mount/fs.d/ntfs.conf
+mounttype = ntfs3
+----
++
+makes *mount* ask the kernel for the _ntfs3_ driver for a filesystem detected
+as _ntfs_.
+
+*helper*::
+Suffix of the external helper, so that **/sbin/mount.**__suffix__ is executed
+instead of **/sbin/mount.**__type__ (and **/sbin/umount.**__suffix__ for
+*umount*(8)). The reserved name *none* means that no helper is used at all, so
+the filesystem is mounted by the kernel driver even if a helper is installed:
++
+----
+# /etc/mount/fs.d/ntfs.conf
+mounttype = ntfs3
+helper = none
+----
+
+Both settings are used only if the filesystem type comes from the system: the
+type detected by *libblkid*(3) or *udev* for *mount*(8), and the type reported
+by the kernel for *umount*(8). A type requested by the user, by *-t* on the
+command line or in _/etc/fstab_, is always used as-is, and *mount -i* always
+wins over *helper*. In other words both names are resolved in the same order:
+
+....
+helper suffix = -t <type>  >  helper=<suffix>     >  <type>
+syscall type  = -t <type>  >  mounttype=<driver>  >  <type>
+....
+
+Note that *umount*(8) uses the configuration file named after the type reported
+by the kernel, which is the driver that mounted the filesystem rather than the
+originally detected type; a filesystem detected as _ntfs_ and mounted with
+*mounttype=ntfs3* is unmounted according to _fs.d/ntfs3.conf_. For some
+filesystem families the kernel reports a generic name, because the *statfs*(2)
+magic number is shared by the whole family (all ext2, ext3 and ext4
+filesystems are reported as _ext4_).
+
+The following table summarizes the usual setups for NTFS, assuming _ntfs-3g_ is
+installed:
+
+|===
+|Goal |Configuration
+
+|Keep the current behavior
+|no file; the helper is used if installed
+
+|Always use *ntfs-3g*
+|*helper = ntfs-3g*
+
+|Use the kernel driver even though *ntfs-3g* is installed
+|*mounttype = ntfs3* and *helper = none*
+|===
+
 == ENVIRONMENT
 
 *LIBBLKID_DEBUG*=all::
@@ -1799,6 +1913,9 @@ temporary file (unused on systems with _mtab_ symbolic link)
 
 _/etc/filesystems_::
 a list of filesystem types to try
+
+_/etc/mount/fs.d/_**__type__**_.conf_::
+per-filesystem type configuration; see *CONFIG FILE*
 
 == HISTORY
 

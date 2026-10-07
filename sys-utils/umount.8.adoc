@@ -176,7 +176,7 @@ ____
 **umount.**__suffix__ {__directory__|_device_} [*-flnrv*] [*-N* _namespace_] [*-t* _type_._subtype_]
 ____
 
-where _suffix_ is the filesystem type (or the value from a *uhelper=* or *helper=* marker in the mtab file). The *-t* option can be used for filesystems that have subtype support. For example:
+where _suffix_ is the filesystem type (or the value from a *uhelper=* or *helper=* marker in the mtab file, or from the *helper* setting in _/etc/mount/fs.d/_**__type__**_.conf_; see *CONFIG FILE* in *mount*(8)). The *-t* option can be used for filesystems that have subtype support. For example:
 
 ____
 *umount.fuse -t fuse.sshfs*
