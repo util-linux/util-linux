@@ -103,6 +103,17 @@ $TS_CMD_UMOUNT --graceful $TS_MOUNTPOINT >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
 $TS_CMD_UMOUNT --graceful /non-existent-path-$$ >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
         || ts_die "--graceful on non-existent path failed"
 
+# --graceful has to be honoured also for --recursive
+$TS_CMD_UMOUNT --recursive --graceful $TS_MOUNTPOINT >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+        || ts_die "--recursive --graceful on unmounted mountpoint failed"
+
+$TS_CMD_UMOUNT --recursive --graceful /non-existent-path-$$ >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+        || ts_die "--recursive --graceful on non-existent path failed"
+
+# --graceful has to be honoured also for --all-targets
+$TS_CMD_UMOUNT --all-targets --graceful /non-existent-path-$$ >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+        || ts_die "--all-targets --graceful on non-existent path failed"
+
 ts_log "Success"
 ts_finalize
 

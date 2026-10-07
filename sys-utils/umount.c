@@ -195,6 +195,19 @@ static int mk_exit_code(struct libmnt_context *cxt, int api_rc)
 	return rc;
 }
 
+static int mk_notmounted_exit_code(const char *spec)
+{
+	if (graceful)
+		return MNT_EX_SUCCESS;
+
+	if (!quiet)
+		warnx(access(spec, F_OK) == 0 ?
+			_("%s: not mounted") :
+			_("%s: not found"), spec);
+
+	return MNT_EX_USAGE;
+}
+
 static int umount_all(struct libmnt_context *cxt)
 {
 	struct libmnt_iter *itr;
@@ -365,13 +378,8 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_FORWARD);
 	if (fs)
 		rc = umount_do_recurse(cxt, tb, fs);
-	else {
-		rc = MNT_EX_USAGE;
-		if (!quiet)
-			warnx(access(spec, F_OK) == 0 ?
-				_("%s: not mounted") :
-				_("%s: not found"), spec);
-	}
+	else
+		rc = mk_notmounted_exit_code(spec);
 
 	mnt_unref_table(tb);
 	return rc;
@@ -389,14 +397,8 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 	 * "umount <spec>".
 	 */
 	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
-	if (rc == 1) {
-		rc = MNT_EX_USAGE;
-		if (!quiet)
-			warnx(access(spec, F_OK) == 0 ?
-				_("%s: not mounted") :
-				_("%s: not found"), spec);
-		return rc;
-	}
+	if (rc == 1)
+		return mk_notmounted_exit_code(spec);
 	if (rc < 0)
 		return mk_exit_code(cxt, rc);		/* error */
 
