@@ -31,6 +31,7 @@
 #include "nls.h"
 #include "c.h"
 #include "env.h"
+#include "strutils.h"
 #include "closestream.h"
 #include "pathnames.h"
 #include "canonicalize.h"
@@ -365,8 +366,17 @@ done:
 static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 {
 	struct libmnt_table *tb;
-	struct libmnt_fs *fs;
-	int rc;
+	struct libmnt_fs *fs, *parent;
+	struct libmnt_iter *itr;
+	struct libmnt_cache *cache;
+	const char *dir = NULL;
+	char *dirbuf = NULL;
+	int rc = MNT_EX_SUCCESS, found = 0, parent_id;
+
+	/* an empty target is converted to CWD by ul_absolute_path() and
+	 * would umount everything below it */
+	if (!spec || !*spec)
+		return mk_notmounted_exit_code(spec);
 
 	tb = new_mountinfo(cxt);
 	if (!tb)
@@ -376,11 +386,54 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	mnt_context_disable_swapmatch(cxt, 1);
 
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_FORWARD);
-	if (fs)
+	if (fs) {
 		rc = umount_do_recurse(cxt, tb, fs);
-	else
-		rc = mk_notmounted_exit_code(spec);
+		goto done;
+	}
 
+	/* not a mountpoint, umount everything below @spec */
+	cache = mnt_table_get_cache(tb);
+	if (cache)
+		dir = mnt_resolve_path(spec, cache);
+	else
+		dir = dirbuf = ul_absolute_path(spec);	/* NULL if absolute */
+	if (!dir)
+		dir = spec;
+
+	/* the filesystem where @dir is placed, mounts below @dir are children
+	 * of this filesystem */
+	parent = mnt_table_find_mountpoint(tb, dir, MNT_ITER_BACKWARD);
+	if (!parent) {
+		rc = mk_notmounted_exit_code(spec);
+		goto done;
+	}
+	parent_id = mnt_fs_get_id(parent);
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(MNT_EX_SYSERR, _("libmount iterator allocation failed"));
+
+	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
+		int xrc;
+
+		/* only mounts attached directly to @parent, their own
+		 * sub-mounts are umounted by umount_do_recurse() */
+		if (mnt_fs_get_parent_id(fs) != parent_id)
+			continue;
+		if (!ul_path_is_within(mnt_fs_get_target(fs), dir))
+			continue;
+
+		found = 1;
+		xrc = umount_do_recurse(cxt, tb, fs);
+		if (xrc != MNT_EX_SUCCESS && rc == MNT_EX_SUCCESS)
+			rc = xrc;	/* continue with the other subtrees */
+	}
+	mnt_free_iter(itr);
+
+	if (!found)
+		rc = mk_notmounted_exit_code(spec);
+done:
+	free(dirbuf);
 	mnt_unref_table(tb);
 	return rc;
 }
