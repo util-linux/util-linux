@@ -1008,6 +1008,33 @@ int streq_paths(const char *a, const char *b)
 	return 0;
 }
 
+/* Returns 1 if @path is @dir or a path below @dir, compared like streq_paths() */
+int ul_path_is_within(const char *path, const char *dir)
+{
+	if (!path || !dir || !*path || !*dir)
+		return 0;
+
+	while (path && dir) {
+		size_t p_sz, d_sz;
+		const char *p_seg = next_path_segment(path, &p_sz);
+		const char *d_seg = next_path_segment(dir, &d_sz);
+
+		/* all @dir segments matched */
+		if (d_sz == 0 || (d_sz == 1 && d_seg && *d_seg == '/'))
+			return 1;
+
+		if (!p_seg || !d_seg)
+			break;
+		if (p_sz != d_sz || strncmp(p_seg, d_seg, p_sz) != 0)
+			break;
+
+		path = p_seg + p_sz;
+		dir = d_seg + d_sz;
+	}
+
+	return 0;
+}
+
 /* concatenate two strings to a new string, the size of the second string is limited by @b */
 char *ul_strnconcat(const char *s, const char *suffix, size_t b)
 {
@@ -1424,6 +1451,19 @@ static int test_strutils_cmp_paths(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+static int test_strutils_path_is_within(int argc, char *argv[])
+{
+	int rc;
+
+	if (argc < 3)
+		return EXIT_FAILURE;
+
+	rc = ul_path_is_within(argv[1], argv[2]);
+
+	printf("%s: '%s' within '%s'\n", rc == 1 ? "YES" : "NOT", argv[1], argv[2]);
+	return EXIT_SUCCESS;
+}
+
 static int test_strutils_normalize(int argc, char *argv[])
 {
 	unsigned char *src, *dst, *org;
@@ -1499,6 +1539,9 @@ int main(int argc, char *argv[])
 	} else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0) {
 		return test_strutils_cmp_paths(argc - 1, argv + 1);
 
+	} else if (argc == 4 && strcmp(argv[1], "--path-is-within") == 0) {
+		return test_strutils_path_is_within(argc - 1, argv + 1);
+
 	} else if (argc == 4 && strcmp(argv[1], "--strdup-member") == 0) {
 		return test_strdup_to_member(argc - 1, argv + 1);
 
@@ -1568,6 +1611,7 @@ int main(int argc, char *argv[])
 				"       %1$s --strtobool <str>\n"
 				"       %1$s --parse-switch <str>\n"
 				"       %1$s --cmp-paths <path> <path>\n"
+				"       %1$s --path-is-within <path> <dir>\n"
 				"       %1$s --strdup-member <str> <str>\n"
 				"       %1$s --stralnumcmp <str> <str>\n"
 				"       %1$s --cstrcasecmp <str> <str>\n"
