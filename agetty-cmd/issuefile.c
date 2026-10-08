@@ -24,6 +24,7 @@
 #include "fileutils.h"
 #include "pathnames.h"
 #include "widechar.h"
+#include "strutils.h"
 
 /* The default issue file (e.g. /etc/issue) is read via ul_configs_file_list()
  * whenever ISSUE_SUPPORT is enabled. The drop-in directory (issue.d) scanning
@@ -87,7 +88,7 @@ static char *read_os_release(struct agetty_options *op, const char *varname)
 	p = buf;
 
 	for (;;) {
-		char *eol, *eon;
+		char *eol;
 
 		p += strspn(p, "\n\r");
 		p += strspn(p, " \t\n\r");
@@ -107,21 +108,14 @@ static char *read_os_release(struct agetty_options *op, const char *varname)
 		if (*p != '=')
 			continue;
 
-		p += strspn(p, " \t\n\r=\"");
+		p += strspn(p, " \t\n\r=");
+
 		eol = p + strcspn(p, "\n\r");
 		*eol = '\0';
-		eon = eol-1;
-		while (eon > p) {
-			if (*eon == '\t' || *eon == ' ') {
-				eon--;
-				continue;
-			}
-			if (*eon == '"') {
-				*eon = '\0';
-				break;
-			}
-			break;
-		}
+
+		rtrim_whitespace((unsigned char *) p);
+		ul_unquote(p);
+
 		free(ret);
 		ret = strdup(p);
 		if (!ret)

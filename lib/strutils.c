@@ -1354,6 +1354,29 @@ char *ul_optstr_get_value(const char *optstr, const char *key)
 	return NULL;
 }
 
+/* Removes one pair of matching surrounding quotes ('' or "") from @str.
+ *
+ * Returns size of the new string (without \0).
+ */
+size_t ul_unquote(char *str)
+{
+	size_t len;
+	char q;
+
+	if (!str || !*str)
+		return 0;
+
+	len = strlen(str);
+	q = *str;
+
+	if ((q != '"' && q != '\'') || len < 2 || str[len - 1] != q)
+		return len;
+
+	memmove(str, str + 1, len - 2);
+	str[len - 2] = '\0';
+	return len - 2;
+}
+
 #ifdef TEST_PROGRAM_STRUTILS
 
 struct testS {
@@ -1563,6 +1586,11 @@ int main(int argc, char *argv[])
 		}
 		if (rc == 1)
 			return EXIT_SUCCESS;
+	} else if (argc == 3 && strcmp(argv[1], "--unquote") == 0) {
+		char* unquoted = strdup(argv[2]);
+		ul_unquote(unquoted);
+		printf("%s-->%s\n", argv[2], unquoted);
+		return EXIT_SUCCESS;
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --strtobool <str>\n"
@@ -1573,7 +1601,8 @@ int main(int argc, char *argv[])
 				"       %1$s --cstrcasecmp <str> <str>\n"
 				"       %1$s --normalize <str>\n"
 				"       %1$s --strto{s,u}{16,32,64} <str>\n"
-				"       %1$s --optstr <str>\n",
+				"       %1$s --optstr <str>\n"
+				"       %1$s --unquote <str>\n",
 				argv[0]);
 		exit(EXIT_FAILURE);
 	}
