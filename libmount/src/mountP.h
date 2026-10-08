@@ -522,6 +522,8 @@ struct libmnt_context
 
 	struct list_head	hooksets_datas;	/* global hooksets data */
 	struct list_head	hooksets_hooks;	/* global hooksets data */
+
+	struct list_head	config_entries;	/* cached config file values */
 };
 
 /* flags */
@@ -541,6 +543,7 @@ struct libmnt_context
 #define MNT_FL_ONLYONCE		(1 << 15)
 #define MNT_FL_EXCL		(1 << 16)
 #define MNT_FL_BENEATH		(1 << 17)
+#define MNT_FL_FSTYPE_EXPLICIT	(1 << 18)	/* fstype from -t or fstab, not from the system */
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* fstab merged to cxt->fs */
@@ -679,6 +682,9 @@ extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 extern int __mnt_fs_set_target_ptr(struct libmnt_fs *fs, char *tgt)
 			__attribute__((nonnull(1)));
 
+/* config.c */
+extern void mnt_free_config(struct libmnt_context *cxt);
+
 /* context.c */
 extern void mnt_context_syscall_save_status(struct libmnt_context *cxt,
                                         const char *syscallname, int success);
@@ -697,6 +703,8 @@ extern int mnt_context_get_mountinfo_for_target(struct libmnt_context *cxt,
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);
 extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
+extern int mnt_context_is_explicit_fstype(struct libmnt_context *cxt);
+extern const char *mnt_context_get_mounttype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
 				      const char *name, const char *type);
 extern int mnt_context_prepare_update(struct libmnt_context *cxt);

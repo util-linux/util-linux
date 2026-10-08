@@ -689,8 +689,11 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 				return rc;
 			}
 			p = autotype;
+			/* the type comes from the system, not from the user */
+			cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
 			DBG_OBJ(CXT, cxt, ul_debug("   --> '%s'", p));
-		}
+		} else
+			cxt->flags |= MNT_FL_FSTYPE_EXPLICIT;
 
 		if (p)
 			rc = do_mount(cxt, p);
@@ -1907,8 +1910,9 @@ int mnt_context_get_mount_excode(
 		if (!buf)
 			break;
 		if (mnt_context_get_fstype(cxt))
+			/* report the driver name we really asked the kernel for */
 			snprintf(buf, bufsz, _("unknown filesystem type '%s'"),
-					mnt_context_get_fstype(cxt));
+					mnt_context_get_mounttype(cxt));
 		else
 			snprintf(buf, bufsz, _("unknown filesystem type"));
 		break;

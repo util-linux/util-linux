@@ -64,6 +64,7 @@ if LINUX
     src/context_umount.c
     src/context_mount.c
     src/context.c
+    src/config.c
 '''.split()
 endif
 
@@ -156,6 +157,7 @@ endif
 
 libmount_tests = [
   'cache',
+  'config',
   'context',
   'lock',
   'optstr',

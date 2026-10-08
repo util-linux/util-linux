@@ -214,7 +214,7 @@ static int hook_mount(struct libmnt_context *cxt,
 
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
-	type = mnt_fs_get_fstype(cxt->fs);
+	type = mnt_context_get_mounttype(cxt);
 
 	ol = mnt_context_get_optlist(cxt);
 	if (!ol)
