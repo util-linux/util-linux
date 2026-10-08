@@ -75,4 +75,10 @@ Meson:
 - Build: `meson setup build && meson compile -C build`
 - Run tests: `meson test -C build`
 
+Tests:
+
+- Use `./tests/run.sh` to execute all tests.
+- Use `./tests/run.sh <subsystem> ...` to test specified subsystems (e.g., `run.sh mount more`). The subsystem name is based on the directory name; see `tests/ts/*`.
+- Use `./tests/ts/<subsystem>/<scriptname>` to directly call a script test. Do not use the `run.sh` wrapper in this case.
+
 Features should include corresponding tests.
