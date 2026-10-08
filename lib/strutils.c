@@ -1587,10 +1587,17 @@ int main(int argc, char *argv[])
 		if (rc == 1)
 			return EXIT_SUCCESS;
 	} else if (argc == 3 && strcmp(argv[1], "--unquote") == 0) {
-		char* unquoted = strdup(argv[2]);
+
+		char *unquoted = strdup(argv[2]);
+
+		if (!unquoted)
+			err(EXIT_FAILURE, "strdup() failed");
+
 		ul_unquote(unquoted);
 		printf("%s-->%s\n", argv[2], unquoted);
+		free(unquoted);
 		return EXIT_SUCCESS;
+
 	} else {
 		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
 				"       %1$s --strtobool <str>\n"
