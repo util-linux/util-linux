@@ -12,4 +12,6 @@ C) Mount child/child
 D) Mount child/child
 E) Mount child-bind
 F) Mount mountpoint-bind
+G) Mount below a non-mountpoint directory
+H) Sibling and parent mounts untouched
 Success
