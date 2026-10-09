@@ -332,6 +332,8 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		 /* Misaligned offset comes only from corrupt metadata. */
 		if ((uintptr_t) keylengths % sizeof(*keylengths))
 			return -ENOENT; /* Corrupt? */
+		if ((uintptr_t) values % sizeof(*values))
+			return -ENOENT; /* Corrupt? */
 
 		first = 0;
 		mid = 0;
