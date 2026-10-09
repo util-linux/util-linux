@@ -2192,8 +2192,6 @@ int main(int argc, char **argv)
 	}
 
 	left = ctl.lines_per_screen;
-	if (ctl.num_files > 1)
-		ctl.print_banner = 1;
 	if (!ctl.no_tty_in && ctl.num_files == 0) {
 		warnx(_("bad usage"));
 		errtryhelp(EXIT_FAILURE);
@@ -2224,6 +2222,8 @@ int main(int argc, char **argv)
 		ctl.print_banner = 1;
 		ctl.first_file = 0;
 	}
+	if (ctl.num_files > 1)
+		ctl.print_banner = 1;
 
 	while (ctl.argv_position < ctl.num_files) {
 		checkf(&ctl, ctl.file_names[ctl.argv_position]);
