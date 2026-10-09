@@ -1970,13 +1970,20 @@ static void screen(struct more_control *ctl, int num_lines)
 	}
 }
 
-static void copy_file(FILE *f)
+/* Copy the file to stdout. */
+/* If @eol is true, make sure the output ends with a newline */
+static void copy_file(FILE *f, bool eol)
 {
 	char buf[BUFSIZ];
 	size_t sz;
+	char last = '\n';
 
-	while ((sz = fread(&buf, sizeof(char), sizeof(buf), f)) > 0)
+	while ((sz = fread(&buf, sizeof(char), sizeof(buf), f)) > 0) {
 		fwrite(&buf, sizeof(char), sz, stdout);
+		last = buf[sz - 1];
+	}
+	if (eol && last != '\n')
+		putchar('\n');
 }
 
 
@@ -2025,8 +2032,10 @@ static void display_file(struct more_control *ctl, int left)
 			if (left > ctl->lines_per_page - 4)
 				left = ctl->lines_per_page - 4;
 		}
+		/* the banner of the next file must start from a new line */
 		if (ctl->no_tty_out)
-			copy_file(ctl->current_file);
+			copy_file(ctl->current_file,
+				  ctl->argv_position < ctl->num_files - 1);
 		else
 			screen(ctl, left);
 	}
@@ -2215,7 +2224,7 @@ int main(int argc, char **argv)
 	ctl.sigfd = signalfd(-1, &ctl.sigset, SFD_CLOEXEC);
 	if (ctl.no_tty_in) {
 		if (ctl.no_tty_out)
-			copy_file(stdin);
+			copy_file(stdin, 0 < ctl.num_files);
 		else {
 			ctl.current_file = stdin;
 			display_file(&ctl, left);
