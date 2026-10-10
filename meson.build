@@ -208,6 +208,10 @@ login_stat_mail = get_option('login-stat-mail')
 conf.set('LOGIN_STAT_MAIL', login_stat_mail ? 1 : false)
 summary('login-stat-mail', login_stat_mail ? 'enabled' : 'disabled', section : 'components')
 
+login_chown_vcs = get_option('login-chown-vcs')
+conf.set('LOGIN_CHOWN_VCS', login_chown_vcs ? 1 : false)
+summary('login-chown-vcs', login_chown_vcs ? 'enabled' : 'disabled', section : 'components')
+
 have = cc.has_type('struct fanotify_event_info_header', prefix : '#include <linux/fanotify.h>')
 conf.set('HAVE_STRUCT_FANOTIFY_EVENT_INFO_HEADER', have ? 1 : false)
 
