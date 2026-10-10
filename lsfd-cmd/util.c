@@ -52,7 +52,7 @@ int call_with_foreign_fd(pid_t target_pid, int target_fd,
 	return r;
 }
 
-int lsfd_stat(const char *path, struct stat *sb)
+int lsfd_stat(const char *path, struct stat *sb, bool error_if_blockable)
 {
 #if HAVE_UL_SAFE_STAT
 	unsigned int retmask = 0;
@@ -68,8 +68,15 @@ int lsfd_stat(const char *path, struct stat *sb)
 	switch (errno) {
 	case ENOSYS:
 	case EOPNOTSUPP:
+		if (error_if_blockable)
+			return -1;
 		break;	/* Fall back to stat() only if unsupported. */
 	default:
+		return -1;
+	}
+#else
+	if (error_if_blockable) {
+		errno = ENOSYS;
 		return -1;
 	}
 #endif
@@ -78,7 +85,7 @@ int lsfd_stat(const char *path, struct stat *sb)
 
 #if HAVE_UL_SAFE_STATX
 static int check_statx_result(int rc, const struct statx *stx, struct stat *sb,
-			      unsigned int mask)
+			      unsigned int mask, bool error_if_blockable)
 {
 	if (rc == 0) {
 		if ((stx->stx_mask & mask) == mask) {
@@ -92,6 +99,8 @@ static int check_statx_result(int rc, const struct statx *stx, struct stat *sb,
 	switch (errno) {
 	case ENOSYS:
 	case EOPNOTSUPP:
+		if (error_if_blockable)
+			return -1;
 		return 1;
 	default:
 		return -1;
@@ -99,20 +108,27 @@ static int check_statx_result(int rc, const struct statx *stx, struct stat *sb,
 }
 #endif
 
-int lsfd_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path)
+int lsfd_path_stat(struct path_cxt *pc, struct stat *sb, int flags, const char *path,
+		   bool error_if_blockable)
 {
 #if HAVE_UL_SAFE_STATX
 	struct statx stx;
 	int rc = ul_path_statx(pc, &stx, flags | AT_NO_AUTOMOUNT | AT_STATX_DONT_SYNC,
 			       STATX_BASIC_STATS, path);
-	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC);
+	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC, error_if_blockable);
 	if (rc <= 0)
 		return rc;
+#else
+	if (error_if_blockable) {
+		errno = ENOSYS;
+		return -1;
+	}
 #endif
 	return ul_path_stat(pc, sb, flags, path);
 }
 
-int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char *path, ...)
+int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags,
+		    bool error_if_blockable, const char *path, ...)
 {
 #if HAVE_UL_SAFE_STATX
 	struct statx stx;
@@ -124,9 +140,14 @@ int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char 
 			     STATX_BASIC_STATS, path, ap);
 	va_end(ap);
 
-	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC);
+	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC, error_if_blockable);
 	if (rc <= 0)
 		return rc;
+#else
+	if (error_if_blockable) {
+		errno = ENOSYS;
+		return -1;
+	}
 #endif
 	{
 		va_list ap;
@@ -144,7 +165,7 @@ int lsfd_path_statf(struct path_cxt *pc, struct stat *sb, int flags, const char 
 	}
 }
 
-int lsfd_fstat(int fd, struct stat *sb)
+int lsfd_fstat(int fd, struct stat *sb, bool error_if_blockable)
 {
 #if HAVE_UL_SAFE_STATX
 	struct statx stx;
@@ -154,9 +175,14 @@ int lsfd_fstat(int fd, struct stat *sb)
 	 * AT_EMPTY_PATH on an already-open file descriptor operates
 	 * directly on the open file without pathname resolution. */
 	rc = statx(fd, "", AT_EMPTY_PATH | AT_STATX_DONT_SYNC, STATX_BASIC_STATS, &stx);
-	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC);
+	rc = check_statx_result(rc, &stx, sb, UL_STATX_BASIC, error_if_blockable);
 	if (rc <= 0)
 		return rc;
+#else
+	if (error_if_blockable) {
+		errno = ENOSYS;
+		return -1;
+	}
 #endif
 	return fstat(fd, sb);
 }
