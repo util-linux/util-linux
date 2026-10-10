@@ -58,6 +58,8 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 	int ch;
 	int colormode = UL_COLORMODE_UNDEF;
 	char *hex_offt = "\"%07.7_Ax\n\"";
+	int fmt_opts = 0;		/* number of format options given */
+	int c_opt = 0;			/* -C was among them */
 
 
 	static const struct option longopts[] = {
@@ -82,30 +84,38 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 	while ((ch = getopt_long(argc, argv, "bXcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
+			fmt_opts++;
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"", hex);
 			break;
 		case 'X':
+			fmt_opts++;
 			add_fmt("\"%07.7_Ax\n\"", hex);
 			add_fmt("\"%07.7_ax \" 16/1 \" %02x \" \"\\n\"", hex);
 			break;
 		case 'c':
+			fmt_opts++;
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"", hex);
 			break;
 		case 'C':
+			fmt_opts++;
+			c_opt = 1;
 			add_fmt("\"%08.8_Ax\n\"", hex);
 			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ", hex);
 			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"", hex);
 			break;
 		case 'd':
+			fmt_opts++;
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"", hex);
 			break;
 		case 'e':
+			fmt_opts++;
 			add_fmt(optarg, hex);
 			break;
 		case 'f':
+			fmt_opts++;
 			addfile(optarg, hex);
 			break;
 		case 'L':
@@ -117,6 +127,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			hex->length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
 		case 'o':
+			fmt_opts++;
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"", hex);
 			break;
@@ -127,6 +138,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			vflag = ALL;
 			break;
 		case 'x':
+			fmt_opts++;
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"", hex);
 			break;
@@ -151,6 +163,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"", hex);
 		}
 	}
+	hex->builtin_c = fmt_opts == 1 && c_opt;
 	colors_init (colormode, "hexdump");
 	return optind;
 }
