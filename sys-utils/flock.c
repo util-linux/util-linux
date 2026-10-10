@@ -480,6 +480,10 @@ int main(int argc, char *argv[])
 		if (verbose)
 			printf(_("%s: executing %s\n"), program_invocation_short_name, cmd_argv[0]);
 
+		/* Ensure buffers are flushed before executing the command */
+		if (fflush(NULL) != 0)
+			warn(_("failed to flush output streams"));
+
 		if (!no_fork) {
 			f = fork();
 			if (f < 0)
