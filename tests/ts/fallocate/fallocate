@@ -42,6 +42,20 @@ fi
 rm -f $IMAGE
 ts_finalize_subtest
 
+# With compression enabled, ZFS stores all-zero blocks as holes; see
+# https://openzfs.github.io/openzfs-docs/man/master/7/zfsprops.7.html#compression
+# Keep the allocation test, but skip the sequence requiring allocated
+# zeros, since the middle region may already be sparse on ZFS.
+fs_type=$("$TS_CMD_FINDMNT" --noheadings --raw --output FSTYPE --target "$TS_OUTDIR")
+if [ "$fs_type" = "zfs" ]; then
+	for subtest in report-data-holes dig-holes report-file-holes; do
+		ts_init_subtest "$subtest"
+		ts_skip "ZFS may store written zeros as sparse holes"
+		ts_finalize_subtest
+	done
+	ts_finalize
+fi
+
 #
 # Create test file with data and zeros for dig/report tests
 #

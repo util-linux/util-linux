@@ -75,5 +75,29 @@ $TS_CMD_FINDMNT --options +nosuid,+nodev,blkio --kernel --tab-file "$TS_SELF/fil
 echo rc=$? >> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "types-nomatch"
+$TS_CMD_FINDMNT --types xxxfs --kernel --tab-file "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "types-nomatch-json"
+$TS_CMD_FINDMNT --json --types xxxfs --kernel --tab-file "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "options-nomatch"
+$TS_CMD_FINDMNT --options xxxopt --kernel --tab-file "$TS_SELF/files/mountinfo" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "source-nomatch"
+$TS_CMD_FINDMNT --kernel --tab-file "$TS_SELF/files/mountinfo" /dev/xxx &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "nofilter"
+$TS_CMD_FINDMNT --kernel --tab-file "$TS_SELF/files/mountinfo" &> /dev/null
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
 
 ts_finalize

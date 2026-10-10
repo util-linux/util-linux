@@ -38,13 +38,13 @@ ts_finalize_subtest
 
 ts_init_subtest "partial-access-fail"
 "$TS_CMD_SETPRIV" --landlock-access \
-	fs:write cp /dev/null /dev/zero \
+	fs:write-file cp /dev/null /dev/zero \
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "partial-access-success"
 "$TS_CMD_SETPRIV" \
-	--landlock-access fs:write --landlock-rule path-beneath:write:/dev/zero \
+	--landlock-access fs:write-file --landlock-rule path-beneath:write-file:/dev/zero \
 	cp /dev/null /dev/zero \
 	&> "$TS_OUTPUT"
 ts_finalize_subtest
@@ -277,6 +277,10 @@ ts_finalize_subtest
 
 ts_init_subtest "invalid-fs-right"
 "$TS_CMD_SETPRIV" --landlock-access fs:an-invalid-right true &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "abbreviated-fs-right"
+"$TS_CMD_SETPRIV" --landlock-access fs:remove true &> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_finalize

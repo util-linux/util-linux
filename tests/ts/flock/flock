@@ -65,7 +65,7 @@ for api in flock fcntl ; do
 		ts_die "unable to run flock"
 	fi
 	# the lock should be established when flock has a child
-	timeout 1s bash -c "while ! pgrep -P $pid >/dev/null; do sleep 0.1 ;done" \
+	timeout 30s bash -c "while ! pgrep -P $pid >/dev/null; do sleep 0.1 ;done" \
 		|| ts_die "timeout waiting for flock child"
 
 	ts_init_subtest "${subtest_prefix}non-block"

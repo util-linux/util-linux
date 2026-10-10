@@ -1,0 +1,9 @@
+.../link:
+      rc: 0
+   errno: 0
+    type: reg
+  st_dev: OK
+ st_rdev: OK
+  S_IFMT: OK
+ st_mode: OK
+  st_ino: OK

@@ -32,7 +32,7 @@ rename - rename files
 Do not rename a symbolic link but change where it points.
 
 *-c*, *--copy*::
-Copy files instead of renaming them. The original files remain unchanged. For regular files, the content is copied and permission bits (*S_IRWXU*|*S_IRWXG*|*S_IRWXO*) are preserved, but ownership, timestamps, and extended attributes are not. For symbolic links, a new link with the same target is created.
+Copy files instead of renaming them. The original files remain unchanged. For regular files, the content is copied and permission bits (*S_IRWXU*|*S_IRWXG*|*S_IRWXO*) are preserved, but ownership, timestamps, and extended attributes are not. For symbolic links, a new link with the same target is created. Nothing else is copied; a FIFO, a device node or a directory is rejected, on the source as well as on the destination side, where symbolic links are followed. The copy is also rejected when the destination turns out to be the same file as the source, which happens with a hard link, a symbolic link pointing back at the source, or another spelling of the same name on a case-insensitive filesystem.
 
 *-v*, *--verbose*::
 Show which files were renamed, if any.

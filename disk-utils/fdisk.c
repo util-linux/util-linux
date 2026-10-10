@@ -1041,7 +1041,7 @@ static fdisk_sector_t get_dev_blocks(char *dev)
 
 	if ((fd = open(dev, O_RDONLY|O_NONBLOCK)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), dev);
-	ret = blkdev_get_sectors(fd, (unsigned long long *) &size);
+	ret = blkdev_get_sectors(fd, &size);
 	close(fd);
 	if (ret < 0)
 		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);

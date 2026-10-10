@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2026 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="safe stat"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_FILEUTILS"
+
+# The attribute values depend on the system, so the helper compares them with
+# the classic stat() and prints OK/FAILED rather than the values.
+BASE="$TS_OUTDIR/${TS_TESTNAME}-dir"
+
+rm -rf "$BASE"
+mkdir -p "$BASE" || ts_skip "cannot create $BASE"
+
+echo "hello" > "$BASE/file"
+ln -s file "$BASE/link"
+
+# ul_safe_stat() needs statx() with AT_STATX_DONT_SYNC
+$TS_HELPER_FILEUTILS --safe-stat "$BASE/file" &> /dev/null \
+	|| ts_skip "statx() unsupported"
+
+function ts_safe_stat {
+	$TS_HELPER_FILEUTILS --safe-stat "$@" 2>&1 \
+		| sed "s:${BASE}:...:g" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+}
+
+ts_init_subtest "file"
+ts_safe_stat "$BASE/file"
+ts_finalize_subtest
+
+ts_init_subtest "file-basic"
+ts_safe_stat "$BASE/file" --basic
+ts_finalize_subtest
+
+ts_init_subtest "directory"
+ts_safe_stat "$BASE" --basic
+ts_finalize_subtest
+
+ts_init_subtest "symlink"
+ts_safe_stat "$BASE/link"
+ts_finalize_subtest
+
+ts_init_subtest "symlink-nofollow"
+ts_safe_stat "$BASE/link" --nofollow
+ts_finalize_subtest
+
+ts_init_subtest "enoent"
+ts_safe_stat "$BASE/nonexistent"
+ts_finalize_subtest
+
+rm -rf "$BASE"
+
+ts_finalize

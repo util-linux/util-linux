@@ -142,7 +142,7 @@ struct fincore_control {
 
 struct fincore_state {
 	const char * name;
-	long long unsigned int file_size;
+	uint64_t file_size;
 
 	struct cachestat cstat;
 	struct {

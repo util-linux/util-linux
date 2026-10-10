@@ -39,6 +39,17 @@ if ! "$TS_CMD_COPYFILERANGE" a b 3:bogus:1 bogus::2 :::: bogus svhhs:%%:8 &>/dev
 fi
 ts_finalize_subtest
 
+ts_init_subtest "unknown-option"
+echo unchanged > i
+if "$TS_CMD_COPYFILERANGE" --unknown-option a i :: &>/dev/null; then
+	echo "unexpected success" >"$TS_OUTPUT"
+elif [ "$(cat i)" != "unchanged" ]; then
+	echo "destination modified" >"$TS_OUTPUT"
+else
+	echo "ok" >"$TS_OUTPUT"
+fi
+ts_finalize_subtest
+
 ts_init_subtest "ranges-option"
 cat <<EOF > ranges1
 3::1
@@ -53,6 +64,21 @@ EOF
 
 "$TS_CMD_COPYFILERANGE" a c --ranges ranges1 --ranges ranges2
 cat c >"$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "ranges-read-error"
+mkdir ranges-read-error
+touch j
+if "$TS_CMD_COPYFILERANGE" a j --ranges ranges-read-error &>/dev/null; then
+	echo "exit status: zero" >"$TS_OUTPUT"
+else
+	echo "exit status: nonzero" >"$TS_OUTPUT"
+fi
+if [ -s j ]; then
+	echo "destination: nonempty" >>"$TS_OUTPUT"
+else
+	echo "destination: empty" >>"$TS_OUTPUT"
+fi
 ts_finalize_subtest
 
 ts_init_subtest "previous-offset-preserved"
@@ -80,6 +106,7 @@ ts_init_subtest "copy-from-beyond-file-size"
 cat h >>"$TS_OUTPUT"
 ts_finalize_subtest
 
-rm -f a b c d e f g ranges
+rm -f a b c d e f g h i j ranges
+rmdir ranges-read-error
 
 ts_finalize

@@ -108,6 +108,7 @@ int main(int argc, char **argv)
 	long inodes;
 	unsigned long long total_blocks, ino_bytes, ino_blocks, data_blocks;
 	unsigned long long user_specified_total_blocks = 0;
+	uint64_t nsectors = 0;
 	int verbose = 0;
 	int fd;
 	uint32_t first_block;
@@ -227,16 +228,20 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
+	if (blkdev_get_sectors(fd, &nsectors) == -1) {
 		if (!user_specified_total_blocks)
 			err(EXIT_FAILURE, _("cannot get size of %s"), device);
 		total_blocks = user_specified_total_blocks;
-	} else if (user_specified_total_blocks) {
-		if (user_specified_total_blocks > total_blocks)
-			errx(EXIT_FAILURE,
-			     _("blocks argument too large, max is %llu"),
-			     total_blocks);
-		total_blocks = user_specified_total_blocks;
+	} else {
+		total_blocks = nsectors;
+
+		if (user_specified_total_blocks) {
+			if (user_specified_total_blocks > total_blocks)
+				errx(EXIT_FAILURE,
+				     _("blocks argument too large, max is %llu"),
+				     total_blocks);
+			total_blocks = user_specified_total_blocks;
+		}
 	}
 
 	if (!inodes) {

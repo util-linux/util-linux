@@ -810,6 +810,7 @@ static int command_verify(struct sfdisk *sf, int argc, char **argv)
 static int get_size(const char *dev, int silent, uintmax_t *sz)
 {
 	int fd, rc = 0;
+	uint64_t nsectors = 0;
 
 	fd = open(dev, O_RDONLY);
 	if (fd < 0) {
@@ -818,11 +819,12 @@ static int get_size(const char *dev, int silent, uintmax_t *sz)
 		return -errno;
 	}
 
-	if (blkdev_get_sectors(fd, (unsigned long long *) sz) == -1) {
+	if (blkdev_get_sectors(fd, &nsectors) == -1) {
 		if (!silent)
 			warn(_("Cannot get size of %s"), dev);
 		rc = -errno;
-	}
+	} else
+		*sz = nsectors;
 
 	close(fd);
 	return rc;

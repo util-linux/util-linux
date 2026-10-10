@@ -188,6 +188,8 @@ static void handle_range_files(struct rangeitem *range, size_t nrange_files, con
 				errx(EXIT_FAILURE, _("Empty line in range file %s is not allowed"), range_files[i]);
 			handle_range(line, range);
 		}
+		if (ferror(f))
+			err(EXIT_FAILURE, _("cannot read range file %s"), range_files[i]);
 
 		free(line);
 		fclose(f);
@@ -230,6 +232,8 @@ int main(const int argc, char **argv)
 			print_version(EXIT_SUCCESS);
 		case 'h':
 			usage();
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

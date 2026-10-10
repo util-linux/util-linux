@@ -225,7 +225,7 @@ static int do_mount_subdir(
 		 * The old mount(2) method does the same, but using BIND. */
 		int fd;
 
-		DBG(HOOK, ul_debug("opening subdir (ateched) '%s'", subdir));
+		DBG(HOOK, ul_debug("opening subdir (attached) '%s'", subdir));
 		fd = open_tree(api->fd_tree, subdir,
 					OPEN_TREE_CLOEXEC | OPEN_TREE_CLONE);
 		mnt_context_syscall_save_status(cxt, "open_tree", fd >= 0);
@@ -351,7 +351,7 @@ static int hook_mount_pre(
 		return -ENOTSUP;
 	}
 
-	/* create unhared temporary target */
+	/* create unshared temporary target */
 	hsd->org_target = strdup(mnt_fs_get_target(cxt->fs));
 	if (!hsd->org_target)
 		rc = -ENOMEM;

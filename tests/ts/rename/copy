@@ -22,6 +22,8 @@ TS_DESC="copy check"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_RENAME"
+ts_check_prog "mkfifo"
+ts_check_prog "timeout"
 ts_cd "$TS_OUTDIR"
 
 # Test 1: regular file copy
@@ -68,5 +70,38 @@ if [ "$(cat rename_copy_bar.3)" != "existing" ]; then
 	echo "error: existing file should not be overwritten" >> $TS_OUTPUT
 fi
 rm -f rename_copy_foo.3 rename_copy_bar.3
+
+# Test 5: copy onto the same file (hard link)
+echo "original" > rename_copy_foo.4
+ln rename_copy_foo.4 rename_copy_bar.4
+$TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.4 >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ "$(cat rename_copy_foo.4)" != "original" ]; then
+	echo "error: copy onto the same file truncated it" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.4 rename_copy_bar.4
+
+# Test 6: destination is a symlink to a non-regular file
+echo "original" > rename_copy_foo.5
+ln -s /dev/null rename_copy_bar.5
+$TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.5 >> $TS_OUTPUT 2>> $TS_ERRLOG
+rm -f rename_copy_foo.5 rename_copy_bar.5
+
+# Test 7: destination is a symlink back to the source
+echo "original" > rename_copy_foo.6
+ln -s rename_copy_foo.6 rename_copy_bar.6
+$TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.6 >> $TS_OUTPUT 2>> $TS_ERRLOG
+if [ "$(cat rename_copy_foo.6)" != "original" ]; then
+	echo "error: copy onto a symlink to the source truncated it" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.6 rename_copy_bar.6
+
+# Test 8: source is a fifo, the open must not block waiting for a writer
+mkfifo rename_copy_foo.7
+timeout 10 $TS_CMD_RENAME --copy --verbose foo bar rename_copy_foo.7 >> $TS_OUTPUT 2>> $TS_ERRLOG
+rc=$?
+if [ $rc -eq 124 ]; then
+	echo "error: copy from a fifo timed out" >> $TS_OUTPUT
+fi
+rm -f rename_copy_foo.7 rename_copy_bar.7
 
 ts_finalize

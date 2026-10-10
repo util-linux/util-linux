@@ -74,6 +74,9 @@ call_cal "Julian - Saturday-based week with week numbers" -3tjw $MYTIME
 call_cal "Normal span" "-Sn 3" $MYTIME
 call_cal "Large span" "-Sn 21" $MYTIME
 call_cal "Very Large span" "-Sn 51" $MYTIME
+call_cal "Span does not go before year 1" "-Sn 12" 1 1
+call_cal "Three months do not go before year 1" -3 1 1
+call_cal "Span back exactly one year" "-Sn 26" 1 2025
 call_cal "Extreme span" "-Sn 201" $MYTIME
 
 ts_finalize

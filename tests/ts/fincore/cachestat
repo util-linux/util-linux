@@ -21,6 +21,7 @@ TS_DESC="cachestat"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FINCORE"
+ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_HELPER_SYSINFO"
 ts_check_prog "jq"
 ts_check_prog "sed"
@@ -32,6 +33,11 @@ if ts_kernel_ver_lt 6 5; then
 	ts_skip "this test requires Linux version >= 6.5"
 fi
 
+# ZFS caches ordinary writes in the ARC rather than the Linux page cache.
+FS="$("$TS_CMD_FINDMNT" -nr -o FSTYPE -T "$TS_OUTDIR")"
+if [ "$FS" = "zfs" ]; then
+	ts_skip "fincore does not work on $FS"
+fi
 
 PAGESIZE="$($TS_HELPER_SYSINFO pagesize)"
 

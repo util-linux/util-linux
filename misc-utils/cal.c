@@ -1091,16 +1091,15 @@ static void monthly(const struct cal_control *ctl)
 
 	/* cal -3, cal -Y --span, etc. */
 	if (ctl->span_months) {
-		int new_month = month - ctl->num_months / 2;
-		if (new_month < 1) {
-			new_month *= -1;
-			year -= (new_month / MONTHS_IN_YEAR) + 1;
+		int64_t idx = (int64_t) year * MONTHS_IN_YEAR + month - 1
+			      - ctl->num_months / 2;
 
-			if (new_month > MONTHS_IN_YEAR)
-				new_month %= MONTHS_IN_YEAR;
-			month = MONTHS_IN_YEAR - new_month;
-		} else
-			month = new_month;
+		/* do not span to months before the first supported year */
+		if (idx < (int64_t) SMALLEST_YEAR * MONTHS_IN_YEAR)
+			idx = (int64_t) SMALLEST_YEAR * MONTHS_IN_YEAR;
+
+		year = idx / MONTHS_IN_YEAR;
+		month = idx % MONTHS_IN_YEAR + 1;
 	}
 
 	ms = xcalloc(ctl->months_in_row, sizeof(*ms));

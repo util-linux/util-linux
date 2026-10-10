@@ -1063,7 +1063,7 @@ int mnt_update_start(struct libmnt_update *upd)
 		return 0;
 	}
 
-	/* Use exclusive lock to avoid some other process will remove the the
+	/* Use exclusive lock to avoid some other process will remove the
 	 * file before it's marked as used by LOCK_SH (below) */
 	rc = update_init_lock(upd, NULL);
 	if (rc)

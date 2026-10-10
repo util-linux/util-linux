@@ -90,6 +90,8 @@ void addfile(char *name, struct hexdump *hex)
 
 		add_fmt(fmt, hex);
 	}
+	if (ferror(fp))
+		err(EXIT_FAILURE, _("can't read %s"), name);
 
 	free(buf);
 	fclose(fp);

@@ -20,8 +20,8 @@ BS=65536
 COUNT=8
 
 FS="$("$TS_CMD_FINDMNT" --noheadings --raw --output FSTYPE --target "$PWD")"
-if [[ "$FS" = "tmpfs" || "$FS" = "overlay" || "$FS" = "" ]]; then
-	ts_skip "fincore does not work on tmpfs or unknown fs"
+if [[ "$FS" = "tmpfs" || "$FS" = "overlay" || "$FS" = "zfs" || "$FS" = "" ]]; then
+	ts_skip "fincore does not work on ${FS:-unknown fs}"
 fi
 
 create_file() {
