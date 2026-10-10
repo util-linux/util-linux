@@ -129,6 +129,7 @@ struct login_context {
 #ifdef LOGIN_CHOWN_VCS
 	char		vcsn[VCS_PATH_MAX];	/* virtual console name */
 	char		vcsan[VCS_PATH_MAX];
+	char		vcsun[VCS_PATH_MAX];
 #endif
 
 	char		*thishost;		/* this machine */
@@ -520,6 +521,11 @@ static void chown_tty(struct login_context *cxt)
 			chown_err(cxt->vcsan, uid, gid);
 		if (chmod(cxt->vcsan, cxt->tty_mode))
 			chmod_err(cxt->vcsan, cxt->tty_mode);
+
+		if (chown(cxt->vcsun, uid, gid))		/* vcsu */
+			chown_err(cxt->vcsun, uid, gid);
+		if (chmod(cxt->vcsun, cxt->tty_mode))
+			chmod_err(cxt->vcsun, cxt->tty_mode);
 	}
 #endif
 }
@@ -561,6 +567,7 @@ static void init_tty(struct login_context *cxt)
 		/* find names of Virtual Console devices, for later mode change */
 		snprintf(cxt->vcsn, sizeof(cxt->vcsn), "/dev/vcs%s", cxt->tty_number);
 		snprintf(cxt->vcsan, sizeof(cxt->vcsan), "/dev/vcsa%s", cxt->tty_number);
+		snprintf(cxt->vcsun, sizeof(cxt->vcsun), "/dev/vcsu%s", cxt->tty_number);
 	}
 #endif
 
