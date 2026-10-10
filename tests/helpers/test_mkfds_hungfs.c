@@ -145,7 +145,7 @@ static int hungfs_getattr(const char *path, struct stat *stbuf)
 		stbuf->st_nlink = 2;
 		return 0;
 	}
-	if (args->file && strcmp(path + 1, args->file) == 0) {
+	if (strcmp(path + 1, args->file) == 0) {
 		if (args->hung && args->is_hung
 		    && (args->hung_target & HUNGFS_TARGET_FILE))
 			hungfs_wait_unhung(args);
@@ -168,7 +168,7 @@ static int hungfs_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 	filler(buf, ".", NULL, 0);
 	filler(buf, "..", NULL, 0);
-	if (args && args->file)
+	if (args)
 		filler(buf, args->file, NULL, 0);
 	return 0;
 }
