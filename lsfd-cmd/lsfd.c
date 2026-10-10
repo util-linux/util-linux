@@ -1123,7 +1123,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 		struct statx stx;
 		if (ul_path_statxf(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
 				   STATX_MNT_ID,
-				   "map_files/%"PRIx64"-%"PRIx64, start, end) == 0)
+				   "map_files/%"PRIx64"-%"PRIx64, start, end) == 0
+		    && (stx.stx_mask & STATX_MNT_ID))
 			f->mnt_id = stx.stx_mnt_id;
 	}
 #endif	/* defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
@@ -1177,8 +1178,9 @@ static void collect_outofbox_files(struct path_cxt *pc,
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 		if (f && has_mnt_id(f)) {
 			struct statx stx;
-			if (ul_path_statx(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
-					  STATX_MNT_ID, fdecl->name) == 0)
+			if ((ul_path_statx(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
+					   STATX_MNT_ID, fdecl->name) == 0)
+			    && (stx.stx_mask & STATX_MNT_ID))
 				f->mnt_id = stx.stx_mnt_id;
 		}
 #endif	/* #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
