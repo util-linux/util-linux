@@ -94,6 +94,9 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			add_fmt("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"", hex);
 			break;
 		case 'C':
+			fmt_opts++;
+			c_opt = 1;
+			/* NOTE: canonical layout duplicated in emit_builtin_c() (hexdump-display.c); keep in sync */
 			add_fmt("\"%08.8_Ax\n\"", hex);
 			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ", hex);
 			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"", hex);
@@ -146,11 +149,13 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			add_fmt("\"%08.8_Ax\n\"", hex);
 			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ", hex);
 			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"", hex);
+			hex->builtin_c = 1;
 		} else {
 			add_fmt(hex_offt, hex);
 			add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"", hex);
 		}
-	}
+	} else
+		hex->builtin_c = fmt_opts == 1 && c_opt;
 	colors_init (colormode, "hexdump");
 	return optind;
 }
