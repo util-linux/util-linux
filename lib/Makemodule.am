@@ -110,6 +110,11 @@ if USE_DLOPEN_SYSTEMD
 systemd_sources += lib/dl-systemd.c
 endif
 
+systemd_varlink_sources = include/dl-systemd-varlink.h
+if USE_DLOPEN_SYSTEMD
+systemd_varlink_sources += lib/dl-systemd-varlink.c
+endif
+
 econf_sources = include/dl-econf.h
 if USE_DLOPEN_ECONF
 econf_sources += lib/dl-econf.c
