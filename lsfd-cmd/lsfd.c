@@ -955,7 +955,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
 					 int assoc,
-					 bool sockets_only)
+					 bool sockets_and_ns_only)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
@@ -968,7 +968,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	else {
 		const struct file_class *class = stat2class(&sb);
 
-		if (sockets_only
+		if (sockets_and_ns_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
 		     * other network namespaces. Based on the information,
