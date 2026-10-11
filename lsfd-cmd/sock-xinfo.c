@@ -254,6 +254,7 @@ void initialize_sock_xinfos(void)
 	if (self_netns_fd < 0)
 		load_sock_xinfo_no_nsswitch(NULL);
 	else {
+		/* /proc/self/ns/net is a local nsfs fd; cannot block. */
 		if (lsfd_fstat(self_netns_fd, &self_netns_sb, false) == 0) {
 			unsigned long m;
 			struct netns *nsobj = mark_sock_xinfo_loaded(self_netns_sb.st_ino);
@@ -280,6 +281,7 @@ void initialize_sock_xinfos(void)
 		struct stat sb;
 		int fd;
 		struct netns *nsobj;
+		/* /var/run/netns files are local nsfs bind mounts; cannot block. */
 		if (lsfd_path_stat(pc, &sb, 0, d->d_name, false) < 0)
 			continue;
 		if (!is_nsfs_dev(sb.st_dev))

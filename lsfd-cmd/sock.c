@@ -154,6 +154,7 @@ ino_t get_netns_from_socket(int sk)
 	if (nsfd < 0)
 		return 0;
 
+	/* nsfd from SIOCGSKNS is a local nsfs fd; cannot block. */
 	if (lsfd_fstat(nsfd, &sb, false) < 0) {
 		close(nsfd);
 		return 0;

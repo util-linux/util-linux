@@ -362,6 +362,8 @@ bool is_multiplexed_by_eventpoll(int fd, struct list_head *eventpolls);
  */
 bool is_pidfs_dev(dev_t dev);
 
+#define LSFD_EX_NONBLOCK_UNAVAIL 2
+
 /*
  * Utility
  */

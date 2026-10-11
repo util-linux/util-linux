@@ -500,6 +500,7 @@ static void cdev_tun_inspect_target_fd(struct cdev *cdev, int fd)
 	if (nsfd < 0)
 		return;
 
+	/* nsfd from TUNGETDEVNETNS is a local nsfs fd; cannot block. */
 	if (lsfd_fstat(nsfd, &sb, false) == 0) {
 		tundata->devnetns = sb.st_ino;
 		load_fdsk_xinfo(tundata->devnetns, nsfd);
