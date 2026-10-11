@@ -1041,14 +1041,15 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 	}
 }
 
-static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
+static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
+			    struct lsfd_control *ctl)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
 	enum association assoc = ASSOC_MEM;
 	struct stat sb = { .st_mode = 0 };
-	struct file *f, *prev;
-	char *path, modestr[5];
+	struct file *f = NULL, *prev;
+	char *path = NULL, modestr[5];
 	dev_t devno;
 
 	/* read rest of the map */
@@ -1080,33 +1081,62 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
-	else if ((path = strchr(buf, '/'))) {
-		rtrim_whitespace((unsigned char *) path);
-		if (lsfd_stat(path, &sb, false) < 0)
-			/* If a file is mapped but deleted from the file system,
-			 * "stat by the file name" may not work. In that case,
-			 */
-			goto try_map_files;
-		if (sb.st_ino != ino || sb.st_dev != devno)
-			/* There are two files having the same absolute file names!
-			 *
-			 * Maybe the file is bind-mount'ed after mapped.
-			 */
-			goto try_map_files;
-		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
-	} else {
-		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
+	else {
 		char sym[PATH_MAX] = { '\0' };
+		int readlink_err = 0;
+		int stat_err = 0;
+		int fallback_err = 0;
+		ssize_t ssz;
 
-	try_map_files:
-		if (ul_path_readlinkf(pc, sym, sizeof(sym),
-				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (lsfd_path_statf(pc, &sb, 0, false,
-				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_stat_error_file(proc, sym, errno, -assoc);
-		else
-			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+		/* Prefer map_files to bypass pathname lookup and avoid hangs */
+		ssz = ul_path_readlinkf(pc, sym, sizeof(sym),
+					"map_files/%"PRIx64"-%"PRIx64, start, end);
+		if (ssz >= 0) {
+			int rc = lsfd_path_statf(pc, &sb, 0, ctl->abort_if_blockable,
+						 "map_files/%"PRIx64"-%"PRIx64, start, end);
+			if (rc == 0)
+				f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+			else {
+				stat_err = (rc != -1) ? -rc : errno;
+				if (!stat_err)
+					stat_err = ENOENT;
+			}
+		} else {
+			readlink_err = (ssz != -1) ? -ssz : errno;
+			if (!readlink_err)
+				readlink_err = ENOENT;
+		}
+
+		if (!f && !ctl->abort_if_blockable && (path = strchr(buf, '/'))) {
+			int rc;
+
+			/* Fallback to pathname from /proc/PID/maps if map_files is not accessible */
+			rtrim_whitespace((unsigned char *) path);
+			rc = lsfd_stat(path, &sb, false);
+			if (rc == 0) {
+				if (sb.st_ino == ino && sb.st_dev == devno)
+					f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
+				else
+					fallback_err = ENOENT;
+			} else {
+				fallback_err = (rc != -1) ? -rc : errno;
+				if (!fallback_err)
+					fallback_err = ENOENT;
+			}
+		}
+
+		if (!f) {
+			if (fallback_err)
+				f = new_stat_error_file(proc, path, fallback_err, -assoc);
+			else if (stat_err)
+				f = new_stat_error_file(proc, sym, stat_err, -assoc);
+			else if (readlink_err)
+				f = new_readlink_error_file(proc, readlink_err, -assoc);
+			else if (path)
+				f = new_stat_error_file(proc, path, ENOENT, -assoc);
+			else
+				f = new_readlink_error_file(proc, ENOENT, -assoc);
+		}
 	}
 
 	if (modestr[0] == 'r')
@@ -1136,7 +1166,7 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 }
 
 static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
-			      struct lsfd_control *ctl __attribute__((unused)))
+			      struct lsfd_control *ctl)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1146,7 +1176,7 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(pc, buf, proc);
+		parse_maps_line(pc, buf, proc, ctl);
 
 	fclose(fp);
 }

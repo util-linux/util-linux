@@ -85,9 +85,12 @@ List only IPv4 sockets and/or IPv6 sockets.
 Exit immediately with exit status 2 (*LSFD_EX_NONBLOCK_UNAVAIL*) if the build does
 not support *statx*(2) with *AT_STATX_DONT_SYNC*. When this option is specified,
 *lsfd* also avoids resolving mountpoint pathnames from _/proc/pid/mountinfo_
-to prevent potential pathname resolution hangs. Note that skipping mountpoint
-pathname resolution may reduce the accuracy of device and file system identification
-(such as `SOURCE` and `DEV` columns) on certain file systems (e.g. btrfs or overlayfs).
+and falling back to pathnames in _/proc/pid/maps_ (if _/proc/pid/map_files_
+is inaccessible or unsupported) to prevent potential pathname resolution hangs.
+In that case, file-backed memory mappings cannot be inspected and will be reported
+as stat error records. Note that skipping mountpoint pathname resolution may
+reduce the accuracy of device and file system identification (such as `SOURCE`
+and `DEV` columns) on certain file systems (e.g. btrfs or overlayfs).
 +
 Even with this option specified, *lsfd* may still block in certain edge cases:
 +
