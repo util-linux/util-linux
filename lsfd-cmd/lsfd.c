@@ -1021,7 +1021,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 /* read symlinks from /proc/#/fd
  */
 static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     struct lsfd_control *ctl)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -1034,7 +1034,7 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		collect_file_symlink(pc, proc, path, num, sockets_only);
+		collect_file_symlink(pc, proc, path, num, ctl->sockets_only);
 	}
 }
 
@@ -1132,7 +1132,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	file_init_content(f);
 }
 
-static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
+static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
+			      struct lsfd_control *ctl __attribute__((unused)))
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1162,7 +1163,7 @@ struct outofbox_fdecl {
 static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
 				   const struct outofbox_fdecl fdecls[],
-				   bool sockets_only)
+				   struct lsfd_control *ctl)
 {
 	const struct outofbox_fdecl *fdecl;
 
@@ -1170,7 +1171,7 @@ static void collect_outofbox_files(struct path_cxt *pc,
 		bool is_ns = (fdecl->attrs & OUTOFBOX_NAMESPACE);
 		struct file *f __attribute__((unused));
 
-		if (sockets_only && !is_ns)
+		if (ctl->sockets_only && !is_ns)
 			continue;
 
 		f = collect_file_symlink(pc, proc, fdecl->name, fdecl->assoc * -1,
@@ -1188,7 +1189,7 @@ static void collect_outofbox_files(struct path_cxt *pc,
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
-				bool sockets_only)
+				struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1197,7 +1198,7 @@ static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static int collect_pidfs_file(struct proc *proc, bool sockets_only)
@@ -1252,7 +1253,7 @@ static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1265,11 +1266,11 @@ static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc,
-					    bool sockets_only)
+					    struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1289,11 +1290,11 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc,
-					       bool sockets_only)
+					       struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1333,7 +1334,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
@@ -1541,7 +1542,8 @@ static void add_nodevs_from_cooked_bdevs(struct mnt_namespace *mnt_ns)
 static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 				    const char *filesystem,
 				    const char *mntpoint_filename,
-				    struct mnt_namespace *mnt_ns)
+				    struct mnt_namespace *mnt_ns,
+				    bool error_if_blockable __attribute__((unused)))
 {
 	if (mnt_ns != NULL) {
 		struct stat sb;
@@ -1557,7 +1559,8 @@ static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 	add_nodev(minor, filesystem);
 }
 
-static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
+static void read_mountinfo(struct lsfd_control *ctl __attribute__((unused)),
+			   FILE *mountinfo, struct mnt_namespace *mnt_ns)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
 	 * paths. */
@@ -1587,7 +1590,8 @@ static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
 
 		line[mntpoint_end_offset] = '\0';
 		process_mountinfo_entry(major, minor, filesystem,
-					line + mntpoint_offset, mnt_ns);
+					line + mntpoint_offset, mnt_ns,
+					false);
 	}
 
 	if (mnt_ns) {
@@ -1596,7 +1600,8 @@ static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
 	}
 }
 
-static void read_mountinfo_in_mntns(FILE *mountinfo, struct mnt_namespace *mnt_ns,
+static void read_mountinfo_in_mntns(struct lsfd_control *ctl,
+				    FILE *mountinfo, struct mnt_namespace *mnt_ns,
 				    int mntns_fd)
 {
 	if (mntns_fd >= 0 && setns(mntns_fd, CLONE_NEWNS) < 0) {
@@ -1604,7 +1609,7 @@ static void read_mountinfo_in_mntns(FILE *mountinfo, struct mnt_namespace *mnt_n
 		mnt_ns = NULL;
 	}
 
-	read_mountinfo(mountinfo, mnt_ns);
+	read_mountinfo(ctl, mountinfo, mnt_ns);
 
 	if (mntns_fd >= 0)
 		setns(self_mntns_fd, CLONE_NEWNS);
@@ -2220,11 +2225,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		goto out;
 	}
 
-	collect_execve_file(pc, proc, ctl->sockets_only);
+	collect_execve_file(pc, proc, ctl);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_fs_files(pc, proc, ctl->sockets_only);
+		collect_fs_files(pc, proc, ctl);
 
 	proc->pidfd = collect_pidfs_file(proc, ctl->sockets_only);
 
@@ -2247,7 +2252,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
 	if (proc->mnt_ns == NULL)
-		collect_namespace_files_tophalf(pc, proc, ctl->sockets_only);
+		collect_namespace_files_tophalf(pc, proc, ctl);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
@@ -2258,7 +2263,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			int mntns_fd = -1;
 			if (proc->mnt_ns && (self_mntns_id != proc->mnt_ns->id))
 				mntns_fd = ul_path_open(pc, O_RDONLY, "ns/mnt");
-			read_mountinfo_in_mntns(mountinfo, proc->mnt_ns, mntns_fd);
+			read_mountinfo_in_mntns(ctl, mountinfo, proc->mnt_ns, mntns_fd);
 			if (mntns_fd >= 0)
 				close(mntns_fd);
 			if (proc->mnt_ns)
@@ -2271,7 +2276,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * When reading the information about the net namespace,
 	 * backing device for "nsfs" must be solved.
 	 */
-	collect_namespace_files_bottomhalf(pc, proc, ctl->sockets_only);
+	collect_namespace_files_bottomhalf(pc, proc, ctl);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
@@ -2281,11 +2286,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if ((!ctl->sockets_only)
 	    && (proc->pid == proc->leader->pid
 		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
-		collect_mem_files(pc, proc);
+		collect_mem_files(pc, proc, ctl);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(pc, proc, ctl->sockets_only);
+		collect_fd_files(pc, proc, ctl);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
