@@ -96,6 +96,8 @@ static const struct fdisk_shortcut dos_parttype_cuts[] =
 
 #define cround(c, n)	fdisk_cround(c, n)
 
+static int get_disk_ranges(struct fdisk_context *cxt, int logical,
+			   fdisk_sector_t *first, fdisk_sector_t *last);
 
 static inline struct fdisk_dos_label *self_label(struct fdisk_context *cxt)
 {
@@ -695,6 +697,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	if (cxt->script) {
 		char *end = NULL;
 		const char *s = fdisk_script_get_header(cxt->script, "label-id");
+		uint64_t first;
 
 		if (s) {
 			errno = 0;
@@ -704,6 +707,24 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 				DBG(LABEL, ul_debug("DOS: re-use ID from script (0x%08x)", id));
 			} else
 				DBG(LABEL, ul_debug("DOS: failed to parse label=id '%s'", s));
+		}
+
+		rc = fdisk_script_get_u64(cxt, "first-lba", &first);
+		if (rc < 0)
+			return rc;
+		if (rc == 0) {
+			fdisk_sector_t last;
+
+			rc = get_disk_ranges(cxt, 0, NULL, &last);
+			if (rc)
+				return rc;
+
+			if (first < 1 || first > last) {
+				fdisk_warnx(cxt, _("First LBA specified by script is out of range."));
+				return -ERANGE;
+			}
+			DBG(LABEL, ul_debug("DOS: first LBA from script: %ju", (uintmax_t) first));
+			fdisk_set_first_lba(cxt, first);
 		}
 	}
 
@@ -1253,19 +1274,24 @@ static int get_disk_ranges(struct fdisk_context *cxt, int logical,
 		if (!ext_pe)
 			return -EINVAL;
 
-		*first = l->ext_offset + cxt->first_lba;
-		*last = get_abs_partition_end(ext_pe);
+		if (first)
+			*first = l->ext_offset + cxt->first_lba;
+		if (last)
+			*last = get_abs_partition_end(ext_pe);
 
 	} else {
 		/* primary partitions */
-		if (fdisk_use_cylinders(cxt) || !cxt->total_sectors)
-			*last = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
-		else
-			*last = cxt->total_sectors - 1;
+		if (last) {
+			if (fdisk_use_cylinders(cxt) || !cxt->total_sectors)
+				*last = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
+			else
+				*last = cxt->total_sectors - 1;
 
-		if (*last >= UINT_MAX)
-			*last = UINT_MAX - 1;
-		*first = cxt->first_lba;
+			if (*last >= UINT_MAX)
+				*last = UINT_MAX - 1;
+		}
+		if (first)
+			*first = cxt->first_lba;
 	}
 
 	return 0;
