@@ -61,19 +61,19 @@ Options are also taken from the environment variable *MORE* (make sure to preced
 *-d*, *--silent*::
 Prompt with "[Press space to continue, 'q' to quit.]", and display "[Press 'h' for instructions.]" instead of ringing the bell when an illegal key is pressed.
 
-*-l*, *--logical*::
+*-l*, *--no-pause*::
 Do not pause after any line containing a *^L* (form feed).
 
 *-e*, *--exit-on-eof*::
 Exit on End-Of-File, enabled by default if POSIXLY_CORRECT environment variable is not set or if not executed on terminal.
 
-*-f*, *--no-pause*::
+*-f*, *--logical*::
 Count logical lines, rather than screen lines (i.e., long lines are not folded).
 
-*-p*, *--print-over*::
+*-p*, *--clean-print*::
 Do not scroll. Instead, clear the whole screen and then display the text. Notice that this option is switched on automatically if the executable is named *page*.
 
-*-c*, *--clean-print*::
+*-c*, *--print-over*::
 Do not scroll. Instead, paint each screen from the top, clearing the remainder of each line as it is displayed.
 
 *-s*, *--squeeze*::
