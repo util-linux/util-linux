@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="restricted mode with setuid helper"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_prog "runuser"
+ts_check_test_command "$TS_HELPER_LIBMOUNT_CONTEXT"
+ts_check_prog "getent"
+getent passwd "$TS_TESTUSER" &> /dev/null || \
+	ts_skip "$TS_TESTUSER user is missing"
+
+TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
+ts_init_suid "$TESTPROG"
+[ -u "$TESTPROG" ] || ts_skip "cannot setup libmount suid test"
+
+if ! restricted=$(runuser -u "$TS_TESTUSER" -- \
+	"$TESTPROG" --check-restricted 2>> "$TS_ERRLOG"); then
+	if grep -Eq "Permission denied|Operation not permitted|error while loading shared libraries|version .* not found" "$TS_ERRLOG"; then
+		ts_skip "setuid test helper cannot access build files or libraries"
+	fi
+	ts_die "libmount context check failed"
+fi
+[ "$restricted" = 0 ] || \
+	ts_die "libmount context is restricted after the setuid helper became root"
+
+ts_log "Success"
+ts_finalize

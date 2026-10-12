@@ -76,8 +76,8 @@ struct libmnt_context *mnt_new_context(void)
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
 
-	/* if we're really root and aren't running setuid */
-	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
+	/* The caller may apply additional restrictions based on its context. */
+	cxt->restricted = (uid_t) 0 != ruid;
 
 	cxt->noautofs = 0;
 
@@ -406,6 +406,24 @@ static int set_flag(struct libmnt_context *cxt, int flag, int enable)
 int mnt_context_is_restricted(struct libmnt_context *cxt)
 {
 	return cxt->restricted;
+}
+
+/**
+ * mnt_context_set_restricted:
+ * @cxt: mount context
+ * @restricted: enable restricted mode
+ *
+ * Sets whether libmount applies the security restrictions used for
+ * unprivileged mounts.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.44
+ */
+int mnt_context_set_restricted(struct libmnt_context *cxt, int restricted)
+{
+	cxt->restricted = !!restricted;
+	return 0;
 }
 
 int mnt_context_target_fd_required(struct libmnt_context *cxt)
@@ -3698,6 +3716,35 @@ struct libmnt_ns *mnt_context_switch_target_ns(struct libmnt_context *cxt)
 
 #include <blkid.h>
 
+static int test_check_restricted(struct libmnt_test *ts __attribute__((unused)),
+				 int argc __attribute__((unused)),
+				 char *argv[] __attribute__((unused)))
+{
+	struct libmnt_context *cxt;
+
+	if (setuid(0) != 0) {
+		warn("setuid");
+		return -errno;
+	}
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	if (mnt_context_is_restricted(cxt) ||
+	    mnt_context_set_restricted(cxt, 1) != 0 ||
+	    !mnt_context_is_restricted(cxt) ||
+	    mnt_context_set_restricted(cxt, 0) != 0 ||
+	    mnt_context_is_restricted(cxt)) {
+		mnt_free_context(cxt);
+		return -EINVAL;
+	}
+
+	printf("%d\n", mnt_context_is_restricted(cxt));
+	mnt_free_context(cxt);
+	return 0;
+}
+
 static int test_search_helper(struct libmnt_test *ts __attribute__((unused)),
 			      int argc, char *argv[])
 {
@@ -4140,6 +4187,7 @@ int main(int argc, char *argv[])
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
 	{ "--cxtsync", test_cxtsync, "<fsopts> <cxtopts> <fsopts>" },
 	{ "--search-helper", test_search_helper, "<fstype>" },
+	{ "--check-restricted", test_check_restricted, "check restricted mode after setuid(0)" },
 	{ "--vfs", test_vfs, "[--table <file>] [--cache <dev>] [--blkid <dev>]" },
 	{ NULL }};
 
