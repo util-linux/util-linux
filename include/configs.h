@@ -26,6 +26,24 @@
  *
  * Returns the length of the file_list, or -ENOMEM, or -ENOTEMPTY if config_name is NULL
  *
+ * The list is returned in parsing order, which means in the order of
+ * increasing priority:
+ *
+ *   - the main file (<config_name>.<suffix>) is the first one; it is searched
+ *     in @etcdir, @rundir and @usrdir in this order and only the first one
+ *     found is used, so a main file in /etc replaces the one in /usr/lib
+ *     rather than modifying it,
+ *
+ *   - then the drop-ins, the files with the @config_suffix suffix in the
+ *     <config_name>.<suffix>.d directory, sorted by their basename and
+ *     collected from all the three directories, where a drop-in in /etc
+ *     replaces the drop-in of the same name in /run or /usr/lib.
+ *
+ * The caller is expected to parse the files in this order and to let the
+ * later file overwrite the settings of the previous one. This means that
+ * drop-ins have higher priority than the main file, and that a drop-in has
+ * higher priority than the drop-ins which sort before it.
+ *
  * Example:
  * int count = 0;
  * struct list_head *file_list;
