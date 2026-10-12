@@ -260,8 +260,21 @@ static int blkzone_report(struct blkzone_control *ctl)
 		zi->nr_zones = min(nr_zones, DEF_REPORT_LEN);
 		zi->sector = ctl->offset;
 
+#ifdef BLKREPORTZONEV2
+		/*
+		 * BLKREPORTZONEV2 uses the flags field of struct
+		 * blk_zone_report as an input and must therefore be set on
+		 * every call, as the kernel also uses it as an output. With no
+		 * input flag set, the report is retrieved from the device,
+		 * exactly like the deprecated BLKREPORTZONE ioctl.
+		 */
+		zi->flags = 0;
+		if (ioctl(fd, BLKREPORTZONEV2, zi) == -1)
+			err(EXIT_FAILURE, _("%s: BLKREPORTZONEV2 ioctl failed"), ctl->devname);
+#else
 		if (ioctl(fd, BLKREPORTZONE, zi) == -1)
 			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
+#endif
 
 		if (ctl->verbose)
 			printf(_("Found %ju zones from 0x%jx\n"),
