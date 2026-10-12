@@ -282,6 +282,8 @@ void initialize_sock_xinfos(void)
 		struct netns *nsobj;
 		if (ul_path_stat(pc, &sb, 0, d->d_name) < 0)
 			continue;
+		if (!is_nsfs_dev(sb.st_dev))
+			continue;
 		if (is_sock_xinfo_loaded(sb.st_ino))
 			continue;
 		nsobj = mark_sock_xinfo_loaded(sb.st_ino);
