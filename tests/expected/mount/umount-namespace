@@ -1,0 +1,12 @@
+recursive: target symlink and child
+recursive: target namespace subtree
+recursive: relative target symlink
+-A: all target mounts
+-AR: all target mounts
+-R: target namespace diagnostics
+-R: valid target after an invalid target
+-A: target namespace diagnostics
+-A: valid target after an invalid target
+-R: valid target after an empty target
+-A: valid target after an empty target
+recursive: caller namespace without -N

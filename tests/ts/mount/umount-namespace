@@ -1,0 +1,178 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="umount target namespace"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_skip_nonroot
+ts_check_test_command "$TS_CMD_NSENTER"
+ts_check_test_command "$TS_CMD_UNSHARE"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_MOUNTPOINT"
+
+"$TS_CMD_UNSHARE" --mount --propagation private \
+	"$TS_CMD_NSENTER" --mount=/proc/self/ns/mnt -- true &> /dev/null || \
+	ts_skip "cannot create or enter mount namespaces"
+
+WORKDIR=$(mktemp -d "$TS_OUTDIR/${TS_TESTNAME}.XXXXXX") || ts_die "cannot create test directory"
+trap 'rm -rf "$WORKDIR"' EXIT
+
+# Both namespaces are private, and all mounts disappear when their processes exit.
+if ! "$TS_CMD_UNSHARE" --mount --propagation private bash -s -- \
+	"$WORKDIR" "$TS_CMD_UNSHARE" "$TS_CMD_MOUNT" "$TS_CMD_UMOUNT" "$TS_CMD_MOUNTPOINT" "$TS_CMD_NSENTER" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG" <<'INNER'
+set -e
+work=$1
+unshare=$2
+mount=$3
+umount=$4
+mountpoint=$5
+nsenter=$6
+view="$work/view"
+pid=
+cleanup() {
+	if [ -n "$pid" ]; then
+		kill "$pid" 2>/dev/null || :
+		wait "$pid" 2>/dev/null || :
+	fi
+}
+trap cleanup EXIT
+
+mkdir -p "$work/origin" "$view/caller-only"
+"$mount" -n -t tmpfs origin "$work/origin"
+ln -s "$work/origin" "$view/link"
+
+# The target exits on EOF if this shell is killed, closing the coprocess pipe.
+coproc target_ns {
+exec "$unshare" --mount --propagation private bash -c '
+set -e
+view=$1
+ready=$2
+mount=$3
+"$mount" -n -t tmpfs view "$view"
+mkdir -p "$view/target" "$view/other" "$view/target-only"
+ln -s target "$view/link"
+touch "$ready"
+read -r || :
+' bash "$view" "$work/ready" "$mount"
+}
+pid=$target_ns_PID
+for ((i = 0; i < 100; i++)); do
+	[ -e "$work/ready" ] && break
+	if ! kill -0 "$pid" 2>/dev/null; then
+		echo "target namespace process exited before becoming ready" >&2
+		exit 1
+	fi
+	sleep 0.1
+done
+if [ ! -e "$work/ready" ]; then
+	echo "timed out after 10 seconds waiting for the target namespace" >&2
+	exit 1
+fi
+ns="/proc/$pid/ns/mnt"
+
+in_target() {
+	"$nsenter" --mount="$ns" -- "$@"
+}
+mount_target() {
+	in_target "$mount" -n -t tmpfs target "$view/target"
+}
+check_unmounted() {
+	if in_target "$mountpoint" -q "$view/target"; then
+		echo "target is still mounted"
+		exit 1
+	fi
+	in_target "$mountpoint" -q "$work/origin"
+	"$mountpoint" -q "$work/origin"
+}
+
+mount_target
+in_target mkdir -p "$view/target/child"
+in_target "$mount" -n -t tmpfs child "$view/target/child"
+"$umount" -n -N "$pid" -R "$view/link"
+check_unmounted
+if in_target "$mountpoint" -q "$view/target/child"; then
+	echo "child is still mounted"
+	exit 1
+fi
+echo "recursive: target symlink and child"
+
+# A directory containing mountpoints exercises recursive path resolution too.
+in_target mkdir -p "$view/subtree/child"
+in_target "$mount" -n -t tmpfs child "$view/subtree/child"
+"$umount" -n -N "$pid" -R "$view/subtree"
+if in_target "$mountpoint" -q "$view/subtree/child"; then
+	echo "subtree child is still mounted"
+	exit 1
+fi
+echo "recursive: target namespace subtree"
+
+mount_target
+# Switching mount namespaces resets the working directory to /.
+(cd / && "$umount" -n -N "$pid" -R "${view#/}/link")
+check_unmounted
+echo "recursive: relative target symlink"
+
+for mode in -A -AR; do
+	mount_target
+	in_target "$mount" -n --bind "$view/target" "$view/other"
+	"$umount" -n -N "$pid" "$mode" "$view/link"
+	check_unmounted
+	if in_target "$mountpoint" -q "$view/other"; then
+		echo "bind target is still mounted"
+		exit 1
+	fi
+	echo "$mode: all target mounts"
+done
+
+for mode in -R -A; do
+	for entry in target-only caller-only; do
+		if "$umount" -n -N "$pid" "$mode" "$view/$entry" 2> "$work/error"; then
+			echo "unexpected success for $entry"
+			exit 1
+		fi
+		if [ "$entry" = target-only ]; then
+			grep -F -- "$view/$entry: not mounted" "$work/error" >/dev/null
+		else
+			grep -F -- "$view/$entry: not found" "$work/error" >/dev/null
+		fi
+	done
+	echo "$mode: target namespace diagnostics"
+
+	mount_target
+	if "$umount" -n -N "$pid" "$mode" "$view/target-only" "$view/link" 2> "$work/error"; then
+		echo "unexpected success after an invalid target"
+		exit 1
+	fi
+	grep -F -- "$view/target-only: not mounted" "$work/error" >/dev/null
+	check_unmounted
+	echo "$mode: valid target after an invalid target"
+done
+
+for mode in -R -A; do
+	mount_target
+	if "$umount" -n -N "$pid" "$mode" "" "$view/link" 2> "$work/error"; then
+		echo "unexpected success after an empty target"
+		exit 1
+	fi
+	check_unmounted
+	echo "$mode: valid target after an empty target"
+done
+
+"$umount" -n -R "$view/link"
+if "$mountpoint" -q "$work/origin"; then
+	echo "origin is still mounted"
+	exit 1
+fi
+in_target "$mountpoint" -q "$work/origin"
+echo "recursive: caller namespace without -N"
+INNER
+then
+	ts_die "namespace test failed"
+fi
+
+ts_finalize
