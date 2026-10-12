@@ -267,6 +267,7 @@ extern int string_to_bitmask(const char *list,
 extern int ul_parse_range(const char *str, int *lower, int *upper, int def);
 
 extern int streq_paths(const char *a, const char *b);
+extern int ul_path_is_within(const char *path, const char *dir);
 
 /*
  * Match string beginning.

@@ -1,0 +1,29 @@
+same path
+YES: '/foo/bar' within '/foo/bar'
+YES: '/' within '/'
+path below dir
+YES: '/foo/bar/baz' within '/foo/bar'
+YES: '/foo/bar/baz/xxx' within '/foo/bar'
+YES: '/foo/bar' within '/'
+path above dir
+NOT: '/foo' within '/foo/bar'
+NOT: '/' within '/foo'
+common prefix is not enough
+NOT: '/foo/barX' within '/foo/bar'
+NOT: '/foo/bar' within '/foo/barX'
+NOT: '/foobar' within '/foo'
+redundant and trailing slashes
+YES: '/foo//bar' within '/foo/bar'
+YES: '/foo/bar/' within '/foo/bar'
+YES: '/foo/bar///baz' within '/foo/bar'
+YES: '/foo/bar' within '/foo//bar'
+YES: '/foo/bar' within '/foo/bar/'
+YES: '/foo/bar/baz' within '//foo///bar//'
+relative paths
+YES: 'foo/bar' within 'foo'
+NOT: 'foo/bar' within '/foo'
+NOT: '/foo/bar' within 'foo'
+empty paths
+NOT: '' within '/foo'
+NOT: '/foo' within ''
+NOT: '' within ''

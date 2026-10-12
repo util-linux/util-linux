@@ -104,7 +104,7 @@ Suppress "not mounted" error messages.
 Exit successfully even if the target is not mounted or does not exist. This option is designed for use in shutdown scripts and service managers where idempotent unmount behavior is desired. Only effective for the root user.
 
 *-R*, *--recursive*::
-Recursively unmount each specified directory. Recursion for each directory will stop if any unmount operation in the chain fails for any reason. The relationship between mountpoints is determined by _/proc/self/mountinfo_ entries. The filesystem must be specified by mountpoint path; a recursive unmount by device name (or UUID) is unsupported. Since version 2.37 it umounts also all over-mounted filesystems (more filesystems on the same mountpoint).
+Recursively unmount each specified directory. Recursion for each directory will stop if any unmount operation in the chain fails for any reason. The relationship between mountpoints is determined by _/proc/self/mountinfo_ entries. The filesystem must be specified by path; a recursive unmount by device name (or UUID) is unsupported. Since version 2.37 it umounts also all over-mounted filesystems (more filesystems on the same mountpoint). Since version 2.43, if the specified directory is not a mountpoint, then all filesystems mounted below the directory are unmounted. In this case each subtree below the directory is processed independently, so a failure in one subtree does not prevent the remaining subtrees from being unmounted.
 
 *-r*, *--read-only*::
 When an unmount fails, try to remount the filesystem read-only.
