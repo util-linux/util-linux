@@ -40,10 +40,10 @@ if [ "$actual" != "$expected" ]; then
 	printf '%s\n' "$actual" > "$TS_OUTPUT"
 	ts_failed "unexpected utab serialization"
 else
-	> "$TS_OUTPUT"
+	: > "$TS_OUTPUT"
 fi
 ts_finalize_subtest
-> "$LIBMOUNT_UTAB"
+: > "$LIBMOUNT_UTAB"
 
 ts_init_subtest "utab-mount"
 ts_run $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
