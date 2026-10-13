@@ -55,13 +55,14 @@
 struct libmnt_context *mnt_new_context(void)
 {
 	struct libmnt_context *cxt;
-	uid_t ruid;
+	uid_t ruid, euid;
 
 	cxt = calloc(1, sizeof(*cxt));
 	if (!cxt)
 		return NULL;
 
 	ruid = getuid();
+	euid = geteuid();
 
 	mnt_context_reset_status(cxt);
 
@@ -76,8 +77,8 @@ struct libmnt_context *mnt_new_context(void)
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
 
-	/* if we're really root and aren't running setuid */
-	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
+	/* unrestricted only when the current credentials are fully root */
+	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
 	cxt->noautofs = 0;
 
@@ -408,6 +409,30 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
 	return cxt->restricted;
 }
 
+/**
+ * mnt_context_set_restricted:
+ * @cxt: mount context
+ * @restricted: TRUE or FALSE
+ *
+ * Explicitly enables or disables restricted mode. Disabling restricted mode
+ * turns off libmount security policies and should only be done when the caller
+ * has independently established that the current credentials are trusted.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ *
+ * Since: 2.43
+ */
+int mnt_context_set_restricted(struct libmnt_context *cxt, int restricted)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->restricted = restricted ? 1 : 0;
+	DBG_OBJ(CXT, cxt, ul_debug("set %s",
+			cxt->restricted ? "RESTRICTED" : "UNRESTRICTED"));
+	return 0;
+}
+
 int mnt_context_target_fd_required(struct libmnt_context *cxt)
 {
 	return mnt_context_is_restricted(cxt);
@@ -578,12 +603,10 @@ void mnt_context_close_target_fd(struct libmnt_context *cxt)
  */
 int mnt_context_force_unrestricted(struct libmnt_context *cxt)
 {
-	if (mnt_context_is_restricted(cxt)) {
+	if (mnt_context_is_restricted(cxt))
 		DBG_OBJ(CXT, cxt, ul_debug("force UNRESTRICTED"));
-		cxt->restricted = 0;
-	}
 
-	return 0;
+	return mnt_context_set_restricted(cxt, 0);
 }
 
 /**
@@ -4131,6 +4154,28 @@ done:
 	return rc;
 }
 
+static int test_restricted(struct libmnt_test *ts __attribute__((unused)),
+			   int argc, char *argv[] __attribute__((unused)))
+{
+	struct libmnt_context *cxt;
+
+	if (argc != 1)
+		return -EINVAL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	printf("default: %d\n", mnt_context_is_restricted(cxt));
+	mnt_context_set_restricted(cxt, 1);
+	printf("restricted: %d\n", mnt_context_is_restricted(cxt));
+	mnt_context_set_restricted(cxt, 0);
+	printf("unrestricted: %d\n", mnt_context_is_restricted(cxt));
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -4140,6 +4185,7 @@ int main(int argc, char *argv[])
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
 	{ "--cxtsync", test_cxtsync, "<fsopts> <cxtopts> <fsopts>" },
 	{ "--search-helper", test_search_helper, "<fstype>" },
+	{ "--restricted", test_restricted, "" },
 	{ "--vfs", test_vfs, "[--table <file>] [--cache <dev>] [--blkid <dev>]" },
 	{ NULL }};
 

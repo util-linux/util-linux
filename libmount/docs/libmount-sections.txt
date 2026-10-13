@@ -106,6 +106,7 @@ mnt_context_set_options
 mnt_context_set_options_pattern
 mnt_context_set_optsmode
 mnt_context_set_passwd_cb
+mnt_context_set_restricted
 mnt_context_set_source
 mnt_context_set_syscall_status
 mnt_context_set_tables_errcb

@@ -57,6 +57,10 @@ mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
 
 ts_log "Do tests..."
 
+ts_init_subtest "restricted"
+ts_run $TESTPROG --restricted >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 function is_mounted {
 	ts_is_mounted "$1"
 	return $?
