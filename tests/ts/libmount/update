@@ -27,6 +27,24 @@ export LIBMOUNT_UTAB="$TS_OUTPUT".utab
 rm -f $LIBMOUNT_UTAB
 > $LIBMOUNT_UTAB
 
+ts_init_subtest "utab-control-chars"
+src=$'/dev/control a\tb\nc\rd\ve\ff\\g\177h'
+expected='SRC=/dev/control\040a\011b\012c\015d\013e\014f\134g\177h TARGET=/mnt/control ROOT=/ OPTS=user'
+expected+=$'\nSRC=/dev/plain TARGET=/mnt/plain ROOT=/ OPTS=user'
+
+ts_run "$TESTPROG" --add "$src" /mnt/control ext4 "rw,user"
+ts_run "$TESTPROG" --add /dev/plain /mnt/plain ext4 "rw,user"
+
+actual=$(cat "$LIBMOUNT_UTAB")
+if [ "$actual" != "$expected" ]; then
+	printf '%s\n' "$actual" > "$TS_OUTPUT"
+	ts_failed "unexpected utab serialization"
+else
+	> "$TS_OUTPUT"
+fi
+ts_finalize_subtest
+> "$LIBMOUNT_UTAB"
+
 ts_init_subtest "utab-mount"
 ts_run $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
 ts_run $TESTPROG --add /dev/sdb1 /mnt/bar ext3 "ro,user"
