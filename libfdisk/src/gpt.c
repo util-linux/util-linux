@@ -721,30 +721,6 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	return res;
 }
 
-static int get_script_u64(struct fdisk_context *cxt, uint64_t *num, const char *name)
-{
-	const char *str;
-	int pwr = 0, rc = 0;
-
-	assert(cxt);
-
-	*num = 0;
-
-	if (!cxt->script)
-		return 1;
-
-	str = fdisk_script_get_header(cxt->script, name);
-	if (!str)
-		return 1;
-
-	rc = ul_parse_size(str, (uintmax_t *) num, &pwr);
-	if (rc < 0)
-		return rc;
-	if (pwr)
-		*num /= cxt->sector_size;
-	return 0;
-}
-
 static int count_first_last_lba(struct fdisk_context *cxt,
 				 uint64_t *first, uint64_t *last,
 				 uint32_t *maxents)
@@ -761,7 +737,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 
 	/* Get the table length from the script, if given */
 	if (cxt->script) {
-		rc = get_script_u64(cxt, &nents, "table-length");
+		rc = fdisk_script_get_u64(cxt, "table-length", &nents);
 		if (rc == 1)
 			nents = GPT_NPARTITIONS;  /* undefined by script */
 		else if (rc < 0)
@@ -792,7 +768,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 
 	/* script default */
 	if (cxt->script) {
-		rc = get_script_u64(cxt, first, "first-lba");
+		rc = fdisk_script_get_u64(cxt, "first-lba", first);
 		if (rc < 0)
 			return rc;
 
@@ -804,7 +780,7 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 			return -ERANGE;
 		}
 
-		rc = get_script_u64(cxt, last, "last-lba");
+		rc = fdisk_script_get_u64(cxt, "last-lba", last);
 		if (rc < 0)
 			return rc;
 
