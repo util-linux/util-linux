@@ -18,7 +18,10 @@
 
 #define from_hex(c)		(isdigit(c) ? c - '0' : tolower(c) - 'a' + 10)
 
-#define is_unwanted_char(x)	(strchr(" \t\n\\", (unsigned int) x) != NULL)
+static inline int is_unwanted_char(unsigned char c)
+{
+	return c <= 0x20 || c == 0x7f || c == '\\';
+}
 
 
 char *mangle(const char *s)
