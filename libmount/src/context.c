@@ -75,6 +75,7 @@ struct libmnt_context *mnt_new_context(void)
 
 	INIT_LIST_HEAD(&cxt->hooksets_hooks);
 	INIT_LIST_HEAD(&cxt->hooksets_datas);
+	INIT_LIST_HEAD(&cxt->config_entries);
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && !is_privileged_execution() ? 0 : 1;
@@ -123,6 +124,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_set_target_ns(cxt, NULL);
 
 	free(cxt->children);
+	mnt_free_config(cxt);
 
 	DBG_OBJ(CXT, cxt, ul_debug("free"));
 	free(cxt);
@@ -1352,6 +1354,12 @@ const char *mnt_context_get_target_prefix(struct libmnt_context *cxt)
  */
 int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
 {
+	/* the type has been requested by the user */
+	if (fstype)
+		cxt->flags |= MNT_FL_FSTYPE_EXPLICIT;
+	else
+		cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
+
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
 }
 
@@ -2322,17 +2330,6 @@ int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 		}
 	}
 
-	if (rc == 0 && *type) {
-		const char *x = ul_fstype_to_mounttype(*type);
-
-		if (x) {
-			free(*type);
-			*type = strdup(x);
-			if (!*type)
-				rc = -ENOMEM;
-		}
-	}
-
 	return rc;
 }
 
@@ -2375,21 +2372,74 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		goto done;
 
 	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
-	if (rc == 0 && type)
+	if (rc == 0 && type) {
 		__mnt_fs_set_fstype_ptr(cxt->fs, type);
-	else
+		/* the type comes from the system, not from the user */
+		cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
+	} else
 		free(type);
 done:
-	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s [rc=%d]",
-				mnt_fs_get_fstype(cxt->fs), rc));
+	DBG_OBJ(CXT, cxt, ul_debug("FS type: %s, mount type: %s [rc=%d]",
+				mnt_fs_get_fstype(cxt->fs),
+				mnt_context_get_mounttype(cxt), rc));
 	return rc;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");
 }
 
 /*
+ * Returns 1 if the filesystem type has been requested by the user (by
+ * "-t <type>" or in fstab), and 0 if it comes from the system -- detected by
+ * libblkid/udev on mount, or reported by the kernel on umount.
+ *
+ * The mount configuration (fs.d/<type>.conf) is applied to the types provided
+ * by the system only, so that a type requested by the user is always used
+ * as-is. Note that the caller has to check that there is any type at all.
+ */
+int mnt_context_is_explicit_fstype(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_FSTYPE_EXPLICIT ? 1 : 0;
+}
+
+/*
+ * Returns the kernel filesystem driver name to use for the mount syscall.
+ *
+ * This is the filesystem type itself, unless the type comes from the system
+ * and the configuration maps it to another driver, for example
+ *
+ *	/etc/mount/fs.d/ntfs.conf:  mounttype = ntfs3
+ *
+ * Note that this is the driver name, it is not used to search for the
+ * /sbin/mount.<type> helper. See mnt_context_prepare_helper().
+ */
+const char *mnt_context_get_mounttype(struct libmnt_context *cxt)
+{
+	const char *type, *x;
+
+	if (!cxt || !cxt->fs)
+		return NULL;
+
+	type = mnt_fs_get_fstype(cxt->fs);
+	if (!type || mnt_context_is_explicit_fstype(cxt))
+		return type;
+
+	x = mnt_config_get_value(cxt, "fs.d", type, "mounttype");
+
+	return x ? x : type;
+}
+
+/*
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @type. The @act is MNT_ACT_{MOUNT,UMOUNT}.
+ *
+ * The name may be redirected by the configuration, for example
+ *
+ *	/etc/mount/fs.d/ntfs.conf:  helper = ntfs-3g
+ *
+ * makes mount(8) execute /sbin/mount.ntfs-3g for a detected "ntfs". The
+ * reserved name "none" means that no helper is used at all, so that the
+ * filesystem is mounted by the kernel driver even if /sbin/mount.<fstype>
+ * is installed.
  *
  * Returns: 0 on success or negative number in case of error. Note that success
  * does not mean that there is any usable helper, you have to check cxt->helper.
@@ -2418,6 +2468,19 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 
 	if (type && strchr(type, ','))
 		return 0;			/* type is fstype pattern */
+
+	/* The configuration is keyed by the filesystem type we really have:
+	 * the type detected by libblkid/udev on mount, and the type reported
+	 * by the kernel on umount. */
+	if (type && !mnt_context_is_explicit_fstype(cxt)) {
+		const char *x = mnt_config_get_value(cxt, "fs.d", type, "helper");
+
+		if (x) {
+			DBG_OBJ(CXT, cxt, ul_debug("config: %s helper %s -> %s",
+						name, type, x));
+			type = x;
+		}
+	}
 
 	if (mnt_context_is_nohelpers(cxt)
 	    || !type
@@ -2672,8 +2735,12 @@ static int apply_fs(struct libmnt_context *cxt, struct libmnt_fs *fs, unsigned l
 	if (!rc)
 		rc = mnt_fs_set_target(cxt->fs, mnt_fs_get_target(fs));
 
-	if (!rc && !mnt_fs_get_fstype(cxt->fs))
+	if (!rc && !mnt_fs_get_fstype(cxt->fs) && mnt_fs_get_fstype(fs)) {
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
+		/* the type has been requested in fstab */
+		if (!rc)
+			cxt->flags |= MNT_FL_FSTYPE_EXPLICIT;
+	}
 
 	if (!rc && !mnt_fs_get_root(cxt->fs) && mnt_fs_get_root(fs))
 		rc = mnt_fs_set_root(cxt->fs, mnt_fs_get_root(fs));
