@@ -37,8 +37,12 @@ enum {
 	FL_JSON		= (1 << 30),
 };
 
+struct tree_entry;
+
 struct findmnt {
 	struct libmnt_cache *cache;
+	struct tree_entry *tree_index;	/* tree mode: fs sorted by parent ID, ID */
+	size_t ntree_index;
 	unsigned int flags;
 	int parse_nerrors;
 	char *uri;
