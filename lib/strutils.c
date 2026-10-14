@@ -944,7 +944,7 @@ int ul_parse_range(const char *str, int *lower, int *upper, int def)
 	return 0;
 }
 
-static const char *next_path_segment(const char *str, size_t *sz)
+const char *ul_path_next_segment(const char *str, size_t *sz)
 {
 	const char *start, *p;
 
@@ -967,8 +967,8 @@ int streq_paths(const char *a, const char *b)
 {
 	while (a && b) {
 		size_t a_sz, b_sz;
-		const char *a_seg = next_path_segment(a, &a_sz);
-		const char *b_seg = next_path_segment(b, &b_sz);
+		const char *a_seg = ul_path_next_segment(a, &a_sz);
+		const char *b_seg = ul_path_next_segment(b, &b_sz);
 
 		/*
 		fprintf(stderr, "A>>>(%zu) '%s'\n", a_sz, a_seg);
@@ -1004,8 +1004,8 @@ int ul_path_is_within(const char *path, const char *dir)
 
 	while (path && dir) {
 		size_t p_sz, d_sz;
-		const char *p_seg = next_path_segment(path, &p_sz);
-		const char *d_seg = next_path_segment(dir, &d_sz);
+		const char *p_seg = ul_path_next_segment(path, &p_sz);
+		const char *d_seg = ul_path_next_segment(dir, &d_sz);
 
 		/* all @dir segments matched */
 		if (d_sz == 0 || (d_sz == 1 && d_seg && *d_seg == '/'))
