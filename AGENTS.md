@@ -8,9 +8,16 @@ Linux kernel coding conventions and workflows.
 
 ## Legal
 
-Only human beings can be credited in commit messages. Do not include
-Co-Developed-By, Co-Authored-By, or similar attribution for AI models.
-Commits should include a Signed-off-by line (`git commit -s`).
+Only human beings can be credited as authors. Do not use Co-Developed-By,
+Co-Authored-By, or similar authorship attribution for AI models — authorship
+carries responsibility for the origin of the patch, which a model cannot take.
+
+Disclosing tool use with an `Assisted-by:` trailer is welcome, but not
+required. It does not change the standard the patch is held to.
+
+Commits must include a Signed-off-by line (`git commit -s`) from the human
+submitter, who is responsible for the patch and is expected to understand and
+be able to defend every line of it.
 
 ## Key Documentation
 
