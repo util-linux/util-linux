@@ -1378,6 +1378,36 @@ static int poll_match(struct libmnt_fs *fs, struct findmnt *findmnt)
 	return rc;
 }
 
+/*
+ * Prints the events collected after one poll() wakeup.
+ *
+ * When more than one event is reported by the same wakeup, printing them as
+ * one range makes libsmartcols separate the JSON objects by commas, without an
+ * enclosing array. Events reported by different wakeups are separated by
+ * whitespace only, so the output would be neither a sequence of top-level JSON
+ * values nor a JSON array. Print every event on its own for JSON, that is
+ * always a sequence of top-level values.
+ */
+static int poll_print_events(struct libscols_table *table, struct findmnt *findmnt)
+{
+	struct libscols_iter *itr;
+	struct libscols_line *ln;
+	int rc = 0;
+
+	if (!(findmnt->flags & FL_JSON))
+		return scols_table_print_range(table, NULL, NULL);
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		return -ENOMEM;
+
+	while (rc == 0 && scols_table_next_line(table, itr, &ln) == 0)
+		rc = scols_table_print_range(table, ln, ln);
+
+	scols_free_iter(itr);
+	return rc;
+}
+
 static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		  int timeout, struct libscols_table *table, int direction, struct findmnt *findmnt)
 {
@@ -1460,7 +1490,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		}
 
 		if (count) {
-			rc = scols_table_print_range(table, NULL, NULL);
+			rc = poll_print_events(table, findmnt);
 			if (rc == 0 && !(findmnt->flags & FL_JSON))
 				fputc('\n', scols_table_get_stream(table));
 			fflush(scols_table_get_stream(table));
