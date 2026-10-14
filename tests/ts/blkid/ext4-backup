@@ -1,0 +1,256 @@
+#!/usr/bin/env bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="ext4 backup superblocks"
+
+. "$TS_TOPDIR"/functions.sh
+
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_BLKID"
+ts_check_prog "python3"
+
+TEST_IMAGE_NAME="$TS_OUTDIR/$TS_TESTNAME.img"
+trap 'rm -f -- "$TEST_IMAGE_NAME"' EXIT
+
+# Build sparse fixtures directly so each backup can have a distinct label.
+init_image()
+{
+	python3 - "$TEST_IMAGE_NAME" "$1" <<'PYEOF'
+import struct
+import sys
+import uuid
+
+path, name = sys.argv[1:]
+fs_uuid = uuid.UUID("12345678-1234-5678-9abc-123456789abc")
+
+
+def checksum(sb):
+    crc = 0xffffffff
+    for byte in sb[:1020]:
+        crc ^= byte
+        for _ in range(8):
+            crc = (crc >> 1) ^ (0x82f63b78 if crc & 1 else 0)
+    return crc
+
+
+def write_super(path, offset, sb, valid=True):
+    sb = bytearray(sb)
+    if valid:
+        struct.pack_into("<I", sb, 1020, checksum(sb))
+    with open(path, "r+b") as image:
+        image.seek(offset)
+        image.write(sb)
+
+
+def read_super(path, offset):
+    with open(path, "rb") as image:
+        image.seek(offset)
+        sb = bytearray(image.read(1024))
+    assert len(sb) == 1024
+    return sb
+
+
+def corrupt_super(path, offset):
+    sb = read_super(path, offset)
+    # Model a changed payload reaching disk before the new checksum.
+    sb[0x30] ^= 1
+    write_super(path, offset, sb, valid=False)
+
+
+def create_image(path, layout, shift=0, groups=128, first=None, prefix=0):
+    block_size = 1024 << shift
+    if first is None:
+        first = int(shift == 0)
+    per_group = 1024
+    blocks = first + groups * per_group
+    size = blocks * block_size
+    sb = bytearray(1024)
+    struct.pack_into("<I", sb, 0x04, blocks & 0xffffffff)
+    struct.pack_into("<I", sb, 0x14, first)
+    struct.pack_into("<I", sb, 0x18, shift)
+    struct.pack_into("<I", sb, 0x1c, shift + (2 if layout == "bigalloc" else 0))
+    struct.pack_into("<I", sb, 0x20, per_group)
+    struct.pack_into("<H", sb, 0x38, 0xef53)
+    struct.pack_into("<I", sb, 0x4c, 1)
+    struct.pack_into("<I", sb, 0x5c,
+                     4 | (0x200 if layout.startswith("sparse2") else 0))
+    struct.pack_into("<I", sb, 0x60, 0x40 | (0x80 if blocks >> 32 else 0))
+    struct.pack_into("<I", sb, 0x64,
+                     0x400 | (0 if layout == "dense" else 1)
+                     | (0x200 if layout == "bigalloc" else 0))
+    sb[0x68:0x78] = fs_uuid.bytes
+    struct.pack_into("<I", sb, 0x150, blocks >> 32)
+    sb[0x175] = 1
+
+    if layout.startswith("sparse2"):
+        backups = [1, groups - 1] if groups > 1 else []
+        if layout == "sparse2-none":
+            backups = []
+        if layout == "sparse2-reversed":
+            backups.reverse()
+        struct.pack_into("<II", sb, 0x24c, *(backups or [0, 0]))
+    elif layout == "dense":
+        backups = range(1, groups)
+    else:
+        backups = set()
+        for base in (3, 5, 7):
+            group = 1
+            while group < groups:
+                backups.add(group)
+                group *= base
+
+    offsets = {0: prefix + 1024}
+    offsets.update({group: prefix + (first + group * per_group) * block_size
+                    for group in backups})
+    with open(path, "wb") as image:
+        image.truncate(prefix + size)
+    for group, offset in offsets.items():
+        struct.pack_into("<H", sb, 0x5a, min(group, 0xffff))
+        label = "primary" if group == 0 else f"backup{group}"
+        sb[0x78:0x88] = label.encode().ljust(16, b"\0")
+        write_super(path, offset, sb)
+    return offsets, size
+
+
+layouts = {
+    "sparse-1k": ("sparse", {}),
+    "sparse-4k": ("sparse", {"shift": 2, "groups": 32}),
+    "sparse-64k": ("sparse", {"shift": 6, "groups": 10}),
+    "bigalloc-1k": ("bigalloc", {"first": 0}),
+    "sparse2": ("sparse2", {}),
+    "sparse2-reversed": ("sparse2-reversed", {}),
+    "dense": ("dense", {"groups": 12}),
+    "single-group": ("sparse", {"groups": 1}),
+    "no-backups": ("sparse2-none", {}),
+    "64bit-block-count": ("sparse2", {"groups": (1 << 22) + 2}),
+    "probe-offset": ("sparse",
+                     {"shift": 2, "groups": 10, "prefix": 1024 * 1024}),
+}
+backup_fields = {
+    "backup-magic": (0x38, "<H", 0),
+    "backup-uuid": (0x68, "<16s", bytes(16)),
+    "backup-block-size": (0x18, "<I", 1),
+    "backup-first-block": (0x14, "<I", 0),
+    "backup-group-size": (0x20, "<I", 2048),
+    "backup-no-checksum": (0x64, "<I", 1),
+}
+primary_fields = {
+    "invalid-block-size": [(0x18, "<I", 32)],
+    "invalid-first-block": [(0x14, "<I", 2)],
+    "zero-group-size": [(0x20, "<I", 0)],
+    "zero-block-count": [(0x04, "<I", 0)],
+    "oversized-filesystem": [(0x04, "<I", 0xffffffff)],
+    "journal-device": [(0x60, "<I", 0x48)],
+    "unused-high-block-count": [(0x150, "<I", 0xffffffff)],
+    "oversized-64bit-filesystem": [
+        (0x150, "<I", 0xffffffff), (0x60, "<I", 0xc0),
+    ],
+    "out-of-range-backup-group": [
+        (0x24c, "<I", 0xffffffff), (0x250, "<I", 1),
+    ],
+    "legacy-no-checksum": [(0x64, "<I", 1)],
+    "erased-primary-magic": [(0x38, "<H", 0)],
+}
+
+prefix = 0
+updates = []
+if name in layouts:
+    layout, options = layouts[name]
+    offsets, size = create_image(path, layout, **options)
+    prefix = options.get("prefix", 0)
+    updates = [offsets[0]]
+    updates += [offsets[group] for group in sorted(offsets, reverse=True)
+                if group != 0]
+elif name in backup_fields:
+    offsets, size = create_image(path, "sparse2", groups=4)
+    corrupt_super(path, offsets[0])
+    sb = read_super(path, offsets[3])
+    offset, fmt, value = backup_fields[name]
+    struct.pack_into(fmt, sb, offset, value)
+    write_super(path, offsets[3], sb)
+    updates = [offsets[1]]
+elif name == "bounded-dense-search":
+    offsets, size = create_image(path, "dense", groups=66)
+    for group, offset in offsets.items():
+        if group != 1:
+            corrupt_super(path, offset)
+    updates = [offsets[2]]
+else:
+    offsets, size = create_image(path, "sparse2", groups=4)
+    sb = read_super(path, offsets[0])
+    for offset, fmt, value in primary_fields[name]:
+        struct.pack_into(fmt, sb, offset, value)
+    write_super(path, offsets[0], sb, valid=name == "erased-primary-magic")
+
+print(prefix, size, *updates)
+PYEOF
+}
+
+_blkid()
+{
+	local args=()
+
+	if [ "$prefix" -ne 0 ]; then
+		args=(--offset "$prefix" --size "$size")
+	fi
+	"$TS_CMD_BLKID" --probe --output udev \
+		--match-tag LABEL --match-tag UUID --match-tag TYPE \
+		"${args[@]}" "$TEST_IMAGE_NAME" 2>> "$TS_ERRLOG" |
+		sort >> "$TS_OUTPUT"
+	echo "exit: ${PIPESTATUS[0]}" >> "$TS_OUTPUT"
+}
+
+for name in sparse-1k sparse-4k sparse-64k bigalloc-1k \
+	    sparse2 sparse2-reversed dense single-group no-backups \
+	    64bit-block-count probe-offset backup-magic backup-uuid \
+	    backup-block-size backup-first-block backup-group-size \
+	    backup-no-checksum invalid-block-size invalid-first-block \
+	    zero-group-size zero-block-count oversized-filesystem \
+	    journal-device unused-high-block-count oversized-64bit-filesystem \
+	    out-of-range-backup-group legacy-no-checksum erased-primary-magic \
+	    bounded-dense-search; do
+	ts_init_subtest "$name"
+
+	if ! image_info=$(init_image "$name" 2>> "$TS_ERRLOG"); then
+		ts_failed "Cannot create image; see $TS_ERRLOG"
+		ts_finalize_subtest
+		continue
+	fi
+	read -r prefix size offsets <<< "$image_info"
+
+	_blkid
+
+	# Change s_wtime without its checksum; restore it for the limit test.
+	value='\1'
+	if [ "$name" = "bounded-dense-search" ]; then
+		value='\0'
+	fi
+	for offset in $offsets; do
+		if ! printf '%b' "$value" |
+		     dd of="$TEST_IMAGE_NAME" bs=1 seek=$(( offset + 0x30 )) \
+			conv=notrunc status=none 2>> "$TS_ERRLOG"; then
+			ts_failed "Cannot update superblock; see $TS_ERRLOG"
+			break
+		fi
+		_blkid
+	done
+
+	ts_finalize_subtest
+done
+
+ts_finalize

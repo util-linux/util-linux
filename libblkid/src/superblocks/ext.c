@@ -29,7 +29,9 @@ struct ext2_super_block {
 	uint32_t		s_free_inodes_count;
 	uint32_t		s_first_data_block;
 	uint32_t		s_log_block_size;
-	uint32_t		s_dummy3[7];
+	uint32_t		s_log_cluster_size;
+	uint32_t		s_blocks_per_group;
+	uint32_t		s_dummy3[5];
 	unsigned char		s_magic[2];
 	uint16_t		s_state;
 	uint16_t		s_errors;
@@ -75,7 +77,9 @@ struct ext2_super_block {
 	uint16_t		s_mmp_interval;
 	uint64_t		s_mmp_block;
 	uint32_t		s_raid_stripe_width;
-	uint32_t		s_reserved[162];
+	uint32_t		s_reserved[54];
+	uint32_t		s_backup_bgs[2];
+	uint32_t		s_reserved2[106];
 	uint32_t		s_checksum;
 } __attribute__((packed));
 
@@ -88,13 +92,15 @@ struct ext2_super_block {
 /* magic string offset within super block */
 #define EXT_MAG_OFF				0x38
 
-
+/* upper ceiling to avoid looping for too long. */
+#define EXT_MAX_BACKUP_SUPERBLOCKS		64
 
 /* for s_flags */
 #define EXT2_FLAGS_TEST_FILESYS		0x0004
 
 /* for s_feature_compat */
 #define EXT3_FEATURE_COMPAT_HAS_JOURNAL		0x0004
+#define EXT4_FEATURE_COMPAT_SPARSE_SUPER2		0x0200
 
 /* for s_feature_ro_compat */
 #define EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER	0x0001
@@ -139,6 +145,125 @@ struct ext2_super_block {
  */
 #define EXT4_SUPPORTS_EXT2 KERNEL_VERSION(2, 6, 29)
 
+static bool ext_has_valid_checksum(blkid_probe pr,
+		const struct ext2_super_block *es)
+{
+	uint32_t csum;
+
+	csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
+	return blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum));
+}
+
+static uint32_t ext_last_backup_group(const struct ext2_super_block *es,
+		uint32_t group)
+{
+	uint32_t fc, frc, last = 0, backup, base;
+
+	fc = le32_to_cpu(es->s_feature_compat);
+	frc = le32_to_cpu(es->s_feature_ro_compat);
+
+	if (!group)
+		return 0;
+
+	if (fc & EXT4_FEATURE_COMPAT_SPARSE_SUPER2) {
+		for (size_t i = 0; i < ARRAY_SIZE(es->s_backup_bgs); i++) {
+			backup = le32_to_cpu(es->s_backup_bgs[i]);
+
+			if (backup <= group && backup > last)
+				last = backup;
+		}
+		return last;
+	}
+
+	if (!(frc & EXT2_FEATURE_RO_COMPAT_SPARSE_SUPER))
+		return group;
+
+	for (base = 3; base <= 7; base += 2) {
+		backup = 1;
+
+		while (backup <= group / base)
+			backup *= base;
+		if (backup > last)
+			last = backup;
+	}
+
+	return last;
+}
+
+static struct ext2_super_block *ext_get_valid_backup_super(
+		blkid_probe pr, const struct ext2_super_block *primary)
+{
+	uint32_t shift, first, per_group, incompat, block_size, group;
+	uint64_t blocks, last_group;
+	unsigned int tried = 0;
+
+	shift = le32_to_cpu(primary->s_log_block_size);
+	first = le32_to_cpu(primary->s_first_data_block);
+	per_group = le32_to_cpu(primary->s_blocks_per_group);
+	incompat = le32_to_cpu(primary->s_feature_incompat);
+	blocks = le32_to_cpu(primary->s_blocks_count);
+
+	if (incompat & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
+		return NULL;
+
+	/* The primary checksum failed, so do not trust its geometry. */
+	if (shift > 6 || !per_group || first > 1 || (shift && first))
+		goto invalid;
+
+	block_size = 1024U << shift;
+	if (incompat & EXT4_FEATURE_INCOMPAT_64BIT)
+		blocks |= (uint64_t)
+				le32_to_cpu(primary->s_blocks_count_hi) << 32;
+	if (blocks <= first || blocks > (uint64_t) pr->size / block_size)
+		goto invalid;
+
+	last_group = (blocks - first - 1) / per_group;
+	if (last_group > UINT32_MAX)
+		goto invalid;
+
+	/*
+	 * When e2fsck updates backups, it writes them in increasing group order
+	 * and flushes them before updating the primary. Probe in reverse order
+	 * to reduce the chance of following its writes.
+	 */
+	for (group = ext_last_backup_group(primary, last_group);
+	     group && tried < EXT_MAX_BACKUP_SUPERBLOCKS;
+	     group = ext_last_backup_group(primary, group - 1), tried++) {
+		struct ext2_super_block *es;
+		uint64_t off;
+
+		off = (first + (uint64_t) group * per_group) * block_size;
+		es = (struct ext2_super_block *)
+			blkid_probe_get_buffer(pr, off, sizeof(*es));
+		if (!es)
+			return NULL;
+
+		if (memcmp(es->s_magic, EXT_SB_MAGIC, sizeof(es->s_magic)) ||
+		    memcmp(es->s_uuid, primary->s_uuid, sizeof(es->s_uuid)) ||
+		    es->s_log_block_size != primary->s_log_block_size ||
+		    es->s_first_data_block != primary->s_first_data_block ||
+		    es->s_blocks_per_group != primary->s_blocks_per_group ||
+		    !(le32_to_cpu(es->s_feature_ro_compat) &
+		      EXT4_FEATURE_RO_COMPAT_METADATA_CSUM)) {
+			DBG(PROBE, ul_debug("ext: invalid backup in group %u",
+				   group));
+			continue;
+		}
+
+		if (ext_has_valid_checksum(pr, es)) {
+			DBG(PROBE, ul_debug("ext: using backup in group %u",
+				   group));
+			return es;
+		}
+	}
+
+	return NULL;
+
+invalid:
+	DBG(PROBE, ul_debug("ext: invalid geometry for backup superblocks"));
+	return NULL;
+}
+
 /*
  * reads superblock and returns:
  *	fc = feature_compat
@@ -155,15 +280,17 @@ static struct ext2_super_block *ext_get_super(
 	if (!es)
 		return NULL;
 	if (le32_to_cpu(es->s_feature_ro_compat) & EXT4_FEATURE_RO_COMPAT_METADATA_CSUM) {
-		uint32_t csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
+		bool valid = ext_has_valid_checksum(pr, es);
+
 		/*
 		 * A read of the superblock can race with other updates to the
 		 * same superblock.  In the unlikely event that this occurs and
 		 * we see a checksum failure, re-read the superblock with
 		 * O_DIRECT to ensure that it's consistent.  If it _still_ fails
-		 * then declare a checksum mismatch.
+		 * then try the backup superblocks, as we might be clashing with
+		 * an fsck.
 		 */
-		if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum))) {
+		if (!valid) {
 #ifdef O_DIRECT
 			if (blkid_probe_reset_buffers(pr))
 				return NULL;
@@ -173,12 +300,13 @@ static struct ext2_super_block *ext_get_super(
 			if (!es)
 				return NULL;
 
-			csum = crc32c(~0, es, offsetof(struct ext2_super_block, s_checksum));
-			if (!blkid_probe_verify_csum(pr, csum, le32_to_cpu(es->s_checksum)))
-				return NULL;
-#else
-			return NULL;
+			valid = ext_has_valid_checksum(pr, es);
 #endif
+			if (!valid) {
+				es = ext_get_valid_backup_super(pr, es);
+				if (!es)
+					return NULL;
+			}
 		}
 	} else {
 		/*
@@ -423,4 +551,3 @@ const struct blkid_idinfo ext4dev_idinfo =
 	.probefunc	= probe_ext4dev,
 	.magics		= BLKID_EXT_MAGICS
 };
-
