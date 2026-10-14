@@ -119,6 +119,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&drbdproxy_datalog_idinfo,
 	&lvm2_idinfo,
 	&lvm1_idinfo,
+	&opensvc_hb_idinfo,
 	&snapcow_idinfo,
 	&verity_hash_idinfo,
 	&integrity_idinfo,
@@ -950,5 +951,4 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 {
 	return blkid_probe_filter_superblocks_usage(pr, flag, usage);
 }
-
 
