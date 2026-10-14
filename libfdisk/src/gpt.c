@@ -1102,6 +1102,17 @@ static int gpt_check_entryarr_crc(struct gpt_header *header, unsigned char *ents
 			le32_to_cpu(header->partition_entry_array_crc32);
 }
 
+/*
+ * Returns 1 if both headers describe partition entries arrays of the same
+ * size (number of entries and entry size), otherwise 0.
+ */
+static int gpt_headers_same_entries(const struct gpt_header *a,
+				    const struct gpt_header *b)
+{
+	return a->npartition_entries == b->npartition_entries &&
+	       a->sizeof_partition_entry == b->sizeof_partition_entry;
+}
+
 static int gpt_check_lba_sanity(struct fdisk_context *cxt, struct gpt_header *header)
 {
 	int ret = 0;
@@ -1641,12 +1652,22 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	gpt->pheader = gpt_read_header(cxt, GPT_PRIMARY_PARTITION_TABLE_LBA,
 				       &gpt->ents);
 
-	if (gpt->pheader)
+	if (gpt->pheader) {
 		/* primary OK, try backup from alternative LBA */
 		gpt->bheader = gpt_read_header(cxt,
 					le64_to_cpu(gpt->pheader->alternative_lba),
 					NULL);
-	else
+
+		/* Only the primary entries array is kept in memory, and both
+		 * headers are used with it (CRCs, write). The backup header has
+		 * to describe an array of the same geometry. */
+		if (gpt->bheader &&
+		    !gpt_headers_same_entries(gpt->pheader, gpt->bheader)) {
+			DBG(GPT, ul_debug("backup header entries geometry differs from primary"));
+			free(gpt->bheader);
+			gpt->bheader = NULL;
+		}
+	} else
 		/* primary corrupted -- try last LBA */
 		gpt->bheader = gpt_read_header(cxt, last_lba(cxt), &gpt->ents);
 

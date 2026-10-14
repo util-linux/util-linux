@@ -1,0 +1,11 @@
+The backup GPT table is corrupt, but the primary appears OK, so that will be used.
+Partition name changed from '' to 'test'.
+
+The partition table has been altered.
+<removed>:
+No errors detected.
+Header version: 1.0
+Using 1 out of 128 partitions.
+A total of 16351 free sectors is available in 1 segment.
+primary: entries=128 entry-size=128
+backup: entries=128 entry-size=128
