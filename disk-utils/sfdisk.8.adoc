@@ -273,7 +273,7 @@ Specify the partition table type. For example *dos* or *gpt*.
 *label-id*::
 Specify the partition table identifier. It should be a hexadecimal number (with a 0x prefix) for MBR and a UUID for GPT.
 *first-lba*::
-Specify the first usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
+Specify the first usable sector. For GPT it is the first sector usable by partitions. For MBR it is the default first sector for primary partitions, and it is also the gap reserved between an extended boot record (EBR) and the logical partition that follows it; a large value therefore reserves the same large gap before every logical partition. The header is used only when a new disk label is created. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default.
 *last-lba*::
 Specify the last usable sector for GPT partitions. This header is ignored if the script and device sector size differ. In this case *sfdisk* uses label specific default. The last-lba header is ignored if *--force* is specified, making the script usable on disks with different sizes.
 *table-length*::

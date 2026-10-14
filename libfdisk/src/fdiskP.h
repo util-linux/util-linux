@@ -539,4 +539,8 @@ int fdisk_check_collisions(struct fdisk_context *cxt);
 /* parttype.c */
 const char *fdisk_label_translate_type_shortcut(const struct fdisk_label *lb, char *cut);
 
+/* script.c */
+int fdisk_script_get_u64(struct fdisk_context *cxt,
+			 const char *name, uint64_t *num);
+
 #endif /* _LIBFDISK_PRIVATE_H */
