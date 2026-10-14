@@ -297,7 +297,9 @@ static int sgi_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 	case SGI_LABELITEM_BOOTFILE:
 		item->name = _("Bootfile");
 		item->type = 's';
-		item->data.str = *sgilabel->boot_file ? strdup((char *) sgilabel->boot_file) : NULL;
+		item->data.str = *sgilabel->boot_file ?
+				strndup((char *) sgilabel->boot_file,
+					sizeof(sgilabel->boot_file)) : NULL;
 		break;
 	default:
 		if (item->id < __FDISK_NLABELITEMS)
@@ -328,16 +330,21 @@ static int sgi_get_sysid(struct fdisk_context *cxt, int i)
 	return be32_to_cpu(sgilabel->partitions[i].type);
 }
 
+/* returns -1 if the on-disk partition number is out of range */
 static int sgi_get_bootpartition(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
-	return be16_to_cpu(sgilabel->root_part_num);
+	int n = be16_to_cpu(sgilabel->root_part_num);
+
+	return n < SGI_MAXPARTITIONS ? n : -1;
 }
 
 static int sgi_get_swappartition(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
-	return be16_to_cpu(sgilabel->swap_part_num);
+	int n = be16_to_cpu(sgilabel->swap_part_num);
+
+	return n < SGI_MAXPARTITIONS ? n : -1;
 }
 
 static unsigned int sgi_get_lastblock(struct fdisk_context *cxt)
@@ -441,7 +448,9 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 	char *name = NULL;
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 
-	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
+	/* boot_file[] is not NUL-terminated if the name uses all 16 bytes */
+	fdisk_info(cxt, _("The current boot file is: %.*s"),
+			(int) sizeof(sgilabel->boot_file), sgilabel->boot_file);
 
 	rc = fdisk_ask_string(cxt, _("Enter full path of the new boot file"), &name);
 	if (rc == 0)
