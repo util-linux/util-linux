@@ -10,8 +10,12 @@
 
 void ul_buffer_reset_data(struct ul_buffer *buf)
 {
-	if (buf->begin)
-		memset(buf->begin, 0, buf->sz);
+	if (buf->begin) {
+		/* only the used part (and the terminator) can be non-zero */
+		size_t len = buf->end ? (size_t) (buf->end - buf->begin) + 1 : buf->sz;
+
+		memset(buf->begin, 0, len < buf->sz ? len : buf->sz);
+	}
 	buf->end = buf->begin;
 
 	if (buf->ptrs && buf->nptrs)
