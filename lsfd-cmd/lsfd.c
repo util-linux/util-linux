@@ -1146,9 +1146,14 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 	fclose(fp);
 }
 
+enum outofbox_attrs {
+	OUTOFBOX_NAMESPACE = (1 << 0),
+};
+
 struct outofbox_fdecl {
 	enum association assoc;
 	const char *name;
+	unsigned int attrs;
 };
 
 #define LAST_OUTOFBOX_FDECL { .name = NULL }
@@ -1161,9 +1166,14 @@ static void collect_outofbox_files(struct path_cxt *pc,
 	const struct outofbox_fdecl *fdecl;
 
 	for (fdecl = fdecls; fdecl->name; fdecl++) {
-		struct file *f __attribute__((unused))
-			= collect_file_symlink(pc, proc, fdecl->name, fdecl->assoc * -1,
-					       sockets_only);
+		bool is_ns = (fdecl->attrs & OUTOFBOX_NAMESPACE);
+		struct file *f __attribute__((unused));
+
+		if (sockets_only && !is_ns)
+			continue;
+
+		f = collect_file_symlink(pc, proc, fdecl->name, fdecl->assoc * -1,
+					 sockets_only);
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 		if (f && has_mnt_id(f)) {
 			struct statx stx;
@@ -1263,14 +1273,17 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 		{
 			.assoc = ASSOC_NS_CGROUP,
 			.name = "ns/cgroup",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_IPC,
 			.name = "ns/ipc",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_MNT,
 			.name = "ns/mnt",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
@@ -1284,30 +1297,37 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 		{
 			.assoc = ASSOC_NS_NET,
 			.name = "ns/net",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_PID,
 			.name = "ns/pid",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_PID4C,
 			.name = "ns/pid_for_children",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_TIME,
 			.name = "ns/time",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_TIME4C,
 			.name = "ns/time_for_children",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_USER,
 			.name = "ns/user",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		{
 			.assoc = ASSOC_NS_UTS,
 			.name = "ns/uts",
+			.attrs = OUTOFBOX_NAMESPACE,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
