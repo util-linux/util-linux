@@ -73,6 +73,7 @@ TS_HELPER_KILL_PIDFDINO="${ts_helpersdir}test_kill_pidfdino"
 TS_HELPER_SCOLS_TERMREDUCE="${ts_helpersdir}test_scols_termreduce"
 TS_HELPER_OPEN_TWICE="${ts_helpersdir}test_open_twice"
 TS_HELPER_PARSEPID="${ts_helpersdir}test_parsepid"
+TS_HELPER_ENV="${ts_helpersdir}test_remove_env"
 
 # paths to commands
 TS_CMD_ADDPART=${TS_CMD_ADDPART:-"${ts_commandsdir}addpart"}
