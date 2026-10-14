@@ -223,17 +223,96 @@ static char *get_fallback_filename(struct libmnt_table *tab, dev_t dev)
 }
 
 /*
+ * Per-process cache of /proc/<pid>/fd: for every inode the first
+ * descriptor (in readdir order) referring to it. Built once per pid so
+ * that looking up K locks does not rescan all F descriptors K times.
+ */
+struct fd_entry {
+	ino_t inode;
+	uint64_t size;
+	char *path;		/* NULL if readlink failed */
+};
+
+struct pid_fds {
+	pid_t pid;
+	void *inodes;		/* tree of struct fd_entry */
+};
+
+static void *pid_fds_tree;
+
+static int pid_fds_compare(const void *a, const void *b)
+{
+	const struct pid_fds *x = a, *y = b;
+
+	return (x->pid > y->pid) - (x->pid < y->pid);
+}
+
+static int fd_entry_compare(const void *a, const void *b)
+{
+	const struct fd_entry *x = a, *y = b;
+
+	return (x->inode > y->inode) - (x->inode < y->inode);
+}
+
+static void fill_pid_fds(struct pid_fds *pf)
+{
+	char path[PATH_MAX] = { 0 };
+	struct dirent *dp;
+	struct stat sb;
+	DIR *dirp;
+	int fd;
+
+	snprintf(path, sizeof(path), "/proc/%d/fd/", pf->pid);
+	if (!(dirp = opendir(path)))
+		return;
+
+	if ((fd = dirfd(dirp)) < 0)
+		goto out;
+
+	while ((dp = xreaddir(dirp))) {
+		struct fd_entry *e, **found;
+		char sym[PATH_MAX] = { 0 };
+		ssize_t len;
+
+		errno = 0;
+
+		/* care only for numerical descriptors */
+		if (!strtol(dp->d_name, (char **) NULL, 10) || errno)
+			continue;
+
+		if (fstatat(fd, dp->d_name, &sb, 0))
+			continue;
+
+		e = xcalloc(1, sizeof(*e));
+		e->inode = sb.st_ino;
+		found = tsearch(e, &pf->inodes, fd_entry_compare);
+		if (!found)
+			errx(EXIT_FAILURE, _("failed to allocate memory"));
+		if (*found != e) {
+			/* an earlier descriptor already refers to it */
+			free(e);
+			continue;
+		}
+
+		e->size = sb.st_size;
+		len = readlinkat(fd, dp->d_name, sym, sizeof(sym) - 1);
+		if (len >= 1) {
+			sym[len] = '\0';
+			e->path = xstrdup(sym);
+		}
+	}
+out:
+	closedir(dirp);
+}
+
+/*
  * Return the absolute path of a file from
  * a given inode number (and its size)
  */
 static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 {
-	struct stat sb;
-	struct dirent *dp;
-	DIR *dirp;
-	int fd;
-	char path[PATH_MAX] = { 0 },
-	     sym[PATH_MAX] = { 0 }, *ret = NULL;
+	struct pid_fds key = { .pid = lock_pid }, **pfp;
+	struct fd_entry ekey = { .inode = inode }, **ep;
 
 	*size = 0;
 
@@ -246,41 +325,23 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	 * iterate the *entire* filesystem searching
 	 * for the damn file.
 	 */
-	snprintf(path, sizeof(path), "/proc/%d/fd/", lock_pid);
-	if (!(dirp = opendir(path)))
+	pfp = tfind(&key, &pid_fds_tree, pid_fds_compare);
+	if (!pfp) {
+		struct pid_fds *pf = xcalloc(1, sizeof(*pf));
+
+		pf->pid = lock_pid;
+		fill_pid_fds(pf);
+		pfp = tsearch(pf, &pid_fds_tree, pid_fds_compare);
+		if (!pfp)
+			errx(EXIT_FAILURE, _("failed to allocate memory"));
+	}
+
+	ep = tfind(&ekey, &(*pfp)->inodes, fd_entry_compare);
+	if (!ep || !(*ep)->path)
 		return NULL;
 
-	if (strlen(path) >= (sizeof(path) - 2))
-		goto out;
-
-	if ((fd = dirfd(dirp)) < 0 )
-		goto out;
-
-	while ((dp = xreaddir(dirp))) {
-		ssize_t len;
-
-		errno = 0;
-
-		/* care only for numerical descriptors */
-		if (!strtol(dp->d_name, (char **) NULL, 10) || errno)
-			continue;
-
-		if (!fstatat(fd, dp->d_name, &sb, 0)
-		    && inode != sb.st_ino)
-			continue;
-
-		if ((len = readlinkat(fd, dp->d_name, sym, sizeof(sym) - 1)) < 1)
-			goto out;
-
-		*size = sb.st_size;
-		sym[len] = '\0';
-
-		ret = xstrdup(sym);
-		break;
-	}
-out:
-	closedir(dirp);
-	return ret;
+	*size = (*ep)->size;
+	return xstrdup((*ep)->path);
 }
 
 /*
