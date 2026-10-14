@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="fsck extract"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MKCRAMFS"
+ts_check_test_command "$TS_CMD_FSCKCRAMFS"
+ts_check_prog "dd"
+ts_check_prog "od"
+
+IMAGE_SOURCE="$TS_OUTDIR/${TS_TESTNAME}-data"
+IMAGE_FILE="$TS_OUTDIR/${TS_TESTNAME}-cramfs.img"
+EXTRACT_DIR="$TS_OUTDIR/${TS_TESTNAME}-extract"
+OUTSIDE_FILE="$TS_OUTDIR/${TS_TESTNAME}-outside"
+
+# create an image with entries 'aaaa' (symlink to $OUTSIDE_FILE) and 'bbbb'
+# (regular file), then rename 'bbbb' to $1 in the image
+function make_image() {
+	local off flags
+
+	rm -rf "$IMAGE_SOURCE" "$EXTRACT_DIR" "$IMAGE_FILE"
+	mkdir -p "$IMAGE_SOURCE"
+	ln -s "$OUTSIDE_FILE" "$IMAGE_SOURCE/aaaa"
+	echo "replaced" > "$IMAGE_SOURCE/bbbb"
+
+	$TS_CMD_MKCRAMFS -N little -b 4096 "$IMAGE_SOURCE" "$IMAGE_FILE" &> /dev/null
+	[ -s "$IMAGE_FILE" ] || ts_die "Cannot create $IMAGE_FILE"
+
+	off=$(grep -obUa "bbbb" "$IMAGE_FILE" | head -n1 | cut -d: -f1)
+	[ -n "$off" ] || ts_die "entry name not found in $IMAGE_FILE"
+	printf "%b" "$1" | dd of="$IMAGE_FILE" bs=1 seek="$off" count=4 conv=notrunc &> /dev/null
+
+	# drop the fsid flag, so the patched image is accepted without a new CRC
+	flags=$(od -An -tu1 -j8 -N1 "$IMAGE_FILE" | tr -d ' ')
+	printf "\\x$(printf %02x $(( flags & ~1 )))" |
+		dd of="$IMAGE_FILE" bs=1 seek=8 count=1 conv=notrunc &> /dev/null
+}
+
+echo "original" > "$OUTSIDE_FILE"
+
+ts_log "duplicate name"
+make_image "aaaa"
+$TS_CMD_FSCKCRAMFS --extract="$EXTRACT_DIR" "$IMAGE_FILE" &> /dev/null
+ts_log "ret: $?"
+ts_log "outside: $(cat "$OUTSIDE_FILE")"
+
+ts_log "dot-dot name"
+make_image "..\\0\\0"
+$TS_CMD_FSCKCRAMFS --extract="$EXTRACT_DIR" "$IMAGE_FILE" 2>&1 >/dev/null |
+	sed -n 's/.*: dangerous filename/dangerous filename/p' >> $TS_OUTPUT
+ts_log "ret: ${PIPESTATUS[0]}"
+
+rm -rf "$IMAGE_SOURCE" "$EXTRACT_DIR" "$IMAGE_FILE" "$OUTSIDE_FILE"
+
+ts_finalize
