@@ -582,6 +582,9 @@ int main(int argc, char **argv)
 	if (!cxt)
 		err(MNT_EX_SYSERR, _("libmount context allocation failed"));
 
+	if (is_privileged_execution())
+		mnt_context_set_restricted(cxt, 1);
+
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
 	while ((c = getopt_long(argc, argv, "aAcdfghilnqRrO:t:vVN:",
