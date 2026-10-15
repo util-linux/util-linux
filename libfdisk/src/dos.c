@@ -2194,12 +2194,18 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 		/* we have empty extended partition, check if the partition has
 		 * been modified and then cleanup possible remaining EBR  */
 		struct pte *pe = self_pte(cxt, l->ext_index);
-		unsigned char empty[512] = { 0 };
 		fdisk_sector_t off = pe ? get_abs_partition_start(pe) : 0;
 
 		if (off && pe->changed) {
+			unsigned char *empty = calloc(1, cxt->sector_size);
+
+			if (!empty) {
+				rc = -ENOMEM;
+				goto done;
+			}
 			mbr_set_magic(empty);
 			write_sector(cxt, off, empty);
+			free(empty);
 		}
 	}
 
