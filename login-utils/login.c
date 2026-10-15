@@ -511,14 +511,14 @@ static void chown_tty(struct login_context *cxt)
 
 #ifdef LOGIN_CHOWN_VCS
 	if (is_consoletty(0)) {
-		if (chown(cxt->vcsn, uid, gid))			/* vcs */
+		if (chown(cxt->vcsn, uid, gid) && errno != ENOENT)	/* vcs */
 			chown_err(cxt->vcsn, uid, gid);
-		if (chmod(cxt->vcsn, cxt->tty_mode))
+		if (chmod(cxt->vcsn, cxt->tty_mode) && errno != ENOENT)
 			chmod_err(cxt->vcsn, cxt->tty_mode);
 
-		if (chown(cxt->vcsan, uid, gid))		/* vcsa */
+		if (chown(cxt->vcsan, uid, gid) && errno != ENOENT)	/* vcsa */
 			chown_err(cxt->vcsan, uid, gid);
-		if (chmod(cxt->vcsan, cxt->tty_mode))
+		if (chmod(cxt->vcsan, cxt->tty_mode) && errno != ENOENT)
 			chmod_err(cxt->vcsan, cxt->tty_mode);
 	}
 #endif
