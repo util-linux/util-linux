@@ -1,0 +1,2 @@
+pipesz: size reduced to the maximum of 2147483648 bytes
+pipesz: cannot set pipe buffer size of fd 42: Bad file descriptor
