@@ -1,0 +1,45 @@
+
+Welcome to fdisk <removed>.
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): 
+Expert command (m for help): 
+
+PMBR: offset = 0, size = 512 bytes.
+00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+000001c0  02 00 ee ff ff ff 01 00  00 00 ff 07 00 00 00 00
+000001d0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+000001f0  00 00 00 00 00 00 00 00  00 00 00 00 00 00 55 aa
+
+GPT Header: offset = 512, size = 512 bytes.
+00000200  45 46 49 20 50 41 52 54  00 00 01 00 5c 00 00 00
+00000210  d4 c1 62 2b 00 00 00 00  01 00 00 00 00 00 00 00
+00000220  ff 07 00 00 00 00 00 00  22 00 00 00 00 00 00 00
+00000230  de 07 00 00 00 00 00 00  67 45 23 01 ab 89 ef cd
+00000240  01 23 45 67 89 ab cd ef  02 00 00 00 00 00 00 00
+00000250  01 00 00 00 88 00 00 00  56 11 d2 c1 00 00 00 00
+00000260  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+
+GPT Entries: offset = 1024, size = 136 bytes.
+00000400  af 3d c6 0f 83 84 72 47  8e 79 3d 69 d8 47 7d e4
+00000410  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 01
+00000420  22 00 00 00 00 00 00 00  61 00 00 00 00 00 00 00
+00000430  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+00000480  00 00 00 00 00 00 00 00 
+
+GPT Backup Entries: offset = 1047552, size = 136 bytes.
+000ffc00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+000ffc80  00 00 00 00 00 00 00 00 
+
+GPT Backup Header: offset = 1048064, size = 512 bytes.
+000ffe00  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+*
+
+Expert command (m for help): 
