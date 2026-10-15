@@ -85,6 +85,10 @@
 #include "pwdutils.h"
 
 #include "logindefs.h"
+#include "vmcp.h"
+#if defined(__s390__) || defined(__s390x__)
+# include "sulogin-consoles.h"	/* For CON_3215, CON_3270, and CON_SCLP */
+#endif
 
 #if defined (HAVE_LIBECONF) && defined (USE_VENDORDIR)
 # include "shells.h"
@@ -165,6 +169,52 @@ static int is_consoletty(int fd)
 }
 #endif
 
+#if defined(__s390__) || defined(__s390x__)
+/* Avoid that passwords are logged on the hypervisors console log */
+
+static struct s390con {
+	uint32_t flags;
+	int vmcpfd;
+} s390_vmcp = { .flags = 0, .vmcpfd = -1 };
+
+static void s390_console_spool_restore(void)
+{
+	if (s390_vmcp.vmcpfd >= 0) {
+		vmcp_restore_and_close(s390_vmcp.vmcpfd, s390_vmcp.flags);
+		s390_vmcp.vmcpfd = -1;
+		s390_vmcp.flags = 0;
+	}
+}
+
+static void s390_console_spool_stop(int fd)
+{
+	struct stat stb;
+
+	if ((fstat(fd, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
+		s390_vmcp.flags |= get_s390_con_flags(stb.st_rdev);
+	}
+	if (s390_vmcp.flags & (CON_3215|CON_3270)) {
+		s390_vmcp.vmcpfd = vmcp_open();
+		if (s390_vmcp.vmcpfd >= 0) {
+			vmcp_stop_console_logging(s390_vmcp.vmcpfd);
+		}
+	}
+	if (s390_vmcp.flags & CON_3215) {
+		if (s390_vmcp.vmcpfd >= 0) {
+			vmcp_prepare_terminal_for_password(s390_vmcp.vmcpfd);
+			vmcp_warning3215(s390_vmcp.vmcpfd);
+		}
+	}
+	/* Catch all regular exit() calls (like sleepexit) */
+	atexit(s390_console_spool_restore);
+}
+# define PREPARE_CONSOLE(fd)	s390_console_spool_stop(fd)
+# define RESTORE_CONSOLE()	s390_console_spool_restore()
+#else
+# define PREPARE_CONSOLE(fd)	/* */
+# define RESTORE_CONSOLE()	/* */
+#endif
+
 /*
  * Robert Ambrose writes:
  * A couple of my users have a problem with login processes hanging around
@@ -178,6 +228,8 @@ static void __attribute__((__noreturn__))
     timedout2(int sig __attribute__((__unused__)))
 {
 	struct termios ti;
+
+	RESTORE_CONSOLE();
 
 	/* reset echo */
 	if (tcgetattr(0, &ti) >= 0) {
@@ -1584,8 +1636,11 @@ int main(int argc, char **argv)
 	/* login -f, then the user has already been authenticated */
 	cxt.noauth = cxt.noauth && getuid() == 0 ? 1 : 0;
 
-	if (!cxt.noauth)
+	if (!cxt.noauth) {
+		PREPARE_CONSOLE(0);
 		loginpam_auth(&cxt);
+		RESTORE_CONSOLE();
+        }
 
 	/*
 	 * Authentication may be skipped (for example, during krlogin, rlogin,
