@@ -10,6 +10,7 @@
 #include <errno.h>
 
 #include "c.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 #include "libsmartcols.h"
@@ -47,29 +48,56 @@ fail:
 	err(EXIT_FAILURE, "failed to create output line");
 }
 
-int main(void)
+int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
-	size_t i;
+	const char *format = NULL;
+	int i, batch = 0, count = 0;
 
 	scols_init_debug(0);
+
+	for (i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "--batch") == 0 && i + 1 < argc)
+			batch = strtos32_or_err(argv[++i], "failed to parse --batch");
+		else if (strcmp(argv[i], "--json-format") == 0 && i + 1 < argc)
+			format = argv[++i];
+	}
 
 	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 	scols_table_enable_json(tb, 1);
 
+	if (format && scols_table_set_json_format(tb, format) != 0)
+		errx(EXIT_FAILURE, "%s: unsupported JSON format", format);
+
 	setup_columns(tb);
 
-	for (i = 0; i < 10; i++) {
-		struct libscols_line *line;
+	if (batch) {
+		/* print more lines by one call, the same way as findmnt --poll
+		 * prints all changes reported by one poll() wakeup */
+		for (i = 0; i < 2; i++) {
+			int n;
 
-		line = add_line(tb, i);
+			for (n = 0; n < batch; n++)
+				add_line(tb, count++);
 
-		/* print the line */
-		scols_table_print_range(tb, line, NULL);
+			scols_table_print_range(tb, NULL, NULL);
+			fflush(scols_table_get_stream(tb));
 
-		fflush(scols_table_get_stream(tb));
+			scols_table_remove_lines(tb);
+		}
+	} else {
+		for (i = 0; i < 10; i++) {
+			struct libscols_line *line;
+
+			line = add_line(tb, i);
+
+			/* print the line */
+			scols_table_print_range(tb, line, NULL);
+
+			fflush(scols_table_get_stream(tb));
+		}
 	}
 
 	scols_unref_table(tb);

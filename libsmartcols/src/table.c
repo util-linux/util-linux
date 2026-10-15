@@ -60,20 +60,38 @@ static void check_padding_debug(struct libscols_table *tb)
 	tb->padding_debug = 1;
 }
 
-static enum ul_json_format get_json_format(void)
+/* names used by LIBSMARTCOLS_JSON= as well as by the API */
+static const char *json_formats[] = {
+	[UL_JSON_PRETTY]	= "pretty",
+	[UL_JSON_COMPACT]	= "compact",
+	[UL_JSON_LINE]		= "lines"
+};
+
+static int json_format_from_name(const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(json_formats); i++) {
+		if (strcmp(name, json_formats[i]) == 0)
+			return (int) i;
+	}
+	return -EINVAL;
+}
+
+static int json_default_format(void)
 {
 	const char *str;
+	int fmt;
 
 	str = getenv("LIBSMARTCOLS_JSON");
 	if (!str)
 		return UL_JSON_PRETTY;
-	else if (strcmp(str, "compact") == 0)
-		return UL_JSON_COMPACT;
-	else if (strcmp(str, "lines") == 0)
-		return UL_JSON_LINE;
 
-	/* default to pretty */
-	return UL_JSON_PRETTY;
+	fmt = json_format_from_name(str);
+	if (fmt < 0)
+		return UL_JSON_PRETTY;	/* unsupported names are ignored */
+
+	return fmt;
 }
 
 /**
@@ -103,7 +121,7 @@ struct libscols_table *scols_new_table(void)
 
 	DBG_OBJ(TAB, tb, ul_debug("alloc"));
 	ON_DBG(INIT, check_padding_debug(tb));
-	tb->json_format = get_json_format();
+	tb->json_format = json_default_format();
 
 	return tb;
 }
@@ -1176,6 +1194,54 @@ int scols_table_enable_json(struct libscols_table *tb, int enable)
 	else if (tb->format == SCOLS_FMT_JSON)
 		tb->format = 0;
 	return 0;
+}
+
+/**
+ * scols_table_set_json_format:
+ * @tb: table
+ * @name: "pretty", "compact", "lines" or NULL
+ *
+ * Sets the format of the JSON output. The names are the same as for the
+ * LIBSMARTCOLS_JSON= environment variable; the variable specifies the default
+ * and this function overwrites it. Use NULL to restore the default.
+ *
+ * Note that "lines" prints every line as a stand-alone JSON object (JSON
+ * lines), the objects are not wrapped by the root object and array.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.43
+ */
+int scols_table_set_json_format(struct libscols_table *tb, const char *name)
+{
+	int fmt;
+
+	if (!tb)
+		return -EINVAL;
+
+	fmt = name ? json_format_from_name(name) : json_default_format();
+	if (fmt < 0)
+		return fmt;
+
+	DBG_OBJ(TAB, tb, ul_debug("json format: %s", json_formats[fmt]));
+	tb->json_format = fmt;
+	return 0;
+}
+
+/**
+ * scols_table_get_json_format:
+ * @tb: table
+ *
+ * Returns: name of the currently used JSON output format, or NULL in case of
+ * an error. The returned string is static, do not free it.
+ *
+ * Since: 2.43
+ */
+const char *scols_table_get_json_format(const struct libscols_table *tb)
+{
+	if (!tb)
+		return NULL;
+	return json_formats[tb->json_format];
 }
 
 /**

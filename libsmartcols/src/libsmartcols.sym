@@ -267,5 +267,7 @@ SMARTCOLS_2.42 {
 
 SMARTCOLS_2.43 {
 	scols_table_calculate;
+	scols_table_get_json_format;
+	scols_table_set_json_format;
 } SMARTCOLS_2.42;
 

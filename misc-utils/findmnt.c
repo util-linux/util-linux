@@ -1664,6 +1664,12 @@ static struct libscols_table *init_scols_table(struct findmnt *findmnt)
 	if (flags & FL_JSON)
 		scols_table_set_name(table, "filesystems");
 
+	/* The poll mode prints a continuous stream of the events, print every
+	 * event as a stand-alone JSON object rather than as a pretty printed
+	 * object on more lines. */
+	if ((flags & FL_JSON) && (flags & FL_POLL))
+		scols_table_set_json_format(table, "lines");
+
 	for (size_t i = 0; i < ncolumns; i++) {
 		struct libscols_column *cl;
 		int fl = get_column_flags(i);

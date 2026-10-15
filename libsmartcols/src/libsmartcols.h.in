@@ -361,6 +361,8 @@ extern int scols_table_enable_colors(struct libscols_table *tb, int enable);
 extern int scols_table_enable_raw(struct libscols_table *tb, int enable);
 extern int scols_table_enable_ascii(struct libscols_table *tb, int enable);
 extern int scols_table_enable_json(struct libscols_table *tb, int enable);
+extern int scols_table_set_json_format(struct libscols_table *tb, const char *name);
+extern const char *scols_table_get_json_format(const struct libscols_table *tb);
 extern int scols_table_enable_noheadings(struct libscols_table *tb, int enable);
 extern int scols_table_enable_header_repeat(struct libscols_table *tb, int enable);
 extern int scols_table_enable_export(struct libscols_table *tb, int enable);
