@@ -40,11 +40,13 @@
 #include "loopdev.h"
 #include "strutils.h"
 #include "mangle.h"
+#include "crc32.h"
 
 /*
  * Canonicalized (resolved) paths & tags cache
  */
 #define MNT_CACHE_CHUNKSZ	128
+#define MNT_CACHE_HBUCKETS	128	/* initial size of the path index */
 
 #define MNT_CACHE_ISTAG		(1 << 1) /* entry is TAG */
 #define MNT_CACHE_ISPATH	(1 << 2) /* entry is path */
@@ -55,12 +57,16 @@ struct mnt_cache_entry {
 	char			*key;	/* search key (e.g. uncanonicalized path) */
 	char			*value;	/* value (e.g. canonicalized path) */
 	int			flag;
+	size_t			hnext;	/* next path entry in the same hash bucket */
 };
 
 struct libmnt_cache {
 	struct mnt_cache_entry	*ents;
 	size_t			nents;
 	size_t			nallocs;
+	size_t			npaths;		/* number of path entries */
+	size_t			*hbuckets;	/* index+1 of the first path entry, or 0 */
+	size_t			nhbuckets;	/* power of two, or 0 */
 	int			refcount;
 	int			probe_sb_extra;	/* extra BLKID_SUBLKS_* flags */
 	bool			noprobe;	/* disable libblkid device probing */
@@ -138,6 +144,7 @@ void mnt_free_cache(struct libmnt_cache *cache)
 		free(e->key);
 	}
 	free(cache->ents);
+	free(cache->hbuckets);
 	if (cache->bc)
 		blkid_put_cache(cache->bc);
 	free(cache);
@@ -244,6 +251,60 @@ int mnt_cache_refer_vfs(struct libmnt_cache *cache, const struct ul_vfs_ops *vfs
 	return 0;
 }
 
+/*
+ * Hash compatible with streq_paths(): repeated and trailing slashes do not
+ * change the result. Uses the same tokenizer as streq_paths() so the two
+ * cannot drift apart.
+ */
+static uint32_t cache_hash_path(const char *path)
+{
+	const char *seg;
+	uint32_t crc = 0;
+	size_t sz;
+
+	while ((seg = ul_path_next_segment(path, &sz))) {
+		if (sz == 1 && *seg == '/' && *(seg + 1) == '\0')
+			break;				/* trailing slash */
+		crc = ul_crc32(crc, (const unsigned char *) seg, sz);
+		path = seg + sz;
+	}
+	return crc;
+}
+
+static void cache_hash_add(struct libmnt_cache *cache, size_t idx)
+{
+	struct mnt_cache_entry *e = &cache->ents[idx];
+	size_t b;
+
+	assert(cache->nhbuckets);
+
+	b = cache_hash_path(e->key) & (cache->nhbuckets - 1);
+
+	e->hnext = cache->hbuckets[b];
+	cache->hbuckets[b] = idx + 1;
+}
+
+/* (re)builds the path index; on ENOMEM it's disabled and lookups scan linearly */
+static void cache_hash_rebuild(struct libmnt_cache *cache, size_t nb)
+{
+	size_t i, *b;
+
+	b = calloc(nb, sizeof(*b));
+	if (!b) {
+		free(cache->hbuckets);
+		cache->hbuckets = NULL;
+		cache->nhbuckets = 0;
+		return;
+	}
+	free(cache->hbuckets);
+	cache->hbuckets = b;
+	cache->nhbuckets = nb;
+
+	for (i = 0; i < cache->nents; i++)
+		if (cache->ents[i].flag & MNT_CACHE_ISPATH)
+			cache_hash_add(cache, i);
+}
+
 /* note that the @key could be the same pointer as @value */
 static int cache_add_entry(struct libmnt_cache *cache, char *key,
 					char *value, int flag)
@@ -268,7 +329,19 @@ static int cache_add_entry(struct libmnt_cache *cache, char *key,
 	e->key = key;
 	e->value = value;
 	e->flag = flag;
+	e->hnext = 0;
 	cache->nents++;
+
+	if (flag & MNT_CACHE_ISPATH) {
+		cache->npaths++;
+		if (cache->nhbuckets < cache->npaths) {
+			size_t nb = cache->nhbuckets ? cache->nhbuckets * 2
+						     : MNT_CACHE_HBUCKETS;
+			cache_hash_rebuild(cache, nb);
+		} else {
+			cache_hash_add(cache, cache->nents - 1);
+		}
+	}
 
 	DBG_OBJ(CACHE, cache, ul_debug("add entry [%2zu] (%s): %s: %s",
 			cache->nents,
@@ -322,6 +395,23 @@ static const char *cache_find_path(struct libmnt_cache *cache, const char *path)
 
 	if (!cache || !path)
 		return NULL;
+
+	if (cache->nhbuckets) {
+		const char *res = NULL;
+		size_t b = cache_hash_path(path) & (cache->nhbuckets - 1);
+
+		/* chains are newest first, so the last match is the oldest
+		 * one, same as the linear scan below */
+		i = cache->hbuckets[b];
+		while (i) {
+			struct mnt_cache_entry *e = &cache->ents[i - 1];
+
+			if (streq_paths(path, e->key))
+				res = e->value;
+			i = e->hnext;
+		}
+		return res;
+	}
 
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
