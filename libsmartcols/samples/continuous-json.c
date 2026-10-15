@@ -51,6 +51,7 @@ fail:
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
+	const char *format = NULL;
 	int i, batch = 0, count = 0;
 
 	scols_init_debug(0);
@@ -58,12 +59,17 @@ int main(int argc, char *argv[])
 	for (i = 1; i < argc; i++) {
 		if (strcmp(argv[i], "--batch") == 0 && i + 1 < argc)
 			batch = strtos32_or_err(argv[++i], "failed to parse --batch");
+		else if (strcmp(argv[i], "--json-format") == 0 && i + 1 < argc)
+			format = argv[++i];
 	}
 
 	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 	scols_table_enable_json(tb, 1);
+
+	if (format && scols_table_set_json_format(tb, format) != 0)
+		errx(EXIT_FAILURE, "%s: unsupported JSON format", format);
 
 	setup_columns(tb);
 

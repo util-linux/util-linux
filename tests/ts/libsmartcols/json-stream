@@ -33,6 +33,22 @@ for fmt in pretty compact lines; do
 	ts_init_subtest "stream-$fmt"
 	LIBSMARTCOLS_JSON="$fmt" ts_run "$TESTPROG" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 	ts_finalize_subtest
+
+	# the same, but requested by scols_table_set_json_format()
+	ts_init_subtest "api-$fmt"
+	ts_run "$TESTPROG" --batch 3 --json-format "$fmt" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_finalize_subtest
 done
+
+# the API overwrites the environment variable
+ts_init_subtest "api-overwrites-env"
+LIBSMARTCOLS_JSON="pretty" ts_run "$TESTPROG" --batch 2 --json-format "lines" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "api-unsupported"
+"$TESTPROG" --json-format "nonsense" >> "$TS_OUTPUT" 2>&1
+echo "rc=$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
 
 ts_finalize
