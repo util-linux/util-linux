@@ -34,21 +34,36 @@ mkdir -p "$MNT/a" "$MNT/b" "$MNT/c"
 $TS_CMD_MOUNT --bind "$MNT" "$MNT" &> /dev/null || ts_die "cannot bind mount $MNT"
 $TS_CMD_MOUNT --make-private "$MNT" &> /dev/null
 
-$TS_CMD_FINDMNT --poll --json -o ACTION,TARGET >"$POLL" 2>> "$TS_ERRLOG" &
+# count the events for our mount points only, the poll mode reports all
+# changes in the mount table
+function count_events {
+	local d n=0
+
+	for d in a b c; do
+		grep -qF "\"target\": \"$MNT/$d\"" "$POLL" && n=$(( n + 1 ))
+	done
+	echo $n
+}
+
+# --timeout, so that the background findmnt cannot outlive the test
+$TS_CMD_FINDMNT --poll --json --timeout 30000 -o ACTION,TARGET \
+	>"$POLL" 2>> "$TS_ERRLOG" &
 FINDMNT_PID=$!
 sleep 1
 
 # Mount three file systems at the same time. They are likely to be reported
 # by the same poll() wakeup, which used to print the JSON objects separated by
 # commas (without an enclosing array).
+MOUNT_PIDS=()
 for d in a b c; do
 	$TS_CMD_MOUNT -t tmpfs tmpfs "$MNT/$d" &
+	MOUNT_PIDS+=($!)
 done
-wait $(jobs -p | grep -v "^$FINDMNT_PID$")
+wait "${MOUNT_PIDS[@]}"
 
 # wait for all the events, max. 10 seconds
 for i in $(seq 100); do
-	[ "$(grep -c '"action": "mount"' "$POLL")" -ge 3 ] && break
+	[ "$(count_events)" -ge 3 ] && break
 	sleep 0.1
 done
 
