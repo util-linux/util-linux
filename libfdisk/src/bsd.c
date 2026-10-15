@@ -410,6 +410,9 @@ static int bsd_delete_part(
 {
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
+	if (partnum >= BSD_MAXPARTITIONS)
+		return -EINVAL;
+
 	d->d_partitions[partnum].p_size   = 0;
 	d->d_partitions[partnum].p_offset = 0;
 	d->d_partitions[partnum].p_fstype = BSD_FS_UNUSED;

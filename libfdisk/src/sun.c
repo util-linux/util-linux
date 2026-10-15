@@ -741,6 +741,9 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, SUN));
 
+	if (partnum >= cxt->label->nparts_max)
+		return -EINVAL;
+
 	sunlabel = self_disklabel(cxt);
 	part = &sunlabel->partitions[partnum];
 	info = &sunlabel->vtoc.infos[partnum];

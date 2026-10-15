@@ -806,7 +806,7 @@ static int sgi_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	assert(cxt);
 	assert(cxt->label);
 
-	if (partnum > cxt->label->nparts_max)
+	if (partnum >= cxt->label->nparts_max)
 		return -EINVAL;
 
 	rc = set_partition(cxt, partnum, 0, 0, 0);
