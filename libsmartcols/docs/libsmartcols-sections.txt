@@ -194,6 +194,7 @@ scols_table_get_column
 scols_table_get_column_by_name
 scols_table_get_column_separator
 scols_table_get_cursor
+scols_table_get_json_format
 scols_table_get_line
 scols_table_get_line_separator
 scols_table_get_name
@@ -232,6 +233,7 @@ scols_table_remove_lines
 scols_table_set_column_separator
 scols_table_set_columns_iter
 scols_table_set_default_symbols
+scols_table_set_json_format
 scols_table_set_line_separator
 scols_table_set_name
 scols_table_set_stream
