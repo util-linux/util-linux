@@ -276,10 +276,6 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 {
 	struct libmnt_table *tb;
-	struct libmnt_ns *ns_old = mnt_context_switch_target_ns(cxt);
-
-	if (!ns_old)
-		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	tb = mnt_new_table();
 	if (!tb)
@@ -293,9 +289,6 @@ static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 		mnt_unref_table(tb);
 		tb = NULL;
 	}
-
-	if (!mnt_context_switch_ns(cxt, ns_old))
-		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	return tb;
 }
@@ -369,6 +362,7 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	struct libmnt_fs *fs, *parent;
 	struct libmnt_iter *itr;
 	struct libmnt_cache *cache;
+	struct libmnt_ns *ns_old;
 	const char *dir = NULL;
 	char *dirbuf = NULL;
 	int rc = MNT_EX_SUCCESS, found = 0, parent_id;
@@ -378,9 +372,15 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	if (!spec || !*spec)
 		return mk_notmounted_exit_code(spec);
 
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
+
 	tb = new_mountinfo(cxt);
-	if (!tb)
-		return MNT_EX_SOFTWARE;
+	if (!tb) {
+		rc = MNT_EX_SOFTWARE;
+		goto done;
+	}
 
 	/* it's always real mountpoint, don't assume that the target maybe a device */
 	mnt_context_disable_swapmatch(cxt, 1);
@@ -435,25 +435,37 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 done:
 	free(dirbuf);
 	mnt_unref_table(tb);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
+
 	return rc;
 }
 
 static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int rec)
 {
 	struct libmnt_fs *fs;
-	struct libmnt_table *tb;
+	struct libmnt_table *tb = NULL;
 	struct libmnt_iter *itr = NULL;
+	struct libmnt_ns *ns_old;
 	dev_t devno = 0;
 	int rc;
+
+	ns_old = mnt_context_switch_target_ns(cxt);
+	if (!ns_old)
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	/* Convert @spec to device name, Use the same logic like regular
 	 * "umount <spec>".
 	 */
 	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
-	if (rc == 1)
-		return mk_notmounted_exit_code(spec);
-	if (rc < 0)
-		return mk_exit_code(cxt, rc);		/* error */
+	if (rc == 1) {
+		rc = mk_notmounted_exit_code(spec);
+		goto done;
+	}
+	if (rc < 0) {
+		rc = mk_exit_code(cxt, rc);
+		goto done;
+	}
 
 	if (!mnt_fs_get_srcpath(fs) || !mnt_fs_get_devno(fs))
 		errx(MNT_EX_USAGE, _("%s: failed to determine source "
@@ -494,6 +506,8 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 done:
 	mnt_free_iter(itr);
 	mnt_unref_table(tb);
+	if (!mnt_context_switch_ns(cxt, ns_old))
+		err(MNT_EX_SYSERR, _("failed to switch namespace"));
 
 	return rc;
 }
