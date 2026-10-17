@@ -55,6 +55,31 @@ ts_init_subtest "canon"
 $TS_CMD_HEXDUMP -C $FILES/ascii.in &> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "canon-n3"
+$TS_CMD_HEXDUMP -C -n 3 $FILES/ascii.in &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "canon-n8"
+$TS_CMD_HEXDUMP -C -n 8 $FILES/ascii.in &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "canon-n9"
+$TS_CMD_HEXDUMP -C -n 9 $FILES/ascii.in &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "canon-empty"
+$TS_CMD_HEXDUMP -C /dev/null &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "canon-color"
+$TS_CMD_HEXDUMP -C --color=always -n 9 $FILES/ascii.in &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "canon-hd"
+ln -sf "$TS_CMD_HEXDUMP" "$TS_OUTDIR/hd"
+"$TS_OUTDIR/hd" -n 9 $FILES/ascii.in &> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "2b_dec"
 TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP --two-bytes-decimal $FILES/ascii.in &> "$TS_OUTPUT"
