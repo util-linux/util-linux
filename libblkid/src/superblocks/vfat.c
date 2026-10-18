@@ -403,8 +403,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		if (fsinfo_sect) {
 			struct fat32_fsinfo *fsinfo;
 
-			buf = blkid_probe_get_buffer(pr,
-					(uint64_t) fsinfo_sect * sector_size,
+			buf = blkid_probe_get_block(pr, fsinfo_sect, sector_size,
 					sizeof(struct fat32_fsinfo));
 			if (buf == NULL)
 				return errno ? -errno : 1;

@@ -112,8 +112,8 @@ static inline uint32_t count_crc32(const unsigned char *buf, size_t len,
 static inline const unsigned char *get_lba_buffer(blkid_probe pr,
 					uint64_t lba, size_t bytes)
 {
-	return blkid_probe_get_buffer(pr,
-			blkid_probe_get_sectorsize(pr) * lba, bytes);
+	return blkid_probe_get_block(pr, lba,
+			blkid_probe_get_sectorsize(pr), bytes);
 }
 
 static inline int guidcmp(efi_guid_t left, efi_guid_t right)

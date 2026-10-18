@@ -427,6 +427,11 @@ extern const unsigned char *blkid_probe_get_buffer_direct(blkid_probe pr,
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
+extern const unsigned char *blkid_probe_get_block(blkid_probe pr,
+				uint64_t blk, uint64_t blksz, uint64_t len)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
 extern const unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
