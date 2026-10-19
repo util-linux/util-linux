@@ -60,7 +60,7 @@ struct hookset_data {
 	struct list_head	datas;
 };
 
-/* individial callback */
+/* individual callback */
 struct hookset_hook {
 	const struct libmnt_hookset *hookset;
 	int stage;
