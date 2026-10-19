@@ -87,7 +87,9 @@ A system reboot would be expected in near future if you're going to use this opt
 *-N*, *--namespace* _ns_::
 Perform *umount* in the mount namespace specified by _ns_. _ns_ is either PID of process running in that namespace or special file representing that namespace.
 +
-*umount* switches to the namespace when it reads _/etc/fstab_, writes _/etc/mtab_ (or writes to _/run/mount_) and calls *umount*(2) system call, otherwise it runs in the original namespace. It means that the target mount namespace does not have to contain any libraries or other requirements necessary to execute *umount*(2) command.
+*umount* switches to the namespace when it reads _/etc/fstab_, writes _/etc/mtab_ (or writes to _/run/mount_), resolves paths and reads mount information for *--recursive* or *--all-targets*, and calls the *umount*(2) system call. Otherwise it runs in the original namespace. The target mount namespace does not have to contain any libraries or other requirements necessary to execute the *umount* command.
++
+Switching to the target mount namespace resets the root and working directories to that namespace's root directory. Relative path arguments are therefore resolved from the target namespace's _/_ directory, including with *--recursive* and *--all-targets*.
 +
 See *mount_namespaces*(7) for more information.
 
