@@ -53,13 +53,17 @@ static int erofs_verify_checksum(blkid_probe pr, const struct blkid_idmag *mag,
 
 	expected = le32_to_cpu(sb->checksum);
 
-	/* kernel validates blkszbits 9..PAGE_SHIFT;
-	 * block size must be > EROFS_SUPER_OFFSET to avoid underflow */
-	if (sb->blkszbits < 9 || sb->blkszbits > 16
-	    || (1U << sb->blkszbits) <= EROFS_SUPER_OFFSET)
+	/* kernel validates blkszbits 9..PAGE_SHIFT */
+	if (sb->blkszbits < 9 || sb->blkszbits > 16)
 		return 0;
 
-	csummed_size = (1U << sb->blkszbits) - EROFS_SUPER_OFFSET;
+	/*
+	 * The checksum covers the superblock up to the end of its block, or
+	 * the whole block if blocks are not larger than EROFS_SUPER_OFFSET.
+	 */
+	csummed_size = 1U << sb->blkszbits;
+	if (csummed_size > EROFS_SUPER_OFFSET)
+		csummed_size -= EROFS_SUPER_OFFSET;
 
 	csummed = blkid_probe_get_sb_buffer(pr, mag, csummed_size);
 	if (!csummed)
