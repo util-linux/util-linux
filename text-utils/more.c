@@ -223,6 +223,7 @@ struct more_control {
 		is_eof,                 /* EOF detected */
 		is_paused,  		/* is output paused */
 		is_secure,		/* is running in secure mode */
+		no_eol,			/* last byte written to stdout was not \n */
 		no_quit_dialog,  	/* suppress quit dialog */
 		no_scroll,  		/* do not scroll, clear the screen and then display text */
 		no_tty_in,  		/* is input in interactive mode */
@@ -418,10 +419,12 @@ static int check_magic(struct more_control *ctl, char *fs)
 	if (magic_error_msg) {
 		printf("%s: %s: %s\n", program_invocation_short_name,
 			_("magic failed"), magic_error_msg);
+		ctl->no_eol = 0;
 		return 0;
 	}
 	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
 		printf(_("\n******** %s: Not a text file ********\n\n"), fs);
+		ctl->no_eol = 0;
 		return 1;
 	}
 #else
@@ -442,6 +445,7 @@ static int check_magic(struct more_control *ctl, char *fs)
 		case 0x457f:	/* simple ELF detection */
 			printf(_("\n******** %s: Not a text file ********\n\n"),
 			       fs);
+			ctl->no_eol = 0;
 			return 1;
 		}
 	}
@@ -475,6 +479,7 @@ static void checkf(struct more_control *ctl, char *fs)
 	}
 	if ((st.st_mode & S_IFMT) == S_IFDIR) {
 		printf(_("\n*** %s: directory ***\n\n"), fs);
+		ctl->no_eol = 0;
 		ctl->current_file = NULL;
 		return;
 	}
@@ -1970,13 +1975,19 @@ static void screen(struct more_control *ctl, int num_lines)
 	}
 }
 
-static void copy_file(FILE *f)
+/*
+ * Copy the file to stdout and keep track of whether the output ended
+ * without a trailing newline.
+ */
+static void copy_file(struct more_control *ctl, FILE *f)
 {
 	char buf[BUFSIZ];
 	size_t sz;
 
-	while ((sz = fread(&buf, sizeof(char), sizeof(buf), f)) > 0)
+	while ((sz = fread(&buf, sizeof(char), sizeof(buf), f)) > 0) {
 		fwrite(&buf, sizeof(char), sz, stdout);
+		ctl->no_eol = buf[sz - 1] != '\n';
+	}
 }
 
 
@@ -2007,6 +2018,10 @@ static void display_file(struct more_control *ctl, int left)
 				more_clear_screen(ctl);
 		}
 		if (ctl->print_banner) {
+			/* the banner has to start on a new line */
+			if (ctl->no_eol)
+				putchar('\n');
+			ctl->no_eol = 0;
 			if (ctl->bad_stdout)
 				erase_to_col(ctl, 0);
 			if (ctl->clear_line_ends)
@@ -2026,7 +2041,7 @@ static void display_file(struct more_control *ctl, int left)
 				left = ctl->lines_per_page - 4;
 		}
 		if (ctl->no_tty_out)
-			copy_file(ctl->current_file);
+			copy_file(ctl, ctl->current_file);
 		else
 			screen(ctl, left);
 	}
@@ -2213,7 +2228,7 @@ int main(int argc, char **argv)
 	ctl.sigfd = signalfd(-1, &ctl.sigset, SFD_CLOEXEC);
 	if (ctl.no_tty_in) {
 		if (ctl.no_tty_out)
-			copy_file(stdin);
+			copy_file(&ctl, stdin);
 		else {
 			ctl.current_file = stdin;
 			display_file(&ctl, left);
