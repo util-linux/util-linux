@@ -31,8 +31,12 @@ grep -q '^E:ID_FS_TYPE=ext3$' "$UDEV_DATA" || ts_skip "udev database was refresh
 mkdir -p "$TS_MOUNTPOINT"
 ts_init_subtest "stale-type"
 if ! $TS_CMD_MOUNT -t auto "$TS_DEVICE" "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"; then
-	cat "$TS_ERRLOG" >> "$TS_OUTPUT"
-	ts_failed "mount failed with stale udev filesystem type"
+	error=$(head -n 1 "$TS_ERRLOG")
+	if [ -n "$error" ]; then
+		ts_failed "mount failed with stale udev filesystem type: $error"
+	else
+		ts_failed "mount failed with stale udev filesystem type (no stderr)"
+	fi
 else
 	fstype=$($TS_CMD_FINDMNT -n -o FSTYPE --target "$TS_MOUNTPOINT")
 	echo "$fstype" >> "$TS_OUTPUT"
