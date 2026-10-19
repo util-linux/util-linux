@@ -46,31 +46,27 @@ mkdir -p "$work/origin" "$view/caller-only"
 "$mount" -n -t tmpfs origin "$work/origin"
 ln -s "$work/origin" "$view/link"
 
-# The target exits on EOF if this shell is killed, closing the coprocess pipe.
+# The coprocess pipes carry the handshake in both directions: the target
+# announces itself on its stdout once the namespace is set up, and its stdin
+# stays open until this shell exits, so a hard kill here makes the read below
+# hit EOF and the target leaves with its mounts.
 coproc target_ns {
 exec "$unshare" --mount --propagation private bash -c '
 set -e
 view=$1
-ready=$2
-mount=$3
+mount=$2
 "$mount" -n -t tmpfs view "$view"
 mkdir -p "$view/target" "$view/other" "$view/target-only"
 ln -s target "$view/link"
-touch "$ready"
+echo ready
 read -r || :
-' bash "$view" "$work/ready" "$mount"
+' bash "$view" "$mount"
 }
 pid=$target_ns_PID
-for ((i = 0; i < 100; i++)); do
-	[ -e "$work/ready" ] && break
-	if ! kill -0 "$pid" 2>/dev/null; then
-		echo "target namespace process exited before becoming ready" >&2
-		exit 1
-	fi
-	sleep 0.1
-done
-if [ ! -e "$work/ready" ]; then
-	echo "timed out after 10 seconds waiting for the target namespace" >&2
+# A target that dies before reporting closes the pipe, so this fails at once
+# instead of waiting out the timeout.
+if ! read -r -t 30 -u "${target_ns[0]}" reply || [ "$reply" != ready ]; then
+	echo "target namespace did not become ready" >&2
 	exit 1
 fi
 ns="/proc/$pid/ns/mnt"
