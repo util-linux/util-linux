@@ -120,8 +120,7 @@ static int probe_dasd_pt_cdl(blkid_probe pr, blkid_partlist ls,
 	 * but we don't know blk_per_trk yet.
 	 */
 	for (blk = 3; blk <= 20; blk++) {
-		buf = blkid_probe_get_buffer(pr,
-			(uint64_t) blk * blocksize,
+		buf = blkid_probe_get_block(pr, blk, blocksize,
 			sizeof(struct dasd_format4_label));
 		if (!buf)
 			return errno ? -errno : BLKID_PROBE_NONE;
@@ -162,8 +161,7 @@ static int probe_dasd_pt_cdl(blkid_probe pr, blkid_partlist ls,
 		uint64_t start_512, size_512;
 		blkid_partition par;
 
-		buf = blkid_probe_get_buffer(pr,
-				(uint64_t) blk * blocksize,
+		buf = blkid_probe_get_block(pr, blk, blocksize,
 				sizeof(struct dasd_format1_label));
 		if (!buf)
 			return errno ? -errno : BLKID_PROBE_NONE;
@@ -285,8 +283,7 @@ static int probe_dasd_pt(blkid_probe pr,
 	size_t i = 0;
 
 	blocksize = blkid_probe_get_sectorsize(pr);
-	buf = blkid_probe_get_buffer(pr,
-			(uint64_t) 2 * blocksize,
+	buf = blkid_probe_get_block(pr, 2, blocksize,
 			sizeof(struct dasd_volume_label_ldl));
 	if (!buf)
 		return errno ? -errno : BLKID_PROBE_NONE;
@@ -307,8 +304,7 @@ static int probe_dasd_pt(blkid_probe pr,
 			if (dasd_blocksizes[i] == blocksize)
 				continue;
 
-			buf = blkid_probe_get_buffer(pr,
-					(uint64_t) 2 * dasd_blocksizes[i],
+			buf = blkid_probe_get_block(pr, 2, dasd_blocksizes[i],
 					sizeof(struct dasd_volume_label_ldl));
 			if (!buf) {
 				if (errno)

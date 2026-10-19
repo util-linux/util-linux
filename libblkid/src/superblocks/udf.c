@@ -361,8 +361,7 @@ real_blksz:
 	/* pick the primary descriptor from the list and read UDF identifiers */
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
-			blkid_probe_get_buffer(pr,
-					((uint64_t) loc + b) * bs,
+			blkid_probe_get_block(pr, (uint64_t) loc + b, bs,
 					sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;
@@ -546,9 +545,7 @@ real_blksz:
 	/* Pick the first logical volume integrity descriptor and read UDF revision */
 	if (lvid_loc && lvid_len >= sizeof(*vd)) {
 		vd = (struct volume_descriptor *)
-			blkid_probe_get_buffer(pr,
-					(uint64_t) lvid_loc * bs,
-					sizeof(*vd));
+			blkid_probe_get_block(pr, lvid_loc, bs, sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;
 		type = le16_to_cpu(vd->tag.id);

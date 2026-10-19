@@ -868,6 +868,23 @@ const unsigned char *blkid_probe_get_buffer_direct(blkid_probe pr, uint64_t off,
 }
 #endif
 
+/*
+ * This is blkid_probe_get_buffer() with the offset specified as a block number
+ * and block size. The offset is calculated in 64 bits and the request is
+ * ignored if it does not fit, so callers do not need to cast or check the
+ * on-disk block numbers themselves.
+ */
+const unsigned char *blkid_probe_get_block(blkid_probe pr, uint64_t blk,
+					   uint64_t blksz, uint64_t len)
+{
+	if (blksz && blk > UINT64_MAX / blksz) {
+		DBG(BUFFER, ul_debug("\t  block offset overflow (ignore)"));
+		errno = 0;
+		return NULL;
+	}
+	return blkid_probe_get_buffer(pr, blk * blksz, len);
+}
+
 /**
  * blkid_probe_reset_buffers:
  * @pr: prober

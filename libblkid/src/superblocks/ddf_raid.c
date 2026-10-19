@@ -118,8 +118,8 @@ static int probe_ddf(blkid_probe pr,
 		/* check primary header */
 		const unsigned char *buf;
 
-		buf = blkid_probe_get_buffer(pr,
-					lba << 9, sizeof(ddf->signature));
+		buf = blkid_probe_get_block(pr, lba, 512,
+					sizeof(ddf->signature));
 		if (!buf)
 			return errno ? -errno : 1;
 

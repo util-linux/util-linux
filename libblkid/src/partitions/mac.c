@@ -61,7 +61,7 @@ static inline const unsigned char *get_mac_block(
 					uint16_t block_size,
 					uint32_t num)
 {
-	return blkid_probe_get_buffer(pr, (uint64_t) num * block_size, block_size);
+	return blkid_probe_get_block(pr, num, block_size, block_size);
 }
 
 static inline int has_part_signature(struct mac_partition *p)
