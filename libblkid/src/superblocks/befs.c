@@ -275,6 +275,17 @@ static int32_t compare_keys(const char keys1[], uint16_t keylengths1[],
 	return result;
 }
 
+static int64_t get_value(const int64_t *values, int32_t index, int fs_le)
+{
+	int64_t v;
+
+	/* The values array is misaligned by design whenever
+	 * all_key_count is not a multiple of 4 (see befs_bt_valarray()
+	 * in the Linux BeFS driver), so read it with memcpy. */
+	memcpy(&v, (const uint8_t *) values + index * sizeof(v), sizeof(v));
+	return FS64_TO_CPU(v, fs_le);
+}
+
 static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			const struct befs_inode *bi, const char *key, int fs_le)
 {
@@ -345,9 +356,9 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		if (cmp == 0) {
 			if ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
 							== BPLUSTREE_NULL)
-				return FS64_TO_CPU(values[last], fs_le);
+				return get_value(values, last, fs_le);
 
-			node_pointer = FS64_TO_CPU(values[last], fs_le);
+			node_pointer = get_value(values, last, fs_le);
 		} else if (cmp < 0)
 			node_pointer = FS64_TO_CPU(bn->overflow_link, fs_le);
 		else {
@@ -363,7 +374,7 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 				if (cmp == 0) {
 					if ((int64_t) FS64_TO_CPU(bn->overflow_link,
 						fs_le) == BPLUSTREE_NULL)
-						return FS64_TO_CPU(values[mid],
+						return get_value(values, mid,
 									fs_le);
 					break;
 				}
@@ -375,13 +386,13 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			}
 			if (cmp < 0) {
 				if (mid + 1U < all_key_count)
-					node_pointer = FS64_TO_CPU(values[mid + 1],
+					node_pointer = get_value(values, mid + 1,
 									fs_le);
 				else
 					node_pointer = FS64_TO_CPU(bn->overflow_link,
 									fs_le);
 			} else
-				node_pointer = FS64_TO_CPU(values[mid], fs_le);
+				node_pointer = get_value(values, mid, fs_le);
 		}
 	} while (++loop_detect < 100 &&
 		(int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
