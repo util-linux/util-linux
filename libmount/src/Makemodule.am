@@ -174,14 +174,6 @@ test_mount_context_CFLAGS = $(libmount_tests_cflags)
 test_mount_context_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_context_LDADD = $(libmount_tests_ldadd)
 
-if LINUX
-check_PROGRAMS += test_mount_restricted
-test_mount_restricted_SOURCES = libmount/src/test_restricted.c
-test_mount_restricted_CFLAGS = $(libmount_tests_cflags)
-test_mount_restricted_LDFLAGS = $(libmount_tests_ldflags)
-test_mount_restricted_LDADD = $(libmount_tests_ldadd)
-endif
-
 test_mount_context_mount_SOURCES = libmount/src/context_mount.c
 test_mount_context_mount_CFLAGS = $(libmount_tests_cflags)
 test_mount_context_mount_LDFLAGS = $(libmount_tests_ldflags)

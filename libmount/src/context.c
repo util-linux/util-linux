@@ -4155,9 +4155,27 @@ done:
 }
 
 static int test_restricted(struct libmnt_test *ts __attribute__((unused)),
-			   int argc, char *argv[] __attribute__((unused)))
+			   int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
+	int restricted;
+
+	if (argc == 2 && strcmp(argv[1], "setuid") == 0) {
+		if (getuid() == 0 || geteuid() != 0 || !is_privileged_execution()) {
+			puts("setuid execution unavailable");
+			return 0;
+		}
+		if (setuid(0) != 0)
+			return -errno;
+
+		cxt = mnt_new_context();
+		if (!cxt)
+			return -ENOMEM;
+		restricted = mnt_context_is_restricted(cxt);
+		mnt_free_context(cxt);
+		printf("setuid default: %d\n", restricted);
+		return restricted ? -EPERM : 0;
+	}
 
 	if (argc != 1)
 		return -EINVAL;

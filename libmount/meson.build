@@ -176,43 +176,29 @@ libmount_test_src_override = {
 if program_tests
   foreach libmount_test: libmount_tests
     test_name = 'test_mount_' + libmount_test
-    exe = executable(
-      test_name,
-      'src/' + libmount_test_src_override.get(libmount_test, libmount_test) + '.c',
-      include_directories : [dir_include],
-      link_with : [lib__mount, lib_common],
-      dependencies : lib__mount_deps + blkid_static_dep,
-      c_args : ['-DTEST_PROGRAM'],
-    )
+    if libmount_test == 'context'
+      exe = executable(
+        test_name,
+        'src/context.c',
+        include_directories : [dir_include],
+        dependencies : [mount_static_dep],
+        c_args : ['-DTEST_PROGRAM'],
+      )
+    else
+      exe = executable(
+        test_name,
+        'src/' + libmount_test_src_override.get(libmount_test, libmount_test) + '.c',
+        include_directories : [dir_include],
+        link_with : [lib__mount, lib_common],
+        dependencies : lib__mount_deps + blkid_static_dep,
+        c_args : ['-DTEST_PROGRAM'],
+      )
+    endif
     # the test-setup expects the helpers in the toplevel build-directory
     link = meson.project_build_root() / test_name
     run_command('ln', '-srf', exe.full_path(), link,
       check : true)
   endforeach
-endif
-
-if program_tests and LINUX
-  restricted_test_deps = lib__mount_deps + [blkid_static_dep]
-  if lib_selinux.found()
-    restricted_test_deps += selinux_deps
-  endif
-  if lib_cryptsetup.found()
-    restricted_test_deps += cryptsetup_deps
-  endif
-  if conf.get('USE_LIBMOUNT_UDEV_SUPPORT').to_string() == '1'
-    restricted_test_deps += systemd_deps
-  endif
-  # Avoid a build-tree libblkid dependency, which AT_SECURE cannot load.
-  exe = executable(
-    'test_mount_restricted',
-    'src/test_restricted.c',
-    objects : lib__mount.extract_all_objects(recursive : true),
-    include_directories : [dir_include, dir_libmount],
-    link_with : [lib_common],
-    dependencies : restricted_test_deps,
-  )
-  link = meson.project_build_root() / 'test_mount_restricted'
-  run_command('ln', '-srf', exe.full_path(), link, check : true)
 endif
 
 subdir('python')
