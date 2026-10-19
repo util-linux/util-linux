@@ -50,6 +50,8 @@ The recommended way is not to specify start offsets at all and specify partition
 
 *sfdisk* uses *BLKRRPART* (reread partition table) ioctl to make sure that the device is not used by system or other tools (see also *--no-reread*). It's possible that this feature or another *sfdisk* activity races with *systemd-udevd*(8). The recommended way how to avoid possible collisions is to use *--lock* option. The exclusive lock will cause *systemd-udevd* to skip the event handling on the device.
 
+Since version 2.43, when *-N* or *--append* is used on a device that is in use, *sfdisk* informs the kernel about the modified partitions only (*BLKPG* ioctl) instead of re-reading the whole partition table. Unmodified partitions may stay mounted in this case. For unused devices and for image files the complete partition table is re-read as before.
+
 The *sfdisk* prompt is only a hint for users and a displayed partition number does not mean that the same partition table entry will be created (if *-N* not specified), especially for tables with gaps.
 
 == COMMANDS
@@ -62,6 +64,8 @@ The default *sfdisk* command is to read the specification for the desired partit
 If the option *-N* or *--partno* is specified, then the changes are applied to the partition addressed by _partition-number_. The unspecified fields of the partition are not modified.
 +
 Note that it's possible to address an unused partition with *-N*. For example, an MBR always contains 4 partitions, but the number of used partitions may be smaller. In this case *sfdisk* follows the default values from the partition table and does not use built-in defaults for the unused partition given with *-N*. See also *--append*.
++
+Note that the kernel refuses to delete or move a partition that is in use, but it does not refuse to shrink it. Reducing a partition that is currently mounted may result in I/O errors and filesystem damage; shrink the filesystem first.
 
 *-A*, *--activate* __device__ [__partition-number__...]::
 Switch on the bootable flag for the specified partitions and switch off the bootable flag on all unspecified partitions. The special placeholder '-' may be used instead of the partition numbers to switch off the bootable flag on all partitions.
@@ -188,7 +192,7 @@ Do not print device names in *--dump* output.
 Do not check through the re-read-partition-table ioctl whether the device is in use.
 
 *--no-tell-kernel*::
-Don't tell the kernel about partition changes. This option is recommended together with *--no-reread* to modify a partition on used disk. The modified partition should not be used (e.g., mounted).
+Don't tell the kernel about partition changes. Note that since version 2.43 *sfdisk* updates the modified partitions only when *-N* or *--append* is used on a device in use, so this option is no longer needed for that case; use it only to leave the kernel's view of the device completely unchanged. The modified partition should not be used (e.g., mounted).
 
 *-O*, *--backup-file* _path_::
 Override the default backup filename. Note that the device name and offset are always appended to the filename.
