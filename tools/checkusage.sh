@@ -32,7 +32,7 @@ test -z "$CU_DUMP" || rm -f /tmp/checkusage--{help,version,unknownopt}
 ##   alt_more__help="x"      # more(1) had neither --help nor -h
 
 alt_fsck__unknownopt="x" # fsck passes unknown opts to fsck.ext4, etc.
-alt_mkfs__unknownopt="x" # dito
+alt_mkfs__unknownopt="x" # ditto
 alt_kill__unknownopt="inval pids" # trick, kill does not use errtryhelp()
 if [ $(id -ru) -eq 0 ]; then
 	alt_sulogin__unknownopt="x" # would hang at pwd prompt
