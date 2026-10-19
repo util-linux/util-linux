@@ -20,6 +20,8 @@ TS_DESC="filter"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF"/lslocks-functions.bash
+
 ts_check_test_command "$TS_CMD_LSLOCKS"
 ts_check_test_command "$TS_CMD_FLOCK"
 ts_check_test_command "$TS_HELPER_MKFDS"
@@ -48,27 +50,6 @@ trap "cleanup" EXIT
 if ! dd if=/dev/zero of="$FILE" bs=$SIZE count=1 status=none; then
     ts_skip "failed to create a temporary file"
 fi
-
-# Duplicate lines have been observed in lslocks output on ppc64le
-# (kernel 7.0). The root cause is unknown. No duplication path has
-# been found in the lslocks code itself. Remove duplicates to avoid
-# false test failures, but warn about it.
-LSLOCKS_DUP_FOUND=""
-
-do_lslocks()
-{
-    local raw
-    raw=$("$TS_CMD_LSLOCKS" "$@")
-    if [ -z "$raw" ]; then
-	return
-    fi
-    local dedup
-    dedup=$(echo "$raw" | uniq)
-    if [ "$raw" != "$dedup" ]; then
-	LSLOCKS_DUP_FOUND="yes"
-    fi
-    echo "$dedup"
-}
 
 do_lslocks_flock_crash()
 {
@@ -187,7 +168,6 @@ do_lslocks_fcntl()
 
 if [ "$LSLOCKS_DUP_FOUND" = "yes" ]; then
     echo "WARNING: duplicate lines in lslocks output" >&2
-    TS_KNOWN_FAIL="yes"
 fi
 
 ts_finalize

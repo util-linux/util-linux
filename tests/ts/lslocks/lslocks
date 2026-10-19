@@ -20,6 +20,8 @@ TS_DESC="flock"
 . "$TS_TOPDIR"/functions.sh
 ts_init "$*"
 
+. "$TS_SELF"/lslocks-functions.bash
+
 ts_check_test_command "$TS_CMD_LSLOCKS"
 ts_check_test_command "$TS_HELPER_MKFDS"
 ts_check_prog "sed"
@@ -31,6 +33,10 @@ FILE=${FILE0}--$$
 FD=17
 DFD=18
 COLS=COMMAND,TYPE,SIZE,MODE,START,END
+# MODE keeps the lines unique; a read and a write lock on the same
+# file would be reported as two identical lines by PATH alone, and
+# do_lslocks() would remove one of them as a duplicate.
+COLS_PATH=PATH,MODE
 OPTS="--raw --noheadings"
 METHODS=(
     flock-sh
@@ -63,10 +69,10 @@ run_lslocks()
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS}"
+	    do_lslocks ${OPTS} --pid "${PID}" -o "${COLS}"
 	    echo "# $m + ${COLS} + ${OPTS}": $?
-	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o PATH | sed -e 's#.*\('"$FILE0"'\)--[0-9]\+ *$#\1#'
-	    echo "# $m + PATH + ${OPTS}": ${PIPESTATUS[0]}
+	    do_lslocks ${OPTS} --pid "${PID}" -o "${COLS_PATH}" | sed -e 's#.*\('"$FILE0"'\)--[0-9]\+ #\1 #'
+	    echo "# $m + ${COLS_PATH} + ${OPTS}": ${PIPESTATUS[0]}
 	    echo DONE >&"${MKFDS[1]}"
 	fi
     } > "$TS_OUTPUT" 2>&1
@@ -82,7 +88,7 @@ run_lslocks_with_co_holders()
 	rm -f "${FILE}"
 	coproc MKFDS { "$TS_HELPER_MKFDS" make-regular-file $FD file="$FILE" lock=$m dupfd=$DFD; }
 	if read -r -u "${MKFDS[0]}" PID; then
-	    "$TS_CMD_LSLOCKS" ${OPTS} --pid "${PID}" -o "${COLS_WITH_HOLDERS}" | sed -e "s/${PID},/1,/g"
+	    do_lslocks ${OPTS} --pid "${PID}" -o "${COLS_WITH_HOLDERS}" | sed -e "s/${PID},/1,/g"
 	    echo "# $m + ${COLS_WITH_HOLDERS} + ${OPTS}": ${PIPESTATUS[0]}
 	    echo DONE >&"${MKFDS[1]}"
 	fi
@@ -102,5 +108,9 @@ for m in "${OFD_METHODS[@]}"; do
     run_lslocks_with_co_holders "$m"
     ts_finalize_subtest
 done
+
+if [ "$LSLOCKS_DUP_FOUND" = "yes" ]; then
+    echo "WARNING: duplicate lines in lslocks output" >&2
+fi
 
 ts_finalize
