@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="udev filesystem type cache"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_prog "mkfs.ext3"
+ts_check_prog "mkfs.ext4"
+ts_check_prog "udevadm"
+
+ts_skip_nonroot
+ts_scsi_debug_init dev_size_mb=50
+
+mkfs.ext3 -F "$TS_DEVICE" &> /dev/null || ts_skip "mkfs.ext3 failed"
+udevadm trigger --action=change --subsystem-match=block \
+	--sysname-match="${TS_DEVICE##*/}" &> /dev/null
+udevadm settle
+
+UDEV_DATA="/run/udev/data/b$(cat "/sys/class/block/${TS_DEVICE##*/}/dev")"
+grep -q '^E:ID_FS_TYPE=ext3$' "$UDEV_DATA" || ts_skip "udev did not record ext3"
+
+# mkfs does not emit a uevent, so udev still reports ext3 here.
+mkfs.ext4 -F "$TS_DEVICE" &> /dev/null || ts_skip "mkfs.ext4 failed"
+grep -q '^E:ID_FS_TYPE=ext3$' "$UDEV_DATA" || ts_skip "udev database was refreshed"
+
+mkdir -p "$TS_MOUNTPOINT"
+ts_init_subtest "stale-type"
+if ! $TS_CMD_MOUNT -t auto "$TS_DEVICE" "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"; then
+	ts_failed "mount failed with stale udev filesystem type"
+else
+	fstype=$($TS_CMD_FINDMNT -n -o FSTYPE --target "$TS_MOUNTPOINT")
+	echo "$fstype" >> "$TS_OUTPUT"
+	$TS_CMD_UMOUNT "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	[ "$fstype" = "ext4" ] || ts_failed "mounted as $fstype, expected ext4"
+fi
+ts_finalize_subtest
+
+ts_finalize
