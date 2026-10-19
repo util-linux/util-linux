@@ -417,9 +417,7 @@ static int check_magic(struct more_control *ctl, char *fs)
 	const char *magic_error_msg = magic_error(ctl->magic);
 
 	if (magic_error_msg) {
-		printf("%s: %s: %s\n", program_invocation_short_name,
-			_("magic failed"), magic_error_msg);
-		ctl->no_eol = 0;
+		warnx("%s: %s", _("magic failed"), magic_error_msg);
 		return 0;
 	}
 	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
