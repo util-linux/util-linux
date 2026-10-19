@@ -28,8 +28,8 @@ grep -q '^E:ID_FS_TYPE=ext3$' "$UDEV_DATA" || ts_skip "udev did not record ext3"
 mkfs.ext4 -F "$TS_DEVICE" &> /dev/null || ts_skip "mkfs.ext4 failed"
 grep -q '^E:ID_FS_TYPE=ext3$' "$UDEV_DATA" || ts_skip "udev database was refreshed"
 
-mkdir -p "$TS_MOUNTPOINT"
 ts_init_subtest "stale-type"
+mkdir -p "$TS_MOUNTPOINT"
 if ! $TS_CMD_MOUNT -t auto "$TS_DEVICE" "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"; then
 	error=$(head -n 1 "$TS_ERRLOG")
 	if [ -n "$error" ]; then
