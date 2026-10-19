@@ -1069,7 +1069,7 @@ static char *record_ctime(struct dmesg_control *ctl,
 
 	record_localtime(ctl, rec, &tm);
 
-	/* TRANSLATORS: dmesg uses strftime() fo generate date-time string
+	/* TRANSLATORS: dmesg uses strftime() to generate date-time string
 	   where %a is abbreviated name of the day, %b is abbreviated month
 	   name and %e is day of the month as a decimal number. Please, set
 	   proper month/day order here */
@@ -1080,7 +1080,7 @@ static char *record_ctime(struct dmesg_control *ctl,
 
 static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 {
-	/* TRANSLATORS: dmesg uses strftime() fo generate date-time string
+	/* TRANSLATORS: dmesg uses strftime() to generate date-time string
 	   where: %b is abbreviated month and %e is day of the month as a
 	   decimal number. Please, set proper month/day order here. */
 	if (strftime(buf, bufsiz, _("%b%e %H:%M"), tm) == 0)
