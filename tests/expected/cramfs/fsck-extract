@@ -1,0 +1,6 @@
+duplicate name
+ret: 8
+outside: original
+dot-dot name
+dangerous filename: ..
+ret: 4

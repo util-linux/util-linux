@@ -445,6 +445,9 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 
 static int is_dangerous_filename(char *name, int len)
 {
+	/* on-disk names are padded with zeros to a multiple of 4 */
+	len = strnlen(name, len);
+
 	return (len == 1 && name[0] == '.') ||
 	       (len == 2 && name[0] == '.' && name[1] == '.');
 }
@@ -542,7 +545,8 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node('f', i, path);
 	if (*extract_dir != '\0') {
-		outfd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
+		/* fail on existing paths, like mkdir(), symlink() and mknod() */
+		outfd = open(path, O_WRONLY | O_CREAT | O_EXCL, i->mode);
 		if (outfd < 0)
 			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
