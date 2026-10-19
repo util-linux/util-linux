@@ -955,7 +955,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
 					 int assoc,
-					 bool sockets_only)
+					 bool sockets_and_ns_only)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
@@ -968,7 +968,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 	else {
 		const struct file_class *class = stat2class(&sb);
 
-		if (sockets_only
+		if (sockets_and_ns_only
 		    /* A nsfs file is not a socket but the nsfs file can
 		     * be used as a entry point to collect information from
 		     * other network namespaces. Based on the information,
@@ -1146,24 +1146,39 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 	fclose(fp);
 }
 
+enum outofbox_attrs {
+	OUTOFBOX_NAMESPACE = (1 << 0),
+};
+
+struct outofbox_fdecl {
+	enum association assoc;
+	const char *name;
+	unsigned int attrs;
+};
+
+#define LAST_OUTOFBOX_FDECL { .name = NULL }
+
 static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
-				   enum association assocs[],
-				   const char *names[],
-				   size_t count,
+				   const struct outofbox_fdecl fdecls[],
 				   bool sockets_only)
 {
-	size_t i;
+	const struct outofbox_fdecl *fdecl;
 
-	for (i = 0; i < count; i++) {
-		struct file *f __attribute__((unused))
-			= collect_file_symlink(pc, proc, names[assocs[i]], assocs[i] * -1,
-					       sockets_only);
+	for (fdecl = fdecls; fdecl->name; fdecl++) {
+		bool is_ns = (fdecl->attrs & OUTOFBOX_NAMESPACE);
+		struct file *f __attribute__((unused));
+
+		if (sockets_only && !is_ns)
+			continue;
+
+		f = collect_file_symlink(pc, proc, fdecl->name, fdecl->assoc * -1,
+					 sockets_only);
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 		if (f && has_mnt_id(f)) {
 			struct statx stx;
 			if (ul_path_statx(pc, &stx, AT_NO_AUTOMOUNT|AT_STATX_DONT_SYNC,
-					  STATX_MNT_ID, names[assocs[i]]) == 0)
+					  STATX_MNT_ID, fdecl->name) == 0)
 				f->mnt_id = stx.stx_mnt_id;
 		}
 #endif	/* #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID) */
@@ -1173,12 +1188,14 @@ static void collect_outofbox_files(struct path_cxt *pc,
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
 				bool sockets_only)
 {
-	enum association assocs[] = { ASSOC_EXE };
-	const char *names[] = {
-		[ASSOC_EXE]  = "exe",
+	static const struct outofbox_fdecl fdecls[] = {
+		{
+			.assoc = ASSOC_EXE,
+			.name = "exe",
+		},
+		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, sockets_only);
 }
 
 static int collect_pidfs_file(struct proc *proc, bool sockets_only)
@@ -1235,55 +1252,86 @@ static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
 			     bool sockets_only)
 {
-	enum association assocs[] = { ASSOC_CWD, ASSOC_ROOT };
-	const char *names[] = {
-		[ASSOC_CWD]  = "cwd",
-		[ASSOC_ROOT] = "root",
+	static const struct outofbox_fdecl fdecls[] = {
+		{
+			.assoc = ASSOC_CWD,
+			.name = "cwd",
+		},
+		{
+			.assoc = ASSOC_ROOT,
+			.name = "root",
+		},
+		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, sockets_only);
 }
 
-static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc,
+					    bool sockets_only)
 {
-	enum association assocs[] = {
-		ASSOC_NS_CGROUP,
-		ASSOC_NS_IPC,
-		ASSOC_NS_MNT,
+	static const struct outofbox_fdecl fdecls[] = {
+		{
+			.assoc = ASSOC_NS_CGROUP,
+			.name = "ns/cgroup",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_IPC,
+			.name = "ns/ipc",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_MNT,
+			.name = "ns/mnt",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		LAST_OUTOFBOX_FDECL,
 	};
-	const char *names[] = {
-		[ASSOC_NS_CGROUP] = "ns/cgroup",
-		[ASSOC_NS_IPC]    = "ns/ipc",
-		[ASSOC_NS_MNT]    = "ns/mnt",
-	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is always needed. */
-			       false);
+	collect_outofbox_files(pc, proc, fdecls, sockets_only);
 }
 
-static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc)
+static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc,
+					       bool sockets_only)
 {
-	enum association assocs[] = {
-		ASSOC_NS_NET,
-		ASSOC_NS_PID,
-		ASSOC_NS_PID4C,
-		ASSOC_NS_TIME,
-		ASSOC_NS_TIME4C,
-		ASSOC_NS_USER,
-		ASSOC_NS_UTS,
+	static const struct outofbox_fdecl fdecls[] = {
+		{
+			.assoc = ASSOC_NS_NET,
+			.name = "ns/net",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_PID,
+			.name = "ns/pid",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_PID4C,
+			.name = "ns/pid_for_children",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_TIME,
+			.name = "ns/time",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_TIME4C,
+			.name = "ns/time_for_children",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_USER,
+			.name = "ns/user",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		{
+			.assoc = ASSOC_NS_UTS,
+			.name = "ns/uts",
+			.attrs = OUTOFBOX_NAMESPACE,
+		},
+		LAST_OUTOFBOX_FDECL,
 	};
-	const char *names[] = {
-		[ASSOC_NS_NET]    = "ns/net",
-		[ASSOC_NS_PID]    = "ns/pid",
-		[ASSOC_NS_PID4C]  = "ns/pid_for_children",
-		[ASSOC_NS_TIME]   = "ns/time",
-		[ASSOC_NS_TIME4C] = "ns/time_for_children",
-		[ASSOC_NS_USER]   = "ns/user",
-		[ASSOC_NS_UTS]    = "ns/uts",
-	};
-	collect_outofbox_files(pc, proc, assocs, names, ARRAY_SIZE(assocs),
-			       /* Namespace information is always needed. */
-			       false);
+	collect_outofbox_files(pc, proc, fdecls, sockets_only);
 }
 
 static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
@@ -2197,7 +2245,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
 	if (proc->mnt_ns == NULL)
-		collect_namespace_files_tophalf(pc, proc);
+		collect_namespace_files_tophalf(pc, proc, ctl->sockets_only);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
@@ -2221,7 +2269,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * When reading the information about the net namespace,
 	 * backing device for "nsfs" must be solved.
 	 */
-	collect_namespace_files_bottomhalf(pc, proc);
+	collect_namespace_files_bottomhalf(pc, proc, ctl->sockets_only);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
