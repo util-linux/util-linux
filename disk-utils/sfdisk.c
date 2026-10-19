@@ -107,6 +107,7 @@ struct sfdisk {
 
 	struct fdisk_context	*cxt;		/* libfdisk context */
 	struct fdisk_partition  *orig_pa;	/* -N <partno> before the change */
+	struct fdisk_table	*orig_layout;	/* original layout for -N and --append */
 
 	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
 		     quiet  : 1,	/* suppress extra messages */
@@ -670,7 +671,10 @@ static int write_changes(struct sfdisk *sf)
 			 * related to the write to the device.
 			 */
 			xusleep(250000);
-			fdisk_reread_partition_table(sf->cxt);
+			if (sf->orig_layout)
+				fdisk_reread_changes(sf->cxt, sf->orig_layout);
+			else
+				fdisk_reread_partition_table(sf->cxt);
 		}
 	}
 
@@ -1869,6 +1873,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
 	assign_device(sf, devname, 0);
+	if ((partno >= 0 || sf->append) && fdisk_device_is_used(sf->cxt))
+		fdisk_get_partitions(sf->cxt, &sf->orig_layout);
 
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
@@ -2150,6 +2156,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_set_script(sf->cxt, NULL);
 	fdisk_unref_script(dp);
+	fdisk_unref_table(sf->orig_layout);
+	sf->orig_layout = NULL;
 	return rc;
 }
 
