@@ -83,7 +83,10 @@ Select a filesystem using the mount node ID.
 Select a filesystem using the mount node 64-bit ID, use with *--kernel=listmount* option.
 
 *-J*, *--json*::
-Use JSON output format.
+Use JSON output format. In the poll mode (*--poll*) the output is a continuous
+stream of the events, where every event is printed as a stand-alone JSON object
+on one line; this is the only usable format for a stream of the events, so
+*LIBSMARTCOLS_JSON* is ignored in this mode.
 
 *-k*, *--kernel*[**=**_method_]::
 Reads information about filesystems from the kernel. This is the default output. The format is tree-like and only includes mount options managed by the kernel (see also *--mtab*).

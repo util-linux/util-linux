@@ -125,10 +125,12 @@ void ul_jsonwrt_indent(struct ul_jsonwrt *fmt)
 
 static void print_name(struct ul_jsonwrt *fmt, const char *name)
 {
-	if (fmt->after_close) {
-		if (fmt->json_format == UL_JSON_LINE)
-			fputs(fmt->indent == 0 ? "\n" : ",", fmt->out);
-		else if (fmt->json_format == UL_JSON_COMPACT)
+	/* Values on the top level are not members of an array or object, so
+	 * they are never comma separated; ul_jsonwrt_close() has already
+	 * terminated the previous one by a newline. */
+	if (fmt->after_close && (fmt->indent > 0 || name)) {
+		if (fmt->json_format == UL_JSON_LINE
+		    || fmt->json_format == UL_JSON_COMPACT)
 			fputs(",", fmt->out);
 		else
 			fputs(name ? ",\n" : ",", fmt->out);
@@ -262,16 +264,13 @@ void ul_jsonwrt_close(struct ul_jsonwrt *fmt, int type)
 
 	fputc(endchr, fmt->out);
 
-	switch (fmt->json_format) {
-	case UL_JSON_LINE:
-		break;
-	case UL_JSON_COMPACT:
-	case UL_JSON_PRETTY:
-	default:
-		if (fmt->indent == 0)
-			fputc('\n', fmt->out);
-		break;
-	}
+	/* Terminate the value on the top level. The writer may be re-initialized
+	 * between the values (for example libsmartcols does it for every
+	 * scols_table_print_range() call), so the terminator has to be printed
+	 * by the value itself rather than by the next one (see print_name()). */
+	if (fmt->indent == 0)
+		fputc('\n', fmt->out);
+
 	fmt->after_close = 1;
 }
 

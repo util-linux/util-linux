@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="poll json"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UNSHARE"
+
+ts_skip_nonroot
+ts_skip_docker
+
+export MNT="$TS_OUTDIR/$TS_TESTNAME-$$-mnt"
+export WARMUP="$TS_OUTDIR/$TS_TESTNAME-$$-warmup"
+export POLL="$TS_OUTDIR/$TS_TESTNAME-$$.poll"
+export TS_CMD_FINDMNT TS_CMD_MOUNT TS_ERRLOG
+
+mkdir -p "$MNT/a" "$MNT/b" "$MNT/c" "$WARMUP"
+
+# Everything in a private mount namespace, so that the poll mode reports our
+# own mount points only; the namespace (and the mounts) are gone when the
+# subshell exits.
+$TS_CMD_UNSHARE --mount --propagation private -- bash -c '
+	$TS_CMD_FINDMNT --poll --json --timeout 30000 -o ACTION,TARGET \
+		>"$POLL" 2>> "$TS_ERRLOG" &
+	FINDMNT_PID=$!
+
+	# Wait until findmnt has read the initial mount table and really polls
+	# for changes. Anything mounted before that is already part of the
+	# initial table and no event is reported for it, so repeat the warm-up
+	# mount (they just stack on each other) until its event shows up.
+	for i in $(seq 50); do
+		$TS_CMD_MOUNT -t tmpfs tmpfs "$WARMUP" 2>> "$TS_ERRLOG"
+		sleep 0.1
+		grep -q -F "\"$WARMUP\"" "$POLL" && break
+	done
+
+	# Mount three file systems at the same time. They are likely to be
+	# reported by the same poll() wakeup, which used to print the JSON
+	# objects separated by commas (without an enclosing array).
+	MOUNT_PIDS=()
+	for d in a b c; do
+		$TS_CMD_MOUNT -t tmpfs tmpfs "$MNT/$d" &
+		MOUNT_PIDS+=($!)
+	done
+	wait "${MOUNT_PIDS[@]}"
+
+	# wait for all the events, max. 10 seconds
+	for i in $(seq 100); do
+		[ "$(grep -c -F "\"$MNT/" "$POLL")" -ge 3 ] && break
+		sleep 0.1
+	done
+
+	kill $FINDMNT_PID
+	wait $FINDMNT_PID 2> /dev/null
+	exit 0
+'
+
+rmdir "$MNT/a" "$MNT/b" "$MNT/c" "$MNT" "$WARMUP"
+
+# Ignore the warm-up events, count the three mount points only. Every event has
+# to be a stand-alone JSON object on its own line; a line that starts with a
+# comma is the separator printed between events of one wakeup.
+grep -F "\"$MNT/" "$POLL" > "$POLL.mnt"
+
+echo "mounts: $(grep -c '"action":"mount"' "$POLL.mnt")" >> "$TS_OUTPUT"
+echo "comma separated: $(grep -c '^,' "$POLL")" >> "$TS_OUTPUT"
+echo "stand-alone objects: $(grep -c '^{.*}$' "$POLL.mnt")" >> "$TS_OUTPUT"
+
+rm -f "$POLL" "$POLL.mnt"
+
+ts_finalize

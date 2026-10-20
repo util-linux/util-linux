@@ -196,13 +196,11 @@ static int do_print_table(struct libscols_table *tb, int *is_empty)
 	else
 		rc = __scols_print_table(tb, &buf);
 
-	if (scols_table_is_json(tb)) {
-		if (tb->json_format != UL_JSON_LINE) {
-			ul_jsonwrt_array_close(&tb->json);
-			ul_jsonwrt_root_close(&tb->json);
-		} else {
-			fputc('\n', tb->out);	/* trailing newline after last object */
-		}
+	/* in UL_JSON_LINE the objects are not wrapped by the root object and
+	 * the array, and they are terminated by ul_jsonwrt_close() */
+	if (scols_table_is_json(tb) && tb->json_format != UL_JSON_LINE) {
+		ul_jsonwrt_array_close(&tb->json);
+		ul_jsonwrt_root_close(&tb->json);
 	}
 done:
 	__scols_cleanup_printing(tb, &buf);
