@@ -790,11 +790,13 @@ const unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64
 
 	if (UINT64_MAX - len < off || UINT64_MAX - len < real_off) {
 		DBG(BUFFER, ul_debug("\t  read-buffer overflow (ignore)"));
+		errno = 0;
 		return NULL;
 	}
 
 	if (len > 8388608 /* 8 Mib */ ) {
 		DBG(BUFFER, ul_debug("\t  too large read request (ignore)"));
+		errno = 0;
 		return NULL;
 	}
 
