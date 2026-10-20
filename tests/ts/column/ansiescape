@@ -46,6 +46,8 @@ printf '%b' "\033[38;5;190m\033[1m\033[32mabcdefghijklmno\033(B\033[m|long-secon
 ts_finalize_subtest
 
 ts_init_subtest "truncate"
+# Known limitation: truncation can remove an SGR reset embedded in the input.
+# libsmartcols only resets color state that it set itself.
 printf '%b' "\033[38;5;190m\033[1m\033[32mabcdefghijklmno\033(B\033[m|long-second-column-value\n" \
 	| $TS_CMD_COLUMN --table --output-width=20 --table-truncate=0 --separator '|' --output-separator '|' \
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"

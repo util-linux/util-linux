@@ -34,6 +34,10 @@ static const char *skip_ansi_escape(const char *p, const char *end)
 	q = p + 1;
 	if (*q == '[') {
 		q++;
+		/* CSI parameter bytes (0x30-0x3f) are followed by intermediate
+		 * bytes (0x20-0x2f) and a final byte (0x40-0x7e). None of them
+		 * occupies a cell.
+		 */
 		while (q < end && (unsigned char) *q >= 0x30
 				&& (unsigned char) *q <= 0x3f)
 			q++;
@@ -43,7 +47,7 @@ static const char *skip_ansi_escape(const char *p, const char *end)
 		if (q < end && (unsigned char) *q >= 0x40
 				&& (unsigned char) *q <= 0x7e)
 			return q + 1;
-	} else if (strchr("()*+", *q) && q + 1 < end)
+	} else if (*q && strchr("()*+", *q) && q + 1 < end)
 		return q + 2;
 
 	return NULL;
