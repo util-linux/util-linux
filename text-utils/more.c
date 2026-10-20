@@ -417,9 +417,7 @@ static int check_magic(struct more_control *ctl, char *fs)
 	const char *magic_error_msg = magic_error(ctl->magic);
 
 	if (magic_error_msg) {
-		printf("%s: %s: %s\n", program_invocation_short_name,
-			_("magic failed"), magic_error_msg);
-		ctl->no_eol = 0;
+		warnx("%s: %s", _("magic failed"), magic_error_msg);
 		return 0;
 	}
 	if (!mime_encoding || !(strcmp("binary", mime_encoding))) {
@@ -475,24 +473,25 @@ static void checkf(struct more_control *ctl, char *fs)
 	}
 	if (fstat(fileno(ctl->current_file), &st) != 0) {
 		warn(_("stat of %s failed"), fs);
-		return;
+		goto fail;
 	}
 	if ((st.st_mode & S_IFMT) == S_IFDIR) {
 		printf(_("\n*** %s: directory ***\n\n"), fs);
 		ctl->no_eol = 0;
-		ctl->current_file = NULL;
-		return;
+		goto fail;
 	}
 	ctl->file_size = st.st_size;
-	if (0 < ctl->file_size && check_magic(ctl, fs)) {
-		fclose(ctl->current_file);
-		ctl->current_file = NULL;
-		return;
-	}
+	if (0 < ctl->file_size && check_magic(ctl, fs))
+		goto fail;
+
 	fcntl(fileno(ctl->current_file), F_SETFD, FD_CLOEXEC);
 	c = more_getc(ctl);
 	ctl->clear_first = (c == '\f');
 	more_ungetc(ctl, c);
+	return;
+fail:
+	fclose(ctl->current_file);
+	ctl->current_file = NULL;
 }
 
 static void prepare_line_buffer(struct more_control *ctl)
