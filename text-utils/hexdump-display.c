@@ -504,8 +504,10 @@ get(struct hexdump *hex)
 	u_char *tmpp;
 
 	if (!curp) {
-		curp = xcalloc(1, hex->blocksize);
-		savp = xcalloc(1, hex->blocksize);
+		/* allocate one extra byte so that the block is always
+		 * NUL-terminated, and %s cannot read past the buffer */
+		curp = xcalloc(1, hex->blocksize + 1);
+		savp = xcalloc(1, hex->blocksize + 1);
 	} else {
 		tmpp = curp;
 		curp = savp;
