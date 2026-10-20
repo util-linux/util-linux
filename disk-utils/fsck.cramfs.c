@@ -53,9 +53,11 @@
 #include <zlib.h>
 
 #include <sys/time.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/resource.h>
 
 #include "c.h"
 #include "cramfs.h"
@@ -77,6 +79,10 @@ static int opt_extract = 0;	/* extract cramfs (-x) */
 static char *extract_dir = "";		/* optional extraction directory (-x) */
 
 #define PAD_SIZE 512
+#define MAX_EXTRACT_DEPTH 256
+#define EXTRACT_FD_RESERVE 16
+
+static unsigned int max_extract_depth = MAX_EXTRACT_DEPTH;
 
 static uid_t euid;		/* effective UID */
 
@@ -103,7 +109,8 @@ static unsigned long read_buffer_block = ~0UL;
 static z_stream stream;
 
 /* Prototypes */
-static void expand_fs(char *, struct cramfs_inode *);
+static void expand_fs(int, const char *, char *, struct cramfs_inode *,
+		      unsigned int);
 
 static char *outbuffer;
 
@@ -425,22 +432,18 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 		curr = next;
 	} while (size);
 }
-static void change_file_status(char *path, struct cramfs_inode *i)
+static void change_file_status(int outfd, char *path, struct cramfs_inode *i)
 {
-	const struct timeval epoch[] = { {0,0}, {0,0} };
+	const struct timespec epoch[] = { {0, 0}, {0, 0} };
 
 	if (euid == 0) {
-		if (lchown(path, i->uid, i->gid) < 0)
-			err(FSCK_EX_ERROR, _("lchown failed: %s"), path);
-		if (S_ISLNK(i->mode))
-			return;
-		if (((S_ISUID | S_ISGID) & i->mode) && chmod(path, i->mode) < 0)
-			err(FSCK_EX_ERROR, _("chmod failed: %s"), path);
+		if (fchown(outfd, i->uid, i->gid) < 0)
+			err(FSCK_EX_ERROR, _("fchown failed: %s"), path);
+		if (((S_ISUID | S_ISGID) & i->mode) && fchmod(outfd, i->mode) < 0)
+			err(FSCK_EX_ERROR, _("fchmod failed: %s"), path);
 	}
-	if (S_ISLNK(i->mode))
-		return;
-	if (utimes(path, epoch) < 0)
-		err(FSCK_EX_ERROR, _("utimes failed: %s"), path);
+	if (futimens(outfd, epoch) < 0)
+		err(FSCK_EX_ERROR, _("futimens failed: %s"), path);
 }
 
 static int is_dangerous_filename(char *name, int len)
@@ -463,13 +466,16 @@ static void __attribute__((__noreturn__))
 	errx(FSCK_EX_UNCORRECTED, "%s: %s", mesg, buf);
 }
 
-static void do_directory(char *path, struct cramfs_inode *i)
+static void do_directory(int parentfd, const char *name, char *path,
+			 struct cramfs_inode *i, unsigned int depth)
 {
 	size_t pathlen = strlen(path);
 	size_t pathbufsz = pathlen + MAX_INPUT_NAMELEN + 1;
 	int count = i->size;
 	unsigned long offset = i->offset << 2;
 	char *newpath = xmalloc(pathbufsz);
+	int dirfd = parentfd;
+	int outfd = -1;
 
 	if (offset == 0 && count != 0)
 		errx(FSCK_EX_UNCORRECTED,
@@ -487,13 +493,19 @@ static void do_directory(char *path, struct cramfs_inode *i)
 		print_node('d', i, path);
 
 	if (*extract_dir != '\0') {
-		if (mkdir(path, i->mode) < 0)
+		if (mkdirat(parentfd, name, i->mode) < 0)
 			err(FSCK_EX_ERROR, _("mkdir failed: %s"), path);
-		change_file_status(path, i);
+		outfd = openat(parentfd, name,
+			       O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+		if (outfd < 0)
+			err(FSCK_EX_ERROR, _("cannot open directory: %s"), path);
+		dirfd = outfd;
+		change_file_status(outfd, path, i);
 	}
 	while (count > 0) {
 		struct cramfs_inode *child = iget(offset);
-		char *name;
+		char *child_name;
+		char *entry_name;
 		int size;
 		int newlen = child->namelen << 2;
 
@@ -501,22 +513,24 @@ static void do_directory(char *path, struct cramfs_inode *i)
 		count -= size;
 
 		offset += sizeof(struct cramfs_inode);
-		name = romfs_read(offset);
+		entry_name = romfs_read(offset);
 
-		if (memchr(name, '/', newlen) != NULL)
-			errx_path(_("illegal filename"), name, newlen);
-		if (*extract_dir != '\0' && is_dangerous_filename(name, newlen))
-			errx_path(_("dangerous filename"), name, newlen);
+		if (memchr(entry_name, '/', newlen) != NULL)
+			errx_path(_("illegal filename"), entry_name, newlen);
+		if (*extract_dir != '\0' &&
+		    is_dangerous_filename(entry_name, newlen))
+			errx_path(_("dangerous filename"), entry_name, newlen);
 		if (newlen == 0)
 			errx(FSCK_EX_UNCORRECTED, _("filename length is zero"));
 		if (pathlen + newlen + 1 > pathbufsz)
 			errx(FSCK_EX_UNCORRECTED, _("filename length is too large"));
 
-		memcpy(newpath + pathlen, name, newlen);
+		child_name = newpath + pathlen;
+		memcpy(child_name, entry_name, newlen);
 		newpath[pathlen + newlen] = '\0';
 		if ((pathlen + newlen) - strlen(newpath) > 3)
 			errx(FSCK_EX_UNCORRECTED, _("bad filename length"));
-		expand_fs(newpath, child);
+		expand_fs(dirfd, child_name, newpath, child, depth + 1);
 
 		offset += newlen;
 
@@ -526,13 +540,16 @@ static void do_directory(char *path, struct cramfs_inode *i)
 			end_dir = offset;
 		iput(child);	/* free(child) */
 	}
+	if (outfd >= 0 && close_fd(outfd) != 0)
+		err(FSCK_EX_ERROR, _("close failed: %s"), path);
 	free(newpath);
 }
 
-static void do_file(char *path, struct cramfs_inode *i)
+static void do_file(int dirfd, const char *name, char *path,
+		   struct cramfs_inode *i)
 {
 	unsigned long offset = i->offset << 2;
-	int outfd = 0;
+	int outfd = -1;
 
 	if (offset == 0 && i->size != 0)
 		errx(FSCK_EX_UNCORRECTED,
@@ -545,21 +562,23 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node('f', i, path);
 	if (*extract_dir != '\0') {
-		/* fail on existing paths, like mkdir(), symlink() and mknod() */
-		outfd = open(path, O_WRONLY | O_CREAT | O_EXCL, i->mode);
+		/* fail on existing paths, like mkdirat(), symlinkat() and mknodat() */
+		outfd = openat(dirfd, name, O_WRONLY | O_CREAT | O_EXCL |
+			       O_NOFOLLOW | O_CLOEXEC, i->mode);
 		if (outfd < 0)
 			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
 	if (i->size)
 		do_uncompress(path, outfd, offset, i->size);
-	if ( *extract_dir != '\0') {
+	if (outfd >= 0) {
+		change_file_status(outfd, path, i);
 		if (close_fd(outfd) != 0)
 			err(FSCK_EX_ERROR, _("write failed: %s"), path);
-		change_file_status(path, i);
 	}
 }
 
-static void do_symlink(char *path, struct cramfs_inode *i)
+static void do_symlink(int dirfd, const char *name, char *path,
+		      struct cramfs_inode *i)
 {
 	unsigned long offset = i->offset << 2;
 	unsigned long curr = offset + 4;
@@ -593,13 +612,49 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 		free(str);
 	}
 	if (*extract_dir != '\0') {
-		if (symlink(outbuffer, path) < 0)
+		if (symlinkat(outbuffer, dirfd, name) < 0)
 			err(FSCK_EX_ERROR, _("symlink failed: %s"), path);
-		change_file_status(path, i);
+		if (euid == 0 &&
+		    fchownat(dirfd, name, i->uid, i->gid,
+			     AT_SYMLINK_NOFOLLOW) < 0)
+			err(FSCK_EX_ERROR, _("lchown failed: %s"), path);
 	}
 }
 
-static void do_special_inode(char *path, struct cramfs_inode *i)
+static void change_special_file_status(int dirfd, const char *name,
+				     char *path, struct cramfs_inode *i)
+{
+	const struct timespec epoch[] = { {0, 0}, {0, 0} };
+	int fd;
+
+	if (euid == 0 &&
+	    fchownat(dirfd, name, i->uid, i->gid,
+		     AT_SYMLINK_NOFOLLOW) < 0)
+		err(FSCK_EX_ERROR, _("fchownat failed: %s"), path);
+	if (((S_ISUID | S_ISGID) & i->mode) && euid == 0) {
+		struct stat st;
+		char proc_path[64];
+		int n;
+
+		fd = openat(dirfd, name, O_PATH | O_NOFOLLOW | O_CLOEXEC);
+		if (fd < 0)
+			err(FSCK_EX_ERROR, _("cannot open special file: %s"), path);
+		if (fstat(fd, &st) < 0 || S_ISLNK(st.st_mode))
+			err(FSCK_EX_ERROR, _("cannot inspect special file: %s"), path);
+		n = snprintf(proc_path, sizeof(proc_path), "/proc/self/fd/%d", fd);
+		if (n < 0 || (size_t) n >= sizeof(proc_path))
+			errx(FSCK_EX_ERROR,
+			     _("special file path is too long: %s"), path);
+		if (chmod(proc_path, i->mode) < 0)
+			err(FSCK_EX_ERROR, _("chmod failed: %s"), path);
+		close_fd(fd);
+	}
+	if (utimensat(dirfd, name, epoch, AT_SYMLINK_NOFOLLOW) < 0)
+		err(FSCK_EX_ERROR, _("utimensat failed: %s"), path);
+}
+
+static void do_special_inode(int dirfd, const char *name, char *path,
+			     struct cramfs_inode *i)
 {
 	dev_t devtype = 0;
 	char type;
@@ -627,42 +682,56 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 		type = 's';
 	} else {
 		errx(FSCK_EX_UNCORRECTED, _("bogus mode: %s (%o)"), path, i->mode);
-		return;		/* not reached */
+		return;	/* not reached */
 	}
 
 	if (opt_verbose)
 		print_node(type, i, path);
 
 	if (*extract_dir != '\0') {
-		if (mknod(path, i->mode, devtype) < 0)
+		if (mknodat(dirfd, name, i->mode, devtype) < 0)
 			err(FSCK_EX_ERROR, _("mknod failed: %s"), path);
-		change_file_status(path, i);
+		change_special_file_status(dirfd, name, path, i);
 	}
 }
 
-static void expand_fs(char *path, struct cramfs_inode *inode)
+static void expand_fs(int dirfd, const char *name, char *path,
+		     struct cramfs_inode *inode, unsigned int depth)
 {
+	if (depth > max_extract_depth)
+		errx(FSCK_EX_UNCORRECTED,
+		     _("directory depth exceeds %u: %s"), max_extract_depth, path);
+
 	if (S_ISDIR(inode->mode))
-		do_directory(path, inode);
+		do_directory(dirfd, name, path, inode, depth);
 	else if (S_ISREG(inode->mode))
-		do_file(path, inode);
+		do_file(dirfd, name, path, inode);
 	else if (S_ISLNK(inode->mode))
-		do_symlink(path, inode);
+		do_symlink(dirfd, name, path, inode);
 	else
-		do_special_inode(path, inode);
+		do_special_inode(dirfd, name, path, inode);
 }
 
 static void test_fs(int start)
 {
 	struct cramfs_inode *root;
+	struct rlimit nofile;
 
+	if (*extract_dir != '\0' && getrlimit(RLIMIT_NOFILE, &nofile) == 0 &&
+	    nofile.rlim_cur != RLIM_INFINITY) {
+		rlim_t limit = nofile.rlim_cur > EXTRACT_FD_RESERVE ?
+			 nofile.rlim_cur - EXTRACT_FD_RESERVE : 0;
+
+		if (limit < max_extract_depth)
+			max_extract_depth = (unsigned int) limit;
+	}
 	root = read_super();
 	umask(0);
 	euid = geteuid();
 	stream.next_in = NULL;
 	stream.avail_in = 0;
 	inflateInit(&stream);
-	expand_fs(extract_dir, root);
+	expand_fs(AT_FDCWD, extract_dir, extract_dir, root, 0);
 	inflateEnd(&stream);
 	if (start_data != ~0UL) {
 		if (start_data < (sizeof(struct cramfs_super) + start))
