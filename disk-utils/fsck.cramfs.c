@@ -625,29 +625,37 @@ static void change_special_file_status(int dirfd, const char *name,
 				     char *path, struct cramfs_inode *i)
 {
 	const struct timespec epoch[] = { {0, 0}, {0, 0} };
-	int fd;
+#if defined(__linux__) && defined(O_PATH)
+	int pathfd;
+#endif
 
 	if (euid == 0 &&
 	    fchownat(dirfd, name, i->uid, i->gid,
 		     AT_SYMLINK_NOFOLLOW) < 0)
 		err(FSCK_EX_ERROR, _("fchownat failed: %s"), path);
 	if (((S_ISUID | S_ISGID) & i->mode) && euid == 0) {
+#if defined(__linux__) && defined(O_PATH)
 		struct stat st;
 		char proc_path[64];
 		int n;
 
-		fd = openat(dirfd, name, O_PATH | O_NOFOLLOW | O_CLOEXEC);
-		if (fd < 0)
+		pathfd = openat(dirfd, name, O_PATH | O_NOFOLLOW | O_CLOEXEC);
+		if (pathfd < 0)
 			err(FSCK_EX_ERROR, _("cannot open special file: %s"), path);
-		if (fstat(fd, &st) < 0 || S_ISLNK(st.st_mode))
+		if (fstat(pathfd, &st) < 0 || S_ISLNK(st.st_mode))
 			err(FSCK_EX_ERROR, _("cannot inspect special file: %s"), path);
-		n = snprintf(proc_path, sizeof(proc_path), "/proc/self/fd/%d", fd);
+		n = snprintf(proc_path, sizeof(proc_path), "/proc/self/fd/%d", pathfd);
 		if (n < 0 || (size_t) n >= sizeof(proc_path))
 			errx(FSCK_EX_ERROR,
 			     _("special file path is too long: %s"), path);
 		if (chmod(proc_path, i->mode) < 0)
 			err(FSCK_EX_ERROR, _("chmod failed: %s"), path);
-		close_fd(fd);
+		close_fd(pathfd);
+#else
+		/* O_PATH and /proc/self/fd are Linux-specific. */
+		if (fchmodat(dirfd, name, i->mode, AT_SYMLINK_NOFOLLOW) < 0)
+			err(FSCK_EX_ERROR, _("chmod failed: %s"), path);
+#endif
 	}
 	if (utimensat(dirfd, name, epoch, AT_SYMLINK_NOFOLLOW) < 0)
 		err(FSCK_EX_ERROR, _("utimensat failed: %s"), path);
