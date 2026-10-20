@@ -3,3 +3,6 @@
 cba
 321
 cba|321
+invalid UTF-8 exit status: 1
+invalid UTF-8 exit status: 1
+invalid UTF-8 exit status: 1
