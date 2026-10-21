@@ -29,6 +29,7 @@ libmount_la_SOURCES = \
 
 if LINUX
 libmount_la_SOURCES += \
+	libmount/src/config.c \
 	libmount/src/context.c \
 	libmount/src/context_mount.c \
 	libmount/src/context_umount.c \
@@ -125,6 +126,7 @@ EXTRA_DIST += \
 if BUILD_LIBMOUNT_TESTS
 check_PROGRAMS += \
 	test_mount_cache \
+	test_mount_config \
 	test_mount_lock \
 	test_mount_optstr \
 	test_mount_optlist \
@@ -168,6 +170,11 @@ test_mount_cache_SOURCES = libmount/src/cache.c
 test_mount_cache_CFLAGS = $(libmount_tests_cflags)
 test_mount_cache_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_cache_LDADD = $(libmount_tests_ldadd)
+
+test_mount_config_SOURCES = libmount/src/config.c
+test_mount_config_CFLAGS = $(libmount_tests_cflags)
+test_mount_config_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_config_LDADD = $(libmount_tests_ldadd)
 
 test_mount_context_SOURCES = libmount/src/context.c
 test_mount_context_CFLAGS = $(libmount_tests_cflags)

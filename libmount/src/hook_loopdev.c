@@ -475,6 +475,8 @@ static int is_loopdev_required(struct libmnt_context *cxt, struct libmnt_optlist
 		if (autotype) {
 			__mnt_fs_set_fstype_ptr(cxt->fs, autotype);
 			type = mnt_fs_get_fstype(cxt->fs);
+			/* the type comes from the system, not from the user */
+			cxt->flags &= ~MNT_FL_FSTYPE_EXPLICIT;
 		}
 	}
 

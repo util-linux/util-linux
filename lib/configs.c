@@ -277,7 +277,9 @@ int ul_configs_file_list(struct list_head *file_list,
 	    (ret = config_merge_list(file_list, &usr_list)) < 0)
 		goto finish;
 
-	/* Add main config file at the beginning (highest priority) */
+	/* Add main config file at the beginning; the list is in parsing
+	 * order, so the main file is parsed first and the drop-ins which
+	 * follow it overwrite its settings. */
 	if (main_file != NULL) {
 		ret = configs_refer_filename(file_list, main_file, 1);
 		if (ret < 0) {
