@@ -3783,6 +3783,17 @@ if not is_disabler(exe)
   exes += exe
 endif
 
+exe = executable(
+  'test_remove_env',
+  'lib/env.c',
+  c_args : ['-DTEST_PROGRAM_ENV'],
+  include_directories : dir_include,
+  link_with : lib_common,
+  build_by_default: program_tests)
+if not is_disabler(exe)
+  exes += exe
+endif
+
 if conf.get('HAVE_OPENAT').to_string() == '1' \
    and conf.get('HAVE_DIRFD').to_string() == '1'
   exe = executable(

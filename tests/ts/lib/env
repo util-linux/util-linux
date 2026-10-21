@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# This file may be distributed under the terms of the
+# GNU Lesser General Public License.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="env library"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_ENV"
+
+"$TS_HELPER_ENV" 2> "$TS_ERRLOG" || ts_die "test failed"
+
+ts_finalize
