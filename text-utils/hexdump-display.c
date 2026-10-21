@@ -205,6 +205,54 @@ static int check_hole(struct hexdump *hex, off_t pos, int fd)
 		}
 	}
 }
+
+/*
+ * Try to skip a sparse hole at the current position of @f.
+ *
+ * All input files are read through the stdin stream (see freopen() in
+ * next()) and the optimization is enabled for regular files only, so the
+ * stream is always seekable here.  Note that the extent map and the seek are
+ * relative to the current file -- use ftello() rather than the stream
+ * address, which is an offset within all the input files.
+ *
+ * Returns: number of skipped bytes, or 0 if nothing has been skipped.
+ */
+static off_t skip_sparse_hole(struct hexdump *hex, FILE *f, const u_char *savp)
+{
+	off_t pos, skip;
+	ssize_t i;
+
+	if (!hex->fiemap)
+		return 0;
+
+	pos = ftello(f);
+	if (pos < 0)
+		return 0;
+
+	if (pos >= hex->region_end)
+		check_hole(hex, pos, fileno(f));
+
+	if (!hex->in_sparse_hole || vflag != DUP)
+		return 0;
+
+	/* the hole is skippable only if the previous block is all zeros */
+	for (i = 0; i < hex->blocksize; i++)
+		if (savp[i] != 0)
+			return 0;
+
+	skip = hex->region_end - pos;
+
+	/* skip complete input blocks within the length limit only */
+	if (hex->length != -1 && skip > hex->length)
+		skip = hex->length;
+	skip -= skip % hex->blocksize;
+
+	if (skip <= 0 || fseeko(f, pos + skip, SEEK_SET) != 0)
+		return 0;
+
+	hex->region_end = 0;
+	return skip;
+}
 #endif /* __linux__ */
 
 enum _vflag vflag = FIRST;
@@ -540,46 +588,21 @@ get(struct hexdump *hex)
 
 #ifdef __linux__
 		/*
-		 * FIEMAP-based sparse file optimization:
+		 * FIEMAP-based sparse file optimization.
+		 *
+		 * Skip holes on input block boundaries only, otherwise we
+		 * would throw away the partially filled block (for example
+		 * when the previous file ended in the middle of the block).
 		 */
-		if (hex->fiemap) {
-			off_t curpos = address + nread;
+		if (nread == 0) {
+			off_t skipped = skip_sparse_hole(hex, stdin, savp);
 
-			if (curpos >= hex->region_end)
-				check_hole(hex, curpos, fileno(stdin));
-
-			if (hex->in_sparse_hole && vflag == DUP) {
-				int savp_is_zero = 1;
-				ssize_t j;
-				for (j = 0; j < hex->blocksize; j++) {
-					if (savp[j] != 0) {
-						savp_is_zero = 0;
-						break;
-					}
-				}
-
-				// Only if savp is all zeros, we can skip the hole.
-				if (savp_is_zero) {
-					off_t skip = hex->region_end - curpos;
-
-					/* Skip only complete input blocks within the length limit. */
-					if (hex->length != -1 && skip > hex->length)
-						skip = hex->length;
-					skip -= skip % hex->blocksize;
-					if (skip > 0) {
-						off_t aligned_pos = curpos + skip;
-						if (fseeko(stdin, aligned_pos, SEEK_SET) == 0) {
-							address = aligned_pos;
-							if (hex->length != -1)
-								hex->length -= skip;
-							memset(curp, 0, hex->blocksize);
-							need = hex->blocksize;
-							nread = 0;
-							hex->region_end = 0;
-							continue;
-						}
-					}
-				}
+			if (skipped > 0) {
+				address += skipped;
+				if (hex->length != -1)
+					hex->length -= skipped;
+				memset(curp, 0, hex->blocksize);
+				continue;
 			}
 		}
 #endif
