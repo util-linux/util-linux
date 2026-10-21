@@ -560,10 +560,14 @@ get(struct hexdump *hex)
 
 				// Only if savp is all zeros, we can skip the hole.
 				if (savp_is_zero) {
-					off_t next_data = hex->region_end;
-					off_t aligned_pos = (next_data / hex->blocksize) * hex->blocksize;
-					if (aligned_pos > curpos) {
-						off_t skip = aligned_pos - curpos;
+					off_t skip = hex->region_end - curpos;
+
+					/* Skip only complete input blocks within the length limit. */
+					if (hex->length != -1 && skip > hex->length)
+						skip = hex->length;
+					skip -= skip % hex->blocksize;
+					if (skip > 0) {
+						off_t aligned_pos = curpos + skip;
 						if (fseeko(stdin, aligned_pos, SEEK_SET) == 0) {
 							address = aligned_pos;
 							if (hex->length != -1)
