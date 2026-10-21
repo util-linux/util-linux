@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="map foreign uid range"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_UNSHARE"
+
+# see FOREIGN_UID_BASE in systemd
+FOREIGN_BASE=2147352576
+
+if "$TS_CMD_UNSHARE" --map-foreign true 2>&1 |
+	grep -q "systemd-nsresourced support is not available"; then
+	ts_skip "built without systemd-nsresourced support"
+fi
+if [ ! -e /run/systemd/io.systemd.NamespaceResource ]; then
+	ts_skip "systemd-nsresourced.service is not available"
+fi
+
+normalize_map() {
+	sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]\+/ /g' \
+	    -e "s/\<$1\>/SELF/g" -e "s/\<$FOREIGN_BASE\>/FOREIGN_BASE/g"
+}
+
+ts_check_nsresource() {
+	if grep -q "failed to load libsystemd" "$TS_ERRLOG"; then
+		ts_skip "libsystemd is not available at runtime"
+	elif grep -q "AllocateUserRange failed\|unable to connect" "$TS_ERRLOG"; then
+		ts_skip "systemd-nsresourced does not support --map-foreign"
+	fi
+}
+
+
+ts_init_subtest "uid-map"
+"$TS_CMD_UNSHARE" --map-foreign cat /proc/self/uid_map 2>>"$TS_ERRLOG" |
+	normalize_map "$(id -ru)" >>"$TS_OUTPUT"
+ts_check_nsresource
+ts_finalize_subtest
+
+
+ts_init_subtest "gid-map"
+"$TS_CMD_UNSHARE" --map-foreign cat /proc/self/gid_map 2>>"$TS_ERRLOG" |
+	normalize_map "$(id -rg)" >>"$TS_OUTPUT"
+ts_check_nsresource
+ts_finalize_subtest
+
+
+ts_init_subtest "map-root-user"
+"$TS_CMD_UNSHARE" --map-foreign --map-root-user cat /proc/self/uid_map 2>>"$TS_ERRLOG" |
+	normalize_map "$(id -ru)" >>"$TS_OUTPUT"
+ts_check_nsresource
+ts_finalize_subtest
+
+
+ts_init_subtest "map-current-user"
+"$TS_CMD_UNSHARE" --map-foreign --map-current-user cat /proc/self/uid_map 2>>"$TS_ERRLOG" |
+	normalize_map "$(id -ru)" >>"$TS_OUTPUT"
+ts_check_nsresource
+ts_finalize_subtest
+
+
+ts_finalize
