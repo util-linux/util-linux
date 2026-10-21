@@ -2204,8 +2204,10 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 				goto done;
 			}
 			mbr_set_magic(empty);
-			write_sector(cxt, off, empty);
+			rc = write_sector(cxt, off, empty);
 			free(empty);
+			if (rc)
+				goto done;
 		}
 	}
 
