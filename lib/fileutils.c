@@ -25,6 +25,7 @@
 #include "fileutils.h"
 #include "pathnames.h"
 #include "strutils.h"
+#include "randutils.h"
 
 int mkstemp_cloexec(char *template)
 {
@@ -54,6 +55,39 @@ unwind:
 	return -1;
 #endif
 }
+
+#ifdef HAVE_OPENAT
+/* Like mkstemp_cloexec(), but resolve the template relative to dirfd. */
+int mkstemp_cloexec_at(int dirfd, char *template)
+{
+	static const char letters[] =
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	uint64_t value;
+	size_t len, i;
+	unsigned int attempt;
+	int fd;
+
+	len = template ? strlen(template) : 0;
+	if (len < 6 || strcmp(template + len - 6, "XXXXXX") != 0) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	for (attempt = 0; attempt < 128; attempt++) {
+		ul_random_get_bytes(&value, sizeof(value));
+		for (i = 0; i < 6; i++) {
+			template[len - 6 + i] = letters[value % (sizeof(letters) - 1)];
+			value /= sizeof(letters) - 1;
+		}
+
+		fd = openat(dirfd, template, O_RDWR | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
+		if (fd >= 0 || errno != EEXIST)
+			return fd;
+	}
+	errno = EEXIST;
+	return -1;
+}
+#endif
 
 /* Create open temporary file in safe way.  Please notice that the
  * file permissions are -rw------- by default. */
@@ -825,6 +859,39 @@ int main(int argc, char *argv[])
 		free(tmpname);
 		fclose(f);
 
+	} else if (strcmp(argv[1], "--mkstemp-at") == 0) {
+#ifdef HAVE_OPENAT
+		char template[] = "test.XXXXXX";
+		char invalid[] = "test.XXX";
+		struct stat st;
+		int dirfd, fd, flags;
+
+		if (argc != 4)
+			errx(EXIT_FAILURE, "expected directory and renamed directory");
+		dirfd = open(argv[2], O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+		if (dirfd < 0)
+			err(EXIT_FAILURE, "open directory");
+		if (rename(argv[2], argv[3]) != 0 || mkdir(argv[2], 0700) != 0)
+			err(EXIT_FAILURE, "replace directory pathname");
+		fd = mkstemp_cloexec_at(dirfd, template);
+		if (fd < 0)
+			err(EXIT_FAILURE, "mkstemp_cloexec_at");
+		flags = fcntl(fd, F_GETFD);
+		if (fstat(fd, &st) != 0 || (st.st_mode & 0777) != 0600 ||
+		    flags < 0 || !(flags & FD_CLOEXEC))
+			errx(EXIT_FAILURE, "incorrect temporary file attributes");
+		if (fstatat(dirfd, template, &st, AT_SYMLINK_NOFOLLOW) != 0)
+			err(EXIT_FAILURE, "temporary file not in pinned directory");
+		if (mkstemp_cloexec_at(dirfd, invalid) != -1 || errno != EINVAL)
+			errx(EXIT_FAILURE, "invalid template was accepted");
+		close(fd);
+		if (unlinkat(dirfd, template, 0) != 0)
+			err(EXIT_FAILURE, "unlink temporary file");
+		close(dirfd);
+		puts("OK");
+#else
+		errx(EXIT_FAILURE, "openat is unavailable");
+#endif
 	} else if (strcmp(argv[1], "--close-fds") == 0) {
 		ignore_result( dup(STDIN_FILENO) );
 		ignore_result( dup(STDIN_FILENO) );

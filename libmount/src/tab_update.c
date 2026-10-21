@@ -509,20 +509,37 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 {
 	FILE *f;
 	int rc, fd;
-	char *uq = NULL;
+	char *uq = NULL, *path, *name, *slash;
+	int dirfd;
 
 	if (!tb || !upd->filename)
 		return -EINVAL;
 
 	DBG_OBJ(UPDATE, upd, ul_debug("%s: updating", upd->filename));
 
-	fd = mnt_open_uniq_filename(upd->filename, &uq);
-	if (fd < 0)
-		return fd;	/* error */
+	path = strdup(upd->filename);
+	if (!path)
+		return -ENOMEM;
+	slash = strrchr(path, '/');
+	name = slash ? slash + 1 : path;
+	if (slash)
+		*slash = '\0';
+	dirfd = open(slash ? (*path ? path : "/") : ".", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+	if (dirfd < 0) {
+		rc = -errno;
+		free(path);
+		return rc;
+	}
+
+	fd = mnt_open_uniq_filename_at(dirfd, name, &uq);
+	if (fd < 0) {
+		close(dirfd);
+		free(path);
+		return fd;
+	}
 
 	f = fdopen(fd, "w" UL_CLOEXECSTR);
 	if (f) {
-		struct stat st;
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
 
@@ -550,15 +567,15 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
-		if (!rc && stat(upd->filename, &st) == 0)
-			/* Copy uid/gid from the present file before renaming. */
-			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
+		if (geteuid() == 0 && fchown(fd, 0, 0) != 0)
+			DBG_OBJ(UPDATE, upd, ul_debug("fchown failed: %m"));
 
-		fclose(f);
+		if (fclose(f) != 0 && !rc)
+			rc = -errno;
 		f = NULL;
 
 		if (!rc)
-			rc = rename(uq, upd->filename) ? -errno : 0;
+			rc = renameat(dirfd, uq, dirfd, name) ? -errno : 0;
 	} else {
 		rc = -errno;
 		close(fd);
@@ -568,7 +585,9 @@ leave:
 	if (f)
 		fclose(f);
 
-	unlink(uq);	/* be paranoid */
+	unlinkat(dirfd, uq, 0);	/* be paranoid */
+	close(dirfd);
+	free(path);
 	free(uq);
 	DBG_OBJ(UPDATE, upd, ul_debug("%s: done [rc=%d]", upd->filename, rc));
 	return rc;
@@ -621,19 +640,42 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 {
 	int fd, rc = 0;
 	FILE *f;
-	char *uq = NULL;
+	char *uq = NULL, *path, *name, *slash;
+	int dirfd;
+
+	if (!filename)
+		return -EINVAL;
 
 	DBG_OBJ(TAB, tb, ul_debug("%s: replacing", filename));
 
-	fd = mnt_open_uniq_filename(filename, &uq);
-	if (fd < 0)
-		return fd;	/* error */
+	path = strdup(filename);
+	if (!path)
+		return -ENOMEM;
+	slash = strrchr(path, '/');
+	name = slash ? slash + 1 : path;
+	if (slash)
+		*slash = '\0';
+	dirfd = open(slash ? (*path ? path : "/") : ".", O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+	if (dirfd < 0) {
+		rc = -errno;
+		free(path);
+		return rc;
+	}
+
+	fd = mnt_open_uniq_filename_at(dirfd, name, &uq);
+	if (fd < 0) {
+		close(dirfd);
+		free(path);
+		return fd;
+	}
 
 	f = fdopen(fd, "w" UL_CLOEXECSTR);
 	if (f) {
 		struct stat st;
 
-		mnt_table_write_file(tb, f);
+		rc = mnt_table_write_file(tb, f);
+		if (rc)
+			goto leave;
 
 		if (fflush(f) != 0) {
 			rc = -errno;
@@ -643,15 +685,16 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
-		if (!rc && stat(filename, &st) == 0)
+		if (!rc && fstatat(dirfd, name, &st, 0) == 0)
 			/* Copy uid/gid from the present file before renaming. */
 			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
 
-		fclose(f);
+		if (fclose(f) != 0 && !rc)
+			rc = -errno;
 		f = NULL;
 
 		if (!rc)
-			rc = rename(uq, filename) ? -errno : 0;
+			rc = renameat(dirfd, uq, dirfd, name) ? -errno : 0;
 	} else {
 		rc = -errno;
 		close(fd);
@@ -660,7 +703,9 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 leave:
 	if (f)
 		fclose(f);
-	unlink(uq);
+	unlinkat(dirfd, uq, 0);
+	close(dirfd);
+	free(path);
 	free(uq);
 
 	DBG_OBJ(TAB, tb, ul_debug("replace done [rc=%d]", rc));
