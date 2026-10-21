@@ -1568,6 +1568,8 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
 		return -EINVAL;
 	if (!cxt->label->op->del_part)
 		return -ENOSYS;
+	if (partno >= cxt->label->nparts_max)
+		return -EINVAL;
 
 	fdisk_wipe_partition(cxt, partno, 0);
 
@@ -1622,6 +1624,8 @@ int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 		return -EINVAL;
 	if (!cxt->label->op->part_is_used)
 		return -ENOSYS;
+	if (n >= cxt->label->nparts_max)
+		return 0;
 
 	return cxt->label->op->part_is_used(cxt, n);
 }

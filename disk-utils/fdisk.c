@@ -954,7 +954,7 @@ static size_t skip_empty(const unsigned char *buf, size_t i, size_t sz)
 	size_t next;
 	const unsigned char *p0 = buf + i;
 
-	for (next = i + 16; next < sz; next += 16) {
+	for (next = i + 16; next + 16 <= sz; next += 16) {
 		if (memcmp(p0, buf + next, 16) != 0)
 			break;
 	}

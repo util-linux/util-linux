@@ -558,7 +558,8 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 {
 	if (!cxt || !cxt->label || !t)
 		return -EINVAL;
-
+	if (partnum >= cxt->label->nparts_max)
+		return -EINVAL;
 
 	if (cxt->label->op->set_part) {
 		struct fdisk_partition *pa = fdisk_new_partition();
@@ -596,6 +597,8 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
 		return -EINVAL;
 	if (!cxt->label->op->part_toggle_flag)
 		return -ENOSYS;
+	if (partnum >= cxt->label->nparts_max)
+		return -EINVAL;
 
 	rc = cxt->label->op->part_toggle_flag(cxt, partnum, flag);
 

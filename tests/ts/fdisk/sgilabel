@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="sgilabel tests"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+
+# write one byte (a printf escape) at the given offset of the SGI label
+function sgi_set_byte {
+	printf "$2" | dd of=${TEST_IMAGE_NAME} bs=1 seek=$1 conv=notrunc &> /dev/null
+}
+
+function sgi_new_label {
+	# a few 255x63 cylinders: free space is cylinder aligned
+	TEST_IMAGE_NAME=$(ts_image_init 50)
+	echo -e "G\nw\nq\n" | \
+		$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} &> /dev/null
+}
+
+
+#
+# The boot file name is a 16-byte field; a name that uses all of it is stored
+# without a terminating NUL and is followed by the device parameters.
+#
+ts_init_subtest "bootfile-full-length"
+sgi_new_label
+
+echo -e "b\n/0123456789abcde\nw\nq\n" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+sgi_set_byte 24 '\001'	# devparam.skew, right after boot_file[]
+
+$TS_CMD_FDISK --list-details ${TEST_IMAGE_NAME} 2> /dev/null | grep '^Bootfile:' >> "$TS_OUTPUT"
+echo -e "b\n\nq\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} 2> /dev/null | \
+	grep -o 'The current boot file is: .*' >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+
+#
+# The root and swap partition numbers are read from disk and have to be
+# within the partition table. Partitions 1 and 2 (the default root and
+# swap) exist, so a label with valid numbers reports neither as missing.
+#
+ts_init_subtest "partnum-out-of-range"
+sgi_new_label
+
+echo -e "n\n1\n\n+1M\nn\n2\n\n+1M\nw\nq\n" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+sgi_set_byte 5 '\020'	# root_part_num = 16
+sgi_set_byte 7 '\020'	# swap_part_num = 16
+
+echo -e "v\nq\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} 2> /dev/null | \
+	grep 'partition does not exist' >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_finalize

@@ -1,0 +1,10 @@
+f6051f0f8e626ca665082f494a9885c1 mbr-empty-extended-4K.img
+Disk <removed>: 10 MiB, 10485760 bytes, 2560 sectors
+Units: sectors of 1 * 4096 = 4096 bytes
+Sector size (logical/physical): 4096 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / <removed> bytes
+Disklabel type: dos
+Disk identifier: <removed>
+
+Device     Boot Start   End Sectors Id Type     Start-C/H/S End-C/H/S Attrs
+<removed>1        256  2559    2304  5 Extended       0/4/5   0/40/40 
