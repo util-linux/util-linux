@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="command-line parsing"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_BLOCKDEV"
+
+WORKDIR=$(mktemp -d "$TS_OUTDIR/${TS_TESTNAME}.XXXXXX") || ts_die "cannot create test directory"
+trap 'rm -rf "$WORKDIR"' EXIT
+ts_cd "$WORKDIR"
+
+for opt in -h --help -V --version; do
+	"$TS_CMD_BLOCKDEV" "$opt" >baseline 2>err || ts_failed "$opt baseline"
+	[ ! -s err ] || ts_failed "$opt baseline stderr"
+	for prefix in "" "-v" "-q" "--getsz"; do
+		"$TS_CMD_BLOCKDEV" $prefix "$opt" missing >out 2>err || ts_failed "$prefix $opt"
+		cmp -s baseline out || ts_failed "$prefix $opt output"
+		[ ! -s err ] || ts_failed "$prefix $opt stderr"
+	done
+done
+echo "help and version: OK" >>"$TS_OUTPUT"
+
+truncate -s 4096 file ./-V ./--help ./-- || ts_die "cannot create files"
+truncate -s 8192 other || ts_die "cannot create second file"
+for separator in "" "--"; do
+	"$TS_CMD_BLOCKDEV" --getsz $separator file >out 2>err || ts_failed "getsz $separator"
+	[ "$(cat out)" = 8 ] || ts_failed "getsz $separator output"
+	[ ! -s err ] || ts_failed "getsz $separator stderr"
+	"$TS_CMD_BLOCKDEV" -v --getsz -q --getsz $separator file other >out 2>err || ts_failed "command replay"
+	printf 'get size in 512-byte sectors: 8\n8\nget size in 512-byte sectors: 16\n16\n' >expected
+	cmp -s expected out || ts_failed "command replay output"
+	[ ! -s err ] || ts_failed "command replay stderr"
+done
+echo "separator and command replay: OK" >>"$TS_OUTPUT"
+
+"$TS_CMD_BLOCKDEV" --getsz -- -V --help -- >out 2>err || ts_failed "separated filenames"
+printf '8\n8\n8\n' >expected
+cmp -s expected out || ts_failed "separated filenames output"
+[ ! -s err ] || ts_failed "separated filenames stderr"
+"$TS_CMD_BLOCKDEV" --getsz file --help >out 2>err || ts_failed "filename after device"
+printf '8\n8\n' >expected
+cmp -s expected out || ts_failed "filename after device output"
+[ ! -s err ] || ts_failed "filename after device stderr"
+echo "option-shaped filenames: OK" >>"$TS_OUTPUT"
+
+for args in "--getsz" "--getsz --" "--unknown file" "--setra" "--setra -- file" "--setra invalid file" "--setra --help file"; do
+	if "$TS_CMD_BLOCKDEV" $args >out 2>err; then
+		ts_failed "$args succeeded"
+	fi
+	[ ! -s out ] || ts_failed "$args stdout"
+	[ -s err ] || ts_failed "$args missing diagnostic"
+done
+echo "invalid arguments: OK" >>"$TS_OUTPUT"
+
+ts_finalize
