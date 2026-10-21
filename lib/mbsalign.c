@@ -23,6 +23,36 @@
 #include "strutils.h"
 #include "widechar.h"
 
+/* Return the byte after a complete ANSI escape sequence, or NULL. */
+static const char *skip_ansi_escape(const char *p, const char *end)
+{
+	const char *q;
+
+	if (p >= end || (unsigned char) *p != '\033' || p + 1 >= end)
+		return NULL;
+
+	q = p + 1;
+	if (*q == '[') {
+		q++;
+		/* CSI parameter bytes (0x30-0x3f) are followed by intermediate
+		 * bytes (0x20-0x2f) and a final byte (0x40-0x7e). None of them
+		 * occupies a cell.
+		 */
+		while (q < end && (unsigned char) *q >= 0x30
+				&& (unsigned char) *q <= 0x3f)
+			q++;
+		while (q < end && (unsigned char) *q >= 0x20
+				&& (unsigned char) *q <= 0x2f)
+			q++;
+		if (q < end && (unsigned char) *q >= 0x40
+				&& (unsigned char) *q <= 0x7e)
+			return q + 1;
+	} else if (*q && strchr("()*+", *q) && q + 1 < end)
+		return q + 2;
+
+	return NULL;
+}
+
 /*
  * Counts number of cells in multibyte string. All control and
  * non-printable chars are ignored.
@@ -43,28 +73,9 @@ size_t mbs_nwidth(const char *buf, size_t bufsz)
 
 	while (p && *p && p <= last) {
 		if (*p == '\033') {
-			p++;
+			const char *e = skip_ansi_escape(p, last + 1);
 
-			/* try detect a CSI sequence "\e[" and skip on success;
-			 * it is parameter bytes (0x30-0x3f), then intermediate
-			 * bytes (0x20-0x2f), terminated by a final byte
-			 * (0x40-0x7e). None of them occupies a cell. */
-			if (*p == '[') {
-				const char *e = p + 1;
-
-				while (e <= last && (unsigned char) *e >= 0x30
-						 && (unsigned char) *e <= 0x3f)
-					e++;
-				while (e <= last && (unsigned char) *e >= 0x20
-						 && (unsigned char) *e <= 0x2f)
-					e++;
-				if (e <= last && (unsigned char) *e >= 0x40
-					       && (unsigned char) *e <= 0x7e)
-					p = e + 1;
-			}
-			/* try detect SCS sequences "\e(X", "\e)X", "\e*X", "\e+X" and skip on success */
-			else if (p < last && (*p == '(' || *p == ')' || *p == '*' || *p == '+'))
-				p += 2;  /* skip the SCS sequence */
+			p = e ? e : p + 1;
 			continue;
 		}
 		if (iscntrl((unsigned char) *p)) {
@@ -455,6 +466,31 @@ wc_ensure_printable (wchar_t *wchars)
   return replaced;
 }
 
+/* Return the wchar after a complete ANSI escape sequence, or NULL. */
+static wchar_t *
+wc_skip_ansi_escape (wchar_t *wc)
+{
+  wchar_t *p = wc + 1;
+
+  if (*wc != L'\033' || !*p)
+    return NULL;
+
+  if (*p == L'[')
+    {
+      p++;
+      while (*p >= 0x30 && *p <= 0x3f)
+        p++;
+      while (*p >= 0x20 && *p <= 0x2f)
+        p++;
+      if (*p >= 0x40 && *p <= 0x7e)
+        return p + 1;
+    }
+  else if ((*p == L'(' || *p == L')' || *p == L'*' || *p == L'+') && p[1])
+    return p + 2;
+
+  return NULL;
+}
+
 /* Truncate wchar string to width cells.
  * Returns number of cells used.  */
 
@@ -466,6 +502,13 @@ wc_truncate (wchar_t *wc, size_t width)
 
   while (*wc)
     {
+      wchar_t *after_escape = wc_skip_ansi_escape (wc);
+      if (after_escape)
+        {
+          wc = after_escape;
+          continue;
+        }
+
       next_cells = wcwidth (*wc);
       if (next_cells == -1) /* non printable */
         {
@@ -527,8 +570,26 @@ mbs_truncate(char *str, size_t *width)
 done:
 	free(wcs);
 #else
-	if (bytes >= 0 && *width < (size_t) bytes)
-		bytes = *width;
+	{
+		const char *p = str;
+		const char *end = str + bytes;
+		size_t cells = 0;
+
+		while (p < end) {
+			const char *after_escape = skip_ansi_escape(p, end);
+
+			if (after_escape) {
+				p = after_escape;
+				continue;
+			}
+			if (cells >= *width)
+				break;
+			p++;
+			cells++;
+		}
+		bytes = p - str;
+		*width = cells;
+	}
 #endif
 	if (bytes >= 0)
 		str[bytes] = '\0';
