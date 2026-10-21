@@ -52,6 +52,7 @@
 
 #include "xalloc.h"
 #include "buffer.h"
+#include "fileutils.h"
 
 static void load_xinfo_from_proc_icmp(ino_t netns_inode, enum sysfs_byteorder byteorder);
 static void load_xinfo_from_proc_icmp6(ino_t netns_inode, enum sysfs_byteorder byteorder);
@@ -275,11 +276,13 @@ void initialize_sock_xinfos(void)
 	dir = ul_path_opendir(pc, NULL);
 	if (dir == NULL)
 		goto out;
-	while ((d = readdir(dir))) {
+	while ((d = xreaddir(dir))) {
 		struct stat sb;
 		int fd;
 		struct netns *nsobj;
 		if (ul_path_stat(pc, &sb, 0, d->d_name) < 0)
+			continue;
+		if (!is_nsfs_dev(sb.st_dev))
 			continue;
 		if (is_sock_xinfo_loaded(sb.st_ino))
 			continue;
