@@ -47,4 +47,8 @@ ts_init_subtest "notime-delta"
 $TS_HELPER_DMESG --notime --show-delta --file "$TS_SELF"/input >> "$TS_OUTPUT" 2>/dev/null
 ts_finalize_subtest
 
+ts_init_subtest "future"
+$TS_HELPER_DMESG --ctime --file "$TS_SELF"/future >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_finalize

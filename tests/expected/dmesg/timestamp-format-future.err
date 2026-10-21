@@ -1,0 +1,1 @@
+test_dmesg: warning: wall-clock timestamp is outside the plausible range; suspend/resume or a clock change may have made it unreliable
