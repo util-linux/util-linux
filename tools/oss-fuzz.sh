@@ -9,7 +9,7 @@ export CXX=${CXX:-clang++}
 export LIB_FUZZING_ENGINE=${LIB_FUZZING_ENGINE:--fsanitize=fuzzer}
 
 SANITIZER=${SANITIZER:-address -fsanitize-address-use-after-scope}
-flags="-O1 -fno-omit-frame-pointer -gline-tables-only -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -fsanitize=$SANITIZER -fsanitize=fuzzer-no-link"
+flags="-O1 -fno-omit-frame-pointer -gline-tables-only -DFUZZING_BUILD_MODE_UNSAFE_FOR_PRODUCTION -DUL_OSS_FUZZ_BUILD -fsanitize=$SANITIZER -fsanitize=fuzzer-no-link"
 
 export CFLAGS=${CFLAGS:-$flags}
 export CXXFLAGS=${CXXFLAGS:-$flags}
