@@ -31,4 +31,15 @@ echo >> "$TS_OUTPUT"
 printf "abc\000123" | $TS_CMD_REV --zero | tr '\0' '|' >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 echo >> "$TS_OUTPUT"
 
+# Invalid and incomplete UTF-8 must be rejected rather than treated as EOF.
+for input in '\x9b\n' '\xc3(\n' '\xe2\x82'; do
+	printf '%b' "$input" | LC_ALL=C.UTF-8 "$TS_CMD_REV" \
+		> "${TS_OUTPUT}.invalid" 2> "${TS_ERRLOG}.invalid"
+	printf 'invalid UTF-8 exit status: %s\n' "$?" >> "$TS_OUTPUT"
+	cat "${TS_OUTPUT}.invalid" >> "$TS_OUTPUT"
+	if ! grep -q 'fgetwc() failed:' "${TS_ERRLOG}.invalid"; then
+		echo 'missing invalid UTF-8 diagnostic' >> "$TS_OUTPUT"
+	fi
+done
+
 ts_finalize
