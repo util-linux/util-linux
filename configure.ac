@@ -1437,6 +1437,7 @@ AC_ARG_ENABLE([libmount],
 )
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
+UL_REQUIRES_HAVE([libmount], [openat], [openat functions])
 UL_REQUIRES_HAVE([libmount], [dirfd,ddfd], [dirfd or ddfd function])
 UL_REQUIRES_HAVE([libmount], [mntent_h], [mntent.h header file])
 UL_REQUIRES_HAVE([libmount], [sys_vfs_h], [sys/vfs.h header file])

@@ -1076,11 +1076,10 @@ const char *mnt_get_utab_path(void)
 
 /* returns file descriptor or -errno, @name returns a unique filename
  */
-int mnt_open_uniq_filename(const char *filename, char **name)
+int mnt_open_uniq_filename_at(int dirfd, const char *filename, char **name)
 {
 	int rc, fd;
 	char *n;
-	mode_t oldmode;
 
 	if (!filename)
 		return -EINVAL;
@@ -1091,16 +1090,9 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	if (rc <= 0)
 		return -ENOMEM;
 
-	/* This is for very old glibc and for compatibility with Posix, which says
-	 * nothing about mkstemp() mode. All sane glibc use secure mode (0600).
-	 */
-	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
-			S_IROTH|S_IWOTH|S_IXOTH);
-
-	fd = mkstemp_cloexec(n);
+	fd = mkstemp_cloexec_at(dirfd, n);
 	if (fd < 0)
 		fd = -errno;
-	umask(oldmode);
 
 	if (fd >= 0 && name)
 		*name = n;
