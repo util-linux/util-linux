@@ -266,11 +266,11 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				for (p1++; strchr(spec, *p1); p1++)
+				for (p1++; *p1 && strchr(spec, *p1); p1++)
 					;
 			} else {
 				/* skip any special chars, field width */
-				while (strchr(spec + 1, *++p1))
+				while (*++p1 && strchr(spec + 1, *p1))
 					;
 				if (*p1 == '.' && isdigit(*++p1)) {
 					sokay = USEPREC;
@@ -278,6 +278,8 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 				} else
 					sokay = NOTOKAY;
 			}
+			if (!*p1)
+				badfmt(fu->fmt);
 
 			p2 = p1 + 1;		/* Set end pointer. */
 			cs[0] = *p1;		/* Set conversion string. */
