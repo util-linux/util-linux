@@ -52,6 +52,9 @@ int ul_parse_pid_str(char *pidstr, pid_t *pid_num, uint64_t *pfd_ino, int flags)
 
 	*pid_num = (pid_t) num;
 
+	if (pfd_ino)
+		*pfd_ino = 0;
+
 	if (*end == ':' && pfd_ino && num > 0) {
 		rc = ul_strtou64(++end, pfd_ino, 10);
 		if (rc < 0)
