@@ -796,6 +796,14 @@ ____
 mount -t auto -o'X-mount.auto-fstypes="noext2,ext3"'  /dev/sdc1 /mnt/test
 ____
 
+*X-loopdev.direct-io*=*on*|*off*::
+Enable or disable direct I/O when setting up a loop device. If a loop device
+already exists for the same file, offset and size limit, its direct I/O mode
+must match; otherwise the mount fails without changing the existing device.
+Without this option, new loop devices use buffered I/O and existing devices
+can be reused in either mode. This option does not change an existing mount
+or apply when no loop device is needed. See also *losetup*(8) *--direct-io*.
+
 *X-mount.mkdir*[**=**_mode_]::
 Allow to make a target directory (mountpoint) if it does not exist yet. The optional argument _mode_ specifies the filesystem access mode used for *mkdir*(2) in octal notation. The default mode is 0755. This functionality is supported only for root users or when *mount* is executed without suid permissions. The option is also supported as *x-mount.mkdir*, but this notation is deprecated since v2.30. See also *--mkdir* command line option.
 
@@ -1708,7 +1716,7 @@ ____
 *mount -t ext4 /tmp/disk.img /mnt*
 ____
 
-This type of mount knows about three options, namely *loop*, *offset* and *sizelimit*, that are really options to *losetup*(8). (These options can be used in addition to those specific to the filesystem type.)
+Loop device setup accepts *loop*, *offset*, *sizelimit* and *X-loopdev.direct-io*, corresponding to options of *losetup*(8). (These options can be used in addition to those specific to the filesystem type.)
 
 Since Linux 2.6.25 auto-destruction of loop devices is supported, meaning that any loop device allocated by *mount* will be freed by *umount* independently of _/etc/mtab_.
 
