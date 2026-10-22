@@ -29,38 +29,38 @@ ts_check_prog "stat"
 
 # make sure we do not use shell built-in command
 if [ "$TS_USE_SYSTEM_COMMANDS" == "yes" ]; then
-	TS_CMD_KILL="$(which kill)"
+  TS_CMD_KILL="$(which kill)"
 fi
 
 # The pidfs was only introduced in kernel version 6.9,
 # which means we cannot get a valid pidfd from earlier versions,
 # so we can confidently anticipate the test failure.
 if ts_kernel_ver_lt 6 9; then
-	TS_KNOWN_FAIL="yes"
+  TS_KNOWN_FAIL="yes"
 fi
 
 ts_init_subtest "single-pid"
 if "$TS_CMD_GETINO" --pidfs 1 &>/dev/null; then
-  echo "ok" > "$TS_OUTPUT"
+  echo "ok" >"$TS_OUTPUT"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "multiple-pids"
-if "$TS_CMD_GETINO" 1 1 1 1 1 &>/dev/null; then
-  echo "ok" > "$TS_OUTPUT"
+if "$TS_CMD_GETINO" 1 "1:$($TS_CMD_GETINO 1)" 2 1 &>/dev/null; then
+  echo "ok" >"$TS_OUTPUT"
 fi
 ts_finalize_subtest
 
 ts_init_subtest "invalid-pid"
 if ! "$TS_CMD_GETINO" "invalid-pid" &>/dev/null; then
-  echo "ok" > "$TS_OUTPUT"
+  echo "ok" >"$TS_OUTPUT"
 fi
 ts_finalize_subtest
 
-ts_init_subtest "print-pid-option" 
-res=$("$TS_CMD_GETINO" --print-pid 1 2>/dev/null | grep -Eo '^[[:digit:]]*:[[:digit:]]*$'); 
+ts_init_subtest "print-pid-option"
+res=$("$TS_CMD_GETINO" --print-pid 1 2>/dev/null | grep -Eo '^[[:digit:]]*:[[:digit:]]*$')
 if [ -n "$res" ]; then
-  echo "ok" > "$TS_OUTPUT"
+  echo "ok" >"$TS_OUTPUT"
 fi
 ts_finalize_subtest
 
@@ -74,9 +74,9 @@ function do_ns_check() {
     ts_ns_ino=$("$TS_CMD_GETINO" --"${ns_name}"ns $$ 2>>"$TS_ERRLOG")
     #shellcheck disable=SC2086
     unshare_ns_ino=$("$TS_CMD_UNSHARE" $unshare_opts bash -c \
-                                    "$TS_CMD_GETINO --${ns_name}ns \$\$" 2>>"$TS_ERRLOG")
+      "$TS_CMD_GETINO --${ns_name}ns \$\$" 2>>"$TS_ERRLOG")
 
-    if (( ts_ns_ino == unshare_ns_ino )); then
+    if ((ts_ns_ino == unshare_ns_ino)); then
       ts_failed "${ns_name} namespace unchanged (NS ID: $ts_ns_ino)"
     fi
   else
@@ -84,7 +84,7 @@ function do_ns_check() {
   fi
 }
 
-"$TS_CMD_GETINO" --ipcns $$ > /dev/null 2>&1 || ts_skip "namespace ioctl not supported"
+"$TS_CMD_GETINO" --ipcns $$ >/dev/null 2>&1 || ts_skip "namespace ioctl not supported"
 
 ts_init_subtest "ipcns"
 do_ns_check "ipc" "--ipc"
@@ -119,18 +119,17 @@ if [ -r /proc/self/ns/user ]; then
   getino_owner="$(stat --format=%U "$TS_CMD_GETINO")"
   ts_user_ns=$("$TS_CMD_GETINO" --userns $$ 2>>"$TS_ERRLOG")
   unshare_user_ns=$("$TS_CMD_RUNUSER" --user "$getino_owner" -- \
-                      "$TS_CMD_UNSHARE" --user \
-                        bash -c "$TS_CMD_GETINO --userns \$\$" 2>>"$TS_ERRLOG")
+    "$TS_CMD_UNSHARE" --user \
+    bash -c "$TS_CMD_GETINO --userns \$\$" 2>>"$TS_ERRLOG")
 
   if grep "$("$TS_HELPER_STRERROR" EACCES)" "$TS_ERRLOG" &>/dev/null; then
     ts_skip "missing permissions to obtain user namespace"
   else
-    (( ts_user_ns == unshare_user_ns )) && ts_failed "user namespace unchanged"
+    ((ts_user_ns == unshare_user_ns)) && ts_failed "user namespace unchanged"
   fi
 else
   ts_skip "no user namespace support"
 fi
 ts_finalize_subtest
-
 
 ts_finalize
