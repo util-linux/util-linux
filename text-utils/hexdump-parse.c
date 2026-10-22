@@ -213,7 +213,7 @@ int block_size(struct hexdump_fs *fs)
 			 * skip any special chars -- save precision in
 			 * case it's a %s format.
 			 */
-			while (strchr(spec + 1, *++fmt) && *fmt != '\0')
+			while (*++fmt && strchr(spec + 1, *fmt))
 				;
 			if (*fmt == '.' && isdigit(*++fmt))
 				fmt = next_number(fmt, &prec);
@@ -225,7 +225,8 @@ int block_size(struct hexdump_fs *fs)
 				size = 8;
 			else if (*fmt == 's')
 				size = prec;
-			else if (*fmt == 'c' || (*fmt == '_' && first_letter(++fmt, "cpu")))
+			else if (*fmt == 'c' ||
+				 (*fmt == '_' && fmt[1] && first_letter(++fmt, "cpu")))
 				size = 1;
 			else
 				size = 0;
@@ -279,11 +280,11 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				for (p1++; strchr(spec, *p1); p1++)
+				for (p1++; *p1 && strchr(spec, *p1); p1++)
 					;
 			} else {
 				/* skip any special chars, field width */
-				while (strchr(spec + 1, *++p1))
+				while (*++p1 && strchr(spec + 1, *p1))
 					;
 				if (*p1 == '.' && isdigit(*++p1)) {
 					sokay = USEPREC;
@@ -291,6 +292,8 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 				} else
 					sokay = NOTOKAY;
 			}
+			if (!*p1)
+				badfmt(fu->fmt);
 
 			p2 = p1 + 1;		/* Set end pointer. */
 			cs[0] = *p1;		/* Set conversion string. */
@@ -404,7 +407,8 @@ isint:				cs[3] = '\0';
 						}
 						break;
 					default:
-						p1[2] = '\0';
+						if (p1[1])
+							p1[2] = '\0';
 						badconv(p1);
 				}
 			} else {
