@@ -670,6 +670,29 @@ fail:
 	return -errno;
 }
 
+static int has_long_overlayfs_lowerdir(struct libmnt_context *cxt)
+{
+	struct libmnt_optlist *ol;
+	struct libmnt_iter itr;
+	struct libmnt_opt *opt;
+
+	ol = mnt_context_get_optlist(cxt);
+	if (!ol)
+		return 0;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	while (mnt_optlist_next_opt(ol, &itr, &opt) == 0) {
+		const char *name = mnt_opt_get_name(opt);
+		const char *value = mnt_opt_get_value(opt);
+
+		if (name && strcmp(name, "lowerdir") == 0
+		    && value && strlen(value) >= 256)
+			return 1;
+	}
+
+	return 0;
+}
+
 static int force_classic_mount(struct libmnt_context *cxt)
 {
 	const char *env = safe_getenv("LIBMOUNT_FORCE_MOUNT2");
@@ -700,6 +723,20 @@ static int force_classic_mount(struct libmnt_context *cxt)
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
 		if (type && strcmp(type, "btrfs") == 0 && cxt->has_selinux_opt)
+			return 1;
+	}
+
+	/*
+	 * Overlayfs limits lowerdir values passed through fsconfig() to 256
+	 * bytes. The lowerdir+ option for fsconfig() was added in Linux 6.7,
+	 * so use mount(2), which accepts options up to PAGE_SIZE, for longer
+	 * layer lists to retain compatibility with older kernels.
+	 */
+	{
+		const char *type = mnt_fs_get_fstype(cxt->fs);
+
+		if (type && strcmp(type, "overlay") == 0
+		    && has_long_overlayfs_lowerdir(cxt))
 			return 1;
 	}
 
