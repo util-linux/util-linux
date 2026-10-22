@@ -912,7 +912,11 @@ print_summary_cputype(struct lscpu_cxt *cxt,
 	if (ct->model || ct->revision)
 		add_summary_s(tb, sec, _("Model:"), ct->model ?: ct->revision);
 
-	add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
+	if (ct->nthreads_per_core_min && ct->nthreads_per_core_min < ct->nthreads_per_core)
+		add_summary_sprint(tb, sec, _("Thread(s) per core:"), "%zu-%zu",
+				ct->nthreads_per_core_min, ct->nthreads_per_core);
+	else
+		add_summary_n(tb, sec, _("Thread(s) per core:"), ct->nthreads_per_core);
 	if (cxt->is_cluster)
 		add_summary_n(tb, sec, _("Core(s) per cluster:"), ct->ncores_per_socket);
 	else

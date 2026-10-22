@@ -89,6 +89,7 @@ struct lscpu_cputype {
 	size_t	physchips;	/* Physical chips */
 	size_t	physcoresperchip;	/* Physical cores per chip */
 
+	size_t	nthreads_per_core_min;
 	size_t	nthreads_per_core;
 	size_t	ncores_per_socket;
 	size_t	nsockets_per_book;

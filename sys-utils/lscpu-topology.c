@@ -141,7 +141,7 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 {
 	size_t i, npos;
 	struct path_cxt *sys;
-	int nthreads = 0, sw_topo = 0, rc, hp_state, hp_online_state;
+	int nthreads = 0, min_nthreads = 0, sw_topo = 0, rc, hp_state, hp_online_state;
 	FILE *fd;
 	cpu_set_t *temp_set;
 
@@ -196,6 +196,8 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 			n = 1;
 		if (n > nthreads)
 			nthreads = n;
+		if (!min_nthreads || n < min_nthreads)
+			min_nthreads = n;
 
 		/* Allocate arrays for topology maps.
 		 *
@@ -258,10 +260,13 @@ static int cputype_read_topology(struct lscpu_cxt *cxt, struct lscpu_cputype *ct
 	}
 
 	ct->nthreads_per_core = nthreads;
+	ct->nthreads_per_core_min = min_nthreads;
 	if (ct->mtid) {
 		uint64_t x;
-		if (ul_strtou64(ct->mtid, &x, 10) == 0 && x <= ULONG_MAX)
+		if (ul_strtou64(ct->mtid, &x, 10) == 0 && x <= ULONG_MAX) {
 			ct->nthreads_per_core = (size_t) x + 1;
+			ct->nthreads_per_core_min = ct->nthreads_per_core;
+		}
 	}
 
 	if (!sw_topo) {
