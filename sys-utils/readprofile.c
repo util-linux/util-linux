@@ -363,7 +363,8 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE,
 			     _("profile address out of range. Wrong map file?"));
 
-		while (step > 0 && indx < (next_add - add0) / step) {
+		while (step > 0 && indx < (next_add - add0) / step &&
+		       indx < len / sizeof(*buf)) {
 			if (optBins && (buf[indx] || optAll)) {
 				if (!header_printed) {
 					printf("%s:\n", fn_name);
@@ -391,7 +392,8 @@ int main(int argc, char **argv)
 				unsigned long long scan;
 
 				for (scan = (fn_add - add0) / step + 1;
-				     scan < (next_add - add0) / step;
+				     scan < (next_add - add0) / step &&
+				     scan < len / sizeof(*buf);
 				     scan++) {
 					unsigned long long addr;
 					addr = (scan - 1) * step + add0;
