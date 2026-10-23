@@ -472,6 +472,14 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 			id = mk_cache_id(cxt, cpu, buf, level);
 
 		ca = get_cache(cxt, buf, level, id);
+
+		/* Guard against cache ID collisions across core types.
+		* On hybrid systems like Intel Meteor Lake sysfs cache IDs are
+		* unique only within a core type, so 2 physically distinct caches
+		* can share the same (type, level, id). */
+		if (ca && ca->sharedmap && !CPU_ISSET_S(num, cxt->setsize, ca->sharedmap)){
+			ca = NULL;
+		}
 		if (!ca)
 			ca = add_cache(cxt, buf, level, id);
 
