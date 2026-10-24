@@ -51,38 +51,14 @@ static uint32_t netlink_groups;
 static void output_special_char(struct agetty_issue *ie, unsigned char c,
 				struct agetty_options *op, struct termios *tp, FILE *fp);
 
-static char *read_os_release(struct agetty_options *op, const char *varname)
+/* Returns the value of the last "varname=value" assignment in the
+ * os-release formatted @data, or NULL if there is none. */
+static char *parse_os_release(const char *data, const char *varname)
 {
-	int fd = -1;
-	struct stat st;
 	size_t varsz = strlen(varname);
-	char *p, *buf = NULL, *ret = NULL;
+	char *p, *buf, *ret = NULL;
 
-	/* read the file only once */
-	if (!op->osrelease) {
-		fd = open(_PATH_OS_RELEASE_ETC, O_RDONLY);
-		if (fd == -1) {
-			fd = open(_PATH_OS_RELEASE_USR, O_RDONLY);
-			if (fd == -1) {
-				agetty_log_warn(_("cannot open os-release file"));
-				return NULL;
-			}
-		}
-
-		if (fstat(fd, &st) < 0 || st.st_size > 4 * 1024 * 1024)
-			goto done;
-
-		op->osrelease = malloc(st.st_size + 1);
-		if (!op->osrelease)
-			agetty_log_err(_("failed to allocate memory: %m"));
-		if (ul_read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
-			free(op->osrelease);
-			op->osrelease = NULL;
-			goto done;
-		}
-		op->osrelease[st.st_size] = 0;
-	}
-	buf = strdup(op->osrelease);
+	buf = strdup(data);
 	if (!buf)
 		agetty_log_err(_("failed to allocate memory: %m"));
 	p = buf;
@@ -122,8 +98,42 @@ static char *read_os_release(struct agetty_options *op, const char *varname)
 			agetty_log_err(_("failed to allocate memory: %m"));
 		p = eol + 1;
 	}
-done:
 	free(buf);
+	return ret;
+}
+
+static char *read_os_release(struct agetty_options *op, const char *varname)
+{
+	int fd = -1;
+	struct stat st;
+	char *ret = NULL;
+
+	/* read the file only once */
+	if (!op->osrelease) {
+		fd = open(_PATH_OS_RELEASE_ETC, O_RDONLY);
+		if (fd == -1) {
+			fd = open(_PATH_OS_RELEASE_USR, O_RDONLY);
+			if (fd == -1) {
+				agetty_log_warn(_("cannot open os-release file"));
+				return NULL;
+			}
+		}
+
+		if (fstat(fd, &st) < 0 || st.st_size > 4 * 1024 * 1024)
+			goto done;
+
+		op->osrelease = malloc(st.st_size + 1);
+		if (!op->osrelease)
+			agetty_log_err(_("failed to allocate memory: %m"));
+		if (ul_read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
+			free(op->osrelease);
+			op->osrelease = NULL;
+			goto done;
+		}
+		op->osrelease[st.st_size] = 0;
+	}
+	ret = parse_os_release(op->osrelease, varname);
+done:
 	if (fd >= 0)
 		close(fd);
 	return ret;
