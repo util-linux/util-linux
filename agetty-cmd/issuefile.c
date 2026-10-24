@@ -52,7 +52,8 @@ static void output_special_char(struct agetty_issue *ie, unsigned char c,
 				struct agetty_options *op, struct termios *tp, FILE *fp);
 
 /* Returns the value of the last "varname=value" assignment in the
- * os-release formatted @data, or NULL if there is none. */
+ * os-release formatted @data, or NULL if there is none. The data are parsed
+ * line by line, so an empty value yields an empty string. */
 static char *parse_os_release(const char *data, const char *varname)
 {
 	size_t varsz = strlen(varname);
@@ -64,39 +65,39 @@ static char *parse_os_release(const char *data, const char *varname)
 	p = buf;
 
 	for (;;) {
-		char *eol;
+		char *line, *eol;
+		int eol_found;
 
-		p += strspn(p, "\n\r");
 		p += strspn(p, " \t\n\r");
 		if (!*p)
 			break;
-		if (strspn(p, "#;\n") != 0) {
-			p += strcspn(p, "\n\r");
-			continue;
-		}
-		if (strncmp(p, varname, varsz) != 0) {
-			p += strcspn(p, "\n\r");
-			continue;
-		}
-		p += varsz;
-		p += strspn(p, " \t\n\r");
 
-		if (*p != '=')
-			continue;
-
-		p += strspn(p, " \t\n\r=");
-
+		/* isolate the line, never look beyond it */
+		line = p;
 		eol = p + strcspn(p, "\n\r");
+		eol_found = *eol != '\0';
 		*eol = '\0';
+		p = eol + eol_found;
 
-		rtrim_whitespace((unsigned char *) p);
-		ul_unquote(p);
+		if (*line == '#' || *line == ';')
+			continue;
+		if (strncmp(line, varname, varsz) != 0)
+			continue;
+		line += varsz;
+		line += strspn(line, " \t");
+
+		if (*line != '=')
+			continue;
+		line++;
+		line += strspn(line, " \t");
+
+		rtrim_whitespace((unsigned char *) line);
+		ul_unquote(line);
 
 		free(ret);
-		ret = strdup(p);
+		ret = strdup(line);
 		if (!ret)
 			agetty_log_err(_("failed to allocate memory: %m"));
-		p = eol + 1;
 	}
 	free(buf);
 	return ret;
