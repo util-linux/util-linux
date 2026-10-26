@@ -157,6 +157,20 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(MKFS_EX_OK);
 }
 
+/*
+ * The image contains zlib compressed data, the compression result differs
+ * between zlib implementations (and versions), so report the library used.
+ */
+static void __attribute__((__noreturn__)) print_cramfs_version(int eval)
+{
+	char zlib[64];
+	const char *features[] = { zlib, NULL };
+
+	snprintf(zlib, sizeof(zlib), "zlib-%s", zlibVersion());
+
+	print_version_with_features(eval, features);
+}
+
 static char *
 do_mmap(char *path, unsigned int size, unsigned int mode){
 	int fd;
@@ -727,10 +741,8 @@ int main(int argc, char **argv)
 		/* first arg may be one of our standard longopts */
 		if (!strcmp(argv[1], "--help"))
 			usage();
-		if (!strcmp(argv[1], "--version")) {
-			print_version(EXIT_SUCCESS);
-			exit(MKFS_EX_OK);
-		}
+		if (!strcmp(argv[1], "--version"))
+			print_cramfs_version(MKFS_EX_OK);
 	}
 	strutils_set_exitcode(MKFS_EX_USAGE);
 
@@ -780,7 +792,7 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			print_version(MKFS_EX_OK);
+			print_cramfs_version(MKFS_EX_OK);
 		case 'v':
 			verbose = 1;
 			break;

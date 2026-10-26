@@ -55,6 +55,16 @@ case "${BYTE_ORDER}:${PAGE_SIZE}" in
 		MD5_EXP="unknown" ;;
 esac
 
+# The image contains zlib compressed data. The checksums above are for the
+# classic zlib, other implementations (for example zlib-ng, which reports
+# itself as "1.3.1.zlib-ng") deflate differently.
+ZLIB_VERSION=$($TS_CMD_MKCRAMFS --version | sed -n 's/.*(features: zlib-\(.*\))$/\1/p')
+case "$ZLIB_VERSION" in
+	*[!0-9.]*)
+		echo "warning ${TS_NS}: unknown checksum for zlib-${ZLIB_VERSION}"
+		MD5_EXP="unknown" ;;
+esac
+
 ts_log "create mountpoint dir"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
@@ -93,7 +103,9 @@ ts_cd "$TS_OUTDIR"
 
 ts_log "count MD5 from the image"
 MD5_OUT=$("$TS_HELPER_MD5" < "$IMAGE_NAME") >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
-if [ "$MD5_EXP" != "$MD5_OUT" -a "$MD5_EXP" != "unknown" ]; then
+if [ "$MD5_EXP" = "unknown" ]; then
+	echo "warning ${TS_NS}: image checksum is $MD5_OUT"
+elif [ "$MD5_EXP" != "$MD5_OUT" ]; then
 	ts_log "is $MD5_OUT, should be $MD5_EXP"
 fi
 echo >> "$TS_OUTPUT"
