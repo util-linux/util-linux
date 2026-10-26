@@ -4349,6 +4349,15 @@ if not is_disabler(exe)
 endif
 
 exe = executable(
+  'sample-scols-grouping-tree',
+  'libsmartcols/samples/grouping-tree.c',
+  include_directories : includes,
+  link_with : [lib_smartcols, lib_common])
+if not is_disabler(exe)
+  exes += exe
+endif
+
+exe = executable(
   'sample-scols-grouping-overlay',
   'libsmartcols/samples/grouping-overlay.c',
   include_directories : includes,

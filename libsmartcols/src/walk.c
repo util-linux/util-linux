@@ -69,6 +69,8 @@ int scols_walk_is_last(struct libscols_table *tb, struct libscols_line *ln)
 		}
 		if (is_tree_root(parent) && !is_last_tree_root(tb, parent))
 			return 0;
+		if (is_group_child(parent) && !is_last_group_child(parent))
+			return 0;
 	}
 	if (is_group_child(ln) && !is_last_group_child(ln))
 		return 0;
