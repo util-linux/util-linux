@@ -51,12 +51,63 @@ static uint32_t netlink_groups;
 static void output_special_char(struct agetty_issue *ie, unsigned char c,
 				struct agetty_options *op, struct termios *tp, FILE *fp);
 
+/* Returns the value of the last "varname=value" assignment in the
+ * os-release formatted @data, or NULL if there is none. The data are parsed
+ * line by line, so an empty value yields an empty string. */
+static char *parse_os_release(const char *data, const char *varname)
+{
+	size_t varsz = strlen(varname);
+	char *p, *buf, *ret = NULL;
+
+	buf = strdup(data);
+	if (!buf)
+		agetty_log_err(_("failed to allocate memory: %m"));
+	p = buf;
+
+	for (;;) {
+		char *line, *eol;
+		int eol_found;
+
+		p += strspn(p, " \t\n\r");
+		if (!*p)
+			break;
+
+		/* isolate the line, never look beyond it */
+		line = p;
+		eol = p + strcspn(p, "\n\r");
+		eol_found = *eol != '\0';
+		*eol = '\0';
+		p = eol + eol_found;
+
+		if (*line == '#' || *line == ';')
+			continue;
+		if (strncmp(line, varname, varsz) != 0)
+			continue;
+		line += varsz;
+		line += strspn(line, " \t");
+
+		if (*line != '=')
+			continue;
+		line++;
+		line += strspn(line, " \t");
+
+		rtrim_whitespace((unsigned char *) line);
+		ul_unquote(line);
+
+		free(ret);
+		ret = strdup(line);
+		if (!ret)
+			agetty_log_err(_("failed to allocate memory: %m"));
+	}
+	free(buf);
+	return ret;
+}
+
 static char *read_os_release(struct agetty_options *op, const char *varname)
 {
 	int fd = -1;
 	struct stat st;
-	size_t varsz = strlen(varname);
-	char *p, *buf = NULL, *ret = NULL;
+	char *ret = NULL;
 
 	/* read the file only once */
 	if (!op->osrelease) {
@@ -82,48 +133,8 @@ static char *read_os_release(struct agetty_options *op, const char *varname)
 		}
 		op->osrelease[st.st_size] = 0;
 	}
-	buf = strdup(op->osrelease);
-	if (!buf)
-		agetty_log_err(_("failed to allocate memory: %m"));
-	p = buf;
-
-	for (;;) {
-		char *eol;
-
-		p += strspn(p, "\n\r");
-		p += strspn(p, " \t\n\r");
-		if (!*p)
-			break;
-		if (strspn(p, "#;\n") != 0) {
-			p += strcspn(p, "\n\r");
-			continue;
-		}
-		if (strncmp(p, varname, varsz) != 0) {
-			p += strcspn(p, "\n\r");
-			continue;
-		}
-		p += varsz;
-		p += strspn(p, " \t\n\r");
-
-		if (*p != '=')
-			continue;
-
-		p += strspn(p, " \t\n\r=");
-
-		eol = p + strcspn(p, "\n\r");
-		*eol = '\0';
-
-		rtrim_whitespace((unsigned char *) p);
-		ul_unquote(p);
-
-		free(ret);
-		ret = strdup(p);
-		if (!ret)
-			agetty_log_err(_("failed to allocate memory: %m"));
-		p = eol + 1;
-	}
+	ret = parse_os_release(op->osrelease, varname);
 done:
-	free(buf);
 	if (fd >= 0)
 		close(fd);
 	return ret;
