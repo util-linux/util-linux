@@ -1231,7 +1231,6 @@ check the image
 mount the image
 list the image
 .:
-total 56
 drwxr-xr-x 1 root root 220 1970-01-01 01:00 dir-000
 drwxr-xr-x 1 root root 220 1970-01-01 01:00 dir-001
 drwxr-xr-x 1 root root 220 1970-01-01 01:00 dir-002
@@ -1345,7 +1344,6 @@ drwxr-xr-x 1 root root 220 1970-01-01 01:00 dir-109
 drwxr-xr-x 1 root root 220 1970-01-01 01:00 dir-110
 
 ./dir-000:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1359,7 +1357,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-001:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1373,7 +1370,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-002:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1387,7 +1383,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-003:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1401,7 +1396,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-004:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1415,7 +1409,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-005:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1429,7 +1422,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-006:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1443,7 +1435,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-007:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1457,7 +1448,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-008:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1471,7 +1461,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-009:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1485,7 +1474,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-010:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1499,7 +1487,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-011:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1513,7 +1500,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-012:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1527,7 +1513,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-013:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1541,7 +1526,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-014:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1555,7 +1539,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-015:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1569,7 +1552,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-016:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1583,7 +1565,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-017:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1597,7 +1578,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-018:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1611,7 +1591,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-019:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1625,7 +1604,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-020:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1639,7 +1617,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-021:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1653,7 +1630,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-022:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1667,7 +1643,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-023:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1681,7 +1656,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-024:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1695,7 +1669,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-025:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1709,7 +1682,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-026:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1723,7 +1695,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-027:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1737,7 +1708,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-028:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1751,7 +1721,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-029:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1765,7 +1734,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-030:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1779,7 +1747,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-031:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1793,7 +1760,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-032:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1807,7 +1773,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-033:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1821,7 +1786,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-034:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1835,7 +1799,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-035:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1849,7 +1812,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-036:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1863,7 +1825,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-037:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1877,7 +1838,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-038:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1891,7 +1851,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-039:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1905,7 +1864,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-040:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1919,7 +1877,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-041:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1933,7 +1890,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-042:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1947,7 +1903,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-043:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1961,7 +1916,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-044:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1975,7 +1929,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-045:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -1989,7 +1942,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-046:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2003,7 +1955,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-047:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2017,7 +1968,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-048:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2031,7 +1981,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-049:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2045,7 +1994,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-050:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2059,7 +2007,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-051:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2073,7 +2020,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-052:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2087,7 +2033,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-053:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2101,7 +2046,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-054:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2115,7 +2059,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-055:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2129,7 +2072,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-056:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2143,7 +2085,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-057:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2157,7 +2098,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-058:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2171,7 +2111,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-059:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2185,7 +2124,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-060:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2199,7 +2137,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-061:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2213,7 +2150,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-062:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2227,7 +2163,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-063:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2241,7 +2176,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-064:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2255,7 +2189,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-065:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2269,7 +2202,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-066:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2283,7 +2215,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-067:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2297,7 +2228,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-068:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2311,7 +2241,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-069:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2325,7 +2254,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-070:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2339,7 +2267,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-071:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2353,7 +2280,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-072:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2367,7 +2293,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-073:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2381,7 +2306,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-074:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2395,7 +2319,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-075:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2409,7 +2332,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-076:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2423,7 +2345,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-077:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2437,7 +2358,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-078:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2451,7 +2371,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-079:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2465,7 +2384,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-080:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2479,7 +2397,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-081:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2493,7 +2410,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-082:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2507,7 +2423,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-083:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2521,7 +2436,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-084:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2535,7 +2449,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-085:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2549,7 +2462,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-086:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2563,7 +2475,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-087:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2577,7 +2488,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-088:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2591,7 +2501,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-089:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2605,7 +2514,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-090:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2619,7 +2527,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-091:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2633,7 +2540,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-092:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2647,7 +2553,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-093:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2661,7 +2566,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-094:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2675,7 +2579,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-095:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2689,7 +2592,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-096:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2703,7 +2605,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-097:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2717,7 +2618,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-098:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2731,7 +2631,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-099:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2745,7 +2644,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-100:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2759,7 +2657,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-101:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2773,7 +2670,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-102:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2787,7 +2683,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-103:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2801,7 +2696,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-104:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2815,7 +2709,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-105:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2829,7 +2722,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-106:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2843,7 +2735,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-107:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2857,7 +2748,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-108:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2871,7 +2761,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-109:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
@@ -2885,7 +2774,6 @@ total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.010
 
 ./dir-110:
-total 6
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.000
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.001
 -rw-r--r-- 1 root root 15 1970-01-01 01:00 data.002
