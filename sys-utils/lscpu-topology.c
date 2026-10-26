@@ -317,19 +317,26 @@ struct lscpu_cache *lscpu_cpu_get_cache(struct lscpu_cxt *cxt,
 }
 
 /*
- * The cache is identifued by type+level+id.
+ * The cache is identified by type+level+id. On hybrid CPUs (e.g. Intel Meteor
+ * Lake) the sysfs cache ID is unique only within a core type, so the CPU has to
+ * be verified against the shared_cpu_map too.
  */
-static struct lscpu_cache *get_cache(struct lscpu_cxt *cxt,
+static struct lscpu_cache *get_cache(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu,
 				const char *type, int level, int id)
 {
 	size_t i;
 
 	for (i = 0; i < cxt->ncaches; i++) {
 		struct lscpu_cache *ca = &cxt->caches[i];
-		if (ca->id == id &&
-		    ca->level == level &&
-		    strcmp(ca->type, type) == 0)
-			return ca;
+
+		if (ca->id != id ||
+		    ca->level != level ||
+		    strcmp(ca->type, type) != 0)
+			continue;
+		if (ca->sharedmap &&
+		    !CPU_ISSET_S(cpu->logical_id, cxt->setsize, ca->sharedmap))
+			continue;
+		return ca;
 	}
 	return NULL;
 }
@@ -398,7 +405,7 @@ static int read_sparc_onecache(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu,
 
 	id = mk_cache_id(cxt, cpu, typestr, level);
 
-	ca = get_cache(cxt, typestr, level, id);
+	ca = get_cache(cxt, cpu, typestr, level, id);
 	if (!ca)
 		ca = add_cache(cxt, typestr, level, id);
 
@@ -471,7 +478,7 @@ static int read_caches(struct lscpu_cxt *cxt, struct lscpu_cpu *cpu)
 		if (id == -1)
 			id = mk_cache_id(cxt, cpu, buf, level);
 
-		ca = get_cache(cxt, buf, level, id);
+		ca = get_cache(cxt, cpu, buf, level, id);
 		if (!ca)
 			ca = add_cache(cxt, buf, level, id);
 
