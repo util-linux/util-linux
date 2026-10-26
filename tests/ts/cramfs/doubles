@@ -24,9 +24,12 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_MKCRAMFS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_HELPER_SYSINFO"
 
 ts_skip_nonroot
 ts_check_losetup
+# the image is mounted by the running kernel
+ts_skip_mixed_byteorder
 
 ORIGPWD=$(pwd)
 IMAGE_NAME="${TS_TESTNAME}.img"

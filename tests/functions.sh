@@ -137,6 +137,25 @@ function ts_check_native_byteorder {
 	fi
 }
 
+# The test binaries may be emulated (qemu-user) on a machine with another byte
+# order. In this case for example filesystem images created by the emulated
+# binaries are not mountable by the running kernel.
+function ts_skip_mixed_byteorder {
+	local kern
+
+	[ -e "$TS_HELPER_SYSINFO" ] || return 0
+	[ -r /sys/kernel/cpu_byteorder ] || return 0
+
+	read -r kern < /sys/kernel/cpu_byteorder
+
+	case "$kern:$("$TS_HELPER_SYSINFO" byte-order)" in
+	little:LE | big:BE)
+		return 0 ;;
+	esac
+
+	ts_skip "mixed byteorder (kernel is $kern endian)"
+}
+
 function ts_check_enotty {
 	# https://lore.kernel.org/qemu-devel/20230426070659.80649-1-thomas@t-8ch.de/
 	if [ -e "$TS_HELPER_SYSINFO" ] &&
