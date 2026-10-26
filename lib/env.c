@@ -168,7 +168,7 @@ struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls, const char *str
 */
 struct ul_env_list *env_list_from_fd(int fd)
 {
-	char *buf = NULL, *p;
+	char *buf = NULL, *p, *end;
 	ssize_t rc = 0;
 	struct ul_env_list *ls = NULL;
 
@@ -176,13 +176,10 @@ struct ul_env_list *env_list_from_fd(int fd)
 	if ((rc = ul_read_all_alloc(fd, &buf)) < 1)
 		return NULL;
 	buf[rc] = '\0';
-	p = buf;
+	end = buf + rc;
 
-	while (rc > 0) {
+	for (p = buf; p < end; p += strlen(p) + 1)
 		ls = env_list_add_from_string(ls, p);
-		p += strlen(p) + 1;
-		rc -= strlen(p) + 1;
-	}
 
 	free(buf);
 	return ls;
@@ -281,6 +278,71 @@ return secure_getenv(arg);
 }
 
 #ifdef TEST_PROGRAM_ENV
+/*
+ * Sizes of name=value strings (without the terminating zero) for
+ * test_from_fd(); the totals are around the read buffer size.
+ */
+static const size_t from_fd_small[] = { 3, 7, 5 };
+static const size_t from_fd_1k[] = { 600, 421 };
+static const size_t from_fd_4k[] = { 3000, 1093 };
+static const size_t from_fd_over_1k[] = { 4, 900, 118 };
+
+/*
+ * Read @n variables of the given sizes from a pipe by env_list_from_fd() and
+ * check that every variable comes back exactly once and nothing else does.
+ */
+static int test_from_fd(const size_t *sizes, size_t n)
+{
+	struct ul_env_list *ls, *x;
+	size_t i, total = 0, count = 0;
+	char *buf, *p, *seen;
+	int fds[2], rc = 0;
+
+	for (i = 0; i < n; i++)
+		total += sizes[i] + 1;
+
+	p = buf = malloc(total);
+	seen = calloc(n, 1);
+	if (!buf || !seen || pipe(fds) != 0)
+		err(EXIT_FAILURE, "test setup failed");
+
+	for (i = 0; i < n; i++) {
+		int len = sprintf(p, "V%zu=", i);
+
+		memset(p + len, 'x', sizes[i] - len);
+		p += sizes[i];
+		*p++ = '\0';
+	}
+	if (ul_write_all(fds[1], buf, total) != 0)
+		err(EXIT_FAILURE, "test setup failed");
+	close(fds[1]);
+
+	ls = env_list_from_fd(fds[0]);
+	close(fds[0]);
+
+	for (x = ls; x; x = x->next) {
+		size_t idx;
+
+		count++;
+		if (sscanf(x->name, "V%zu", &idx) != 1 || idx >= n || seen[idx]
+		    || strlen(x->name) + 1 + strlen(x->value) != sizes[idx]) {
+			warnx("from_fd: unexpected variable '%s'", x->name);
+			rc = 1;
+			continue;
+		}
+		seen[idx] = 1;
+	}
+	if (count != n) {
+		warnx("from_fd: got %zu variables, expected %zu", count, n);
+		rc = 1;
+	}
+
+	env_list_free(ls);
+	free(seen);
+	free(buf);
+	return rc;
+}
+
 int main(void)
 {
 	char *const *bad;
@@ -331,6 +393,13 @@ int main(void)
 	}
 
 	env_list_free(removed);
+
+	/* read environment from fd */
+	if (test_from_fd(from_fd_small, ARRAY_SIZE(from_fd_small))
+	    || test_from_fd(from_fd_1k, ARRAY_SIZE(from_fd_1k))
+	    || test_from_fd(from_fd_4k, ARRAY_SIZE(from_fd_4k))
+	    || test_from_fd(from_fd_over_1k, ARRAY_SIZE(from_fd_over_1k)))
+		retval = EXIT_FAILURE;
 
 	return retval;
 }
