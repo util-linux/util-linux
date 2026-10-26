@@ -8,6 +8,7 @@ check_PROGRAMS += \
 	sample-scols-continuous-json \
 	sample-scols-fromfile \
 	sample-scols-grouping-simple \
+	sample-scols-grouping-tree \
 	sample-scols-grouping-overlay \
 	sample-scols-maxout
 
@@ -56,6 +57,10 @@ sample_scols_fromfile_CFLAGS = $(sample_scols_cflags)
 sample_scols_grouping_simple_SOURCES = libsmartcols/samples/grouping-simple.c
 sample_scols_grouping_simple_LDADD = $(sample_scols_ldadd) libcommon.la
 sample_scols_grouping_simple_CFLAGS = $(sample_scols_cflags)
+
+sample_scols_grouping_tree_SOURCES = libsmartcols/samples/grouping-tree.c
+sample_scols_grouping_tree_LDADD = $(sample_scols_ldadd) libcommon.la
+sample_scols_grouping_tree_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_grouping_overlay_SOURCES = libsmartcols/samples/grouping-overlay.c
 sample_scols_grouping_overlay_LDADD = $(sample_scols_ldadd) libcommon.la
