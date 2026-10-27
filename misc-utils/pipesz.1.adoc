@@ -38,7 +38,7 @@ The kernel imposes limits on the amount of pipe buffer space unprivileged proces
 Report the size of pipe buffers to standard output and exit. As a special behavior, if neither *--file* nor *--fd* are specified, standard input is examined. It is an error to specify this option in combination with *--set*.
 
 *-s*, *--set* _size_::
-Set the size of the pipe buffers, in bytes. This option may be suffixed by *K*, *M*, *G*, *KiB*, *MiB*, or *GiB* to indicate multiples of 1024. Fractional values are supported in this case. Additional suffixes are supported but are unlikely to be useful. If this option is not specified, a default value is used, as described above. If this option is specified multiple times, a warning is emitted and only the last-specified _size_ is used. As a special behavior, if neither *--file* nor *--fd* are specified, standard output is adjusted. It is an error to specify this option in combination with *--get*.
+Set the size of the pipe buffers, in bytes. This option may be suffixed by *K*, *M*, *G*, *KiB*, *MiB*, or *GiB* to indicate multiples of 1024. Fractional values are supported in this case. Additional suffixes are supported but are unlikely to be useful. If this option is not specified, a default value is used, as described above. If this option is specified multiple times, a warning is emitted and only the last-specified _size_ is used. The kernel refuses any _size_ above 2,147,483,648 bytes (2 GiB). *pipesz* reduces a larger _size_ to this maximum and emits a warning. As a special behavior, if neither *--file* nor *--fd* are specified, standard output is adjusted. It is an error to specify this option in combination with *--get*.
 
 *-f*, *--file* _path_::
 Set the buffer size of the FIFO or pipe at _path_, relative to the current working directory. You may specify this option multiple times to affect different files, and you may do so in combination with *--fd*. Generally, this option is used with FIFOs, but it will also operate on anonymous pipes such as those found in */proc/PID/fd*. Changes to the buffer size of FIFOs are not preserved across system restarts.
@@ -87,6 +87,8 @@ Linux supports adjusting the size of pipe buffers since kernel 2.6.35. This rele
 This program uses *fcntl*(2) *F_GETPIPE_SZ*/*F_SETPIPE_SZ* to get and set pipe buffer sizes.
 
 This program uses *ioctl*(2) *FIONREAD* to report the amount of unread data in pipes. If for some reason this fails, the amount of unread data is reported as 0.
+
+The kernel handles pipe buffer sizes and unread byte counts as an *unsigned int*, but *fcntl*(2) and *FIONREAD* return them in an *int*. The largest buffer the kernel grants, 2,147,483,648 bytes (2 GiB), therefore arrives as a negative number, and *fcntl*(2) leaves *errno* unchanged. *pipesz* treats such a result as unsigned and reports the size correctly. Other programs that call *fcntl*(2) directly can report a spurious error instead.
 
 == BUGS
 
