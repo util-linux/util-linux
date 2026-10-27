@@ -28,6 +28,12 @@ IMAGE_SOURCE="$TS_OUTDIR/${TS_TESTNAME}-data"
 IMAGE_FILE="$TS_OUTDIR/${TS_TESTNAME}-cramfs.img"
 EXTRACT_DIR="$TS_OUTDIR/${TS_TESTNAME}-extract"
 OUTSIDE_FILE="$TS_OUTDIR/${TS_TESTNAME}-outside"
+NESTED_SOURCE="$TS_OUTDIR/${TS_TESTNAME}-nested-data"
+NESTED_IMAGE="$TS_OUTDIR/${TS_TESTNAME}-nested-cramfs.img"
+NESTED_EXTRACT="$TS_OUTDIR/${TS_TESTNAME}-nested-extract"
+DEEP_SOURCE="$TS_OUTDIR/${TS_TESTNAME}-deep-data"
+DEEP_IMAGE="$TS_OUTDIR/${TS_TESTNAME}-deep-cramfs.img"
+DEEP_EXTRACT="$TS_OUTDIR/${TS_TESTNAME}-deep-extract"
 
 # create an image with entries 'aaaa' (symlink to $OUTSIDE_FILE) and 'bbbb'
 # (regular file), then rename 'bbbb' to $1 in the image
@@ -66,6 +72,46 @@ $TS_CMD_FSCKCRAMFS --extract="$EXTRACT_DIR" "$IMAGE_FILE" 2>&1 >/dev/null |
 	sed -n 's/.*: dangerous filename/dangerous filename/p' >> $TS_OUTPUT
 ts_log "ret: ${PIPESTATUS[0]}"
 
+ts_log "nested directory extraction"
+rm -rf "$NESTED_SOURCE" "$NESTED_EXTRACT" "$NESTED_IMAGE"
+mkdir -p "$NESTED_SOURCE/one/two"
+printf "nested\n" > "$NESTED_SOURCE/one/two/file"
+$TS_CMD_MKCRAMFS -N little -b 4096 "$NESTED_SOURCE" "$NESTED_IMAGE" &> /dev/null
+[ -s "$NESTED_IMAGE" ] || ts_die "Cannot create $NESTED_IMAGE"
+$TS_CMD_FSCKCRAMFS --extract="$NESTED_EXTRACT" "$NESTED_IMAGE" &> /dev/null
+if ! diff -r "$NESTED_SOURCE" "$NESTED_EXTRACT" &> /dev/null; then
+	ts_die "Nested extraction differs from source"
+fi
+ts_log "nested extraction: ok"
+
+# An excessively deep directory tree must fail cleanly instead of exhausting
+# the process stack during recursive extraction.
+ts_log "deep directory tree"
+rm -rf "$DEEP_SOURCE" "$DEEP_EXTRACT" "$DEEP_IMAGE"
+mkdir -p "$DEEP_SOURCE"
+path="$DEEP_SOURCE"
+depth=0
+while [ "$depth" -le 256 ]; do
+	path="$path/d"
+	mkdir "$path" || ts_die "Cannot create deep test directory"
+	depth=$((depth + 1))
+done
+printf "deep\n" > "$path/file"
+$TS_CMD_MKCRAMFS -N little -b 4096 "$DEEP_SOURCE" "$DEEP_IMAGE" &> /dev/null
+[ -s "$DEEP_IMAGE" ] || ts_die "Cannot create $DEEP_IMAGE"
+$TS_CMD_FSCKCRAMFS --extract="$DEEP_EXTRACT" "$DEEP_IMAGE" 2>&1 >/dev/null |
+	sed -n 's/.*directory depth exceeds.*/directory depth limit/p' >> "$TS_OUTPUT"
+ts_log "ret: ${PIPESTATUS[0]}"
+
+rm -rf "$DEEP_EXTRACT"
+ts_log "low descriptor limit"
+(ulimit -n 32; $TS_CMD_FSCKCRAMFS --extract="$DEEP_EXTRACT" "$DEEP_IMAGE") \
+	2>&1 >/dev/null |
+	sed -n 's/.*directory depth exceeds.*/directory depth limit/p' >> "$TS_OUTPUT"
+ts_log "ret: ${PIPESTATUS[0]}"
+
 rm -rf "$IMAGE_SOURCE" "$EXTRACT_DIR" "$IMAGE_FILE" "$OUTSIDE_FILE"
+rm -rf "$DEEP_SOURCE" "$DEEP_EXTRACT" "$DEEP_IMAGE"
+rm -rf "$NESTED_SOURCE" "$NESTED_EXTRACT" "$NESTED_IMAGE"
 
 ts_finalize
