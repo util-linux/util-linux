@@ -536,7 +536,7 @@ static int is_cgroup2(void)
 static void join_into_cgroup(void)
 {
 	pid_t pid;
-	char buf[ sizeof(stringify_value(UINT32_MAX)) ];
+	char buf[UL_INT_STRSZ(size_t)];
 	int len;
 
 	pid = getpid();

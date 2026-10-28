@@ -138,7 +138,7 @@ static void do_set(int fd, const char *name)
  */
 static void do_fd(int fd)
 {
-	char name[sizeof(stringify(INT_MIN)) + 3];
+	char name[sizeof("fd ") + UL_INT_STRSZ(int)];
 
 	snprintf(name, sizeof(name), "fd %d", fd);
 

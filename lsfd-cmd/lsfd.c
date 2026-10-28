@@ -1025,7 +1025,7 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
-	char path[sizeof("fd/") + sizeof(stringify_value(UINT64_MAX))];
+	char path[sizeof("fd/") + UL_INT_STRSZ(uint64_t)];
 
 	while (ul_path_next_dirent(pc, &sub, "fd", &d) == 0) {
 		uint64_t num;

@@ -841,7 +841,7 @@ int mnt_parse_gid(const char *group, size_t group_len, gid_t *gid)
 
 int mnt_parse_mode(const char *mode, size_t mode_len, mode_t *uid)
 {
-	char buf[sizeof(stringify_value(UINT32_MAX))];
+	char buf[UL_INT_STRSZ(uint32_t)];
 	uint32_t num;
 	int rc;
 
