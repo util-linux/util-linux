@@ -100,12 +100,14 @@ void addfile(char *name, struct hexdump *hex)
 static char *next_number(const char *str, int *num)
 {
 	char *end = NULL;
+	long val;
 
 	errno = 0;
-	*num = strtol(str, &end, 10);
+	val = strtol(str, &end, 10);
 
-	if (errno || !end || end == str)
+	if (errno || !end || end == str || val < 0 || val > INT_MAX)
 		return NULL;
+	*num = val;
 	return end;
 }
 
@@ -178,10 +180,18 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 
 static const char *spec = ".#-+ 0123456789";
 
+/* returns @bcnt + @size * @reps, all arguments are non-negative */
+static int add_unit_size(int bcnt, int size, int reps, const char *fmt)
+{
+	if (reps && size > (INT_MAX - bcnt) / reps)
+		badfmt(fmt);
+	return bcnt + size * reps;
+}
+
 int block_size(struct hexdump_fs *fs)
 {
 	struct hexdump_fu *fu;
-	int bcnt, prec, cursize = 0;
+	int bcnt, prec, size, cursize = 0;
 	char *fmt;
 	struct list_head *p;
 
@@ -189,7 +199,7 @@ int block_size(struct hexdump_fs *fs)
 	list_for_each (p, &fs->fulist) {
 		fu = list_entry(p, struct hexdump_fu, fulist);
 		if (fu->bcnt) {
-			cursize += fu->bcnt * fu->reps;
+			cursize = add_unit_size(cursize, fu->bcnt, fu->reps, fu->fmt);
 			continue;
 		}
 		bcnt = prec = 0;
@@ -203,23 +213,27 @@ int block_size(struct hexdump_fs *fs)
 			 * skip any special chars -- save precision in
 			 * case it's a %s format.
 			 */
-			while (strchr(spec + 1, *++fmt) && *fmt != '\0')
+			while (*++fmt && strchr(spec + 1, *fmt))
 				;
 			if (*fmt == '.' && isdigit(*++fmt))
 				fmt = next_number(fmt, &prec);
-			if (*fmt == '\0')
+			if (!fmt || *fmt == '\0')
 				badfmt(fu->fmt);
 			if (first_letter(fmt, "diouxX"))
-				bcnt += 4;
+				size = 4;
 			else if (first_letter(fmt, "efgEG"))
-				bcnt += 8;
+				size = 8;
 			else if (*fmt == 's')
-				bcnt += prec;
-			else if (*fmt == 'c' || (*fmt == '_' && first_letter(++fmt, "cpu")))
-				++bcnt;
+				size = prec;
+			else if (*fmt == 'c' ||
+				 (*fmt == '_' && fmt[1] && first_letter(++fmt, "cpu")))
+				size = 1;
+			else
+				size = 0;
+			bcnt = add_unit_size(bcnt, size, 1, fu->fmt);
 			++fmt;
 		}
-		cursize += bcnt * fu->reps;
+		cursize = add_unit_size(cursize, bcnt, fu->reps, fu->fmt);
 	}
 	return(cursize);
 }
@@ -266,11 +280,11 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				for (p1++; strchr(spec, *p1); p1++)
+				for (p1++; *p1 && strchr(spec, *p1); p1++)
 					;
 			} else {
 				/* skip any special chars, field width */
-				while (strchr(spec + 1, *++p1))
+				while (*++p1 && strchr(spec + 1, *p1))
 					;
 				if (*p1 == '.' && isdigit(*++p1)) {
 					sokay = USEPREC;
@@ -278,6 +292,8 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 				} else
 					sokay = NOTOKAY;
 			}
+			if (!*p1)
+				badfmt(fu->fmt);
 
 			p2 = p1 + 1;		/* Set end pointer. */
 			cs[0] = *p1;		/* Set conversion string. */
@@ -391,7 +407,8 @@ isint:				cs[3] = '\0';
 						}
 						break;
 					default:
-						p1[2] = '\0';
+						if (p1[1])
+							p1[2] = '\0';
 						badconv(p1);
 				}
 			} else {
