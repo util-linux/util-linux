@@ -83,6 +83,7 @@ struct blkzone_control {
 	uint32_t count;
 
 	unsigned int force : 1;
+	unsigned int cached : 1;
 	unsigned int verbose : 1;
 };
 
@@ -226,6 +227,19 @@ static const char *const condition_str[] = {
 	"of"  /* Offline */
 };
 
+static const char *zone_cond_str(uint8_t cond)
+{
+#ifdef BLK_ZONE_COND_ACTIVE
+	/*
+	 * A cached zone report (see --cached) reports the implicitly open,
+	 * explicitly open and closed conditions as a single active condition.
+	 */
+	if (cond == BLK_ZONE_COND_ACTIVE)
+		return "ac"; /* Active */
+#endif
+	return condition_str[cond & (ARRAY_SIZE(condition_str) - 1)];
+}
+
 static int blkzone_report(struct blkzone_control *ctl)
 {
 	bool only_capacity_sum = !strcmp(ctl->command->name, "capacity");
@@ -233,7 +247,19 @@ static int blkzone_report(struct blkzone_control *ctl)
 	struct blk_zone_report *zi;
 	unsigned long zonesize;
 	uint32_t i, nr_zones;
+#ifdef BLKREPORTZONEV2
+	uint32_t report_flags = 0;
+#endif
 	int fd;
+
+	if (ctl->cached) {
+#ifdef BLKREPORTZONEV2
+		report_flags = BLK_ZONE_REP_CACHED;
+#else
+		errx(EXIT_FAILURE, _("--cached is unsupported: "
+		     "compiled without BLKREPORTZONEV2 support"));
+#endif
+	}
 
 	fd = init_device(ctl, O_RDONLY);
 
@@ -260,8 +286,22 @@ static int blkzone_report(struct blkzone_control *ctl)
 		zi->nr_zones = min(nr_zones, DEF_REPORT_LEN);
 		zi->sector = ctl->offset;
 
+#ifdef BLKREPORTZONEV2
+		/*
+		 * BLKREPORTZONEV2 uses the flags field of struct
+		 * blk_zone_report as an input and must therefore be set on
+		 * every call, as the kernel also uses it as an output. With no
+		 * input flag set, the report is retrieved from the device,
+		 * exactly like the deprecated BLKREPORTZONE ioctl.
+		 * BLK_ZONE_REP_CACHED requests the kernel's cached view.
+		 */
+		zi->flags = report_flags;
+		if (ioctl(fd, BLKREPORTZONEV2, zi) == -1)
+			err(EXIT_FAILURE, _("%s: BLKREPORTZONEV2 ioctl failed"), ctl->devname);
+#else
 		if (ioctl(fd, BLKREPORTZONE, zi) == -1)
 			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
+#endif
 
 		if (ctl->verbose)
 			printf(_("Found %ju zones from 0x%jx\n"),
@@ -308,7 +348,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
 					(uintmax_t) start, (uintmax_t) len, (uintmax_t) cap, wp_str,
 					entry.reset, entry.non_seq,
-					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
+					cond, zone_cond_str(cond),
 					type, type_text[type]);
 			} else {
 				printf(_("  start: 0x%09jx, len 0x%06jx"
@@ -316,7 +356,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 					" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
 					(uintmax_t) start, (uintmax_t) len, wp_str,
 					entry.reset, entry.non_seq,
-					cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
+					cond, zone_cond_str(cond),
 					type, type_text[type]);
 			}
 
@@ -410,6 +450,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"), out);
 	fputs(_(" -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"), out);
 	fputs(_(" -c, --count <number>   maximum number of zones\n"), out);
+	fputs(_("     --cached           report cached zone information (report, capacity)\n"), out);
 	fputs(_(" -f, --force            enforce on block devices used by the system\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -429,11 +470,15 @@ int main(int argc, char **argv)
 		.devname = NULL
 	};
 
+	enum {
+		OPT_CACHED = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 	    { "help",    no_argument,       NULL, 'h' },
 	    { "count",   required_argument, NULL, 'c' }, /* max #of zones to operate on */
 	    { "length",  required_argument, NULL, 'l' }, /* max of sectors to operate on */
 	    { "offset",  required_argument, NULL, 'o' }, /* starting LBA */
+	    { "cached",  no_argument,       NULL, OPT_CACHED },
 	    { "force",   no_argument,       NULL, 'f' },
 	    { "verbose", no_argument,       NULL, 'v' },
 	    { "version", no_argument,       NULL, 'V' },
@@ -475,6 +520,9 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.offset = strtosize_or_err(optarg,
 					_("failed to parse zone offset"));
+			break;
+		case OPT_CACHED:
+			ctl.cached = 1;
 			break;
 		case 'f':
 			ctl.force = 1;
