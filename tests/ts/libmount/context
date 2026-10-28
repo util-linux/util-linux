@@ -12,6 +12,7 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_RUNUSER"
 ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_skip_nonroot
@@ -59,6 +60,34 @@ ts_log "Do tests..."
 
 ts_init_subtest "restricted"
 ts_run $TESTPROG --restricted >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "restricted-setuid"
+if ! getent passwd "$TS_TESTUSER" &> /dev/null; then
+	ts_skip "$TS_TESTUSER user is missing"
+else
+	SUID_TESTDIR=$(mktemp -d "${TMPDIR:-/tmp}/libmount-context.XXXXXX") || \
+		ts_die "cannot create setuid test directory"
+	if ! "$TS_CMD_MOUNT" -n -t tmpfs -o mode=0755 tmpfs "$SUID_TESTDIR" &> /dev/null; then
+		rmdir "$SUID_TESTDIR"
+		ts_skip "cannot mount a setuid test filesystem"
+	else
+		SUID_TESTPROG="$SUID_TESTDIR/test_mount_context"
+		cp "$TESTPROG" "$SUID_TESTPROG" || ts_die "cannot copy test helper"
+		ts_init_suid "$SUID_TESTPROG"
+		setuid_output=$("$TS_CMD_RUNUSER" -u "$TS_TESTUSER" -- \
+			"$SUID_TESTPROG" --restricted setuid 2>&1)
+		rc=$?
+		"$TS_CMD_UMOUNT" "$SUID_TESTDIR" &> /dev/null || ts_die "cannot unmount setuid test filesystem"
+		rmdir "$SUID_TESTDIR"
+		if [ "$setuid_output" = "setuid execution unavailable" ]; then
+			ts_skip "setuid execution is unavailable"
+		elif [ "$rc" -ne 0 ] || [ "$setuid_output" != "setuid default: 0" ]; then
+			echo "$setuid_output" >> "$TS_OUTPUT"
+			ts_die "context is restricted after setuid(0)"
+		fi
+	fi
+fi
 ts_finalize_subtest
 
 function is_mounted {
