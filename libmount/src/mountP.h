@@ -123,7 +123,7 @@ extern int mnt_parse_gid(const char *group, size_t group_len, gid_t *gid);
 extern int mnt_parse_mode(const char *mode, size_t mode_len, mode_t *gid);
 extern int mnt_in_group(gid_t gid);
 
-extern int mnt_open_uniq_filename(const char *filename, char **name);
+extern int mnt_open_uniq_filename_at(int dirfd, const char *filename, char **name);
 
 extern int mnt_has_regular_utab(const char **utab, int *writable);
 extern const char *mnt_get_utab_path(void);
