@@ -102,6 +102,16 @@ dd if="$DEV" skip="$PHY_OFFSET" bs=$PHY_BLOCK_SIZE \
 	iflag=direct count=1 status=none 2>>"$TS_ERRLOG" \
 		| "$TS_CMD_HEXDUMP" -C >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 
+# statfs f_blocks leaves out the ext4 metadata, so the filesystem goes on
+# behind f_blocks * f_bsize. A stepped trim has to walk that part as well.
+FS_DATA_BYTES=$(( $(stat -f -c '%b * %S' "$TS_MOUNTPOINT") ))
+TRIMMED=$("$TS_CMD_FSTRIM" --step 1M --offset "$FS_DATA_BYTES" \
+	--verbose "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG" |
+	sed 's/.*(\([0-9]*\) bytes).*/\1/')
+if [ "${TRIMMED:-0}" -eq 0 ]; then
+	"$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
+	ts_die "stepped trim did not walk behind f_blocks"
+fi
 
 "$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
 sed -i "s@$TS_MOUNTPOINT@<mountpoint>@" "$TS_OUTPUT"
