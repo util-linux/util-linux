@@ -5,7 +5,7 @@ _fstrim_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-o'|'--offset'|'-l'|'--length'|'-m'|'--minimum')
+		'-o'|'--offset'|'-l'|'--length'|'-p'|'--step'|'-m'|'--minimum')
 			COMPREPLY=( $(compgen -W "num" -- $cur) )
 			return 0
 			;;
@@ -21,6 +21,7 @@ _fstrim_module()
 				--quiet-unsupported
 				--offset
 				--length
+				--step
 				--minimum
 				--types
 				--verbose

@@ -12,7 +12,7 @@ fstrim - discard unused blocks on a mounted filesystem
 
 == SYNOPSIS
 
-*fstrim* [*-v*] [*-o* _offset_] [*-l* _length_] [*-m* _minimum-size_] *-A*|*-a*|_mountpoint_
+*fstrim* [*-v*] [*-o* _offset_] [*-l* _length_] [*-p* _step_] [*-m* _minimum-size_] *-A*|*-a*|_mountpoint_
 
 == DESCRIPTION
 
@@ -42,6 +42,9 @@ Byte offset in the filesystem from which to begin searching for free blocks to d
 
 *-l, --length* _length_::
 The number of bytes (after the starting point) to search for free blocks to discard. If the specified value extends past the end of the filesystem, *fstrim* will stop at the filesystem size boundary. The default value extends to the end of the filesystem.
+
+*-p, --step* _step_::
+The number of bytes to discard within one iteration. The default is to discard all by one ioctl call. A zero value disables stepping. Stepping lets the system suspend or shut down between the iterations. It is ignored on btrfs, where the range is a logical address space and every call trims all unallocated device space.
 
 *-I, --listed-in* _list_::
 Specifies a colon-separated list of files in fstab or kernel mountinfo format. All missing or empty files are silently ignored. The evaluation of the _list_ stops after first non-empty file. For example:

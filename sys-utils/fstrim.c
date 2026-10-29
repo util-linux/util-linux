@@ -63,6 +63,7 @@ struct fstrim_range {
 
 struct fstrim_control {
 	struct fstrim_range range;
+	uint64_t step;
 	char *type_pattern;
 
 	unsigned int verbose : 1,
@@ -87,11 +88,30 @@ static int is_directory(const char *path, int silent)
 	return 1;
 }
 
+/* returns size of the block device the filesystem lives on, or 0 */
+static uint64_t get_device_size(int fd)
+{
+	struct path_cxt *pc;
+	struct stat st;
+	uint64_t sectors = 0;
+
+	if (fstat(fd, &st) != 0)
+		return 0;
+	pc = ul_new_sysfs_path(st.st_dev, NULL, NULL);
+	if (!pc)
+		return 0;
+	if (ul_path_read_u64(pc, &sectors, "size") != 0)
+		sectors = 0;
+	ul_unref_path(pc);
+	return sectors << 9;
+}
+
 /* returns: 0 = success, 1 = unsupported, < 0 = error */
 static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const char *devname)
 {
 	int fd = -1, rc;
 	struct fstrim_range range;
+	uint64_t trimmed = 0, step = 0, data_end = 0, end = 0;
 	char *rpath = realpath(path, NULL);
 
 	if (!rpath) {
@@ -118,35 +138,81 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 		goto done;
 	}
 
-	errno = 0;
-	if (ioctl(fd, FITRIM, &range)) {
-		switch (errno) {
-		case EBADF:
-		case ENOTTY:
-		case EOPNOTSUPP:
-		case ENOSYS:
-			rc = 1;
-			break;
-		default:
+	if (ctl->step) {
+		struct statfs fsinfo;
+
+		if (fstatfs(fd, &fsinfo) != 0) {
+			warn(_("%s: failed to get filesystem size"), path);
 			rc = -errno;
+			goto done;
 		}
-		if (rc < 0)
-			warn(_("%s: FITRIM ioctl failed"), path);
-		goto done;
+		/*
+		 * btrfs uses a logical address space and trims all unallocated
+		 * device space on every FITRIM call, so stepping does not help.
+		 */
+		if (!F_TYPE_EQUAL(fsinfo.f_type, STATFS_BTRFS_MAGIC)) {
+			step = ctl->step;
+			/*
+			 * f_blocks does not cover ext4 metadata or the XFS log, so
+			 * walk up to the device size and let the final call cover
+			 * whatever is behind it.
+			 */
+			data_end = (uint64_t) fsinfo.f_blocks * fsinfo.f_bsize;
+			end = max(data_end, get_device_size(fd));
+		}
 	}
+
+	do {
+		struct fstrim_range current = range;
+		uint64_t chunk_len;
+		int last = !step || range.start >= end;
+
+		if (!last && current.len > step)
+			current.len = step;
+		chunk_len = current.len;
+
+		errno = 0;
+		if (ioctl(fd, FITRIM, &current)) {
+			/*
+			 * The kernel rejects a start beyond the end of the
+			 * filesystem, which is somewhere behind f_blocks.
+			 */
+			if (errno == EINVAL && range.start >= data_end &&
+			    range.start != ctl->range.start)
+				break;
+			switch (errno) {
+			case EBADF:
+			case ENOTTY:
+			case EOPNOTSUPP:
+			case ENOSYS:
+				rc = 1;
+				break;
+			default:
+				rc = -errno;
+			}
+			if (rc < 0)
+				warn(_("%s: FITRIM ioctl failed"), path);
+			goto done;
+		}
+		trimmed += current.len;
+		if (last)
+			break;
+		range.start += chunk_len;
+		range.len -= chunk_len;
+	} while (range.len);
 
 	if (ctl->verbose) {
 		char *str = size_to_human_string(
 				SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				(uint64_t) range.len);
+				trimmed);
 		if (devname)
 			/* TRANSLATORS: The standard value here is a very large number. */
 			printf(_("%s: %s (%ju bytes) trimmed on %s\n"),
-				path, str, (uintmax_t) range.len, devname);
+				path, str, (uintmax_t) trimmed, devname);
 		else
 			/* TRANSLATORS: The standard value here is a very large number. */
 			printf(_("%s: %s (%ju bytes) trimmed\n"),
-				path, str, (uintmax_t) range.len);
+				path, str, (uintmax_t) trimmed);
 
 		free(str);
 	}
@@ -483,6 +549,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -I, --listed-in <list>   trim filesystems listed in specified files\n"), out);
 	fputs(_(" -o, --offset <num>       the offset in bytes to start discarding from\n"), out);
 	fputs(_(" -l, --length <num>       the number of bytes to discard\n"), out);
+	fputs(_(" -p, --step <num>         size of the discard iterations\n"), out);
 	fputs(_(" -m, --minimum <num>      the minimum extent length to discard\n"), out);
 	fputs(_(" -t, --types <list>       limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose            print number of discarded bytes\n"), out);
@@ -519,6 +586,7 @@ int main(int argc, char **argv)
 	    { "version",   no_argument,       NULL, 'V' },
 	    { "offset",    required_argument, NULL, 'o' },
 	    { "length",    required_argument, NULL, 'l' },
+	    { "step",      required_argument, NULL, 'p' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "types",     required_argument, NULL, 't' },
 	    { "verbose",   no_argument,       NULL, 'v' },
@@ -538,7 +606,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "AahI:l:m:no:t:Vv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "AahI:l:m:no:p:t:Vv", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -565,6 +633,10 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.range.start = strtosize_or_err(optarg,
 					_("failed to parse offset"));
+			break;
+		case 'p':
+			ctl.step = strtosize_or_err(optarg,
+					_("failed to parse step"));
 			break;
 		case 'm':
 			ctl.range.minlen = strtosize_or_err(optarg,
