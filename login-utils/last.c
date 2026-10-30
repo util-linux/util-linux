@@ -950,6 +950,13 @@ static void process_wtmp_file(const struct last_control *ctl,
 
 int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 {
+	static const unsigned int fmts[] = {
+		LAST_TIMEFTM_NONE, LAST_TIMEFTM_SHORT, LAST_TIMEFTM_CTIME,
+		LAST_TIMEFTM_ISO8601
+		/* LAST_TIMEFTM_HHMM is a non-public value: it only appears as
+		 * in_fmt/out_fmt inside timefmts[] entries and has no table
+		 * row of its own, so it must never be selected directly. */
+	};
 	struct last_control ctl = {
 		.showhost = TRUE,
 		.time_fmt = LAST_TIMEFTM_SHORT,
@@ -959,17 +966,51 @@ int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
 		}
 	};
 	char name[] = "/tmp/test-last-fuzz.XXXXXX";
-	int fd;
+	int fd, saved_stdout = -1, devnull = -1;
+
+	if (size == 0)
+		return 0;
+
+	/*
+	 * Option matrix: the first byte selects the time format, so a single
+	 * target sweeps all time_formatter() variants (and the fmt-dependent
+	 * branches of list()). The remaining bytes are the wtmp/btmp image.
+	 */
+	ctl.time_fmt = fmts[data[0] % ARRAY_SIZE(fmts)];
+	data++;
+	size--;
 
 	fd = mkstemp_cloexec(name);
 	if (fd < 0)
 		err(EXIT_FAILURE, "mkstemp() failed");
 	if (ul_write_all(fd, data, size) != 0)
 		err(EXIT_FAILURE, "write() failed");
+	close(fd);
+
+	/*
+	 * Fuzzing hygiene: process_wtmp_file() prints every parsed session
+	 * ("begins ...", one line per record) to stdout. Redirect stdout to
+	 * /dev/null so that the fuzz driver log and the coverage runners are
+	 * not flooded by product printf() output. Only stdout is silenced;
+	 * stderr (and with it the sanitizer report channel) stays attached.
+	 */
+	saved_stdout = dup(STDOUT_FILENO);
+	if (saved_stdout >= 0) {
+		devnull = open("/dev/null", O_WRONLY);
+		if (devnull >= 0) {
+			dup2(devnull, STDOUT_FILENO);
+			close(devnull);
+		}
+	}
 
 	process_wtmp_file(&ctl, name);
 
-	close(fd);
+	if (saved_stdout >= 0) {
+		fflush(stdout);
+		dup2(saved_stdout, STDOUT_FILENO);
+		close(saved_stdout);
+	}
+
 	unlink(name);
 
 	return 0;
