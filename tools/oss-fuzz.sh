@@ -48,4 +48,5 @@ unxz -k "$(dirname $0)"/../tests/ts/blkid/images-*/*.xz
 zip -jqrm $OUT/test_blkid_fuzz_seed_corpus.zip "$(dirname $0)"/../tests/ts/blkid/images-*/*.img
 
 find . -maxdepth 1 -type f -executable -name "test_*_fuzz" -exec mv {} $OUT \;
-find . -type f -name "fuzz-*.dict" -exec cp {} $OUT \;
+# copy in-tree dictionaries under their fuzz target names ($OUT/<target>.dict)
+find . -type f -name "*_fuzz.dict" -exec cp {} $OUT \;
