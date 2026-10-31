@@ -271,12 +271,6 @@ int main(int argc, char **argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
-	/* -V not together with commands */
-	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))
-		print_version(EXIT_SUCCESS);
-	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
-		usage();
-
 	/* --report not together with other commands */
 	if (!strcmp(argv[1], "--report")) {
 		int rc = 0;
@@ -299,6 +293,10 @@ int main(int argc, char **argv)
 				d++;
 			continue;
 		}
+		if (!strcmp(argv[d], "-V") || !strcmp(argv[d], "--version"))
+			print_version(EXIT_SUCCESS);
+		if (!strcmp(argv[d], "-h") || !strcmp(argv[d], "--help"))
+			usage();
 		if (!strcmp(argv[d], "--getsz"))
 			continue;
 		if (!strcmp(argv[d], "--")) {
