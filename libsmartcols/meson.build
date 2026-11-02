@@ -50,20 +50,28 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libsmartcols_sym_path)
 	libsmartcols_link_args += ['-Wl,--version-script=@0@'.format(libsmartcols_sym_path)]
 endif
 
-lib_smartcols = both_libraries(
-  'smartcols',
+lib__smartcols = static_library(
+  '_smartcols',
   list_h,
   lib_smartcols_sources,
   include_directories : [dir_include, dir_libsmartcols],
+  dependencies : build_libsmartcols ? [] : disabler())
+
+lib_smartcols = library(
+  'smartcols',
+  link_whole : lib__smartcols,
   link_depends : libsmartcols_link_depends,
   version : libsmartcols_version,
   link_args : libsmartcols_link_args,
   link_with : lib_common,
-  dependencies : build_libsmartcols ? [] : disabler(),
   install : build_libsmartcols)
 smartcols_dep = declare_dependency(link_with: lib_smartcols, include_directories: '.')
 
-lib_smartcols_static = lib_smartcols.get_static_lib()
+lib_smartcols_static = static_library(
+  'smartcols_static',
+  link_whole : lib__smartcols,
+  link_with : lib_common,
+  install : false)
 
 if build_libsmartcols
   pkgconfig.generate(lib_smartcols,

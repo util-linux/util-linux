@@ -5,6 +5,7 @@ project('util-linux', 'c',
         default_options : [
           'c_std=c99',
           'cpp_std=c++11',
+          'default_library=both',
         ])
 
 fs = import('fs')
@@ -2027,7 +2028,7 @@ exe = executable(
   include_directories : includes,
   link_args : ['--static'],
   link_with : [lib_common,
-               lib_smartcols.get_static_lib()],
+               lib_smartcols_static],
   install_dir : sbindir,
   install : opt,
   build_by_default : opt)
@@ -2695,7 +2696,7 @@ exe = executable(
   link_with : [lib_common,
                lib_tcolors,
                lib_fdisk_static,
-               lib_smartcols.get_static_lib()],
+               lib_smartcols_static],
   dependencies : [lib_readline_static],
   install_dir : sbindir,
   install : opt2,
@@ -2729,7 +2730,7 @@ exe = executable(
   link_with : [lib_common,
                lib_tcolors,
                lib_fdisk_static,
-               lib_smartcols.get_static_lib()],
+               lib_smartcols_static],
   dependencies : [lib_readline_static],
   install_dir : sbindir,
   install : opt2,
@@ -2832,7 +2833,7 @@ exe4 = executable(
   include_directories : includes,
   link_args : ['--static'],
   link_with : [lib_common,
-               lib_smartcols.get_static_lib()],
+               lib_smartcols_static],
   dependencies : [blkid_static_dep],
   install_dir : usrsbin_exec_dir,
   install : opt,
@@ -4230,7 +4231,7 @@ if LINUX
     'test_mkfds',
     test_mkfds_sources,
     include_directories : includes,
-    link_with : lib_smartcols.get_static_lib(),
+    link_with : lib_smartcols_static,
     dependencies : test_mkfds_deps,
     c_args : test_mkfds_c_args,
     build_by_default: program_tests)
