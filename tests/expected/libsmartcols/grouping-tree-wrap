@@ -1,0 +1,11 @@
+    NAME       DATA
+,-> disk-a     
+'-> disk-b     
+ |--raid-a     
+ |  |-part-a   first
+ |  `-part-b   
+ |    `-volume one
+ |             two
+ |--raid-b     next
+ `--raid-c     
+    `-last     end
