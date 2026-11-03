@@ -2481,7 +2481,7 @@ static char *packet_get_name(struct sock_xinfo *sock_xinfo,
 	char *str = NULL;
 	const char *type = sock_decode_type(pkt->type);
 	const char *proto_str = packet_decode_protocol(pkt->protocol);
-	char proto_buf[ sizeof("unknown(") + sizeof (stringify_value(UINT16_MAX)) + sizeof (")") ];
+	char proto_buf[sizeof("unknown(") + UL_INT_STRSZ(uint16_t) + sizeof(")")];
 	const char *iface = get_iface_name(sock_xinfo->netns_inode,
 					   pkt->iface);
 
