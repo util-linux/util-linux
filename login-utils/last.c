@@ -160,7 +160,6 @@ static struct last_timefmt timefmts[] = {
 
 /* Global variables */
 static unsigned int recsdone;	/* Number of records listed */
-static time_t lastdate;		/* Last date we've seen */
 static time_t currentdate;	/* date when we started processing the file */
 
 #ifndef FUZZ_TARGET
@@ -695,9 +694,9 @@ static void process_wtmp_file(const struct last_control *ctl,
 	lastdown = 1596001948;
 #endif
 	/*
-	 * Fill in 'lastdate'
+	 * Fill in 'currentdate'
 	 */
-	lastdate = currentdate = lastrch = lastdown;
+	currentdate = lastrch = lastdown;
 
 #ifndef FUZZ_TARGET
 	/*
@@ -749,8 +748,6 @@ static void process_wtmp_file(const struct last_control *ctl,
 
 		if (ctl->until && ctl->until < ut.ut_tv.tv_sec)
 			continue;
-
-		lastdate = ut.ut_tv.tv_sec;
 
 		if (ctl->lastb) {
 			quit = list(ctl, &ut, ut.ut_tv.tv_sec, R_NORMAL);
