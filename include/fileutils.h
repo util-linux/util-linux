@@ -151,7 +151,7 @@ extern void ul_close_all_fds(unsigned int first, unsigned int last);
 int ul_copy_file(int from, int to);
 
 /* Size of the buffer for ul_fd_mkpath() */
-#define UL_FDPATH_BUFSIZ	(sizeof(_PATH_PROC_FDDIR) + sizeof(stringify_value(INT_MAX)))
+#define UL_FDPATH_BUFSIZ	(sizeof(_PATH_PROC_FDDIR) + UL_INT_STRSZ(int))
 
 extern int ul_reopen(int fd, int flags);
 extern char *ul_fd_mkpath(char *buf, size_t bufsz, int fd);

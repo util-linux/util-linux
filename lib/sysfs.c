@@ -74,8 +74,8 @@ int sysfs_blkdev_init_path(struct path_cxt *pc, dev_t devno, struct path_cxt *pa
 	struct sysfs_blkdev *blk;
 	int rc;
 	char buf[sizeof(_PATH_SYS_DEVBLOCK)
-		 + sizeof(stringify_value(UINT32_MAX)) * 2
-		 + 3];
+		 + UL_INT_STRSZ(unsigned int) * 2
+		 + 2];
 
 	/* define path to devno stuff */
 	snprintf(buf, sizeof(buf), _PATH_SYS_DEVBLOCK "/%u:%u", major(devno), minor(devno));

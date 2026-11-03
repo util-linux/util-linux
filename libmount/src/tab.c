@@ -1651,7 +1651,7 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs,
 	*rootfs = NULL;
 
 	if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz) == 0) {
-		char subvolidstr[sizeof(stringify_value(UINT64_MAX))];
+		char subvolidstr[UL_INT_STRSZ(uint64_t)];
 
 		DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
 
@@ -1718,7 +1718,7 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs,
 		 * defined.
 		 */
 		uint64_t default_id;
-		char default_id_str[sizeof(stringify_value(UINT64_MAX))];
+		char default_id_str[UL_INT_STRSZ(uint64_t)];
 
 		DBG(BTRFS, ul_debug(" subvolid/subvol not found, checking default"));
 

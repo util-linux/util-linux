@@ -73,7 +73,7 @@ int procfs_process_init_path(struct path_cxt *pc, pid_t pid)
 {
 	struct procfs_process *prc;
 	int rc;
-	char buf[sizeof(_PATH_PROC) + sizeof(stringify_value(UINT32_MAX)) + 2];
+	char buf[sizeof(_PATH_PROC) + UL_INT_STRSZ(size_t) + 1];
 
 	/* define path to pid stuff */
 	snprintf(buf, sizeof(buf), _PATH_PROC "/%zu", (size_t) pid);

@@ -1215,7 +1215,7 @@ int mnt_opt_set_value(struct libmnt_opt *opt, const char *str)
 
 int mnt_opt_set_u64value(struct libmnt_opt *opt, uint64_t num)
 {
-	char buf[ sizeof(stringify_value(UINT64_MAX)) ];
+	char buf[UL_INT_STRSZ(uint64_t)];
 
         snprintf(buf, sizeof(buf), "%"PRIu64, num);
 

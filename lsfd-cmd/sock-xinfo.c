@@ -1522,9 +1522,9 @@ static char *raw_get_name_common(struct sock_xinfo *sock_xinfo,
 		xasprintf(&str, "state=%s", st_str);
 	else {
 		const char *protocol_str = NULL;
-		char protocol_buf[ sizeof ("unknown(")
-				   + sizeof (stringify_value(UINT16_MA))
-				   + sizeof (")") ];
+		char protocol_buf[sizeof("unknown(")
+				   + UL_INT_STRSZ(uint16_t)
+				   + sizeof(")")];
 
 		if (decode_as_protocol) {
 			protocol_str = raw_decode_protocol(raw->protocol,

@@ -525,7 +525,7 @@ static void add_rtc_clocks_from_discovery(struct libscols_table *tb,
 struct cpu_clock {
 	struct list_head head;
 	pid_t pid;
-	char name[sizeof(stringify_value(SINT_MAX(pid_t)))];
+	char name[UL_INT_STRSZ(pid_t)];
 };
 
 static void add_cpu_clock(struct libscols_table *tb,
