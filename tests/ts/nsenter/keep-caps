@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="preserve capabilities when entering user namespaces"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_NSENTER"
+ts_check_test_command "$TS_CMD_UNSHARE"
+
+if [ "$(id -u)" -eq 0 ]; then
+	ts_check_test_command "$TS_CMD_SETPRIV"
+	test_uid=$(id -u "$TS_TESTUSER" 2>/dev/null) || ts_skip "test user not found"
+	test_gid=$(id -g "$TS_TESTUSER" 2>/dev/null) || ts_skip "test group not found"
+
+	run_as_test_user() {
+		"$TS_CMD_SETPRIV" --reuid="$test_uid" --regid="$test_gid" --clear-groups "$@"
+	}
+else
+	run_as_test_user() {
+		"$@"
+	}
+fi
+
+ts_cd "$TS_OUTDIR"
+
+PIDFILE="$TS_OUTDIR/${TS_TESTNAME}.pid"
+rm -f "$PIDFILE"
+# Use a nested user namespace so --user-parent enters a namespace distinct
+# from the test process's current user namespace.
+run_as_test_user "$TS_CMD_UNSHARE" --user --map-current-user --uts -- \
+	"$TS_CMD_UNSHARE" --user --map-current-user --uts -- \
+	/bin/sh -c 'echo $$; exec sleep 30' > "$PIDFILE" 2>/dev/null &
+TARGET_SHELL=$!
+trap 'kill "$TARGET_SHELL" "$TARGET" &>/dev/null' EXIT
+
+for _ in $(seq 1 50); do
+	read -r TARGET < "$PIDFILE" 2>/dev/null && [ -n "$TARGET" ] && break
+	sleep 0.1
+done
+
+if [ -z "${TARGET:-}" ] || [ ! -d "/proc/$TARGET" ]; then
+	ts_skip "cannot set up a user namespace"
+fi
+
+run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user --uts \
+	--preserve-credentials --keep-caps \
+	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/with-uts" 2>>"$TS_ERRLOG" || \
+	ts_skip "cannot enter the user namespace"
+if grep -q '^CapEff:[[:space:]]*0000000000000000$' "$TS_OUTDIR/with-uts"; then
+	ts_skip "user namespace does not grant capabilities"
+fi
+
+run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user \
+	--preserve-credentials --keep-caps \
+	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/user-only" 2>>"$TS_ERRLOG" || \
+	ts_skip "cannot enter the user namespace"
+
+if cmp -s "$TS_OUTDIR/with-uts" "$TS_OUTDIR/user-only"; then
+	echo "preserved" >>"$TS_OUTPUT"
+else
+	echo "not preserved" >>"$TS_OUTPUT"
+fi
+
+run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user-parent \
+	--preserve-credentials --keep-caps \
+	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/user-parent" 2>>"$TS_ERRLOG" || \
+	ts_skip "cannot enter the parent user namespace"
+
+if cmp -s "$TS_OUTDIR/with-uts" "$TS_OUTDIR/user-parent"; then
+	echo "preserved" >>"$TS_OUTPUT"
+else
+	echo "not preserved" >>"$TS_OUTPUT"
+fi
+
+kill "$TARGET" &>/dev/null
+wait "$TARGET_SHELL" &>/dev/null || true
+rm -f "$PIDFILE"
+
+ts_finalize
