@@ -98,6 +98,7 @@ static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 {
 	size_t size = 1024, c = 0;
 	ssize_t ret;
+	char *tmp;
 
 	*buf = malloc(size);
 	if (!*buf)
@@ -105,11 +106,8 @@ static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 
 	while (1) {
 		ret = ul_read_all(fd, *buf + c, size - c);
-		if (ret < 0) {
-			free(*buf);
-			*buf = NULL;
-			return -1;
-		}
+		if (ret < 0)
+			goto fail;
 
 		if (ret == 0)
 			return c;
@@ -117,11 +115,16 @@ static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 		c += ret;
 		if (c == size) {
 			size *= 2;
-			*buf = realloc(*buf, size);
-			if (!*buf)
-				return -1;
+			tmp = realloc(*buf, size);
+			if (!tmp)
+				goto fail;
+			*buf = tmp;
 		}
 	}
+fail:
+	free(*buf);
+	*buf = NULL;
+	return -1;
 }
 
 static inline ssize_t ul_sendfile_all(int out __attribute__((__unused__)),
