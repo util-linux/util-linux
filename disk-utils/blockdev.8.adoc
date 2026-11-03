@@ -47,6 +47,8 @@ include::man-common/help-version.adoc[]
 
 It is possible to give multiple devices and multiple commands.
 
+Use *--* to end the commands when a device name starts with *-*.
+
 *--flushbufs*::
 Flush buffers.
 
