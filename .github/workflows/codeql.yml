@@ -49,7 +49,7 @@ jobs:
                 id: cpp/world-writable-file-creation
 
       - name: Install dependencies
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: sudo --preserve-env=COMPILER .github/workflows/cibuild-setup-ubuntu.sh
         env:
           COMPILER: gcc
 
