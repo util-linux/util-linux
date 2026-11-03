@@ -102,6 +102,36 @@ dd if="$DEV" skip="$PHY_OFFSET" bs=$PHY_BLOCK_SIZE \
 	iflag=direct count=1 status=none 2>>"$TS_ERRLOG" \
 		| "$TS_CMD_HEXDUMP" -C >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 
+# A stepped trim has to cover the same range as one unbounded FITRIM call,
+# including the part of the filesystem behind statfs f_blocks. ext4 skips
+# block groups it already trimmed until the next mount, so remount before
+# each run and compare the totals.
+#
+# The exact equality holds only because the fixture is a freshly created,
+# nearly empty ext4: each group has one free run reaching the end of the
+# group, so ext4 marks the group trimmed on the first iteration that covers
+# it and skips it afterwards. On a fragmented filesystem the stepped total
+# can come out higher, because since kernel commit 68da4c44b994 ("ext4: fix
+# inconsistent between segment fstrim and full fstrim", v6.8) ext4 trims the
+# whole extent straddling the end of the range, and the next iteration
+# restarts inside it. Do not generalise this check to other fixtures.
+fstrim_remount() {
+	"$TS_CMD_UMOUNT" "$TS_MOUNTPOINT" >/dev/null 2>>"$TS_ERRLOG"
+	"$TS_CMD_MOUNT" "$DEV" "$TS_MOUNTPOINT" >/dev/null 2>>"$TS_ERRLOG"
+	ts_is_mounted "$DEV" || ts_die "could not remount $DEV"
+}
+
+fstrim_total() {
+	"$TS_CMD_FSTRIM" "$@" --verbose "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG" |
+		sed 's/.*(\([0-9]*\) bytes).*/\1/'
+}
+
+fstrim_remount; UNSTEPPED=$(fstrim_total)
+fstrim_remount; STEPPED=$(fstrim_total --step 1M)
+if [ -z "$UNSTEPPED" ] || [ "$UNSTEPPED" != "$STEPPED" ]; then
+	"$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
+	ts_die "stepped trim discarded ${STEPPED:-0} bytes, unstepped ${UNSTEPPED:-0}"
+fi
 
 "$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
 sed -i "s@$TS_MOUNTPOINT@<mountpoint>@" "$TS_OUTPUT"
