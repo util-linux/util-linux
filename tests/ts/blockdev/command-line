@@ -17,13 +17,17 @@ ts_cd "$WORKDIR"
 # $WORKDIR is removed on exit, so keep what blockdev printed for the failure report.
 log_failed() {
 	ts_logerr "$1: unexpected output"
-	cat out err >>"$TS_ERRLOG" 2>/dev/null
+	ts_logerr "--- stdout ---"
+	cat out >>"$TS_ERRLOG" 2>/dev/null
+	ts_logerr "--- stderr ---"
+	cat err >>"$TS_ERRLOG" 2>/dev/null
 	ts_failed "$1"
 }
 
 for opt in -h --help -V --version; do
-	"$TS_CMD_BLOCKDEV" "$opt" >baseline 2>err || ts_failed "$opt baseline"
-	[ ! -s err ] || ts_failed "$opt baseline stderr"
+	"$TS_CMD_BLOCKDEV" "$opt" >out 2>err || log_failed "$opt baseline"
+	[ ! -s err ] || log_failed "$opt baseline stderr"
+	mv out baseline
 	for prefix in "" "-v" "-q" "--getsz"; do
 		"$TS_CMD_BLOCKDEV" $prefix "$opt" missing >out 2>err || log_failed "$prefix $opt"
 		cmp -s baseline out || log_failed "$prefix $opt output"
