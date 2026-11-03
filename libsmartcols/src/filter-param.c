@@ -667,6 +667,7 @@ int filter_compare_params(struct libscols_filter *fltr __attribute__((__unused__
 static int string_cast(int type, struct filter_param *n)
 {
 	char *str = n->val.str;
+	int rc = 0;
 
 	if (type == SCOLS_DATA_STRING)
 		return 0;
@@ -677,23 +678,19 @@ static int string_cast(int type, struct filter_param *n)
 	case SCOLS_DATA_U64:
 	{
 		uint64_t num = 0;
-		if (str) {
-			int rc = ul_strtou64(str, &num, 10);
-			if (rc)
-				return rc;
-		}
-		n->val.num = num;
+		if (str)
+			rc = ul_strtou64(str, &num, 10);
+		if (!rc)
+			n->val.num = num;
 		break;
 	}
 	case SCOLS_DATA_FLOAT:
 	{
 		long double num = 0;
-		if (str) {
-			int rc = ul_strtold(str, &num);
-			if (rc)
-				return rc;
-		}
-		n->val.fnum = num;
+		if (str)
+			rc = ul_strtold(str, &num);
+		if (!rc)
+			n->val.fnum = num;
 		break;
 	}
 	case SCOLS_DATA_BOOLEAN:
@@ -706,11 +703,12 @@ static int string_cast(int type, struct filter_param *n)
 		break;
 	}
 	default:
-		return -EINVAL;
+		rc = -EINVAL;
+		break;
 	}
 
 	free(str);
-	return 0;
+	return rc;
 }
 
 static int u64_cast(int type, struct filter_param *n)
