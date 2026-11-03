@@ -18,8 +18,8 @@ struct ul_buffer {
 	char *encoded;		/* encoded data (from mbs_safe_encode_to_buffer)) */
 	size_t encoded_sz;	/* space allocated for encoded data */
 
-	char **ptrs;		/* saved pointers */
-	size_t nptrs;		/* number of saved pointers */
+	size_t *ptrs;		/* saved positions; offset from BEGIN plus 1, zero means unset */
+	size_t nptrs;		/* number of saved positions */
 };
 
 #define UL_INIT_BUFFER { .begin = NULL }

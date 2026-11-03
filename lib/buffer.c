@@ -15,7 +15,7 @@ void ul_buffer_reset_data(struct ul_buffer *buf)
 	buf->end = buf->begin;
 
 	if (buf->ptrs && buf->nptrs)
-		memset(buf->ptrs, 0, buf->nptrs * sizeof(char *));
+		memset(buf->ptrs, 0, buf->nptrs * sizeof(size_t));
 }
 
 static inline char *ul_buffer_free_data_common(struct ul_buffer *buf, bool steal)
@@ -68,36 +68,45 @@ int ul_buffer_is_empty(struct ul_buffer *buf)
 	return buf->begin == buf->end;
 }
 
+/*
+ * The positions are stored as offsets from BEGIN (plus 1, so that zero can be
+ * used for "unset") rather than as pointers. ul_buffer_alloc_data() uses
+ * realloc(), which may move the data, and that would turn stored pointers into
+ * dangling ones.
+ */
 int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
 {
 	if (ptr_idx >= buf->nptrs) {
-		char **tmp = reallocarray(buf->ptrs, ptr_idx + 1, sizeof(char *));
+		size_t *tmp = reallocarray(buf->ptrs, ptr_idx + 1, sizeof(size_t));
 
 		if (!tmp)
 			return -EINVAL;
 		buf->ptrs = tmp;
+
+		/* reallocarray() does not initialize the new entries */
+		memset(tmp + buf->nptrs, 0,
+		       (ptr_idx + 1 - buf->nptrs) * sizeof(size_t));
 		buf->nptrs = ptr_idx + 1;
 	}
 
-	buf->ptrs[ptr_idx] = buf->end;
+	buf->ptrs[ptr_idx] = (buf->begin && buf->end ?
+				(size_t) (buf->end - buf->begin) : 0) + 1;
 	return 0;
 }
 
 
 char *ul_buffer_get_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
 {
-	if (ptr_idx < buf->nptrs)
-		return buf->ptrs[ptr_idx];
+	if (ptr_idx < buf->nptrs && buf->ptrs[ptr_idx] && buf->begin)
+		return buf->begin + (buf->ptrs[ptr_idx] - 1);
 	return NULL;
 }
 
 /* returns length from begin to the pointer */
 size_t ul_buffer_get_pointer_length(struct ul_buffer *buf, unsigned short ptr_idx)
 {
-	char *ptr = ul_buffer_get_pointer(buf, ptr_idx);
-
-	if (ptr && ptr > buf->begin)
-		return ptr - buf->begin;
+	if (ptr_idx < buf->nptrs && buf->ptrs[ptr_idx])
+		return buf->ptrs[ptr_idx] - 1;
 	return 0;
 }
 
