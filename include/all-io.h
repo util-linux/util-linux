@@ -94,6 +94,14 @@ static inline ssize_t __read_all(const struct ul_vfs_ops *vfs, int fd,
 #define ul_read_all(fd, buf, count)		__read_all(NULL, (fd), (buf), (count))
 #define ul_vfs_read_all(vfs, fd, buf, count)	__read_all((vfs), (fd), (buf), (count))
 
+/*
+ * Reads all data from @fd to a newly allocated buffer and returns the number
+ * of bytes read, or -1 on error.
+ *
+ * The caller gets a buffer only when there is something in it: *buf is set to
+ * NULL for an empty read as well as on error. In other words, there is
+ * nothing to free unless the return value is greater than zero.
+ */
 static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 {
 	size_t size = 1024, c = 0;
@@ -110,7 +118,7 @@ static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 			goto fail;
 
 		if (ret == 0)
-			return c;
+			break;
 
 		c += ret;
 		if (c == size) {
@@ -121,6 +129,13 @@ static inline ssize_t ul_read_all_alloc(int fd, char **buf)
 			*buf = tmp;
 		}
 	}
+
+	if (c == 0) {
+		/* empty read; don't hand over a buffer to free */
+		free(*buf);
+		*buf = NULL;
+	}
+	return c;
 fail:
 	free(*buf);
 	*buf = NULL;
