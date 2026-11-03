@@ -161,6 +161,12 @@ endif
 if BUILD_FDFORMAT
 dist_bashcompletion_DATA += bash-completion/fdformat
 endif
+if BUILD_FDSEND
+dist_bashcompletion_DATA += bash-completion/fdsend
+endif
+if BUILD_FDRECV
+dist_bashcompletion_DATA += bash-completion/fdrecv
+endif
 if BUILD_BLOCKDEV
 dist_bashcompletion_DATA += bash-completion/blockdev
 endif
