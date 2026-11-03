@@ -168,7 +168,7 @@ struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls, const char *str
 */
 struct ul_env_list *env_list_from_fd(int fd)
 {
-	char *buf = NULL, *p;
+	char *buf = NULL, *p, *end;
 	ssize_t rc = 0;
 	struct ul_env_list *ls = NULL;
 
@@ -176,13 +176,10 @@ struct ul_env_list *env_list_from_fd(int fd)
 	if ((rc = read_all_alloc(fd, &buf)) < 1)
 		return NULL;
 	buf[rc] = '\0';
-	p = buf;
+	end = buf + rc;
 
-	while (rc > 0) {
+	for (p = buf; p < end; p += strlen(p) + 1)
 		ls = env_list_add_from_string(ls, p);
-		p += strlen(p) + 1;
-		rc -= strlen(p) + 1;
-	}
 
 	free(buf);
 	return ls;
