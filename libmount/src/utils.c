@@ -545,6 +545,10 @@ const char *mnt_statfs_get_fstype(struct statfs *vfs)
  *
  * "bar" : "foo,nobar"		-> False
  *
+ * A NULL @type (unknown filesystem type) is interpreted as an empty string.
+ * It never matches a concrete name, but it still matches negated patterns
+ * ("nofoo") and an empty pattern.
+ *
  * Returns: 1 if type is matching, else 0. This function also returns
  *          0 if @pattern is NULL and @type is non-NULL.
  */
@@ -1377,11 +1381,17 @@ int mnt_open_tree(int dirfd, const char *path, unsigned long flags,
 static int test_match_fstype(struct libmnt_test *ts __attribute__((unused)),
 			     int argc, char *argv[])
 {
-	if (argc != 3)
-		return -1;
+	char *type, *pattern;
 
-	char *type = argv[1];
-	char *pattern = argv[2];
+	/* no <type> argument means an unknown (NULL) filesystem type */
+	if (argc == 2) {
+		type = NULL;
+		pattern = argv[1];
+	} else if (argc == 3) {
+		type = argv[1];
+		pattern = argv[2];
+	} else
+		return -1;
 
 	printf("%s\n", mnt_match_fstype(type, pattern) ? "MATCH" : "NOT-MATCH");
 	return 0;
@@ -1661,7 +1671,7 @@ static int tests_stat(struct libmnt_test *ts __attribute__((unused)),
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-	{ "--match-fstype",  test_match_fstype,    "<type> <pattern>     FS types matching" },
+	{ "--match-fstype",  test_match_fstype,    "[<type>] <pattern>   FS types matching" },
 	{ "--match-options", test_match_options,   "<options> <pattern>  options matching" },
 	{ "--filesystems",   test_filesystems,	   "[<pattern>] list /{etc,proc}/filesystems" },
 	{ "--starts-with",   test_startswith,      "<string> <prefix>" },

@@ -19,6 +19,10 @@
  * "no" prefix to invert matching of the whole list. The "no" could
  * also be used for individual items in the @pattern list. So,
  * "nofoo,bar" has the same meaning as "nofoo,nobar".
+ *
+ * A NULL @type (unknown filesystem type) is interpreted as an empty string.
+ * It never matches a concrete name, but it still matches negated patterns
+ * ("noext4") and an empty pattern.
  */
 int match_fstype(const char *type, const char *pattern)
 {
@@ -30,6 +34,8 @@ int match_fstype(const char *type, const char *pattern)
 		return 1;
 	if (!pattern)
 		return 0;
+	if (!type)
+		type = "";
 
 	if (!strncmp(pattern, "no", 2)) {
 		no = 1;

@@ -24,6 +24,18 @@ ts_init_subtest "match-fstype-neg2"
 ts_run $TESTPROG --match-fstype cifs "noext2,ext3,cifs" &> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "match-fstype-null"
+ts_run $TESTPROG --match-fstype "ext2,ext3,cifs" &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "match-fstype-null-neg"
+ts_run $TESTPROG --match-fstype "noext2,nocifs" &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "match-fstype-null-empty"
+ts_run $TESTPROG --match-fstype "" &> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "match-options"
 ts_run $TESTPROG --match-options "aaa,bbb=BBB,ccc,ddd" "ccc" &> "$TS_OUTPUT"
 ts_finalize_subtest
