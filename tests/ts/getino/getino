@@ -46,7 +46,7 @@ fi
 ts_finalize_subtest
 
 ts_init_subtest "multiple-pids"
-if "$TS_CMD_GETINO" 1 1 1 1 1 &>/dev/null; then
+if "$TS_CMD_GETINO" 1 "$("$TS_CMD_GETINO" 1)" $$ &>/dev/null; then
   echo "ok" > "$TS_OUTPUT"
 fi
 ts_finalize_subtest
