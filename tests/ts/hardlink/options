@@ -43,6 +43,7 @@ show_srcdir()
 summary_clean()
 {
 	sed -i \
+		-e '/^cannot initialize .* method, use .memcmp. fallback$/d' \
 		-e 's/^Duration:.*/Duration: [Redacted]/' \
 		-e 's/^Method:.*/Method: [Redacted]/' \
 		-e 's/^Compared:.*files/Compared: [Redacted] files/' \
