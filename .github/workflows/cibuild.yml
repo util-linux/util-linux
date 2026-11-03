@@ -36,7 +36,7 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: | 
+        run: |
           sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE \
             .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
@@ -46,7 +46,7 @@ jobs:
       - name: Configure & Make
         run: .github/workflows/cibuild.sh MAKE
       - name: Check
-        run: | 
+        run: |
           sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE \
             .github/workflows/cibuild.sh CHECK
       - name: Make install

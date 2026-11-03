@@ -56,7 +56,7 @@ if [[ "$TRANSLATE_MANPAGES" == "yes" ]];then
 	PACKAGES+=(po4a)
 fi
 
-apt install -y lsb-release software-properties-common
+apt install -y lsb-release software-properties-common gnupg
 
 COMPILER="${COMPILER:?}"
 RELEASE="$(lsb_release -cs)"
@@ -75,13 +75,13 @@ elif [[ "$COMPILER" == clang ]]; then
 	APT_LLVM_SOURCES_LIST="/etc/apt/sources.list.d/apt.llvm.org_$RELEASE-$COMPILER_VERSION.list"
 	LLVM_KEY_PATH="${APT_KEYRINGS_DIR}/apt.llvm.org.gpg"
 
-	[ ! -f "$APT_KEYRINGS_DIR" ] && mkdir -p "$APT_KEYRINGS_DIR"
+	mkdir -p "$APT_KEYRINGS_DIR"
 
 	# Latest LLVM stack deb packages provided by https://apt.llvm.org/
 	wget -O - "$LLVM_KEY_URL" | gpg --dearmor --yes -o "$LLVM_KEY_PATH"
 	chmod 644 "$LLVM_KEY_PATH"
 	echo "deb [signed-by=$LLVM_KEY_PATH] http://apt.llvm.org/$RELEASE/ llvm-toolchain-$RELEASE-$COMPILER_VERSION  main" \
-				| tee "$APT_LLVM_SOURCES_LIST"
+				> "$APT_LLVM_SOURCES_LIST"
 
 	PACKAGES+=(clang-"$COMPILER_VERSION" \
 			lldb-"$COMPILER_VERSION" \
