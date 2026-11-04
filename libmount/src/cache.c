@@ -488,7 +488,8 @@ static bool is_device_cached(struct libmnt_cache *cache, const char *devname)
  * read data from libblkid into local cache
  * returns: <0 on error; 0 success; 1 nothing
 */
-static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
+static int read_from_blkid(struct libmnt_cache *cache, const char *devname,
+			   const char *type_hint)
 {
 	blkid_probe pr;
 	const struct libmnt_cachetag *t;
@@ -515,6 +516,32 @@ static int read_from_blkid(struct libmnt_cache *cache, const char *devname)
 	if (blkid_probe_open_device(pr, devname, 0)) {
 		blkid_free_probe(pr);
 		return -errno;
+	}
+
+	if (type_hint) {
+		const char *data;
+		char *types[] = { (char *) type_hint, NULL };
+
+		blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
+		if (blkid_probe_filter_superblocks_type(pr, BLKID_FLTR_ONLYIN,
+						       types) == 0 &&
+		    blkid_do_safeprobe(pr) == 0 &&
+		    blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 &&
+		    strcmp(data, type_hint) == 0) {
+			cacheval = strdup(devname);
+			rc = !cacheval ? -ENOMEM :
+				cache_add_tag(cache, "TYPE", data, cacheval,
+					      MNT_CACHE_TAGREAD);
+			if (!rc) {
+				ntags++;
+				cacheval = NULL; /* stored into cache */
+			}
+			goto done;
+		}
+
+		/* The udev value may be stale. Retry without the type filter. */
+		blkid_probe_reset_superblocks_filter(pr);
+		blkid_reset_probe(pr);
 	}
 
 	blkid_probe_enable_superblocks(pr, 1);
@@ -559,7 +586,8 @@ done:
  * read data from udev into local cache
  * returns: <0 on error; 0 success; 1 nothing
  */
-static int read_from_udev(struct libmnt_cache *cache, const char *devname)
+static int read_from_udev(struct libmnt_cache *cache, const char *devname,
+			  char **type_hint)
 {
 	sd_device *sd = NULL;
 	const struct libmnt_cachetag *t;
@@ -569,6 +597,7 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 
 	assert(cache);
 	assert(devname);
+	assert(type_hint);
 
 	if (ul_dlopen_libsystemd() != 0)
 		return -ENOSYS;
@@ -586,6 +615,14 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
 			continue;
 		if (systemd_call(sd_device_get_property_value)(sd, t->udev_name, &data) < 0)
 			continue;
+		if (!cache->noprobe && strcmp(t->mnt_name, "TYPE") == 0) {
+			*type_hint = strdup(data);
+			if (!*type_hint) {
+				rc = -ENOMEM;
+				break;
+			}
+			continue;
+		}
 
 		tagval = strdup(data); /* temporary for unhexmangle() */
 		cacheval = strdup(devname);
@@ -625,6 +662,10 @@ static int read_from_udev(struct libmnt_cache *cache, const char *devname)
  */
 int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
+	int udev_rc = 1;
+	int blkid_rc;
+	char *type_hint = NULL;
+
 	if (!cache || !devname)
 		return -EINVAL;
 
@@ -634,10 +675,18 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 		return 0;
 
 #ifdef USE_LIBMOUNT_UDEV_SUPPORT
-	if (read_from_udev(cache, devname) == 0)
+	udev_rc = read_from_udev(cache, devname, &type_hint);
+	if (cache->noprobe && udev_rc == 0) {
+		free(type_hint);
 		return 0;
+	}
 #endif
-	return read_from_blkid(cache, devname);
+	blkid_rc = read_from_blkid(cache, devname, type_hint);
+	free(type_hint);
+
+	if (udev_rc == 0 && blkid_rc != -ENOMEM)
+		return 0;
+	return blkid_rc;
 }
 
 /**
