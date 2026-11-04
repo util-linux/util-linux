@@ -18,11 +18,17 @@
 
 #include "list.h"
 
+enum setpriv_landlock_category {
+	SETPRIV_LANDLOCK_FS,
+	SETPRIV_LANDLOCK_NET,
+	SETPRIV_LANDLOCK_SCOPE,
+	SETPRIV_LANDLOCK_PERMISSION,
+	SETPRIV_LANDLOCK_NCATEGORIES
+};
+
 struct setpriv_landlock_opts {
-	uint64_t access_fs;
-	uint64_t access_net;
-	uint64_t scoped;
-	uint64_t permissions;
+	/* handled rights, indexed by enum setpriv_landlock_category */
+	uint64_t handled[SETPRIV_LANDLOCK_NCATEGORIES];
 	struct list_head rules;
 };
 
