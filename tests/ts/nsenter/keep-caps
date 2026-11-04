@@ -38,7 +38,10 @@ fi
 ts_cd "$TS_OUTDIR"
 
 PIDFILE="$TS_OUTDIR/${TS_TESTNAME}.pid"
-rm -f "$PIDFILE"
+CAPS_WITH_UTS="$TS_OUTDIR/${TS_TESTNAME}-with-uts"
+CAPS_USER_ONLY="$TS_OUTDIR/${TS_TESTNAME}-user-only"
+CAPS_USER_PARENT="$TS_OUTDIR/${TS_TESTNAME}-user-parent"
+rm -f "$PIDFILE" "$CAPS_WITH_UTS" "$CAPS_USER_ONLY" "$CAPS_USER_PARENT"
 # Use a nested user namespace so --user-parent enters a namespace distinct
 # from the test process's current user namespace.
 run_as_test_user "$TS_CMD_UNSHARE" --user --map-current-user --uts -- \
@@ -58,18 +61,18 @@ fi
 
 run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user --uts \
 	--preserve-credentials --keep-caps \
-	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/with-uts" 2>>"$TS_ERRLOG" || \
+	grep '^CapEff:' /proc/self/status >"$CAPS_WITH_UTS" 2>>"$TS_ERRLOG" || \
 	ts_skip "cannot enter the user namespace"
-if grep -q '^CapEff:[[:space:]]*0000000000000000$' "$TS_OUTDIR/with-uts"; then
+if grep -q '^CapEff:[[:space:]]*0000000000000000$' "$CAPS_WITH_UTS"; then
 	ts_skip "user namespace does not grant capabilities"
 fi
 
 run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user \
 	--preserve-credentials --keep-caps \
-	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/user-only" 2>>"$TS_ERRLOG" || \
+	grep '^CapEff:' /proc/self/status >"$CAPS_USER_ONLY" 2>>"$TS_ERRLOG" || \
 	ts_skip "cannot enter the user namespace"
 
-if cmp -s "$TS_OUTDIR/with-uts" "$TS_OUTDIR/user-only"; then
+if cmp -s "$CAPS_WITH_UTS" "$CAPS_USER_ONLY"; then
 	echo "preserved" >>"$TS_OUTPUT"
 else
 	echo "not preserved" >>"$TS_OUTPUT"
@@ -77,10 +80,10 @@ fi
 
 run_as_test_user "$TS_CMD_NSENTER" --target "$TARGET" --user-parent \
 	--preserve-credentials --keep-caps \
-	grep '^CapEff:' /proc/self/status >"$TS_OUTDIR/user-parent" 2>>"$TS_ERRLOG" || \
+	grep '^CapEff:' /proc/self/status >"$CAPS_USER_PARENT" 2>>"$TS_ERRLOG" || \
 	ts_skip "cannot enter the parent user namespace"
 
-if cmp -s "$TS_OUTDIR/with-uts" "$TS_OUTDIR/user-parent"; then
+if cmp -s "$CAPS_WITH_UTS" "$CAPS_USER_PARENT"; then
 	echo "preserved" >>"$TS_OUTPUT"
 else
 	echo "not preserved" >>"$TS_OUTPUT"
@@ -88,6 +91,6 @@ fi
 
 kill "$TARGET" &>/dev/null
 wait "$TARGET_SHELL" &>/dev/null || true
-rm -f "$PIDFILE"
+rm -f "$PIDFILE" "$CAPS_WITH_UTS" "$CAPS_USER_ONLY" "$CAPS_USER_PARENT"
 
 ts_finalize
