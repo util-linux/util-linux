@@ -22,13 +22,19 @@
 
 enum landlock_rule_type {
 	LANDLOCK_RULE_PATH_BENEATH = 1,
-	LANDLOCK_RULE_NET_PORT = 2,
+	LANDLOCK_RULE_NET_PORT,
+	LANDLOCK_RULE_NAMESPACE,
+	LANDLOCK_RULE_CAPABILITY,
 };
 
 struct landlock_ruleset_attr {
 	uint64_t handled_access_fs;
 	uint64_t handled_access_net;
 	uint64_t scoped;
+	uint64_t quiet_access_fs;
+	uint64_t quiet_access_net;
+	uint64_t quiet_scoped;
+	uint64_t handled_permissions;
 };
 
 struct landlock_path_beneath_attr {
@@ -41,8 +47,28 @@ struct landlock_net_port_attr {
 	uint64_t port;
 };
 
+struct landlock_namespace_attr {
+	uint64_t permissions;
+	uint64_t allowed_namespace_types;
+	uint64_t quiet_namespace_types;
+};
+
+struct landlock_capability_attr {
+	uint64_t permissions;
+	uint64_t allowed_capabilities;
+	uint64_t quiet_capabilities;
+};
+
 #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
 #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
+
+#define LANDLOCK_ADD_RULE_QUIET				(1U << 0)
+
+#define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF	(1U << 0)
+#define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON		(1U << 1)
+#define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF	(1U << 2)
+#define LANDLOCK_RESTRICT_SELF_TSYNC			(1U << 3)
+#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS		(1U << 4)
 
 #define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
 #define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
@@ -69,6 +95,9 @@ struct landlock_net_port_attr {
 
 #define LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
 #define LANDLOCK_SCOPE_SIGNAL				(1ULL << 1)
+
+#define LANDLOCK_PERMISSION_NAMESPACE_USE		(1ULL << 0)
+#define LANDLOCK_PERMISSION_CAPABILITY_USE		(1ULL << 1)
 
 static inline int landlock_create_ruleset(
 		const struct landlock_ruleset_attr *attr,
