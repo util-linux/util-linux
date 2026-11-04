@@ -664,7 +664,8 @@ int main(int argc, char *argv[])
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, namespaces = 0, unopened = 0, remaining = 0,
+	    setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, do_uid = false, force_uid = false,
 	     do_gid = false, force_gid = false, do_env = false, do_all = false,
 	     do_join_cgroup = false, do_user_parent = false;
@@ -835,8 +836,8 @@ int main(int argc, char *argv[])
 	/*
 	 * Open remaining namespace and directory descriptors.
 	 */
-	namespaces = get_namespaces_without_fd();
-	if (namespaces || sock_fd >= 0 || do_user_parent) {
+	unopened = get_namespaces_without_fd();
+	if (unopened || sock_fd >= 0 || do_user_parent) {
 		if (!namespace_target_pid)
 			errx(EXIT_FAILURE, _("no target PID specified"));
 
@@ -849,8 +850,8 @@ int main(int argc, char *argv[])
 				pid_fd = pidfd_open(namespace_target_pid, 0);
 			ns_pid_fd = pid_fd;
 		}
-		if (ns_pid_fd < 0 && namespaces)
-			open_namespaces(namespaces);	/* fallback */
+		if (ns_pid_fd < 0 && unopened)
+			open_namespaces(unopened);	/* fallback */
 	}
 
 	if (do_rd)
@@ -874,7 +875,9 @@ int main(int argc, char *argv[])
 	if (sock_fd >= 0)
 		open_target_sk_netns(pid_fd, sock_fd);
 
-	/* All initialized, get final set of namespaces */
+	/* All initialized, get the final set of namespaces. From this point on
+	 * @namespaces is read-only -- it describes all namespaces we want to
+	 * enter, not what is left to do. */
 	namespaces = get_namespaces();
 	if (!namespaces)
 		errx(EXIT_FAILURE, _("no namespace specified"));
@@ -919,11 +922,12 @@ int main(int argc, char *argv[])
 	 * namespace last and if we're privileging it then we enter the user
 	 * namespace first (because the initial setns will fail).
 	 */
-	enter_namespaces(ns_pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
+	if (namespaces & ~CLONE_NEWUSER)
+		enter_namespaces(ns_pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
 
-	namespaces = get_namespaces();
-	if (namespaces)
-		enter_namespaces(ns_pid_fd, namespaces, 0);		/* report errors */
+	remaining = get_namespaces();
+	if (remaining)
+		enter_namespaces(ns_pid_fd, remaining, 0);		/* report errors */
 
 	if (pid_fd >= 0)
 		close(pid_fd);
