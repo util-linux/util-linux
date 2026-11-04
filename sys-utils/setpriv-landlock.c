@@ -15,6 +15,7 @@
 
 #include "setpriv-landlock.h"
 
+#include "namespace.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "nls.h"
@@ -127,6 +128,7 @@ struct landlock_rule_entry {
 	union {
 		struct landlock_path_beneath_attr path_beneath_attr;
 		struct landlock_net_port_attr net_port_attr;
+		struct landlock_namespace_attr namespace_attr;
 	};
 };
 
@@ -168,6 +170,21 @@ static const struct landlock_restriction landlock_scope_restriction[] = {
 	{ LANDLOCK_SCOPE_SIGNAL,	       "signal",	       N_("ability to send signals to processes") },
 };
 
+static const struct landlock_restriction landlock_permission[] = {
+	{ LANDLOCK_PERMISSION_NAMESPACE_USE,  "namespace-use",  N_("use of namespace types") },
+};
+
+static const struct landlock_restriction landlock_namespace_type[] = {
+	{ CLONE_NEWNS,	   "mnt",    N_("mount namespace") },
+	{ CLONE_NEWNET,	   "net",    N_("network namespace") },
+	{ CLONE_NEWPID,	   "pid",    N_("PID namespace") },
+	{ CLONE_NEWUTS,	   "uts",    N_("UTS namespace") },
+	{ CLONE_NEWIPC,	   "ipc",    N_("System V IPC namespace") },
+	{ CLONE_NEWUSER,   "user",   N_("user namespace") },
+	{ CLONE_NEWCGROUP, "cgroup", N_("cgroup namespace") },
+	{ CLONE_NEWTIME,   "time",   N_("time namespace") },
+};
+
 /* cumulative access_fs rights supported by each Landlock ABI version, indexed by (abi - 1) */
 static const uint64_t landlock_access_fs_mask[] = {
 	/* ABI 1 */ (LANDLOCK_ACCESS_FS_MAKE_SYM << 1) - 1,
@@ -203,6 +220,22 @@ static const uint64_t landlock_access_scope_mask[] = {
 	/* ABI 4 */ 0,
 	/* ABI 5 */ 0,
 	/* ABI 6 */ (LANDLOCK_SCOPE_SIGNAL << 1) - 1,
+};
+
+/* cumulative permissions supported by each Landlock ABI version, indexed by (abi - 1) */
+static const uint64_t landlock_access_permission_mask[] = {
+	/* ABI 1 */ 0,
+	/* ABI 2 */ 0,
+	/* ABI 3 */ 0,
+	/* ABI 4 */ 0,
+	/* ABI 5 */ 0,
+	/* ABI 6 */ 0,
+	/* ABI 7 */ 0,
+	/* ABI 8 */ 0,
+	/* ABI 9 */ 0,
+	/* ABI 10 */ 0,
+	/* ABI 11 */ 0,
+	/* ABI 12 */ LANDLOCK_PERMISSION_NAMESPACE_USE,
 };
 
 static int supported_landlock_abi(void)
@@ -257,6 +290,17 @@ static uint64_t landlock_abi_scope_mask(void)
 	if (idx >= n)
 		idx = n - 1;
 	return landlock_access_scope_mask[idx];
+}
+
+static uint64_t landlock_abi_permission_mask(void)
+{
+	int abi = supported_landlock_abi();
+	size_t n = ARRAY_SIZE(landlock_access_permission_mask);
+	size_t idx = (size_t) (abi - 1);
+
+	if (idx >= n)
+		idx = n - 1;
+	return landlock_access_permission_mask[idx];
 }
 
 static long landlock_fs_access_to_mask(const char *str, size_t len)
@@ -356,6 +400,67 @@ static uint64_t parse_landlock_scope_restriction(const char *list)
 	return r;
 }
 
+static long landlock_permission_to_mask(const char *str, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(landlock_permission); i++)
+		if (strlen(landlock_permission[i].type) == len
+				&& memcmp(landlock_permission[i].type, str, len) == 0)
+			return landlock_permission[i].value;
+	return -1;
+}
+
+static uint64_t parse_landlock_permission(const char *list)
+{
+	unsigned long r = 0, unsupported;
+	size_t i;
+
+	if (string_to_bitmask(list, &r, landlock_permission_to_mask))
+		errx(EXIT_FAILURE,
+		     _("could not parse Landlock permission: %s"), list);
+
+	unsupported = r & ~landlock_abi_permission_mask();
+	if (unsupported) {
+		for (i = 0; i < ARRAY_SIZE(landlock_permission); i++)
+			if (landlock_permission[i].value & unsupported)
+				errx(EXIT_FAILURE,
+				     _("Landlock permission is not supported by the running kernel: %s"),
+				     landlock_permission[i].type);
+	}
+
+	return r;
+}
+
+static long landlock_namespace_type_to_mask(const char *str, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(landlock_namespace_type); i++)
+		if (strlen(landlock_namespace_type[i].type) == len
+				&& memcmp(landlock_namespace_type[i].type, str, len) == 0)
+			return landlock_namespace_type[i].value;
+	return -1;
+}
+
+static uint64_t parse_landlock_namespace_types(const char *list)
+{
+	unsigned long r = 0;
+	size_t i;
+
+	if (strcmp(list, "all") == 0) {
+		for (i = 0; i < ARRAY_SIZE(landlock_namespace_type); i++)
+			r |= landlock_namespace_type[i].value;
+		return r;
+	}
+
+	if (string_to_bitmask(list, &r, landlock_namespace_type_to_mask) || r == 0)
+		errx(EXIT_FAILURE,
+		     _("could not parse Landlock namespace types: %s"), list);
+
+	return r;
+}
+
 void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 {
 	uint64_t mask;
@@ -403,13 +508,28 @@ void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 		return;
 	}
 
+	if (strcmp(str, "permission") == 0 || strcmp(str, "permission:") == 0) {
+		mask = landlock_abi_permission_mask();
+		if (mask == 0)
+			errx(EXIT_FAILURE,
+			     _("Landlock permission is not supported"));
+		opts->permissions |= mask;
+		return;
+	}
+
+	type = ul_startswith(str, "permission:");
+	if (type) {
+		opts->permissions |= parse_landlock_permission(type);
+		return;
+	}
+
 	errx(EXIT_FAILURE, _("invalid Landlock access: %s"), str);
 }
 
 void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 {
 	struct landlock_rule_entry *rule = xmalloc(sizeof(*rule));
-	const char *accesses, *path, *portstr;
+	const char *accesses, *path, *portstr, *nstypes;
 	char *accesses_part;
 	int parent_fd;
 	uint16_t portnum;
@@ -464,6 +584,17 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 		return;
 	}
 
+	nstypes = ul_startswith(str, "namespace:");
+	if (nstypes) {
+		rule->rule_type = LANDLOCK_RULE_NAMESPACE;
+		rule->namespace_attr.permissions = LANDLOCK_PERMISSION_NAMESPACE_USE;
+		rule->namespace_attr.allowed_namespace_types = parse_landlock_namespace_types(nstypes);
+		rule->namespace_attr.quiet_namespace_types = 0;
+
+		list_add(&rule->head, &opts->rules);
+		return;
+	}
+
 	errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
 }
 
@@ -490,15 +621,21 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 			errx(EXIT_FAILURE,
 				_("Landlock net-port rule requires a network access restriction (--landlock-access net)"));
 		}
+		if (rule->rule_type == LANDLOCK_RULE_NAMESPACE
+				&& !(opts->permissions & LANDLOCK_PERMISSION_NAMESPACE_USE)) {
+			errx(EXIT_FAILURE,
+				_("Landlock namespace rule requires a namespace permission restriction (--landlock-access permission:namespace-use)"));
+		}
 	}
 
-	if (!opts->access_fs && !opts->access_net && !opts->scoped)
+	if (!opts->access_fs && !opts->access_net && !opts->scoped && !opts->permissions)
 		return;
 
 	const struct landlock_ruleset_attr ruleset_attr = {
 		.handled_access_fs = opts->access_fs,
 		.handled_access_net = opts->access_net,
 		.scoped = opts->scoped,
+		.handled_permissions = opts->permissions,
 	};
 
 	fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
@@ -520,6 +657,8 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 				net_port_attr.allowed_access = opts->access_net;
 
 			ret = landlock_add_rule(fd, rule->rule_type, &net_port_attr, 0);
+		} else if (rule->rule_type == LANDLOCK_RULE_NAMESPACE) {
+			ret = landlock_add_rule(fd, rule->rule_type, &rule->namespace_attr, 0);
 		} else {
 			abort();
 		}
@@ -549,6 +688,8 @@ void usage_landlock(FILE *out)
 	fputs(_("  path-beneath - filesystem based rule; <argument> is a path\n"), out);
 	/* TRANSLATORS: Keep *{net-port}* untranslated, it's a type name */
 	fputs(_("  net-port - network based rule; <argument> is a port number\n"), out);
+	/* TRANSLATORS: Keep *{namespace}* untranslated, it's a type name */
+	fputs(_("  namespace - namespace based rule; syntax is namespace:<type>[,<type>...]\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" available Landlock filesystem rights are:\n"), out);
@@ -570,6 +711,20 @@ void usage_landlock(FILE *out)
 		fprintf(out, "  %20s - %s\n", landlock_scope_restriction[i].type,
 					_(landlock_scope_restriction[i].help));
 	}
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" available Landlock permissions are:\n"), out);
+	for (i = 0; i < ARRAY_SIZE(landlock_permission); i++) {
+		fprintf(out, "  %14s - %s\n", landlock_permission[i].type,
+					_(landlock_permission[i].help));
+	}
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" available Landlock namespace types are:\n"), out);
+	for (i = 0; i < ARRAY_SIZE(landlock_namespace_type); i++) {
+		fprintf(out, "  %6s - %s\n", landlock_namespace_type[i].type,
+					_(landlock_namespace_type[i].help));
+	}
 }
 
 void list_landlock_support(void)
@@ -577,7 +732,7 @@ void list_landlock_support(void)
 	int abi, errata;
 	unsigned n;
 	size_t i;
-	uint64_t fs_mask, net_mask, scope_mask;
+	uint64_t fs_mask, net_mask, scope_mask, permission_mask;
 
 	abi = supported_landlock_abi();
 	errata = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_ERRATA);
@@ -594,6 +749,7 @@ void list_landlock_support(void)
 	fs_mask = landlock_abi_fs_mask();
 	net_mask = landlock_abi_net_mask();
 	scope_mask = landlock_abi_scope_mask();
+	permission_mask = landlock_abi_permission_mask();
 
 	printf(_("access:"));
 	if (fs_mask)
@@ -602,6 +758,8 @@ void list_landlock_support(void)
 		printf(" net");
 	if (scope_mask)
 		printf(" scope");
+	if (permission_mask)
+		printf(" permission");
 	printf("\n");
 
 	printf(_("%s rights:"), "fs");
@@ -629,6 +787,19 @@ void list_landlock_support(void)
 				printf(" %s", landlock_scope_restriction[i].type);
 		printf("\n");
 	}
+
+	if (permission_mask) {
+		printf(_("%s rights:"), "permission");
+		for (i = 0; i < ARRAY_SIZE(landlock_permission); i++)
+			if (landlock_permission[i].value & permission_mask)
+				printf(" %s", landlock_permission[i].type);
+		printf("\n");
+
+		printf(_("%s rules:"), "permission");
+		if (permission_mask & LANDLOCK_PERMISSION_NAMESPACE_USE)
+			printf(" namespace");
+		printf("\n");
+	}
 }
 
 void list_landlock_access(void)
@@ -639,6 +810,8 @@ void list_landlock_access(void)
 		printf("net\n");
 	if (landlock_abi_scope_mask())
 		printf("scope\n");
+	if (landlock_abi_permission_mask())
+		printf("permission\n");
 }
 
 void list_landlock_rights(const char *access)
@@ -661,6 +834,11 @@ void list_landlock_rights(const char *access)
 		for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++)
 			if (landlock_scope_restriction[i].value & mask)
 				printf("%s\n", landlock_scope_restriction[i].type);
+	} else if (strcmp(access, "permission") == 0) {
+		mask = landlock_abi_permission_mask();
+		for (i = 0; i < ARRAY_SIZE(landlock_permission); i++)
+			if (landlock_permission[i].value & mask)
+				printf("%s\n", landlock_permission[i].type);
 	} else
 		errx(EXIT_FAILURE, _("unknown Landlock access: %s"), access);
 }
