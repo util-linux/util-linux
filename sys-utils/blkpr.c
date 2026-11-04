@@ -35,7 +35,7 @@
 #include "xalloc.h"
 
 struct type_string {
-	int type;
+	unsigned long type;	/* also keeps IOC_PR_* ioctl numbers */
 	char *str;
 	char *desc;
 };
@@ -156,16 +156,19 @@ static void print_type(FILE *out, const struct type_string *ts, size_t nmem)
 }
 
 
-static int parse_type_by_str(const struct type_string *ts, int nmem, char *pattern)
+static int parse_type_by_str(const struct type_string *ts, size_t nmem,
+			     const char *pattern, unsigned long *res)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < nmem; i++) {
-		if (!strcmp(ts[i].str, pattern))
-			return ts[i].type;
+		if (!strcmp(ts[i].str, pattern)) {
+			*res = ts[i].type;
+			return 0;
+		}
 	}
 
-	return -1;
+	return -EINVAL;
 }
 
 
@@ -175,8 +178,8 @@ static int parse_type_by_str(const struct type_string *ts, int nmem, char *patte
 	{ print_type(out, XX, ARRAY_SIZE(XX)); }
 
 #define PARSE(XX) \
-	static int parse_##XX(char *pattern) \
-	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern); }
+	static int parse_##XX(const char *pattern, unsigned long *res) \
+	{ return parse_type_by_str(XX, ARRAY_SIZE(XX), pattern, res); }
 
 PRINT_SUPPORTED(pr_type)
 PRINT_SUPPORTED(pr_command)
@@ -222,10 +225,10 @@ out:
 #endif /* IOC_PR_READ_KEYS */
 
 #ifdef IOC_PR_READ_RESERVATION
-static inline const char *type_to_str(const struct type_string *ts, int nmem,
-                                      int type)
+static inline const char *type_to_str(const struct type_string *ts, size_t nmem,
+                                      unsigned long type)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < nmem; i++) {
 		if (ts[i].type == type)
@@ -257,7 +260,8 @@ static int do_pr_read_reservation(int fd)
 }
 #endif /* IOC_PR_READ_RESERVATION */
 
-static int do_pr(char *path, uint64_t key, uint64_t oldkey, int op, int type, int flag)
+static int do_pr(char *path, uint64_t key, uint64_t oldkey, unsigned long op,
+		 unsigned long type, unsigned long flag)
 {
 	struct pr_registration pr_reg;
 	struct pr_reservation pr_res;
@@ -364,7 +368,7 @@ int main(int argc, char **argv)
 	int c;
 	char *path;
 	uint64_t key = 0, oldkey = 0;
-	int command = -1, type = -1, flag = 0;
+	unsigned long command = 0, type = 0, flag = 0;
 
 	static const struct option longopts[] = {
 	    { "help",            no_argument,       NULL, 'h' },
@@ -394,18 +398,15 @@ int main(int argc, char **argv)
 					_("failed to parse old key"));
 			break;
 		case 'c':
-			command = parse_pr_command(optarg);
-			if (command == -1)
+			if (parse_pr_command(optarg, &command) < 0)
 				err(EXIT_FAILURE, _("unknown command"));
 			break;
 		case 't':
-			type = parse_pr_type(optarg);
-			if (type < 0)
+			if (parse_pr_type(optarg, &type) < 0)
 				err(EXIT_FAILURE, _("unknown type"));
 			break;
 		case 'f':
-			flag = parse_pr_flag(optarg);
-			if (flag < 0)
+			if (parse_pr_flag(optarg, &flag) < 0)
 				err(EXIT_FAILURE, _("unknown flag"));
 			break;
 

@@ -29,14 +29,16 @@ jobs:
         env:
           - { COMPILER: "gcc",   COMPILER_VERSION: "15", SANITIZE: "yes"  }
           - { COMPILER: "gcc",   COMPILER_VERSION: "15", SANITIZE: "no"   }
-          - { COMPILER: "clang", COMPILER_VERSION: "20", SANITIZE: "yes"  }
-          - { COMPILER: "clang", COMPILER_VERSION: "20", SANITIZE: "no"   }
+          - { COMPILER: "clang", COMPILER_VERSION: "23", SANITIZE: "yes"  }
+          - { COMPILER: "clang", COMPILER_VERSION: "23", SANITIZE: "no"   }
     env: ${{ matrix.env }}
     steps:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE \
+            .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
         run: .github/workflows/cibuild.sh CONFIGUREFAST
       - name: Code checks
@@ -44,7 +46,9 @@ jobs:
       - name: Configure & Make
         run: .github/workflows/cibuild.sh MAKE
       - name: Check
-        run: sudo -E .github/workflows/cibuild.sh CHECK
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE \
+            .github/workflows/cibuild.sh CHECK
       - name: Make install
         run: .github/workflows/cibuild.sh INSTALL
 
@@ -59,18 +63,22 @@ jobs:
       cancel-in-progress: true
     env:
       COMPILER: gcc
-      COMPILER_VERSION: 13
+      COMPILER_VERSION: 15
       SANITIZE: no
       COVERAGE: yes
     steps:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE,COVERAGE \
+            .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure & Make
         run: .github/workflows/cibuild.sh CONFIGUREFAST MAKE
       - name: Check
-        run: sudo -E .github/workflows/cibuild.sh CHECK
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE,COVERAGE \
+            .github/workflows/cibuild.sh CHECK
       - name: Coveralls
         uses: coverallsapp/github-action@master
         with:
@@ -90,7 +98,9 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE \
+            .github/workflows/cibuild-setup-ubuntu.sh
       - name: Meson configure
         run: .github/workflows/cibuild.sh MESONCONF
       - name: Meson build
@@ -113,7 +123,9 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: |
+          sudo --preserve-env=COMPILER,COMPILER_VERSION,SANITIZE,TRANSLATE_MANPAGES \
+            .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Make distcheck
@@ -220,7 +232,7 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: sudo --preserve-env=COMPILER .github/workflows/cibuild-setup-ubuntu.sh
       - name: OpenWrt environment
         run: |
           OPENWRT_RELEASE=25.12.2

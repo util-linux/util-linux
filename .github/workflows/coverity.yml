@@ -20,7 +20,7 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v7
       - name: Ubuntu setup
-        run: sudo -E .github/workflows/cibuild-setup-ubuntu.sh
+        run: sudo --preserve-env=COMPILER .github/workflows/cibuild-setup-ubuntu.sh
       - name: Configure
         run: .github/workflows/cibuild.sh CONFIGURE
       - name: Coverity

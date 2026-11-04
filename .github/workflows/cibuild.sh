@@ -205,10 +205,17 @@ for phase in "${PHASES[@]}"; do
         ./tests/run.sh --show-diff
 
         if [[ "$COVERAGE" == "yes" ]]; then
-            lcov --directory . --capture --initial --output-file coverage.info.initial
-            lcov --directory . --capture --output-file coverage.info.run --no-checksum --rc lcov_branch_coverage=1
-            lcov -a coverage.info.initial -a coverage.info.run --rc lcov_branch_coverage=1 -o coverage.info.raw
-            lcov --extract coverage.info.raw "$(pwd)/*" --rc lcov_branch_coverage=1 --output-file coverage.info
+            # Some sources are compiled more than once with different macros,
+            # for example libuuid/src/gen_uuid.c is built into the library and
+            # again with -DTEST_PROGRAM for test_uuid_time.  lcov then finds
+            # the same function on two different lines and bails out with an
+            # 'inconsistent' error, so let's downgrade it to a warning.
+            lcov_ign=(--ignore-errors inconsistent)
+
+            lcov "${lcov_ign[@]}" --directory . --capture --initial --output-file coverage.info.initial
+            lcov "${lcov_ign[@]}" --directory . --capture --output-file coverage.info.run --no-checksum --rc lcov_branch_coverage=1
+            lcov "${lcov_ign[@]}" -a coverage.info.initial -a coverage.info.run --rc lcov_branch_coverage=1 -o coverage.info.raw
+            lcov "${lcov_ign[@]}" --extract coverage.info.raw "$(pwd)/*" --rc lcov_branch_coverage=1 --output-file coverage.info
         fi
         ;;
     DISTCHECK)

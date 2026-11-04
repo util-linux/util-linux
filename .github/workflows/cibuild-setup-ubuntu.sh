@@ -56,7 +56,7 @@ if [[ "$TRANSLATE_MANPAGES" == "yes" ]];then
 	PACKAGES+=(po4a)
 fi
 
-apt install -y lsb-release software-properties-common
+apt install -y lsb-release software-properties-common gnupg
 
 COMPILER="${COMPILER:?}"
 RELEASE="$(lsb_release -cs)"
@@ -70,16 +70,29 @@ if [[ "$COMPILER_VERSION" == "" ]]; then
 	PACKAGES+=("$COMPILER")
     fi
 elif [[ "$COMPILER" == clang ]]; then
-    # Latest LLVM stack deb packages provided by https://apt.llvm.org/
-    # Following snippet was borrowed from https://apt.llvm.org/llvm.sh
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-    add-apt-repository -y "deb http://apt.llvm.org/$RELEASE/   llvm-toolchain-$RELEASE-$COMPILER_VERSION  main"
-    PACKAGES+=(clang-$COMPILER_VERSION lldb-$COMPILER_VERSION lld-$COMPILER_VERSION clangd-$COMPILER_VERSION)
+	LLVM_KEY_URL="https://apt.llvm.org/llvm-snapshot.gpg.key"
+	APT_KEYRINGS_DIR="/etc/apt/keyrings"
+	APT_LLVM_SOURCES_LIST="/etc/apt/sources.list.d/apt.llvm.org_$RELEASE-$COMPILER_VERSION.list"
+	LLVM_KEY_PATH="${APT_KEYRINGS_DIR}/apt.llvm.org.gpg"
+
+	mkdir -p "$APT_KEYRINGS_DIR"
+
+	# Latest LLVM stack deb packages provided by https://apt.llvm.org/
+	wget -O - "$LLVM_KEY_URL" | gpg --dearmor --yes -o "$LLVM_KEY_PATH"
+	chmod 644 "$LLVM_KEY_PATH"
+	echo "deb [signed-by=$LLVM_KEY_PATH] http://apt.llvm.org/$RELEASE/ llvm-toolchain-$RELEASE-$COMPILER_VERSION  main" \
+				> "$APT_LLVM_SOURCES_LIST"
+
+	PACKAGES+=(clang-"$COMPILER_VERSION" \
+			lldb-"$COMPILER_VERSION" \
+			lld-"$COMPILER_VERSION" \
+			clangd-"$COMPILER_VERSION"
+		)
 elif [[ "$COMPILER" == gcc ]]; then
     # Latest gcc stack deb packages provided by
     # https://launchpad.net/~ubuntu-toolchain-r/+archive/ubuntu/test
     add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    PACKAGES+=(gcc-$COMPILER_VERSION)
+    PACKAGES+=(gcc-"$COMPILER_VERSION")
 else
     fatal "Unknown compiler: $COMPILER"
 fi
