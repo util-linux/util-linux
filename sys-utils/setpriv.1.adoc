@@ -125,6 +125,10 @@ Deny creating, joining, or obtaining references to namespaces of any type:
 +
 *setpriv --landlock-access permission:namespace-use*
 +
+Deny the use of all Linux capabilities, even those held by the process:
++
+*setpriv --landlock-access permission:capability-use*
++
 For a complete set of supported access categories use *setpriv --help*.
 
 *--landlock-rule* _rule_::
@@ -148,6 +152,11 @@ Namespace rules take a comma-separated list of namespace types instead (*mnt*, *
 namespaces:
 +
 *--landlock-rule namespace:user,net*
++
+Capability rules take a comma-separated list of capability names, using the same names
+as *--inh-caps*. To allow binding to privileged ports:
++
+*--landlock-rule capability:net_bind_service*
 
 *--landlock-support*::
 List the Landlock ABI version supported by the running kernel, together with the access

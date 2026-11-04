@@ -196,9 +196,24 @@ _setpriv_module()
 					COMPREPLY=( $(compgen -P "$prefix" -W "$NS" -- "$realcur") )
 					_setpriv_ltrim_colon_completions "$prefix$realcur"
 					;;
+				capability:*)
+					local prefix realcur CAPS_ALL CAPS WORD
+					realcur="${cur#capability:}"
+					realcur="${realcur##*,}"
+					prefix="${cur%"$realcur"}"
+					CAPS_ALL="all $($1 --list-caps)"
+					for WORD in $CAPS_ALL; do
+						if ! [[ $prefix == *"$WORD"* ]]; then
+							CAPS="$WORD ${CAPS:-""}"
+						fi
+					done
+					compopt -o nospace
+					COMPREPLY=( $(compgen -P "$prefix" -W "$CAPS" -- "$realcur") )
+					_setpriv_ltrim_colon_completions "$prefix$realcur"
+					;;
 				*)
 					compopt -o nospace
-					COMPREPLY=( $(compgen -W "path-beneath: net-port: namespace:" -- $cur) )
+					COMPREPLY=( $(compgen -W "path-beneath: net-port: namespace: capability:" -- $cur) )
 					;;
 			esac
 			return 0

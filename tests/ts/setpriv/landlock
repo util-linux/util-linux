@@ -307,6 +307,38 @@ else
 fi
 ts_finalize_subtest
 
+# Creating a mount namespace needs CAP_SYS_ADMIN, which the process holds
+# inside the new user namespace unless Landlock denies it.
+cap_tests_issue=
+if [[ "$abi_version" -lt 12 ]]; then
+	cap_tests_issue="landlock permission restrictions are not supported"
+elif ! type "$TS_CMD_UNSHARE" > /dev/null 2>&1; then
+	cap_tests_issue="unshare is unavailable"
+elif ! "$TS_CMD_UNSHARE" --map-root-user --mount true &> /dev/null; then
+	cap_tests_issue="cannot create user and mount namespaces"
+fi
+
+ts_init_subtest "capability-blocked"
+if [[ -n "$cap_tests_issue" ]]; then
+	ts_skip "$cap_tests_issue"
+else
+	"$TS_CMD_SETPRIV" --landlock-access permission:capability-use \
+		"$TS_CMD_UNSHARE" --map-root-user --mount true \
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+fi
+ts_finalize_subtest
+
+ts_init_subtest "capability-allowed"
+if [[ -n "$cap_tests_issue" ]]; then
+	ts_skip "$cap_tests_issue"
+else
+	"$TS_CMD_SETPRIV" --landlock-access permission:capability-use \
+		--landlock-rule capability:sys_admin \
+		"$TS_CMD_UNSHARE" --map-root-user --mount true \
+		>>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
+fi
+ts_finalize_subtest
+
 ## Invalid Landlock rule/right
 
 ts_init_subtest "invalid-access"
@@ -323,6 +355,10 @@ ts_finalize_subtest
 
 ts_init_subtest "invalid-namespace"
 "$TS_CMD_SETPRIV" --landlock-rule namespace:an-invalid-namespace true &> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "invalid-capability"
+"$TS_CMD_SETPRIV" --landlock-rule capability:an-invalid-capability true &> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_finalize

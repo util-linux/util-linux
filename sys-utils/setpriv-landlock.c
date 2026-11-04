@@ -12,9 +12,11 @@
 
 #include <sys/prctl.h>
 #include <sys/syscall.h>
+#include <cap-ng.h>
 
 #include "setpriv-landlock.h"
 
+#include "caputils.h"
 #include "namespace.h"
 #include "strutils.h"
 #include "xalloc.h"
@@ -129,6 +131,7 @@ struct landlock_rule_entry {
 		struct landlock_path_beneath_attr path_beneath_attr;
 		struct landlock_net_port_attr net_port_attr;
 		struct landlock_namespace_attr namespace_attr;
+		struct landlock_capability_attr capability_attr;
 	};
 };
 
@@ -172,6 +175,7 @@ static const struct landlock_restriction landlock_scope_restriction[] = {
 
 static const struct landlock_restriction landlock_permission[] = {
 	{ LANDLOCK_PERMISSION_NAMESPACE_USE,  "namespace-use",  N_("use of namespace types") },
+	{ LANDLOCK_PERMISSION_CAPABILITY_USE, "capability-use", N_("use of Linux capabilities") },
 };
 
 static const struct landlock_restriction landlock_namespace_type[] = {
@@ -235,7 +239,7 @@ static const uint64_t landlock_access_permission_mask[] = {
 	/* ABI 9 */ 0,
 	/* ABI 10 */ 0,
 	/* ABI 11 */ 0,
-	/* ABI 12 */ LANDLOCK_PERMISSION_NAMESPACE_USE,
+	/* ABI 12 */ LANDLOCK_PERMISSION_NAMESPACE_USE | LANDLOCK_PERMISSION_CAPABILITY_USE,
 };
 
 static int supported_landlock_abi(void)
@@ -461,6 +465,33 @@ static uint64_t parse_landlock_namespace_types(const char *list)
 	return r;
 }
 
+static uint64_t parse_landlock_capabilities(const char *list)
+{
+	char *buf = xstrdup(list);
+	char *str = buf;
+	char *c;
+	uint64_t r = 0;
+	int cap, max = cap_last_cap();
+
+	while ((c = strsep(&str, ","))) {
+		if (strcmp(c, "all") == 0) {
+			for (cap = 0; cap <= max && cap < 64; cap++)
+				r |= 1ULL << cap;
+			continue;
+		}
+
+		cap = capng_name_to_capability(c);
+		if (cap < 0 && (sscanf(c, "cap_%d", &cap) != 1 || cap > max))
+			cap = -1;
+		if (cap < 0 || cap >= 64)
+			errx(EXIT_FAILURE, _("unknown capability \"%s\""), c);
+		r |= 1ULL << cap;
+	}
+
+	free(buf);
+	return r;
+}
+
 void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 {
 	uint64_t mask;
@@ -529,7 +560,7 @@ void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 {
 	struct landlock_rule_entry *rule = xmalloc(sizeof(*rule));
-	const char *accesses, *path, *portstr, *nstypes;
+	const char *accesses, *path, *portstr, *caps, *nstypes;
 	char *accesses_part;
 	int parent_fd;
 	uint16_t portnum;
@@ -595,6 +626,17 @@ void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 		return;
 	}
 
+	caps = ul_startswith(str, "capability:");
+	if (caps) {
+		rule->rule_type = LANDLOCK_RULE_CAPABILITY;
+		rule->capability_attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
+		rule->capability_attr.allowed_capabilities = parse_landlock_capabilities(caps);
+		rule->capability_attr.quiet_capabilities = 0;
+
+		list_add(&rule->head, &opts->rules);
+		return;
+	}
+
 	errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
 }
 
@@ -625,6 +667,11 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 				&& !(opts->permissions & LANDLOCK_PERMISSION_NAMESPACE_USE)) {
 			errx(EXIT_FAILURE,
 				_("Landlock namespace rule requires a namespace permission restriction (--landlock-access permission:namespace-use)"));
+		}
+		if (rule->rule_type == LANDLOCK_RULE_CAPABILITY
+				&& !(opts->permissions & LANDLOCK_PERMISSION_CAPABILITY_USE)) {
+			errx(EXIT_FAILURE,
+				_("Landlock capability rule requires a capability permission restriction (--landlock-access permission:capability-use)"));
 		}
 	}
 
@@ -659,6 +706,8 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 			ret = landlock_add_rule(fd, rule->rule_type, &net_port_attr, 0);
 		} else if (rule->rule_type == LANDLOCK_RULE_NAMESPACE) {
 			ret = landlock_add_rule(fd, rule->rule_type, &rule->namespace_attr, 0);
+		} else if (rule->rule_type == LANDLOCK_RULE_CAPABILITY) {
+			ret = landlock_add_rule(fd, rule->rule_type, &rule->capability_attr, 0);
 		} else {
 			abort();
 		}
@@ -690,6 +739,8 @@ void usage_landlock(FILE *out)
 	fputs(_("  net-port - network based rule; <argument> is a port number\n"), out);
 	/* TRANSLATORS: Keep *{namespace}* untranslated, it's a type name */
 	fputs(_("  namespace - namespace based rule; syntax is namespace:<type>[,<type>...]\n"), out);
+	/* TRANSLATORS: Keep *{capability}* untranslated, it's a type name */
+	fputs(_("  capability - capability based rule; syntax is capability:<cap>[,<cap>...]\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" available Landlock filesystem rights are:\n"), out);
@@ -798,6 +849,8 @@ void list_landlock_support(void)
 		printf(_("%s rules:"), "permission");
 		if (permission_mask & LANDLOCK_PERMISSION_NAMESPACE_USE)
 			printf(" namespace");
+		if (permission_mask & LANDLOCK_PERMISSION_CAPABILITY_USE)
+			printf(" capability");
 		printf("\n");
 	}
 }
