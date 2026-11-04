@@ -753,7 +753,8 @@ int main(int argc, char *argv[])
 	 * namespace last and if we're privileging it then we enter the user
 	 * namespace first (because the initial setns will fail).
 	 */
-	enter_namespaces(pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
+	if (namespaces & ~CLONE_NEWUSER)
+		enter_namespaces(pid_fd, namespaces & ~CLONE_NEWUSER, 1);	/* ignore errors */
 
 	namespaces = get_namespaces();
 	if (namespaces)
