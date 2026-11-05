@@ -38,6 +38,38 @@ ts_run $TESTPROG --nlines 10 \
 	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest "tree-numeric"
+ts_run $TESTPROG --nlines 10 \
+	--tree-id-column 1 \
+	--tree-parent-column 2 \
+	--tree-numeric \
+	--column $TS_SELF/files/col-tree \
+	--column $TS_SELF/files/col-id \
+	--column $TS_SELF/files/col-parent \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-id-padded \
+	$TS_SELF/files/data-parent \
+	$TS_SELF/files/data-string-long \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
+ts_init_subtest "tree-numeric-invalid"
+ts_run $TESTPROG --nlines 10 \
+	--tree-id-column 1 \
+	--tree-parent-column 2 \
+	--tree-numeric \
+	--column $TS_SELF/files/col-tree \
+	--column $TS_SELF/files/col-id \
+	--column $TS_SELF/files/col-parent \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-id-invalid \
+	$TS_SELF/files/data-parent \
+	$TS_SELF/files/data-string-long \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_init_subtest "tree-json"
 ts_run $TESTPROG --nlines 10 --json \
 	--tree-id-column 1 \
