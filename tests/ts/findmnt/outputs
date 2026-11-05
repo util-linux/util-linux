@@ -178,6 +178,16 @@ $TS_CMD_FINDMNT --tab-file "$TS_SELF/files/mountinfo-messy" &> "$TS_OUTPUT"
 echo rc=$? >> "$TS_OUTPUT"
 ts_finalize_subtest
 
+ts_init_subtest "id0-child"
+$TS_CMD_FINDMNT --tab-file "$TS_SELF/files/mountinfo-id0" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "id0-child-submounts"
+$TS_CMD_FINDMNT --submounts --mountpoint / --tab-file "$TS_SELF/files/mountinfo-id0" &> "$TS_OUTPUT"
+echo rc=$? >> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "empty-file"
 touch "$TS_OUTDIR/empty"
 $TS_CMD_FINDMNT --tab-file "$TS_OUTDIR/empty" &> "$TS_OUTPUT"
