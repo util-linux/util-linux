@@ -41,6 +41,7 @@ struct findmnt {
 	struct libmnt_cache *cache;
 	unsigned int flags;
 	int parse_nerrors;
+	size_t tree_depth;	/* create_treenode() recursion depth */
 	char *uri;
 	struct libscols_filter *filter;
 };
