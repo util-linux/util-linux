@@ -608,88 +608,19 @@ static void reorder_table(struct column_control *ctl)
 	ul_strv_free(order);
 }
 
-struct tree_ent {
-	const char *parent;
-	struct libscols_line *ln;
-	size_t idx;
-};
-
-static int cmp_tree_ent(const void *a, const void *b)
-{
-	const struct tree_ent *x = a, *y = b;
-	int rc = strcmp(x->parent, y->parent);
-
-	if (rc)
-		return rc;
-	return x->idx < y->idx ? -1 : x->idx > y->idx;
-}
-
 static void create_tree(struct column_control *ctl)
 {
 	struct libscols_column *cl_tree = string_to_column(ctl, ctl->tree);
 	struct libscols_column *cl_p = string_to_column(ctl, ctl->tree_parent);
 	struct libscols_column *cl_i = string_to_column(ctl, ctl->tree_id);
-	struct libscols_iter *itr_i;
-	struct libscols_line *ln_i;
-	struct tree_ent *ents;
-	size_t nlines, n = 0, i;
 
 	if (!cl_p || !cl_i || !cl_tree)
 		return;			/* silently ignore the tree request */
 
 	column_set_flag(cl_tree, SCOLS_FL_TREE);
 
-	itr_i = scols_new_iter(SCOLS_ITER_FORWARD);
-	if (!itr_i)
-		err_oom();
-
-	/* index all lines with a parent, sorted by parent (stable) */
-	nlines = scols_table_get_nlines(ctl->tab);
-	ents = xcalloc(nlines ? nlines : 1, sizeof(*ents));
-
-	while (scols_table_next_line(ctl->tab, itr_i, &ln_i) == 0) {
-		struct libscols_cell *ce = scols_line_get_column_cell(ln_i, cl_p);
-		const char *parent = ce ? scols_cell_get_data(ce) : NULL;
-
-		if (!parent || n >= nlines)
-			continue;
-		ents[n].parent = parent;
-		ents[n].ln = ln_i;
-		ents[n].idx = n;
-		n++;
-	}
-	qsort(ents, n, sizeof(*ents), cmp_tree_ent);
-
-	/* scan all lines for ID */
-	scols_reset_iter(itr_i, SCOLS_ITER_FORWARD);
-	while (scols_table_next_line(ctl->tab, itr_i, &ln_i) == 0) {
-		struct libscols_cell *ce = scols_line_get_column_cell(ln_i, cl_i);
-		const char *id = ce ? scols_cell_get_data(ce) : NULL;
-		size_t lo = 0, hi = n;
-
-		if (!id)
-			continue;
-
-		/* first entry with parent >= id */
-		while (lo < hi) {
-			size_t mid = lo + (hi - lo) / 2;
-
-			if (strcmp(ents[mid].parent, id) < 0)
-				lo = mid + 1;
-			else
-				hi = mid;
-		}
-
-		/* lines using the ID as parent, in table order */
-		for (i = lo; i < n && strcmp(ents[i].parent, id) == 0; i++) {
-			if (scols_line_is_ancestor(ents[i].ln, ln_i))
-				continue;
-			scols_line_add_child(ln_i, ents[i].ln);
-		}
-	}
-
-	free(ents);
-	scols_free_iter(itr_i);
+	if (scols_table_make_tree(ctl->tab, cl_i, cl_p, SCOLS_DATA_NONE) != 0)
+		errx(EXIT_FAILURE, _("failed to create tree"));
 }
 
 static void modify_table(struct column_control *ctl)

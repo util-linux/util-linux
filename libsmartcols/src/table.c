@@ -1932,3 +1932,240 @@ size_t scols_table_get_termheight(const struct libscols_table *tb)
 {
 	return tb->termheight;
 }
+
+struct tree_key {
+	const char	*str;
+	uint64_t	num;
+	size_t		idx;		/* line index in the table */
+	bool		set;
+};
+
+static int cmp_tree_key_str(const void *a, const void *b)
+{
+	const struct tree_key *x = a, *y = b;
+	int rc = strcmp(x->str, y->str);
+
+	if (rc)
+		return rc;
+	return x->idx < y->idx ? -1 : x->idx > y->idx;
+}
+
+static int cmp_tree_key_num(const void *a, const void *b)
+{
+	const struct tree_key *x = a, *y = b;
+
+	if (x->num != y->num)
+		return x->num < y->num ? -1 : 1;
+	return x->idx < y->idx ? -1 : x->idx > y->idx;
+}
+
+static int tree_key_cmp(const struct tree_key *x, const struct tree_key *y, int how)
+{
+	if (how == SCOLS_DATA_U64)
+		return x->num < y->num ? -1 : x->num > y->num;
+	return strcmp(x->str, y->str);
+}
+
+static int get_tree_key(struct libscols_line *ln, struct libscols_column *cl,
+			int how, struct tree_key *key)
+{
+	struct libscols_cell *ce = scols_line_get_column_cell(ln, cl);
+	const char *str;
+
+	key->set = false;
+	if (!ce)
+		return 0;
+
+	if (how == SCOLS_DATA_U64 && scols_column_has_data_func(cl)) {
+		const uint64_t *p = cl->datafunc(cl, ce, cl->datafunc_data);
+
+		if (p) {
+			key->num = *p;
+			key->set = true;
+		}
+		return 0;
+	}
+
+	str = scols_cell_get_data(ce);
+	if (!str || !*str)
+		return 0;
+
+	if (how != SCOLS_DATA_U64)
+		key->str = str;
+	else if (ul_strtou64(str, &key->num, 10) != 0)
+		return -EINVAL;
+
+	key->set = true;
+	return 0;
+}
+
+/**
+ * scols_table_make_tree:
+ * @tb: table
+ * @cl_id: column with line IDs
+ * @cl_parent: column with parent IDs
+ * @how: SCOLS_DATA_NONE or SCOLS_DATA_U64
+ *
+ * Builds parent/child relations between lines from flat data: a line becomes
+ * a child of the line whose @cl_id cell matches its @cl_parent cell. This is
+ * an alternative to scols_line_add_child() for applications that only get
+ * the relation as data, for example column(1) --tree-id and --tree-parent.
+ *
+ * With SCOLS_DATA_NONE the cell data are compared as strings by strcmp(), so
+ * the caller is responsible for a consistent format in both columns.
+ *
+ * With SCOLS_DATA_U64 the cells are compared as numbers (so "7" and "007"
+ * match). Both columns have to be set to SCOLS_DATA_U64 by
+ * scols_column_set_data_type(). The column data function is used if
+ * defined (see scols_column_set_data_func()), otherwise the cell data are
+ * converted from decimal strings. A cell that is not a valid number is an
+ * error, nothing is changed in this case.
+ *
+ * Rules:
+ *
+ * - a line with an empty or unset @cl_parent cell, or with a parent that
+ *   does not match any @cl_id, stays at the top level
+ * - empty or unset @cl_id cells never match
+ * - if more lines have the same ID, children are added to the first one
+ * - if the relations form a cycle, the line of the cycle that comes first
+ *   in the table stays at the top level
+ * - children are kept in table order
+ *
+ * The table must not contain any parent/child relations yet. The
+ * function does not set SCOLS_FL_TREE; the tree column is up to the caller.
+ *
+ * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.43
+ */
+int scols_table_make_tree(struct libscols_table *tb,
+			  struct libscols_column *cl_id,
+			  struct libscols_column *cl_parent,
+			  int how)
+{
+	struct libscols_line **lines = NULL, *ln;
+	struct libscols_iter itr;
+	struct tree_key *ids = NULL, *parents = NULL;
+	size_t *par = NULL, i, n = 0, nids = 0;
+	unsigned char *state = NULL;
+	int rc = 0;
+
+	if (!tb || !cl_id || !cl_parent)
+		return -EINVAL;
+	if (cl_id->table != tb || cl_parent->table != tb)
+		return -EINVAL;
+
+	switch (how) {
+	case SCOLS_DATA_NONE:
+		break;
+	case SCOLS_DATA_U64:
+		if (cl_id->data_type != SCOLS_DATA_U64
+		    || cl_parent->data_type != SCOLS_DATA_U64)
+			return -EINVAL;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	if (!tb->nlines)
+		return 0;
+
+	DBG_OBJ(TAB, tb, ul_debug("make tree"));
+
+	lines = calloc(tb->nlines, sizeof(*lines));
+	ids = calloc(tb->nlines, sizeof(*ids));
+	parents = calloc(tb->nlines, sizeof(*parents));
+	par = calloc(tb->nlines, sizeof(*par));
+	state = calloc(tb->nlines, sizeof(*state));
+	if (!lines || !ids || !parents || !par || !state) {
+		rc = -ENOMEM;
+		goto done;
+	}
+
+	/* read keys, nothing is modified until all cells are known to be valid */
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_line(tb, &itr, &ln) == 0 && n < tb->nlines) {
+		struct tree_key id;
+
+		if (ln->parent || !list_empty(&ln->ln_branch)) {
+			rc = -EINVAL;
+			goto done;
+		}
+
+		rc = get_tree_key(ln, cl_id, how, &id);
+		if (!rc)
+			rc = get_tree_key(ln, cl_parent, how, &parents[n]);
+		if (rc)
+			goto done;
+
+		if (id.set) {
+			id.idx = n;
+			ids[nids++] = id;
+		}
+		lines[n++] = ln;
+	}
+
+	qsort(ids, nids, sizeof(*ids),
+	      how == SCOLS_DATA_U64 ? cmp_tree_key_num : cmp_tree_key_str);
+
+	/* parent index for each line, @n means no parent */
+	for (i = 0; i < n; i++) {
+		size_t lo = 0, hi = nids;
+
+		par[i] = n;
+		if (!parents[i].set)
+			continue;
+
+		/* first ID >= parent, the sort is stable by line index */
+		while (lo < hi) {
+			size_t mid = lo + (hi - lo) / 2;
+
+			if (tree_key_cmp(&ids[mid], &parents[i], how) < 0)
+				lo = mid + 1;
+			else
+				hi = mid;
+		}
+		if (lo < nids && tree_key_cmp(&ids[lo], &parents[i], how) == 0)
+			par[i] = ids[lo].idx;
+	}
+
+	/* break cycles; every line has at most one parent, so every connected
+	 * part has at most one cycle and each line is visited a few times */
+	for (i = 0; i < n; i++) {
+		size_t x;
+
+		/* 0 = new, 1 = on the current path, 2 = done */
+		for (x = i; x < n && state[x] == 0; x = par[x])
+			state[x] = 1;
+
+		if (x < n && state[x] == 1) {
+			size_t y = x, first = x;
+
+			do {
+				state[y] = 2;
+				if (y < first)
+					first = y;
+				y = par[y];
+			} while (y != x);
+			par[first] = n;
+		}
+
+		for (x = i; x < n && state[x] == 1; x = par[x])
+			state[x] = 2;
+	}
+
+	for (i = 0; i < n; i++) {
+		if (par[i] == n)
+			continue;
+		rc = scols_line_add_child(lines[par[i]], lines[i]);
+		if (rc)
+			break;
+	}
+done:
+	free(lines);
+	free(ids);
+	free(parents);
+	free(par);
+	free(state);
+	return rc;
+}

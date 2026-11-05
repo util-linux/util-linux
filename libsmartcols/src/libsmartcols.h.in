@@ -429,6 +429,10 @@ extern int scols_table_set_termwidth(struct libscols_table *tb, size_t width);
 extern size_t scols_table_get_termwidth(const struct libscols_table *tb);
 extern int scols_table_set_termheight(struct libscols_table *tb, size_t height);
 extern size_t scols_table_get_termheight(const struct libscols_table *tb);
+extern int scols_table_make_tree(struct libscols_table *tb,
+			struct libscols_column *cl_id,
+			struct libscols_column *cl_parent,
+			int how);
 
 
 /* table_print.c */

@@ -1,0 +1,11 @@
+1 0 root
+2 1 child-of-first-1
+1 0 duplicate-1
+3 1 also-child-of-first-1
+4 99 missing-parent
+5 5 own-parent
+6 8 cycle-first
+7 6 cycle-second
+8 7 cycle-third
+9 7 below-cycle
+10
