@@ -8,6 +8,15 @@
 #include <stddef.h>
 #include <stdarg.h>
 
+/*
+ * The data is always zero-terminated at END, and the space between END and
+ * BEGIN + SZ is kept zeroed; ul_buffer_alloc_data() zero-fills the newly
+ * allocated space and the append functions always terminate the data.
+ *
+ * Keep this invariant in mind when adding a new ul_buffer_*() function,
+ * ul_buffer_reset_data() depends on it to avoid clearing the whole
+ * allocation.
+ */
 struct ul_buffer {
 	char *begin;		/* begin of the data */
 	char *end;		/* current end of data */
