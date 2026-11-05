@@ -49,6 +49,9 @@
 #include "strutils.h"
 #include "pwdutils.h"
 #include "env.h"
+#include "optutils.h"
+
+#include "dl-systemd-varlink.h"
 
 #ifndef HAVE_ENVIRON_DECL
 extern char **environ;
@@ -87,6 +90,10 @@ enum {
 	SETGROUPS_DENY = 0,
 	SETGROUPS_ALLOW = 1,
 };
+
+#ifdef HAVE_SYSTEMD_VARLINK
+static void allocate_user_range(int userns_fd, int target, bool foreign);
+#endif
 
 static const char *setgroups_strings[] =
 {
@@ -791,6 +798,9 @@ static void __attribute__((__noreturn__)) usage(void)
 		"                           map count users from outeruid to inneruid (implies --user)\n"), out);
 	fputs(_(" --map-groups <innergid>:<outergid>:<count>\n"
 		"                           map count groups from outergid to innergid (implies --user)\n"), out);
+	fputs(_(" --map-foreign             map the foreign uid range via systemd-nsresourced\n"
+		"                           (implies --user, maps current user by default\n"
+		"                           via nsresourced)\n"), out);
 	fputs(_(" --owner <uid>:<gid>       set the user namespace owner (implies --user)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
@@ -830,6 +840,7 @@ int main(int argc, char *argv[])
 		OPT_MAPGROUPS,
 		OPT_MAPAUTO,
 		OPT_MAPSUBIDS,
+		OPT_MAPFOREIGN,
 		OPT_OWNER,
 		OPT_FORWARD_SIGNALS,
 		OPT_CLEAR_ENV,
@@ -861,6 +872,7 @@ int main(int argc, char *argv[])
 		{ "map-current-user", no_argument,    NULL, 'c'             },
 		{ "map-auto",      no_argument,       NULL, OPT_MAPAUTO     },
 		{ "map-subids",    no_argument,       NULL, OPT_MAPSUBIDS   },
+		{ "map-foreign",   no_argument,       NULL, OPT_MAPFOREIGN  },
 		{ "owner",         required_argument, NULL, OPT_OWNER       },
 		{ "propagation",   required_argument, NULL, OPT_PROPAGATION },
 		{ "setgroups",     required_argument, NULL, OPT_SETGROUPS   },
@@ -876,6 +888,17 @@ int main(int argc, char *argv[])
 		{ "whitelist-env",   required_argument, NULL, OPT_WHITELIST_ENV	},
 		{ NULL, 0, NULL, 0 }
 	};
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ OPT_MAPUSER, OPT_MAPFOREIGN },
+		{ OPT_MAPUSERS, OPT_MAPFOREIGN },
+		{ OPT_MAPGROUP, OPT_MAPFOREIGN },
+		{ OPT_MAPGROUPS, OPT_MAPFOREIGN },
+		{ OPT_MAPAUTO, OPT_MAPFOREIGN },
+		{ OPT_MAPSUBIDS, OPT_MAPFOREIGN },
+		{ OPT_MAPFOREIGN, OPT_OWNER },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
@@ -884,6 +907,7 @@ int main(int argc, char *argv[])
 	gid_t mapgroup = -1, ownergroup = -1;
 	struct map_range *usermap = NULL;
 	struct map_range *groupmap = NULL;
+	bool mapforeign = false;
 	struct ul_env_list *env_whitelist = NULL; /* environment whitelist */
 	int kill_child_signo = 0; /* 0 means --kill-child was not used */
 	const char *procmnt = NULL;
@@ -916,6 +940,8 @@ int main(int argc, char *argv[])
 	close_stdout_atexit();
 
 	while ((c = getopt_long(argc, argv, "+fhVmuinpCTUrR:w:S:G:cl:", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -1027,6 +1053,10 @@ int main(int argc, char *argv[])
 			insert_map_range(&usermap, read_subid_range(_PATH_SUBUID, real_euid, 1));
 			insert_map_range(&groupmap, read_subid_range(_PATH_SUBGID, real_euid, 1));
 			break;
+		case OPT_MAPFOREIGN:
+			unshare_flags |= CLONE_NEWUSER;
+			mapforeign = true;
+			break;
 		case OPT_OWNER:
 			unshare_flags |= CLONE_NEWUSER;
 			if (sscanf(optarg, "%u:%u%n", &owneruser, &ownergroup,
@@ -1106,6 +1136,11 @@ int main(int argc, char *argv[])
 	if ((force_monotonic || force_boottime) && !(unshare_flags & CLONE_NEWTIME))
 		errx(EXIT_FAILURE, _("options --monotonic and --boottime require "
 			"unsharing of a time namespace (-T)"));
+
+#ifndef HAVE_SYSTEMD_VARLINK
+	if (mapforeign)
+		errx(EXIT_FAILURE, _("systemd-nsresourced support is not available"));
+#endif
 
 	/* clear any inherited settings */
 	signal(SIGCHLD, SIG_DFL);
@@ -1273,19 +1308,37 @@ int main(int argc, char *argv[])
 #endif
 	}
 
-	if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
-		map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
+#ifdef HAVE_SYSTEMD_VARLINK
+	if (mapforeign) {
+		int userns_fd;
 
-	/* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
-	 * has been disabled unless /proc/self/setgroups is written
-	 * first to permanently disable the ability to call setgroups
-	 * in that user namespace. */
-	if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
-		if (setgrpcmd == SETGROUPS_ALLOW)
-			errx(EXIT_FAILURE, _("options --setgroups=allow and "
-					"--map-group are mutually exclusive"));
-		setgroups_control(SETGROUPS_DENY);
-		map_id(_PATH_PROC_GIDMAP, mapgroup, real_egid);
+		if (ul_dlopen_libsystemd_varlink() < 0)
+			errx(EXIT_FAILURE, _("failed to load libsystemd"));
+
+		userns_fd = open(_PATH_PROC_NSDIR "/user", O_RDONLY | O_CLOEXEC);
+		if (userns_fd < 0)
+			err(EXIT_FAILURE, _("cannot open %s"), _PATH_PROC_NSDIR "/user");
+
+		allocate_user_range(userns_fd, mapuser == 0 ? 0 : -1, mapforeign);
+		close(userns_fd);
+	}
+#endif
+
+	if (!mapforeign) {
+		if (mapuser != MAX_OF_UINT_TYPE(uid_t) && !usermap)
+			map_id(_PATH_PROC_UIDMAP, mapuser, real_euid);
+
+		/* Since Linux 3.19 unprivileged writing of /proc/self/gid_map
+		 * has been disabled unless /proc/self/setgroups is written
+		 * first to permanently disable the ability to call setgroups
+		 * in that user namespace. */
+		if (mapgroup != MAX_OF_UINT_TYPE(gid_t) && !groupmap) {
+			if (setgrpcmd == SETGROUPS_ALLOW)
+				errx(EXIT_FAILURE, _("options --setgroups=allow and "
+						"--map-group are mutually exclusive"));
+			setgroups_control(SETGROUPS_DENY);
+			map_id(_PATH_PROC_GIDMAP, mapgroup, real_egid);
+		}
 	}
 
 	if (setgrpcmd != SETGROUPS_NONE)
@@ -1363,3 +1416,50 @@ int main(int argc, char *argv[])
 	}
 	exec_shell();
 }
+
+#ifdef HAVE_SYSTEMD_VARLINK
+
+#define NSRESOURCE_VARLINK_ADDRESS	"/run/systemd/io.systemd.NamespaceResource"
+
+static void allocate_user_range(int userns_fd, int target, bool foreign)
+{
+	int r, userns_idx;
+	const char *error_id = NULL;
+	char name[32];
+	sd_varlink *vl = NULL;
+
+	r = systemd_varlink_call(sd_varlink_connect_address)(&vl, NSRESOURCE_VARLINK_ADDRESS);
+	if (r < 0)
+		errx(EXIT_FAILURE, _("unable to connect to %s: %s; "
+				     "is systemd-nsresourced.service running?"),
+				   NSRESOURCE_VARLINK_ADDRESS, strerror(-r));
+
+	r = systemd_varlink_call(sd_varlink_set_allow_fd_passing_output)(vl, true);
+	if (r < 0)
+		errx(EXIT_FAILURE, _("unable to allow fd passing: %s"), strerror(-r));
+
+	userns_idx = systemd_varlink_call(sd_varlink_push_dup_fd)(vl, userns_fd);
+	if (userns_idx < 0)
+		errx(EXIT_FAILURE, _("unable to push fd: %s"), strerror(-userns_idx));
+
+	snprintf(name, sizeof(name), "unshare-%d", (int) getpid());
+
+	r = systemd_varlink_call(sd_varlink_callb)(vl, "io.systemd.NamespaceResource.AllocateUserRange",
+		NULL,
+		&error_id,
+		SD_JSON_BUILD_OBJECT(
+			SD_JSON_BUILD_PAIR_STRING("name", name),
+			SD_JSON_BUILD_PAIR_UNSIGNED("size", 1),
+			SD_JSON_BUILD_PAIR_UNSIGNED("userNamespaceFileDescriptor", userns_idx),
+			SD_JSON_BUILD_PAIR_CONDITION(foreign, "mapForeign", SD_JSON_BUILD_BOOLEAN(true)),
+			SD_JSON_BUILD_PAIR_CONDITION(target >= 0, "target", SD_JSON_BUILD_UNSIGNED(target)),
+			SD_JSON_BUILD_PAIR_STRING("type", "self")));
+	if (r < 0)
+		errx(EXIT_FAILURE, _("unable to make varlink call: %s"), strerror(-r));
+	if (error_id)
+		errx(EXIT_FAILURE, _("io.systemd.NamespaceResource.AllocateUserRange failed: %s"), error_id);
+
+	systemd_varlink_call(sd_varlink_close_unref)(vl);
+}
+
+#endif /* HAVE_SYSTEMD_VARLINK */
