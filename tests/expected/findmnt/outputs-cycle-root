@@ -1,0 +1,5 @@
+TARGET    SOURCE    FSTYPE OPTIONS
+/boot     tmpfs     tmpfs  rw,relatime
+`-/       /dev/sda1 ext4   rw,relatime
+  `-/home tmpfs     tmpfs  rw,relatime
+rc=0

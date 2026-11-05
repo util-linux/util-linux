@@ -963,6 +963,12 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	struct libscols_line *line;
 	int rc = -1, first = 0;
 
+	/* a tree can't be deeper than the number of entries, the parent
+	 * IDs form a cycle */
+	if (findmnt->tree_depth > (size_t) mnt_table_get_nents(tb))
+		return 0;
+	findmnt->tree_depth++;
+
 	if (!fs) {
 		/* first call, get root FS */
 		if (mnt_table_get_root_fs(tb, &fs))
@@ -970,8 +976,10 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 		parent_line = NULL;
 		first = 1;
 
-	} else if ((findmnt->flags & FL_SUBMOUNTS) && has_line(table, fs))
-		return 0;
+	} else if ((findmnt->flags & FL_SUBMOUNTS) && has_line(table, fs)) {
+		rc = 0;
+		goto leave;
+	}
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
@@ -979,8 +987,12 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 
 	if ((findmnt->flags & FL_SUBMOUNTS) || match_func(fs, findmnt)) {
 		bool filtered = false;
-		if (has_line(table, fs))
+
+		/* already in the tree (for example the parent IDs form a cycle) */
+		if (has_line(table, fs)) {
+			rc = 0;
 			goto leave;
+		}
 
 		line = add_line(table, fs, parent_line, findmnt, &filtered);
 		if (filtered)
@@ -1011,6 +1023,7 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	}
 leave:
 	mnt_free_iter(itr);
+	findmnt->tree_depth--;
 	return rc;
 }
 

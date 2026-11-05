@@ -682,8 +682,8 @@ static inline struct libmnt_fs *get_parent_fs(struct libmnt_table *tb, struct li
 int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 {
 	struct libmnt_iter itr;
-	struct libmnt_fs *fs, *root_fs = NULL;
-	int root_id = 0;
+	struct libmnt_fs *fs, *root_fs = NULL, *first_fs;
+	int root_id = 0, nsteps = 0;
 
 	if (!tb || !is_mountinfo(tb))
 		return -EINVAL;
@@ -702,10 +702,17 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 	}
 
 	/* go to the root node by "parent_id -> id" relation */
+	first_fs = root_fs;
 	while (root_fs) {
 		struct libmnt_fs *x = get_parent_fs(tb, root_fs);
 		if (!x || x == root_fs)
 			break;
+		/* more steps than entries means the parents form a cycle */
+		if (++nsteps > tb->nents) {
+			DBG_OBJ(TAB, tb, ul_debug(" parent IDs form a cycle"));
+			root_fs = first_fs;
+			break;
+		}
 		DBG_OBJ(TAB, tb, ul_debug(" messy mountinfo, walk to %s", mnt_fs_get_target(x)));
 		root_fs = x;
 	}

@@ -1,0 +1,4 @@
+20 1 8:1 / / rw,relatime shared:1 - ext4 /dev/sda1 rw
+21 20 0:31 / /home rw,relatime shared:3 - tmpfs tmpfs rw
+30 31 0:40 / /a rw,relatime - tmpfs tmpfs rw
+31 30 0:41 / /b rw,relatime - tmpfs tmpfs rw
