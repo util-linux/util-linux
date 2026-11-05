@@ -63,6 +63,7 @@ struct fstrim_range {
 
 struct fstrim_control {
 	struct fstrim_range range;
+	uint64_t step;
 	char *type_pattern;
 
 	unsigned int verbose : 1,
@@ -92,6 +93,8 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 {
 	int fd = -1, rc;
 	struct fstrim_range range;
+	uint64_t trimmed = 0, step = 0, data_end = 0;
+	int first = 1, last;
 	char *rpath = realpath(path, NULL);
 
 	if (!rpath) {
@@ -118,35 +121,100 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 		goto done;
 	}
 
-	errno = 0;
-	if (ioctl(fd, FITRIM, &range)) {
-		switch (errno) {
-		case EBADF:
-		case ENOTTY:
-		case EOPNOTSUPP:
-		case ENOSYS:
-			rc = 1;
-			break;
-		default:
+	if (ctl->step) {
+		struct statfs fsinfo;
+
+		if (fstatfs(fd, &fsinfo) != 0) {
 			rc = -errno;
+			warn(_("%s: fstatfs failed"), path);
+			goto done;
 		}
-		if (rc < 0)
-			warn(_("%s: FITRIM ioctl failed"), path);
-		goto done;
+		/*
+		 * btrfs uses a logical address space and trims all unallocated
+		 * device space on every call, stepping does not help there.
+		 */
+		if (!F_TYPE_EQUAL(fsinfo.f_type, STATFS_BTRFS_MAGIC)) {
+			uint64_t bs = fsinfo.f_frsize > 0 ? (uint64_t) fsinfo.f_frsize : 1;
+
+			step = ctl->step;
+
+			/*
+			 * An iteration shorter than one filesystem block is
+			 * rejected with EINVAL, and an iteration shorter than
+			 * minlen discards nothing on filesystems that clip
+			 * free extents to the requested range.
+			 */
+			if (step < ctl->range.minlen)
+				step = ctl->range.minlen;
+			if (step % bs) {
+				if (step > UINT64_MAX - bs)
+					step = UINT64_MAX;
+				else
+					step += bs - (step % bs);
+			}
+
+			data_end = (uint64_t) fsinfo.f_blocks * bs;
+		}
 	}
+
+	do {
+		struct fstrim_range current = range;
+		uint64_t chunk;
+
+		last = !step || range.start >= data_end;
+
+		if (last) {
+			/*
+			 * f_blocks excludes ext4 metadata and the XFS log, the
+			 * filesystem continues behind it. Finish with the same
+			 * unbounded call as without --step.
+			 */
+			if (ctl->range.len == ULLONG_MAX)
+				current.len = ULLONG_MAX;
+		} else if (current.len > step)
+			current.len = step;
+
+		chunk = current.len;
+
+		errno = 0;
+		if (ioctl(fd, FITRIM, &current)) {
+			/* f_blocks may already be at the end of the filesystem */
+			if (last && !first && errno == EINVAL)
+				break;
+			switch (errno) {
+			case EBADF:
+			case ENOTTY:
+			case EOPNOTSUPP:
+			case ENOSYS:
+				rc = 1;
+				break;
+			default:
+				rc = -errno;
+			}
+			if (rc < 0)
+				warn(_("%s: FITRIM ioctl failed"), path);
+			goto done;
+		}
+		trimmed += current.len;
+		first = 0;
+		if (last)
+			break;
+		range.start += chunk;
+		range.len -= chunk;
+	} while (range.len);
 
 	if (ctl->verbose) {
 		char *str = size_to_human_string(
 				SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				(uint64_t) range.len);
+				trimmed);
 		if (devname)
 			/* TRANSLATORS: The standard value here is a very large number. */
 			printf(_("%s: %s (%ju bytes) trimmed on %s\n"),
-				path, str, (uintmax_t) range.len, devname);
+				path, str, (uintmax_t) trimmed, devname);
 		else
 			/* TRANSLATORS: The standard value here is a very large number. */
 			printf(_("%s: %s (%ju bytes) trimmed\n"),
-				path, str, (uintmax_t) range.len);
+				path, str, (uintmax_t) trimmed);
 
 		free(str);
 	}
@@ -483,6 +551,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -I, --listed-in <list>   trim filesystems listed in specified files\n"), out);
 	fputs(_(" -o, --offset <num>       the offset in bytes to start discarding from\n"), out);
 	fputs(_(" -l, --length <num>       the number of bytes to discard\n"), out);
+	fputs(_(" -p, --step <num>         size of the discard iterations\n"), out);
 	fputs(_(" -m, --minimum <num>      the minimum extent length to discard\n"), out);
 	fputs(_(" -t, --types <list>       limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose            print number of discarded bytes\n"), out);
@@ -519,6 +588,7 @@ int main(int argc, char **argv)
 	    { "version",   no_argument,       NULL, 'V' },
 	    { "offset",    required_argument, NULL, 'o' },
 	    { "length",    required_argument, NULL, 'l' },
+	    { "step",      required_argument, NULL, 'p' },
 	    { "minimum",   required_argument, NULL, 'm' },
 	    { "types",     required_argument, NULL, 't' },
 	    { "verbose",   no_argument,       NULL, 'v' },
@@ -538,7 +608,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "AahI:l:m:no:t:Vv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "AahI:l:m:no:p:t:Vv", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -565,6 +635,10 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.range.start = strtosize_or_err(optarg,
 					_("failed to parse offset"));
+			break;
+		case 'p':
+			ctl.step = strtosize_or_err(optarg,
+					_("failed to parse step"));
 			break;
 		case 'm':
 			ctl.range.minlen = strtosize_or_err(optarg,
