@@ -30,6 +30,7 @@ ts_check_prog "id"
 ts_check_prog "mkdir"
 ts_check_prog "rm"
 ts_check_prog "rmdir"
+ts_check_prog "sed"
 
 ts_cd "$TS_OUTDIR"
 
@@ -73,5 +74,7 @@ EXPR=
     fi
 } > "$TS_OUTPUT" 2>&1
 wait "${MKFDS_PID}"
+
+sed -i -E 's/stat:E(ACCES|PERM)/stat:[EACCES-OR-EPERM]/' "$TS_OUTPUT"
 
 ts_finalize

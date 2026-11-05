@@ -50,6 +50,7 @@ _lsfd_module()
 				--notruncate
 				--pid
 				--inet
+				--abort-if-blockable
 				--filter
 				--debug-filter
 				--summary

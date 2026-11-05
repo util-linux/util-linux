@@ -39,6 +39,16 @@ default outputs in your scripts. Always explicitly define expected columns by us
 option for customizing the output format, and *--filter* option for filtering. Use *lsfd --list-columns*
 to get a list of all available columns.
 
+Since util-linux v2.43, *lsfd* uses *statx*(2) with the *AT_STATX_DONT_SYNC*
+flag by default to collect file attributes without synchronizing with remote
+(e.g., NFS) or user-space (e.g., FUSE) file systems, reducing the risk of
+hanging on unresponsive storage. On platforms or environments where *statx*(2)
+or *AT_STATX_DONT_SYNC* is not available, *lsfd* falls back to traditional
+*stat*(2) calls without *AT_STATX_DONT_SYNC*, where synchronization with
+underlying file systems may still occur. The *-b* option can be specified
+to abort immediately with exit status 2 (*LSFD_EX_NONBLOCK_UNAVAIL*) if
+*AT_STATX_DONT_SYNC* is unavailable at build time.
+
 == OPTIONS
 
 *-l*, *--threads*::
@@ -70,6 +80,27 @@ See also *FILTER EXAMPLES*.
 
 *-i*[*4*|*6*], *--inet*[**=4**|**=6**]::
 List only IPv4 sockets and/or IPv6 sockets.
+
+*-b*, *--abort-if-blockable*::
+Exit immediately with exit status 2 (*LSFD_EX_NONBLOCK_UNAVAIL*) if the build does
+not support *statx*(2) with *AT_STATX_DONT_SYNC*. When this option is specified,
+*lsfd* also avoids resolving mountpoint pathnames from _/proc/pid/mountinfo_
+and falling back to pathnames in _/proc/pid/maps_ (if _/proc/pid/map_files_
+is inaccessible or unsupported) to prevent potential pathname resolution hangs.
+In that case, file-backed memory mappings cannot be inspected and will be reported
+as stat error records. Note that skipping mountpoint pathname resolution may
+reduce the accuracy of device and file system identification (such as `SOURCE`
+and `DEV` columns) on certain file systems (e.g. btrfs or overlayfs).
++
+Even with this option specified, *lsfd* may still block in certain edge cases:
++
+* Files under _/var/run/netns_ are assumed to be pinned network namespaces
+that will not block on *stat*(2). If unexpected or stalled remote/FUSE files
+exist in that directory, inspecting them may cause *lsfd* to block.
+* If a target process is in the uninterruptible sleep state (`D` state), reading
+its _/proc/pid/maps_ file may block inside the kernel waiting for the process's
+`mmap_lock` (memory management lock). Because this is caused by kernel lock
+contention rather than a file system operation, *statx*(2) cannot prevent it.
 
 *-Q*, *--filter* _expression_::
 Print only the files matching the condition represented by the _expression_.
@@ -119,6 +150,16 @@ List the columns that can be specified with the *--output* option.
 Can be used with *--json* or *--raw* to get the list in a machine-readable format.
 
 include::man-common/help-version.adoc[]
+
+== EXIT STATUS
+
+*0*::
+Success.
+*1*::
+Failure.
+*2*::
+Non-blocking feature (*statx*(2) with *AT_STATX_DONT_SYNC*) is unavailable
+at build time when *-b* (*--abort-if-blockable*) is specified (*LSFD_EX_NONBLOCK_UNAVAIL*).
 
 == ENVIRONMENT
 
@@ -847,6 +888,7 @@ mailto:kzak@redhat.com[Karel Zak]
 *socket*(2),
 *ss*(8),
 *stat*(2),
+*statx*(2),
 *vsock*(7)
 
 include::man-common/bugreports.adoc[]
