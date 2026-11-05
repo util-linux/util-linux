@@ -83,41 +83,20 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 
 }
 
-static struct libscols_line *get_line_with_id(struct libscols_table *tb,
-						int col_id, const char *id)
+static void compose_tree(struct libscols_table *tb, int parent_col, int id_col,
+			 int how)
 {
-	struct libscols_line *ln;
-	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	struct libscols_column *cl_parent = scols_table_get_column(tb, parent_col);
+	struct libscols_column *cl_id = scols_table_get_column(tb, id_col);
 
-	while (scols_table_next_line(tb, itr, &ln) == 0) {
-		struct libscols_cell *ce = scols_line_get_cell(ln, col_id);
-		const char *data = ce ? scols_cell_get_data(ce) : NULL;
-
-		if (data && strcmp(data, id) == 0)
-			break;
+	if (!cl_parent || !cl_id)
+		errx(EXIT_FAILURE, "tree parent or ID column out of range");
+	if (how == SCOLS_DATA_U64) {
+		scols_column_set_data_type(cl_parent, SCOLS_DATA_U64);
+		scols_column_set_data_type(cl_id, SCOLS_DATA_U64);
 	}
-
-	scols_free_iter(itr);
-	return ln;
-}
-
-static void compose_tree(struct libscols_table *tb, int parent_col, int id_col)
-{
-	struct libscols_line *ln;
-	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
-
-	while (scols_table_next_line(tb, itr, &ln) == 0) {
-		struct libscols_line *parent = NULL;
-		struct libscols_cell *ce = scols_line_get_cell(ln, parent_col);
-		const char *data = ce ? scols_cell_get_data(ce) : NULL;
-
-		if (data)
-			parent = get_line_with_id(tb, id_col, data);
-		if (parent)
-			scols_line_add_child(parent, ln);
-	}
-
-	scols_free_iter(itr);
+	if (scols_table_make_tree(tb, cl_id, cl_parent, how) != 0)
+		errx(EXIT_FAILURE, "failed to compose tree");
 }
 
 static struct libscols_filter *init_filter(
@@ -215,6 +194,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
+	fputs(" -u, --tree-numeric             compare tree IDs as numbers\n", out);
 	fputs(" -Q, --filter <expr>            filter\n", out);
 	fputs(" -h, --help                     this help\n", out);
 	fputs("\n", out);
@@ -226,7 +206,7 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	int c, n, nlines = 0, rc;
-	int parent_col = -1, id_col = -1;
+	int parent_col = -1, id_col = -1, tree_how = SCOLS_DATA_NONE;
 	int fltr_dump = 0;
 	const char *fltr_str = NULL;
 	struct libscols_filter *fltr = NULL;
@@ -239,6 +219,7 @@ int main(int argc, char *argv[])
 		{ "width",  1, NULL, 'w' },
 		{ "tree-parent-column", 1, NULL, 'p' },
 		{ "tree-id-column",	1, NULL, 'i' },
+		{ "tree-numeric",	0, NULL, 'u' },
 		{ "json",   0, NULL, 'J' },
 		{ "raw",    0, NULL, 'r' },
 		{ "export", 0, NULL, 'E' },
@@ -263,7 +244,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hCc:dEi:JMmn:p:Q:rw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hCc:dEi:JMmn:p:Q:ruw:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -285,6 +266,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			id_col = strtou32_or_err(optarg, "failed to parse tree ID column");
+			break;
+		case 'u':
+			tree_how = SCOLS_DATA_U64;
 			break;
 		case 'J':
 			scols_table_enable_json(tb, 1);
@@ -356,7 +340,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (scols_table_is_tree(tb) && parent_col >= 0 && id_col >= 0)
-		compose_tree(tb, parent_col, id_col);
+		compose_tree(tb, parent_col, id_col, tree_how);
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 
