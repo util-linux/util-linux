@@ -947,6 +947,10 @@ endif
 conf.set('HAVE_CLOCK_GETTIME', have ? 1 : false)
 
 thread_libs = dependency('threads', required: false)
+if thread_libs.found() and not cc.has_function(
+  'pthread_atfork', prefix : '#include <pthread.h>', dependencies : thread_libs)
+  thread_libs = dependency('', required : false)
+endif
 conf.set('HAVE_LIBPTHREAD', thread_libs.found() ? 1 : false)
 
 have = cc.has_function('timer_create')
