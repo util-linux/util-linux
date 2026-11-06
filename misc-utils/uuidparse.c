@@ -288,8 +288,10 @@ static void print_output(struct control const *const ctrl, int argc,
 	if (i == 0) {
 		char uuid[UUID_STR_LEN];
 
-		while (scanf(" %36[^ \t\n]%*c", uuid) && !feof(stdin))
+		while (scanf(" %36[^ \t\n]%*c", uuid) == 1)
 			fill_table_row(tb, uuid);
+		if (ferror(stdin))
+			err(EXIT_FAILURE, _("read failed"));
 	}
 	scols_print_table(tb);
 	scols_unref_table(tb);
