@@ -31,6 +31,8 @@ The *libblkid* library is used to identify block devices (disks) as to their con
 
 The low-level part of the library also allows the extraction of information about partitions and block device topology.
 
+When an ext4 primary superblock has an invalid checksum, the library also checks backup superblocks, starting with the highest block group. When *e2fsck*(8) updates backups, it writes them in increasing block-group order and flushes them before updating the primary superblock. Probing in reverse order reduces the risk of following those writes. Backup superblocks must have a valid checksum and match the primary superblock's UUID and block-group geometry. At most 64 backup superblocks are checked.
+
 The high-level part of the library keeps information about block devices in a cache file and is verified to still be valid before being returned to the user (if the user has read permission on the raw block device, otherwise not). The cache file also allows unprivileged users (normally anyone other than root, or those not in the "disk" group) to locate devices by label/id. The standard location of the cache file can be overridden by the environment variable *BLKID_FILE*.
 
 In situations where one is getting information about a single known device, it does not impact performance whether the cache is used or not (unless you are not able to read the block device directly).
