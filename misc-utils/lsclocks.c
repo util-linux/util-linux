@@ -277,22 +277,29 @@ static clockid_t parse_clock(const char *name)
 	errx(EXIT_FAILURE, _("Unknown clock: %s"), name);
 }
 
-static int64_t get_namespace_offset(const char *name)
+/* Returns 0 on success, <0 if the offset is unavailable (no time namespace
+ * support, unreadable file, or no entry for 'name'). A missing offset is not
+ * fatal, the column is simply left empty. */
+static int get_namespace_offset(const char *name, int64_t *offset)
 {
-	char *tokstr, *buf, *saveptr, *line, *space;
-	uint64_t ret;
-	int fd;
+	char *tokstr, *buf = NULL, *saveptr, *line, *space;
+	int fd, rc = -1;
 
 	fd = open(_PATH_PROC_TIMENS_OFF, O_RDONLY);
-	if (fd == -1)
-		err(EXIT_FAILURE, _("Could not open %s"), _PATH_PROC_TIMENS_OFF);
+	if (fd < 0)
+		return -1;
 
-	ul_read_all_alloc(fd, &buf);
+	if (ul_read_all_alloc(fd, &buf) < 1) {
+		close(fd);
+		return -1;
+	}
+	close(fd);
 
 	for (tokstr = buf; ; tokstr = NULL) {
 		line = strtok_r(tokstr, "\n", &saveptr);
 		if (!line)
-			continue;
+			break;		/* no entry for 'name' */
+
 		line = (char *) ul_startswith(line, name);
 		if (!line || line[0] != ' ')
 			continue;
@@ -301,13 +308,13 @@ static int64_t get_namespace_offset(const char *name)
 		space = strchr(line, ' ');
 		if (space)
 			*space = '\0';
-		ret = strtos64_or_err(line, _("invalid offset"));
+		*offset = strtos64_or_err(line, _("invalid offset"));
+		rc = 0;
 		break;
 	}
 
 	free(buf);
-	close(fd);
-	return ret;
+	return rc;
 }
 
 static void add_clock_line(struct libscols_table *tb, const int *columns,
@@ -379,9 +386,12 @@ static void add_clock_line(struct libscols_table *tb, const int *columns,
 				scols_line_set_data(ln, i, buf);
 				break;
 			case COL_NS_OFFSET:
-				if (clockinfo->ns_offset_name)
-					scols_line_sprintf(ln, i, "%"PRId64,
-							   get_namespace_offset(clockinfo->ns_offset_name));
+				if (clockinfo->ns_offset_name) {
+					int64_t offset;
+
+					if (get_namespace_offset(clockinfo->ns_offset_name, &offset) == 0)
+						scols_line_sprintf(ln, i, "%"PRId64, offset);
+				}
 				break;
 		}
 	}
