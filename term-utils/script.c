@@ -362,8 +362,13 @@ static int log_close(struct script_control *ctl,
 	}
 
 	if (close_stream(log->fp) != 0) {
-		warn(_("write failed: %s"), log->filename);
-		rc = -errno;
+		int errsv = errno;
+
+		if (errsv)
+			warn(_("write failed: %s"), log->filename);
+		else
+			warnx(_("write failed: %s"), log->filename);
+		rc = errsv ? -errsv : -EIO;
 	}
 
 	free(log->filename);
@@ -638,9 +643,9 @@ static ssize_t log_info(struct script_control *ctl, const char *name, const char
 }
 
 
-static void logging_done(struct script_control *ctl, const char *msg)
+static int logging_done(struct script_control *ctl, const char *msg)
 {
-	int status;
+	int status, rc = 0, log_rc;
 	size_t i;
 
 	DBG(MISC, ul_debug("stop logging"));
@@ -655,7 +660,9 @@ static void logging_done(struct script_control *ctl, const char *msg)
 	/* close all output logs */
 	for (i = 0; i < ctl->out.nlogs; i++) {
 		struct script_log *log = ctl->out.logs[i];
-		log_close(ctl, log, msg, status);
+		log_rc = log_close(ctl, log, msg, status);
+		if (!rc)
+			rc = log_rc;
 		log_free(ctl, log);
 	}
 	free(ctl->out.logs);
@@ -665,12 +672,16 @@ static void logging_done(struct script_control *ctl, const char *msg)
 	/* close all input logs */
 	for (i = 0; i < ctl->in.nlogs; i++) {
 		struct script_log *log = ctl->in.logs[i];
-		log_close(ctl, log, msg, status);
+		log_rc = log_close(ctl, log, msg, status);
+		if (!rc)
+			rc = log_rc;
 		log_free(ctl, log);
 	}
 	free(ctl->in.logs);
 	ctl->in.logs = NULL;
 	ctl->in.nlogs = 0;
+
+	return rc;
 }
 
 static void callback_child_die(
@@ -722,7 +733,7 @@ static int callback_log_stream_activity(void *data, int fd, char *buf, size_t bu
 		if (!ctl->quiet)
 			printf(_("Script terminated, max output files size %ju exceeded.\n"), (uintmax_t) ctl->maxsz);
 		DBG(IO, ul_debug("output size %"PRIu64", exceeded limit %"PRIu64, ctl->outsz, ctl->maxsz));
-		logging_done(ctl, _("max output size exceeded"));
+		(void) logging_done(ctl, _("max output size exceeded"));
 		return 1;
 	}
 	return 0;
@@ -782,7 +793,7 @@ int main(int argc, char **argv)
 		.in  = { .ident = 'I' },
 	};
 	struct ul_pty_callbacks *cb;
-	int ch, format = 0, caught_signal = 0, rc = 0, echo = 1;
+	int ch, format = 0, caught_signal = 0, rc = 0, log_rc, echo = 1;
 	const char *outfile = NULL, *infile = NULL;
 	const char *timingfile = NULL, *shell = NULL;
 	char **cmd_argv = NULL;
@@ -1122,7 +1133,7 @@ int main(int argc, char **argv)
 
 done:
 	ul_pty_cleanup(ctl.pty);
-	logging_done(&ctl, NULL);
+	log_rc = logging_done(&ctl, NULL);
 
 	if (!ctl.quiet)
 		printf(_("Script done.\n"));
@@ -1137,6 +1148,10 @@ done:
 
 	/* default exit code */
 	rc = rc ? EXIT_FAILURE : EXIT_SUCCESS;
+
+	/* log write error; --return has priority */
+	if (rc == EXIT_SUCCESS && log_rc && !ctl.rc_wanted)
+		rc = EXIT_FAILURE;
 
 	/* exit code based on child status */
 	if (ctl.rc_wanted && rc == EXIT_SUCCESS) {
