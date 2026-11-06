@@ -1,0 +1,6 @@
+raw: exit status 1
+raw: write error reported
+return: exit status 1
+return: write error reported
+flush-timing: exit status 1
+flush-timing: write error reported
