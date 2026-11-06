@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="log write errors"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_SCRIPT"
+[ -c /dev/full ] || ts_skip "/dev/full not found"
+
+check_write_error()
+{
+	local name=$1 rc
+	shift
+
+	$TS_CMD_SCRIPT "$@" </dev/null >/dev/null 2> "$TS_ERRLOG"
+	rc=$?
+	printf '%s: exit status %d\n' "$name" "$rc" >> "$TS_OUTPUT"
+	if grep -q 'write failed: /dev/full' "$TS_ERRLOG"; then
+		printf '%s: write error reported\n' "$name" >> "$TS_OUTPUT"
+	fi
+	if grep -q ': Success' "$TS_ERRLOG"; then
+		printf '%s: misleading success message\n' "$name" >> "$TS_OUTPUT"
+	fi
+	: > "$TS_ERRLOG"
+}
+
+check_write_error "raw" -q -c 'printf hello' /dev/full
+check_write_error "return" -q -e -c 'exit 42' /dev/full
+check_write_error "flush-timing" -q -f -T /dev/full -O "$TS_OUTDIR/$TS_TESTNAME-log" -c 'printf hello'
+
+ts_finalize
