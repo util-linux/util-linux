@@ -30,5 +30,21 @@ $TS_CMD_COLUMN -x -c 50 $TS_SELF/files/fivecols \
 			$TS_SELF/files/fivecols \
 			$TS_SELF/files/fivecols >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
+input="$TS_OUTDIR/$TS_TESTNAME-input"
+missing="$TS_OUTDIR/$TS_TESTNAME-missing"
+printf 'A B\n1 2\n' > "$input"
+rm -f "$missing"
+
+$TS_CMD_COLUMN --table "$missing" "$input" >> "$TS_OUTPUT" 2> "$TS_ERRLOG"
+printf 'mixed input status: %d\n' "$?" >> "$TS_OUTPUT"
+if grep -Fq "$missing" "$TS_ERRLOG"; then
+	printf 'missing input reported\n' >> "$TS_OUTPUT"
+fi
+: > "$TS_ERRLOG"
+
+$TS_CMD_COLUMN --table "$input" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf 'valid input status: %d\n' "$?" >> "$TS_OUTPUT"
+rm -f "$input"
+
 ts_finalize
 
