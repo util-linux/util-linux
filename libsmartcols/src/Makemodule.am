@@ -116,6 +116,16 @@ nodist_EXTRA_test_smartcols_fuzz_SOURCES = dummy.cxx
 test_smartcols_fuzz_CFLAGS = $(sample_scols_cflags) -DFUZZ_TARGET
 test_smartcols_fuzz_LDFLAGS = -static
 test_smartcols_fuzz_LDADD = $(sample_scols_ldadd) libcommon.la $(LIB_FUZZING_ENGINE)
+
+check_PROGRAMS += test_smartcols_table_fuzz
+
+test_smartcols_table_fuzz_SOURCES = libsmartcols/src/table-fuzz.c
+
+nodist_EXTRA_test_smartcols_table_fuzz_SOURCES = dummy.cxx
+
+test_smartcols_table_fuzz_CFLAGS = $(sample_scols_cflags) -DFUZZ_TARGET
+test_smartcols_table_fuzz_LDFLAGS = -static
+test_smartcols_table_fuzz_LDADD = $(sample_scols_ldadd) libcommon.la $(LIB_FUZZING_ENGINE)
 endif
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
