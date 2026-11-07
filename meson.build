@@ -1738,6 +1738,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['renice']
 endif
 
+opt = get_option('build-setpgid').allowed()
 exe = executable(
   'setpgid',
   setpgid_sources,
@@ -1745,7 +1746,8 @@ exe = executable(
   link_with : [lib_common,
                lib_smartcols],
   install_dir : usrbin_exec_dir,
-  install : true)
+  install : opt,
+  build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += setpgid_manadocs

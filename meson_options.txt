@@ -200,6 +200,8 @@ option('build-rfkill', type : 'feature',
        description : 'build rfkill')
 option('build-renice', type : 'feature',
        description : 'build renice')
+option('build-setpgid', type : 'feature',
+       description : 'build setpgid')
 option('build-tunelp', type : 'feature',
        description : 'build tunelp')
 option('build-fstrim', type : 'feature',
