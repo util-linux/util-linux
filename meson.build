@@ -2541,6 +2541,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['isosize']
 endif
 
+opt = get_option('build-mkswap') \
+      .require(build_libblkid) \
+      .require(build_libuuid) \
+      .allowed()
 exe = executable(
   'mkswap',
   mkswap_sources,
@@ -2549,8 +2553,9 @@ exe = executable(
                lib_uuid],
   dependencies: [blkid_dep] + selinux_deps,
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += mkswap_manadocs
   bashcompletions += ['mkswap']
