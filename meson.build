@@ -3452,6 +3452,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['findfs']
 endif
 
+opt = get_option('build-wipefs') \
+      .require(build_libblkid) \
+      .require(build_libsmartcols) \
+      .allowed()
 exe = executable(
   'wipefs',
   wipefs_sources,
@@ -3460,8 +3464,9 @@ exe = executable(
                lib_smartcols],
   dependencies : [blkid_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += wipefs_manadocs
   bashcompletions += ['wipefs']
