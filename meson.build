@@ -3133,16 +3133,20 @@ if opt and not is_disabler(exe)
 endif
 
 if build_liblastlog2
+  opt = build_lastlog2
   exe = executable(
     'lastlog2',
     lastlog2_sources,
     include_directories : includes,
     link_with : [lib_common, lib_lastlog2],
     install_dir : usrbin_exec_dir,
-    install : true)
-  exes += exe
-  manadocs += lastlog2_manadocs
-  bashcompletions += ['lastlog2']
+    install : opt,
+    build_by_default : opt)
+  if opt and not is_disabler(exe)
+    exes += exe
+    manadocs += lastlog2_manadocs
+    bashcompletions += ['lastlog2']
+  endif
   manadocs += lib_lastlog2_manadocs
 endif
 
