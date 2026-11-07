@@ -2561,6 +2561,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['mkswap']
 endif
 
+opt = get_option('build-swaplabel') \
+      .require(build_libblkid) \
+      .require(build_libuuid) \
+      .allowed()
 exe = executable(
   'swaplabel',
   swaplabel_sources,
@@ -2569,8 +2573,9 @@ exe = executable(
                lib_uuid],
   dependencies : [blkid_dep],
   install_dir : sbindir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += swaplabel_manadocs
   bashcompletions += ['swaplabel']

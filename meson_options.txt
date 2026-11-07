@@ -70,6 +70,8 @@ option('build-swapoff', type : 'feature',
        description : 'build swapoff')
 option('build-mkswap', type : 'feature',
        description : 'build mkswap')
+option('build-swaplabel', type : 'feature',
+       description : 'build swaplabel')
 option('build-chcpu', type : 'feature',
        description : 'build chcpu')
 option('build-losetup', type : 'feature',
