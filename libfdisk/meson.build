@@ -64,7 +64,7 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libfdisk_sym_path))
 	libfdisk_link_args += ['-Wl,--version-script=@0@'.format(libfdisk_sym_path)]
 endif
 
-lib_fdisk = both_libraries(
+lib_fdisk = library(
   'fdisk',
   link_whole : lib__fdisk,
   link_depends : libfdisk_link_depends,
@@ -76,7 +76,13 @@ lib_fdisk = both_libraries(
   install : build_libfdisk)
 fdisk_dep = declare_dependency(link_with: lib_fdisk, include_directories: '.')
 
-lib_fdisk_static = lib_fdisk.get_static_lib()
+lib_fdisk_static = static_library(
+  'fdisk_static',
+  link_whole : lib__fdisk,
+  link_with : [lib_common,
+               lib_uuid_static],
+  dependencies : [blkid_static_dep],
+  install : false)
 
 if build_libfdisk
   pkgconfig.generate(lib_fdisk,
