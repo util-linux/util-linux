@@ -1748,15 +1748,16 @@ if opt and not is_disabler(exe)
   bashcompletions += ['rfkill']
 endif
 
+opt = get_option('build-renice').allowed()
 exe = executable(
   'renice',
   renice_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_smartcols],
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += renice_manadocs
   bashcompletions += ['renice']
