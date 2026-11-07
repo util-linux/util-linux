@@ -109,6 +109,8 @@ option('build-uuidparse', type : 'feature',
        description : 'build uuidparse')
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
+option('build-blkid', type : 'feature',
+       description : 'build blkid')
 
 option('build-choom', type : 'feature',
        description : 'build choom')
