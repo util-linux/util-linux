@@ -2465,8 +2465,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['irqtop']
 endif
 
-opt = get_option('build-ipcs') \
+opt = get_option('build-lsipc') \
       .require(LINUX) \
+      .require(build_libsmartcols) \
       .allowed()
 exe = executable(
   'lsipc',
