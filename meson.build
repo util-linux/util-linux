@@ -3287,6 +3287,10 @@ if opt and not is_disabler(exe)
   bashcompletions += ['uuidgen']
 endif
 
+opt = get_option('build-uuidparse') \
+      .require(build_libuuid) \
+      .require(build_libsmartcols) \
+      .allowed()
 exe = executable(
   'uuidparse',
   uuidparse_sources,
@@ -3295,8 +3299,9 @@ exe = executable(
                lib_uuid,
                lib_smartcols],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += uuidparse_manadocs
   bashcompletions += ['uuidparse']

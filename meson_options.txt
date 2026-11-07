@@ -105,6 +105,8 @@ option('build-rev', type : 'feature',
 
 option('build-uuidgen', type : 'feature',
        description : 'build uuidgen')
+option('build-uuidparse', type : 'feature',
+       description : 'build uuidparse')
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
 
