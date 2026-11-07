@@ -1512,6 +1512,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['rev']
 endif
 
+opt = get_option('build-column') \
+      .require(build_libsmartcols) \
+      .allowed()
 exe = executable(
   'column',
   column_sources,
@@ -1520,8 +1523,9 @@ exe = executable(
                lib_smartcols,
                lib_tcolors],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += column_manadocs
   bashcompletions += ['column']

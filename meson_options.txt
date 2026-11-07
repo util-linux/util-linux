@@ -98,6 +98,8 @@ option('build-colcrt', type : 'feature',
        description : 'build colcrt')
 option('build-colrm', type : 'feature',
        description : 'build colrm')
+option('build-column', type : 'feature',
+       description : 'build column')
 option('build-rev', type : 'feature',
        description : 'build rev')
 
