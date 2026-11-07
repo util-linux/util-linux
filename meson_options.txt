@@ -103,6 +103,8 @@ option('build-column', type : 'feature',
 option('build-rev', type : 'feature',
        description : 'build rev')
 
+option('build-uuidgen', type : 'feature',
+       description : 'build uuidgen')
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
 

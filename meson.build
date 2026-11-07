@@ -3269,6 +3269,9 @@ if opt and not is_disabler(exe)
   bashcompletions += ['lsfd']
 endif
 
+opt = get_option('build-uuidgen') \
+      .require(build_libuuid) \
+      .allowed()
 exe = executable(
   'uuidgen',
   uuidgen_sources,
@@ -3276,8 +3279,9 @@ exe = executable(
   link_with : [lib_common,
                lib_uuid],
   install_dir : usrbin_exec_dir,
-  install : true)
-if not is_disabler(exe)
+  install : opt,
+  build_by_default : opt)
+if opt and not is_disabler(exe)
   exes += exe
   manadocs += uuidgen_manadocs
   bashcompletions += ['uuidgen']
