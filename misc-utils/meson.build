@@ -71,8 +71,10 @@ test_uuidd_sources = files(
 )
 
 build_lastlog2 = get_option('build-lastlog2') \
-    .require(build_liblastlog2) \
-    .allowed()
+  .disable_auto_if(build_all_programs.disabled()) \
+  .require(build_liblastlog2) \
+  .allowed()
+
 if build_lastlog2 and systemd.found()
   lastlog2_tmpfiles = configure_file(
     input : 'lastlog2-tmpfiles.conf.in',
@@ -176,7 +178,10 @@ getopt_sources = files(
 )
 getopt_manadocs = files('getopt.1.adoc')
 
-if get_option('build-getopt').allowed()
+build_getopt = get_option('build-getopt') \
+  .disable_auto_if(build_all_programs.disabled()) \
+  .allowed()
+if build_getopt
   install_data(
     'getopt-example.bash',
     'getopt-example.tcsh',

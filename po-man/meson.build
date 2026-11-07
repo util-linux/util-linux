@@ -1,6 +1,7 @@
 po4a = find_program('po4a', required : false)
 
-if not get_option('translate-docs').require(asciidoctor.found()).require(po4a.found()).allowed()
+# Selective builds without manual pages must not run the translation pipeline.
+if manadocs.length() == 0 or not get_option('translate-docs').require(asciidoctor.found()).require(po4a.found()).allowed()
   subdir_done()
 endif
 
