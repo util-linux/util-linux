@@ -204,6 +204,8 @@ option('build-setpgid', type : 'feature',
        description : 'build setpgid')
 option('build-setsid', type : 'feature',
        description : 'build setsid')
+option('build-readprofile', type : 'feature',
+       description : 'build readprofile')
 option('build-tunelp', type : 'feature',
        description : 'build tunelp')
 option('build-fstrim', type : 'feature',
