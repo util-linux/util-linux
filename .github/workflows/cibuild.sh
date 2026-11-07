@@ -141,7 +141,7 @@ for phase in "${PHASES[@]}"; do
         make install DESTDIR=/tmp/dest
         ;;
     MESONCONF)
-        meson -Dwerror=true build
+        meson -Dwerror=true -Dbuild-all-programs=enabled build
         ;;
     MESONBUILD)
         ninja -C build
