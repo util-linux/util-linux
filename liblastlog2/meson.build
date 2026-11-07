@@ -59,19 +59,21 @@ if build_liblastlog2
   )
   meson.override_dependency('lastlog2', lastlog2_dep)
 
-  foreach lastlog2_test: lastlog2_tests
-    test_name = 'test_lastlog2_' + lastlog2_test
-    exe = executable(
-      test_name,
-      'src/tests/tst_' + lastlog2_test + '.c',
-      include_directories : [dir_include],
-      link_with : [lib_common],
-      dependencies : [libdl, lastlog2_dep],
-    )
-    # the test-setup expects the helpers in the toplevel build-directory
-    link = meson.project_build_root() / test_name
-    run_command('ln', '-srf', exe.full_path(), link,
-      check : true)
-  endforeach
+  if program_tests
+    foreach lastlog2_test: lastlog2_tests
+      test_name = 'test_lastlog2_' + lastlog2_test
+      exe = executable(
+        test_name,
+        'src/tests/tst_' + lastlog2_test + '.c',
+        include_directories : [dir_include],
+        link_with : [lib_common],
+        dependencies : [libdl, lastlog2_dep],
+      )
+      # the test-setup expects the helpers in the toplevel build-directory
+      link = meson.project_build_root() / test_name
+      run_command('ln', '-srf', exe.full_path(), link,
+        check : true)
+    endforeach
+  endif
 
 endif

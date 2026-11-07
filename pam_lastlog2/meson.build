@@ -1,4 +1,5 @@
 build_pam_lastlog2 = get_option('build-pam-lastlog2') \
+    .disable_auto_if(build_all_programs.disabled()) \
     .require(build_liblastlog2) \
     .require(conf.get('HAVE_SECURITY_PAM_MODULES_H').to_string() == '1') \
     .allowed()

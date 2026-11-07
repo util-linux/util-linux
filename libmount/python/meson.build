@@ -1,4 +1,5 @@
-if get_option('build-python').disabled()
+if get_option('build-python').disable_auto_if(build_all_programs.disabled()).disabled() or \
+   get_option('build-pylibmount').disable_auto_if(build_all_programs.disabled()).disabled()
   subdir_done()
 endif
 

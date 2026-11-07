@@ -36,6 +36,13 @@ and libuuid:
 	./configure --disable-all-programs --enable-mount \
 	            --enable-libmount --enable-libblkid --enable-libuuid
 
+With Meson, use `-Dbuild-all-programs=disabled` and enable the desired
+programs and their required libraries:
+
+	meson setup build -Dbuild-all-programs=disabled -Dbuild-fallocate=enabled
+	meson setup build -Dbuild-all-programs=disabled -Dbuild-mount=enabled \
+	                  -Dbuild-libmount=enabled -Dbuild-libblkid=enabled
+
 ## Compiler Flags
 
 Use `SUID_CFLAGS` and `SUID_LDFLAGS` for suid programs (chfn, chsh,
