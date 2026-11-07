@@ -111,6 +111,8 @@ option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
 option('build-blkid', type : 'feature',
        description : 'build blkid')
+option('build-lastlog2', type : 'feature',
+       description : 'build lastlog2')
 
 option('build-choom', type : 'feature',
        description : 'build choom')

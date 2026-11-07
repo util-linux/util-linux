@@ -70,7 +70,10 @@ test_uuidd_sources = files(
   'test_uuidd.c',
 )
 
-if build_liblastlog2 and systemd.found()
+build_lastlog2 = get_option('build-lastlog2') \
+    .require(build_liblastlog2) \
+    .allowed()
+if build_lastlog2 and systemd.found()
   lastlog2_tmpfiles = configure_file(
     input : 'lastlog2-tmpfiles.conf.in',
     output : 'lastlog2-tmpfiles.conf',
