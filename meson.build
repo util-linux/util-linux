@@ -1778,14 +1778,15 @@ if opt and not is_disabler(exe)
   bashcompletions += ['setpgid']
 endif
 
+opt = get_option('build-setsid').allowed()
 exe = executable(
   'setsid',
   setsid_sources,
   include_directories : includes,
-  link_with : [lib_common,
-               lib_smartcols],
+  link_with : [lib_common],
   install_dir : usrbin_exec_dir,
-  install : true)
+  install : opt,
+  build_by_default : opt)
 if opt and not is_disabler(exe)
   exes += exe
   manadocs += setsid_manadocs
