@@ -39,6 +39,9 @@ option('fuse',           type : 'feature',
 
 # enable building of various programs and features ("build-" prefix)
 
+option('build-all-programs', type : 'feature',
+       description : 'build everything or nothing by default')
+
 option('build-python', type : 'feature', value : 'auto',
        description : 'build python extension module')
 option('python', type : 'string', value : 'python3',
@@ -144,7 +147,7 @@ option('build-bfs', type : 'feature',
        description : 'build mkfs.bfs')
 option('build-minix', type : 'feature',
        description : 'build fsck.minix, mkfs.minix')
-option('build-fdformat', type : 'feature', value : 'disabled',
+option('build-fdformat', type : 'feature',
        description : 'build fdformat')
 option('build-blockdev', type : 'feature',
        description : 'build blockdev')
@@ -240,7 +243,7 @@ option('build-line', type : 'feature',
        description : 'build line')
 option('build-mesg', type : 'feature',
        description : 'build mesg')
-option('build-raw', type : 'feature', value : 'disabled',
+option('build-raw', type : 'feature',
        description : 'build raw')
 option('build-rename', type : 'feature',
        description : 'build rename')
