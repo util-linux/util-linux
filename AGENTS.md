@@ -81,6 +81,7 @@ Meson:
 
 - Build: `meson setup build && meson compile -C build`
 - Run tests: `meson test -C build`
+- Selective build: `meson setup build -Dbuild-all-programs=disabled -Dbuild-<name>=enabled`
 
 Tests:
 
