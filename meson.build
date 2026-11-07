@@ -405,10 +405,14 @@ lib_utempter = cc.find_library(
   required : get_option('libutempter'))
 conf.set('HAVE_LIBUTEMPTER', lib_utempter.found() ? 1 : false)
 
+dl_requirement = get_option('cryptsetup-dlopen') or \
+    get_option('econf-dlopen') or \
+    get_option('selinux-dlopen') or \
+    get_option('systemd-dlopen')
 if meson.version().version_compare('>= 0.62.0')
-  lib_dl = dependency('dl')
+  lib_dl = dependency('dl', required : dl_requirement)
 else
-  lib_dl = cc.find_library('dl')
+  lib_dl = cc.find_library('dl', required : dl_requirement)
 endif
 
 systemd = dependency(
