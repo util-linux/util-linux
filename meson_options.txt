@@ -184,6 +184,8 @@ option('build-lsmem', type : 'feature',
        description : 'build lsmem')
 option('build-lsirq', type : 'feature',
        description : 'build lsirq')
+option('build-lsipc', type : 'feature',
+       description : 'build lsipc')
 option('build-irqtop', type : 'feature',
        description : 'build irqtop')
 option('build-chmem', type : 'feature',
