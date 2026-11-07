@@ -3296,7 +3296,7 @@ if opt and not is_disabler(exe)
   bashcompletions += ['uuidd']
 endif
 
-opt = build_libblkid
+opt = get_option('build-blkid').require(build_libblkid).allowed()
 exe = executable(
   'blkid',
   blkid_sources,
