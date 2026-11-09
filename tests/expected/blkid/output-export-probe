@@ -1,5 +1,5 @@
 DEVNAME=blkid-output.img
-LABEL=tM-CM-)s\"\'^J\ t
+LABEL=tM-CM-\)s\"\'^J\ t
 FSSIZE=4096
 VERSION=2
 ENDIANNESS=LITTLE

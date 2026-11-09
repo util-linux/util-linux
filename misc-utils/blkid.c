@@ -333,7 +333,7 @@ static void print_value(const struct blkid_control *ctl, int num,
 			printf("DEVNAME=%s\n", devname);
 		fputs(name, stdout);
 		fputs("=", stdout);
-		safe_print(ctl, value, valsz, " \\\"'$`<>");
+		safe_print(ctl, value, valsz, " \\\"'$`<>&();|~");
 		fputs("\n", stdout);
 
 	} else if (ctl->output & OUTPUT_JSON) {
