@@ -50,6 +50,8 @@ Read from _cachefile_ instead of reading from the default cache file (see the *C
 
 *-d*, *--no-encoding*::
 Don't encode non-printing characters. The non-printing characters are encoded by ^ and M- notation by default. Note that the *--output udev* output format uses a different encoding which cannot be disabled.
++
+This option also disables the backslash escaping of the *--output export* format. Such output must not be parsed by a shell; see the *PARSING THE OUTPUT* section below.
 
 *-D*, *--no-part-details*::
 Don't print information (PART_ENTRY_* tags) from partition table in low-level probing mode.
@@ -94,8 +96,12 @@ Use the specified output format. Note that the order of variables and devices is
 +
 *full*;;
 print all tags (the default)
++
+This output format is intended for humans and it is not designed to be parsed. The values are enclosed in double quotes, but *$* and `{backtick}` are not escaped. Use *--output json* or *--output export* for machine readable output.
 *value*;;
 print the value of the tags
++
+The values are printed as-is, without any escaping.
 *list*;;
 print the devices in a user-friendly format; this output format is unsupported for low-level probing (*--probe* or *--info*).
 +
@@ -104,7 +110,9 @@ This output format is *DEPRECATED* in favour of the *lsblk*(8) command.
 print the device name only; this output format is always enabled for the *--label* and *--uuid* options
 *udev*;;
 //TRANSLATORS: Please keep {underscore} untranslated.
-print key="value" pairs for easy import into the udev environment; the keys are prefixed by ID_FS_ or ID_PART_ prefixes. The value may be modified to be safe for udev environment; allowed is plain ASCII, hex-escaping and valid UTF-8, everything else (including whitespaces) is replaced with '{underscore}'. The keys with __ENC_ postfix use hex-escaping for unsafe chars.
+print key=value pairs for easy import into the udev environment; the keys are prefixed by ID_FS_ or ID_PART_ prefixes. The value may be modified to be safe for udev environment; allowed is plain ASCII, hex-escaping and valid UTF-8, everything else (including whitespaces) is replaced with '{underscore}'. The keys with __ENC_ postfix use hex-escaping for unsafe chars.
++
+The sanitization of the plain *ID_FS_LABEL* and *ID_FS_UUID* values makes them safe for the udev environment only. Use the *{underscore}ENC* variants whenever the value is used as a filename or passed to a shell; the _/dev/disk/by-label_ and _/dev/disk/by-uuid_ symlinks are based on the *{underscore}ENC* variants.
 +
 The udev output returns the ID_FS_AMBIVALENT tag if more superblocks are detected, and ID_PART_ENTRY_* tags are always returned for all partitions including empty partitions.
 +
@@ -112,7 +120,7 @@ This output format is *DEPRECATED*.
 *export*;;
 print key=value pairs for easy import into the environment; this output format is automatically enabled when I/O Limits (*--info* option) are requested.
 +
-The non-printing characters are encoded by ^ and M- notation and all potentially unsafe characters are escaped.
+The non-printing characters are encoded by ^ and M- notation, and the characters space, \, ", ', $, {backtick}, <, >, &, (, ), ;, | and ~ are escaped by a backslash. This makes it possible to read the output back by the shell *read* builtin. See the *PARSING THE OUTPUT* section below.
 *json*;;
 Print the tags entries in JSON objects.
 
@@ -148,6 +156,25 @@ probes for all supported formats except RAIDs. This option is only useful togeth
 Look up the device that uses this filesystem _uuid_. For more details see the *--label* option.
 
 include::man-common/help-version.adoc[]
+
+== PARSING THE OUTPUT
+
+Tags such as LABEL are read from the device and their content is fully controlled by whoever last wrote to the device, for example by the person who formatted a USB stick. Never pass *blkid* output to *eval* or to any other interpreter.
+
+The *--output json* format is the recommended machine readable output.
+
+The *--output export* format can be read by the shell *read* builtin used without the *-r* option. The shell then removes the backslashes added by *blkid* and restores the original values:
+
+....
+blkid -o export /dev/sda1 | while IFS='=' read name value; do
+	case "$name" in
+	LABEL) printf 'label: %s\n' "$value" ;;
+	UUID)  printf 'uuid:  %s\n' "$value" ;;
+	esac
+done
+....
+
+Note that the loop is executed in a subshell, so the variables set inside the loop are not available after the loop.
 
 == EXIT STATUS
 
