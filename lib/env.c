@@ -4,6 +4,7 @@
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
  */
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -165,6 +166,9 @@ struct ul_env_list *env_list_add_getenvs(struct ul_env_list *ls, const char *str
  * Use env_list_from_fd() to read environment from @fd.
  *
  * @fd must be /proc/<pid>/environ file.
+ *
+ * Returns NULL on error as well as for an empty environment; the caller tells
+ * the two apart by errno, which is zero in the latter case.
 */
 struct ul_env_list *env_list_from_fd(int fd)
 {
@@ -173,8 +177,12 @@ struct ul_env_list *env_list_from_fd(int fd)
 	struct ul_env_list *ls = NULL;
 
 	errno = 0;
-	if ((rc = ul_read_all_alloc(fd, &buf)) < 1)
+	rc = ul_read_all_alloc(fd, &buf);
+	if (rc < 1) {
+		if (rc == 0)
+			errno = 0;	/* empty file, not an error */
 		return NULL;
+	}
 	buf[rc] = '\0';
 	end = buf + rc;
 
@@ -343,6 +351,35 @@ static int test_from_fd(const size_t *sizes, size_t n)
 	return rc;
 }
 
+/*
+ * An empty environment is not an error. Check that env_list_from_fd() says so
+ * with errno, this is how nsenter(1) tells the two cases apart.
+ */
+static int test_from_fd_empty(void)
+{
+	struct ul_env_list *ls;
+	int fds[2], rc = 0;
+
+	if (pipe(fds) != 0)
+		err(EXIT_FAILURE, "test setup failed");
+	close(fds[1]);
+
+	ls = env_list_from_fd(fds[0]);
+	close(fds[0]);
+
+	if (ls) {
+		warnx("from_fd: empty input returned variables");
+		rc = 1;
+	}
+	if (errno) {
+		warnx("from_fd: empty input reported error %d", errno);
+		rc = 1;
+	}
+
+	env_list_free(ls);
+	return rc;
+}
+
 int main(void)
 {
 	char *const *bad;
@@ -398,7 +435,8 @@ int main(void)
 	if (test_from_fd(from_fd_small, ARRAY_SIZE(from_fd_small))
 	    || test_from_fd(from_fd_1k, ARRAY_SIZE(from_fd_1k))
 	    || test_from_fd(from_fd_4k, ARRAY_SIZE(from_fd_4k))
-	    || test_from_fd(from_fd_over_1k, ARRAY_SIZE(from_fd_over_1k)))
+	    || test_from_fd(from_fd_over_1k, ARRAY_SIZE(from_fd_over_1k))
+	    || test_from_fd_empty())
 		retval = EXIT_FAILURE;
 
 	return retval;
