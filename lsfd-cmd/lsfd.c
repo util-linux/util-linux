@@ -651,7 +651,8 @@ struct lsfd_control {
 			show_main : 1,		/* print main table */
 			show_summary : 1,	/* print summary/counters */
 			sockets_only : 1,	/* display only SOCKETS */
-			show_xmode : 1;		/* XMODE column is enabled. */
+			show_xmode : 1,		/* XMODE column is enabled. */
+			abort_if_blockable : 1;
 
 	char *uri;
 
@@ -955,7 +956,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 					 struct proc *proc,
 					 const char *name,
 					 int assoc,
-					 bool sockets_and_ns_only)
+					 bool sockets_and_ns_only,
+					 bool error_if_blockable)
 {
 	char sym[PATH_MAX] = { '\0' };
 	struct stat sb = { .st_mode = 0 };
@@ -963,7 +965,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 
 	if (ul_path_readlink(pc, sym, sizeof(sym), name) < 0)
 		f = new_readlink_error_file(proc, errno, assoc);
-	else if (ul_path_stat(pc, &sb, 0, name) < 0)
+	else if (lsfd_path_stat(pc, &sb, 0, name, error_if_blockable) < 0)
 		f = new_stat_error_file(proc, sym, errno, assoc);
 	else {
 		const struct file_class *class = stat2class(&sb);
@@ -995,7 +997,8 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 		/* file-descriptor based association */
 		FILE *fdinfo;
 
-		if (ul_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name) == 0)
+		/* Inspecting /proc/$pid/fd/$fd symlink itself without following; cannot block. */
+		if (lsfd_path_stat(pc, &sb, AT_SYMLINK_NOFOLLOW, name, false) == 0)
 			f->mode = sb.st_mode;
 
 		if (is_nsfs_dev(f->stat.st_dev))
@@ -1021,7 +1024,7 @@ static struct file *collect_file_symlink(struct path_cxt *pc,
 /* read symlinks from /proc/#/fd
  */
 static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     struct lsfd_control *ctl)
 {
 	DIR *sub = NULL;
 	struct dirent *d = NULL;
@@ -1034,18 +1037,19 @@ static void collect_fd_files(struct path_cxt *pc, struct proc *proc,
 			continue;
 
 		snprintf(path, sizeof(path), "fd/%ju", (uintmax_t) num);
-		collect_file_symlink(pc, proc, path, num, sockets_only);
+		collect_file_symlink(pc, proc, path, num, ctl->sockets_only, ctl->abort_if_blockable);
 	}
 }
 
-static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
+static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc,
+			    struct lsfd_control *ctl)
 {
 	uint64_t start, end, offset, ino;
 	unsigned long major, minor;
 	enum association assoc = ASSOC_MEM;
 	struct stat sb = { .st_mode = 0 };
-	struct file *f, *prev;
-	char *path, modestr[5];
+	struct file *f = NULL, *prev;
+	char *path = NULL, modestr[5];
 	dev_t devno;
 
 	/* read rest of the map */
@@ -1077,33 +1081,62 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	if (prev && (!is_error_object(prev))
 	    && prev->stat.st_dev == devno && prev->stat.st_ino == ino)
 		f = copy_file(prev, -assoc);
-	else if ((path = strchr(buf, '/'))) {
-		rtrim_whitespace((unsigned char *) path);
-		if (stat(path, &sb) < 0)
-			/* If a file is mapped but deleted from the file system,
-			 * "stat by the file name" may not work. In that case,
-			 */
-			goto try_map_files;
-		if (sb.st_ino != ino || sb.st_dev != devno)
-			/* There are two files having the same absolute file names!
-			 *
-			 * Maybe the file is bind-mount'ed after mapped.
-			 */
-			goto try_map_files;
-		f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
-	} else {
-		/* As used in tcpdump, AF_PACKET socket can be mmap'ed. */
+	else {
 		char sym[PATH_MAX] = { '\0' };
+		int readlink_err = 0;
+		int stat_err = 0;
+		int fallback_err = 0;
+		ssize_t ssz;
 
-	try_map_files:
-		if (ul_path_readlinkf(pc, sym, sizeof(sym),
-				      "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_readlink_error_file(proc, errno, -assoc);
-		else if (ul_path_statf(pc, &sb, 0,
-				       "map_files/%"PRIx64"-%"PRIx64, start, end) < 0)
-			f = new_stat_error_file(proc, sym, errno, -assoc);
-		else
-			f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+		/* Prefer map_files to bypass pathname lookup and avoid hangs */
+		ssz = ul_path_readlinkf(pc, sym, sizeof(sym),
+					"map_files/%"PRIx64"-%"PRIx64, start, end);
+		if (ssz >= 0) {
+			int rc = lsfd_path_statf(pc, &sb, 0, ctl->abort_if_blockable,
+						 "map_files/%"PRIx64"-%"PRIx64, start, end);
+			if (rc == 0)
+				f = new_file(proc, stat2class(&sb), &sb, sym, -assoc);
+			else {
+				stat_err = (rc != -1) ? -rc : errno;
+				if (!stat_err)
+					stat_err = ENOENT;
+			}
+		} else {
+			readlink_err = (ssz != -1) ? -ssz : errno;
+			if (!readlink_err)
+				readlink_err = ENOENT;
+		}
+
+		if (!f && !ctl->abort_if_blockable && (path = strchr(buf, '/'))) {
+			int rc;
+
+			/* Fallback to pathname from /proc/PID/maps if map_files is not accessible */
+			rtrim_whitespace((unsigned char *) path);
+			rc = lsfd_stat(path, &sb, false);
+			if (rc == 0) {
+				if (sb.st_ino == ino && sb.st_dev == devno)
+					f = new_file(proc, stat2class(&sb), &sb, path, -assoc);
+				else
+					fallback_err = ENOENT;
+			} else {
+				fallback_err = (rc != -1) ? -rc : errno;
+				if (!fallback_err)
+					fallback_err = ENOENT;
+			}
+		}
+
+		if (!f) {
+			if (fallback_err)
+				f = new_stat_error_file(proc, path, fallback_err, -assoc);
+			else if (stat_err)
+				f = new_stat_error_file(proc, sym, stat_err, -assoc);
+			else if (readlink_err)
+				f = new_readlink_error_file(proc, readlink_err, -assoc);
+			else if (path)
+				f = new_stat_error_file(proc, path, ENOENT, -assoc);
+			else
+				f = new_readlink_error_file(proc, ENOENT, -assoc);
+		}
 	}
 
 	if (modestr[0] == 'r')
@@ -1132,7 +1165,8 @@ static void parse_maps_line(struct path_cxt *pc, char *buf, struct proc *proc)
 	file_init_content(f);
 }
 
-static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
+static void collect_mem_files(struct path_cxt *pc, struct proc *proc,
+			      struct lsfd_control *ctl)
 {
 	FILE *fp;
 	char buf[BUFSIZ];
@@ -1142,13 +1176,14 @@ static void collect_mem_files(struct path_cxt *pc, struct proc *proc)
 		return;
 
 	while (fgets(buf, sizeof(buf), fp))
-		parse_maps_line(pc, buf, proc);
+		parse_maps_line(pc, buf, proc, ctl);
 
 	fclose(fp);
 }
 
 enum outofbox_attrs {
 	OUTOFBOX_NAMESPACE = (1 << 0),
+	OUTOFBOX_CAN_BLOCK = (1 << 1),
 };
 
 struct outofbox_fdecl {
@@ -1162,19 +1197,21 @@ struct outofbox_fdecl {
 static void collect_outofbox_files(struct path_cxt *pc,
 				   struct proc *proc,
 				   const struct outofbox_fdecl fdecls[],
-				   bool sockets_only)
+				   struct lsfd_control *ctl)
 {
 	const struct outofbox_fdecl *fdecl;
 
 	for (fdecl = fdecls; fdecl->name; fdecl++) {
 		bool is_ns = (fdecl->attrs & OUTOFBOX_NAMESPACE);
 		struct file *f __attribute__((unused));
+		bool error_if_blockable = ctl->abort_if_blockable
+			&& (fdecl->attrs & OUTOFBOX_CAN_BLOCK);
 
-		if (sockets_only && !is_ns)
+		if (ctl->sockets_only && !is_ns)
 			continue;
 
 		f = collect_file_symlink(pc, proc, fdecl->name, fdecl->assoc * -1,
-					 sockets_only);
+					 ctl->sockets_only, error_if_blockable);
 #if defined(HAVE_STATX) && defined(HAVE_STRUCT_STATX_STX_MNT_ID)
 		if (f && has_mnt_id(f)) {
 			struct statx stx;
@@ -1188,16 +1225,17 @@ static void collect_outofbox_files(struct path_cxt *pc,
 }
 
 static void collect_execve_file(struct path_cxt *pc, struct proc *proc,
-				bool sockets_only)
+				struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
 			.assoc = ASSOC_EXE,
 			.name = "exe",
+			.attrs = OUTOFBOX_CAN_BLOCK,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static int collect_pidfs_file(struct proc *proc, bool sockets_only)
@@ -1216,7 +1254,7 @@ static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 		struct stat sb;
 		const int assoc = ASSOC_PIDFS * -1;
 
-		if (fstat(pidfd, &sb) < 0) {
+		if (lsfd_fstat(pidfd, &sb, false) < 0) {
 			/* Even fstat fails here, the pidfd is still
 			 * usable in the caller side. */
 			return pidfd;
@@ -1252,24 +1290,26 @@ static int collect_pidfs_file(struct proc *proc, bool sockets_only)
 }
 
 static void collect_fs_files(struct path_cxt *pc, struct proc *proc,
-			     bool sockets_only)
+			     struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
 			.assoc = ASSOC_CWD,
 			.name = "cwd",
+			.attrs = OUTOFBOX_CAN_BLOCK,
 		},
 		{
 			.assoc = ASSOC_ROOT,
 			.name = "root",
+			.attrs = OUTOFBOX_CAN_BLOCK,
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *proc,
-					    bool sockets_only)
+					    struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1289,11 +1329,11 @@ static void collect_namespace_files_tophalf(struct path_cxt *pc, struct proc *pr
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc *proc,
-					       bool sockets_only)
+					       struct lsfd_control *ctl)
 {
 	static const struct outofbox_fdecl fdecls[] = {
 		{
@@ -1333,7 +1373,7 @@ static void collect_namespace_files_bottomhalf(struct path_cxt *pc, struct proc 
 		},
 		LAST_OUTOFBOX_FDECL,
 	};
-	collect_outofbox_files(pc, proc, fdecls, sockets_only);
+	collect_outofbox_files(pc, proc, fdecls, ctl);
 }
 
 static void reset_cooked_bdev(struct cooked_bdev *bdev, dev_t raw, const char *filesystem)
@@ -1541,11 +1581,23 @@ static void add_nodevs_from_cooked_bdevs(struct mnt_namespace *mnt_ns)
 static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 				    const char *filesystem,
 				    const char *mntpoint_filename,
-				    struct mnt_namespace *mnt_ns)
+				    struct mnt_namespace *mnt_ns,
+				    bool error_if_blockable)
 {
-	if (mnt_ns != NULL) {
+	if (mnt_ns != NULL && !error_if_blockable) {
 		struct stat sb;
-		if (stat(mntpoint_filename, &sb) == 0)
+
+		/*
+		 * Even though lsfd_stat() uses ul_safe_stat() with AT_STATX_DONT_SYNC,
+		 * resolving a pathname (link_path_walk) can still block if an intermediate
+		 * directory is on an unresponsive file system (e.g. stalled FUSE or NFS).
+		 * When error_if_blockable is true, avoid stat'ing mountpoints altogether.
+		 *
+		 * Future improvement: this limitation could be overcome using modern
+		 * mount APIs such as statmount(2) / listmount(2) (Linux 6.8+), which
+		 * inspect mounts via mount IDs without pathname resolution.
+		 */
+		if (lsfd_stat(mntpoint_filename, &sb, false) == 0)
 			add_cooked_bdev(mnt_ns, sb.st_dev, makedev(major, minor), filesystem);
 	}
 
@@ -1557,7 +1609,8 @@ static void process_mountinfo_entry(unsigned long major, unsigned long minor,
 	add_nodev(minor, filesystem);
 }
 
-static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
+static void read_mountinfo(struct lsfd_control *ctl,
+			   FILE *mountinfo, struct mnt_namespace *mnt_ns)
 {
 	/* This can be very long. A line in mountinfo can have more than 3
 	 * paths. */
@@ -1587,7 +1640,8 @@ static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
 
 		line[mntpoint_end_offset] = '\0';
 		process_mountinfo_entry(major, minor, filesystem,
-					line + mntpoint_offset, mnt_ns);
+					line + mntpoint_offset, mnt_ns,
+					ctl->abort_if_blockable);
 	}
 
 	if (mnt_ns) {
@@ -1596,7 +1650,8 @@ static void read_mountinfo(FILE *mountinfo, struct mnt_namespace *mnt_ns)
 	}
 }
 
-static void read_mountinfo_in_mntns(FILE *mountinfo, struct mnt_namespace *mnt_ns,
+static void read_mountinfo_in_mntns(struct lsfd_control *ctl,
+				    FILE *mountinfo, struct mnt_namespace *mnt_ns,
 				    int mntns_fd)
 {
 	if (mntns_fd >= 0 && setns(mntns_fd, CLONE_NEWNS) < 0) {
@@ -1604,7 +1659,7 @@ static void read_mountinfo_in_mntns(FILE *mountinfo, struct mnt_namespace *mnt_n
 		mnt_ns = NULL;
 	}
 
-	read_mountinfo(mountinfo, mnt_ns);
+	read_mountinfo(ctl, mountinfo, mnt_ns);
 
 	if (mntns_fd >= 0)
 		setns(self_mntns_fd, CLONE_NEWNS);
@@ -2220,11 +2275,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 		goto out;
 	}
 
-	collect_execve_file(pc, proc, ctl->sockets_only);
+	collect_execve_file(pc, proc, ctl);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FS, 0, 0) != 0)
-		collect_fs_files(pc, proc, ctl->sockets_only);
+		collect_fs_files(pc, proc, ctl);
 
 	proc->pidfd = collect_pidfs_file(proc, ctl->sockets_only);
 
@@ -2247,7 +2302,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 
 	/* 1/3. Read /proc/$pid/ns/mnt */
 	if (proc->mnt_ns == NULL)
-		collect_namespace_files_tophalf(pc, proc, ctl->sockets_only);
+		collect_namespace_files_tophalf(pc, proc, ctl);
 
 	/* 2/3. read /proc/$pid/mountinfo unless we have read it already.
 	 * The backing device for "nsfs" is solved here.
@@ -2258,7 +2313,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 			int mntns_fd = -1;
 			if (proc->mnt_ns && (self_mntns_id != proc->mnt_ns->id))
 				mntns_fd = ul_path_open(pc, O_RDONLY, "ns/mnt");
-			read_mountinfo_in_mntns(mountinfo, proc->mnt_ns, mntns_fd);
+			read_mountinfo_in_mntns(ctl, mountinfo, proc->mnt_ns, mntns_fd);
 			if (mntns_fd >= 0)
 				close(mntns_fd);
 			if (proc->mnt_ns)
@@ -2271,7 +2326,7 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	 * When reading the information about the net namespace,
 	 * backing device for "nsfs" must be solved.
 	 */
-	collect_namespace_files_bottomhalf(pc, proc, ctl->sockets_only);
+	collect_namespace_files_bottomhalf(pc, proc, ctl);
 
 	/* If kcmp is not available,
 	 * there is no way to know whether threads share resources.
@@ -2281,11 +2336,11 @@ static void read_process(struct lsfd_control *ctl, struct path_cxt *pc,
 	if ((!ctl->sockets_only)
 	    && (proc->pid == proc->leader->pid
 		|| kcmp(proc->leader->pid, proc->pid, KCMP_VM, 0, 0) != 0))
-		collect_mem_files(pc, proc);
+		collect_mem_files(pc, proc, ctl);
 
 	if (proc->pid == proc->leader->pid
 	    || kcmp(proc->leader->pid, proc->pid, KCMP_FILES, 0, 0) != 0)
-		collect_fd_files(pc, proc, ctl->sockets_only);
+		collect_fd_files(pc, proc, ctl);
 
 	list_add_tail(&proc->procs, &ctl->procs);
 	if (tsearch(proc, &proc_tree, proc_tree_compare) == NULL)
@@ -2435,6 +2490,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_(" -u, --notruncate             don't truncate text in columns\n"), out);
 	fputs(_(" -p, --pid <list>             collect information only for specified processes\n"), out);
 	fputs(_(" -i[4|6], --inet[=4|=6]       list only IPv4 and/or IPv6 sockets\n"), out);
+	fputs(_(" -b, --abort-if-blockable     exit immediately if non-blocking stat is unavailable\n"), out);
 	fputs(_(" -Q, --filter <expr>          apply display filter\n"), out);
 	fputs(_("     --debug-filter           dump the internal data structure of filter and exit\n"), out);
 	fputs(_(" -C, --counter <name>:<expr>  define custom counter for --summary output\n"), out);
@@ -2798,6 +2854,7 @@ int main(int argc, char *argv[])
 		{ "notruncate", no_argument, NULL, 'u' },
 		{ "pid",        required_argument, NULL, 'p' },
 		{ "inet",       optional_argument, NULL, 'i' },
+		{ "abort-if-blockable", no_argument, NULL, 'b' },
 		{ "filter",     required_argument, NULL, 'Q' },
 		{ "debug-filter",no_argument, NULL, OPT_DEBUG_FILTER },
 		{ "summary",    optional_argument, NULL,  OPT_SUMMARY },
@@ -2822,7 +2879,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	close_stdout_atexit();
 
-	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::C:sH", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "no:JrVhluQ:p:i::bC:sH", longopts, NULL)) != -1) {
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
@@ -2867,6 +2924,14 @@ int main(int argc, char *argv[])
 			append_filter_expr(&filter_expr, subexpr, true);
 			break;
 		}
+		case 'b':
+#if !defined(HAVE_STATX) || !defined(HAVE_STRUCT_STATX) || !defined(AT_STATX_DONT_SYNC)
+			errx(LSFD_EX_NONBLOCK_UNAVAIL,
+			     _("this build does not support statx with AT_STATX_DONT_SYNC"));
+#else
+			ctl.abort_if_blockable = 1;
+#endif
+			break;
 		case 'Q':
 			append_filter_expr(&filter_expr, optarg, true);
 			break;
