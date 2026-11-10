@@ -44,7 +44,9 @@ Byte offset in the filesystem from which to begin searching for free blocks to d
 The number of bytes (after the starting point) to search for free blocks to discard. If the specified value extends past the end of the filesystem, *fstrim* will stop at the filesystem size boundary. The default value extends to the end of the filesystem.
 
 *-p, --step* _step_::
-The number of bytes to discard within one iteration. The default is to discard everything in a single *FITRIM* ioctl call; a zero value also means no stepping. Stepping lets the system suspend or shut down between the iterations. It is ignored on btrfs, where the range is a logical address space and every call trims all unallocated device space. The _step_ is silently rounded up to the filesystem block size and to the minimum discard size, because a shorter iteration cannot discard anything.
+The number of bytes to discard within one iteration. The default is to discard everything in a single *FITRIM* ioctl call; a zero value also means no stepping. Stepping lets the system suspend or shut down between the iterations. It is ignored on btrfs, where the range is a logical address space and every call trims all unallocated device space. The _step_ is silently raised to at least 1 MiB and rounded up to the filesystem block size and to the minimum discard size, because a shorter iteration cannot discard anything.
++
+Use a large _step_; hundreds of megabytes or more. Filesystems track what they have already trimmed per allocation group, and an iteration that covers only part of a group does not update that state. On ext4 this makes the kernel discard, and report, the same free space in several iterations, so a small _step_ wastes device bandwidth and can make the total printed by *--verbose* larger than the filesystem itself. The effect disappears when the _step_ is a whole multiple of the allocation group. For ext2/3/4 that is "Blocks per group" times "Block size" as reported by *tune2fs*(8) *-l* or *dumpe2fs*(8) *-h*; with the usual 4 KiB blocks it is 128 MiB.
 +
 Using *--step* together with *--minimum* is an advanced use case. The kernel compares free ranges with the minimum within each iteration, and it raises the minimum to the device's _queue/discard_granularity_, which *fstrim* does not know here. Free space that crosses an iteration boundary is handled differently by each filesystem; it may be skipped or discarded twice. Test the combination on the target filesystem before relying on it.
 
@@ -104,7 +106,8 @@ mailto:kzak@redhat.com[Karel Zak]
 == SEE ALSO
 
 *blkdiscard*(8),
-*mount*(8)
+*mount*(8),
+*tune2fs*(8)
 
 include::man-common/bugreports.adoc[]
 

@@ -146,6 +146,16 @@ static int fstrim_filesystem(struct fstrim_control *ctl, const char *path, const
 			 */
 			if (step < ctl->range.minlen)
 				step = ctl->range.minlen;
+			/*
+			 * A very small step is counter-productive. Filesystems
+			 * track trimmed space per allocation group, so an
+			 * iteration covering only part of a group makes the
+			 * kernel discard the same free space again in the next
+			 * one. Below this the repeated discards cost much more
+			 * than the shorter iteration saves.
+			 */
+			if (step < (uint64_t) 1024 * 1024)
+				step = (uint64_t) 1024 * 1024;
 			if (step % bs) {
 				if (step > UINT64_MAX - bs)
 					step = UINT64_MAX;
