@@ -225,6 +225,7 @@ if host_machine.system() == 'linux'
   have_struct_statx = cc.has_type('struct statx', args : '-D_GNU_SOURCE', prefix : '#include <sys/stat.h>')
   if have_struct_statx
     have_statx_mnt_id = cc.has_member('struct statx', 'stx_mnt_id',
+                                       args : '-D_GNU_SOURCE',
                                        prefix : '#include <sys/stat.h>')
   endif
 endif
