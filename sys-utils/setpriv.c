@@ -751,7 +751,7 @@ static void do_seccomp_filter(const char *file)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot read %s"), file);
 
-	if (s % sizeof(*prog.filter))
+	if (s == 0 || s % sizeof(*prog.filter))
 		errx(SETPRIV_EXIT_PRIVERR, _("invalid filter"));
 
 	prog.len = s / sizeof(*prog.filter);
