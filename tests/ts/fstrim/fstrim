@@ -102,6 +102,33 @@ dd if="$DEV" skip="$PHY_OFFSET" bs=$PHY_BLOCK_SIZE \
 	iflag=direct count=1 status=none 2>>"$TS_ERRLOG" \
 		| "$TS_CMD_HEXDUMP" -C >>"$TS_OUTPUT" 2>>"$TS_ERRLOG"
 
+# A stepped trim has to cover the same range as one unbounded FITRIM call,
+# including the part of the filesystem behind statfs f_blocks. ext4 skips
+# block groups it already trimmed until the next mount, so remount before
+# each run and compare the totals.
+#
+# The step must be a whole multiple of the ext4 block group, which is
+# 8 * blocksize * blocksize = 8MiB for the 1KiB blocks used here. ext4 marks a
+# group trimmed only when an iteration starts at the group boundary, so an
+# iteration that splits a group makes the kernel trim and report the same free
+# space again, and the two totals then differ by a layout-dependent amount.
+fstrim_remount() {
+	"$TS_CMD_UMOUNT" "$TS_MOUNTPOINT" >/dev/null 2>>"$TS_ERRLOG"
+	"$TS_CMD_MOUNT" "$DEV" "$TS_MOUNTPOINT" >/dev/null 2>>"$TS_ERRLOG"
+	ts_is_mounted "$DEV" || ts_die "could not remount $DEV"
+}
+
+fstrim_total() {
+	"$TS_CMD_FSTRIM" "$@" --verbose "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG" |
+		sed 's/.*(\([0-9]*\) bytes).*/\1/'
+}
+
+fstrim_remount; UNSTEPPED=$(fstrim_total)
+fstrim_remount; STEPPED=$(fstrim_total --step 8M)
+if [ -z "$UNSTEPPED" ] || [ "$UNSTEPPED" != "$STEPPED" ]; then
+	"$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
+	ts_die "stepped trim discarded ${STEPPED:-0} bytes, unstepped ${UNSTEPPED:-0}"
+fi
 
 "$TS_CMD_UMOUNT" --force "$TS_MOUNTPOINT" 2>>"$TS_ERRLOG"
 sed -i "s@$TS_MOUNTPOINT@<mountpoint>@" "$TS_OUTPUT"
