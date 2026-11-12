@@ -1352,7 +1352,8 @@ int main(int argc, char **argv)
 	case COLUMN_MODE_TABLE:
 		if (ctl.tab && scols_table_get_nlines(ctl.tab)) {
 			modify_table(&ctl);
-			eval = scols_print_table(ctl.tab);
+			if (scols_print_table(ctl.tab) != 0)
+				eval = EXIT_FAILURE;
 
 			scols_unref_table(ctl.tab);
 			if (ctl.tab_colnames)
