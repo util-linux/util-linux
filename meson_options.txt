@@ -39,6 +39,9 @@ option('fuse',           type : 'feature',
 
 # enable building of various programs and features ("build-" prefix)
 
+option('build-all-programs', type : 'feature',
+       description : 'build everything or nothing by default')
+
 option('build-python', type : 'feature', value : 'auto',
        description : 'build python extension module')
 option('python', type : 'string', value : 'python3',
@@ -68,6 +71,10 @@ option('build-swapon', type : 'feature',
        description : 'build swapon')
 option('build-swapoff', type : 'feature',
        description : 'build swapoff')
+option('build-mkswap', type : 'feature',
+       description : 'build mkswap')
+option('build-swaplabel', type : 'feature',
+       description : 'build swaplabel')
 option('build-chcpu', type : 'feature',
        description : 'build chcpu')
 option('build-losetup', type : 'feature',
@@ -94,11 +101,21 @@ option('build-colcrt', type : 'feature',
        description : 'build colcrt')
 option('build-colrm', type : 'feature',
        description : 'build colrm')
+option('build-column', type : 'feature',
+       description : 'build column')
 option('build-rev', type : 'feature',
        description : 'build rev')
 
+option('build-uuidgen', type : 'feature',
+       description : 'build uuidgen')
+option('build-uuidparse', type : 'feature',
+       description : 'build uuidparse')
 option('build-uuidd', type : 'feature',
        description : 'build the uuid daemon')
+option('build-blkid', type : 'feature',
+       description : 'build blkid')
+option('build-lastlog2', type : 'feature',
+       description : 'build lastlog2')
 
 option('build-choom', type : 'feature',
        description : 'build choom')
@@ -130,7 +147,7 @@ option('build-bfs', type : 'feature',
        description : 'build mkfs.bfs')
 option('build-minix', type : 'feature',
        description : 'build fsck.minix, mkfs.minix')
-option('build-fdformat', type : 'feature', value : 'disabled',
+option('build-fdformat', type : 'feature',
        description : 'build fdformat')
 option('build-blockdev', type : 'feature',
        description : 'build blockdev')
@@ -170,6 +187,8 @@ option('build-lsmem', type : 'feature',
        description : 'build lsmem')
 option('build-lsirq', type : 'feature',
        description : 'build lsirq')
+option('build-lsipc', type : 'feature',
+       description : 'build lsipc')
 option('build-irqtop', type : 'feature',
        description : 'build irqtop')
 option('build-chmem', type : 'feature',
@@ -182,6 +201,14 @@ option('build-ipcs', type : 'feature',
        description : 'build ipcs')
 option('build-rfkill', type : 'feature',
        description : 'build rfkill')
+option('build-renice', type : 'feature',
+       description : 'build renice')
+option('build-setpgid', type : 'feature',
+       description : 'build setpgid')
+option('build-setsid', type : 'feature',
+       description : 'build setsid')
+option('build-readprofile', type : 'feature',
+       description : 'build readprofile')
 option('build-tunelp', type : 'feature',
        description : 'build tunelp')
 option('build-fstrim', type : 'feature',
@@ -216,7 +243,7 @@ option('build-line', type : 'feature',
        description : 'build line')
 option('build-mesg', type : 'feature',
        description : 'build mesg')
-option('build-raw', type : 'feature', value : 'disabled',
+option('build-raw', type : 'feature',
        description : 'build raw')
 option('build-rename', type : 'feature',
        description : 'build rename')
