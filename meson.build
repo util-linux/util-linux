@@ -363,6 +363,24 @@ foreach curses_libs : [lib_slang, lib_ncursesw, lib_ncurses]
   endif
 endforeach
 
+# tinfo or ncurses are optional
+if lib_tinfo.found()
+  tcolors_deps = [lib_tinfo]
+elif lib_ncursesw.found()
+  tcolors_deps = [lib_ncursesw]
+elif lib_ncurses.found()
+  tcolors_deps = [lib_ncurses]
+else
+  tcolors_deps = []
+endif
+
+if lib_ncursesw.found()
+  ncurses_libs = lib_ncursesw
+else
+  ncurses_libs = lib_ncurses
+endif
+terminfo_libs = lib_tinfo.found() and ncurses_libs.found() ? lib_tinfo : ncurses_libs
+
 lib_z = dependency(
   'zlib',
   disabler : true,
@@ -1521,8 +1539,8 @@ exe = executable(
   pg_sources,
   link_with : lib_common,
   include_directories : includes,
-  dependencies : [lib_tinfo,
-                  curses_libs],
+  dependencies : [ncurses_libs,
+                  terminfo_libs],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1537,8 +1555,7 @@ exe = executable(
   'ul',
   ul_sources,
   include_directories : includes,
-  dependencies : [lib_tinfo,
-                  curses_libs],
+  dependencies : [terminfo_libs],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -1556,7 +1573,7 @@ exe = executable(
   more_sources,
   link_with : [lib_common],
   include_directories : includes,
-  dependencies : [curses_libs,
+  dependencies : [terminfo_libs,
 		  lib_magic],
   install : opt,
   build_by_default : opt)
@@ -1566,7 +1583,7 @@ exe2 = executable(
   link_with : [lib_common],
   include_directories : includes,
   c_args : '-DTEST_PROGRAM',
-  dependencies : [curses_libs,
+  dependencies : [terminfo_libs,
 		  lib_magic],
   build_by_default : opt and program_tests)
 if opt and not is_disabler(exe)
@@ -2938,7 +2955,7 @@ exe = executable(
   setterm_sources,
   include_directories : includes,
   link_with : [lib_common],
-  dependencies : [curses_libs],
+  dependencies : [terminfo_libs],
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -3057,7 +3074,7 @@ exe = executable(
   include_directories : includes,
   link_with : [lib_common,
                lib_tcolors],
-  dependencies : [curses_libs],
+  dependencies : tcolors_deps,
   install_dir : usrbin_exec_dir,
   install : opt,
   build_by_default : opt)
@@ -3527,7 +3544,7 @@ exe = executable(
   c_args : '-DTEST_CAL',
   link_with : [lib_common,
                lib_tcolors],
-  dependencies : [curses_libs],
+  dependencies : tcolors_deps,
   build_by_default: program_tests)
 if not is_disabler(exe)
   exes += exe
