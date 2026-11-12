@@ -45,7 +45,7 @@ Children will have a distinct set of PID-to-process mappings from their parent. 
 The process will have a virtualized view of _/proc/self/cgroup_, and new cgroup mounts will be rooted at the namespace cgroup root. For further details, see *cgroup_namespaces*(7).
 
 *user namespace*::
-The process will have a distinct set of UIDs, GIDs and capabilities. For further details, see *user_namespaces*(7).
+The process will have a distinct set of UIDs, GIDs and capabilities. This namespace is often used by unprivileged users to gain the capabilities needed to create other namespaces. For further details, see *user_namespaces*(7).
 
 *time namespace*::
 The process can have a distinct view of *CLOCK_MONOTONIC* and/or *CLOCK_BOOTTIME* which can be changed using _/proc/self/timens_offsets_. For further details, see *time_namespaces*(7).
