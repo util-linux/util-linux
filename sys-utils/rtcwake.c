@@ -159,9 +159,25 @@ static int is_wakeup_enabled(const char *devname)
 	return strcmp(buf, "enabled") == 0;
 }
 
-static int get_basetimes(struct rtcwake_control *ctl, int fd)
+/* Convert rtc_time to normal arithmetic-friendly form. */
+static time_t rtc_tm_to_time(const struct rtc_time *rtc)
 {
 	struct tm tm = { 0 };
+
+	tm.tm_sec = rtc->tm_sec;
+	tm.tm_min = rtc->tm_min;
+	tm.tm_hour = rtc->tm_hour;
+	tm.tm_mday = rtc->tm_mday;
+	tm.tm_mon = rtc->tm_mon;
+	tm.tm_year = rtc->tm_year;
+	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
+
+	return mktime(&tm);
+}
+
+static int get_basetimes(struct rtcwake_control *ctl, int fd)
+{
+	struct tm tm;
 	struct rtc_time	rtc;
 
 	/* This process works in RTC time, except when working
@@ -186,18 +202,7 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		warn(_("read system time failed"));
 		return -1;
 	}
-	/* Convert rtc_time to normal arithmetic-friendly form,
-	 * updating tm.tm_wday as used by asctime().
-	 */
-	tm.tm_sec = rtc.tm_sec;
-	tm.tm_min = rtc.tm_min;
-	tm.tm_hour = rtc.tm_hour;
-	tm.tm_mday = rtc.tm_mday;
-	tm.tm_mon = rtc.tm_mon;
-	tm.tm_year = rtc.tm_year;
-	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
-
-	ctl->rtc_time = mktime(&tm);
+	ctl->rtc_time = rtc_tm_to_time(&rtc);
 	if (ctl->rtc_time == (time_t)-1) {
 		warn(_("convert rtc time failed"));
 		return -1;
@@ -255,6 +260,88 @@ static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 	return 0;
 }
 
+/*
+ * Read the wake alarm back from the RTC and compare it with the RTC time.
+ * The kernel rounds the alarm time down to the alarm resolution of the RTC
+ * (one minute on some RTCs). An alarm that ends up at or before the current
+ * time is never armed, although setting it succeeded.
+ *
+ * Returns 1 if the alarm is enabled and lies in the future, 0 if not, and -1
+ * if unknown. @when is set to the alarm time reported by the RTC, or to -1 if
+ * the RTC reports none.
+ */
+static int get_alarm_status(int fd, time_t *when)
+{
+	struct rtc_wkalrm wake;
+	struct rtc_time	rtc;
+	time_t now;
+
+	*when = (time_t)-1;
+
+	if (ioctl(fd, RTC_RD_TIME, &rtc) < 0) {
+		warn(_("read rtc time failed"));
+		return -1;
+	}
+	if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
+		warn(_("read rtc alarm failed"));
+		return -1;
+	}
+
+	now = rtc_tm_to_time(&rtc);
+	if (now == (time_t)-1) {
+		warn(_("convert rtc time failed"));
+		return -1;
+	}
+	if (wake.time.tm_year != -1)
+		*when = rtc_tm_to_time(&wake.time);
+
+	return wake.enabled && *when != (time_t)-1 && *when > now;
+}
+
+/*
+ * Check that the alarm set by setup_alarm() for @alarm is armed. Returns -1
+ * if not. An unknown status is not an error: before Linux 6.3, RTC_WKALM_RD
+ * fails on RTCs without a read_alarm callback.
+ */
+static int check_alarm_armed(const struct rtcwake_control *ctl,
+			     const char *devname, int fd, time_t *alarm)
+{
+	time_t when;
+	int rc = get_alarm_status(fd, &when);
+
+	if (rc < 0)
+		return 0;
+	if (rc == 0 && when != (time_t)-1 && when < *alarm) {
+		char s[CTIME_BUFSIZ];
+		time_t sys_when = when + ctl->sys_time - ctl->rtc_time;
+
+		ctime_r(&sys_when, s);
+		s[strcspn(s, "\n")] = '\0';
+		warnx(_("%s: wake alarm not armed: the RTC rounded it down to %s, which has already passed"),
+				devname, s);
+		return -1;
+	}
+	if (rc == 0) {
+		warnx(_("%s: wake alarm not armed: the alarm time has already passed"),
+				devname);
+		return -1;
+	}
+	return 0;
+}
+
+/* The last check before the system goes to sleep or powers off. */
+static int check_alarm_pending(const char *devname, int fd)
+{
+	time_t when;
+
+	if (get_alarm_status(fd, &when) == 0) {
+		warnx(_("%s: wake alarm expired before suspend, not suspending"),
+				devname);
+		return -1;
+	}
+	return 0;
+}
+
 static char **get_sys_power_states(struct rtcwake_control *ctl)
 {
 	int fd = -1;
@@ -296,24 +383,29 @@ static void wait_stdin(struct rtcwake_control *ctl)
 	}
 }
 
-static void suspend_system(struct rtcwake_control *ctl)
+static int suspend_system(struct rtcwake_control *ctl, const char *devname, int fd)
 {
 	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w" UL_CLOEXECSTR);
 
 	if (!f) {
 		warn(_("cannot open %s"), SYS_POWER_STATE_PATH);
-		return;
+		return 0;
 	}
 
 	if (!ctl->dryrun) {
 		if (isatty(STDIN_FILENO))
 			wait_stdin(ctl);
+		if (check_alarm_pending(devname, fd) < 0) {
+			fclose(f);
+			return -1;
+		}
 		fprintf(f, "%s\n", ctl->mode_str);
 		fflush(f);
 	}
 	/* this executes after wake from suspend */
 	if (close_stream(f))
 		errx(EXIT_FAILURE, _("write error"));
+	return 0;
 }
 
 static int read_clock_mode(struct rtcwake_control *ctl)
@@ -349,7 +441,6 @@ static int read_clock_mode(struct rtcwake_control *ctl)
 static int print_alarm(struct rtcwake_control *ctl, int fd)
 {
 	struct rtc_wkalrm wake;
-	struct tm tm = { 0 };
 	time_t alarm;
 	char s[CTIME_BUFSIZ];
 
@@ -362,15 +453,7 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 		printf(_("alarm: off\n"));
 		return 0;
 	}
-	tm.tm_sec = wake.time.tm_sec;
-	tm.tm_min = wake.time.tm_min;
-	tm.tm_hour = wake.time.tm_hour;
-	tm.tm_mday = wake.time.tm_mday;
-	tm.tm_mon = wake.time.tm_mon;
-	tm.tm_year = wake.time.tm_year;
-	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
-
-	alarm = mktime(&tm);
+	alarm = rtc_tm_to_time(&wake.time);
 	if (alarm == (time_t)-1) {
 		warn(_("convert time failed"));
 		return -1;
@@ -584,6 +667,10 @@ int main(int argc, char **argv)
 
 		if (setup_alarm(&ctl, fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
+		if (!ctl.dryrun && check_alarm_armed(&ctl, devname, fd, &alarm) < 0) {
+			rc = EXIT_FAILURE;
+			goto disable_alarm;
+		}
 
 		if (suspend == NO_MODE || suspend == ON_MODE) {
 			char s[CTIME_BUFSIZ];
@@ -631,6 +718,10 @@ int main(int argc, char **argv)
 				printf(_("suspend mode: off; executing %s\n"),
 						arg[0]);
 			if (!ctl.dryrun) {
+				if (check_alarm_pending(devname, fd) < 0) {
+					rc = EXIT_FAILURE;
+					break;
+				}
 				execv(arg[0], arg);
 				warn(_("failed to execute %s"), arg[0]);
 				rc = EX_EXEC_ENOENT;
@@ -677,9 +768,11 @@ int main(int argc, char **argv)
 		if (ctl.verbose)
 			printf(_("suspend mode: %s; suspending system\n"), ctl.mode_str);
 		sync();
-		suspend_system(&ctl);
+		if (suspend_system(&ctl, devname, fd) < 0)
+			rc = EXIT_FAILURE;
 	}
 
+disable_alarm:
 	if (!ctl.dryrun) {
 		struct rtc_wkalrm wake;
 
