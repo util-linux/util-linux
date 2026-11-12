@@ -1457,7 +1457,6 @@ static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
 
 		if (nchunks == nalloc) {
 			size_t new_nalloc;
-			struct metadata_chunk *tmp;
 
 			if (nalloc == 0)
 				new_nalloc = 16;
@@ -1472,20 +1471,11 @@ static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
 				goto done;
 			}
 
-			tmp = realloc(chunks, new_nalloc * sizeof(*chunks));
-			if (!tmp) {
-				rc = -ENOMEM;
-				goto done;
-			}
-			chunks = tmp;
+			chunks = xrealloc(chunks, new_nalloc * sizeof(*chunks));
 			nalloc = new_nalloc;
 		}
 
-		chunks[nchunks].name = m_name ? strdup(m_name) : NULL;
-		if (m_name && !chunks[nchunks].name) {
-			rc = -ENOMEM;
-			goto done;
-		}
+		chunks[nchunks].name = m_name ? xstrdup(m_name) : NULL;
 		chunks[nchunks].offset = m_offset;
 		chunks[nchunks].size = m_size;
 		nchunks++;
