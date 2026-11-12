@@ -119,6 +119,7 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 		cxt->display_details =	parent->display_details;
 		cxt->display_in_cyl_units = parent->display_in_cyl_units;
 		cxt->protect_bootbits = parent->protect_bootbits;
+		cxt->no_collisions = parent->no_collisions;
 	}
 
 	free(cxt->dev_model);
@@ -422,6 +423,46 @@ int fdisk_disable_dialogs(struct fdisk_context *cxt, int disable)
 int fdisk_has_dialogs(struct fdisk_context *cxt)
 {
 	return cxt->no_disalogs == 0;
+}
+
+/**
+ * fdisk_disable_collisions:
+ * @cxt: fdisk context
+ * @disable: 1 or 0
+ *
+ * The library checks for collisions (foreign partition tables, filesystems and
+ * RAID signatures) on the device when it is assigned to the context. This
+ * function allows to disable the check.
+ *
+ * Returns: 0 on success, < 0 on error.
+ *
+ * Since: 2.43
+ */
+int fdisk_disable_collisions(struct fdisk_context *cxt, int disable)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->no_collisions = disable ? 1 : 0;
+	return 0;
+}
+
+/**
+ * fdisk_has_collisions
+ * @cxt: fdisk context
+ *
+ * See fdisk_disable_collisions().
+ *
+ * Returns: 1 if collision detection is enabled (default), or 0.
+ *
+ * Since: 2.43
+ */
+int fdisk_has_collisions(struct fdisk_context *cxt)
+{
+	if (!cxt)
+		return 0;
+
+	return cxt->no_collisions == 0;
 }
 
 /**

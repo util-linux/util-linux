@@ -167,6 +167,9 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
+	if (cxt->no_collisions)
+		return 0;
+
 	DBG_OBJ(WIPE, cxt, ul_debug("wipe check: initialize libblkid prober"));
 
 	pr = blkid_new_probe();
