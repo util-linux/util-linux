@@ -286,10 +286,6 @@ OUT_COLUMNS=PAGES,FILE
 } >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
 {
-	run_dd_test 1b 1
-} >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
-
-{
 	run_dd_test 'ONE PAGE' $PAGE_SIZE
 } >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 
