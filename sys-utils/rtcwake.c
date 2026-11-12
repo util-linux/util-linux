@@ -664,7 +664,7 @@ int main(int argc, char **argv)
 		if (setup_alarm(&ctl, fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
 		if (!ctl.dryrun)
-			check_alarm_armed(devname, fd, alarm);
+			alarm = check_alarm_armed(devname, fd, alarm);
 
 		if (suspend == NO_MODE || suspend == ON_MODE) {
 			char s[CTIME_BUFSIZ];
