@@ -1,0 +1,2 @@
+unshare: unshare failed: Operation not permitted
+Hint: unprivileged users need to create a user namespace first; try --user
