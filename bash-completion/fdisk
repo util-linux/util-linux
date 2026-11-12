@@ -77,6 +77,7 @@ _fdisk_module()
 				--list
 				--list-details
 				--noauto-pt
+				--nocheck-collisions
 				--lock
 				--output
 				--type

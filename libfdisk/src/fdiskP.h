@@ -401,6 +401,7 @@ struct fdisk_context {
 		     display_details : 1,	/* expert display mode */
 		     protect_bootbits : 1,	/* don't zeroize first sector */
 		     pt_collision : 1,		/* another PT detected by libblkid */
+		     no_collisions : 1,		/* disable check for collisions */
 		     no_disalogs : 1,		/* disable dialog-driven partititoning */
 		     dev_model_probed : 1,	/* tried to read from sys */
 		     is_priv : 1,		/* open by libfdisk */
