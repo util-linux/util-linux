@@ -212,10 +212,10 @@ Preserve whitespace-only lines in the input. The default is to ignore all empty 
 Specify the column to use for a tree-like output. Note that the circular dependencies and other anomalies in child and parent relation are silently ignored.
 
 *-i, --tree-id* _column_::
-Specify the column that contains each line's unique child ID for a child-parent relation.
+Specify the column that contains each line's unique child ID for a child-parent relation. If more lines have the same ID, the children are added to the first of them.
 
 *-p, --tree-parent* _column_::
-Specify the column that contains each line's parent ID for a child-parent relation.
+Specify the column that contains each line's parent ID for a child-parent relation. An empty parent ID never matches, so the line stays at the top level even if some line has an empty ID.
 
 *-x, --fillrows*::
 Fill rows before filling columns.

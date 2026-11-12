@@ -1,0 +1,11 @@
+TREE             ID PARENT STRINGS
+aaaa            001      0 qqqqqqqqqqqqqqqqqX
+|-bbb            02      1 dddddddddddddX
+| |-ee            5      2 ddddddddddddddddddddddddddX
+| `-ffff          6      2 jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjX
+|-ccccc           3      1 ffffffffffffffffffffffffffffffffffffffffX
+| `-gggggg       07      3 mmmmmmmmmmmmmmmmmmmX
+|   |-hhh         8      7 lllllllllllllllllllllllllllllllllllllX
+|   | `-iiiiii    9      8 yyyyyyyyyyyyyyyyyyyyyyyyyyyyX
+|   `-jj        010      7 pppppppppX
+`-dddddd       0004      1 ssssssssssX
