@@ -121,6 +121,14 @@ Limit access to abstract unix sockets to those created inside the Landlock domai
 +
 *setpriv --landlock-access scope:abstract-unix-socket*
 +
+Deny creating, joining, or obtaining references to namespaces of any type:
++
+*setpriv --landlock-access permission:namespace-use*
++
+Deny the use of all Linux capabilities, even those held by the process:
++
+*setpriv --landlock-access permission:capability-use*
++
 For a complete set of supported access categories use *setpriv --help*.
 
 *--landlock-rule* _rule_::
@@ -138,6 +146,17 @@ For example, to grant the file read right on files under */boot*:
 To allow connect to TCP port 443:
 +
 *--landlock-rule net-port:connect-tcp:443*
++
+Namespace rules take a comma-separated list of namespace types instead (*mnt*, *net*,
+*pid*, *uts*, *ipc*, *user*, *cgroup*, *time*, or *all*). To allow creating user and network
+namespaces:
++
+*--landlock-rule namespace:user,net*
++
+Capability rules take a comma-separated list of capability names, using the same names
+as *--inh-caps*. To allow binding to privileged ports:
++
+*--landlock-rule capability:net_bind_service*
 
 *--landlock-support*::
 List the Landlock ABI version supported by the running kernel, together with the access

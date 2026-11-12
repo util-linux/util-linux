@@ -181,9 +181,39 @@ _setpriv_module()
 					compopt -o nospace
 					_setpriv_landlock_rights "$1" net 'net-port:' "${cur#net-port:}"
 					;;
+				namespace:*)
+					local prefix realcur NS_ALL NS WORD
+					realcur="${cur#namespace:}"
+					realcur="${realcur##*,}"
+					prefix="${cur%"$realcur"}"
+					NS_ALL="all mnt net pid uts ipc user cgroup time"
+					for WORD in $NS_ALL; do
+						if ! [[ $prefix == *"$WORD"* ]]; then
+							NS="$WORD ${NS:-""}"
+						fi
+					done
+					compopt -o nospace
+					COMPREPLY=( $(compgen -P "$prefix" -W "$NS" -- "$realcur") )
+					_setpriv_ltrim_colon_completions "$prefix$realcur"
+					;;
+				capability:*)
+					local prefix realcur CAPS_ALL CAPS WORD
+					realcur="${cur#capability:}"
+					realcur="${realcur##*,}"
+					prefix="${cur%"$realcur"}"
+					CAPS_ALL="all $($1 --list-caps)"
+					for WORD in $CAPS_ALL; do
+						if ! [[ $prefix == *"$WORD"* ]]; then
+							CAPS="$WORD ${CAPS:-""}"
+						fi
+					done
+					compopt -o nospace
+					COMPREPLY=( $(compgen -P "$prefix" -W "$CAPS" -- "$realcur") )
+					_setpriv_ltrim_colon_completions "$prefix$realcur"
+					;;
 				*)
 					compopt -o nospace
-					COMPREPLY=( $(compgen -W "path-beneath: net-port:" -- $cur) )
+					COMPREPLY=( $(compgen -W "path-beneath: net-port: namespace: capability:" -- $cur) )
 					;;
 			esac
 			return 0
