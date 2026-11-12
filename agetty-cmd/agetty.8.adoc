@@ -185,6 +185,18 @@ Run login with this priority.
 *--reload*::
 Ask all running *agetty* instances to reload and update their displayed prompts, if the user has not yet commenced logging in. After doing so the command will exit. This feature might be unsupported on systems without Linux *inotify*(7).
 
+*--set-term* _list_::
+Set attributes of the terminal. The _list_ is a comma-separated list of _key_[=_value_] items. The following items are supported:
++
+* *blink*=_on_|_off_, *bold*=_on_|_off_, *half*=_on_|_off_, *underline*=_on_|_off_ and *reverse*=_on_|_off_ turn the corresponding text attribute on or off.
+* *cursor*=_on_|_off_ shows or hides the cursor.
+* *fg*=_color_ and *bg*=_color_ set the foreground or background color. The _color_ is one of *black*, *red*, *green*, *yellow*, *blue*, *magenta*, *cyan*, *white* or *default*.
+* *blank*=_minutes_ sets the inactivity period (0-60 minutes) after which the screen is blanked. This is supported on virtual consoles only.
+* *reset* resets all text attributes.
+
++
+For example, *--set-term bg=red,blank=30,blink=off* sets a red background, blanks the screen after 30 minutes of inactivity and turns blinking off.
+
 *--help*::
 Display help text and exit.
 
