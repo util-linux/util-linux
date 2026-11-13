@@ -203,6 +203,7 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
 	struct timeval	boot_time;	/* system boot time */
+	struct timeval	wall_time;	/* wall clock for sanity checks */
 	usec_t		suspended_time;	/* time spent in suspended state */
 
 	int		action;		/* SYSLOG_ACTION_* */
@@ -248,8 +249,10 @@ struct dmesg_control {
 			pager,		/* pipe output into a pager */
 			color,		/* colorize messages */
 			json,		/* JSON output */
-			force_prefix;	/* force timestamp and decode prefix
+			force_prefix,	/* force timestamp and decode prefix
 					   on each line */
+			time_check_initialized,	/* wall_time has a sample */
+			time_warning;	/* invalid time warning was emitted */
 	int		indent;		/* due to timestamps if newline */
 	size_t          caller_id_size;	/* PRINTK_CALLERID max field size */
 };
@@ -1004,6 +1007,49 @@ static usec_t record_time(struct dmesg_control *ctl, struct dmesg_record *rec)
 		timeval_to_usec(&rec->tv);
 }
 
+static void warn_if_invalid_wall_time(struct dmesg_control *ctl,
+				struct dmesg_record *rec)
+{
+	const usec_t tolerance = USEC_PER_SEC;
+	struct timeval now;
+	usec_t timestamp, limit, boot_time;
+	bool invalid = 0;
+
+	if (ctl->time_warning ||
+	    (!is_time_fmt(ctl, DMESG_TIMEFTM_CTIME) &&
+	     !is_time_fmt(ctl, DMESG_TIMEFTM_CTIME_DELTA) &&
+	     !is_time_fmt(ctl, DMESG_TIMEFTM_ISO8601)))
+		return;
+
+	if (!ctl->time_check_initialized) {
+		if (gettimeofday(&ctl->wall_time, NULL) != 0)
+			return;
+		ctl->time_check_initialized = 1;
+	}
+
+	timestamp = record_time(ctl, rec);
+	boot_time = timeval_to_usec(&ctl->boot_time) + ctl->suspended_time;
+	if (timestamp < boot_time && boot_time - timestamp > tolerance)
+		invalid = 1;
+
+	limit = timeval_to_usec(&ctl->wall_time) + tolerance;
+	if (!invalid && timestamp > limit) {
+		/* Refresh before warning: a large buffer or --follow may take long
+		 * enough for newer records to pass the original snapshot. */
+		if (gettimeofday(&now, NULL) != 0)
+			return;
+		ctl->wall_time = now;
+		limit = timeval_to_usec(&ctl->wall_time) + tolerance;
+		invalid = timestamp > limit;
+	}
+	if (!invalid)
+		return;
+
+	ctl->time_warning = 1;
+	warnx(_("warning: wall-clock timestamp is outside the plausible range; "
+	       "suspend/resume or a clock change may have made it unreliable"));
+}
+
 static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
 	if (ctl->fltr_lev && (rec->facility < 0 ||
@@ -1165,6 +1211,8 @@ static void print_record(struct dmesg_control *ctl,
 			putchar('\n');
 		return;
 	}
+
+	warn_if_invalid_wall_time(ctl, rec);
 
 	delta = record_count_delta(ctl, rec);
 
