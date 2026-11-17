@@ -560,9 +560,9 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 	while (IS_EXTENDED (p->sys_ind)) {
 		fdisk_sector_t next;
 
-		if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
+		if (cxt->label->nparts_max >= ARRAY_SIZE(l->ptes)) {
 			/* This is not a Linux restriction, but
-			   this program uses arrays of size MAXIMUM_PARTS.
+			   this program uses arrays of a fixed size.
 			   Do not try to `improve' this test. */
 			struct pte *pre = self_pte(cxt,
 						cxt->label->nparts_max - 1);
@@ -1913,7 +1913,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 
 	l = self_label(cxt);
 
-	if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
+	if (cxt->label->nparts_max >= ARRAY_SIZE(l->ptes)) {
 		fdisk_warnx(cxt, _("The maximum number of partitions has "
 				  "been created."));
 		return -EINVAL;
