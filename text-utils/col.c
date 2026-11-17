@@ -137,6 +137,10 @@ struct col_ctl {
 	struct col_alloc *alloc_root;	/* first of line allocations */
 	struct col_alloc *alloc_head;	/* latest line allocation */
 #endif
+	struct col_char *sorted;	/* sort buffer for flush_line() */
+	size_t sorted_size;
+	size_t *count;			/* count buffer for flush_line() */
+	size_t count_size;
 	bool	last_set,		/* char_set of last char printed */
 		compress_spaces,	/* if doing space -> tab conversion */
 		fine,			/* if `fine' resolution (half lines) */
@@ -230,39 +234,37 @@ static void flush_line(struct col_ctl *ctl, struct col_line *l)
 	size_t nchars = l->l_line_len, last_col = 0, this_col;
 
 	if (l->l_needs_sort) {
-		static struct col_char *sorted = NULL;
-		static size_t count_size = 0, *count = NULL, sorted_size = 0;
 		size_t i, tot;
 
 		/*
 		 * Do an O(n) sort on l->l_line by column being careful to
 		 * preserve the order of characters in the same column.
 		 */
-		if (sorted_size < l->l_lsize) {
-			sorted_size = l->l_lsize;
-			sorted = xreallocarray(sorted, sorted_size, sizeof(struct col_char));
+		if (ctl->sorted_size < l->l_lsize) {
+			ctl->sorted_size = l->l_lsize;
+			ctl->sorted = xreallocarray(ctl->sorted, ctl->sorted_size, sizeof(struct col_char));
 		}
-		if (count_size <= l->l_max_col) {
-			count_size = l->l_max_col + 1;
-			count = xreallocarray(count, count_size, sizeof(size_t));
+		if (ctl->count_size <= l->l_max_col) {
+			ctl->count_size = l->l_max_col + 1;
+			ctl->count = xreallocarray(ctl->count, ctl->count_size, sizeof(size_t));
 		}
-		memset(count, 0, sizeof(size_t) * l->l_max_col + 1);
+		memset(ctl->count, 0, sizeof(size_t) * l->l_max_col + 1);
 		for (i = nchars, c = l->l_line; c && 0 < i; i--, c++)
-			count[c->c_column]++;
+			ctl->count[c->c_column]++;
 
 		/*
 		 * calculate running total (shifted down by 1) to use as
 		 * indices into new line.
 		 */
 		for (tot = 0, i = 0; i <= l->l_max_col; i++) {
-			size_t save = count[i];
-			count[i] = tot;
+			size_t save = ctl->count[i];
+			ctl->count[i] = tot;
 			tot += save;
 		}
 
 		for (i = nchars, c = l->l_line; 0 < i; i--, c++)
-			sorted[count[c->c_column]++] = *c;
-		c = sorted;
+			ctl->sorted[ctl->count[c->c_column]++] = *c;
+		c = ctl->sorted;
 	} else
 		c = l->l_line;
 
@@ -697,6 +699,8 @@ int main(int argc, char **argv)
 	if (lns.max_line == 0 && lns.cur_col == 0) {
 #ifdef COL_DEALLOCATE_ON_EXIT
 		free_line_allocations(ctl.alloc_root);
+		free(ctl.sorted);
+		free(ctl.count);
 #endif
 		return EXIT_SUCCESS;	/* no lines, so just exit */
 	}
@@ -716,6 +720,8 @@ int main(int argc, char **argv)
 	flush_blanks(&ctl);
 #ifdef COL_DEALLOCATE_ON_EXIT
 	free_line_allocations(ctl.alloc_root);
+	free(ctl.sorted);
+	free(ctl.count);
 #endif
 	return ret;
 }
