@@ -120,4 +120,12 @@ check_bad_format '"%.2147483647s%.2147483647s"'
 check_bad_format '"%.99999999999999999999d"'
 ts_finalize_subtest
 
+# Regression test for emit_generic() OOB guard: custom format with an
+# explicit byte count (1/8) that exceeds the available data for the unit;
+# the rem-based guard prevents the read past valid data.
+ts_init_subtest "custom-bcnt"
+TS_EXPECTED+=$BE_EXT
+printf '\x01\x02\x03\x04' | $TS_CMD_HEXDUMP -f "$FILES/custom-bcnt.fmt" &> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_finalize

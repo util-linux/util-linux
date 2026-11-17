@@ -544,6 +544,11 @@ static void emit_generic(struct hexdump *hex, unsigned char *bp)
 					    && !(pr->flags&(F_TEXT|F_BPAD)))
 						bpad(pr);
 
+					if (pr->bcnt > rem && !(pr->flags & (F_TEXT|F_BPAD))) {
+						rem = -1;
+						break;
+					}
+
 					if (cnt == 1 && pr->nospace) {
 						savech = *pr->nospace;
 						*pr->nospace = '\0';
@@ -553,11 +558,9 @@ static void emit_generic(struct hexdump *hex, unsigned char *bp)
 						print(pr, bp);
 
 					address += pr->bcnt;
-
 					rem -= pr->bcnt;
 					if (rem < 0)
 						break;
-
 					bp += pr->bcnt;
 				}
 				--cnt;
