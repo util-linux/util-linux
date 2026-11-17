@@ -456,6 +456,8 @@ extern void scols_ref_filter(struct libscols_filter *fltr);
 extern void scols_unref_filter(struct libscols_filter *fltr);
 extern int scols_dump_filter(struct libscols_filter *fltr, FILE *out);
 extern const char *scols_filter_get_errmsg(struct libscols_filter *fltr);
+extern int scols_filter_set_max_exprsz(struct libscols_filter *fltr, size_t sz);
+extern size_t scols_filter_get_max_exprsz(struct libscols_filter *fltr);
 
 extern int scols_line_apply_filter(struct libscols_line *ln,
 			struct libscols_filter *fltr, int *status);

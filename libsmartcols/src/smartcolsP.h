@@ -561,10 +561,12 @@ struct libscols_filter {
 	struct list_head counters;
 
 	size_t parse_nodes;
+	size_t max_exprsz;
+
 	unsigned int parsing : 1;
 };
 
-#define SCOLS_FILTER_MAX_EXPRSZ	1024
+#define SCOLS_FILTER_MAX_EXPRSZ	4096
 #define SCOLS_FILTER_MAX_NODES	256
 #define SCOLS_FILTER_MAX_REGSZ	256
 #define SCOLS_FILTER_MAX_REPCNT	1024

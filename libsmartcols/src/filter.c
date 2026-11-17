@@ -44,6 +44,7 @@ struct libscols_filter *scols_new_filter(const char *str)
 
 	DBG_OBJ(FLTR, fltr, ul_debug("alloc"));
 	fltr->refcount = 1;
+	fltr->max_exprsz = SCOLS_FILTER_MAX_EXPRSZ;
 	INIT_LIST_HEAD(&fltr->params);
 	INIT_LIST_HEAD(&fltr->counters);
 
@@ -193,7 +194,7 @@ int scols_filter_parse_string(struct libscols_filter *fltr, const char *str)
 	if (!str || !*str)
 		return 0;	/* empty filter is not error */
 
-	if (strlen(str) > SCOLS_FILTER_MAX_EXPRSZ)
+	if (strlen(str) > fltr->max_exprsz)
 		return -ERANGE;
 
 	fltr->src = fmemopen((void *) str, strlen(str), "r");
@@ -367,6 +368,41 @@ int scols_filter_set_filler_cb(struct libscols_filter *fltr,
 	fltr->filler_data = userdata;
 
 	return 0;
+}
+
+/**
+ * scols_filter_set_max_exprsz:
+ * @fltr: filter instance
+ * @sz: maximum expression size in bytes (0 restores the default)
+ *
+ * Overrides the compiled-in maximum filter expression size. The limit is
+ * checked by scols_filter_parse_string(). Setting @sz to 0 restores the
+ * default SCOLS_FILTER_MAX_EXPRSZ (currently 4096).
+ *
+ * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.42
+ */
+int scols_filter_set_max_exprsz(struct libscols_filter *fltr, size_t sz)
+{
+	if (!fltr)
+		return -EINVAL;
+
+	fltr->max_exprsz = sz ? sz : SCOLS_FILTER_MAX_EXPRSZ;
+	return 0;
+}
+
+/**
+ * scols_filter_get_max_exprsz:
+ * @fltr: filter instance
+ *
+ * Returns: current maximum expression size in bytes.
+ *
+ * Since: 2.42
+ */
+size_t scols_filter_get_max_exprsz(struct libscols_filter *fltr)
+{
+	return fltr ? fltr->max_exprsz : SCOLS_FILTER_MAX_EXPRSZ;
 }
 
 /**
