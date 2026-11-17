@@ -247,45 +247,43 @@ struct libscols_cell *scols_table_get_title(struct libscols_table *tb)
  * @cl: a pointer to a struct libscols_column instance
  *
  * Adds @cl to @tb's column list. The column cannot be shared between more
- * tables.
+ * tables. On error the table is left unchanged.
  *
  * Returns: 0, a negative number in case of an error.
  */
 int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
 {
-	struct libscols_iter itr;
-	struct libscols_line *ln;
-	int rc = 0;
-
 	if (!tb || !cl || cl->table)
 		return -EINVAL;
 
 	if (!list_empty(&cl->cl_columns))
 		return -EINVAL;
 
-	if (cl->flags & SCOLS_FL_TREE)
-		tb->ntreecols++;
+	/* Realloc line cell arrays; this is the only step that can fail.
+	 * Do it before linking the column so there is nothing to undo. */
+	if (!list_empty(&tb->tb_lines)) {
+		struct libscols_iter itr;
+		struct libscols_line *ln;
+		int rc;
+
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (scols_table_next_line(tb, &itr, &ln) == 0) {
+			rc = scols_line_alloc_cells(ln, tb->ncols + 1);
+			if (rc)
+				return rc;
+		}
+	}
 
 	DBG_OBJ(TAB, tb, ul_debug("add column"));
+
+	if (cl->flags & SCOLS_FL_TREE)
+		tb->ntreecols++;
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
 	cl->table = tb;
 	scols_ref_column(cl);
 
-	if (list_empty(&tb->tb_lines))
-		return 0;
-
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-
-	/* Realloc line cell arrays
-	 */
-	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		rc = scols_line_alloc_cells(ln, tb->ncols);
-		if (rc)
-			break;
-	}
-
-	return rc;
+	return 0;
 }
 
 /**
