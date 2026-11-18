@@ -31,8 +31,8 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libuuid_sym_path))
 	libuuid_link_args += ['-Wl,--version-script=@0@'.format(libuuid_sym_path)]
 endif
 
-lib_uuid = library(
-  'uuid',
+lib__uuid = static_library(
+  '_uuid',
   list_h,
   lib_uuid_sources,
   predefined_c,
@@ -42,13 +42,22 @@ lib_uuid = library(
   md5_c,
   sha1_c,
   include_directories : [dir_include, dir_libuuid],
+  dependencies : [socket_libs, thread_libs,
+                  build_libuuid ? [] : disabler()])
+
+lib_uuid = library(
+  'uuid',
+  link_whole : lib__uuid,
   link_depends : libuuid_link_depends,
   version : libuuid_version,
   link_args : libuuid_link_args,
-  dependencies : [socket_libs, thread_libs,
-                  build_libuuid ? [] : disabler()],
   install : build_libuuid)
 uuid_dep = declare_dependency(link_with: lib_uuid, include_directories: dir_libuuid)
+
+lib_uuid_static = static_library(
+  'uuid_static',
+  link_whole : lib__uuid,
+  install : false)
 
 if build_libuuid
   pkgconfig.generate(lib_uuid,

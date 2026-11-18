@@ -152,21 +152,29 @@ if cc.has_link_argument('-Wl,--version-script=@0@'.format(libblkid_sym_path))
 	libblkid_link_args += ['-Wl,--version-script=@0@'.format(libblkid_sym_path)]
 endif
 
-lib_blkid = both_libraries(
-  'blkid',
+lib__blkid = static_library(
+  '_blkid',
   list_h,
   lib_blkid_sources,
   econf_sources, common_dl_sources,
   include_directories : [dir_include, dir_libblkid],
+  dependencies : build_libblkid ? econf_deps : disabler())
+
+lib_blkid = library(
+  'blkid',
+  link_whole : lib__blkid,
   link_depends : libblkid_link_depends,
   version : libblkid_version,
   link_args : libblkid_link_args,
   link_with : lib_common,
-  dependencies : build_libblkid ? econf_deps : disabler(),
   install : build_libblkid)
 blkid_dep = declare_dependency(link_with: lib_blkid, include_directories: '.')
 
-lib_blkid_static = lib_blkid.get_static_lib()
+lib_blkid_static = static_library(
+  'blkid_static',
+  link_whole : lib__blkid,
+  link_with : lib_common,
+  install : false)
 blkid_static_dep = declare_dependency(link_with: lib_blkid_static, include_directories: '.')
 
 pkgconfig.generate(lib_blkid,
