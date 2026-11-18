@@ -1,0 +1,6 @@
+TARGET        SOURCE    FSTYPE OPTIONS
+/             /dev/sda1 ext4   rw,relatime
+|-/boot       tmpfs     tmpfs  rw,relatime
+| `-/boot/efi /dev/sda2 vfat   rw,relatime
+`-/home       tmpfs     tmpfs  rw,relatime
+rc=0

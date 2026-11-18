@@ -909,7 +909,6 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 			set_line_data(line, i, data, datasiz);
 	}
 
-	scols_line_set_userdata(line, fs);
 	return line;
 }
 
@@ -933,35 +932,99 @@ static struct libscols_line *add_tabdiff_line(struct libscols_table *table, stru
 	return line;
 }
 
+/* create_treenode() sets userdata of every added fs to the output table */
 static int has_line(struct libscols_table *table, struct libmnt_fs *fs)
 {
-	struct libscols_line *ln;
-	struct libscols_iter *itr;
-	int rc = 0;
+	return mnt_fs_get_userdata(fs) == table;
+}
 
-	itr = scols_new_iter(SCOLS_ITER_FORWARD);
-	if (!itr)
+/* entry of the tree index, see build_tree_index() */
+struct tree_entry {
+	struct libmnt_fs *fs;
+	int parent_id;
+	int id;
+	size_t pos;		/* position in the mount table */
+};
+
+static int tree_entry_cmp(const void *a, const void *b)
+{
+	const struct tree_entry *x = a, *y = b;
+
+	if (x->parent_id != y->parent_id)
+		return x->parent_id < y->parent_id ? -1 : 1;
+	if (x->id != y->id)
+		return x->id < y->id ? -1 : 1;
+	return x->pos < y->pos ? -1 : x->pos > y->pos;
+}
+
+/*
+ * Builds an index of all filesystems in @tb sorted by (parent ID, ID, table
+ * position), so create_treenode() does not have to rescan the table for
+ * children of every node. The index points to the filesystems in @tb, so it
+ * has to be rebuilt if @tb is modified afterwards.
+ *
+ * Like mnt_table_next_child_fs(), nothing has children unless @tb is
+ * mountinfo (the first entry is a kernel mount with a root), so the index
+ * stays empty for other tables.
+ */
+static int build_tree_index(struct libmnt_table *tb, struct findmnt *findmnt)
+{
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs = NULL;
+	size_t n = 0;
+
+	if (mnt_table_first_fs(tb, &fs) != 0
+	    || !mnt_fs_is_kernel(fs) || !mnt_fs_get_root(fs))
 		return 0;
 
-	while (scols_table_next_line(table, itr, &ln) == 0) {
-		if ((struct libmnt_fs *) scols_line_get_userdata(ln) == fs) {
-			rc = 1;
-			break;
-		}
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		return -ENOMEM;
 	}
+	fs = NULL;
 
-	scols_free_iter(itr);
-	return rc;
+	findmnt->tree_index = xcalloc(mnt_table_get_nents(tb) + 1,
+				      sizeof(*findmnt->tree_index));
+	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
+		struct tree_entry *r = &findmnt->tree_index[n];
+
+		r->fs = fs;
+		r->parent_id = mnt_fs_get_parent_id(fs);
+		r->id = mnt_fs_get_id(fs);
+		r->pos = n++;
+	}
+	mnt_free_iter(itr);
+
+	findmnt->ntree_index = n;
+	qsort(findmnt->tree_index, n, sizeof(*findmnt->tree_index), tree_entry_cmp);
+	return 0;
+}
+
+/* returns position of the first entry with @parent_id in the tree index */
+static size_t tree_index_lower_bound(struct findmnt *findmnt, int parent_id)
+{
+	size_t lo = 0, hi = findmnt->ntree_index;
+
+	while (lo < hi) {
+		size_t mid = lo + (hi - lo) / 2;
+
+		if (findmnt->tree_index[mid].parent_id < parent_id)
+			lo = mid + 1;
+		else
+			hi = mid;
+	}
+	return lo;
 }
 
 /* reads filesystems from @tb (libmount) and fills in @table (output table) */
 static int create_treenode(struct libscols_table *table, struct libmnt_table *tb,
 			   struct libmnt_fs *fs, struct libscols_line *parent_line, struct findmnt *findmnt)
 {
-	struct libmnt_fs *chld = NULL;
 	struct libmnt_iter *itr = NULL;
 	struct libscols_line *line;
-	int rc = -1, first = 0;
+	size_t i, start;
+	int rc = -1, first = 0, parent_id;
 
 	if (!fs) {
 		/* first call, get root FS */
@@ -973,10 +1036,6 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	} else if ((findmnt->flags & FL_SUBMOUNTS) && has_line(table, fs))
 		return 0;
 
-	itr = mnt_new_iter(MNT_ITER_FORWARD);
-	if (!itr)
-		goto leave;
-
 	if ((findmnt->flags & FL_SUBMOUNTS) || match_func(fs, findmnt)) {
 		bool filtered = false;
 		if (has_line(table, fs))
@@ -987,14 +1046,30 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 			line = parent_line;
 		else if (!line)
 			goto leave;
+		else
+			mnt_fs_set_userdata(fs, table);
 	} else
 		line = parent_line;
 
 	/*
 	 * add all children to the output table
 	 */
-	while (mnt_table_next_child_fs(tb, itr, fs, &chld) == 0) {
-		if (create_treenode(table, tb, chld, line, findmnt))
+	parent_id = mnt_fs_get_id(fs);
+	start = tree_index_lower_bound(findmnt, parent_id);
+
+	for (i = start; i < findmnt->ntree_index &&
+			findmnt->tree_index[i].parent_id == parent_id; i++) {
+		struct tree_entry *r = &findmnt->tree_index[i];
+
+		/*
+		 * Like mnt_table_next_child_fs(), ignore a self-parent and
+		 * entries with an already used ID
+		 */
+		if (r->id == parent_id ||
+		    (i > start && r->id == findmnt->tree_index[i - 1].id))
+			continue;
+
+		if (create_treenode(table, tb, r->fs, line, findmnt))
 			goto leave;
 	}
 	rc = 0;
@@ -1002,7 +1077,11 @@ static int create_treenode(struct libscols_table *table, struct libmnt_table *tb
 	/* make sure all entries are in the tree */
 	if (first && (size_t) mnt_table_get_nents(tb) >
 		     (size_t) scols_table_get_nlines(table)) {
-		mnt_reset_iter(itr, MNT_ITER_FORWARD);
+		itr = mnt_new_iter(MNT_ITER_FORWARD);
+		if (!itr) {
+			rc = -1;
+			goto leave;
+		}
 		fs = NULL;
 		while (mnt_table_next_fs(tb, itr, &fs) == 0) {
 			if (!has_line(table, fs) && match_func(fs, findmnt))
@@ -2248,6 +2327,13 @@ int main(int argc, char *argv[])
 	/*
 	 * Fill in data to the output table
 	 */
+	if (!(findmnt.flags & FL_POLL)
+	    && (findmnt.flags & (FL_TREE | FL_SUBMOUNTS))) {
+		rc = build_tree_index(tb, &findmnt);
+		if (rc)
+			goto leave;
+	}
+
 	if (findmnt.flags & FL_POLL) {
 		/* poll mode (accept the first tabfile only) */
 		rc = poll_table(tb, tabfiles ? *tabfiles : _PATH_PROC_MOUNTINFO, timeout, table, direction, &findmnt);
@@ -2287,6 +2373,7 @@ int main(int argc, char *argv[])
 	}
 leave:
 	scols_unref_table(table);
+	free(findmnt.tree_index);
 	scols_unref_filter(findmnt.filter);
 
 	mnt_unref_table(tb);
