@@ -222,7 +222,8 @@ endif
 if HAVE_PTY
 su_SOURCES += lib/pty-session.c \
       include/pty-session.h \
-      lib/monotonic.c
+      lib/monotonic.c \
+      lib/caputils.c
 su_LDADD += -lutil $(REALTIME_LIBS)
 endif
 endif # BUILD_SU
@@ -256,7 +257,8 @@ endif
 if HAVE_PTY
 runuser_SOURCES += lib/pty-session.c \
 	include/pty-session.h \
-	lib/monotonic.c
+	lib/monotonic.c \
+	lib/caputils.c
 runuser_LDADD += -lutil $(REALTIME_LIBS)
 endif
 endif # BUILD_RUNUSER

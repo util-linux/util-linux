@@ -16,6 +16,7 @@
 #include <sys/prctl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <limits.h>
 #include <errno.h>
 
@@ -122,6 +123,50 @@ void cap_permitted_to_ambient(void)
 		    && prctl(PR_CAP_AMBIENT, PR_CAP_AMBIENT_RAISE, cap, 0, 0) < 0)
 			err(EXIT_FAILURE, _("prctl(PR_CAP_AMBIENT) failed"));
 	}
+}
+
+/*
+ * Lower the effective capability set to the capabilities in @retain. The
+ * original capability sets are stored in @saved for cap_restore().
+ *
+ * Returns 0 on success, or a negative errno.
+ */
+int cap_lower_effective(struct __user_cap_data_struct saved[_LINUX_CAPABILITY_U32S_3],
+			uint64_t retain)
+{
+	struct __user_cap_header_struct header = {
+		.version = _LINUX_CAPABILITY_VERSION_3,
+		.pid = 0,
+	};
+	struct __user_cap_data_struct lowered[_LINUX_CAPABILITY_U32S_3];
+
+	if (capget(&header, saved) < 0)
+		return -errno;
+
+	memcpy(lowered, saved, sizeof(lowered));
+	lowered[0].effective &= (uint32_t) retain;
+	lowered[1].effective &= (uint32_t) (retain >> 32);
+
+	if (capset(&header, lowered) < 0)
+		return -errno;
+	return 0;
+}
+
+/*
+ * Restore the capability sets saved by cap_lower_effective().
+ *
+ * Returns 0 on success, or a negative errno.
+ */
+int cap_restore(struct __user_cap_data_struct saved[_LINUX_CAPABILITY_U32S_3])
+{
+	struct __user_cap_header_struct header = {
+		.version = _LINUX_CAPABILITY_VERSION_3,
+		.pid = 0,
+	};
+
+	if (capset(&header, saved) < 0)
+		return -errno;
+	return 0;
 }
 
 #ifdef TEST_PROGRAM_CAPUTILS
