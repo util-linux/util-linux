@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="log write errors"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_SCRIPT"
+[ -c /dev/full ] || ts_skip "/dev/full not found"
+
+check_write_error()
+{
+	local rc
+
+	ts_init_subtest "$1"
+	shift
+
+	$TS_CMD_SCRIPT "$@" </dev/null >/dev/null 2> "$TS_ERRLOG"
+	rc=$?
+	printf 'exit status %d\n' "$rc" >> "$TS_OUTPUT"
+	if grep -q 'write failed: /dev/full' "$TS_ERRLOG"; then
+		printf 'write error reported\n' >> "$TS_OUTPUT"
+	fi
+	: > "$TS_ERRLOG"
+	ts_finalize_subtest
+}
+
+check_write_error "raw" -q -c 'printf hello' /dev/full
+check_write_error "return" -q -e -c 'exit 42' /dev/full
+
+ts_init_subtest "flush-timing"
+$TS_CMD_SCRIPT -q -f -T /dev/full -O "$TS_OUTDIR/$TS_TESTNAME-log" -c 'printf hello' \
+	</dev/null >/dev/null 2> "$TS_ERRLOG"
+printf 'exit status %d\n' "$?" >> "$TS_OUTPUT"
+rm -f "$TS_OUTDIR/$TS_TESTNAME-log"
+ts_finalize_subtest
+
+ts_finalize
