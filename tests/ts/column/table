@@ -132,6 +132,15 @@ $TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
 		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest "tree-adversarial"
+$TS_CMD_COLUMN --table "$TS_SELF"/files/tree-adversarial \
+		--table-columns ID,PARENT,NAME \
+		--tree NAME \
+		--tree-id ID \
+		--tree-parent PARENT \
+		>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_init_subtest "json"
 $TS_CMD_COLUMN  --table "$TS_SELF"/files/mountinfo \
                 --table-name "mountinfo" \

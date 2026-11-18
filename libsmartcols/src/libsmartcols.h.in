@@ -398,6 +398,10 @@ extern void scols_table_remove_lines(struct libscols_table *tb);
 extern int scols_table_next_line(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_line **ln);
 extern struct libscols_line *scols_table_new_line(struct libscols_table *tb, struct libscols_line *parent);
 extern struct libscols_line *scols_table_get_line(struct libscols_table *tb, size_t n);
+extern int scols_table_make_tree(struct libscols_table *tb,
+			struct libscols_column *cl_id,
+			struct libscols_column *cl_parent,
+			int how);
 extern struct libscols_table *scols_copy_table(struct libscols_table *tb);
 extern int scols_table_set_symbols(struct libscols_table *tb, struct libscols_symbols *sy);
 extern int scols_table_set_default_symbols(struct libscols_table *tb);
