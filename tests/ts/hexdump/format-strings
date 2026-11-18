@@ -70,4 +70,22 @@ TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP --two-bytes-hex $FILES/ascii.in &> "$TS_OUTPUT"
 ts_finalize_subtest
 
+#malformed formats
+function check_bad_format {
+	$TS_CMD_HEXDUMP -e "$1" < /dev/null >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	echo "exit code: $?" >> "$TS_OUTPUT"
+}
+
+ts_init_subtest "incomplete-conversion"
+check_bad_format '1/4 "%"'
+check_bad_format '1/4 "%_"'
+check_bad_format '"%_"'
+ts_finalize_subtest
+
+ts_init_subtest "number-overflow"
+check_bad_format '4294967297/1 "%x"'
+check_bad_format '"%.2147483647s%.2147483647s"'
+check_bad_format '"%.99999999999999999999d"'
+ts_finalize_subtest
+
 ts_finalize
