@@ -273,8 +273,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, "%s", proFile);
 	close(proFd);
 
+	size_t entries = len / sizeof(*buf);
+
 	if (!optNative) {
-		int entries = len / sizeof(*buf);
 		int big = 0, small = 0;
 		unsigned *p;
 		size_t i;
@@ -359,7 +360,8 @@ int main(int argc, char **argv)
 				break;	/* only text is profiled */
 		}
 
-		if (indx >= len / sizeof(*buf))
+		if (indx >= entries
+		    || (step > 0 && (next_add - add0) / step > entries))
 			errx(EXIT_FAILURE,
 			     _("profile address out of range. Wrong map file?"));
 

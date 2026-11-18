@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="map file that does not match the profile"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_READPROFILE"
+
+ts_cd "$TS_OUTDIR"
+
+# one step entry plus two bins; all four bytes of each word are equal,
+# so the profile reads the same on big and little endian
+printf '\004\004\004\004\000\000\000\000\000\000\000\000' > profile
+
+# step = 0x04040404, so a symbol address k steps past _stext is
+# 0x1000 + k*0x04040404: k=1 -> 0x4041404, k=3 -> 0xc0c1c0c,
+# k=4 -> 0x10102010
+
+# func_a ends 3 steps past _stext, exactly at the last bin
+cat > map-matching <<EOF
+0000000000001000 T _stext
+0000000004041404 t func_a
+000000000c0c1c0c T _etext
+EOF
+
+# func_a ends 4 steps past _stext, one bin beyond the profile
+cat > map-beyond <<EOF
+0000000000001000 T _stext
+000000010102010 t func_a
+EOF
+
+cat > map-etext-beyond <<EOF
+0000000000001000 T _stext
+0000000004041404 t func_a
+000000010102010 T _etext
+EOF
+
+cat > map-before-stext <<EOF
+0000000000001000 T _stext
+0000000000000800 t func_a
+EOF
+
+ts_init_subtest "matching-map"
+$TS_CMD_READPROFILE -a --profile profile --mapfile map-matching >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "matching-map-counters"
+$TS_CMD_READPROFILE -a --counters --profile profile --mapfile map-matching >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "symbol-beyond-end"
+$TS_CMD_READPROFILE --profile profile --mapfile map-beyond >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "etext-beyond-end"
+$TS_CMD_READPROFILE --profile profile --mapfile map-etext-beyond >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "symbol-before-stext"
+$TS_CMD_READPROFILE --profile profile --mapfile map-before-stext >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_finalize
