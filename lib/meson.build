@@ -112,6 +112,6 @@ lib_tcolors = static_library(
   'tcolors',
   lib_color_sources,
   include_directories : dir_include,
-  dependencies : curses_libs)
+  dependencies : tcolors_deps)
 
 lib_tcolors_manadocs = files('terminal-colors.d.5.adoc')
