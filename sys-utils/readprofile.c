@@ -263,8 +263,8 @@ int main(int argc, char **argv)
 	    || ((int)(len = lseek(proFd, 0, SEEK_END)) < 0)
 	    || (lseek(proFd, 0, SEEK_SET) < 0))
 		err(EXIT_FAILURE, "%s", proFile);
-	if (!len)
-		errx(EXIT_FAILURE, "%s: %s", proFile, _("input file is empty"));
+	if (len < sizeof(*buf))
+		errx(EXIT_FAILURE, "%s: %s", proFile, _("input file is empty or truncated"));
 
 	buf = xmalloc(len);
 
