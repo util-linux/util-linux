@@ -1,0 +1,3 @@
+TARGET SOURCE    FSTYPE OPTIONS
+/      /dev/sda1 ext4   rw,relatime
+rc=0
