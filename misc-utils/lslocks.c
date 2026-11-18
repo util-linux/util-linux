@@ -145,6 +145,7 @@ struct lslocks {
 
 	struct list_head proc_locks;
 	void *pid_locks;
+	void *pid_fds;				/* cache of /proc/PID/fd, items: struct pid_fds */
 	struct libmnt_table *tab;		/* /proc/self/mountinfo */
 };
 
@@ -223,17 +224,109 @@ static char *get_fallback_filename(struct libmnt_table *tab, dev_t dev)
 }
 
 /*
+ * Per-process cache of /proc/<pid>/fd: for every inode the first
+ * descriptor (in readdir order) referring to it. Built once per pid so
+ * that looking up K locks does not rescan all F descriptors K times.
+ */
+struct fd_entry {
+	ino_t inode;
+	uint64_t size;
+	char *path;		/* NULL if readlink failed */
+};
+
+struct pid_fds {
+	pid_t pid;
+	void *inodes;		/* tree of struct fd_entry */
+};
+
+static int pid_fds_compare(const void *a, const void *b)
+{
+	const struct pid_fds *x = a, *y = b;
+
+	return (x->pid > y->pid) - (x->pid < y->pid);
+}
+
+static int fd_entry_compare(const void *a, const void *b)
+{
+	const struct fd_entry *x = a, *y = b;
+
+	return (x->inode > y->inode) - (x->inode < y->inode);
+}
+
+static void rem_fd_entry(void *node)
+{
+	struct fd_entry *e = node;
+
+	free(e->path);
+	free(e);
+}
+
+static void rem_pid_fds(void *node)
+{
+	struct pid_fds *pf = node;
+
+	tdestroy(pf->inodes, rem_fd_entry);
+	free(pf);
+}
+
+static void fill_pid_fds(struct pid_fds *pf)
+{
+	char path[PATH_MAX] = { 0 };
+	struct dirent *dp;
+	struct stat sb;
+	DIR *dirp;
+	int fd;
+
+	snprintf(path, sizeof(path), "/proc/%d/fd/", pf->pid);
+	if (!(dirp = opendir(path)))
+		return;
+
+	if ((fd = dirfd(dirp)) < 0)
+		goto out;
+
+	while ((dp = xreaddir(dirp))) {
+		struct fd_entry *e, **found;
+		char sym[PATH_MAX];
+		ssize_t len;
+
+		/* care only for numerical descriptors */
+		if (!isdigit_string(dp->d_name))
+			continue;
+
+		if (fstatat(fd, dp->d_name, &sb, 0))
+			continue;
+
+		e = xcalloc(1, sizeof(*e));
+		e->inode = sb.st_ino;
+		found = tsearch(e, &pf->inodes, fd_entry_compare);
+		if (!found)
+			errx(EXIT_FAILURE, _("failed to allocate memory"));
+		if (*found != e) {
+			/* an earlier descriptor already refers to it */
+			free(e);
+			continue;
+		}
+
+		e->size = sb.st_size;
+		len = readlinkat(fd, dp->d_name, sym, sizeof(sym) - 1);
+		if (len >= 1) {
+			sym[len] = '\0';
+			e->path = xstrdup(sym);
+		}
+	}
+out:
+	closedir(dirp);
+}
+
+/*
  * Return the absolute path of a file from
  * a given inode number (and its size)
  */
-static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
+static char *get_filename_sz(void **pid_fds, ino_t inode, pid_t lock_pid,
+			     size_t *size)
 {
-	struct stat sb;
-	struct dirent *dp;
-	DIR *dirp;
-	int fd;
-	char path[PATH_MAX] = { 0 },
-	     sym[PATH_MAX] = { 0 }, *ret = NULL;
+	struct pid_fds key = { .pid = lock_pid }, **pfp;
+	struct fd_entry ekey = { .inode = inode }, **ep;
 
 	*size = 0;
 
@@ -246,41 +339,23 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 	 * iterate the *entire* filesystem searching
 	 * for the damn file.
 	 */
-	snprintf(path, sizeof(path), "/proc/%d/fd/", lock_pid);
-	if (!(dirp = opendir(path)))
+	pfp = tfind(&key, pid_fds, pid_fds_compare);
+	if (!pfp) {
+		struct pid_fds *pf = xcalloc(1, sizeof(*pf));
+
+		pf->pid = lock_pid;
+		fill_pid_fds(pf);
+		pfp = tsearch(pf, pid_fds, pid_fds_compare);
+		if (!pfp)
+			errx(EXIT_FAILURE, _("failed to allocate memory"));
+	}
+
+	ep = tfind(&ekey, &(*pfp)->inodes, fd_entry_compare);
+	if (!ep || !(*ep)->path)
 		return NULL;
 
-	if (strlen(path) >= (sizeof(path) - 2))
-		goto out;
-
-	if ((fd = dirfd(dirp)) < 0 )
-		goto out;
-
-	while ((dp = xreaddir(dirp))) {
-		ssize_t len;
-
-		errno = 0;
-
-		/* care only for numerical descriptors */
-		if (!strtol(dp->d_name, (char **) NULL, 10) || errno)
-			continue;
-
-		if (!fstatat(fd, dp->d_name, &sb, 0)
-		    && inode != sb.st_ino)
-			continue;
-
-		if ((len = readlinkat(fd, dp->d_name, sym, sizeof(sym) - 1)) < 1)
-			goto out;
-
-		*size = sb.st_size;
-		sym[len] = '\0';
-
-		ret = xstrdup(sym);
-		break;
-	}
-out:
-	closedir(dirp);
-	return ret;
+	*size = (*ep)->size;
+	return xstrdup((*ep)->path);
 }
 
 /*
@@ -340,7 +415,8 @@ static void add_to_list(struct list_head *locks, struct lock *l)
 	list_add(&l->locks, locks);
 }
 
-static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallback)
+static struct lock *get_lock(struct lslocks *lslocks, char *buf,
+			     struct override_info *oinfo, void *fallback)
 {
 	int i;
 	char *tok = NULL;
@@ -430,7 +506,7 @@ static struct lock *get_lock(char *buf, struct override_info *oinfo, void *fallb
 		else
 			l->cmdname = xstrdup(_("(undefined)"));
 	}
-	l->path = get_filename_sz(l->inode, l->pid, &sz);
+	l->path = get_filename_sz(&lslocks->pid_fds, l->inode, l->pid, &sz);
 	if (l->path)
 		l->size = sz;
 
@@ -470,7 +546,7 @@ static int get_pid_lock(struct lslocks *lslocks, FILE *fp,
 		struct lock *l;
 		if (strncmp(buf, "lock:\t", 6))
 			continue;
-		l = get_lock(buf + 6, &oinfo, NULL);
+		l = get_lock(lslocks, buf + 6, &oinfo, NULL);
 		if (l)
 			l = refine_lock(l, lslocks->no_inaccessible,
 					lslocks->tab);
@@ -558,7 +634,7 @@ static int get_proc_locks(struct lslocks *lslocks)
 		return -1;
 
 	while (fgets(buf, sizeof(buf), fp)) {
-		struct lock *l = get_lock(buf, NULL, &lslocks->pid_locks);
+		struct lock *l = get_lock(lslocks, buf, NULL, &lslocks->pid_locks);
 		if (l)
 			l = refine_lock(l, lslocks->no_inaccessible,
 					lslocks->tab);
@@ -1075,6 +1151,7 @@ static void lslocks_free(struct lslocks *lslocks)
 {
 	rem_locks(&lslocks->proc_locks);
 	tdestroy(lslocks->pid_locks, rem_tnode);
+	tdestroy(lslocks->pid_fds, rem_pid_fds);
 }
 
 int main(int argc, char *argv[])
