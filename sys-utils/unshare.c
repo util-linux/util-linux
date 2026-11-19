@@ -1133,8 +1133,12 @@ int main(int argc, char *argv[])
 	if (owneruser != (uid_t) -1 && setuid(owneruser) != 0)
 		err(EXIT_FAILURE, _("setuid() failed"));
 
-	if (-1 == unshare(unshare_flags))
+	if (-1 == unshare(unshare_flags)) {
+		if (errno == EPERM && geteuid() != 0 &&
+		    !(unshare_flags & CLONE_NEWUSER))
+			err(EXIT_FAILURE, _("unshare failed, unprivileged users need --user"));
 		err(EXIT_FAILURE, _("unshare failed"));
+	}
 
 	/* Tell child we've called unshare() */
 	if (usermap || groupmap)
