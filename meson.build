@@ -3798,7 +3798,8 @@ endif
 
 opt = get_option('build-pipesz') \
       .disable_auto_if(build_all_programs.disabled()) \
-      .require(cc.has_header_symbol('fcntl.h', 'F_GETPIPE_SZ')) \
+      .require(cc.has_header_symbol('fcntl.h', 'F_GETPIPE_SZ',
+                                    args : '-D_GNU_SOURCE')) \
       .allowed()
 exe = executable(
   'pipesz',
