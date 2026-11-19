@@ -48,6 +48,7 @@
 # include <poll.h>
 # include <sys/signalfd.h>
 # include "pty-session.h"
+# include "caputils.h"
 # define USE_PTY
 #endif
 
@@ -538,11 +539,17 @@ static void create_watching_parent(struct su_context *su)
 {
 	struct sigaction action;
 	int status;
+#ifdef USE_PTY
+	bool caps_required = false;
+#endif
 
 	DBG(MISC, ul_debug("forking..."));
 #ifdef USE_PTY
 	if (su->force_pty) {
 		struct ul_pty_callbacks *cb;
+
+		/* must be read before free_getlogindefs_data() */
+		caps_required = getlogindefs_bool("SU_PTY_REQUIRE_DROP_CAPS", 0);
 
 		/* set callbacks */
 		ul_pty_set_callback_data(su->pty, (void *) su);
@@ -610,14 +617,50 @@ static void create_watching_parent(struct su_context *su)
 		warn(_("cannot change directory to %s"), "/");
 #ifdef USE_PTY
 	if (su->force_pty) {
+		struct __user_cap_data_struct caps[_LINUX_CAPABILITY_U32S_3] = {{ 0 }};
+		int lower_rc, restore_rc = 0;
+
 		ul_pty_set_child(su->pty, su->child);
 
-		ul_pty_proxy_master(su->pty);
+		/*
+		 * Lower effective capabilities while proxying data between
+		 * stdin/stdout (controlled by the caller) and the pty master
+		 * (controlled by the target user), so su cannot be abused as
+		 * a confused deputy writing to caller-selected file
+		 * descriptors with full privileges. CAP_KILL is retained to
+		 * signal the child. Capabilities are restored for
+		 * pam_close_session(), PAM modules may need them.
+		 */
+		lower_rc = cap_lower_effective(caps, UINT64_C(1) << CAP_KILL);
 
-		/* ul_pty_proxy_master() keeps classic signal handler are out of game */
-		caught_signal = ul_pty_get_delivered_signal(su->pty);
+		if (lower_rc && caps_required) {
+			/*
+			 * Never relay data with full privileges; pretend we
+			 * have been signaled and let the code below terminate
+			 * the child and close the session.
+			 */
+			caught_signal = SIGTERM;
+		} else {
+			ul_pty_proxy_master(su->pty);
+
+			if (lower_rc == 0)
+				restore_rc = cap_restore(caps);
+
+			/* ul_pty_proxy_master() keeps classic signal handler are out of game */
+			caught_signal = ul_pty_get_delivered_signal(su->pty);
+		}
 
 		ul_pty_cleanup(su->pty);
+
+		/* warn only after ul_pty_cleanup() has left terminal raw mode */
+		if (lower_rc) {
+			errno = -lower_rc;
+			warn(_("cannot lower capabilities"));
+		}
+		if (restore_rc) {
+			errno = -restore_rc;
+			warn(_("cannot restore capabilities"));
+		}
 	} else
 #endif
 		parent_setup_signals(su);

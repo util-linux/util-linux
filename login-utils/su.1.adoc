@@ -119,6 +119,11 @@ If set to _yes_ and *--login* and *--preserve-environment* were not specified *s
 +
 The environment variable *PATH* may be different on systems where _/bin_ and _/sbin_ are merged into _/usr_; this variable is also affected by the *--login* command-line option and the PAM system setting (e.g., *pam_env*(8)).
 
+*SU_PTY_REQUIRE_DROP_CAPS* (boolean)::
+With *--pty*, *su* lowers its effective capabilities to *CAP_KILL* while relaying data between the terminal and the pseudoterminal. If lowering fails, *su* continues with full privileges and prints a warning when the session ends. If set to _yes_, *su* terminates the session instead. The default is _no_.
++
+Set this item in _/etc/default/su_; other tools reading _/etc/login.defs_ may report it as unknown.
+
 == EXIT STATUS
 
 *su* normally returns the exit status of the command it executed. If the command was killed by a signal, *su* returns the number of the signal plus 128.
