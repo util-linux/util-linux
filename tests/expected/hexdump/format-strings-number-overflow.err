@@ -1,0 +1,3 @@
+hexdump: bad format {4294967297/1 "%x"}
+hexdump: bad format {%.2147483647s%.2147483647s}
+hexdump: bad format {%.99999999999999999999d}
