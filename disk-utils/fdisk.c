@@ -1115,6 +1115,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
 	fprintf(out,
 	      _("     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
+	fputs(_("     --nocheck-collisions      don't check for collisions with old signatures\n"), out);
 	fprintf(out,
 	      _(" -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
@@ -1152,7 +1153,8 @@ int main(int argc, char **argv)
 	const char *wanted_label = NULL;
 	enum {
 		OPT_BYTES	= CHAR_MAX + 1,
-		OPT_LOCK
+		OPT_LOCK,
+		OPT_NOCHECK_COLLISIONS
 	};
 	static const struct option longopts[] = {
 		{ "bytes",          no_argument,       NULL, OPT_BYTES },
@@ -1167,6 +1169,7 @@ int main(int argc, char **argv)
 		{ "list-details",   no_argument,       NULL, 'x' },
 		{ "lock",           optional_argument, NULL, OPT_LOCK },
 		{ "noauto-pt",      no_argument,       NULL, 'n' },
+		{ "nocheck-collisions", no_argument,   NULL, OPT_NOCHECK_COLLISIONS },
 		{ "sector-size",    required_argument, NULL, 'b' },
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
@@ -1301,6 +1304,9 @@ int main(int argc, char **argv)
 			usage();
 		case OPT_BYTES:
 			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
+			break;
+		case OPT_NOCHECK_COLLISIONS:
+			fdisk_disable_collisions(cxt, 1);
 			break;
 		case OPT_LOCK:
 			lockmode = "1";

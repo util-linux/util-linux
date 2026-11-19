@@ -338,4 +338,6 @@ FDISK_2_43 {
 	fdisk_script_has_devnames;
 	fdisk_get_recommended_labelname;
 	fdisk_set_vfs;
+	fdisk_disable_collisions;
+	fdisk_has_collisions;
 } FDISK_2_42;

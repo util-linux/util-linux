@@ -72,6 +72,9 @@ to avoid collisions with *systemd-udevd*(8) or other tools.
 *-n*, *--noauto-pt*::
 Don't automatically create a default partition table on empty device. The partition table has to be explicitly created by user (by command like 'o', 'g', etc.).
 
+*--nocheck-collisions*::
+Don't check the device for collisions with existing partition tables, filesystems and RAID signatures. The check is enabled by default and the detected signatures are reported by warning messages; see also *--wipe*. This option is intended for emergency situations where the device contains data that confuses the probing code.
+
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns.
 +

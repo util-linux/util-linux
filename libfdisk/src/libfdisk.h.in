@@ -214,6 +214,8 @@ int fdisk_is_listonly(struct fdisk_context *cxt);
 
 int fdisk_enable_wipe(struct fdisk_context *cxt, int enable);
 int fdisk_has_wipe(struct fdisk_context *cxt);
+int fdisk_disable_collisions(struct fdisk_context *cxt, int disable);
+int fdisk_has_collisions(struct fdisk_context *cxt);
 const char *fdisk_get_collision(struct fdisk_context *cxt);
 int fdisk_is_ptcollision(struct fdisk_context *cxt);
 int fdisk_is_collision_area(struct fdisk_context *cxt, uint64_t start, uint64_t size);
