@@ -45,6 +45,27 @@ function _dd
 	return $ret
 }
 
+function drop_cache
+{
+	local file=$1
+	local len=$2
+	local size off
+
+	# O_DIRECT is only a hint.  On some kernels and filesystems the data
+	# written by a direct write is kept in the page cache anyway and then
+	# fincore correctly reports pages in core where this test expects
+	# none.  Explicitly remove the just written range from the page cache
+	# to make the result independent from the direct I/O implementation.
+	size=$(stat --format=%s "$file")
+	off=$(( size - len ))
+	[ "$off" -lt 0 ] && off=0
+
+	# DONTNEED does not drop dirty pages
+	sync "$file"
+
+	$TS_CMD_FADVISE --advice dontneed --offset "$off" --length "$len" "$file"
+}
+
 function check_dd_fs_feat
 {
 	local testf="$TS_OUTDIR/ddtest"
@@ -74,6 +95,9 @@ function run_dd_test
 		touch $input
     else
 		_dd if=/dev/zero of=$input count=1 bs=$bs $flags || return
+		case "$flags" in
+		*direct*) drop_cache "$input" "$bs" ;;
+		esac
     fi
 
     $TS_CMD_FINCORE --raw --output $OUT_COLUMNS  --bytes --noheadings $input
@@ -94,7 +118,14 @@ function run_dd_dd_test
 	rm -f "$input"
 
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags0 || return
+    case "$flags0" in
+    *direct*) drop_cache "$input" "$bs" ;;
+    esac
+
     _dd if=/dev/zero of=$input count=1 bs=$bs $flags1 || return
+    case "$flags1" in
+    *direct*) drop_cache "$input" "$bs" ;;
+    esac
 
     $TS_CMD_FINCORE --raw --output $OUT_COLUMNS --bytes --noheadings $input
 
@@ -134,6 +165,7 @@ TS_EXPECTED="$AGG_OUT"
 TS_EXPECTED_ERR="$AGG_ERR"
 
 ts_check_test_command "$TS_CMD_FINCORE"
+ts_check_test_command "$TS_CMD_FADVISE"
 ts_cd "$TS_OUTDIR"
 
 check_dd_fs_feat
