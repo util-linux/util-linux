@@ -1,0 +1,10 @@
+Disk <removed>: 4 MiB, 4194304 bytes, 8192 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: gpt
+Disk identifier: <removed>
+
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M Linux filesystem
+<removed>2  4096  6143    2048   1M Linux filesystem

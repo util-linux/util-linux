@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+#
+# The last sector as +size{K,M,...} which exactly fills the free space has to
+# be accepted and the partition has to end at the last free sector. A size
+# one sector larger has to be rejected.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="relative size"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+
+function print_layout {
+	$TS_CMD_FDISK --list ${TEST_IMAGE_NAME} >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_fdisk_clean ${TEST_IMAGE_NAME}
+}
+
+# 2 MiB, sectors 2048-4095 are free, +1M is 2048 sectors
+ts_init_subtest "dos-fit"
+TEST_IMAGE_NAME=$(ts_image_init 2)
+echo -e "o\nn\np\n1\n2048\n+1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# sectors 2049-4095 are free, +1M is rejected, the default is used
+ts_init_subtest "dos-too-big"
+TEST_IMAGE_NAME=$(ts_image_init 2)
+echo -e "o\nn\np\n1\n2049\n+1M\n\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# partition 2 at 4096-6143, then sectors 2048-4095 are free for partition 1
+ts_init_subtest "gpt-fit"
+TEST_IMAGE_NAME=$(ts_image_init 4)
+echo -e "g\nn\n2\n4096\n+1M\nn\n1\n2048\n+1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# sectors 2049-4095 are free, +1M is rejected, the default is used
+ts_init_subtest "gpt-too-big"
+TEST_IMAGE_NAME=$(ts_image_init 4)
+echo -e "g\nn\n2\n4096\n+1M\nn\n1\n2049\n+1M\n\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+ts_finalize

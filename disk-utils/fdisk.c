@@ -389,6 +389,11 @@ static int ask_offset(struct fdisk_context *cxt,
 				fdisk_ask_number_set_relative(ask, 1);
 			return fdisk_ask_number_set_result(ask, (uint64_t)num);
 		}
+		/* +{size}{K,M,...} which exactly fills the space up to the high
+		 * limit; the relative "num" is the first sector after the
+		 * partition, so use the limit as an absolute last sector */
+		if (sig == '+' && pwr && num == high + 1)
+			return fdisk_ask_number_set_result(ask, high);
 		fdisk_warnx(cxt, _("Value out of range."));
 	} while (1);
 
