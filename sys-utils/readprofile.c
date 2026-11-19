@@ -263,8 +263,8 @@ int main(int argc, char **argv)
 	    || ((int)(len = lseek(proFd, 0, SEEK_END)) < 0)
 	    || (lseek(proFd, 0, SEEK_SET) < 0))
 		err(EXIT_FAILURE, "%s", proFile);
-	if (!len)
-		errx(EXIT_FAILURE, "%s: %s", proFile, _("input file is empty"));
+	if (len < sizeof(*buf))
+		errx(EXIT_FAILURE, "%s: %s", proFile, _("input file is empty or truncated"));
 
 	buf = xmalloc(len);
 
@@ -273,8 +273,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, "%s", proFile);
 	close(proFd);
 
+	size_t entries = len / sizeof(*buf);
+
 	if (!optNative) {
-		int entries = len / sizeof(*buf);
 		int big = 0, small = 0;
 		unsigned *p;
 		size_t i;
@@ -359,7 +360,8 @@ int main(int argc, char **argv)
 				break;	/* only text is profiled */
 		}
 
-		if (indx >= len / sizeof(*buf))
+		if (indx >= entries
+		    || (step > 0 && (next_add - add0) / step > entries))
 			errx(EXIT_FAILURE,
 			     _("profile address out of range. Wrong map file?"));
 

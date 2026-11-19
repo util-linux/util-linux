@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# This file is part of util-linux.
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="profile shorter than one entry"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_READPROFILE"
+
+ts_cd "$TS_OUTDIR"
+
+ts_init_subtest "empty"
+: > empty-profile.bin
+$TS_CMD_READPROFILE --profile empty-profile.bin >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_init_subtest "short"
+printf '\001\002' > short-profile.bin
+$TS_CMD_READPROFILE --profile short-profile.bin >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf "exit code: %d\n" "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
+ts_finalize
