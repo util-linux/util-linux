@@ -49,3 +49,10 @@ zip -jqrm $OUT/test_blkid_fuzz_seed_corpus.zip "$(dirname $0)"/../tests/ts/blkid
 
 find . -maxdepth 1 -type f -executable -name "test_*_fuzz" -exec mv {} $OUT \;
 find . -type f -name "fuzz-*.dict" -exec cp {} $OUT \;
+
+# attach in-tree dictionaries to their fuzz targets ($OUT/<target>.dict)
+for d in tests/ts/fuzzers/fuzz-*.dict; do
+    [ -e "$d" ] || continue
+    b=$(basename "$d" .dict)
+    cp "$d" "$OUT/test_${b#fuzz-}_fuzz.dict"
+done
