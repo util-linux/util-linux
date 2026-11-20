@@ -2388,8 +2388,9 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			return 0;
 		key = d->key;
 
-	} else if (key != 'w' && key != 'W')
-		key = tolower(key);	/* case insensitive except 'W'rite */
+	} else if (key != 'w' && key != 'W' 
+		  && key >= 0 && key <= UCHAR_MAX)
+		key = tolower((unsigned char)key);	/* case insensitive except 'W'rite */
 
 	DBG(MENU, ul_debug("main menu action: key=%c", key));
 
