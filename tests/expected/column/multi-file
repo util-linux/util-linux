@@ -8,3 +8,10 @@
 0 1 2 3 4 5	0 1 2 3 4 5	0 1 2 3 4 5
 0 1 2 3 4 5	0 1 2 3 4 5	0 1 2 3 4 5
 0 1 2 3 4 5	0 1 2 3 4 5	0 1 2 3 4 5
+A  B
+1  2
+mixed input status: 1
+missing input reported
+A  B
+1  2
+valid input status: 0
