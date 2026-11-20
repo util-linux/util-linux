@@ -2464,7 +2464,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			fdisk_partition_set_size(npa, secs);
 
 		if (expsize)
-			fdisk_partition_size_explicit(pa, 1);
+			fdisk_partition_size_explicit(npa, 1);
 
 		fdisk_partition_set_start(npa, start);
 		fdisk_partition_partno_follow_default(npa, 1);
