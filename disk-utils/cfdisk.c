@@ -829,8 +829,13 @@ static void sig_handler_resize(int dummy __attribute__((__unused__)))
 
 static void menu_refresh_size(struct cfdisk *cf)
 {
-	if (cf->menu && cf->menu->nitems)
-		cf->menu->page_sz = (cf->menu->nitems / (ui_lines - 4)) ? ui_lines - 4 : 0;
+	if (!cf->menu)
+		return;
+	if (!cf->menu->nitems || ui_lines <= 4) {
+		cf->menu->page_sz = 0;
+		return;
+	}
+	cf->menu->page_sz = (cf->menu->nitems / (ui_lines - 4)) ? ui_lines - 4 : 0;
 }
 
 static void menu_update_ignore(struct cfdisk *cf)
