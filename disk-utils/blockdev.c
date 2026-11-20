@@ -229,10 +229,14 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputsln(_("Available commands:"), stdout);
 	fprintf(stdout, _(" %-25s get size in 512-byte sectors\n"), "--getsz");
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
-		if (bdcms[i].argname)
+		if (bdcms[i].argname) {
+			int w = 24 - (int)strlen(bdcms[i].name);
+			if (w < 0)
+				w = 0;
+
 			fprintf(stdout, " %s %-*s %s\n", bdcms[i].name,
-				(int)(24 - strlen(bdcms[i].name)),
-				bdcms[i].argname, _(bdcms[i].help));
+				w, bdcms[i].argname, _(bdcms[i].help));
+		}
 		else
 			fprintf(stdout, " %-25s %s\n", bdcms[i].name,
 				_(bdcms[i].help));
