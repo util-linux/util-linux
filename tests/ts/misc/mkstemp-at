@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+# Copyright (C) 2026 Eduard Zateev <hackerowskiy@gmail.com>
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="temporary file in a pinned directory"
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+ts_check_test_command "$TS_HELPER_FILEUTILS"
+ts_skip_config HAVE_OPENAT "openat is unavailable"
+ts_check_prog "mkdir"
+BASE="$TS_OUTDIR/${TS_TESTNAME}-dir"
+mkdir -m 700 "$BASE" || ts_die "cannot create test directory"
+trap 'rmdir "$BASE" "$BASE.old" 2>/dev/null' EXIT
+"$TS_HELPER_FILEUTILS" --mkstemp-at "$BASE" "$BASE.old" >"$TS_OUTPUT" 2>"$TS_ERRLOG"
+ts_finalize
