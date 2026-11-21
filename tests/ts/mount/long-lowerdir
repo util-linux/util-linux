@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="overlayfs with a long lowerdir"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_MOUNTPOINT"
+ts_skip_nonroot
+
+mkdir -p "$TS_MOUNTPOINT"
+lowerdir=
+for i in {1..5}; do
+	dir="$TS_OUTDIR/${TS_TESTNAME}-lower-$(printf '%050d' "$i")"
+	mkdir -p "$dir"
+	lowerdir="${lowerdir:+$lowerdir:}$dir"
+done
+
+[ ${#lowerdir} -ge 256 ] || ts_die "lowerdir is too short"
+[ ${#lowerdir} -lt 4096 ] || ts_die "lowerdir exceeds mount(2) limit"
+
+cleanup() {
+	"$TS_CMD_UMOUNT" -n "$TS_MOUNTPOINT" >/dev/null 2>&1 || :
+}
+trap cleanup EXIT
+
+# Verify that this host supports overlayfs and the legacy mount API first.
+LIBMOUNT_FORCE_MOUNT2=always "$TS_CMD_MOUNT" -n -t overlay overlay \
+	-o "lowerdir=$lowerdir" "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+	|| ts_skip "overlayfs mount is unavailable"
+"$TS_CMD_MOUNTPOINT" -q "$TS_MOUNTPOINT" || ts_die "legacy mount did not attach"
+"$TS_CMD_UMOUNT" -n "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+	|| ts_die "cannot unmount legacy mount"
+
+# The default API must fall back to mount(2) for a long lowerdir value.
+"$TS_CMD_MOUNT" -n -t overlay overlay -o "lowerdir=$lowerdir" "$TS_MOUNTPOINT" \
+	>> "$TS_OUTPUT" 2>> "$TS_ERRLOG" || ts_die "long lowerdir mount failed"
+"$TS_CMD_MOUNTPOINT" -q "$TS_MOUNTPOINT" || ts_die "long lowerdir mount did not attach"
+"$TS_CMD_UMOUNT" -n "$TS_MOUNTPOINT" >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
+	|| ts_die "cannot unmount long lowerdir mount"
+
+trap - EXIT
+ts_finalize
