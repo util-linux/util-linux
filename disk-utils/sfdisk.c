@@ -1394,12 +1394,18 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
 {
+	struct metadata_chunk {
+		char *name;
+		uint64_t offset;
+		size_t size;
+	} *chunks = NULL;
+	size_t nchunks = 0, nalloc = 0;
 	struct fdisk_table *tb = NULL;
 	struct fdisk_iter *itr = NULL;
 	struct fdisk_partition *pa = NULL;
 	const char *devname = NULL;
 	uint64_t ss;
-	int rc;
+	int rc = 0;
 
 	if (!argc)
 		errx(EXIT_FAILURE, _("no disk device specified"));
@@ -1414,15 +1420,78 @@ static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
 	assign_device(sf, devname, 0);
 
 	ss = fdisk_get_sector_size(sf->cxt);
+	if (ss == 0) {
+		fdisk_warnx(sf->cxt, _("invalid sector size; aborting discard"));
+		rc = -EINVAL;
+		goto done;
+	}
+
+	/* Enumerate and validate all disk-label metadata chunks upfront */
+	while (1) {
+		const char *m_name = NULL;
+		uint64_t m_offset = 0;
+		size_t m_size = 0;
+		int loc_rc;
+
+		if (nchunks > INT_MAX) {
+			rc = -ERANGE;
+			goto done;
+		}
+
+		loc_rc = fdisk_locate_disklabel(sf->cxt, (int) nchunks, &m_name, &m_offset, &m_size);
+
+		if (loc_rc == 1)
+			break; /* End of metadata items */
+
+		if (loc_rc < 0) {
+			fdisk_warnx(sf->cxt, _("failed to locate disklabel metadata"));
+			rc = loc_rc;
+			goto done;
+		}
+
+		if (m_size == 0 || m_offset > UINT64_MAX - m_size) {
+			fdisk_warnx(sf->cxt, _("invalid disklabel metadata item; aborting discard"));
+			rc = -EINVAL;
+			goto done;
+		}
+
+		if (nchunks == nalloc) {
+			size_t new_nalloc;
+
+			if (nalloc == 0)
+				new_nalloc = 16;
+			else if (nalloc > SIZE_MAX / 2) {
+				rc = -ENOMEM;
+				goto done;
+			} else
+				new_nalloc = nalloc * 2;
+
+			if (new_nalloc > SIZE_MAX / sizeof(*chunks)) {
+				rc = -ENOMEM;
+				goto done;
+			}
+
+			chunks = xrealloc(chunks, new_nalloc * sizeof(*chunks));
+			nalloc = new_nalloc;
+		}
+
+		chunks[nchunks].name = m_name ? xstrdup(m_name) : NULL;
+		chunks[nchunks].offset = m_offset;
+		chunks[nchunks].size = m_size;
+		nchunks++;
+	}
 
 	rc = fdisk_get_freespaces(sf->cxt, &tb);
 	if (rc) {
-		 fdisk_warn(sf->cxt, _("failed to gather unpartitioned space"));
-		 goto done;
+		fdisk_warn(sf->cxt, _("failed to gather unpartitioned space"));
+		goto done;
 	}
 
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		uint64_t range[2];
+		uint64_t start_byte, end_byte;
+		int overlap = 0;
+		size_t i;
 
 		if (!fdisk_partition_has_size(pa) ||
 		    !fdisk_partition_has_start(pa))
@@ -1431,22 +1500,62 @@ static int command_discard_free(struct sfdisk *sf, int argc, char **argv)
 		range[0] = (uint64_t) fdisk_partition_get_start(pa);
 		range[1] = (uint64_t) fdisk_partition_get_size(pa);
 
+		if (range[1] == 0)
+			continue;
+
+		/* Check for range overflow and sector-to-byte conversion overflow */
+		if (range[0] > UINT64_MAX / ss ||
+		    range[1] > (UINT64_MAX / ss) - range[0]) {
+			fdisk_warnx(sf->cxt, _("Region starting at %ju, size %ju: range overflow; skipping discard"),
+					(uintmax_t) range[0],
+					(uintmax_t) range[1]);
+			continue;
+		}
+
+		start_byte = range[0] * ss;
+		end_byte = (range[0] + range[1]) * ss - 1;
+
+		/* Check candidate range against all enumerated metadata chunks */
+		for (i = 0; i < nchunks; i++) {
+			if (start_byte <= chunks[i].offset + chunks[i].size - 1 &&
+			    end_byte >= chunks[i].offset) {
+				fdisk_warnx(sf->cxt, _("Region %ju-%ju overlaps %s at %ju; skipping discard"),
+						(uintmax_t) range[0],
+						(uintmax_t) (range[0] + range[1] - 1),
+						chunks[i].name ? chunks[i].name : _("metadata"),
+						(uintmax_t) (chunks[i].offset / ss));
+				overlap = 1;
+				break;
+			}
+		}
+
+		if (overlap)
+			continue;
+
 		fdisk_info(sf->cxt, _("Discarding region %ju-%ju"),
 				(uintmax_t) range[0],
 				(uintmax_t) (range[0] + range[1] - 1));
 
-		range[0] *= ss;
-		range[1] *= ss;
+		range[0] = start_byte;
+		range[1] = (uint64_t) range[1] * ss;
 
-		errno = 0;
-		if (ioctl(fdisk_get_devfd(sf->cxt), BLKDISCARD, &range)) {
-			rc = -errno;
-			fdisk_warn(sf->cxt, _("BLKDISCARD ioctl failed"));
-			break;
+		if (!sf->noact) {
+			errno = 0;
+			if (ioctl(fdisk_get_devfd(sf->cxt), BLKDISCARD, &range)) {
+				rc = -errno;
+				fdisk_warn(sf->cxt, _("BLKDISCARD ioctl failed"));
+				break;
+			}
 		}
 	}
 
 done:
+	if (chunks) {
+		size_t k;
+		for (k = 0; k < nchunks; k++)
+			free(chunks[k].name);
+		free(chunks);
+	}
 	fdisk_free_iter(itr);
 	fdisk_unref_table(tb);
 	return rc;
