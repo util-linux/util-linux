@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="offload-only options"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+ts_check_test_command "$TS_CMD_SWAPON"
+
+missing_dir="$TS_OUTDIR/does-not-exist"
+missing="$missing_dir/swap"
+fstab="$TS_OUTDIR/offload-only.fstab"
+log="$TS_OUTDIR/offload-only.log"
+
+[ ! -e "$missing_dir" ] || ts_failed "test path must not exist"
+
+# Check parsing against a missing path, without activating swap.
+for option in --offload-only --options=offload-only; do
+	if "$TS_CMD_SWAPON" "$option" "$missing" > "$log" 2>&1; then
+		ts_failed "missing test path was unexpectedly activated"
+	fi
+	grep -Fq "cannot open $missing" "$log" ||
+		ts_failed "$option did not reach device handling"
+done
+ts_log "Command-line options accepted"
+
+# nofail makes a missing fstab entry a parsing-only success. Exercise both
+# per-entry policy and the global option with --all.
+for policy in per-entry global; do
+	args=(--all --fstab "$fstab")
+	opts=nofail
+	if [ "$policy" = per-entry ]; then
+		opts=offload-only,nofail
+	else
+		args+=(--offload-only)
+	fi
+	printf '%s none swap %s 0 0\n' "$missing" "$opts" > "$fstab"
+	"$TS_CMD_SWAPON" "${args[@]}" > "$log" 2>&1 ||
+		ts_failed "$policy policy was rejected"
+	test ! -s "$log" || ts_failed "valid missing nofail entry produced output"
+done
+ts_log "Per-entry and global policies accepted with --all"
+
+ts_finalize
