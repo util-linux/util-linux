@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+sysconfdir=@sysconfdir@
+localstatedir=@localstatedir@
+runstatedir=@runstatedir@
+sysconfstaticdir=@sysconfstaticdir@
+vendordir=@vendordir@
+tmpfilesdir=@tmpfilesdir@
+
+systemd_support=@SYSTEMD_SUPPORT_PC@
+libeconf_support=@LIBECONF_SUPPORT_PC@
+btrfs_support=@BTRFS_SUPPORT_PC@
+lastlog2_support=@LASTLOG2_SUPPORT_PC@
+libcryptsetup_support=@LIBCRYPTSETUP_SUPPORT_PC@
+more_secure_pager_support=@MORE_SECURE_PAGER_SUPPORT_PC@
+agetty_reload_support=@AGETTY_RELOAD_SUPPORT_PC@
+agetty_netlink_support=@AGETTY_NETLINK_SUPPORT_PC@
+
+Name: util-linux
+Description: A random collection of Linux utilities
+Version: @UTIL_LINUX_PC_VERSION@
