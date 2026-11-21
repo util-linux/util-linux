@@ -42,6 +42,7 @@ TS_HELPER_LIBSMARTCOLS_CONTINUOUS_JSON="${ts_helpersdir}sample-scols-continuous-
 TS_HELPER_LIBSMARTCOLS_FROMFILE="${ts_helpersdir}sample-scols-fromfile"
 TS_HELPER_LIBSMARTCOLS_GROUPING_TREE="${ts_helpersdir}sample-scols-grouping-tree"
 TS_HELPER_LIBSMARTCOLS_TITLE="${ts_helpersdir}sample-scols-title"
+TS_HELPER_PYLASTLOG2="$top_srcdir/liblastlog2/python/test.py"
 TS_HELPER_PYLIBMOUNT_CONTEXT="$top_srcdir/libmount/python/test_mount_context.py"
 TS_HELPER_PYLIBMOUNT_TAB="$top_srcdir/libmount/python/test_mount_tab.py"
 TS_HELPER_PYLIBMOUNT_UPDATE="$top_srcdir/libmount/python/test_mount_tab_update.py"
