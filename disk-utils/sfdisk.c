@@ -2002,16 +2002,16 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		refresh_prompt_buffer(sf, devname, next_partno, created);
 
 
-		if (sf->prompt && (sf->interactive || !sf->quiet)) {
+		if (sf->interactive && sf->prompt && !sf->quiet) {
 #ifndef HAVE_LIBREADLINE
 			fputs(sf->prompt, stdout);
-#else
-			if (!sf->interactive)
-				fputs(sf->prompt, stdout);
 #endif
 		}
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
+
+		if (!sf->interactive && rc != 1 && sf->prompt && !sf->quiet)
+			fputs(sf->prompt, stdout);
 		if (rc == -ENOTSUP) {
 			buf[sizeof(buf) - 1] = '\0';
 			fdisk_warnx(sf->cxt, _("Unknown script header '%s' -- ignore."), buf);

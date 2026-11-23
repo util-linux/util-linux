@@ -10,7 +10,7 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 >>> Created a new disklabel.
 <removed>1: Created a new partition <removed>.
 <removed>2: Created a new partition <removed>.
-<removed>3: Done.
+Done.
 
 New situation:
 Disklabel type: dos
