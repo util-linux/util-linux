@@ -5,7 +5,7 @@ I/O size (minimum/optimal): 512 bytes / <removed> bytes
 
 >>> Created a new disklabel.
 <removed>p1: Created a new partition <removed>.
-<removed>p2: Done.
+Done.
 
 New situation:
 Disklabel type: gpt
