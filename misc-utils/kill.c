@@ -478,8 +478,9 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			struct timeouts *next;
 
 			ctl->timeout = 1;
-			if (argc < 2)
-				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
+			if (argc < 3)
+				errx(EXIT_FAILURE,
+				     _("option '%s' requires <milliseconds> and <signal>"), arg);
 			argc--, argv++;
 			arg = *argv;
 			next = xcalloc(1, sizeof(*next));
