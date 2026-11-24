@@ -162,6 +162,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --erase-chars <string> additional backspace chars\n"), out);
 	fputs(_("     --kill-chars <string>  additional kill chars\n"), out);
 	fputs(_("     --nologin-message <msg> message shown when login program is missing\n"), out);
+	fputs(_("     --set-term <list>      set terminal attributes\n"), out);
 	fputs(_("     --chdir <directory>    chdir before the login\n"), out);
 	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
 	fputs(_("     --nice <number>        run login with this priority\n"), out);
@@ -174,6 +175,121 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(EXIT_SUCCESS);
 }
 
+/* Parse on|off value for --set-term. */
+static int set_term_onoff(const char *name, const char *val)
+{
+	if (!val)
+		agetty_log_err(_("missing value for terminal setting '%s'"), name);
+	if (strcmp(val, "on") == 0)
+		return 1;
+	if (strcmp(val, "off") == 0)
+		return 0;
+	agetty_log_err(_("unsupported value for terminal setting '%s': %s"),
+			name, val);
+}
+
+/* Parse color name for --set-term, returns -1 for "default". */
+static int set_term_color(const char *name, const char *val)
+{
+	static const char *colors[] = {
+		"black", "red", "green", "yellow",
+		"blue", "magenta", "cyan", "white"
+	};
+	size_t i;
+
+	if (val && strcmp(val, "default") == 0)
+		return -1;
+
+	for (i = 0; i < ARRAY_SIZE(colors); i++)
+		if (val && strcmp(val, colors[i]) == 0)
+			return (int) i;
+
+	agetty_log_err(_("unsupported color for terminal setting '%s': %s"),
+			name, val ? val : "");
+}
+
+/* Convert --set-term list to escape sequence(s). */
+static char *agetty_parse_set_term(const char *arg)
+{
+	char *spec, *tok, *save = NULL, *out = NULL;
+	size_t outsz = 0;
+
+	if (!arg || !*arg)
+		agetty_log_err(_("empty terminal setting"));
+
+	spec = strdup(arg);
+	if (!spec)
+		agetty_log_err(_("failed to allocate memory: %m"));
+
+	for (tok = strtok_r(spec, ",", &save); tok;
+	     tok = strtok_r(NULL, ",", &save)) {
+		char buf[32];
+		char *val = strchr(tok, '=');
+		const char *seq = NULL;
+
+		if (val)
+			*val++ = '\0';
+		if (!*tok)
+			agetty_log_err(_("empty terminal setting"));
+
+		if (strcmp(tok, "blink") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[5m" : "\033[25m";
+		else if (strcmp(tok, "bold") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[1m" : "\033[22m";
+		else if (strcmp(tok, "half") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[2m" : "\033[22m";
+		else if (strcmp(tok, "underline") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[4m" : "\033[24m";
+		else if (strcmp(tok, "reverse") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[7m" : "\033[27m";
+		else if (strcmp(tok, "cursor") == 0)
+			seq = set_term_onoff(tok, val) ? "\033[?25h" : "\033[?25l";
+		else if (strcmp(tok, "blank") == 0) {
+			uint32_t n;
+
+			if (!val)
+				agetty_log_err(_("missing value for terminal setting '%s'"), tok);
+			n = strtou32_or_err(val, _("invalid blank time"));
+			if (n > 60)
+				agetty_log_err(_("invalid blank time: %s"), val);
+			snprintf(buf, sizeof(buf), "\033[9;%u]", n);
+			seq = buf;
+		} else if (strcmp(tok, "fg") == 0) {
+			int c = set_term_color(tok, val);
+			if (c < 0)
+				seq = "\033[39m";
+			else {
+				snprintf(buf, sizeof(buf), "\033[3%dm", c);
+				seq = buf;
+			}
+		} else if (strcmp(tok, "bg") == 0) {
+			int c = set_term_color(tok, val);
+			if (c < 0)
+				seq = "\033[49m";
+			else {
+				snprintf(buf, sizeof(buf), "\033[4%dm", c);
+				seq = buf;
+			}
+		} else if (strcmp(tok, "reset") == 0 && !val)
+			seq = "\033[0m";
+		else
+			agetty_log_err(_("unsupported terminal setting '%s'"), tok);
+
+		if (seq) {
+			size_t len = strlen(seq);
+			char *p = realloc(out, outsz + len + 1);
+
+			if (!p)
+				agetty_log_err(_("failed to allocate memory: %m"));
+			memcpy(p + outsz, seq, len + 1);
+			out = p;
+			outsz += len;
+		}
+	}
+
+	free(spec);
+	return out;
+}
 
 static void parse_args(int argc, char **argv, struct agetty_options *op)
 {
@@ -192,6 +308,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		LIST_SPEEDS_OPTION,
 		ISSUE_SHOW_OPTION,
 		NOLOGIN_MESSAGE_OPTION,
+		SET_TERM_OPTION,
 	};
 	static const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 NULL,  '8'  },
@@ -231,6 +348,7 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 		{  "erase-chars",    required_argument,  NULL,  ERASE_CHARS_OPTION },
 		{  "kill-chars",     required_argument,  NULL,  KILL_CHARS_OPTION },
 		{  "nologin-message", required_argument, NULL,  NOLOGIN_MESSAGE_OPTION },
+		{  "set-term",       required_argument, NULL,  SET_TERM_OPTION },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -348,6 +466,10 @@ static void parse_args(int argc, char **argv, struct agetty_options *op)
 			break;
 		case NOLOGIN_MESSAGE_OPTION:
 			op->nologin_message = optarg;
+			break;
+		case SET_TERM_OPTION:
+			free(op->set_term);
+			op->set_term = agetty_parse_set_term(optarg);
 			break;
 		case RELOAD_OPTION:
 			agetty_reload();
@@ -515,6 +637,13 @@ int main(int argc, char **argv)
 		debug("writing init string\n");
 		ul_write_all(STDOUT_FILENO, options.initstring,
 			   strlen(options.initstring));
+	}
+
+	/* Set terminal attributes, e.g. colors, cursor and blinking. */
+	if (options.set_term && *options.set_term != '\0') {
+		debug("writing terminal settings\n");
+		ul_write_all(STDOUT_FILENO, options.set_term,
+			   strlen(options.set_term));
 	}
 
 	if (options.flags & F_VCONSOLE || options.clocal != CLOCAL_MODE_ALWAYS)

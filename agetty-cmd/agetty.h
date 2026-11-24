@@ -72,6 +72,7 @@ struct agetty_options {
 	const char *vcline;		/* line of virtual console */
 	char *term;			/* terminal type */
 	char *initstring;		/* modem init string */
+	char *set_term;			/* terminal attributes escape sequence */
 	char *issue;			/* alternative issue file or directory */
 	char *erasechars;		/* string with erase chars */
 	char *killchars;		/* string with kill chars */
