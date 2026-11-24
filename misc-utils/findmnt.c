@@ -1773,13 +1773,15 @@ static struct libscols_table *init_scols_table(struct findmnt *findmnt)
 		if (!(flags & FL_POLL) && is_tabdiff_column(id)) {
 			warnx(_("%s column is requested, but --poll "
 			       "is not enabled"), get_column_name(i));
-			goto leave;
+			scols_unref_table(table);
+			return NULL;
 		}
 		cl = scols_table_new_column(table, get_column_name(i),
 					get_column_whint(i), fl);
 		if (!cl)	{
 			warn(_("failed to allocate output column"));
-			goto leave;
+			scols_unref_table(table);
+			return NULL;
 		}
 
 		if (findmnt->uri && id == COL_TARGET)
