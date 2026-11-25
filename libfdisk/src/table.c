@@ -515,7 +515,7 @@ static int check_container_freespace(struct fdisk_context *cxt,
 {
 	struct fdisk_iter itr;
 	struct fdisk_partition *pa;
-	fdisk_sector_t x, last, grain, lastplusoff;
+	fdisk_sector_t x, last, grain, lastplusoff, nextstart, meta;
 	int rc = 0;
 
 	assert(cxt);
@@ -548,8 +548,28 @@ static int check_container_freespace(struct fdisk_context *cxt,
 					(uintmax_t) fdisk_partition_get_end(pa)));
 
 		lastplusoff = last + cxt->first_lba;
-		if (pa->start > lastplusoff && pa->start - lastplusoff > grain)
-			rc = table_add_freespace(cxt, tb, lastplusoff, pa->start, cont);
+
+		/* The free space ends before the next partition, but also
+		 * before the on-disk label metadata that belongs to the next
+		 * partition (e.g. EBR of the DOS logical partition).
+		 *
+		 * The metadata is relevant only when it's located within the
+		 * gap <lastplusoff, next->start-1>. For example the EBR of the
+		 * first logical partition is stored at the very beginning of
+		 * the container, in front of the gap, where it's already
+		 * protected by @lastplusoff.
+		 *
+		 * Note that cxt->first_lba does not have to match the distance
+		 * between the metadata and the partition as it's stored in the
+		 * partition table, so the metadata may be exactly at the
+		 * beginning of the gap. */
+		nextstart = fdisk_partition_get_start(pa);
+		if (fdisk_partition_get_metadata_location(pa, &meta) == 0
+		    && meta >= lastplusoff && meta < nextstart)
+			nextstart = meta;
+
+		if (nextstart > lastplusoff && nextstart - lastplusoff > grain)
+			rc = table_add_freespace(cxt, tb, lastplusoff, nextstart - 1, cont);
 		if (rc)
 			goto done;
 		last = fdisk_partition_get_end(pa);

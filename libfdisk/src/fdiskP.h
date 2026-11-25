@@ -142,6 +142,14 @@ struct fdisk_partition {
 	fdisk_sector_t	start;			/* first sectors */
 	fdisk_sector_t	size;			/* size in sectors */
 
+	/* Location of the on-disk label metadata that belongs to the partition,
+	 * but it's stored outside of the <start,size> range; for example the
+	 * EBR of a DOS logical partition. The sector is not usable for data and
+	 * it has to be excluded from free-space ranges. Note that nothing is
+	 * assumed about the space between the metadata and the partition.
+	 * 0 = no such metadata. */
+	fdisk_sector_t	metadata_start;
+
 	int		movestart;		/* FDISK_MOVE_* (scripts only) */
 	int		resize;			/* FDISK_RESIZE_* (scripts only) */
 
@@ -456,6 +464,10 @@ extern int fdisk_diff_tables(struct fdisk_table *a, struct fdisk_table *b,
 				struct fdisk_partition **res, int *change);
 extern void fdisk_debug_print_table(struct fdisk_table *tb);
 
+
+/* partition.c */
+extern int fdisk_partition_get_metadata_location(struct fdisk_partition *pa,
+				    fdisk_sector_t *start);
 
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,

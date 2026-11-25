@@ -2359,8 +2359,14 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->size = dos_partition_get_size(p);
 	pa->container = lb->ext_offset && n == lb->ext_index;
 
-	if (n >= 4)
+	if (n >= 4) {
 		pa->parent_partno = lb->ext_index;
+
+		/* The EBR is stored in front of the logical partition. It's not
+		 * usable for data and it's not covered by <start,size>.
+		 * Note that pe->offset is an absolute sector number. */
+		pa->metadata_start = pe->offset;
+	}
 
 	if (p->boot_ind && asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;

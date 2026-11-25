@@ -230,6 +230,29 @@ int fdisk_partition_has_start(struct fdisk_partition *pa)
 	return pa && !FDISK_IS_UNDEF(pa->start);
 }
 
+/*
+ * Returns location of the on-disk label metadata that belongs to the
+ * partition, but it's stored outside of the partition <start,size> range; for
+ * example EBR of a DOS logical partition.
+ *
+ * The sector is not usable for data and it has to be excluded from free-space
+ * ranges. Note that nothing is assumed about the space between the metadata
+ * and the partition.
+ *
+ * Returns: 0 on success, 1 if the partition has no such metadata, <0 on error.
+ */
+int fdisk_partition_get_metadata_location(struct fdisk_partition *pa,
+				fdisk_sector_t *start)
+{
+	if (!pa)
+		return -EINVAL;
+	if (!pa->metadata_start)
+		return 1;
+	if (start)
+		*start = pa->metadata_start;
+	return 0;
+}
+
 
 /**
  * fdisk_partition_cmp_start:
