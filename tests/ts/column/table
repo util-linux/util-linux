@@ -29,6 +29,12 @@ ts_init_subtest "default"
 $TS_CMD_COLUMN --table "$TS_SELF"/files/table >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
 ts_finalize_subtest
 
+ts_init_subtest "missing-input"
+$TS_CMD_COLUMN --table "$TS_SELF"/files/table missing-column-input \
+			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+printf 'Exit status: %d\n' "$?" >> "$TS_OUTPUT"
+ts_finalize_subtest
+
 ts_init_subtest "output-separator"
 $TS_CMD_COLUMN --output-separator '|' --table "$TS_SELF"/files/table \
 			>> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
