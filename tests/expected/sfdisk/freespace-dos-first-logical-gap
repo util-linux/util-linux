@@ -1,0 +1,7 @@
+Unpartitioned space <removed>: 27 MiB, 28311552 bytes, 55296 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+
+Start    End Sectors Size
+24576  61439   36864  18M
+83968 102399   18432   9M
