@@ -74,6 +74,8 @@ Don't automatically create a default partition table on empty device. The partit
 
 *--nocheck-collisions*::
 Don't check the device for collisions with existing partition tables, filesystems and RAID signatures. The check is enabled by default and the detected signatures are reported by warning messages. This option is intended for emergency situations where the device contains data that confuses the probing code.
++
+Note that the option disables the detection and the related warnings only, it does not disable wiping. The device is probed again when the partition table is written, so *--nocheck-collisions --wipe always* skips the check on open and still wipes the signatures on write. The *--wipe-partitions* option is not affected.
 
 *-o*, *--output* _list_::
 Specify which output columns to print. Use *--help* to get a list of all supported columns.

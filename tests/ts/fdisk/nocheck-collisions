@@ -21,6 +21,7 @@ TS_DESC="nocheck-collisions"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_BLKID"
 ts_check_prog "mkfs.ext2"
 
 TEST_IMAGE_NAME=$(ts_image_init 10)
@@ -44,5 +45,16 @@ test_collision >> "$TS_OUTPUT"
 
 ts_log "collision check disabled"
 test_collision --nocheck-collisions >> "$TS_OUTPUT"
+
+ts_log "wipe always with collision check disabled"
+printf 'o\nw\n' | $TS_CMD_FDISK --nocheck-collisions --wipe always "$TEST_IMAGE_NAME" \
+	> /dev/null 2>> "$TS_ERRLOG"
+if $TS_CMD_BLKID -p -s TYPE -o value "$TEST_IMAGE_NAME" 2>/dev/null | grep -q '^ext2$'; then
+	echo "ext2 signature after write: still present" >> "$TS_OUTPUT"
+else
+	echo "ext2 signature after write: removed" >> "$TS_OUTPUT"
+fi
+
+rm -f "$TEST_IMAGE_NAME"
 
 ts_finalize
