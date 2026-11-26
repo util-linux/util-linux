@@ -196,6 +196,32 @@ enum {
 #define FDISK_INIT_UNDEF(_x)	((_x) = (__typeof__(_x)) -1)
 #define FDISK_IS_UNDEF(_x)	((_x) == (__typeof__(_x)) -1)
 
+/*
+ * Partition area arithmetic. The "end" is always the last sector of the area,
+ * so the generic rule is
+ *
+ *	end = start + size - 1
+ *
+ * Use the helpers below rather than open coded +1/-1 to keep it consistent.
+ * Inline functions rather than macros to not evaluate the arguments twice.
+ */
+static inline fdisk_sector_t fdisk_area_end(fdisk_sector_t start, fdisk_sector_t size)
+{
+	return size ? start + size - 1ULL : start;
+}
+
+static inline fdisk_sector_t fdisk_area_size(fdisk_sector_t start, fdisk_sector_t end)
+{
+	return end >= start ? end - start + 1ULL : 0;
+}
+
+/* Does an area of @size sectors at @start end at @limit or before? */
+static inline int fdisk_area_fits_limit(fdisk_sector_t start, fdisk_sector_t size,
+					fdisk_sector_t limit)
+{
+	return start <= limit && size <= fdisk_area_size(start, limit);
+}
+
 struct fdisk_table {
 	struct list_head	parts;		/* partitions */
 	int			refcount;

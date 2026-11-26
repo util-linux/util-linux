@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+#
+# The last sector specified as +size{K,M,...} is the last sector of the
+# partition, so the size is <start> + <size> - 1. A size which exactly fills
+# the free space has to be accepted, a size one sector larger has to be
+# rejected. The +<sectors> notation (without a suffix) is strictly
+# <start> + <sectors>.
+#
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="relative size"
+
+. "$TS_TOPDIR"/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+
+function print_layout {
+	$TS_CMD_FDISK --list ${TEST_IMAGE_NAME} >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+	ts_fdisk_clean ${TEST_IMAGE_NAME}
+}
+
+# 2 MiB, sectors 2048-4095 are free, +1M is exactly the free space
+ts_init_subtest "dos-fit"
+TEST_IMAGE_NAME=$(ts_image_init 2)
+echo -e "o\nn\np\n1\n2048\n+1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# 10 MiB, sectors 2048-20479 are free; the free space is larger than the
+# grain, so the end would be aligned for a smaller size
+ts_init_subtest "dos-fit-aligned"
+TEST_IMAGE_NAME=$(ts_image_init 10)
+echo -e "o\nn\np\n1\n2048\n+9M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# the same image, +8M does not fill the free space, so the end is aligned
+ts_init_subtest "dos-aligned"
+TEST_IMAGE_NAME=$(ts_image_init 10)
+echo -e "o\nn\np\n1\n2048\n+8M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# on small devices the grain is reduced to the physical sector size, so the
+# end is not aligned and +1M has to be exactly 2048 sectors
+ts_init_subtest "dos-noalign"
+TEST_IMAGE_NAME=$(ts_image_init 4)
+echo -e "o\nn\np\n1\n2048\n+1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# sectors 2049-4095 are free, +1M is one sector too large and is rejected,
+# the default (the last free sector) is used instead
+ts_init_subtest "dos-too-big"
+TEST_IMAGE_NAME=$(ts_image_init 2)
+echo -e "o\nn\np\n1\n2049\n+1M\n\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# +<sectors> (without a suffix) is strictly <start> + <sectors>
+ts_init_subtest "dos-sectors"
+TEST_IMAGE_NAME=$(ts_image_init 4)
+echo -e "o\nn\np\n1\n2048\n+2048\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# -size is relative to the high limit and has to leave 1 MiB free
+ts_init_subtest "dos-minus"
+TEST_IMAGE_NAME=$(ts_image_init 4)
+echo -e "o\nn\np\n1\n2048\n-1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# partition 2 at 4096-6143, then sectors 2048-4095 are free for partition 1
+ts_init_subtest "gpt-fit"
+TEST_IMAGE_NAME=$(ts_image_init 10)
+echo -e "g\nn\n2\n4096\n+1M\nn\n1\n2048\n+1M\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+# sectors 2049-4095 are free, +1M is rejected, the default is used
+ts_init_subtest "gpt-too-big"
+TEST_IMAGE_NAME=$(ts_image_init 10)
+echo -e "g\nn\n2\n4096\n+1M\nn\n1\n2049\n+1M\n\nw\n" | \
+	$TS_CMD_FDISK --noauto-pt ${TEST_IMAGE_NAME} > /dev/null 2>> "$TS_ERRLOG"
+print_layout
+ts_finalize_subtest
+
+ts_finalize

@@ -1048,13 +1048,13 @@ static void set_partition(struct fdisk_context *cxt,
 				i, doext ? " [extended]" : "",
 				(size_t) offset,
 				(size_t) (start -  offset),
-				(size_t) (stop - start + 1),
+				(size_t) fdisk_area_size(start, stop),
 				sysid));
 
 	p->boot_ind = boot ? ACTIVE_FLAG : 0;
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
-	dos_partition_set_size(p, stop - start + 1);
+	dos_partition_set_size(p, fdisk_area_size(start, stop));
 	dos_partition_sync_chs(p, offset, cxt->geom.sectors, cxt->geom.heads);
 	partition_set_changed(cxt, i, 1);
 }
@@ -1413,7 +1413,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_sector_t last;
 
 			rc = find_last_free(cxt, is_logical, start, limit, &last);
-			if (rc == 0 && last - start + 1 < fdisk_partition_get_size(pa)) {
+			if (rc == 0 && !fdisk_area_fits_limit(start,
+						fdisk_partition_get_size(pa), last)) {
 				DBG(LABEL, ul_debug("DOS: area <%"PRIu64",%"PRIu64"> too small [wanted=%"PRIu64" aval=%"PRIu64"]",
 							start, last,
 							fdisk_partition_get_size(pa),
@@ -1473,10 +1474,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	else if (pa && pa->end_follow_default)
 		stop = limit;
 	else if (pa && fdisk_partition_has_size(pa)) {
-		stop = start + pa->size;
+		stop = fdisk_area_end(start, pa->size);
 		isrel = pa->size_explicit ? 0 : 1;
-		if ((!isrel || !alignment_required(cxt)) && stop > start)
-			stop -= 1;
 	} else {
 		/* ask user by dialog */
 		for (;;) {
@@ -1527,7 +1526,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	if (stop > limit)
 		stop = limit;
 
-	if (isrel && stop - start < (cxt->grain / fdisk_get_sector_size(cxt))) {
+	if (isrel && fdisk_area_size(start, stop) < (cxt->grain / fdisk_get_sector_size(cxt))) {
 		/* Don't try to be smart on very small partitions and don't align so small sizes */
 		isrel = 0;
 		DBG(LABEL, ul_debug("DOS: don't align end of tiny partition [start=%ju, stop=%ju, grain=%lu]",
@@ -1540,7 +1539,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		 * align the end of the partition. The next partition
 		 * will start at phy.block boundary.
 		 */
-		stop = fdisk_align_lba_in_range(cxt, stop, start, limit);
+		stop = fdisk_align_lba_in_range(cxt, stop + 1, start, limit);
 		if (stop > start)
 			stop -= 1;	/* end one sector before aligned offset */
 		if (stop > limit)
@@ -2456,7 +2455,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 		if (FDISK_IS_UNDEF(size))
 			size = dos_partition_get_size(p);
 
-		set_partition(cxt, n, 0, start, start + size - 1,
+		set_partition(cxt, n, 0, start, fdisk_area_end(start, size),
 				pa->type  ? pa->type->code : p->sys_ind,
 				FDISK_IS_UNDEF(pa->boot) ?
 					p->boot_ind == ACTIVE_FLAG :

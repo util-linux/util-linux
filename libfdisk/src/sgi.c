@@ -922,9 +922,9 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	if (pa && pa->end_follow_default)
 		last -= 1ULL;
 	else if (pa && fdisk_partition_has_size(pa)) {
-		if (first + pa->size - 1ULL > last)
+		if (!fdisk_area_fits_limit(first, pa->size, last))
 			return -ERANGE;
-		last = first + pa->size - 1ULL;
+		last = fdisk_area_end(first, pa->size);
 	} else {
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),

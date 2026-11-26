@@ -374,9 +374,17 @@ static int ask_offset(struct fdisk_context *cxt,
 			num += unit/2;	/* round */
 			num /= unit;
 		}
-		if (sig == '+')
+		if (sig == '+') {
+			/* The size is converted to the last sector of the
+			 * area, the generic rule is
+			 *	end = start + size - 1
+			 * The +<number> notation (without a multiplicative
+			 * suffix) is strictly <start> + <number>, see
+			 * fdisk(8). */
+			if (pwr && num)
+				num -= 1;
 			num += base;
-		else if (sig == '-' && fdisk_ask_number_is_wrap_negative(ask))
+		} else if (sig == '-' && fdisk_ask_number_is_wrap_negative(ask))
 			num = high - num;
 		else if (sig == '-')
 			num = base - num;
