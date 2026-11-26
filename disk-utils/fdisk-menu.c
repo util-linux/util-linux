@@ -1129,7 +1129,7 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 			fdisk_warn(cxt, _("Failed to create '%s' disk label"), wanted);
 		}
 	}
-	if (rc == 0 && fdisk_get_collision(cxt))
+	if (rc == 0)
 		follow_wipe_mode(cxt);
 
 	return rc;

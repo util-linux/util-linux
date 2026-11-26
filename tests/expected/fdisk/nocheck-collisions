@@ -1,0 +1,6 @@
+default (collision check enabled)
+ext2 signature warning: yes
+collision check disabled
+ext2 signature warning: no
+wipe always with collision check disabled
+ext2 signature after write: removed

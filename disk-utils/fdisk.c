@@ -1051,15 +1051,19 @@ static fdisk_sector_t get_dev_blocks(char *dev)
 
 void follow_wipe_mode(struct fdisk_context *cxt)
 {
+	const char *collision = fdisk_get_collision(cxt);
 	int dowipe = wipemode == WIPEMODE_ALWAYS ? 1 : 0;
 
-	if (isatty(STDIN_FILENO) && wipemode == WIPEMODE_AUTO)
+	if (collision && isatty(STDIN_FILENO) && wipemode == WIPEMODE_AUTO)
 		dowipe = 1;	/* do it in interactive mode */
 
 	if (fdisk_is_ptcollision(cxt) && wipemode != WIPEMODE_NEVER)
 		dowipe = 1;	/* always remove old PT */
 
 	fdisk_enable_wipe(cxt, dowipe);
+
+	if (!collision)
+		return;		/* nothing detected, nothing to report */
 
 	if (dowipe) {
 		/* check if collision in first sector */
@@ -1068,18 +1072,18 @@ void follow_wipe_mode(struct fdisk_context *cxt)
 			fdisk_warnx(cxt, _(
 				"The device contains a '%s' signature in the first sector; it will not be wiped "
 				"unless you create a new partition table. Alternatively, use wipefs(8)."),
-					fdisk_get_collision(cxt));
+					collision);
 		else
 			fdisk_warnx(cxt, _(
 				"The device contains '%s' signature and it will be removed by a write command. "
 				"See fdisk(8) man page and --wipe option for more details."),
-					fdisk_get_collision(cxt));
+					collision);
 	} else
 		fdisk_warnx(cxt, _(
 			"The device contains '%s' signature and it may remain on the device. "
 			"It is recommended to wipe the device with wipefs(8) or "
 			"fdisk --wipe, in order to avoid possible collisions."),
-			fdisk_get_collision(cxt));
+			collision);
 }
 
 static void __attribute__((__noreturn__)) usage(void)
@@ -1115,6 +1119,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
 	fprintf(out,
 	      _("     --lock[=<mode>]           use exclusive device lock (%s, %s or %s)\n"), "yes", "no", "nonblock");
+	fputs(_("     --nocheck-collisions      don't check for collisions with old signatures\n"), out);
 	fprintf(out,
 	      _(" -w, --wipe <mode>             wipe signatures (%s, %s or %s)\n"), "auto", "always", "never");
 	fprintf(out,
@@ -1152,7 +1157,8 @@ int main(int argc, char **argv)
 	const char *wanted_label = NULL;
 	enum {
 		OPT_BYTES	= CHAR_MAX + 1,
-		OPT_LOCK
+		OPT_LOCK,
+		OPT_NOCHECK_COLLISIONS
 	};
 	static const struct option longopts[] = {
 		{ "bytes",          no_argument,       NULL, OPT_BYTES },
@@ -1167,6 +1173,7 @@ int main(int argc, char **argv)
 		{ "list-details",   no_argument,       NULL, 'x' },
 		{ "lock",           optional_argument, NULL, OPT_LOCK },
 		{ "noauto-pt",      no_argument,       NULL, 'n' },
+		{ "nocheck-collisions", no_argument,   NULL, OPT_NOCHECK_COLLISIONS },
 		{ "sector-size",    required_argument, NULL, 'b' },
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
@@ -1302,6 +1309,9 @@ int main(int argc, char **argv)
 		case OPT_BYTES:
 			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
 			break;
+		case OPT_NOCHECK_COLLISIONS:
+			fdisk_disable_collisions_check(cxt, 1);
+			break;
 		case OPT_LOCK:
 			lockmode = "1";
 			if (optarg) {
@@ -1398,8 +1408,7 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
-		if (fdisk_get_collision(cxt))
-			follow_wipe_mode(cxt);
+		follow_wipe_mode(cxt);
 
 		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
