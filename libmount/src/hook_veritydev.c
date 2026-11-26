@@ -22,6 +22,7 @@
 #include "strutils.h"
 #include "fileutils.h"
 #include "pathnames.h"
+#include "sha256.h"
 
 /* Data used by all verity hooks */
 struct hookset_data {
@@ -215,9 +216,10 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 			*root_hash_binary = NULL,
 			*mapper_device = NULL,
 			*root_hash = NULL,
-			*hash_sig = NULL;
+			*hash_sig = NULL,
+			*hashed = NULL;
 
-	size_t hash_size, hash_sig_size = 0, keysize = 0;
+	size_t hash_size, root_hash_size = 0, hash_sig_size = 0, keysize = 0;
 	struct crypt_params_verity crypt_params = {};
 	struct crypt_device *crypt_dev = NULL;
 
@@ -340,12 +342,44 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 		rc = -EINVAL;
 	}
 
+	if (!rc) {
+		root_hash_size = crypt_hex_to_bytes(root_hash, &root_hash_binary);
+		if ((ssize_t) root_hash_size < 0) {
+			DBG_OBJ(HOOK, hs, ul_debug("root hash %s is not valid hex", root_hash));
+			rc = -EINVAL;
+		}
+	}
+
 	/* To avoid clashes, use the roothash as the device name. This allows us to reuse already open devices, saving
 	 * a lot of time and resources when there are duplicated mounts. If the roothash is the same, then the volumes
 	 * are also guaranteed to be identical. This is what systemd also does, so we can deduplicate across the whole
-	 * system. */
-	if (!rc && asprintf(&mapper_device, "%s-verity", root_hash) < 0)
-		rc = -ENOMEM;
+	 * system.
+	 *
+	 * Besides the limit on the device-mapper name itself, libcryptsetup composes the device-mapper UUID as
+	 * "CRYPT-VERITY-<superblock uuid>-<name>" and truncates it, with an error logged, when it doesn't fit in
+	 * DM_UUID_LEN-1 characters. With the 32 hex characters of the superblock UUID that leaves 82 characters for
+	 * the name, so hash the root hash with SHA-256 if its hex encoding doesn't fit, which always does. Keep in
+	 * sync with verity_dm_name_base() in systemd's dissect-image.c. */
+	if (!rc) {
+		const char *name = root_hash;
+
+		if (root_hash_size * 2 > 82 - strlen("-verity")) {
+			unsigned char sha[UL_SHA256LENGTH];
+			size_t i;
+
+			ul_SHA256(sha, (unsigned char *) root_hash_binary, root_hash_size);
+			hashed = malloc(UL_SHA256LENGTH * 2 + 1);
+			if (!hashed)
+				rc = -ENOMEM;
+			else {
+				for (i = 0; i < UL_SHA256LENGTH; i++)
+					snprintf(hashed + i * 2, 3, "%02x", sha[i]);
+				name = hashed;
+			}
+		}
+		if (!rc && asprintf(&mapper_device, "%s-verity", name) < 0)
+			rc = -ENOMEM;
+	}
 
 	if (!rc)
 		rc = verity_call( crypt_init_data_device(&crypt_dev, hash_device, backing_file) );
@@ -364,7 +398,7 @@ static int setup_veritydev(	struct libmnt_context *cxt,
 		goto done;
 
 	hash_size = verity_call( crypt_get_volume_key_size(crypt_dev) );
-	if (crypt_hex_to_bytes(root_hash, &root_hash_binary) != hash_size) {
+	if (root_hash_size != hash_size) {
 		DBG_OBJ(HOOK, hs, ul_debug("root hash %s is not of length %zu", root_hash, hash_size));
 		rc = -EINVAL;
 		goto done;
@@ -456,6 +490,7 @@ done:
 	verity_call( crypt_free(crypt_dev) );
 
 	free(root_hash_binary);
+	free(hashed);
 	free(mapper_device);
 	free(root_hash);
 	free(hash_sig);
