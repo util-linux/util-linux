@@ -12,9 +12,12 @@
 
 #include <sys/prctl.h>
 #include <sys/syscall.h>
+#include <cap-ng.h>
 
 #include "setpriv-landlock.h"
 
+#include "caputils.h"
+#include "namespace.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "nls.h"
@@ -22,13 +25,19 @@
 
 enum landlock_rule_type {
 	LANDLOCK_RULE_PATH_BENEATH = 1,
-	LANDLOCK_RULE_NET_PORT = 2,
+	LANDLOCK_RULE_NET_PORT,
+	LANDLOCK_RULE_NAMESPACE,
+	LANDLOCK_RULE_CAPABILITY,
 };
 
 struct landlock_ruleset_attr {
 	uint64_t handled_access_fs;
 	uint64_t handled_access_net;
 	uint64_t scoped;
+	uint64_t quiet_access_fs;
+	uint64_t quiet_access_net;
+	uint64_t quiet_scoped;
+	uint64_t handled_permissions;
 };
 
 struct landlock_path_beneath_attr {
@@ -41,8 +50,28 @@ struct landlock_net_port_attr {
 	uint64_t port;
 };
 
+struct landlock_namespace_attr {
+	uint64_t permissions;
+	uint64_t allowed_namespace_types;
+	uint64_t quiet_namespace_types;
+};
+
+struct landlock_capability_attr {
+	uint64_t permissions;
+	uint64_t allowed_capabilities;
+	uint64_t quiet_capabilities;
+};
+
 #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
 #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
+
+#define LANDLOCK_ADD_RULE_QUIET				(1U << 0)
+
+#define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF	(1U << 0)
+#define LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON		(1U << 1)
+#define LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF	(1U << 2)
+#define LANDLOCK_RESTRICT_SELF_TSYNC			(1U << 3)
+#define LANDLOCK_RESTRICT_SELF_NO_NEW_PRIVS		(1U << 4)
 
 #define LANDLOCK_ACCESS_FS_EXECUTE			(1ULL << 0)
 #define LANDLOCK_ACCESS_FS_WRITE_FILE			(1ULL << 1)
@@ -69,6 +98,9 @@ struct landlock_net_port_attr {
 
 #define LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET		(1ULL << 0)
 #define LANDLOCK_SCOPE_SIGNAL				(1ULL << 1)
+
+#define LANDLOCK_PERMISSION_NAMESPACE_USE		(1ULL << 0)
+#define LANDLOCK_PERMISSION_CAPABILITY_USE		(1ULL << 1)
 
 static inline int landlock_create_ruleset(
 		const struct landlock_ruleset_attr *attr,
@@ -98,6 +130,8 @@ struct landlock_rule_entry {
 	union {
 		struct landlock_path_beneath_attr path_beneath_attr;
 		struct landlock_net_port_attr net_port_attr;
+		struct landlock_namespace_attr namespace_attr;
+		struct landlock_capability_attr capability_attr;
 	};
 };
 
@@ -139,6 +173,22 @@ static const struct landlock_restriction landlock_scope_restriction[] = {
 	{ LANDLOCK_SCOPE_SIGNAL,	       "signal",	       N_("ability to send signals to processes") },
 };
 
+static const struct landlock_restriction landlock_permission[] = {
+	{ LANDLOCK_PERMISSION_NAMESPACE_USE,  "namespace-use",  N_("use of namespace types") },
+	{ LANDLOCK_PERMISSION_CAPABILITY_USE, "capability-use", N_("use of Linux capabilities") },
+};
+
+static const struct landlock_restriction landlock_namespace_type[] = {
+	{ CLONE_NEWNS,	   "mnt",    N_("mount namespace") },
+	{ CLONE_NEWNET,	   "net",    N_("network namespace") },
+	{ CLONE_NEWPID,	   "pid",    N_("PID namespace") },
+	{ CLONE_NEWUTS,	   "uts",    N_("UTS namespace") },
+	{ CLONE_NEWIPC,	   "ipc",    N_("System V IPC namespace") },
+	{ CLONE_NEWUSER,   "user",   N_("user namespace") },
+	{ CLONE_NEWCGROUP, "cgroup", N_("cgroup namespace") },
+	{ CLONE_NEWTIME,   "time",   N_("time namespace") },
+};
+
 /* cumulative access_fs rights supported by each Landlock ABI version, indexed by (abi - 1) */
 static const uint64_t landlock_access_fs_mask[] = {
 	/* ABI 1 */ (LANDLOCK_ACCESS_FS_MAKE_SYM << 1) - 1,
@@ -176,6 +226,111 @@ static const uint64_t landlock_access_scope_mask[] = {
 	/* ABI 6 */ (LANDLOCK_SCOPE_SIGNAL << 1) - 1,
 };
 
+/* cumulative permissions supported by each Landlock ABI version, indexed by (abi - 1) */
+static const uint64_t landlock_access_permission_mask[] = {
+	/* ABI 1 */ 0,
+	/* ABI 2 */ 0,
+	/* ABI 3 */ 0,
+	/* ABI 4 */ 0,
+	/* ABI 5 */ 0,
+	/* ABI 6 */ 0,
+	/* ABI 7 */ 0,
+	/* ABI 8 */ 0,
+	/* ABI 9 */ 0,
+	/* ABI 10 */ 0,
+	/* ABI 11 */ 0,
+	/* ABI 12 */ LANDLOCK_PERMISSION_NAMESPACE_USE | LANDLOCK_PERMISSION_CAPABILITY_USE,
+};
+
+struct landlock_category {
+	const char *name;
+	const struct landlock_restriction *items;
+	size_t nitems;
+	/* cumulative rights supported by each Landlock ABI version, indexed by (abi - 1) */
+	const uint64_t *abi_masks;
+	size_t nabi_masks;
+	const char *rules;		/* rule types, NULL if there are none */
+	const char *support_label;	/* --landlock-support label for the rights */
+	const char *usage_title;	/* --help section title */
+	const char *parse_err;
+	const char *unsupported_err;
+};
+
+/*
+ * Converts a comma-separated list of names from @items to a bitmask. Every
+ * name must be known; returns -1 otherwise.
+ */
+static int landlock_names_to_mask(const struct landlock_restriction *items, size_t nitems,
+				  const char *list, uint64_t *mask)
+{
+	size_t i, len;
+
+	for (;;) {
+		len = strcspn(list, ",");
+		for (i = 0; i < nitems; i++)
+			if (strlen(items[i].type) == len
+					&& memcmp(items[i].type, list, len) == 0)
+				break;
+		if (i == nitems)
+			return -1;
+		*mask |= items[i].value;
+
+		if (list[len] == '\0')
+			return 0;
+		list += len + 1;
+	}
+}
+
+static const struct landlock_category landlock_categories[SETPRIV_LANDLOCK_NCATEGORIES] = {
+	[SETPRIV_LANDLOCK_FS] = {
+		.name = "fs",
+		.items = landlock_access_fs,
+		.nitems = ARRAY_SIZE(landlock_access_fs),
+		.abi_masks = landlock_access_fs_mask,
+		.nabi_masks = ARRAY_SIZE(landlock_access_fs_mask),
+		.rules = "path-beneath",
+		.support_label = N_("%s rights:"),
+		.usage_title = N_(" available Landlock filesystem rights are:\n"),
+		.parse_err = N_("could not parse Landlock fs access: %s"),
+		.unsupported_err = N_("Landlock fs access right is not supported by the running kernel: %s"),
+	},
+	[SETPRIV_LANDLOCK_NET] = {
+		.name = "net",
+		.items = landlock_access_net,
+		.nitems = ARRAY_SIZE(landlock_access_net),
+		.abi_masks = landlock_access_net_mask,
+		.nabi_masks = ARRAY_SIZE(landlock_access_net_mask),
+		.rules = "net-port",
+		.support_label = N_("%s rights:"),
+		.usage_title = N_(" available Landlock network rights are:\n"),
+		.parse_err = N_("could not parse Landlock net access: %s"),
+		.unsupported_err = N_("Landlock net access right is not supported by the running kernel: %s"),
+	},
+	[SETPRIV_LANDLOCK_SCOPE] = {
+		.name = "scope",
+		.items = landlock_scope_restriction,
+		.nitems = ARRAY_SIZE(landlock_scope_restriction),
+		.abi_masks = landlock_access_scope_mask,
+		.nabi_masks = ARRAY_SIZE(landlock_access_scope_mask),
+		.support_label = N_("%s restrictions:"),
+		.usage_title = N_(" available Landlock scope restrictions are:\n"),
+		.parse_err = N_("could not parse Landlock scope restriction: %s"),
+		.unsupported_err = N_("Landlock scope restriction is not supported by the running kernel: %s"),
+	},
+	[SETPRIV_LANDLOCK_PERMISSION] = {
+		.name = "permission",
+		.items = landlock_permission,
+		.nitems = ARRAY_SIZE(landlock_permission),
+		.abi_masks = landlock_access_permission_mask,
+		.nabi_masks = ARRAY_SIZE(landlock_access_permission_mask),
+		.rules = "namespace capability",
+		.support_label = N_("%s rights:"),
+		.usage_title = N_(" available Landlock permissions are:\n"),
+		.parse_err = N_("could not parse Landlock permission: %s"),
+		.unsupported_err = N_("Landlock permission is not supported by the running kernel: %s"),
+	},
+};
+
 static int supported_landlock_abi(void)
 {
 	static int abi = -1;
@@ -197,239 +352,185 @@ static int supported_landlock_abi(void)
 	return abi;
 }
 
-static uint64_t landlock_abi_fs_mask(void)
+static uint64_t landlock_abi_mask(const struct landlock_category *cat)
 {
 	int abi = supported_landlock_abi();
-	size_t n = ARRAY_SIZE(landlock_access_fs_mask);
 	size_t idx = (size_t) (abi - 1);
 
-	if (idx >= n)
-		idx = n - 1;
-	return landlock_access_fs_mask[idx];
+	if (idx >= cat->nabi_masks)
+		idx = cat->nabi_masks - 1;
+	return cat->abi_masks[idx];
 }
 
-static uint64_t landlock_abi_net_mask(void)
+static uint64_t parse_landlock_rights(const struct landlock_category *cat, const char *list)
 {
-	int abi = supported_landlock_abi();
-	size_t n = ARRAY_SIZE(landlock_access_net_mask);
-	size_t idx = (size_t) (abi - 1);
-
-	if (idx >= n)
-		idx = n - 1;
-	return landlock_access_net_mask[idx];
-}
-
-static uint64_t landlock_abi_scope_mask(void)
-{
-	int abi = supported_landlock_abi();
-	size_t n = ARRAY_SIZE(landlock_access_scope_mask);
-	size_t idx = (size_t) (abi - 1);
-
-	if (idx >= n)
-		idx = n - 1;
-	return landlock_access_scope_mask[idx];
-}
-
-static long landlock_fs_access_to_mask(const char *str, size_t len)
-{
+	uint64_t r = 0, unsupported;
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-		if (strlen(landlock_access_fs[i].type) == len
-				&& memcmp(landlock_access_fs[i].type, str, len) == 0)
-			return landlock_access_fs[i].value;
-	return -1;
-}
+	if (landlock_names_to_mask(cat->items, cat->nitems, list, &r))
+		errx(EXIT_FAILURE, _(cat->parse_err), list);
 
-static uint64_t parse_landlock_fs_access(const char *list)
-{
-	unsigned long r = 0, unsupported;
-	size_t i;
-
-	if (string_to_bitmask(list, &r, landlock_fs_access_to_mask))
-		errx(EXIT_FAILURE,
-		     _("could not parse Landlock fs access: %s"), list);
-
-	unsupported = r & ~landlock_abi_fs_mask();
+	unsupported = r & ~landlock_abi_mask(cat);
 	if (unsupported) {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-			if (landlock_access_fs[i].value & unsupported)
-				errx(EXIT_FAILURE,
-				     _("Landlock fs access right is not supported by the running kernel: %s"),
-				     landlock_access_fs[i].type);
+		for (i = 0; i < cat->nitems; i++)
+			if (cat->items[i].value & unsupported)
+				errx(EXIT_FAILURE, _(cat->unsupported_err), cat->items[i].type);
 	}
 
 	return r;
 }
 
-static long landlock_net_access_to_mask(const char *str, size_t len)
+static uint64_t parse_landlock_namespace_types(const char *list)
 {
+	uint64_t r = 0;
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(landlock_access_net); i++) {
-		if (strlen(landlock_access_net[i].type) == len
-				&& memcmp(landlock_access_net[i].type, str, len) == 0)
-			return landlock_access_net[i].value;
+	if (strcmp(list, "all") == 0) {
+		for (i = 0; i < ARRAY_SIZE(landlock_namespace_type); i++)
+			r |= landlock_namespace_type[i].value;
+		return r;
 	}
-	return -1;
-}
 
-static uint64_t parse_landlock_net_access(const char *list)
-{
-	unsigned long r = 0, unsupported;
-	size_t i;
-
-	if (string_to_bitmask(list, &r, landlock_net_access_to_mask))
+	if (landlock_names_to_mask(landlock_namespace_type,
+				   ARRAY_SIZE(landlock_namespace_type), list, &r))
 		errx(EXIT_FAILURE,
-		     _("could not parse Landlock net access: %s"), list);
-
-	unsupported = r & ~landlock_abi_net_mask();
-	if (unsupported) {
-		for (i = 0; i < ARRAY_SIZE(landlock_access_net); i++)
-			if (landlock_access_net[i].value & unsupported)
-				errx(EXIT_FAILURE,
-				     _("Landlock net access right is not supported by the running kernel: %s"),
-				     landlock_access_net[i].type);
-	}
+		     _("could not parse Landlock namespace types: %s"), list);
 
 	return r;
 }
 
-static long landlock_scope_restriction_to_mask(const char *str, size_t len)
+static uint64_t parse_landlock_capabilities(const char *list)
 {
-	size_t i;
+	char *buf = xstrdup(list);
+	char *str = buf;
+	char *c;
+	uint64_t r = 0;
+	int cap, max = cap_last_cap();
 
-	for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++)
-		if (strlen(landlock_scope_restriction[i].type) == len
-				&& memcmp(landlock_scope_restriction[i].type, str, len) == 0)
-			return landlock_scope_restriction[i].value;
-	return -1;
-}
+	while ((c = strsep(&str, ","))) {
+		if (strcmp(c, "all") == 0) {
+			for (cap = 0; cap <= max && cap < 64; cap++)
+				r |= 1ULL << cap;
+			continue;
+		}
 
-static uint64_t parse_landlock_scope_restriction(const char *list)
-{
-	unsigned long r = 0, unsupported;
-	size_t i;
-
-	if (string_to_bitmask(list, &r, landlock_scope_restriction_to_mask))
-		errx(EXIT_FAILURE,
-		     _("could not parse Landlock scope restriction: %s"), list);
-
-	unsupported = r & ~landlock_abi_scope_mask();
-	if (unsupported) {
-		for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++)
-			if (landlock_scope_restriction[i].value & unsupported)
-				errx(EXIT_FAILURE,
-				     _("Landlock scope restriction is not supported by the running kernel: %s"),
-				     landlock_scope_restriction[i].type);
+		cap = capng_name_to_capability(c);
+		if (cap < 0 && (sscanf(c, "cap_%d", &cap) != 1 || cap > max))
+			cap = -1;
+		if (cap < 0 || cap >= 64)
+			errx(EXIT_FAILURE, _("unknown capability \"%s\""), c);
+		r |= 1ULL << cap;
 	}
 
+	free(buf);
 	return r;
 }
 
 void parse_landlock_access(struct setpriv_landlock_opts *opts, const char *str)
 {
+	const struct landlock_category *cat;
+	const char *rights;
 	uint64_t mask;
-	const char *type;
+	size_t i;
 
-	/* without argument, match all supported by the current kernel */
-	if (strcmp(str, "fs") == 0 || strcmp(str, "fs:") == 0) {
-		opts->access_fs |= landlock_abi_fs_mask();
-		return;
-	}
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++) {
+		cat = &landlock_categories[i];
+		rights = ul_startswith(str, cat->name);
+		if (!rights || (*rights != '\0' && *rights != ':'))
+			continue;
+		if (*rights == ':')
+			rights++;
 
-	type = ul_startswith(str, "fs:");
-	if (type) {
-		opts->access_fs |= parse_landlock_fs_access(type);
-		return;
-	}
+		if (*rights != '\0') {
+			opts->handled[i] |= parse_landlock_rights(cat, rights);
+			return;
+		}
 
-	if (strcmp(str, "net") == 0 || strcmp(str, "net:") == 0) {
-		mask = landlock_abi_net_mask();
+		/* without argument, match all supported by the current kernel */
+		mask = landlock_abi_mask(cat);
 		if (mask == 0)
-			errx(EXIT_FAILURE,
-			     _("Landlock net is not supported"));
-		opts->access_net |= mask;
-		return;
-	}
-
-	type = ul_startswith(str, "net:");
-	if (type) {
-		opts->access_net |= parse_landlock_net_access(type);
-		return;
-	}
-
-	if (strcmp(str, "scope") == 0 || strcmp(str, "scope:") == 0) {
-		mask = landlock_abi_scope_mask();
-		if (mask == 0)
-			errx(EXIT_FAILURE,
-			     _("Landlock scope is not supported"));
-		opts->scoped |= mask;
-		return;
-	}
-
-	type = ul_startswith(str, "scope:");
-	if (type) {
-		opts->scoped |= parse_landlock_scope_restriction(type);
+			errx(EXIT_FAILURE, _("Landlock %s is not supported"), cat->name);
+		opts->handled[i] |= mask;
 		return;
 	}
 
 	errx(EXIT_FAILURE, _("invalid Landlock access: %s"), str);
 }
 
+/*
+ * Parses the "<right>,...:" part of a "<type>:<right>,...:<argument>" rule,
+ * returning the rights (0 if empty) and setting @arg to the argument.
+ */
+static uint64_t parse_landlock_rule_rights(const char *rule, const char *rights,
+					   enum setpriv_landlock_category category,
+					   const char **arg)
+{
+	const char *end = strchr(rights, ':');
+	char *buf;
+	uint64_t r = 0;
+
+	if (!end)
+		errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), rule);
+
+	if (end != rights) {
+		buf = xstrndup(rights, end - rights);
+		r = parse_landlock_rights(&landlock_categories[category], buf);
+		free(buf);
+	}
+
+	*arg = end + 1;
+	return r;
+}
+
 void parse_landlock_rule(struct setpriv_landlock_opts *opts, const char *str)
 {
 	struct landlock_rule_entry *rule = xmalloc(sizeof(*rule));
-	const char *accesses, *path, *portstr;
-	char *accesses_part;
+	const char *rest, *arg;
 	int parent_fd;
-	uint16_t portnum;
 
-	accesses = ul_startswith(str, "path-beneath:");
-	if (accesses) {
-		path = strchr(accesses, ':');
-		if (!path)
-			errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
+	rest = ul_startswith(str, "path-beneath:");
+	if (rest) {
 		rule->rule_type = LANDLOCK_RULE_PATH_BENEATH;
+		rule->path_beneath_attr.allowed_access =
+			parse_landlock_rule_rights(str, rest, SETPRIV_LANDLOCK_FS, &arg);
 
-		accesses_part = xstrndup(accesses, path - accesses);
-		if (accesses_part[0] != '\0')
-			rule->path_beneath_attr.allowed_access = parse_landlock_fs_access(accesses_part);
-		else
-			rule->path_beneath_attr.allowed_access = 0;
-		free(accesses_part);
-
-		path++;
-
-		parent_fd = open(path, O_RDONLY | O_PATH | O_CLOEXEC);
+		parent_fd = open(arg, O_RDONLY | O_PATH | O_CLOEXEC);
 		if (parent_fd == -1)
-			err(EXIT_FAILURE, _("could not open file for Landlock: %s"), path);
-
+			err(EXIT_FAILURE, _("could not open file for Landlock: %s"), arg);
 		rule->path_beneath_attr.parent_fd = parent_fd;
 
 		list_add(&rule->head, &opts->rules);
 		return;
 	}
 
-	accesses = ul_startswith(str, "net-port:");
-	if (accesses) {
-		portstr = strchr(accesses, ':');
-		if (!portstr)
-			errx(EXIT_FAILURE, _("invalid Landlock rule: %s"), str);
+	rest = ul_startswith(str, "net-port:");
+	if (rest) {
 		rule->rule_type = LANDLOCK_RULE_NET_PORT;
+		rule->net_port_attr.allowed_access =
+			parse_landlock_rule_rights(str, rest, SETPRIV_LANDLOCK_NET, &arg);
+		rule->net_port_attr.port = strtou16_or_err(arg, "could not parse port number");
 
-		accesses_part = xstrndup(accesses, portstr - accesses);
-		if (accesses_part[0] != '\0')
-			rule->net_port_attr.allowed_access = parse_landlock_net_access(accesses_part);
-		else
-			rule->net_port_attr.allowed_access = 0;
-		free(accesses_part);
+		list_add(&rule->head, &opts->rules);
+		return;
+	}
 
-		portstr++;
+	rest = ul_startswith(str, "namespace:");
+	if (rest) {
+		rule->rule_type = LANDLOCK_RULE_NAMESPACE;
+		rule->namespace_attr.permissions = LANDLOCK_PERMISSION_NAMESPACE_USE;
+		rule->namespace_attr.allowed_namespace_types = parse_landlock_namespace_types(rest);
+		rule->namespace_attr.quiet_namespace_types = 0;
 
-		portnum = strtou16_or_err(portstr, "could not parse port number");
+		list_add(&rule->head, &opts->rules);
+		return;
+	}
 
-		rule->net_port_attr.port = portnum;
+	rest = ul_startswith(str, "capability:");
+	if (rest) {
+		rule->rule_type = LANDLOCK_RULE_CAPABILITY;
+		rule->capability_attr.permissions = LANDLOCK_PERMISSION_CAPABILITY_USE;
+		rule->capability_attr.allowed_capabilities = parse_landlock_capabilities(rest);
+		rule->capability_attr.quiet_capabilities = 0;
 
 		list_add(&rule->head, &opts->rules);
 		return;
@@ -448,28 +549,43 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 	struct landlock_rule_entry *rule;
 	struct list_head *entry;
 	int fd, ret;
+	size_t i;
 	struct landlock_path_beneath_attr path_beneath_attr;
 	struct landlock_net_port_attr net_port_attr;
 
 	list_for_each(entry, &opts->rules) {
 		rule = list_entry(entry, struct landlock_rule_entry, head);
-		if (rule->rule_type == LANDLOCK_RULE_PATH_BENEATH && !opts->access_fs) {
+		if (rule->rule_type == LANDLOCK_RULE_PATH_BENEATH && !opts->handled[SETPRIV_LANDLOCK_FS]) {
 			errx(EXIT_FAILURE,
 				_("Landlock path-beneath rule requires a filesystem access restriction (--landlock-access fs)"));
 		}
-		if (rule->rule_type == LANDLOCK_RULE_NET_PORT && !opts->access_net) {
+		if (rule->rule_type == LANDLOCK_RULE_NET_PORT && !opts->handled[SETPRIV_LANDLOCK_NET]) {
 			errx(EXIT_FAILURE,
 				_("Landlock net-port rule requires a network access restriction (--landlock-access net)"));
 		}
+		if (rule->rule_type == LANDLOCK_RULE_NAMESPACE
+				&& !(opts->handled[SETPRIV_LANDLOCK_PERMISSION] & LANDLOCK_PERMISSION_NAMESPACE_USE)) {
+			errx(EXIT_FAILURE,
+				_("Landlock namespace rule requires a namespace permission restriction (--landlock-access permission:namespace-use)"));
+		}
+		if (rule->rule_type == LANDLOCK_RULE_CAPABILITY
+				&& !(opts->handled[SETPRIV_LANDLOCK_PERMISSION] & LANDLOCK_PERMISSION_CAPABILITY_USE)) {
+			errx(EXIT_FAILURE,
+				_("Landlock capability rule requires a capability permission restriction (--landlock-access permission:capability-use)"));
+		}
 	}
 
-	if (!opts->access_fs && !opts->access_net && !opts->scoped)
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++)
+		if (opts->handled[i])
+			break;
+	if (i == SETPRIV_LANDLOCK_NCATEGORIES)
 		return;
 
 	const struct landlock_ruleset_attr ruleset_attr = {
-		.handled_access_fs = opts->access_fs,
-		.handled_access_net = opts->access_net,
-		.scoped = opts->scoped,
+		.handled_access_fs = opts->handled[SETPRIV_LANDLOCK_FS],
+		.handled_access_net = opts->handled[SETPRIV_LANDLOCK_NET],
+		.scoped = opts->handled[SETPRIV_LANDLOCK_SCOPE],
+		.handled_permissions = opts->handled[SETPRIV_LANDLOCK_PERMISSION],
 	};
 
 	fd = landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
@@ -482,15 +598,19 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 		if (rule->rule_type == LANDLOCK_RULE_PATH_BENEATH) {
 			path_beneath_attr = rule->path_beneath_attr;
 			if (!path_beneath_attr.allowed_access)
-				path_beneath_attr.allowed_access = opts->access_fs;
+				path_beneath_attr.allowed_access = opts->handled[SETPRIV_LANDLOCK_FS];
 
 			ret = landlock_add_rule(fd, rule->rule_type, &path_beneath_attr, 0);
 		} else if (rule->rule_type == LANDLOCK_RULE_NET_PORT) {
 			net_port_attr = rule->net_port_attr;
 			if (!net_port_attr.allowed_access)
-				net_port_attr.allowed_access = opts->access_net;
+				net_port_attr.allowed_access = opts->handled[SETPRIV_LANDLOCK_NET];
 
 			ret = landlock_add_rule(fd, rule->rule_type, &net_port_attr, 0);
+		} else if (rule->rule_type == LANDLOCK_RULE_NAMESPACE) {
+			ret = landlock_add_rule(fd, rule->rule_type, &rule->namespace_attr, 0);
+		} else if (rule->rule_type == LANDLOCK_RULE_CAPABILITY) {
+			ret = landlock_add_rule(fd, rule->rule_type, &rule->capability_attr, 0);
 		} else {
 			abort();
 		}
@@ -504,6 +624,21 @@ void do_landlock(const struct setpriv_landlock_opts *opts)
 
 	if (landlock_restrict_self(fd, 0) == -1)
 		err(SETPRIV_EXIT_PRIVERR, _("landlock_restrict_self failed"));
+}
+
+static void usage_landlock_items(FILE *out, const char *title,
+				 const struct landlock_restriction *items, size_t nitems)
+{
+	size_t i;
+	int width = 0;
+
+	for (i = 0; i < nitems; i++)
+		width = max(width, (int) strlen(items[i].type));
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(title), out);
+	for (i = 0; i < nitems; i++)
+		fprintf(out, "  %*s - %s\n", width, items[i].type, _(items[i].help));
 }
 
 void usage_landlock(FILE *out)
@@ -520,35 +655,27 @@ void usage_landlock(FILE *out)
 	fputs(_("  path-beneath - filesystem based rule; <argument> is a path\n"), out);
 	/* TRANSLATORS: Keep *{net-port}* untranslated, it's a type name */
 	fputs(_("  net-port - network based rule; <argument> is a port number\n"), out);
+	/* TRANSLATORS: Keep *{namespace}* untranslated, it's a type name */
+	fputs(_("  namespace - namespace based rule; syntax is namespace:<type>[,<type>...]\n"), out);
+	/* TRANSLATORS: Keep *{capability}* untranslated, it's a type name */
+	fputs(_("  capability - capability based rule; syntax is capability:<cap>[,<cap>...]\n"), out);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" available Landlock filesystem rights are:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++) {
-		fprintf(out, "  %12s - %s\n", landlock_access_fs[i].type,
-					_(landlock_access_fs[i].help));
-	}
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++)
+		usage_landlock_items(out, landlock_categories[i].usage_title,
+				     landlock_categories[i].items,
+				     landlock_categories[i].nitems);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" available Landlock network rights are:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(landlock_access_net); i++) {
-		fprintf(out, "  %16s - %s\n", landlock_access_net[i].type,
-					_(landlock_access_net[i].help));
-	}
-
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" available Landlock scope restrictions are:\n"), out);
-	for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++) {
-		fprintf(out, "  %20s - %s\n", landlock_scope_restriction[i].type,
-					_(landlock_scope_restriction[i].help));
-	}
+	usage_landlock_items(out, N_(" available Landlock namespace types are:\n"),
+			     landlock_namespace_type, ARRAY_SIZE(landlock_namespace_type));
 }
 
 void list_landlock_support(void)
 {
+	const struct landlock_category *cat;
+	uint64_t masks[SETPRIV_LANDLOCK_NCATEGORIES];
 	int abi, errata;
 	unsigned n;
-	size_t i;
-	uint64_t fs_mask, net_mask, scope_mask;
+	size_t i, j;
 
 	abi = supported_landlock_abi();
 	errata = landlock_create_ruleset(NULL, 0, LANDLOCK_CREATE_RULESET_ERRATA);
@@ -562,76 +689,56 @@ void list_landlock_support(void)
 	}
 	printf("\n");
 
-	fs_mask = landlock_abi_fs_mask();
-	net_mask = landlock_abi_net_mask();
-	scope_mask = landlock_abi_scope_mask();
-
 	printf(_("access:"));
-	if (fs_mask)
-		printf(" fs");
-	if (net_mask)
-		printf(" net");
-	if (scope_mask)
-		printf(" scope");
-	printf("\n");
-
-	printf(_("%s rights:"), "fs");
-	for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-		if (landlock_access_fs[i].value & fs_mask)
-			printf(" %s", landlock_access_fs[i].type);
-	printf("\n");
-
-	printf(_("%s rules: %s\n"), "fs", "path-beneath");
-
-	if (net_mask) {
-		printf(_("%s rights:"), "net");
-		for (i = 0; i < ARRAY_SIZE(landlock_access_net); i++)
-			if (landlock_access_net[i].value & net_mask)
-				printf(" %s", landlock_access_net[i].type);
-		printf("\n");
-
-		printf(_("%s rules: %s\n"), "net", "net-port");
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++) {
+		masks[i] = landlock_abi_mask(&landlock_categories[i]);
+		if (masks[i])
+			printf(" %s", landlock_categories[i].name);
 	}
+	printf("\n");
 
-	if (scope_mask) {
-		printf(_("%s restrictions:"), "scope");
-		for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++)
-			if (landlock_scope_restriction[i].value & scope_mask)
-				printf(" %s", landlock_scope_restriction[i].type);
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++) {
+		cat = &landlock_categories[i];
+		if (!masks[i])
+			continue;
+
+		printf(_(cat->support_label), cat->name);
+		for (j = 0; j < cat->nitems; j++)
+			if (cat->items[j].value & masks[i])
+				printf(" %s", cat->items[j].type);
 		printf("\n");
+
+		if (cat->rules)
+			printf(_("%s rules: %s\n"), cat->name, cat->rules);
 	}
 }
 
 void list_landlock_access(void)
 {
-	if (landlock_abi_fs_mask())
-		printf("fs\n");
-	if (landlock_abi_net_mask())
-		printf("net\n");
-	if (landlock_abi_scope_mask())
-		printf("scope\n");
+	size_t i;
+
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++)
+		if (landlock_abi_mask(&landlock_categories[i]))
+			printf("%s\n", landlock_categories[i].name);
 }
 
 void list_landlock_rights(const char *access)
 {
+	const struct landlock_category *cat;
 	uint64_t mask;
-	size_t i;
+	size_t i, j;
 
-	if (strcmp(access, "fs") == 0) {
-		mask = landlock_abi_fs_mask();
-		for (i = 0; i < ARRAY_SIZE(landlock_access_fs); i++)
-			if (landlock_access_fs[i].value & mask)
-				printf("%s\n", landlock_access_fs[i].type);
-	} else if (strcmp(access, "net") == 0) {
-		mask = landlock_abi_net_mask();
-		for (i = 0; i < ARRAY_SIZE(landlock_access_net); i++)
-			if (landlock_access_net[i].value & mask)
-				printf("%s\n", landlock_access_net[i].type);
-	} else if (strcmp(access, "scope") == 0) {
-		mask = landlock_abi_scope_mask();
-		for (i = 0; i < ARRAY_SIZE(landlock_scope_restriction); i++)
-			if (landlock_scope_restriction[i].value & mask)
-				printf("%s\n", landlock_scope_restriction[i].type);
-	} else
-		errx(EXIT_FAILURE, _("unknown Landlock access: %s"), access);
+	for (i = 0; i < SETPRIV_LANDLOCK_NCATEGORIES; i++) {
+		cat = &landlock_categories[i];
+		if (strcmp(access, cat->name) != 0)
+			continue;
+
+		mask = landlock_abi_mask(cat);
+		for (j = 0; j < cat->nitems; j++)
+			if (cat->items[j].value & mask)
+				printf("%s\n", cat->items[j].type);
+		return;
+	}
+
+	errx(EXIT_FAILURE, _("unknown Landlock access: %s"), access);
 }
