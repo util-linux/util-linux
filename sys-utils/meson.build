@@ -292,7 +292,12 @@ hwclock_manadocs = files(
   'hwclock.8.adoc',
 )
 
-if systemd.found()
+build_fstrim = get_option('build-fstrim') \
+  .disable_auto_if(build_all_programs.disabled()) \
+  .require(have_sys_vfs_header) \
+  .allowed()
+
+if build_fstrim and systemd.found()
   fstrim_service = configure_file(
     input : 'fstrim.service.in',
     output : 'fstrim.service',
