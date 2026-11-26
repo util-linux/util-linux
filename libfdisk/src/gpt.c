@@ -2602,8 +2602,12 @@ static int gpt_add_partition(
 				goto done;
 
 			user_l = fdisk_ask_number_get_result(ask);
-			if (fdisk_ask_number_is_relative(ask)) {
-				user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l);
+
+			/* Don't align the end if it's exactly the last free
+			 * sector, in this case the size has been requested by
+			 * the user and the alignment would reduce it. */
+			if (user_l != max_l && fdisk_ask_number_is_relative(ask)) {
+				user_l = fdisk_align_lba_in_range(cxt, user_l + 1, user_f, dflt_l);
 				if (user_l > user_f)
 					user_l -= 1ULL;
 			}

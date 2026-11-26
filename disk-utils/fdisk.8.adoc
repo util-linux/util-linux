@@ -124,7 +124,10 @@ If the size is prefixed by '{plus}' then it is interpreted as relative to the pa
 In the case the size is specified in bytes, then the number may be followed by the multiplicative suffixes KiB (1024 bytes), MiB (1024*1024 bytes), and so on for GiB, TiB, PiB, EiB, ZiB and YiB. The "iB" is optional, e.g., "K" has the same meaning as "KiB".
 
 //TRANSLATORS: Keep {plus} untranslated.
-The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) are always aligned according to device I/O limits. The {plus}/-<size>{K,B,M,G,...} notation is recommended.
+The relative sizes if specified with multiplicative suffixes (e.g. +100MiB) are aligned according to device I/O limits, so that the next partition begins on a device I/O boundary. The {plus}/-<size>{K,B,M,G,...} notation is recommended.
+
+//TRANSLATORS: Keep {plus} untranslated.
+The last sector of the partition is calculated as <start> {plus} <size> - 1 for the {plus}<size>{K,B,M,G,...} notation. If the size exactly fills the free space then the partition ends on the last free sector and the size is not aligned.
 
 The last sector of the partition is strictly calculated as <start> + <size> (without -1) if the size is specified by the +<sectors> notation. In this case, the size is not aligned to the device I/O limits.
 
