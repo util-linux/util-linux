@@ -226,10 +226,12 @@ SMARTCOLS_2.40 {
 	scols_new_filter;
 	scols_unref_filter;
 	scols_filter_get_errmsg;
+	scols_filter_get_max_exprsz;
 	scols_filter_next_holder;
 	scols_filter_assign_column;
 	scols_line_apply_filter;
 	scols_filter_set_filler_cb;
+	scols_filter_set_max_exprsz;
 	scols_line_is_filled;
 	scols_filter_new_counter;
 	scols_counter_set_name;
