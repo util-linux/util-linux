@@ -299,9 +299,10 @@ static int get_alarm_status(int fd, time_t *when)
 }
 
 /*
- * Check that the alarm set by setup_alarm() for @alarm is armed. Returns -1
- * if not. An unknown status is not an error: before Linux 6.3, RTC_WKALM_RD
- * fails on RTCs without a read_alarm callback.
+ * Check that the alarm set by setup_alarm() for @alarm is armed and set
+ * @alarm to the time the RTC reports. Returns -1 if not armed. An unknown
+ * status is not an error: before Linux 6.3, RTC_WKALM_RD fails on RTCs
+ * without a read_alarm callback.
  */
 static int check_alarm_armed(const struct rtcwake_control *ctl,
 			     const char *devname, int fd, time_t *alarm)
@@ -326,6 +327,7 @@ static int check_alarm_armed(const struct rtcwake_control *ctl,
 				devname);
 		return -1;
 	}
+	*alarm = when;
 	return 0;
 }
 
@@ -671,6 +673,7 @@ int main(int argc, char **argv)
 			rc = EXIT_FAILURE;
 			goto disable_alarm;
 		}
+		alarm += ctl.sys_time - ctl.rtc_time;
 
 		if (suspend == NO_MODE || suspend == ON_MODE) {
 			char s[CTIME_BUFSIZ];
