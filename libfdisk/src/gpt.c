@@ -206,7 +206,7 @@ static uint64_t gpt_partition_size(const struct gpt_entry *e)
 	uint64_t start = gpt_partition_start(e);
 	uint64_t end = gpt_partition_end(e);
 
-	return start > end ? 0 : end - start + 1ULL;
+	return fdisk_area_size(start, end);
 }
 
 /* prints UUID in the real byte order! */
@@ -1574,7 +1574,7 @@ static uint64_t find_first_in_largest(struct fdisk_gpt_label *gpt)
 		first_sect = find_first_available(gpt, start);
 		if (first_sect != 0) {
 			last_sect = find_last_free(gpt, first_sect);
-			segment_size = last_sect - first_sect + 1ULL;
+			segment_size = fdisk_area_size(first_sect, last_sect);
 
 			if (segment_size > selected_size) {
 				selected_size = segment_size;
@@ -1612,7 +1612,7 @@ static uint64_t get_free_sectors(struct fdisk_context *cxt,
 		first_sect = find_first_available(gpt, start);
 		if (first_sect) {
 			last_sect = find_last_free(gpt, first_sect);
-			segment_sz = last_sect - first_sect + 1;
+			segment_sz = fdisk_area_size(first_sect, last_sect);
 
 			if (segment_sz > largest_seg)
 				largest_seg = segment_sz;
@@ -2035,7 +2035,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	if (fdisk_partition_has_size(pa) || fdisk_partition_has_start(pa)) {
 		uint64_t xstart = fdisk_partition_has_start(pa) ? pa->start : gpt_partition_start(e);
 		uint64_t xsize  = fdisk_partition_has_size(pa)  ? pa->size  : gpt_partition_size(e);
-		end = xstart + xsize - 1ULL;
+		end = fdisk_area_end(xstart, xsize);
 	}
 
 	if (!FDISK_IS_UNDEF(start)) {
@@ -2501,7 +2501,7 @@ static int gpt_add_partition(
 	/* don't offer too small free space by default, this is possible to
 	 * bypass by sfdisk script */
 	if ((!pa || !fdisk_partition_has_start(pa))
-	    && dflt_l - dflt_f + 1 < cxt->grain / cxt->sector_size) {
+	    && fdisk_area_size(dflt_f, dflt_l) < cxt->grain / cxt->sector_size) {
 		fdisk_warnx(cxt, _("No enough free sectors available."));
 		return -ENOSPC;
 	}
@@ -2565,7 +2565,7 @@ static int gpt_add_partition(
 		user_l = dflt_l;
 
 	} else if (pa && fdisk_partition_has_size(pa)) {
-		user_l = user_f + pa->size - 1;
+		user_l = fdisk_area_end(user_f, pa->size);
 		DBG(GPT, ul_debug("size defined: %ju, end: %"PRIu64
 				  "(last possible: %"PRIu64", optimal: %"PRIu64")",
 				(uintmax_t)pa->size, user_l, max_l, dflt_l));

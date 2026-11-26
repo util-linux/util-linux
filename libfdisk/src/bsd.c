@@ -276,9 +276,9 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	if (pa && pa->end_follow_default)
 		;
 	else if (pa && fdisk_partition_has_size(pa)) {
-		if (begin + pa->size > end)
+		if (!fdisk_area_fits_limit(begin, pa->size, end))
 			return -ERANGE;
-		end = begin + pa->size - 1ULL;
+		end = fdisk_area_end(begin, pa->size);
 	} else {
 		/* ask user by dialog */
 		struct fdisk_ask *ask = fdisk_new_ask();
@@ -312,7 +312,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 			end = end * d->d_secpercyl - 1;
 	}
 
-	d->d_partitions[i].p_size   = end - begin + 1;
+	d->d_partitions[i].p_size   = fdisk_area_size(begin, end);
 	d->d_partitions[i].p_offset = begin;
 	d->d_partitions[i].p_fstype = BSD_FS_UNUSED;
 

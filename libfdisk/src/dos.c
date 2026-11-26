@@ -1048,13 +1048,13 @@ static void set_partition(struct fdisk_context *cxt,
 				i, doext ? " [extended]" : "",
 				(size_t) offset,
 				(size_t) (start -  offset),
-				(size_t) (stop - start + 1),
+				(size_t) fdisk_area_size(start, stop),
 				sysid));
 
 	p->boot_ind = boot ? ACTIVE_FLAG : 0;
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
-	dos_partition_set_size(p, stop - start + 1);
+	dos_partition_set_size(p, fdisk_area_size(start, stop));
 	dos_partition_sync_chs(p, offset, cxt->geom.sectors, cxt->geom.heads);
 	partition_set_changed(cxt, i, 1);
 }
@@ -1413,7 +1413,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			fdisk_sector_t last;
 
 			rc = find_last_free(cxt, is_logical, start, limit, &last);
-			if (rc == 0 && last - start + 1 < fdisk_partition_get_size(pa)) {
+			if (rc == 0 && !fdisk_area_fits_limit(start,
+						fdisk_partition_get_size(pa), last)) {
 				DBG(LABEL, ul_debug("DOS: area <%"PRIu64",%"PRIu64"> too small [wanted=%"PRIu64" aval=%"PRIu64"]",
 							start, last,
 							fdisk_partition_get_size(pa),
@@ -2456,7 +2457,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 		if (FDISK_IS_UNDEF(size))
 			size = dos_partition_get_size(p);
 
-		set_partition(cxt, n, 0, start, start + size - 1,
+		set_partition(cxt, n, 0, start, fdisk_area_end(start, size),
 				pa->type  ? pa->type->code : p->sys_ind,
 				FDISK_IS_UNDEF(pa->boot) ?
 					p->boot_ind == ACTIVE_FLAG :

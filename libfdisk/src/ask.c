@@ -1077,7 +1077,7 @@ int fdisk_info_new_partition(
 {
 	int rc;
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				     (uint64_t)(stop - start + 1) * cxt->sector_size);
+				     (uint64_t) fdisk_area_size(start, stop) * cxt->sector_size);
 
 	rc = fdisk_info(cxt,
 			_("Created a new partition %d of type '%s' and of size %s."),

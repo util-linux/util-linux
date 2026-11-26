@@ -420,7 +420,7 @@ static int new_freespace(struct fdisk_context *cxt,
 	assert(end > start);
 
 	aligned_start = fdisk_align_lba_in_range(cxt, start, start, end);
-	size = end - aligned_start + 1ULL;
+	size = fdisk_area_size(aligned_start, end);
 
 	if (size == 0) {
 		DBG(TAB, ul_debug("ignore freespace (aligned size is zero)"));
