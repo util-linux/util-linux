@@ -518,7 +518,7 @@ static int report_device(char *device, int quiet)
 		ul_unref_path(pc);
 	}
 	if (!*start_str)
-		snprintf(start_str, sizeof(start_str), "%15ju", start);
+		snprintf(start_str, sizeof(start_str), "%15ju", (uintmax_t)start);
 
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
 	    ioctl(fd, BLKRAGET, &ra) == 0 &&

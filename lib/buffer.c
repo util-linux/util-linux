@@ -85,12 +85,14 @@ int ul_buffer_save_pointer(struct ul_buffer *buf, unsigned short ptr_idx)
 
 		if (!tmp)
 			return -EINVAL;
+
 		buf->ptrs = tmp;
 
 		/* reallocarray() does not initialize the new entries */
 		memset(tmp + buf->nptrs, 0,
 		       (ptr_idx + 1 - buf->nptrs) * sizeof(size_t));
 		buf->nptrs = ptr_idx + 1;
+		memset(buf->ptrs + old_nptrs, 0, (buf->nptrs - old_nptrs) * sizeof(char *));
 	}
 
 	buf->ptrs[ptr_idx] = (buf->begin && buf->end ?
