@@ -74,15 +74,17 @@ _findmnt_module()
 			return 0
 			;;
 		'-S'|'--source')
-			local DEV_MPOINT
-			DEV_MPOINT=$($1 -rno SOURCE | command grep ^/dev)
-			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- $cur) )
+			local IFS=$'\n' DEV_MPOINT
+			compopt -o filenames
+			DEV_MPOINT=$($1 -lno SOURCE | command grep ^/dev)
+			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- "$cur") )
 			return 0
 			;;
 		'-T'|'--target')
-			local DEV_MPOINT
-			DEV_MPOINT=$($1 -rno TARGET)
-			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- $cur) )
+			local IFS=$'\n' DEV_MPOINT
+			compopt -o filenames
+			DEV_MPOINT=$($1 -lno TARGET)
+			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- "$cur") )
 			return 0
 			;;
 		'-M'|'--mountpoint')
@@ -152,9 +154,12 @@ _findmnt_module()
 			return 0
 			;;
 	esac
-	local DEV_MPOINT
-	DEV_MPOINT=$($1 -rno TARGET,SOURCE)
-	COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- $cur) )
+	local IFS=$'\n' DEV_MPOINT COL
+	compopt -o filenames
+	for COL in TARGET SOURCE; do
+		DEV_MPOINT=$($1 -lno "$COL")
+		COMPREPLY+=( $(compgen -W "$DEV_MPOINT" -- "$cur") )
+	done
 	return 0
 }
 complete -F _findmnt_module findmnt
