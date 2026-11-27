@@ -1,0 +1,560 @@
+/*
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * Copyright (C) 2026 WanBingjiang <wanbingjiang@webray.com.cn>
+ *
+ * fdsend/fdrecv common - SOCKSPEC resolution, socket, SCM_RIGHTS.
+ */
+#include "fdsend-common.h"
+#include "c.h"
+#include "fileutils.h"
+#include "path.h"
+#include "pathnames.h"
+#include "pidfd-utils.h"
+#include "procfs.h"
+#include "strutils.h"
+#include "xalloc.h"
+
+#include <errno.h>
+#include <limits.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <poll.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/un.h>
+#include <sys/inotify.h>
+
+#define INOTIFY_BUF_LEN (sizeof(struct inotify_event) + NAME_MAX + 1)
+
+/* Interrupt blocking waits (fdrecv accept(), fdsend connect-retry) on signal.
+ * Each binary uses only one of these waits, so a single shared flag is enough. */
+static volatile sig_atomic_t got_signal;
+
+static void sig_handler(int sig __attribute__((__unused__)))
+{
+	got_signal = 1;
+}
+
+void fdrecv_setup_cleanup_signals(void)
+{
+	struct sigaction sa = { .sa_handler = sig_handler };
+
+	got_signal = 0;
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
+	sigaction(SIGHUP, &sa, NULL);
+}
+
+#define SOCK_NAME_MAX  (sizeof(((struct sockaddr_un *)0)->sun_path))
+/* Abstract Unix socket name length limit (sun_path[0] is NUL, name at +1). */
+#define ABSTRACT_SOCK_NAME_MAX  (SOCK_NAME_MAX - 1)
+#define ABSTRACT_SOCK_CONNECT_RETRY_MS  100
+
+static int sockpath_from_spec(const char *spec, char *path, size_t size, int abstract)
+{
+	struct path_cxt *pc;
+	uid_t uid;
+	char *dir = NULL;
+	int rc = -1;
+	size_t len;
+
+	if (!spec || !path || size == 0) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (abstract) {
+		/* SOCKSPEC is the abstract socket name; use as-is, no path resolution. */
+		len = strlen(spec);
+		if (len > ABSTRACT_SOCK_NAME_MAX || len >= size) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+		xstrncpy(path, spec, size);
+		return 0;
+	}
+
+	if (spec[0] == '/') {
+		/* SOCKPATH: use as-is */
+		if (strlen(spec) >= size) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+		xstrncpy(path, spec, size);
+		return 0;
+	}
+
+	/* SOCKNAME: must not contain '/' */
+	if (strchr(spec, '/') != NULL) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	uid = getuid();
+	if (uid == 0)
+		xasprintf(&dir, "%s", _PATH_FDSEND_RUN);
+	else
+		xasprintf(&dir, "%s/%u/fdsend", _PATH_FDSEND_RUN_USER, (unsigned) uid);
+
+	/* Ensure the directory exists */
+	rc = ul_mkdir_p(dir, 0700);
+	if (rc != 0) {
+		errno = -rc;
+		goto done;
+	}
+
+	/* Join dir/spec into the caller buffer; ul_path_get_abspath() returns
+	 * NULL and sets errno to ENAMETOOLONG when the result would not fit. */
+	pc = ul_new_path("%s", dir);
+	if (!pc) {
+		errno = ENOMEM;
+		goto done;
+	}
+	if (!ul_path_get_abspath(pc, path, size, "%s", spec)) {
+		ul_unref_path(pc);
+		goto done;
+	}
+	ul_unref_path(pc);
+	rc = 0;
+done:
+	free(dir);
+	return rc;
+}
+
+/*
+ * Wait for socket file to appear (receiver started first).
+ * Returns 0 when socket exists; -1 on error.
+ */
+static int fdsend_wait_for_socket(const char *sockpath)
+{
+	char dir[PATH_MAX];
+	char *base;
+	int inotify_fd = -1;
+	int wd = -1;
+	struct pollfd pfd;
+	char buf[INOTIFY_BUF_LEN];
+	int ret = -1;
+
+	/* return if the socket exists */
+	if (access(sockpath, F_OK) == 0)
+		return 0;
+
+	if (strlen(sockpath) >= sizeof(dir)) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+	xstrncpy(dir, sockpath, sizeof(dir));
+	base = stripoff_last_component(dir);
+	if (!base) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+	if (inotify_fd < 0)
+		inotify_fd = inotify_init();
+	if (inotify_fd < 0)
+		return -1;
+
+	wd = inotify_add_watch(inotify_fd, dir, IN_CREATE);
+	if (wd < 0)
+		goto out;
+
+	/* Close the race between the initial access() and inotify_add_watch(). */
+	if (access(sockpath, F_OK) == 0) {
+		ret = 0;
+		goto out;
+	}
+
+	for (;;) {
+		ssize_t n;
+		char *p;
+		int pr;
+
+		/* Interrupt on SIGINT/SIGTERM/SIGHUP: poll()/read() are restarted
+		 * on EINTR and loop back here, where the flag is observed. */
+		if (got_signal) {
+			errno = EINTR;
+			goto out;
+		}
+
+		pfd.fd = inotify_fd;
+		pfd.events = POLLIN;
+		pr = poll(&pfd, 1, -1);
+		if (pr < 0) {
+			if (errno == EINTR)
+				continue;
+			goto out;
+		}
+
+		n = read(inotify_fd, buf, sizeof(buf));
+		if (n < 0) {
+			if (errno == EINTR || errno == EAGAIN)
+				continue;
+			goto out;
+		}
+		for (p = buf; p < buf + n; ) {
+			struct inotify_event *ev = (struct inotify_event *)p;
+			if (ev->mask & IN_CREATE && ev->len > 0 &&
+			    strcmp(ev->name, base) == 0) {
+				ret = 0;
+				goto out;
+			}
+			p += sizeof(struct inotify_event) + ev->len;
+		}
+	}
+out:
+	if (wd >= 0)
+		inotify_rm_watch(inotify_fd, wd);
+	close(inotify_fd);
+	return ret;
+}
+
+/* Unlink path-based (non-abstract) Unix socket file. No-op for abstract sockets. */
+static inline void unlink_socket_path(int abstract, const char *path)
+{
+	if (!abstract)
+		unlink(path);
+}
+
+/* Set permissions for path-based (non-abstract) Unix socket file. No-op for abstract sockets. */
+static inline int chmod_socket_path(int abstract, int sock)
+{
+	if (!abstract)
+		return fchmod(sock, 0600);
+	return 0;
+}
+
+/*
+ * fdrecv_accept_and_recv_fd - receiver side: accept one connection and receive an fd.
+ *
+ * socket/bind/listen/accept on sockpath, then recvmsg(SCM_RIGHTS) to get the fd into *out_fd.
+ *
+ * sockpath:  For path-based sockets, a filesystem path; for abstract, the
+ *            name in the kernel abstract namespace.
+ * out_fd:   On success, the received file descriptor is stored here.
+ * abstract: Non-zero if sockpath is an abstract Unix socket name (Linux).
+ *
+ * Signal handling: If interrupted in accept(), the socket is unlinked and
+ * the function returns -1 with errno EINTR.
+ *
+ * Returns 0 on success, -1 on error (and errno set). On success *out_fd is
+ * the received fd; the caller owns it.
+ */
+static int fdrecv_accept_and_recv_fd(const char *sockpath, int *out_fd, int abstract)
+{
+	int sock = -1;
+	int conn = -1;
+	struct sockaddr_un sun;
+	size_t path_len;
+	socklen_t addr_len;
+	struct cmsghdr *cmsg;
+	union {
+		struct cmsghdr hdr;
+		char buf[CMSG_SPACE(sizeof(int))];
+	} cmsg_buf = { 0 };
+	struct msghdr msg = { 0 };
+	struct iovec iov;
+	char dummy = ' ';
+
+	if (!sockpath || !out_fd) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	path_len = strlen(sockpath);
+	if (abstract) {
+		if (path_len >= ABSTRACT_SOCK_NAME_MAX) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+	} else {
+		if (path_len >= sizeof(sun.sun_path)) {
+			errno = ENAMETOOLONG;
+			return -1;
+		}
+	}
+
+	sock = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (sock < 0)
+		return -1;
+
+	memset(&sun, 0, sizeof(sun));
+	sun.sun_family = AF_UNIX;
+	if (abstract) {
+		sun.sun_path[0] = '\0';
+		xstrncpy(sun.sun_path + 1, sockpath, sizeof(sun.sun_path) - 1);
+		addr_len = offsetof(struct sockaddr_un, sun_path) + 1 + path_len;
+	} else {
+		xstrncpy(sun.sun_path, sockpath, sizeof(sun.sun_path));
+		addr_len = sizeof(sun);
+	}
+
+	if (bind(sock, (struct sockaddr *)&sun, addr_len) != 0) {
+		close(sock);
+		return -1;
+	}
+
+	if (chmod_socket_path(abstract, sock) != 0) {
+		close(sock);
+		unlink_socket_path(abstract, sockpath);
+		return -1;
+	}
+
+	if (listen(sock, 1) != 0) {
+		close(sock);
+		unlink_socket_path(abstract, sockpath);
+		return -1;
+	}
+
+	while (true) {
+		conn = accept(sock, NULL, NULL);
+		if (conn >= 0)
+			break;
+		if (errno != EINTR) {
+			close(sock);
+			unlink_socket_path(abstract, sockpath);
+			return -1;
+		}
+		if (got_signal) {
+			close(sock);
+			unlink_socket_path(abstract, sockpath);
+			errno = EINTR;
+			return -1;
+		}
+	}
+
+	close(sock);
+	unlink_socket_path(abstract, sockpath);
+
+	/* recvmsg: at least one byte in iov; control buffer for SCM_RIGHTS */
+	iov.iov_base = &dummy;
+	iov.iov_len = 1;
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	msg.msg_control = cmsg_buf.buf;
+	msg.msg_controllen = sizeof(cmsg_buf.buf);
+
+	if (recvmsg(conn, &msg, 0) <= 0) {
+		close(conn);
+		return -1;
+	}
+
+	cmsg = CMSG_FIRSTHDR(&msg);
+	for (; cmsg != NULL; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
+		if (cmsg->cmsg_level == SOL_SOCKET && cmsg->cmsg_type == SCM_RIGHTS) {
+			*out_fd = *(int *)CMSG_DATA(cmsg);
+			close(conn);
+			return 0;
+		}
+	}
+	close(conn);
+	errno = EINVAL;
+	return -1;
+}
+
+
+/*
+ * Get fd number @fd from process @pid by opening /proc/PID/fd/FD.
+ * @open_mode: O_RDONLY, O_WRONLY, O_RDWR, or -1 for default (O_RDWR).
+ * Returns the new fd on success, -1 on error.
+ */
+static int open_proc_pid_fd(pid_t pid, int fd, int open_mode)
+{
+	struct path_cxt *pc;
+	int mode = (open_mode >= 0) ? open_mode : O_RDWR;
+	int ret;
+
+	pc = ul_new_procfs_path(pid, NULL);
+	if (!pc)
+		return -1;
+
+	ret = ul_path_openf(pc, mode | O_CLOEXEC, "fd/%d", fd);
+	ul_unref_path(pc);
+	return ret;
+}
+
+/*
+ * Get fd number @fd from process @pid.
+ * dup_fd: if true use pidfd_getfd to duplicate the fd (shared offset);
+ *         if false open a new copy via /proc/PID/fd/FD (independent offset).
+ * Returns the new fd on success, -1 on error.
+ */
+static int fdsend_open_pid_fd(pid_t pid, int fd, int dup_fd, uint64_t pidfd_ino, int open_mode)
+{
+	int pidfd;
+	int ret;
+
+	if (!dup_fd)
+		return open_proc_pid_fd(pid, fd, open_mode);
+
+	if (pidfd_ino)
+		pidfd = ul_get_valid_pidfd(pid, pidfd_ino);
+	else
+		pidfd = pidfd_open(pid, 0);
+	if (pidfd < 0)
+		return -1;
+
+	ret = pidfd_getfd(pidfd, fd, 0);
+	close(pidfd);
+	return ret;
+}
+
+/*
+ * Sender: connect and sendmsg SCM_RIGHTS.
+ * When opts->abstract and opts->blocking, retry connect on ECONNREFUSED until success.
+ */
+static int fdsend_connect_and_send_fd(const char *sockpath, int fd_to_send, int own_fd, const struct fdsend_opts *opts)
+{
+	int sock = -1;
+	struct sockaddr_un sun;
+	size_t path_len;
+	socklen_t addr_len;
+	union {
+		struct cmsghdr hdr;
+		char buf[CMSG_SPACE(sizeof(int))];
+	} cmsg_buf = { 0 };
+	struct msghdr msg = { 0 };
+	struct cmsghdr *cmsg;
+	struct iovec iov;
+	char dummy = ' ';
+	int ret = -1;
+	size_t sock_name_len_max = SOCK_NAME_MAX;
+
+	if (opts->abstract)
+		sock_name_len_max = ABSTRACT_SOCK_NAME_MAX;
+
+	if (!sockpath) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	path_len = strlen(sockpath);
+
+	if (path_len >= sock_name_len_max) {
+		errno = ENAMETOOLONG;
+		return -1;
+	}
+
+	sock = socket(AF_UNIX, SOCK_STREAM, 0);
+	if (sock < 0)
+		goto out;
+
+	memset(&sun, 0, sizeof(sun));
+	sun.sun_family = AF_UNIX;
+	if (opts->abstract) {
+		sun.sun_path[0] = '\0';
+		xstrncpy(sun.sun_path + 1, sockpath, sizeof(sun.sun_path) - 1);
+		addr_len = offsetof(struct sockaddr_un, sun_path) + 1 + path_len;
+	} else {
+		xstrncpy(sun.sun_path, sockpath, sizeof(sun.sun_path));
+		addr_len = sizeof(sun);
+	}
+
+	/* Abstract sockets use connect retry instead of wait for socket file. */
+	if (opts->abstract && opts->blocking) {
+		for (;;) {
+			if (connect(sock, (struct sockaddr *)&sun, addr_len) == 0)
+				break;
+			if (errno != ECONNREFUSED)
+				goto out;
+			if (got_signal) {
+				errno = EINTR;
+				goto out;
+			}
+			usleep(ABSTRACT_SOCK_CONNECT_RETRY_MS * 1000);
+		}
+	} else {
+		if (connect(sock, (struct sockaddr *)&sun, addr_len) != 0)
+			goto out;
+	}
+
+	iov.iov_base = &dummy;
+	iov.iov_len = 1;
+	msg.msg_iov = &iov;
+	msg.msg_iovlen = 1;
+	msg.msg_control = cmsg_buf.buf;
+	msg.msg_controllen = sizeof(cmsg_buf.buf);
+
+	cmsg = CMSG_FIRSTHDR(&msg);
+	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
+	cmsg->cmsg_level = SOL_SOCKET;
+	cmsg->cmsg_type = SCM_RIGHTS;
+	*(int *)CMSG_DATA(cmsg) = fd_to_send;
+
+	if (sendmsg(sock, &msg, 0) < 0)
+		goto out;
+	ret = 0;
+out:
+	close(sock);
+	if (own_fd && fd_to_send >= 0)
+		close(fd_to_send);
+	return ret;
+}
+
+int fdsend_do_send(const char *sockspec, int fd, const struct fdsend_opts *opts)
+{
+	char path[PATH_MAX];
+	int fd_to_send = fd;
+	int own_fd = 0;
+
+	if (!opts) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (sockpath_from_spec(sockspec, path, sizeof(path), opts->abstract) != 0)
+		return -1;
+
+	/*
+	 * Set up signal handlers so SIGINT/SIGTERM/SIGHUP can interrupt
+	 * blocking waits (both inotify and connect-retry loops).
+	 */
+	if (opts->blocking)
+		fdrecv_setup_cleanup_signals();
+
+	/*
+	 * Wait for socket file to appear when blocking;
+	 * For abstract sockets connect retry is used instead.
+	 */
+	if (!opts->abstract && opts->blocking && fdsend_wait_for_socket(path) != 0)
+		return -1;
+
+	if (opts->pid >= 0) {
+		fd_to_send = fdsend_open_pid_fd(opts->pid, fd, opts->dup_fd,
+						 opts->pidfd_ino, opts->open_mode);
+		if (fd_to_send < 0)
+			return -1;
+		own_fd = 1;
+	}
+
+	return fdsend_connect_and_send_fd(path, fd_to_send, own_fd, opts);
+}
+
+int fdrecv_do_recv(const char *sockspec, int *out_fd, int abstract)
+{
+	char path[PATH_MAX];
+
+	if (!out_fd) {
+		errno = EINVAL;
+		return -1;
+	}
+
+	if (sockpath_from_spec(sockspec, path, sizeof(path), abstract) != 0)
+		return -1;
+
+	return fdrecv_accept_and_recv_fd(path, out_fd, abstract);
+}

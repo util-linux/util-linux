@@ -110,6 +110,8 @@ ylwrap
 /fadvise
 /fallocate
 /fdformat
+/fdrecv
+/fdsend
 /fdisk
 /fincore
 /findfs
