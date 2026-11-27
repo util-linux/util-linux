@@ -19,6 +19,9 @@
 #include "pathnames.h"
 
 extern int mkstemp_cloexec(char *template);
+#ifdef HAVE_OPENAT
+extern int mkstemp_cloexec_at(int dirfd, char *template);
+#endif
 
 extern int xmkstemp(char **tmpname, const char *dir, const char *prefix);
 
