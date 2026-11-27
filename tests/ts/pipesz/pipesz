@@ -65,6 +65,10 @@ echo -n | $TS_CMD_PIPESZ --check --get --file "/dev/stdin" 2>> "$TS_ERRLOG" \
         || ts_logerr "expected success"
 ts_finalize_subtest
 
+ts_init_subtest "set-too-large"
+$TS_CMD_PIPESZ --set 4G --fd 42 >> "$TS_OUTPUT" 2>> "$TS_ERRLOG"
+ts_finalize_subtest
+
 ts_init_subtest "pipe-max-size"
 echo -n | $TS_CMD_PIPESZ --check --stdin >> "$TS_OUTPUT" 2>> "$TS_ERRLOG" \
         || ts_logerr "expected success"
