@@ -63,6 +63,13 @@ Specify swap options by an __fstab__-compatible comma-separated string. For exam
 +
 The _opts_ string is evaluated last and overrides all other command line options.
 
+*--offload-only*::
+Activate the area for explicit proactive reclaim, excluding pressure-driven writes and hibernation. Requires kernel support. This policy does not check memory headroom or guarantee reclaim progress; see _Documentation/mm/swap.rst_ in the kernel documentation for reclaim interfaces and limitations.
++
+The equivalent *offload-only* option in _/etc/fstab_ or *--options* takes no value. With *--all*, the long option applies to every selected swap area.
++
+On devices supporting discard, *--discard* and *--discard=pages* are incompatible with this policy; *--discard=once* is allowed.
+
 *-p*, *--priority* _priority_::
 Specify the priority of the swap device. _priority_ is a value between 0 and 32767. Higher numbers indicate higher priority. See *swapon*(2) for a full description of swap priorities. Add **pri=**__value__ to the option field of _/etc/fstab_ for use with *swapon -a*. When no priority is defined, Linux kernel defaults to negative numbers.
 
@@ -128,6 +135,9 @@ Do not report errors for this device if it does not exist.
 
 *discard*[**=**_policy_]::
 Enable swap discard. The supported settings are *discard*, *discard=once*, or *discard=pages*. For more details, see the **--discard** command line option.
+
+*offload-only*::
+Restrict the area to explicit proactive reclaim. Takes no value. See *--offload-only*.
 
 **pri=**_priority_::
 Specify the priority of the swap device. For more details, see the **--priority** command line option.
