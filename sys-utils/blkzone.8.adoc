@@ -50,6 +50,7 @@ Zone conditions:
  oi    Implicitly opened
  ol    Offline
  ro    Read only
+ ac    Active (only reported with the --cached option)
  xN    Reserved conditions (should not be reported)
 ....
 
@@ -89,6 +90,9 @@ The maximum number of sectors the command should operate on. The default value i
 
 *-c*, *--count* _count_::
 The maximum number of zones the command should operate on. The default value is the number of zones starting from _offset_. This option cannot be used together with the option *--length*.
+
+*--cached*::
+Applies to the *report* and *capacity* commands. By default the zone report is obtained from the device, so that the zone conditions reflect the current state of the device. With this option the report is built from the zone information cached by the kernel instead. In a cached report the implicitly open, explicitly open and closed zone conditions are all reported with the *active* (*BLK_ZONE_COND_ACTIVE*) condition. This option requires a kernel that provides the *BLKREPORTZONEV2* ioctl (Linux 6.19 and later); otherwise it is rejected with an error.
 
 *-f*, *--force*::
 Enforce commands to change zone status on block devices used by the system.
