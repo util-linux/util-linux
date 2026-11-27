@@ -4,3 +4,11 @@ outside: original
 dot-dot name
 dangerous filename: ..
 ret: 4
+nested directory extraction
+nested extraction: ok
+deep directory tree
+directory depth limit
+ret: 4
+low descriptor limit
+directory depth limit
+ret: 4
