@@ -75,6 +75,11 @@ ADOCFILES_COMMON =
 MANPAGES =
 MANLINKS =
 
+# pkg-config metadata exposing build-time paths, lib support and tool feature
+# availability via `pkg-config --variable=` for other projects that embed us.
+pkgconfig_DATA += util-linux.pc
+PATHFILES      += util-linux.pc
+
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
@@ -189,6 +194,17 @@ edit_cmd = sed \
 	 -e 's|@includedir[@]|$(includedir)|g' \
 	 -e 's|@runstatedir[@]|$(runstatedir)|g' \
 	 -e 's|@localstatedir[@]|$(localstatedir)|g' \
+	 -e 's|@sysconfstaticdir[@]|$(sysconfstaticdir)|g' \
+	 -e 's|@tmpfilesdir[@]|$(tmpfilesdir)|g' \
+	 -e 's|@UTIL_LINUX_PC_VERSION[@]|$(UTIL_LINUX_PC_VERSION)|g' \
+	 -e 's|@SYSTEMD_SUPPORT_PC[@]|$(SYSTEMD_SUPPORT_PC)|g' \
+	 -e 's|@LIBECONF_SUPPORT_PC[@]|$(LIBECONF_SUPPORT_PC)|g' \
+	 -e 's|@BTRFS_SUPPORT_PC[@]|$(BTRFS_SUPPORT_PC)|g' \
+	 -e 's|@LASTLOG2_SUPPORT_PC[@]|$(LASTLOG2_SUPPORT_PC)|g' \
+	 -e 's|@LIBCRYPTSETUP_SUPPORT_PC[@]|$(LIBCRYPTSETUP_SUPPORT_PC)|g' \
+	 -e 's|@MORE_SECURE_PAGER_SUPPORT_PC[@]|$(MORE_SECURE_PAGER_SUPPORT_PC)|g' \
+	 -e 's|@AGETTY_RELOAD_SUPPORT_PC[@]|$(AGETTY_RELOAD_SUPPORT_PC)|g' \
+	 -e 's|@AGETTY_NETLINK_SUPPORT_PC[@]|$(AGETTY_NETLINK_SUPPORT_PC)|g' \
 	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
 	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
 	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
