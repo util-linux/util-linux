@@ -54,6 +54,8 @@ more - display the contents of a file in a terminal
 
 *more* is a filter for paging through text one screenful at a time. This version is especially primitive. Users should realize that *less*(1) provides *more*(1) emulation plus extensive enhancements.
 
+When multiple files are specified, a header containing the filename is displayed before each file. Headers are also displayed before named files when input is read from standard input.
+
 == OPTIONS
 
 Options are also taken from the environment variable *MORE* (make sure to precede them with a dash (*-*)) but command-line options will override those.
